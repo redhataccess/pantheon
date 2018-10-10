@@ -1,0 +1,27 @@
+{
+  "jcr:primaryType": "sling:Folder",
+  "sling:resourceType": "pantheon/modules/all",
+
+
+  "module_1": {
+    "jcr:primaryType": "pantheon:modules",
+    "jcr:description": "Pre-defined module 1",
+    "jcr:title": "Module 1",
+    "jcr:content": "Content for Module 1",
+    "sling:resourceType": "pantheon/modules"
+  },
+  "module_2": {
+    "jcr:primaryType": "pantheon:modules",
+    "jcr:description": "Pre-defined module 2",
+    "jcr:title": "Module 2",
+    "jcr:content": "Content for Module 2",
+    "sling:resourceType": "pantheon/modules"
+  },
+  "module_3": {
+    "jcr:primaryType": "pantheon:modules",
+    "jcr:description": "Pre-defined module 3",
+    "jcr:title": "Module 3",
+    "jcr:content": "Content for Module 3",
+    "sling:resourceType": "pantheon/modules"
+  }
+}
