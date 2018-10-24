@@ -23,9 +23,6 @@ import java.io.Writer;
 
 import javax.servlet.ServletException;
 
-//import org.apache.felix.scr.annotations.Properties;
-//import org.apache.felix.scr.annotations.Property;
-//import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
@@ -51,15 +48,15 @@ import org.slf4j.LoggerFactory;
  *    @Property(name="sling.servlet.extensions", value="html")
  * })
  */
-@SlingServlet(resourceTypes="pantheon/modules", extensions="adoc")
+@SlingServlet(resourceTypes="pantheon/modules", extensions="preview")
 @Properties({
     @Property(name="service.description", value="Hello World Type Servlet"),
     @Property(name="service.vendor", value="The Apache Software Foundation")
 })
 @SuppressWarnings("serial")
-public class ByResourceTypeServlet extends SlingSafeMethodsServlet {
+public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     
-    private final Logger log = LoggerFactory.getLogger(ByResourceTypeServlet.class);
+    private final Logger log = LoggerFactory.getLogger(AsciidocRenderingServlet.class);
 
     @Override
     protected void doGet(SlingHttpServletRequest request,
