@@ -2,24 +2,26 @@
     <head data-sly-include="${'/apps/pantheon/partials/header.html'}">
     </head>
     <body>
-        <h1>${properties.jcr:title}</h1>
+        <div class="container">
+            <h1>${properties.jcr:title}</h1>
 
-        <p>
-            <a class="btn btn-primary" href="/modules/${resource.name}.edit.html">Edit</a>
-        </p>
+            <p>
+                <a class="btn btn-primary" href="/modules/${resource.name}.edit.html">Edit</a>
+            </p>
 
-        <div>
-            <div class="form-group">
-                <label>Title:</label>
-                <div>${properties.jcr:title}</div>
-            </div>
-            <div class="form-group">
-                <label>Description:</label>
-                <div>${properties.jcr:description}</div>
-            </div>
-            <div class="form-group">
-                <label>Content:</label>
-                <div>${properties.jcr:content}</div>
+            <div>
+                <div class="form-group">
+                    <label>Title:</label>
+                    <div>${properties.jcr:title}</div>
+                </div>
+                <div class="form-group">
+                    <label>Description:</label>
+                    <div>${properties.jcr:description}</div>
+                </div>
+                <div class="form-group">
+                    <label>Content:</label>
+                    <div>${properties.jcr:content}</div>
+                </div>
             </div>
         </div>
 

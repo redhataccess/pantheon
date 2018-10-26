@@ -4,30 +4,31 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.54.8/css/patternfly-additions.min.css">
 </head>
 <body>
-<h1>New module</h1>
+    <div class="container">
+        <h1>New module</h1>
 
-<div>
-    <form method="POST" action="/content/modules/">
-        Title:<br/>
-        <input type="text" name="jcr:title" style="width:100%"/>
+        <div>
+            <form method="POST" action="/content/modules/">
+                Title:<br/>
+                <input type="text" name="jcr:title" style="width:100%"/>
 
-        <br/>Description:<br/>
-        <textarea style="width:100%" name="jcr:description"></textarea>
+                <br/>Description:<br/>
+                <textarea style="width:100%" name="jcr:description"></textarea>
 
-        <br/>Content:<br/>
-        <textarea style="width:100%" name="jcr:content"></textarea>
+                <br/>Content:<br/>
+                <textarea style="width:100%" name="jcr:content"></textarea>
 
-        <br/>
-        <input type="submit" value="save"/>
+                <br/>
+                <input type="submit" value="save"/>
 
-        <input type="hidden" name=":redirect" value="*.html"/>
-        <input type="hidden" name="jcr:primaryType" value="pantheon:modules"/>
+                <input type="hidden" name=":redirect" value="*.html"/>
+                <input type="hidden" name="jcr:primaryType" value="pantheon:modules"/>
 
-        <!-- used by Sling when decoding request parameters -->
-        <input type="hidden" name="_charset_" value="UTF-8"/>
-    </form>
-</div>
-
+                <!-- used by Sling when decoding request parameters -->
+                <input type="hidden" name="_charset_" value="UTF-8"/>
+            </form>
+        </div>
+    </div>
 <!-- code of step 2 comes here -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

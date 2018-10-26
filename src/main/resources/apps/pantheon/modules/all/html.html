@@ -2,13 +2,14 @@
 <head data-sly-include="${'/apps/pantheon/partials/header.html'}">
 </head>
 <body>
-<h1>All Modules</h1>
-
-<p>
-    <a class="btn btn-primary" href="/modules.add.html">New Module</a>
-</p>
 
 <div class="container-fluid">
+    <h1>All Modules</h1>
+
+    <p>
+        <a class="btn btn-primary" href="/modules.add.html">New Module</a>
+    </p>
+
     <div class="list-group list-view-pf list-view-pf-view" data-sly-list="${resource.listChildren}">
         <div class="list-group-item">
             <a href="${item.name @ prependPath='modules/', addSelectors=['html']}">
