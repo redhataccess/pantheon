@@ -57,7 +57,8 @@
                         <!--<Import-Package>-->
                             <!--!com.beust.jcommander-->
                         <!--</Import-Package>-->
-                        <!--<Embed-Dependency>asciidoctorj</Embed-Dependency>-->
+                        <!-- Embed the necessary dependencies -->
+                        <Embed-Dependency>org.apache.sling.servlets.get</Embed-Dependency>
                         <!--<Export-Package>org.asciidoctor.*,org.jruby.*,com.beust.jcommander.*</Export-Package>-->
                     </instructions>
                 </configuration>
@@ -70,6 +71,14 @@
                     <slingUrl>http://localhost:8080/system/console</slingUrl>
                     <user>admin</user>
                     <password>admin</password>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -147,9 +156,21 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.servlets.get</artifactId>
+            <version>2.1.36</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+        <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>
             <version>1.12.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.commons.johnzon</artifactId>
+            <version>1.1.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
