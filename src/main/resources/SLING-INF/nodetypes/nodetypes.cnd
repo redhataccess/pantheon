@@ -27,9 +27,8 @@
 
 <pant = 'http://redhat.com/pantheon'>
 
-[pant:module] > nt:unstructured, mix:versionable, mix:created, mix:lastModified
-	- jcr:title (string) mandatory
+[pant:module] > nt:unstructured, mix:versionable, mix:created, mix:lastModified, mix:title
 	- jcr:description (string)
 	- jcr:content (string)
 	- pant:asciidocContent (string)
-	- sling:resourceType (string) = 'pantheon/module' mandatory autocreated
+	- sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
