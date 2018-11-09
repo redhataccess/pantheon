@@ -25,10 +25,11 @@
 //	  -	 http://jackrabbit.apache.org/node-type-notation.html
 //
 
-<pantheon = 'http://redhat.com/pantheon'>
+<pant = 'http://redhat.com/pantheon'>
 
-[pantheon:modules] > nt:unstructured, mix:versionable
+[pant:module] > nt:unstructured, mix:versionable, mix:created, mix:lastModified
 	- jcr:title (string) mandatory
 	- jcr:description (string)
 	- jcr:content (string)
-	- sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
+	- pant:asciidocContent (string)
+	- sling:resourceType (string) = 'pantheon/module' mandatory autocreated
