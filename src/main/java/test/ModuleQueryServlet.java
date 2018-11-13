@@ -17,11 +17,11 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Iterator;
 
-@SlingServlet(paths = "/content/modules", selectors = "query", extensions = "json")
-@Properties({
-        @Property(name = "service.description", value = "Query servlet for modules"),
-        @Property(name = "service.vendor", value = "Red Hat")
-})
+//@SlingServlet(paths = "/content/modules", selectors = "query", extensions = "json")
+//@Properties({
+//        @Property(name = "service.description", value = "Query servlet for modules"),
+//        @Property(name = "service.vendor", value = "Red Hat")
+//})
 public class ModuleQueryServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
