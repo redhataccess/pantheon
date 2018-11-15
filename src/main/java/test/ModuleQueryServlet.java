@@ -17,17 +17,24 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Iterator;
 
-//@SlingServlet(paths = "/content/modules", selectors = "query", extensions = "json")
-//@Properties({
-//        @Property(name = "service.description", value = "Query servlet for modules"),
-//        @Property(name = "service.vendor", value = "Red Hat")
-//})
+/**
+ * Servlet can be accessed via:
+ *
+ * <url>/modules.query?q=sometext
+ */
+@SlingServlet(paths = "/modules", selectors = "query", extensions = "json")
+@Properties({
+        @Property(name = "service.description", value = "Query servlet for modules"),
+        @Property(name = "service.vendor", value = "Red Hat")
+})
 public class ModuleQueryServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
         ResourceResolver resolver = request.getResourceResolver();
+
+        // run a simple query searching for content
         Iterator<Resource> resources = resolver.findResources(
-                "SELECT * FROM [pantheon:modules] as mod where mod.[jcr:content] like '%" + request.getParameter("q") + "%'",
+                "SELECT * FROM [pant:module] as mod where mod.[jcr:content] like '%" + request.getParameter("q") + "%'",
                 Query.JCR_SQL2);
 
         response.setContentType("text/json");
