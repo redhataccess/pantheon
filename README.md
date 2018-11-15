@@ -47,4 +47,21 @@ JCR path `content/modules` with three modules used for testing.
 A basic module management application can be found at `http://localhost:8080/modules.html`
 
 
+### How to run against a Mongo datastore
+
+Pull the mongo db image:
+```sh
+docker pull mongo
+```
+
+Run a mongo db container (were are calling it `slingmongo` here)
+```sh
+docker run --name slingmongo -d mongo
+```
+
+Run a transient container which stores everything in the linked mongo db:
+```sh
+docker run --rm -p 8080:8080 --link slingmongo:mongo -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://mongo:27017' cptools/sling
+```
+
 ### more to come...
