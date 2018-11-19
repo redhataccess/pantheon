@@ -8,6 +8,7 @@
     "jcr:description": "Pre-defined module 1",
     "jcr:title": "Module 1",
     "jcr:content": "Content for Module 1",
+    "jcr:isCheckedOut": false,
     "sling:resourceType": "pantheon/modules"
   },
   "module_2": {
@@ -15,6 +16,7 @@
     "jcr:description": "Pre-defined module 2",
     "jcr:title": "Module 2",
     "jcr:content": "Content for Module 2",
+    "jcr:isCheckedOut": false,
     "sling:resourceType": "pantheon/modules"
   },
   "module_3": {
@@ -22,6 +24,7 @@
     "jcr:description": "Pre-defined module 3",
     "jcr:title": "Module 3",
     "jcr:content": "Content for Module 3",
+    "jcr:isCheckedOut": false,
     "sling:resourceType": "pantheon/modules"
   }
 }
