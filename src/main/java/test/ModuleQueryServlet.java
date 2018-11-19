@@ -7,6 +7,7 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.get.impl.util.ResourceTraversor;
 
@@ -22,7 +23,9 @@ import java.util.Iterator;
  *
  * <url>/modules.query?q=sometext
  */
-@SlingServlet(paths = "/modules", selectors = "query", extensions = "json")
+@SlingServlet(paths = "/modules", selectors = "query", extensions = "json",
+              methods = HttpConstants.METHOD_GET,
+              resourceTypes = "pantheon/modules")
 @Properties({
         @Property(name = "service.description", value = "Query servlet for modules"),
         @Property(name = "service.vendor", value = "Red Hat")
