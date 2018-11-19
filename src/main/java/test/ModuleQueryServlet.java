@@ -21,11 +21,12 @@ import java.util.Iterator;
 /**
  * Servlet can be accessed via:
  *
- * <url>/modules.query?q=sometext
+ * <url>/modules.query.json?q=sometext
  */
-@SlingServlet(paths = "/modules", selectors = "query", extensions = "json",
-              methods = HttpConstants.METHOD_GET,
-              resourceTypes = "pantheon/modules")
+@SlingServlet(resourceTypes = "pantheon/modules/all",
+              selectors = "query",
+              extensions = "json",
+              methods = HttpConstants.METHOD_GET)
 @Properties({
         @Property(name = "service.description", value = "Query servlet for modules"),
         @Property(name = "service.vendor", value = "Red Hat")

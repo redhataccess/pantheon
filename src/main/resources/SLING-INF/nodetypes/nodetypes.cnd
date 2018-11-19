@@ -31,4 +31,5 @@
 	- jcr:description (string)
 	- jcr:content (string)
 	- pant:asciidocContent (string)
+	- pant:urlFragment (string)
 	- sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
