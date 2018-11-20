@@ -33,9 +33,10 @@
 	- jcr:content (string)
 	- pant:asciidocContent (string)
 	- pant:urlFragment (string)
+	- pant:relatedProducts (reference) multiple
 	- sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
 
 // Base type for a product definition
-[pant:product] > nt:unstructured, mix:created, mix:lastModified
+[pant:product] > nt:unstructured, mix:referenceable, mix:created, mix:lastModified
 	- pant:canonicalName (string) mandatory
 	- pant:otherNames (string) multiple

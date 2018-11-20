@@ -50,8 +50,11 @@ You can also retrieve product definitions at `http://localhost:8080/products.tid
 A brief explanation on the url:
 
 `http://localhost:8080/products` is the location of the resource (the content)
+
 `.tidy` is a selector, which pretty prints the requested json
+
 `.2` is the recursion level, it means fetch 2 levels from the content tree
+
 `.json` is the format in which to render the requested resource
 
 

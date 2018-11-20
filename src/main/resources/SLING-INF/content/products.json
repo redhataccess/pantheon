@@ -5,5 +5,10 @@
     "jcr:primaryType": "pant:product",
     "pant:canonicalName": "Red Hat Enterprise Linux",
     "pant:otherNames": ["RHEL", "Red Hat Linux"]
+  },
+  "Openshift Container Platform": {
+    "jcr:primaryType": "pant:product",
+    "pant:canonicalName": "Openshift Container Platform",
+    "pant:otherNames": ["OCP", "Openshift"]
   }
 }
