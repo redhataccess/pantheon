@@ -69,7 +69,7 @@ docker run --name slingmongo -d mongo
 
 Run a transient container which stores everything in the linked mongo db:
 ```sh
-docker run --rm -p 8080:8080 --link slingmongo:mongo -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://mongo:27017' cptools/sling
+docker run --rm -d -p 8080:8080 --link slingmongo:mongo -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://mongo:27017' cptools/sling
 ```
 
 ### more to come...
