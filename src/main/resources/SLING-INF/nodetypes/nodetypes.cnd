@@ -27,9 +27,15 @@
 
 <pant = 'http://redhat.com/pantheon'>
 
+// Base type for modules
 [pant:module] > nt:unstructured, mix:versionable, mix:created, mix:lastModified, mix:title
 	- jcr:description (string)
 	- jcr:content (string)
 	- pant:asciidocContent (string)
 	- pant:urlFragment (string)
 	- sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
+
+// Base type for a product definition
+[pant:product] > nt:unstructured, mix:created, mix:lastModified
+	- pant:canonicalName (string) mandatory
+	- pant:otherNames (string) multiple

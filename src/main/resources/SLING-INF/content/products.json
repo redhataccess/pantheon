@@ -1,0 +1,9 @@
+{
+  "jcr:primaryType": "sling:Folder",
+
+  "Red Hat Enterprise Linux": {
+    "jcr:primaryType": "pant:product",
+    "pant:canonicalName": "Red Hat Enterprise Linux",
+    "pant:otherNames": ["RHEL", "Red Hat Linux"]
+  }
+}
