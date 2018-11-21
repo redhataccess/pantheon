@@ -1,4 +1,4 @@
-package test;
+package com.redhat.pantheon.servlet;
 
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;

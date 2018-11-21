@@ -16,59 +16,56 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package test;
+package com.redhat.pantheon.servlet;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.ServletException;
-
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.io.Writer;
+
 /**
- * Hello World Servlet registered by resource type
- *
+ * Hello World Servlet registered by path
+ * 
  * Annotations below are short version of:
  * 
  * @Component
  * @Service(Servlet.class)
  * @Properties({
- *    @Property(name="service.description", value="Hello World Type Servlet"),
- *    @Property(name="service.vendor", value="The Apache Software Foundation"),
- *    @Property(name="sling.servlet.resourceTypes", value="sling/servlet/default"),
- *    @Property(name="sling.servlet.selectors", value="hello"),
- *    @Property(name="sling.servlet.extensions", value="html")
+ *     @Property(name="service.description", value="Hello World Path Servlet"),
+ *     @Property(name="service.vendor", value="The Apache Software Foundation"),
+ *     @Property(name="sling.servlet.paths", value="/hello-world-servlet")
  * })
  */
-@SlingServlet(resourceTypes="pantheon/modules", extensions="preview")
-@Properties({
-    @Property(name="service.description", value="Hello World Type Servlet"),
-    @Property(name="service.vendor", value="The Apache Software Foundation")
-})
+//@SlingServlet(paths="/hello-world-servlet")
+//@Properties({
+//    @Property(name="service.description", value="Hello World Path Servlet"),
+//    @Property(name="service.vendor", value="The Apache Software Foundation")
+//})
 @SuppressWarnings("serial")
-public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
+public class ByPathServlet extends SlingSafeMethodsServlet {
     
-    private final Logger log = LoggerFactory.getLogger(AsciidocRenderingServlet.class);
+    private final Logger log = LoggerFactory.getLogger(ByPathServlet.class);
 
     @Override
     protected void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws ServletException,
             IOException {
-        Resource resource = request.getResource();
-
-        String content = resource.getValueMap().get("jcr:content", String.class);
-
-        response.setContentType("text/html");
+        
         Writer w = response.getWriter();
-        w.write(content);
+        w.write("<!DOCTYPE html PUBLIC \"-//IETF//DTD HTML 2.0//EN\">");
+        w.write("<html>");
+        w.write("<head>");
+        w.write("<title>Hello World Servlet</title>");
+        w.write("</head>");
+        w.write("<body>");
+        w.write("<h1>Hello World!</h1>");
+        w.write("</body>");
+        w.write("</html>");
         
         log.info("Hello World Servlet");
         
