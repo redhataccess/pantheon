@@ -38,7 +38,7 @@ public class ModuleQueryServlet extends SlingSafeMethodsServlet {
 
         // run a simple query searching for content
         Iterator<Resource> resources = resolver.findResources(
-                "SELECT * FROM [pant:module] as mod where mod.[jcr:content] like '%" + request.getParameter("q") + "%'",
+                "SELECT * FROM [pant:module] as mod where contains(*, '" + request.getParameter("q") + "')",
                 Query.JCR_SQL2);
 
         response.setContentType("text/json");

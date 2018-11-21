@@ -51,7 +51,8 @@
                         <Sling-Nodetypes>SLING-INF/nodetypes/nodetypes.cnd</Sling-Nodetypes>
                         <Sling-Initial-Content><![CDATA[
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
-                            SLING-INF/content;overwrite:=true;uninstall:=true;path:=/content
+                            SLING-INF/content;overwrite:=true;uninstall:=true;path:=/content,
+                            SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index
                         ]]></Sling-Initial-Content>
                         <!-- Export 3rd party dependencies -->
                         <!--<Import-Package>-->
