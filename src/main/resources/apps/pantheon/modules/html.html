@@ -3,7 +3,15 @@
     </head>
     <body>
         <div class="container">
-            <h1>${properties.jcr:title}</h1>
+
+            <ol class="breadcrumb">
+                <li>
+                    <a href="/modules.html">Modules</a>
+                </li>
+                <li class="active">
+                    <h1>${properties.jcr:title}</h1>
+                </li>
+            </ol>
 
             <p>
                 <a class="btn btn-primary" href="/modules/${resource.name}.edit.html">Edit</a>
