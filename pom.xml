@@ -70,6 +70,8 @@
                 <version>2.3.4</version>
                 <configuration>
                     <slingUrl>${sling.url}</slingUrl>
+                    <slingUrlSuffix>/apps/pantheon/install</slingUrlSuffix>
+                    <deploymentMethod>SlingPostServlet</deploymentMethod>
                     <user>admin</user>
                     <password>admin</password>
                 </configuration>
@@ -110,7 +112,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <sling.url>http://localhost:8080/system/console</sling.url>
+                <sling.url>http://localhost:8080</sling.url>
             </properties>
         </profile>
         <profile>
