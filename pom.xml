@@ -60,7 +60,7 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
-                <version>4.0.0</version>
+                <version>4.1.0</version>
                 <configuration>
                     <instructions>
                         <Sling-Nodetypes>SLING-INF/nodetypes/nodetypes.cnd</Sling-Nodetypes>
@@ -70,12 +70,14 @@
                             SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index
                         ]]></Sling-Initial-Content>
                         <!-- Export 3rd party dependencies -->
-                        <!--<Import-Package>-->
-                            <!--!com.beust.jcommander-->
-                        <!--</Import-Package>-->
+                        <Import-Package>
+                            !jnr.a64asm,!jnr.x86asm,!org.apache.bsf,!org.apache.bsf.util,
+                            !org.apache.tools.ant,!org.joda.convert,!org.objectweb.asm,!sun.misc,*
+                        </Import-Package>
                         <!-- Embed the necessary dependencies -->
-                        <Embed-Dependency>org.apache.sling.servlets.get</Embed-Dependency>
-                        <!--<Export-Package>org.asciidoctor.*,org.jruby.*,com.beust.jcommander.*</Export-Package>-->
+                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <Require-Capability>osgi.ee;filter:="(&amp;(osgi.ee=JavaSE)(version=1.8))"</Require-Capability>
                     </instructions>
                 </configuration>
             </plugin>
@@ -143,7 +145,7 @@
         <dependency>
             <groupId>org.asciidoctor</groupId>
             <artifactId>asciidoctorj</artifactId>
-            <version>1.5.7</version>
+            <version>1.6.1</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -187,12 +189,12 @@
             <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.servlets.get</artifactId>
-            <version>2.1.36</version>
-            <!--<scope>provided</scope>-->
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.sling</groupId>-->
+            <!--<artifactId>org.apache.sling.servlets.get</artifactId>-->
+            <!--<version>2.1.36</version>-->
+            <!--&lt;!&ndash;<scope>provided</scope>&ndash;&gt;-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>

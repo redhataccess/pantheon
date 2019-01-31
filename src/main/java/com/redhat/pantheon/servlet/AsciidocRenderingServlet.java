@@ -18,11 +18,6 @@
  */
 package com.redhat.pantheon.servlet;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.ServletException;
-
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
@@ -30,8 +25,19 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.OptionsBuilder;
+import org.jruby.RubyInstanceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Hello World Servlet registered by resource type
@@ -50,8 +56,8 @@ import org.slf4j.LoggerFactory;
  */
 @SlingServlet(resourceTypes="pantheon/modules", extensions="preview")
 @Properties({
-    @Property(name="service.description", value="Hello World Type Servlet"),
-    @Property(name="service.vendor", value="The Apache Software Foundation")
+    @Property(name="service.description", value="Servlet which transforms asciidoc content into html"),
+    @Property(name="service.vendor", value="Red Hat Content Tooling team")
 })
 @SuppressWarnings("serial")
 public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
@@ -63,15 +69,45 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             SlingHttpServletResponse response) throws ServletException,
             IOException {
         Resource resource = request.getResource();
+        String html = "<NO CONTENT>";
 
-        String content = resource.getValueMap().get("jcr:content", String.class);
+        // Get the existing content
+        Resource cachedContentNode = resource.getChild("pant:cachedContent");
+
+        // If the content doesn't exist yet, generate and save it
+        if( cachedContentNode == null ) {
+
+            String content = resource.getChild("jcr:content").getValueMap().get("jcr:data", String.class);
+
+            RubyInstanceConfig config = new RubyInstanceConfig();
+            config.setLoader(Thread.currentThread().getContextClassLoader()); // ???
+
+            Asciidoctor instance = Asciidoctor.Factory.create(
+                    singletonList("uri:classloader:/gems/asciidoctor-1.5.8/lib"));
+
+            log.info("CONTENT: " + content);
+
+            html = instance.convert(
+                    content,
+                    OptionsBuilder.options()
+                            .backend("html")
+//                          .headerFooter(false)
+//                          .attributes(AttributesBuilder.attributes()
+//                          .attribute("showtitle"))
+                            .get());
+
+            Map<String, Object> props = new HashMap<>();
+            props.put("jcr:data", html);
+
+            request.getResourceResolver().create(resource, "pant:cachedContent", props);
+            request.getResourceResolver().commit();
+        } else {
+            html = cachedContentNode.getValueMap().get("jcr:data", String.class);
+        }
 
         response.setContentType("text/html");
         Writer w = response.getWriter();
-        w.write(content);
-        
-        log.info("Hello World Servlet");
-        
+        w.write(html);
     }
 
 }

@@ -40,3 +40,6 @@
 [pant:product] > nt:base, mix:referenceable, mix:created, mix:lastModified
 	- pant:canonicalName (string) mandatory
 	- pant:otherNames (string) multiple
+
+// Base type for modules 2
+[pant:module2] > nt:unstructured, nt:file
