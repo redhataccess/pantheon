@@ -18,9 +18,6 @@
  */
 package com.redhat.pantheon.servlet;
 
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -28,9 +25,12 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 import org.jruby.RubyInstanceConfig;
+import org.osgi.framework.Constants;
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
@@ -54,11 +54,14 @@ import static java.util.Collections.singletonList;
  *    @Property(name="sling.servlet.extensions", value="html")
  * })
  */
-@SlingServlet(resourceTypes="pantheon/modules", extensions="preview")
-@Properties({
-    @Property(name="service.description", value="Servlet which transforms asciidoc content into html"),
-    @Property(name="service.vendor", value="Red Hat Content Tooling team")
-})
+@Component(
+        service = Servlet.class,
+        property = {
+                "sling.servlet.resourceTypes=pantheon/modules",
+                "sling.servlet.extensions=preview",
+                Constants.SERVICE_DESCRIPTION+"=Servlet which transforms asciidoc content into html",
+                Constants.SERVICE_VENDOR+"=Red Hat Content Tooling team"
+        })
 @SuppressWarnings("serial")
 public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     

@@ -44,14 +44,14 @@
 
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-scr-plugin</artifactId>
-                <version>1.21.0</version>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
-                        <id>generate-scr-descriptor</id>
+                        <id>run-bnd</id>
                         <goals>
-                            <goal>scr</goal>
+                            <goal>bnd-process</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -63,6 +63,10 @@
                 <version>4.1.0</version>
                 <configuration>
                     <instructions>
+                        <!-- Enable processing of OSGI DS component annotations -->
+                        <_dsannotations>*</_dsannotations>
+                        <!-- Enable processing of OSGI metatype annotations -->
+                        <_metatypeannotations>*</_metatypeannotations>
                         <Sling-Nodetypes>SLING-INF/nodetypes/nodetypes.cnd</Sling-Nodetypes>
                         <Sling-Initial-Content><![CDATA[
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
