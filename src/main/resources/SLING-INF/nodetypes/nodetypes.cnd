@@ -43,3 +43,4 @@
 
 // Base type for modules 2
 [pant:module2] > nt:unstructured, nt:file
+	- sling:resourceType (string) = 'pantheon/modules'

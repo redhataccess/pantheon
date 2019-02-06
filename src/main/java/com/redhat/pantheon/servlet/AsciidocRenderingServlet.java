@@ -18,6 +18,7 @@
  */
 package com.redhat.pantheon.servlet;
 
+import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -83,12 +84,14 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             String content = resource.getChild("jcr:content").getValueMap().get("jcr:data", String.class);
 
             RubyInstanceConfig config = new RubyInstanceConfig();
-            config.setLoader(Thread.currentThread().getContextClassLoader()); // ???
+            config.setLoader(Thread.currentThread().getContextClassLoader());
 
             Asciidoctor instance = Asciidoctor.Factory.create(
                     singletonList("uri:classloader:/gems/asciidoctor-1.5.8/lib"));
 
-            log.info("CONTENT: " + content);
+            // Register any extensions
+            instance.javaExtensionRegistry().includeProcessor(
+                   new SlingResourceIncludeProcessor(request.getResourceResolver(), resource));
 
             html = instance.convert(
                     content,
@@ -104,6 +107,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
             request.getResourceResolver().create(resource, "pant:cachedContent", props);
             request.getResourceResolver().commit();
+            instance.shutdown();
         } else {
             html = cachedContentNode.getValueMap().get("jcr:data", String.class);
         }
