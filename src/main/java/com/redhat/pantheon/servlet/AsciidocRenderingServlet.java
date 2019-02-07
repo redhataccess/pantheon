@@ -24,7 +24,9 @@ import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
+import org.asciidoctor.SafeMode;
 import org.jruby.RubyInstanceConfig;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
@@ -96,10 +98,22 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             html = instance.convert(
                     content,
                     OptionsBuilder.options()
+                            // we're generating html
                             .backend("html")
-//                          .headerFooter(false)
-//                          .attributes(AttributesBuilder.attributes()
-//                          .attribute("showtitle"))
+                            // no physical file is being generated
+                            .toFile(false)
+                            // allow for some extra flexibility
+                            .safe(SafeMode.UNSAFE) // This probably needs to change
+                            .inPlace(false)
+                            // Generate the html header and footer
+                            .headerFooter(true)
+                            .attributes(AttributesBuilder.attributes()
+                                // show the title on the generated html
+                                .attribute("showtitle")
+                                // link the css instead of embedding it
+                                .linkCss(true)
+                                // stylesheet reference
+                                .styleSheetName("/content/static/asciidoctor-default.css"))
                             .get());
 
             Map<String, Object> props = new HashMap<>();
@@ -114,6 +128,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
         response.setContentType("text/html");
         Writer w = response.getWriter();
+
         w.write(html);
     }
 
