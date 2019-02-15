@@ -21,6 +21,7 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.asciidoctor.Asciidoctor;
@@ -38,9 +39,12 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Hello World Servlet registered by resource type
@@ -95,6 +99,24 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             instance.javaExtensionRegistry().includeProcessor(
                    new SlingResourceIncludeProcessor(request.getResourceResolver(), resource));
 
+            // build the attributes (default + those coming from http parameters)
+            AttributesBuilder atts = AttributesBuilder.attributes()
+                    // show the title on the generated html
+                    .attribute("showtitle")
+                    // link the css instead of embedding it
+                    .linkCss(true)
+                    // stylesheet reference
+                    .styleSheetName("/content/static/asciidoctor-default.css");
+
+            // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
+            // parameters
+            request.getRequestParameterList().stream().filter(
+                    p -> p.getName().toLowerCase().startsWith("ctx_")
+            )
+            .collect(toList())
+            .forEach(p -> atts.attribute(p.getName().replaceFirst("ctx_", ""), p.getString()));
+
+            // generate html
             html = instance.convert(
                     content,
                     OptionsBuilder.options()
@@ -107,13 +129,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
                             .inPlace(false)
                             // Generate the html header and footer
                             .headerFooter(true)
-                            .attributes(AttributesBuilder.attributes()
-                                // show the title on the generated html
-                                .attribute("showtitle")
-                                // link the css instead of embedding it
-                                .linkCss(true)
-                                // stylesheet reference
-                                .styleSheetName("/content/static/asciidoctor-default.css"))
+                            .attributes(atts)
                             .get());
 
             Map<String, Object> props = new HashMap<>();
