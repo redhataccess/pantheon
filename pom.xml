@@ -23,8 +23,8 @@
     <groupId>org.redhat</groupId>
     <artifactId>slingapp</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>slingapp</name>
-    <description>org.redhat - slingapp</description>
+    <name>pantheon</name>
+    <description>Pantheon content management system</description>
     <packaging>bundle</packaging>
 
     <properties>

@@ -1,9 +1,15 @@
-# Sling App
+# Pantheon 2.x
 
 ### Prerequsistes
 Docker
 Maven
 Java
+
+### Unit Tests
+
+```sh
+mvn test
+```
 
 ### How to run this App
 
