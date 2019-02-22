@@ -6,7 +6,7 @@
 
             <h1>Edit module ${properties.jcr:title}</h1>
 
-            <form method="POST" action="/content/modules/${resource.name}">
+            <form method="POST" action="${resource.path}">
                 <div class="form-group">
                     <label for="jcr:title">Title</label>
                     <input type="text" class="form-control" id="jcr:title" name="jcr:title" value="${properties.jcr:title}">

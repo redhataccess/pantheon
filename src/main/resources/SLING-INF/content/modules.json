@@ -1,33 +1,4 @@
 {
   "jcr:primaryType": "sling:Folder",
-  "sling:resourceType": "pantheon/modules/all",
-
-
-  "module_1": {
-    "jcr:primaryType": "pant:module",
-    "jcr:description": "Pre-defined module 1",
-    "jcr:title": "Module 1",
-    "jcr:content": "<h1>Module 1</h1><div>Lorem Ipsum</div>",
-    "pant:urlFragment": "module_1",
-    "jcr:isCheckedOut": false,
-    "sling:resourceType": "pantheon/modules"
-  },
-  "module_2": {
-    "jcr:primaryType": "pant:module",
-    "jcr:description": "Pre-defined module 2",
-    "jcr:title": "Module 2",
-    "jcr:content": "<h1>Module 2</h1><div>Lorem Ipsum</div>",
-    "pant:urlFragment": "module_2",
-    "jcr:isCheckedOut": false,
-    "sling:resourceType": "pantheon/modules"
-  },
-  "module_3": {
-    "jcr:primaryType": "pant:module",
-    "jcr:description": "Pre-defined module 3",
-    "jcr:title": "Module 3",
-    "jcr:content": "<h1>Module 3</h1><div>Lorem Ipsum</div>",
-    "pant:urlFragment": "module_3",
-    "jcr:isCheckedOut": false,
-    "sling:resourceType": "pantheon/modules"
-  }
+  "sling:resourceType": "pantheon/modules/all"
 }
