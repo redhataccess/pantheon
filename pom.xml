@@ -33,21 +33,7 @@
     </properties>
 
     <build>
-
-        <!-- Use the maven resources plugin to move the built SPA to the desired place -->
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-            <resource>
-                <directory>frontend/sling-spa/dist</directory>
-                <targetPath>apps/pantheon</targetPath>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
-
         <!--TODO Build the Angular content as part of the build-->
-
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
