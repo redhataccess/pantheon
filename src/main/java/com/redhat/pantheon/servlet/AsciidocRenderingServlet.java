@@ -24,17 +24,16 @@ import com.google.common.hash.Hashing;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 import org.jruby.RubyInstanceConfig;
-import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,36 +43,17 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
-/**
- * Hello World Servlet registered by resource type
- *
- * Annotations below are short version of:
- * 
- * @Component
- * @Service(Servlet.class)
- * @Properties({
- *    @Property(name="service.description", value="Hello World Type Servlet"),
- *    @Property(name="service.vendor", value="The Apache Software Foundation"),
- *    @Property(name="sling.servlet.resourceTypes", value="sling/servlet/default"),
- *    @Property(name="sling.servlet.selectors", value="hello"),
- *    @Property(name="sling.servlet.extensions", value="html")
- * })
- */
-@Component(
-        service = Servlet.class,
-        property = {
-                "sling.servlet.resourceTypes=pantheon/modules",
-                "sling.servlet.extensions=preview",
-                Constants.SERVICE_DESCRIPTION+"=Servlet which transforms asciidoc content into html",
-                Constants.SERVICE_VENDOR+"=Red Hat Content Tooling team"
-        })
+
+@Component(service = { Servlet.class })
+@SlingServletResourceTypes(
+        resourceTypes="pantheon/modules",
+        methods= "GET",
+        extensions="preview")
 @SuppressWarnings("serial")
 public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     
