@@ -34,6 +34,7 @@ public class AsciidocRenderingServletTest {
 
         // Given
         Resource contentNode = mock(Resource.class);
+        Resource fileNode = mock(Resource.class);
         Resource cachedContentNode = mock(Resource.class);
         ValueMap contentNodeVm = mock(ValueMap.class);
         String asciidocContent = "== This is a title \n\n And this is some text";
@@ -42,9 +43,10 @@ public class AsciidocRenderingServletTest {
 
         // When
         lenient().when(resource.getPath()).thenReturn("/content");
-        lenient().when(resource.getChild("jcr:content")).thenReturn(contentNode);
-        lenient().when(resource.getChild("pant:cachedContent")).thenReturn(null);
-        when(contentNode.getValueMap()).thenReturn(contentNodeVm);
+        lenient().when(resource.getChild("asciidoc")).thenReturn(contentNode);
+        lenient().when(contentNode.getChild("jcr:content")).thenReturn(fileNode);
+        lenient().when(resource.getChild("cachedContent")).thenReturn(null);
+        when(fileNode.getValueMap()).thenReturn(contentNodeVm);
         when(contentNodeVm.get( eq("jcr:data"), eq(String.class) )).thenReturn( asciidocContent );
         slingContext.request().setResource(resource);
 
