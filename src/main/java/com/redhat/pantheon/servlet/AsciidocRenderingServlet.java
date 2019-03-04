@@ -34,6 +34,7 @@ import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 import org.jruby.RubyInstanceConfig;
+import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,12 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 
-@Component(service = { Servlet.class })
+@Component(
+        service = Servlet.class,
+        property = {
+                Constants.SERVICE_DESCRIPTION + "=Servlet which transforms asciidoc content into html",
+                Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
+        })
 @SlingServletResourceTypes(
         resourceTypes="pantheon/modules",
         methods= "GET",
