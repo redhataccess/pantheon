@@ -61,7 +61,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     private static final String CONTENT_NODE_NAME = "jcr:content";
     private static final String CACHE_NODE_NAME = "cachedContent";
     
-    private final Logger log = LoggerFactory.getLogger("com.redhat");
+    private final Logger log = LoggerFactory.getLogger(AsciidocRenderingServlet.class);
 
     @Override
     protected void doGet(SlingHttpServletRequest request,
