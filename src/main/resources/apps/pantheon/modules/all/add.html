@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.54.8/css/patternfly-additions.min.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container" data-sly-test="${currentSession.getUserID != 'anonymous'}">
         <h1>New module</h1>
 
         <div>
@@ -30,6 +30,10 @@
                 <input type="hidden" name="_charset_" value="UTF-8"/>
             </form>
         </div>
+    </div>
+
+    <div class="container" data-sly-test="${currentSession.getUserID == 'anonymous'}">
+        You must <a href="/system/sling/login.html">log in</a> before attempting to upload a new module.
     </div>
 <!-- code of step 2 comes here -->
 

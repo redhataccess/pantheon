@@ -31,7 +31,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
         String content = "Invalid include: " + target;
 
         if(includeResource != null) {
-            content = includeResource.getChild("jcr:content").getValueMap().get("jcr:data", String.class);
+            content = includeResource.getChild("asciidoc").getChild("jcr:content").getValueMap().get("jcr:data", String.class);
         }
 
         reader.push_include(content, target, target, 1, attributes);

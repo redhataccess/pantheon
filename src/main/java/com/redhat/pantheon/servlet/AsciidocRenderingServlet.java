@@ -80,7 +80,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         Resource cachedContentNode = resource.getChild(CACHE_NODE_NAME);
 
         // If the content doesn't exist yet, generate and save it
-        if( cachedContentNode == null || !generatedContentHashMatches(resource)) {
+        if( cachedContentNode == null || !generatedContentHashMatches(resource) || request.getParameter("rerender") != null) {
             Content c = generateHtml(request, resource);
             cacheContent(request, resource, c);
             html = c.html;
