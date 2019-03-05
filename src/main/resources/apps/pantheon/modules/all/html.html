@@ -3,16 +3,17 @@
 </head>
 <body>
 
-<div class="container-fluid">
+<div class="container-fluid" data-sly-use.moduleData="com.redhat.pantheon.use.ModuleData">
     <h1>All Modules</h1>
 
     <p>
         <a class="btn btn-primary" href="/modules.add.html">New Module</a>
     </p>
 
-    <div class="list-group list-view-pf list-view-pf-view" data-sly-list="${resource.listChildren}">
+    <!-- <div class="list-group list-view-pf list-view-pf-view" data-sly-list="${resource.listChildren}"> -->
+    <div class="list-group list-view-pf list-view-pf-view" data-sly-list="${moduleData.getModulesCreateSort}">
         <div class="list-group-item">
-            <a href="${item.name @ prependPath='modules/', addSelectors=['html']}">
+            <a href="${item.name @ prependPath='modules/', addSelectors=['preview']}">
                 <div class="list-view-pf-actions">
                     <div class="list-view-pf-main-info">
                         <div class="list-view-pf-left">
