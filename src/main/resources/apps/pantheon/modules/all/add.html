@@ -4,34 +4,36 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.54.8/css/patternfly-additions.min.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container" data-sly-test="${currentSession.getUserID != 'anonymous'}">
         <h1>New module</h1>
 
         <div>
-            <form method="POST" action="/content/modules/">
+            <form method="POST" action="/content/modules/" enctype="multipart/form-data">
                 Title:<br/>
                 <input type="text" name="jcr:title" style="width:100%"/>
 
                 <br/>Description:<br/>
                 <textarea style="width:100%" name="jcr:description"></textarea>
 
-                <br/>Url Fragment:<br/>
-                <input type="text" name="pant:urlFragment" style="width:100%"/>
-
-                <br/>Content:<br/>
-                <textarea style="width:100%" name="jcr:content"></textarea>
+                <br />File:<br />
+                <input type="file" name="asciidoc" />
 
                 <br/>
                 <input type="submit" value="save"/>
 
-                <input type="hidden" name=":redirect" value="*.html"/>
-                <input type="hidden" name=":checkinNewVersionableNodes" value="true"/>
-                <input type="hidden" name="jcr:primaryType" value="pant:module"/>
+                <input type="hidden" name=":redirect" value="modules.html"/>
+                <!-- <input type="hidden" name=":checkinNewVersionableNodes" value="true"/> -->
+                <!-- <input type="hidden" name="asciidoc@TypeHint" value="nt:file"/> -->
+                <input type="hidden" name="sling:resourceType" value="pantheon/modules"/>
 
                 <!-- used by Sling when decoding request parameters -->
                 <input type="hidden" name="_charset_" value="UTF-8"/>
             </form>
         </div>
+    </div>
+
+    <div class="container" data-sly-test="${currentSession.getUserID == 'anonymous'}">
+        You must <a href="/system/sling/login.html">log in</a> before attempting to upload a new module.
     </div>
 <!-- code of step 2 comes here -->
 

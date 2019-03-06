@@ -24,11 +24,11 @@ import com.google.common.hash.Hashing;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
@@ -44,38 +44,28 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
-/**
- * Hello World Servlet registered by resource type
- *
- * Annotations below are short version of:
- * 
- * @Component
- * @Service(Servlet.class)
- * @Properties({
- *    @Property(name="service.description", value="Hello World Type Servlet"),
- *    @Property(name="service.vendor", value="The Apache Software Foundation"),
- *    @Property(name="sling.servlet.resourceTypes", value="sling/servlet/default"),
- *    @Property(name="sling.servlet.selectors", value="hello"),
- *    @Property(name="sling.servlet.extensions", value="html")
- * })
- */
+
 @Component(
         service = Servlet.class,
         property = {
-                "sling.servlet.resourceTypes=pantheon/modules",
-                "sling.servlet.extensions=preview",
-                Constants.SERVICE_DESCRIPTION+"=Servlet which transforms asciidoc content into html",
-                Constants.SERVICE_VENDOR+"=Red Hat Content Tooling team"
+                Constants.SERVICE_DESCRIPTION + "=Servlet which transforms asciidoc content into html",
+                Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
+@SlingServletResourceTypes(
+        resourceTypes="pantheon/modules",
+        methods= "GET",
+        extensions="preview")
 @SuppressWarnings("serial")
 public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
+
+    private static final String ADOC_NODE_NAME = "asciidoc";
+    private static final String CONTENT_NODE_NAME = "jcr:content";
+    private static final String CACHE_NODE_NAME = "cachedContent";
     
     private final Logger log = LoggerFactory.getLogger(AsciidocRenderingServlet.class);
 
@@ -87,14 +77,13 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         String html = "NO CONTENT";
 
         // Get the existing content
-        Resource cachedContentNode = resource.getChild("pant:cachedContent");
+        Resource cachedContentNode = resource.getChild(CACHE_NODE_NAME);
 
         // If the content doesn't exist yet, generate and save it
-        if( cachedContentNode == null || generatedContentHashDoesntMatch(resource)) {
-
-            html = generateHtml(request, resource);
-
-            request.getResourceResolver().commit();
+        if( cachedContentNode == null || !generatedContentHashMatches(resource) || request.getParameter("rerender") != null) {
+            Content c = generateHtml(request, resource);
+            cacheContent(request, resource, c);
+            html = c.html;
         } else {
             html = cachedContentNode.getValueMap().get("jcr:data", String.class);
         }
@@ -105,16 +94,18 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         w.write(html);
     }
 
-    private boolean generatedContentHashDoesntMatch(Resource resource) {
-        String srcContent = resource.getValueMap().get("jcr:content/jcr:data", String.class);
-        String existingHash = resource.getValueMap().get("pant:cachedContent/pant:hash", String.class);
+    private boolean generatedContentHashMatches(Resource resource) {
+        String srcContent = resource.getValueMap().get("asciidoc/jcr:content/jcr:data", String.class);
+        String existingHash = resource.getValueMap().get("cachedContent/pant:hash", String.class);
 
-        return !hash(srcContent).toString().equals(existingHash);
+        boolean match = hash(srcContent).toString().equals(existingHash);
+
+        return match;
     }
 
-    private String generateHtml(SlingHttpServletRequest request, Resource resource) throws PersistenceException {
-        String html;
-        String content = resource.getChild("jcr:content").getValueMap().get("jcr:data", String.class);
+    private Content generateHtml(SlingHttpServletRequest request, Resource resource) throws PersistenceException {
+        Content c = new Content();
+        c.asciidoc = resource.getChild(ADOC_NODE_NAME).getChild(CONTENT_NODE_NAME).getValueMap().get("jcr:data", String.class);
 
         RubyInstanceConfig config = new RubyInstanceConfig();
         config.setLoader(Thread.currentThread().getContextClassLoader());
@@ -144,8 +135,8 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         .forEach(p -> atts.attribute(p.getName().replaceFirst("ctx_", ""), p.getString()));
 
         // generate html
-        html = instance.convert(
-                content,
+        c.html = instance.convert(
+                c.asciidoc,
                 OptionsBuilder.options()
                         // we're generating html
                         .backend("html")
@@ -160,18 +151,23 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
                         .get());
         instance.shutdown();
 
-        Map<String, Object> props = new HashMap<>();
-        props.put("jcr:data", html);
+        return c;
+    }
 
-        if(resource.getChild("pant:cachedContent") != null) {
-            request.getResourceResolver().delete(resource.getChild("pant:cachedContent"));
+    private void cacheContent(SlingHttpServletRequest request, Resource resource, Content content) throws PersistenceException {
+        Map<String, Object> props = new HashMap<>();
+        props.put("jcr:data", content.html);
+        props.put("jcr:primaryType", "pant:moduleMetadata");
+
+        if(resource.getChild(CACHE_NODE_NAME) != null) {
+            request.getResourceResolver().delete(resource.getChild(CACHE_NODE_NAME));
         }
-        Resource cachedHtmlResource = request.getResourceResolver().create(resource, "pant:cachedContent", props);
+        Resource cachedHtmlResource = request.getResourceResolver().create(resource, CACHE_NODE_NAME, props);
 
         // this has to be done to modify sling resources
-        cachedHtmlResource.adaptTo(ModifiableValueMap.class).put("pant:hash", hash(content).toString());
+        cachedHtmlResource.adaptTo(ModifiableValueMap.class).put("pant:hash", hash(content.asciidoc).toString());
 
-        return html;
+        request.getResourceResolver().commit();
     }
 
     /*
@@ -180,6 +176,11 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
      */
     private HashCode hash(String str) {
         return Hashing.adler32().hashString(str, Charsets.UTF_8);
+    }
+
+    private class Content {
+        public String html;
+        public String asciidoc;
     }
 }
 
