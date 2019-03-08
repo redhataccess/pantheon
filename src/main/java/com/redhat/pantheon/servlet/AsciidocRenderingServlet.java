@@ -22,6 +22,8 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
+import com.redhat.pantheon.asciidoctor.extension.TemplateDirectory;
+import com.redhat.pantheon.sling.PantheonBundleActivator;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.ModifiableValueMap;
@@ -43,10 +45,13 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 
@@ -110,8 +115,14 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         RubyInstanceConfig config = new RubyInstanceConfig();
         config.setLoader(Thread.currentThread().getContextClassLoader());
 
-        Asciidoctor instance = Asciidoctor.Factory.create(
-                singletonList("uri:classloader:/gems/asciidoctor-1.5.8/lib"));
+        Enumeration<URL> gems = PantheonBundleActivator.getContext().getBundle().findEntries("gems", "*", false);
+        List<String> gemPaths = new ArrayList<>();
+        while (gems.hasMoreElements()) {
+            URL g = gems.nextElement();
+            gemPaths.add("uri:classloader:" + g.getPath() + "lib");
+        }
+
+        Asciidoctor instance = Asciidoctor.Factory.create(gemPaths);
 
         // Register any extensions
         instance.javaExtensionRegistry().includeProcessor(
@@ -124,7 +135,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
                 // link the css instead of embedding it
                 .linkCss(true)
                 // stylesheet reference
-                .styleSheetName("/content/static/asciidoctor-default.css");
+                .styleSheetName("/static/rhdocs.css");
 
         // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
         // parameters
@@ -147,6 +158,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
                         .inPlace(false)
                         // Generate the html header and footer
                         .headerFooter(true)
+                        .templateDir(TemplateDirectory.get())
                         .attributes(atts)
                         .get());
         instance.shutdown();
