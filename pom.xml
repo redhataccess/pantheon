@@ -43,7 +43,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>
-                            com.redhat.pantheon.sling.PantheonBundleActivator
+                            com.redhat.pantheon.sling.PantheonBundle
                         </Bundle-Activator>
                         <!-- Enable processing of OSGI DS component annotations -->
                         <_dsannotations>*</_dsannotations>
@@ -86,6 +86,9 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.0</version>
+                <configuration>
+                    <trimStackTrace>false</trimStackTrace>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -21,9 +21,7 @@ package com.redhat.pantheon.servlet;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
-import com.redhat.pantheon.asciidoctor.extension.TemplateDirectory;
-import com.redhat.pantheon.sling.PantheonBundleActivator;
+import com.redhat.pantheon.sling.PantheonBundle;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.ModifiableValueMap;
@@ -31,7 +29,6 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
-import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
@@ -45,11 +42,7 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
@@ -73,6 +66,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     private static final String CACHE_NODE_NAME = "cachedContent";
     
     private final Logger log = LoggerFactory.getLogger(AsciidocRenderingServlet.class);
+
 
     @Override
     protected void doGet(SlingHttpServletRequest request,
@@ -115,19 +109,6 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         RubyInstanceConfig config = new RubyInstanceConfig();
         config.setLoader(Thread.currentThread().getContextClassLoader());
 
-        Enumeration<URL> gems = PantheonBundleActivator.getContext().getBundle().findEntries("gems", "*", false);
-        List<String> gemPaths = new ArrayList<>();
-        while (gems.hasMoreElements()) {
-            URL g = gems.nextElement();
-            gemPaths.add("uri:classloader:" + g.getPath() + "lib");
-        }
-
-        Asciidoctor instance = Asciidoctor.Factory.create(gemPaths);
-
-        // Register any extensions
-        instance.javaExtensionRegistry().includeProcessor(
-               new SlingResourceIncludeProcessor(request.getResourceResolver(), resource));
-
         // build the attributes (default + those coming from http parameters)
         AttributesBuilder atts = AttributesBuilder.attributes()
                 // show the title on the generated html
@@ -146,7 +127,8 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         .forEach(p -> atts.attribute(p.getName().replaceFirst("ctx_", ""), p.getString()));
 
         // generate html
-        c.html = instance.convert(
+        PantheonBundle.getIncludeProcessor().setContext(request.getResourceResolver(), resource);
+        c.html = PantheonBundle.getAsciidoctor().convert(
                 c.asciidoc,
                 OptionsBuilder.options()
                         // we're generating html
@@ -158,10 +140,9 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
                         .inPlace(false)
                         // Generate the html header and footer
                         .headerFooter(true)
-                        .templateDir(TemplateDirectory.get())
+                        .templateDir(PantheonBundle.getTemplateDir())
                         .attributes(atts)
                         .get());
-        instance.shutdown();
 
         return c;
     }
