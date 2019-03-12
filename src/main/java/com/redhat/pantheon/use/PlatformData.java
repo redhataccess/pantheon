@@ -18,7 +18,7 @@ public class PlatformData implements Use {
     private ResourceResolver resolver;
     private Resource currentResource;
 
-    private final Logger log = LoggerFactory.getLogger(PlatformData.class);
+    private static final Logger log = LoggerFactory.getLogger(PlatformData.class);
 
     @Override
     public void init(Bindings bindings) {
@@ -26,10 +26,10 @@ public class PlatformData implements Use {
         currentResource = (Resource) bindings.get("resource");
     }
 
-    public String getJarBuildDate() {
+    public static String getJarBuildDate() {
         String ret = "Unable to determine build date.";
         try {
-            Manifest mf = new Manifest(this.getClass().getClassLoader().getResource("META-INF/MANIFEST.MF").openStream());
+            Manifest mf = new Manifest(PlatformData.class.getClassLoader().getResource("META-INF/MANIFEST.MF").openStream());
             String lastmod = mf.getMainAttributes().getValue("Bnd-LastModified");
             Date d = new Date(Long.valueOf(lastmod));
             ret = d.toString();

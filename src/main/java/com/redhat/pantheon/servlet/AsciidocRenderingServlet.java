@@ -21,6 +21,8 @@ package com.redhat.pantheon.servlet;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
+import com.redhat.pantheon.dependency.DependencyProvider;
+import com.redhat.pantheon.dependency.OsgiDependencyProvider;
 import com.redhat.pantheon.sling.PantheonBundle;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -30,6 +32,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.asciidoctor.AttributesBuilder;
+import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 import org.jruby.RubyInstanceConfig;
@@ -67,6 +70,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     
     private final Logger log = LoggerFactory.getLogger(AsciidocRenderingServlet.class);
 
+    private DependencyProvider dependencyProvider;
 
     @Override
     protected void doGet(SlingHttpServletRequest request,
@@ -106,9 +110,6 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         Content c = new Content();
         c.asciidoc = resource.getChild(ADOC_NODE_NAME).getChild(CONTENT_NODE_NAME).getValueMap().get("jcr:data", String.class);
 
-        RubyInstanceConfig config = new RubyInstanceConfig();
-        config.setLoader(Thread.currentThread().getContextClassLoader());
-
         // build the attributes (default + those coming from http parameters)
         AttributesBuilder atts = AttributesBuilder.attributes()
                 // show the title on the generated html
@@ -127,22 +128,25 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         .forEach(p -> atts.attribute(p.getName().replaceFirst("ctx_", ""), p.getString()));
 
         // generate html
-        PantheonBundle.getIncludeProcessor().setContext(request.getResourceResolver(), resource);
-        c.html = PantheonBundle.getAsciidoctor().convert(
+        getDependencyProvider().getIncludeProcessor().setContext(request.getResourceResolver(), resource);
+        OptionsBuilder ob = OptionsBuilder.options()
+                // we're generating html
+                .backend("html")
+                // no physical file is being generated
+                .toFile(false)
+                // allow for some extra flexibility
+                .safe(SafeMode.UNSAFE) // This probably needs to change
+                .inPlace(false)
+                // Generate the html header and footer
+                .headerFooter(true)
+                .attributes(atts);
+        if (dependencyProvider.getTemplateDir() != null) {
+            ob = ob.templateDir(dependencyProvider.getTemplateDir());
+        }
+
+        c.html = getDependencyProvider().getAsciidoctor().convert(
                 c.asciidoc,
-                OptionsBuilder.options()
-                        // we're generating html
-                        .backend("html")
-                        // no physical file is being generated
-                        .toFile(false)
-                        // allow for some extra flexibility
-                        .safe(SafeMode.UNSAFE) // This probably needs to change
-                        .inPlace(false)
-                        // Generate the html header and footer
-                        .headerFooter(true)
-                        .templateDir(PantheonBundle.getTemplateDir())
-                        .attributes(atts)
-                        .get());
+                ob.get());
 
         return c;
     }
@@ -169,6 +173,17 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
      */
     private HashCode hash(String str) {
         return Hashing.adler32().hashString(str, Charsets.UTF_8);
+    }
+
+    public DependencyProvider getDependencyProvider() {
+        if (dependencyProvider == null) {
+            dependencyProvider = new OsgiDependencyProvider();
+        }
+        return dependencyProvider;
+    }
+
+    public void setDependencyProvider(DependencyProvider dependencyProvider) {
+        this.dependencyProvider = dependencyProvider;
     }
 
     private class Content {
