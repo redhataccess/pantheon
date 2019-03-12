@@ -17,11 +17,8 @@ public abstract class DependencyProvider {
 
     public Asciidoctor getAsciidoctor() throws IOException {
         if (asciidoctor == null) {
-            System.out.println("asciidoctor initializing...");
-
             asciidoctor = Asciidoctor.Factory.create(getGemPaths());
             asciidoctor.javaExtensionRegistry().includeProcessor(includeProcessor);
-            System.out.println("asciidoctor initialized");
         }
         return asciidoctor;
     }

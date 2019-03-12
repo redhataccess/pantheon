@@ -15,10 +15,5 @@ public class PantheonBundle implements BundleActivator {
     }
 
     @Override
-    public void stop(BundleContext bundleContext) throws Exception {
-        //FIXME
-//        if (asciidoctor != null) {
-//            asciidoctor.shutdown();
-//        }
-    }
+    public void stop(BundleContext bundleContext) throws Exception {}
 }
