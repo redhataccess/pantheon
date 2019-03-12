@@ -4,6 +4,7 @@ import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import org.asciidoctor.Asciidoctor;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ public abstract class DependencyProvider {
     private Asciidoctor asciidoctor;
     private SlingResourceIncludeProcessor includeProcessor = new SlingResourceIncludeProcessor();
 
-    public Asciidoctor getAsciidoctor() {
+    public Asciidoctor getAsciidoctor() throws IOException {
         if (asciidoctor == null) {
             System.out.println("asciidoctor initializing...");
 
@@ -29,7 +30,7 @@ public abstract class DependencyProvider {
         return includeProcessor;
     }
 
-    public abstract List<String> getGemPaths();
+    public abstract List<String> getGemPaths() throws IOException;
 
-    public abstract File getTemplateDir();
+    public abstract File getTemplateDir() throws IOException;
 }

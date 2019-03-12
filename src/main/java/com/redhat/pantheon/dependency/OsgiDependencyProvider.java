@@ -33,37 +33,33 @@ public class OsgiDependencyProvider extends DependencyProvider {
     }
 
     @Override
-    public File getTemplateDir() {
+    public File getTemplateDir() throws IOException {
         if (templateDir == null) {
-            try {
-                Enumeration<URL> urls = FrameworkUtil.getBundle(PantheonBundle.class).findEntries("apps/pantheon/templates/haml/html5", "*", false);
-                Path p = Files.createTempDirectory("templates");
-                templateDir = p.toFile();
+            Enumeration<URL> urls = FrameworkUtil.getBundle(PantheonBundle.class).findEntries("apps/pantheon/templates/haml/html5", "*", false);
+            Path p = Files.createTempDirectory("templates");
+            templateDir = p.toFile();
 
-                while (urls.hasMoreElements()) {
-                    URL url = urls.nextElement();
-                    String filename = url.toString();
-                    filename = filename.substring(filename.lastIndexOf("/") + 1);
+            while (urls.hasMoreElements()) {
+                URL url = urls.nextElement();
+                String filename = url.toString();
+                filename = filename.substring(filename.lastIndexOf("/") + 1);
 
-                    File f = new File(templateDir, filename);
-                    f.deleteOnExit();
+                File f = new File(templateDir, filename);
+                f.deleteOnExit();
 
-                    InputStream is = url.openConnection().getInputStream();
-                    FileOutputStream os = new FileOutputStream(f);
+                InputStream is = url.openConnection().getInputStream();
+                FileOutputStream os = new FileOutputStream(f);
 
-                    byte[] buffer = new byte[4096];
+                byte[] buffer = new byte[4096];
 
-                    int n;
-                    while (-1 != (n = is.read(buffer))) {
-                        os.write(buffer, 0, n);
-                    }
-
-                    os.flush();
-                    os.close();
-                    is.close();
+                int n;
+                while (-1 != (n = is.read(buffer))) {
+                    os.write(buffer, 0, n);
                 }
-            } catch (IOException e) {
-                e.printStackTrace(); //FIXME
+
+                os.flush();
+                os.close();
+                is.close();
             }
         }
         return templateDir;

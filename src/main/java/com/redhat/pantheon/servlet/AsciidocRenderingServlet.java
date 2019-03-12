@@ -106,7 +106,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         return match;
     }
 
-    private Content generateHtml(SlingHttpServletRequest request, Resource resource) throws PersistenceException {
+    private Content generateHtml(SlingHttpServletRequest request, Resource resource) throws PersistenceException, IOException {
         Content c = new Content();
         c.asciidoc = resource.getChild(ADOC_NODE_NAME).getChild(CONTENT_NODE_NAME).getValueMap().get("jcr:data", String.class);
 
