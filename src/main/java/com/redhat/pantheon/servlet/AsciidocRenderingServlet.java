@@ -21,7 +21,9 @@ package com.redhat.pantheon.servlet;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
+import com.redhat.pantheon.dependency.DependencyProvider;
+import com.redhat.pantheon.dependency.OsgiDependencyProvider;
+import com.redhat.pantheon.sling.PantheonBundle;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.ModifiableValueMap;
@@ -29,8 +31,8 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
-import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.AttributesBuilder;
+import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 import org.jruby.RubyInstanceConfig;
@@ -46,7 +48,6 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 
@@ -68,6 +69,8 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     private static final String CACHE_NODE_NAME = "cachedContent";
     
     private final Logger log = LoggerFactory.getLogger(AsciidocRenderingServlet.class);
+
+    private DependencyProvider dependencyProvider;
 
     @Override
     protected void doGet(SlingHttpServletRequest request,
@@ -103,19 +106,9 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         return match;
     }
 
-    private Content generateHtml(SlingHttpServletRequest request, Resource resource) throws PersistenceException {
+    private Content generateHtml(SlingHttpServletRequest request, Resource resource) throws PersistenceException, IOException {
         Content c = new Content();
         c.asciidoc = resource.getChild(ADOC_NODE_NAME).getChild(CONTENT_NODE_NAME).getValueMap().get("jcr:data", String.class);
-
-        RubyInstanceConfig config = new RubyInstanceConfig();
-        config.setLoader(Thread.currentThread().getContextClassLoader());
-
-        Asciidoctor instance = Asciidoctor.Factory.create(
-                singletonList("uri:classloader:/gems/asciidoctor-1.5.8/lib"));
-
-        // Register any extensions
-        instance.javaExtensionRegistry().includeProcessor(
-               new SlingResourceIncludeProcessor(request.getResourceResolver(), resource));
 
         // build the attributes (default + those coming from http parameters)
         AttributesBuilder atts = AttributesBuilder.attributes()
@@ -124,7 +117,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
                 // link the css instead of embedding it
                 .linkCss(true)
                 // stylesheet reference
-                .styleSheetName("/content/static/asciidoctor-default.css");
+                .styleSheetName("/static/rhdocs.css");
 
         // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
         // parameters
@@ -135,21 +128,25 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         .forEach(p -> atts.attribute(p.getName().replaceFirst("ctx_", ""), p.getString()));
 
         // generate html
-        c.html = instance.convert(
+        getDependencyProvider().getIncludeProcessor().setContext(request.getResourceResolver(), resource);
+        OptionsBuilder ob = OptionsBuilder.options()
+                // we're generating html
+                .backend("html")
+                // no physical file is being generated
+                .toFile(false)
+                // allow for some extra flexibility
+                .safe(SafeMode.UNSAFE) // This probably needs to change
+                .inPlace(false)
+                // Generate the html header and footer
+                .headerFooter(true)
+                .attributes(atts);
+        if (dependencyProvider.getTemplateDir() != null) {
+            ob = ob.templateDir(dependencyProvider.getTemplateDir());
+        }
+
+        c.html = getDependencyProvider().getAsciidoctor().convert(
                 c.asciidoc,
-                OptionsBuilder.options()
-                        // we're generating html
-                        .backend("html")
-                        // no physical file is being generated
-                        .toFile(false)
-                        // allow for some extra flexibility
-                        .safe(SafeMode.UNSAFE) // This probably needs to change
-                        .inPlace(false)
-                        // Generate the html header and footer
-                        .headerFooter(true)
-                        .attributes(atts)
-                        .get());
-        instance.shutdown();
+                ob.get());
 
         return c;
     }
@@ -176,6 +173,17 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
      */
     private HashCode hash(String str) {
         return Hashing.adler32().hashString(str, Charsets.UTF_8);
+    }
+
+    public DependencyProvider getDependencyProvider() {
+        if (dependencyProvider == null) {
+            dependencyProvider = new OsgiDependencyProvider();
+        }
+        return dependencyProvider;
+    }
+
+    public void setDependencyProvider(DependencyProvider dependencyProvider) {
+        this.dependencyProvider = dependencyProvider;
     }
 
     private class Content {

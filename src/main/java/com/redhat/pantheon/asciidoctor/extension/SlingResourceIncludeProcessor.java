@@ -10,13 +10,8 @@ import java.util.Map;
 
 public class SlingResourceIncludeProcessor extends IncludeProcessor {
 
-    private final ResourceResolver resolver;
-    private final Resource resource;
-
-    public SlingResourceIncludeProcessor(ResourceResolver resolver, Resource resource) {
-        this.resolver = resolver;
-        this.resource = resource;
-    }
+    private ResourceResolver resolver;
+    private Resource resource;
 
     @Override
     public boolean handles(String target) {
@@ -47,5 +42,10 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
         }
 
         reader.push_include(content, target, target, 1, attributes);
+    }
+
+    public void setContext(ResourceResolver resolver, Resource resource) {
+        this.resolver = resolver;
+        this.resource = resource;
     }
 }

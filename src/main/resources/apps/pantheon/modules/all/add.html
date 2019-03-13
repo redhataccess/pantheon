@@ -1,7 +1,5 @@
 <html>
-<head>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.54.8/css/patternfly.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.54.8/css/patternfly-additions.min.css">
+<head data-sly-include="${'/apps/pantheon/partials/header.html'}">
 </head>
 <body>
     <div class="container" data-sly-test="${currentSession.getUserID != 'anonymous'}">
@@ -36,9 +34,7 @@
         You must <a href="/system/sling/login.html">log in</a> before attempting to upload a new module.
     </div>
 <!-- code of step 2 comes here -->
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.54.8/js/patternfly.min.js"></script>
+    <div data-sly-include="${'/apps/pantheon/partials/footer.html'}">
+    </div>
 </body>
 </html>
