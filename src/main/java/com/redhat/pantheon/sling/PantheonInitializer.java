@@ -5,6 +5,7 @@ import org.apache.jackrabbit.api.security.JackrabbitAccessControlList;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlManager;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlPolicy;
 import org.apache.jackrabbit.api.security.principal.PrincipalManager;
+import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.jcr.api.SlingRepositoryInitializer;
 import org.osgi.service.component.annotations.Component;
@@ -31,6 +32,9 @@ public class PantheonInitializer implements SlingRepositoryInitializer {
     public void processRepository(SlingRepository slingRepository) throws Exception {
         JackrabbitSession s = (JackrabbitSession) slingRepository.loginAdministrative(null);
         try {
+            User admin = (User) s.getUserManager().getAuthorizable("admin");
+            admin.changePassword("ccsadmin"); // FIXME - hardcoding admin passwords is a Bad Thing
+
             // http://jackrabbit.apache.org/api/2.16/org/apache/jackrabbit/core/security/authorization/GlobPattern.html
             assignPermissionToPrincipal(s, "anonymous", "/content/modules", "/*/cachedContent*", Privilege.JCR_MODIFY_PROPERTIES); // No idea why the trailing * is necessary but it doesn't work without it
             assignPermissionToPrincipal(s, "demo", "/content/modules", null, Privilege.JCR_WRITE, Privilege.JCR_NODE_TYPE_MANAGEMENT);
