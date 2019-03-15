@@ -149,17 +149,8 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
     private void cacheContent(SlingHttpServletRequest request, Resource resource, Content content) {
         try {
-
-//            Resource cachedHtmlResource = resource.getChild(CACHE_NODE_NAME);
             Node resourceNode = resource.adaptTo(Node.class);
-            Node cacheNode = null;
-            try {
-                cacheNode = resourceNode.getNode(CACHE_NODE_NAME);
-            } catch (PathNotFoundException e) {
-                cacheNode = resourceNode.addNode(CACHE_NODE_NAME);
-                cacheNode.setPrimaryType("pant:moduleMetadata");
-                cacheNode.setProperty("sling:resourceType", "pantheon/modules/metadata");
-            }
+            Node cacheNode = resourceNode.getNode(CACHE_NODE_NAME);
 
             cacheNode.setProperty("pant:hash", hash(content.asciidoc).toString());
             cacheNode.setProperty("jcr:data", content.html);

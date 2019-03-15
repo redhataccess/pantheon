@@ -73,6 +73,7 @@
                 <version>2.3.4</version>
                 <configuration>
                     <slingUrl>${sling.url}</slingUrl>
+                    <password>ccsadmin</password>
                 </configuration>
             </plugin>
             <plugin>

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.jcr.Node;
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
@@ -45,9 +46,10 @@ public class AsciidocRenderingServletTest {
     public void testGenerateHtmlFromAsciidoc() throws Exception {
 
         // Given
-        Resource contentNode = mock(Resource.class);
+        Resource contentResource = mock(Resource.class);
+        Node contentNode = mock(Node.class);
+        Node cacheNode = mock(Node.class);
         Resource fileNode = mock(Resource.class);
-        Resource cachedContentNode = mock(Resource.class);
         ValueMap contentNodeVm = mock(ValueMap.class);
         String asciidocContent = "== This is a title \n\n And this is some text";
         AsciidocRenderingServlet servlet = new AsciidocRenderingServlet();
@@ -82,8 +84,10 @@ public class AsciidocRenderingServletTest {
 
         // When
         lenient().when(resource.getPath()).thenReturn("/content");
-        lenient().when(resource.getChild("asciidoc")).thenReturn(contentNode);
-        lenient().when(contentNode.getChild("jcr:content")).thenReturn(fileNode);
+        lenient().when(resource.adaptTo(Node.class)).thenReturn(contentNode);
+        lenient().when(contentNode.getNode("cachedContent")).thenReturn(cacheNode);
+        lenient().when(resource.getChild("asciidoc")).thenReturn(contentResource);
+        lenient().when(contentResource.getChild("jcr:content")).thenReturn(fileNode);
         lenient().when(resource.getChild("cachedContent")).thenReturn(null);
         when(fileNode.getValueMap()).thenReturn(contentNodeVm);
         when(contentNodeVm.get( eq("jcr:data"), eq(String.class) )).thenReturn( asciidocContent );
