@@ -94,7 +94,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     }
 
     private boolean generatedContentHashMatches(Resource resource) {
-        String srcContent = resource.getValueMap().get("asciidoc/jcr:data", String.class);
+        String srcContent = resource.getValueMap().get("asciidoc/jcr:content/jcr:data", String.class);
         String existingHash = resource.getValueMap().get("cachedContent/pant:hash", String.class);
 
         boolean match = hash(srcContent).toString().equals(existingHash);
@@ -104,7 +104,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
     private Content generateHtml(SlingHttpServletRequest request, Resource resource) throws PersistenceException, IOException {
         Content c = new Content();
-        c.asciidoc = resource.getChild(ADOC_NODE_NAME).getValueMap().get("jcr:data", String.class);
+        c.asciidoc = resource.getChild(ADOC_NODE_NAME).getChild(CONTENT_NODE_NAME).getValueMap().get("jcr:data", String.class);
 
         // build the attributes (default + those coming from http parameters)
         AttributesBuilder atts = AttributesBuilder.attributes()

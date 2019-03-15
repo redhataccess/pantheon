@@ -53,6 +53,7 @@
                         <Sling-Initial-Content><![CDATA[
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
                             SLING-INF/content;overwrite:=false;uninstall:=false;path:=/content,
+                            SLING-INF/users;overwrite:=false;uninstall:=false,
                             SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index
                         ]]></Sling-Initial-Content>
                         <Import-Package>
