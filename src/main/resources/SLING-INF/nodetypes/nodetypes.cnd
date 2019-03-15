@@ -35,3 +35,7 @@
 // Base type for modules
 [pant:module] > nt:unstructured
 	- sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
+    + cachedContent (pant:moduleMetadata) = pant:moduleMetadata mandatory autocreated
+
+[pant:moduleMetadata] > nt:unstructured
+	- sling:resourceType (string) = 'pantheon/modules/metadata' mandatory autocreated
