@@ -33,7 +33,7 @@ public class ModuleData implements Use {
     }
 
     private List<Resource> getModules(String querySuffix) {
-        Iterator<Resource> resources = resolver.findResources("select * from [sling:Folder] as a " +
+        Iterator<Resource> resources = resolver.findResources("select * from [pant:module] as a " +
                 "where [sling:resourceType] = 'pantheon/modules' " +
                 "and isdescendantnode(a, '/content/modules') " +
                 querySuffix, Query.JCR_SQL2);

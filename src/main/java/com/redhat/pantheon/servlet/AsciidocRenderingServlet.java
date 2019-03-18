@@ -23,30 +23,26 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.redhat.pantheon.dependency.DependencyProvider;
 import com.redhat.pantheon.dependency.OsgiDependencyProvider;
-import com.redhat.pantheon.sling.PantheonBundle;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.asciidoctor.AttributesBuilder;
-import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
-import org.jruby.RubyInstanceConfig;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -151,20 +147,22 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         return c;
     }
 
-    private void cacheContent(SlingHttpServletRequest request, Resource resource, Content content) throws PersistenceException {
-        Map<String, Object> props = new HashMap<>();
-        props.put("jcr:data", content.html);
-        props.put("jcr:primaryType", "pant:moduleMetadata");
+    private void cacheContent(SlingHttpServletRequest request, Resource resource, Content content) {
+        try {
+            Node resourceNode = resource.adaptTo(Node.class);
+            Node cacheNode = resourceNode.getNode(CACHE_NODE_NAME);
 
-        if(resource.getChild(CACHE_NODE_NAME) != null) {
-            request.getResourceResolver().delete(resource.getChild(CACHE_NODE_NAME));
+            cacheNode.setProperty("pant:hash", hash(content.asciidoc).toString());
+            cacheNode.setProperty("jcr:data", content.html);
+
+//            Session ses = request.getResourceResolver().adaptTo(Session.class);
+//            System.out.println("Session: " + ses);
+
+            request.getResourceResolver().commit();
+        } catch (Exception e) {
+            e.printStackTrace(); // FIXME
+            throw new RuntimeException(e);
         }
-        Resource cachedHtmlResource = request.getResourceResolver().create(resource, CACHE_NODE_NAME, props);
-
-        // this has to be done to modify sling resources
-        cachedHtmlResource.adaptTo(ModifiableValueMap.class).put("pant:hash", hash(content.asciidoc).toString());
-
-        request.getResourceResolver().commit();
     }
 
     /*
@@ -172,7 +170,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
      * TODO This should probably be moved elsewhere
      */
     private HashCode hash(String str) {
-        return Hashing.adler32().hashString(str, Charsets.UTF_8);
+        return Hashing.adler32().hashString(str == null ? "" : str, Charsets.UTF_8);
     }
 
     public DependencyProvider getDependencyProvider() {

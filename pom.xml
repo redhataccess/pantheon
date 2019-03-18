@@ -53,6 +53,7 @@
                         <Sling-Initial-Content><![CDATA[
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
                             SLING-INF/content;overwrite:=false;uninstall:=false;path:=/content,
+                            SLING-INF/users;overwrite:=false;uninstall:=false,
                             SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index
                         ]]></Sling-Initial-Content>
                         <Import-Package>
@@ -72,6 +73,7 @@
                 <version>2.3.4</version>
                 <configuration>
                     <slingUrl>${sling.url}</slingUrl>
+                    <password>ccsadmin</password>
                 </configuration>
             </plugin>
             <plugin>
@@ -181,6 +183,18 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.api</artifactId>
             <version>2.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-jcr-commons</artifactId>
+            <version>2.16.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-api</artifactId>
+            <version>2.16.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

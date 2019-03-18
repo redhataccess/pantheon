@@ -33,5 +33,6 @@
 	- pant:otherNames (string) multiple
 
 // Base type for modules
-[pant:module] > nt:unstructured
+[pant:module] > nt:unstructured, sling:Folder
 	- sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
+    + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated
