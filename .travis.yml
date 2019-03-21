@@ -2,6 +2,9 @@ language: java
 jdk: openjdk8
 install: true
 script: ./mvnw clean install
+after_success:
+  # Move the code coverage results to codecov
+- bash <(curl -s https://codecov.io/bash)
 cache:
   directories:
   - $HOME/.m2
