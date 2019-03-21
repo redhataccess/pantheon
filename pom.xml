@@ -73,8 +73,6 @@
                 <version>2.3.4</version>
                 <configuration>
                     <slingUrl>${sling.url}</slingUrl>
-                    <user>admin</user>
-                    <password>admin</password>
                     <slingUrlSuffix>/apps/pantheon/install</slingUrlSuffix>
                     <deploymentMethod>SlingPostServlet</deploymentMethod>
                 </configuration>
