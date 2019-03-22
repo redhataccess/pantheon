@@ -73,7 +73,8 @@
                 <version>2.3.4</version>
                 <configuration>
                     <slingUrl>${sling.url}</slingUrl>
-                    <password>ccsadmin</password>
+                    <slingUrlSuffix>/apps/pantheon/install</slingUrlSuffix>
+                    <deploymentMethod>SlingPostServlet</deploymentMethod>
                 </configuration>
             </plugin>
             <plugin>
@@ -92,8 +93,62 @@
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>autoInstallBundle</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.sling</groupId>
+                        <artifactId>maven-sling-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>install-bundle</id>
+                                <goals>
+                                    <goal>install</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <sling.url>http://localhost:8080</sling.url>
+            </properties>
+        </profile>
+        <profile>
+            <id>openpaas</id>
+            <properties>
+            </properties>
+        </profile>
+    </profiles>
     <dependencies>
         <!-- Embedded (compile) dependencies -->
         <dependency>
