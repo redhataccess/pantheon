@@ -13,6 +13,11 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
     private ResourceResolver resolver;
     private Resource resource;
 
+    public SlingResourceIncludeProcessor(final Resource resource) {
+        this.resolver = resource.getResourceResolver();
+        this.resource = resource;
+    }
+
     @Override
     public boolean handles(String target) {
         return true;
@@ -42,10 +47,5 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
         }
 
         reader.push_include(content, target, target, 1, attributes);
-    }
-
-    public void setContext(ResourceResolver resolver, Resource resource) {
-        this.resolver = resolver;
-        this.resource = resource;
     }
 }

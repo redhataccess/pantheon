@@ -1,5 +1,6 @@
 package com.redhat.pantheon.sling;
 
+import com.redhat.pantheon.conf.LocalFileManagementService;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlList;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlManager;
@@ -8,7 +9,11 @@ import org.apache.jackrabbit.api.security.principal.PrincipalManager;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.jcr.api.SlingRepositoryInitializer;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -28,8 +33,23 @@ import java.util.Map;
 @Component(service = SlingRepositoryInitializer.class)
 public class PantheonInitializer implements SlingRepositoryInitializer {
 
+    private static final Logger log = LoggerFactory.getLogger(SlingRepositoryInitializer.class);
+
+    private LocalFileManagementService localFileManagementService;
+
+    @Activate
+    public PantheonInitializer(
+            @Reference LocalFileManagementService localFileManagementService) {
+        this.localFileManagementService = localFileManagementService;
+    }
+
     @Override
     public void processRepository(SlingRepository slingRepository) throws Exception {
+        initializeRepositoryACLs(slingRepository);
+        localFileManagementService.initializeTemplateDirectories();
+    }
+
+    private void initializeRepositoryACLs(SlingRepository slingRepository) throws RepositoryException {
         JackrabbitSession s = (JackrabbitSession) slingRepository.loginAdministrative(null);
         try {
             User admin = (User) s.getUserManager().getAuthorizable("admin");
