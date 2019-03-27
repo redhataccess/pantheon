@@ -1,10 +1,12 @@
 package com.redhat.pantheon.model;
 
+import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.Via;
+import org.apache.sling.models.annotations.injectorspecific.Self;
 import org.apache.sling.models.annotations.via.ChildResource;
 
 import javax.inject.Inject;
@@ -18,6 +20,9 @@ import java.util.Calendar;
     adaptables = Resource.class,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class Module {
+
+    @Self
+    private Resource resource;
 
     @Inject @Named("sling:resourceType")
     @Default(values = "pantheon/modules")
@@ -67,10 +72,6 @@ public class Module {
         return cachedHtmlContent;
     }
 
-    public void setCachedHtmlContent(String cachedHtmlContent) {
-        this.cachedHtmlContent = cachedHtmlContent;
-    }
-
     public CachedContent getCachedContent() {
         return cachedContent;
     }
@@ -84,6 +85,9 @@ public class Module {
         defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
     public static class CachedContent {
 
+        @Self
+        private Resource resource;
+
         @Inject @Named("pant:hash")
         private String hash;
 
@@ -95,6 +99,7 @@ public class Module {
         }
 
         public void setHash(String hash) {
+            resource.adaptTo(ModifiableValueMap.class).put("pant:hash", hash);
             this.hash = hash;
         }
 
@@ -103,6 +108,7 @@ public class Module {
         }
 
         public void setData(String data) {
+            resource.adaptTo(ModifiableValueMap.class).put("jcr:data", data);
             this.data = data;
         }
     }
