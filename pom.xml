@@ -43,7 +43,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>
-                            com.redhat.pantheon.sling.PantheonBundle
+                            com.redhat.pantheon.sling.PantheonBundleActivator
                         </Bundle-Activator>
                         <!-- Enable processing of OSGI DS component annotations -->
                         <_dsannotations>*</_dsannotations>
