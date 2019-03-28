@@ -1,0 +1,4 @@
+{
+  "jcr:primaryType": "sling:Folder",
+  "sling:resourceType": "pantheon/repositories/all"
+}
