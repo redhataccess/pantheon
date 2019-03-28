@@ -1,9 +1,10 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.dependency.DependencyProvider;
+import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.Module.CachedContent;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.testing.mock.sling.MockSling;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.jcr.Node;
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
@@ -26,10 +26,8 @@ import java.util.jar.JarFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 public class AsciidocRenderingServletTest {
@@ -46,11 +44,8 @@ public class AsciidocRenderingServletTest {
     public void testGenerateHtmlFromAsciidoc() throws Exception {
 
         // Given
-        Resource contentResource = mock(Resource.class);
-        Node contentNode = mock(Node.class);
-        Node cacheNode = mock(Node.class);
-        Resource fileNode = mock(Resource.class);
-        ValueMap contentNodeVm = mock(ValueMap.class);
+        Module module = mock(Module.class);
+        CachedContent cachedContent = mock(CachedContent.class);
         String asciidocContent = "== This is a title \n\n And this is some text";
         AsciidocRenderingServlet servlet = new AsciidocRenderingServlet();
         servlet.setDependencyProvider(new DependencyProvider() {
@@ -84,13 +79,9 @@ public class AsciidocRenderingServletTest {
 
         // When
         lenient().when(resource.getPath()).thenReturn("/content");
-        lenient().when(resource.adaptTo(Node.class)).thenReturn(contentNode);
-        lenient().when(contentNode.getNode("cachedContent")).thenReturn(cacheNode);
-        lenient().when(resource.getChild("asciidoc")).thenReturn(contentResource);
-        lenient().when(contentResource.getChild("jcr:content")).thenReturn(fileNode);
-        lenient().when(resource.getChild("cachedContent")).thenReturn(null);
-        when(fileNode.getValueMap()).thenReturn(contentNodeVm);
-        when(contentNodeVm.get( eq("jcr:data"), eq(String.class) )).thenReturn( asciidocContent );
+        lenient().when(resource.adaptTo(Module.class)).thenReturn(module);
+        lenient().when(module.getCachedContent()).thenReturn(cachedContent);
+        lenient().when(module.getAsciidocContent()).thenReturn(asciidocContent);
         slingContext.request().setResource(resource);
 
         servlet.doGet(slingContext.request(), slingContext.response());

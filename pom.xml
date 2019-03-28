@@ -56,6 +56,9 @@
                             SLING-INF/users;overwrite:=false;uninstall:=false,
                             SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index
                         ]]></Sling-Initial-Content>
+                        <Sling-Model-Packages>
+                            com.redhat.pantheon.model
+                        </Sling-Model-Packages>
                         <Import-Package>
                             !jnr.a64asm,!jnr.x86asm,!org.apache.bsf,!org.apache.bsf.util,
                             !org.apache.tools.ant,!org.joda.convert,!org.objectweb.asm,!sun.misc,*
@@ -66,6 +69,13 @@
                         <Require-Capability>osgi.ee;filter:="(&amp;(osgi.ee=JavaSE)(version=1.8))"</Require-Capability>
                     </instructions>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.sling</groupId>
+                        <artifactId>org.apache.sling.bnd.models</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.sling</groupId>
@@ -238,6 +248,18 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.api</artifactId>
             <version>2.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.models.api</artifactId>
+            <version>1.3.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <version>1.1</version>
+            <groupId>org.apache.geronimo.specs</groupId>
             <scope>provided</scope>
         </dependency>
         <dependency>
