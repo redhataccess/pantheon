@@ -157,7 +157,6 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
                 .setHash(hash(content.asciidoc).toString());
             module.getCachedContent()
                 .setData(content.html);
-
             request.getResourceResolver().commit();
         } catch (Exception e) {
             e.printStackTrace(); // FIXME
