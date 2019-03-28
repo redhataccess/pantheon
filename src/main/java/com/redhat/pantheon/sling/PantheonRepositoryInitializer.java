@@ -9,6 +9,8 @@ import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.jcr.api.SlingRepositoryInitializer;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -26,10 +28,16 @@ import java.util.Map;
  * Created by ben on 3/7/19.
  */
 @Component(service = SlingRepositoryInitializer.class)
-public class PantheonInitializer implements SlingRepositoryInitializer {
+public class PantheonRepositoryInitializer implements SlingRepositoryInitializer {
+
+    private static final Logger log = LoggerFactory.getLogger(SlingRepositoryInitializer.class);
 
     @Override
     public void processRepository(SlingRepository slingRepository) throws Exception {
+        initializeRepositoryACLs(slingRepository);
+    }
+
+    private void initializeRepositoryACLs(SlingRepository slingRepository) throws RepositoryException {
         JackrabbitSession s = (JackrabbitSession) slingRepository.loginAdministrative(null);
         try {
             User admin = (User) s.getUserManager().getAuthorizable("admin");

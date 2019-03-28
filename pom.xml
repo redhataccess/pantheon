@@ -43,7 +43,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>
-                            com.redhat.pantheon.sling.PantheonBundle
+                            com.redhat.pantheon.sling.PantheonBundleActivator
                         </Bundle-Activator>
                         <!-- Enable processing of OSGI DS component annotations -->
                         <_dsannotations>*</_dsannotations>
@@ -272,6 +272,12 @@
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-api</artifactId>
             <version>2.16.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <artifactId>commons-io</artifactId>
+            <groupId>commons-io</groupId>
+            <version>2.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
