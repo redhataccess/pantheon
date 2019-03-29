@@ -15,6 +15,7 @@ public class LogbackConfigProvider implements ConfigProvider {
 
     @Override
     public InputSource getConfigSource() {
+        // https://sling.apache.org/documentation/development/logging.html
         return new InputSource(getClass().getClassLoader().getResourceAsStream("logback.xml"));
     }
 }
