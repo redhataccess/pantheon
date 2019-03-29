@@ -1,0 +1,13 @@
+<included>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                [PANTHEON] %d{HH:mm:ss.SSS} %-5level %logger{1} - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+    <logger name="com.redhat" level="debug">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+</included>
