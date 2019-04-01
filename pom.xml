@@ -57,7 +57,8 @@
                             SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index
                         ]]></Sling-Initial-Content>
                         <Sling-Model-Packages>
-                            com.redhat.pantheon.model
+                            com.redhat.pantheon.model,
+                            com.redhat.pantheon.use
                         </Sling-Model-Packages>
                         <Import-Package>
                             !jnr.a64asm,!jnr.x86asm,!org.apache.bsf,!org.apache.bsf.util,

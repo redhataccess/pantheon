@@ -30,6 +30,11 @@
                                     ${item.jcr:description}
                                 </div>
                             </div>
+                            <div class="list-view-pf-additional-info">
+                                <div class="list-group-item-text">
+                                    <sly data-sly-use.date="${'com.redhat.pantheon.use.DateFormatter' @ format='yyyy/MM/dd HH:mm:ss', date=item.jcr:created}">${date.value}</sly>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
