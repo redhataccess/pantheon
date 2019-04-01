@@ -10,35 +10,89 @@
         <a class="btn btn-primary" href="/modules.add.html">New Module</a>
     </p>
 
-    <!-- <div class="list-group list-view-pf list-view-pf-view" data-sly-list="${resource.listChildren}"> -->
-    <div class="list-group list-view-pf list-view-pf-view" data-sly-list="${moduleData.getModulesCreateSort}">
-        <div class="list-group-item">
-            <a href="${item.name @ prependPath='modules/', addSelectors=['preview']}">
-                <div class="list-view-pf-actions">
-                    <div class="list-view-pf-main-info">
-                        <div class="list-view-pf-left">
-                            <!--span class="fa fa-plane list-view-pf-icon-sm"></span-->
-                        </div>
-                        <div class="list-view-pf-body">
-                            <div class="list-view-pf-description">
-                                <div class="list-group-item-heading">
-                                    ${item.jcr:title}
-                                </div>
-                            </div>
-                            <div class="list-view-pf-additional-info">
-                                <div class="list-group-item-text">
-                                    ${item.jcr:description}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
+    <table id="myTable">
+        <tr>
+            <th width="200px"><a href="#" onclick="sortTable(0)">Name</a></th>
+            <th width="325px"><a href="#" onclick="sortTable(1)">Description</th>
+            <th><a href="#" onclick="sortTable(2)">Upload Time</a></th>
+        </tr>
+
+        <sly data-sly-list="${moduleData.getModulesCreateSort}">
+            <tr>
+                <td>
+                    <a href="${item.name @ prependPath='modules/', addSelectors=['preview']}">${item.jcr:title}</a>
+                </td>
+                <td>
+                    <a href="${item.name @ prependPath='modules/', addSelectors=['preview']}">${item.jcr:description}</a>
+                </td>
+                <td>
+                    <sly data-sly-use.date="${'com.redhat.pantheon.use.DateFormatter' @ format='yyyy/MM/dd HH:mm:ss', date=item.jcr:created}">${date.value}</sly>
+                </td>
+            </tr>
+        </sly>
+    </table>
 </div>
 
 <div data-sly-include="${'/apps/pantheon/partials/footer.html'}">
 </div>
+
+<!-- https://www.w3schools.com/howto/howto_js_sort_table.asp -->
+<script>
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("myTable");
+  switching = true;
+  //Set the sorting direction to ascending:
+  dir = "asc";
+  /*Make a loop that will continue until
+  no switching has been done:*/
+  while (switching) {
+    //start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /*Loop through all table rows (except the
+    first, which contains table headers):*/
+    for (i = 1; i < (rows.length - 1); i++) {
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+      /*Get the two elements you want to compare,
+      one from current row and one from the next:*/
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /*check if the two rows should switch place,
+      based on the direction, asc or desc:*/
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch= true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /*If a switch has been marked, make the switch
+      and mark that a switch has been done:*/
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      //Each time a switch is done, increase this count by 1:
+      switchcount ++;
+    } else {
+      /*If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again.*/
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
+
 </body>
 </html>
