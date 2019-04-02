@@ -21,24 +21,26 @@ package com.redhat.pantheon.servlet;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import com.redhat.pantheon.dependency.DependencyProvider;
-import com.redhat.pantheon.dependency.OsgiDependencyProvider;
+import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
+import com.redhat.pantheon.conf.LocalFileManagementService;
+import com.redhat.pantheon.model.Module;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
+import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 import org.osgi.framework.Constants;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -60,13 +62,15 @@ import static java.util.stream.Collectors.toList;
 @SuppressWarnings("serial")
 public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
-    private static final String ADOC_NODE_NAME = "asciidoc";
-    private static final String CONTENT_NODE_NAME = "jcr:content";
-    private static final String CACHE_NODE_NAME = "cachedContent";
-    
     private final Logger log = LoggerFactory.getLogger(AsciidocRenderingServlet.class);
 
-    private DependencyProvider dependencyProvider;
+    private LocalFileManagementService localFileManagementService;
+
+    @Activate
+    public AsciidocRenderingServlet(
+            @Reference LocalFileManagementService localFileManagementService) {
+        this.localFileManagementService = localFileManagementService;
+    }
 
     @Override
     protected void doGet(SlingHttpServletRequest request,
@@ -74,17 +78,16 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             IOException {
         Resource resource = request.getResource();
         String html = "NO CONTENT";
-
-        // Get the existing content
-        Resource cachedContentNode = resource.getChild(CACHE_NODE_NAME);
+        final Module module = resource.adaptTo(Module.class);
+        String cachedContent = module.getCachedHtmlContent();
 
         // If the content doesn't exist yet, generate and save it
-        if( cachedContentNode == null || !generatedContentHashMatches(resource) || request.getParameter("rerender") != null) {
+        if( cachedContent == null || !generatedContentHashMatches(resource) || request.getParameter("rerender") != null) {
             Content c = generateHtml(request, resource);
-            cacheContent(request, resource, c);
+            cacheContent(request, module, c);
             html = c.html;
         } else {
-            html = cachedContentNode.getValueMap().get("jcr:data", String.class);
+            html = module.getCachedHtmlContent();
         }
 
         response.setContentType("text/html");
@@ -104,7 +107,9 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
     private Content generateHtml(SlingHttpServletRequest request, Resource resource) throws PersistenceException, IOException {
         Content c = new Content();
-        c.asciidoc = resource.getChild(ADOC_NODE_NAME).getChild(CONTENT_NODE_NAME).getValueMap().get("jcr:data", String.class);
+        // TODO remove the use of Resource (if possible)
+        Module module = resource.adaptTo(Module.class);
+        c.asciidoc = module.getAsciidocContent();
 
         // build the attributes (default + those coming from http parameters)
         AttributesBuilder atts = AttributesBuilder.attributes()
@@ -124,7 +129,6 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         .forEach(p -> atts.attribute(p.getName().replaceFirst("ctx_", ""), p.getString()));
 
         // generate html
-        getDependencyProvider().getIncludeProcessor().setContext(request.getResourceResolver(), resource);
         OptionsBuilder ob = OptionsBuilder.options()
                 // we're generating html
                 .backend("html")
@@ -136,12 +140,12 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
                 // Generate the html header and footer
                 .headerFooter(true)
                 .attributes(atts);
-        if (dependencyProvider.getTemplateDir() != null) {
-            ob = ob.templateDir(dependencyProvider.getTemplateDir());
+        if (localFileManagementService.getTemplateDirectory() != null) {
+            ob = ob.templateDir(localFileManagementService.getTemplateDirectory());
         }
 
         long start = System.currentTimeMillis();
-        c.html = getDependencyProvider().getAsciidoctor().convert(
+        c.html = getAsciidoctorInstance(resource).convert(
                 c.asciidoc,
                 ob.get());
         log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
@@ -149,22 +153,24 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         return c;
     }
 
-    private void cacheContent(SlingHttpServletRequest request, Resource resource, Content content) {
+    private void cacheContent(SlingHttpServletRequest request, Module module, Content content) {
         try {
-            Node resourceNode = resource.adaptTo(Node.class);
-            Node cacheNode = resourceNode.getNode(CACHE_NODE_NAME);
-
-            cacheNode.setProperty("pant:hash", hash(content.asciidoc).toString());
-            cacheNode.setProperty("jcr:data", content.html);
-
-//            Session ses = request.getResourceResolver().adaptTo(Session.class);
-//            System.out.println("Session: " + ses);
-
+            module.getCachedContent()
+                .setHash(hash(content.asciidoc).toString());
+            module.getCachedContent()
+                .setData(content.html);
             request.getResourceResolver().commit();
         } catch (Exception e) {
             e.printStackTrace(); // FIXME
             throw new RuntimeException(e);
         }
+    }
+
+    private Asciidoctor getAsciidoctorInstance(final Resource resource) throws IOException {
+        Asciidoctor asciidoctor = Asciidoctor.Factory.create(localFileManagementService.getGemPaths());
+        asciidoctor.javaExtensionRegistry().includeProcessor(
+                new SlingResourceIncludeProcessor(resource));
+        return asciidoctor;
     }
 
     /*
@@ -173,17 +179,6 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
      */
     private HashCode hash(String str) {
         return Hashing.adler32().hashString(str == null ? "" : str, Charsets.UTF_8);
-    }
-
-    public DependencyProvider getDependencyProvider() {
-        if (dependencyProvider == null) {
-            dependencyProvider = new OsgiDependencyProvider();
-        }
-        return dependencyProvider;
-    }
-
-    public void setDependencyProvider(DependencyProvider dependencyProvider) {
-        this.dependencyProvider = dependencyProvider;
     }
 
     private class Content {

@@ -43,7 +43,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>
-                            com.redhat.pantheon.sling.PantheonBundle
+                            com.redhat.pantheon.sling.PantheonBundleActivator
                         </Bundle-Activator>
                         <!-- Enable processing of OSGI DS component annotations -->
                         <_dsannotations>*</_dsannotations>
@@ -56,6 +56,10 @@
                             SLING-INF/users;overwrite:=false;uninstall:=false,
                             SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index
                         ]]></Sling-Initial-Content>
+                        <Sling-Model-Packages>
+                            com.redhat.pantheon.model,
+                            com.redhat.pantheon.use
+                        </Sling-Model-Packages>
                         <Import-Package>
                             !jnr.a64asm,!jnr.x86asm,!org.apache.bsf,!org.apache.bsf.util,
                             !org.apache.tools.ant,!org.joda.convert,!org.objectweb.asm,!sun.misc,*
@@ -66,6 +70,13 @@
                         <Require-Capability>osgi.ee;filter:="(&amp;(osgi.ee=JavaSE)(version=1.8))"</Require-Capability>
                     </instructions>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.sling</groupId>
+                        <artifactId>org.apache.sling.bnd.models</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.sling</groupId>
@@ -241,6 +252,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.models.api</artifactId>
+            <version>1.3.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <version>1.1</version>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-jcr-commons</artifactId>
             <version>2.16.3</version>
@@ -256,6 +279,12 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.commons.log</artifactId>
             <version>5.1.10</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <artifactId>commons-io</artifactId>
+            <groupId>commons-io</groupId>
+            <version>2.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
