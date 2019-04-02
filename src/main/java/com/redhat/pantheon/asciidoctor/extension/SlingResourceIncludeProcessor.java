@@ -27,7 +27,13 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
     public void process(Document document, PreprocessorReader reader, String target, Map<String, Object> attributes) {
 
         // Find the included file relative to the current resource's location
-        Resource includeResource = resolver.getResource(this.resource.getParent(), target);
+        Resource parent = resource.getParent();
+        Resource includeResource = resolver.getResource(parent, target);
+        // Odds are good that our fist attempt was looking for something like "include.adoc", but our resource was
+        // simply named "include", so try again after dropping the suffix.
+        if (includeResource == null && target.contains(".")) {
+            includeResource = resolver.getResource(parent, target.substring(0, target.lastIndexOf('.')));
+        }
         String content = "Invalid include: " + target;
 
         if(includeResource != null) {

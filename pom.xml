@@ -276,6 +276,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.commons.log</artifactId>
+            <version>5.1.10</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <artifactId>commons-io</artifactId>
             <groupId>commons-io</groupId>
             <version>2.6</version>

@@ -144,9 +144,11 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             ob = ob.templateDir(localFileManagementService.getTemplateDirectory());
         }
 
+        long start = System.currentTimeMillis();
         c.html = getAsciidoctorInstance(resource).convert(
                 c.asciidoc,
                 ob.get());
+        log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
 
         return c;
     }
