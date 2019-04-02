@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 import os
 import requests
-import getpass
 import argparse
 import getpass
+import logging
 from pathlib import Path
 from datetime import datetime
 
@@ -28,7 +28,15 @@ parser.add_argument('--repository', '-r', help='The name of the repository; this
 parser.add_argument('--user', '-u', help='Username for authentication, default \'demo\'', default='demo')
 parser.add_argument('--password', '-p', help='Password for authentication, default \'demo\'. If \'-\' is supplied, the script will prompt for the password.', default='demo')
 parser.add_argument('--directory', '-d', help='Directory to upload, default is current working directory. (' + os.getcwd() + ')', default=os.getcwd())
+parser.add_argument('--log', '-l', help='Verbosity of logging, default is \'warning\'', default='warning')
 args = parser.parse_args()
+
+numeric_level = getattr(logging, args.log.upper(), None)
+if not isinstance(numeric_level, int):
+    raise ValueError('Invalid log level: %s' % args.log)
+logger = logging.getLogger(__name__)
+logger.setLevel(numeric_level)
+logger.addHandler(logging.StreamHandler())
 
 pw = args.password
 if pw == '-':
@@ -55,14 +63,14 @@ for path in pathlist:
     if parent_dir_str:
         url += '/' + parent_dir_str
 
-    # print('base name: ' + base_name)
+    logger.debug('base name: %s', base_name)
 
     # Asciidoc content (treat as a module)
     if path.suffix == '.adoc' or path.suffix == '.asciidoc':
         print(path)
         if base_name.endswith(('.module', '.internal', '.title')):  # Should differentiate later
             url += '/' + path.name
-            # print(url)
+            logger.debug(url)
             data = {"jcr:primaryType": 'pant:module',
                     "jcr:title": base_name,
                     "jcr:description": base_name,
@@ -87,7 +95,7 @@ for path in pathlist:
     else:
         print(path)
         if not base_name.endswith('.ignore'):
-            # print(url)
+            logger.debug(url)
             files = {path.name: (path.name, open(path, 'rb'))}
             r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
             print(r.status_code, r.reason)
