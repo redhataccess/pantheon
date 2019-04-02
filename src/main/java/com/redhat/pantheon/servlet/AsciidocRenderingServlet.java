@@ -22,6 +22,7 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
+import com.redhat.pantheon.conf.AsciidoctorPoolService;
 import com.redhat.pantheon.conf.LocalFileManagementService;
 import com.redhat.pantheon.model.Module;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -65,11 +66,14 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     private final Logger log = LoggerFactory.getLogger(AsciidocRenderingServlet.class);
 
     private LocalFileManagementService localFileManagementService;
+    private AsciidoctorPoolService asciidoctorPoolService;
 
     @Activate
     public AsciidocRenderingServlet(
-            @Reference LocalFileManagementService localFileManagementService) {
+            @Reference LocalFileManagementService localFileManagementService,
+            @Reference AsciidoctorPoolService asciidoctorPoolService) {
         this.localFileManagementService = localFileManagementService;
+        this.asciidoctorPoolService = asciidoctorPoolService;
     }
 
     @Override
@@ -145,9 +149,11 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         }
 
         long start = System.currentTimeMillis();
-        c.html = getAsciidoctorInstance(resource).convert(
+        Asciidoctor asciidoctor = asciidoctorPoolService.requestInstance(resource);
+        c.html = asciidoctor.convert(
                 c.asciidoc,
                 ob.get());
+        asciidoctorPoolService.releaseInstance(asciidoctor);
         log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
 
         return c;
@@ -164,13 +170,6 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             e.printStackTrace(); // FIXME
             throw new RuntimeException(e);
         }
-    }
-
-    private Asciidoctor getAsciidoctorInstance(final Resource resource) throws IOException {
-        Asciidoctor asciidoctor = Asciidoctor.Factory.create(localFileManagementService.getGemPaths());
-        asciidoctor.javaExtensionRegistry().includeProcessor(
-                new SlingResourceIncludeProcessor(resource));
-        return asciidoctor;
     }
 
     /*
