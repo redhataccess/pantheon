@@ -33,17 +33,19 @@ public class AsciidoctorPoolService {
         this.localFileManagementService = localFileManagementService;
     }
 
-    public synchronized void releaseInstance(Asciidoctor asciidoctor) {
+    public void releaseInstance(Asciidoctor asciidoctor) {
         asciidoctor.unregisterAllExtensions();
         queue.offer(asciidoctor);
         log.trace("Returned Asciidoctor instance to pool, new pool size: {}", queue.size());
     }
 
-    public synchronized Asciidoctor requestInstance(Resource resource) throws IOException {
+    public Asciidoctor requestInstance(Resource resource) throws IOException {
         Asciidoctor ret = queue.poll();
         if (ret == null) {
             log.trace("No Asciidoctor instances available from pool, creating...");
-            ret = Asciidoctor.Factory.create(localFileManagementService.getGemPaths());
+            synchronized (this) {
+                ret = Asciidoctor.Factory.create(localFileManagementService.getGemPaths());
+            }
         } else {
             log.trace("Reusing Asciidoctor instance from pool");
         }
