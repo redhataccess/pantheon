@@ -150,10 +150,13 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
         long start = System.currentTimeMillis();
         Asciidoctor asciidoctor = asciidoctorPoolService.requestInstance(resource);
-        c.html = asciidoctor.convert(
-                c.asciidoc,
-                ob.get());
-        asciidoctorPoolService.releaseInstance(asciidoctor);
+        try {
+            c.html = asciidoctor.convert(
+                    c.asciidoc,
+                    ob.get());
+        } finally {
+            asciidoctorPoolService.releaseInstance(asciidoctor);
+        }
         log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
 
         return c;
