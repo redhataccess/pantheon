@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet;
 
+import com.redhat.pantheon.conf.AsciidoctorPoolService;
 import com.redhat.pantheon.conf.LocalFileManagementService;
 import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.model.Module.CachedContent;
@@ -8,12 +9,12 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.MockSling;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
+import org.asciidoctor.Asciidoctor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sun.misc.Cache;
 
 import java.io.IOException;
 import java.net.JarURLConnection;
@@ -47,8 +48,9 @@ public class AsciidocRenderingServletTest {
         Module module = mock(Module.class);
         CachedContent cachedContent = mock(CachedContent.class);
         LocalFileManagementService lfmService = mock(LocalFileManagementService.class);
+        AsciidoctorPoolService apService = mock(AsciidoctorPoolService.class);
         String asciidocContent = "== This is a title \n\n And this is some text";
-        AsciidocRenderingServlet servlet = new AsciidocRenderingServlet(lfmService);
+        AsciidocRenderingServlet servlet = new AsciidocRenderingServlet(lfmService, apService);
         servlet.init();
 
         // When
@@ -58,6 +60,7 @@ public class AsciidocRenderingServletTest {
         lenient().when(module.getAsciidocContent()).thenReturn(asciidocContent);
         lenient().when(lfmService.getGemPaths()).thenReturn(getGemPaths());
         lenient().when(lfmService.getTemplateDirectory()).thenReturn(null);
+        lenient().when(apService.requestInstance(resource)).thenReturn(Asciidoctor.Factory.create(getGemPaths()));
         slingContext.request().setResource(resource);
 
         servlet.doGet(slingContext.request(), slingContext.response());
