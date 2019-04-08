@@ -46,14 +46,11 @@ print('Using server: ' + args.server)
 print('Using repository: ' + args.repository)
 print('--------------')
 
-directory_in_str = args.directory
-pathlist = Path(directory_in_str).glob('**/*.*')
+pathlist = Path(args.directory).glob('**/*.*')
 
 for path in pathlist:
-    # relative path to the current directory (with extension)
-    relative_path_in_str = str(path.relative_to(Path.cwd()))
     # parent directory
-    parent_dir_str = str(path.parent.relative_to(Path.cwd()))
+    parent_dir_str = str(path.parent.relative_to(args.directory))
     if parent_dir_str == '.':
         parent_dir_str = ''
     # file becomes a/file/name (no extension)
