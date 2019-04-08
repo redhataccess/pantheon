@@ -39,57 +39,45 @@
 <!-- https://www.w3schools.com/howto/howto_js_sort_table.asp -->
 <script>
 function sortTable(n) {
-  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
   table = document.getElementById("myTable");
-  switching = true;
-  //Set the sorting direction to ascending:
-  dir = "asc";
-  /*Make a loop that will continue until
-  no switching has been done:*/
-  while (switching) {
-    //start by saying: no switching is done:
-    switching = false;
-    rows = table.rows;
-    /*Loop through all table rows (except the
-    first, which contains table headers):*/
-    for (i = 1; i < (rows.length - 1); i++) {
-      //start by saying there should be no switching:
-      shouldSwitch = false;
-      /*Get the two elements you want to compare,
-      one from current row and one from the next:*/
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
-      /*check if the two rows should switch place,
-      based on the direction, asc or desc:*/
-      if (dir == "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch= true;
-          break;
-        }
-      } else if (dir == "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      }
-    }
-    if (shouldSwitch) {
-      /*If a switch has been marked, make the switch
-      and mark that a switch has been done:*/
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      //Each time a switch is done, increase this count by 1:
-      switchcount ++;
+
+  var htmlRows = table.rows;
+  rows = [];
+  origRows = [];
+  for (i = 1 ; i < htmlRows.length ; i++) {
+    rows[i - 1] = origRows[i - 1] = htmlRows[i];
+  }
+  rows.sort(function(a, b) {
+    var t1, t2;
+    if (a.cells[n].firstElementChild == null) {
+        t1 = a.cells[n].innerText;
+        t2 = b.cells[n].innerText;
     } else {
-      /*If no switching has been done AND the direction is "asc",
-      set the direction to "desc" and run the while loop again.*/
-      if (switchcount == 0 && dir == "asc") {
-        dir = "desc";
-        switching = true;
-      }
+        t1 = a.cells[n].firstElementChild.innerText;
+        t2 = b.cells[n].firstElementChild.innerText;
     }
+    if (t1 == t2) { return 0; }
+    else if (t1 > t2) { return 1; }
+    else { return -1; }
+  });
+
+  match = true;
+  for (i = 0 ; i < rows.length ; i++) {
+    if (rows[i] != origRows[i]) {
+      match = false;
+      break;
+    }
+  }
+  if (match) {
+    rows.reverse()
+  }
+
+  tBodyNode = htmlRows[0].parentNode;
+  while (tBodyNode.children.length > 1) {
+    tBodyNode.removeChild(tBodyNode.children[1]);
+  }
+  for (i = 0 ; i < rows.length ; i++) {
+    tBodyNode.appendChild(rows[i]);
   }
 }
 </script>
