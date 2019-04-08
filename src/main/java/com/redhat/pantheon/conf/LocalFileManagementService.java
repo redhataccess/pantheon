@@ -15,9 +15,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Optional;
 
 @Component(
         service = LocalFileManagementService.class,
@@ -27,9 +27,9 @@ public class LocalFileManagementService {
 
     private static final Logger log = LoggerFactory.getLogger(LocalFileManagementService.class);
 
-    private Optional<File> templateDirectory = Optional.empty();
+    private File templateDirectory;
 
-    private Optional<List<String>> gemPaths = Optional.empty();
+    private List<String> gemPaths;
 
     @Activate
     public void activate() throws IOException {
@@ -44,14 +44,16 @@ public class LocalFileManagementService {
 
         log.info("Initializing template directories at " + p.toString());
 
-        templateDirectory = Optional.of(p.toFile());
+        if (urls != null && urls.hasMoreElements()) {
+            templateDirectory = p.toFile();
+        }
 
-        while (urls.hasMoreElements()) {
+        while (urls != null && urls.hasMoreElements()) {
             URL url = urls.nextElement();
             String filename = url.toString();
             filename = filename.substring(filename.lastIndexOf("/") + 1);
 
-            File f = new File(templateDirectory.get(), filename);
+            File f = new File(templateDirectory, filename);
             f.deleteOnExit();
 
             InputStream is = url.openConnection().getInputStream();
@@ -60,32 +62,28 @@ public class LocalFileManagementService {
         }
     }
 
-    public synchronized File getTemplateDirectory() {
-        if (!templateDirectory.isPresent()) {
-            try {
-                initializeTemplateDirectories();
-            } catch (IOException e) {
-                log.error("Error initializing template directory", e);
-            }
+    public File getTemplateDirectory() {
+        if (templateDirectory == null) {
+            log.warn("LocalFileManagementService.getTemplateDirectory() is returning a null value. If this is " +
+                    "running in a Red Hat environment, this is ALMOST CERTAINLY a project misconfiguration. Check " +
+                    "to ensure that there are no broken symlinks in your build environment.");
         }
-        return templateDirectory.get();
+        return templateDirectory;
     }
 
-    public synchronized List<String> getGemPaths() throws IOException {
-        if (!gemPaths.isPresent()) {
-            initializeGemPaths();
-        }
-        return gemPaths.get();
+    public List<String> getGemPaths() {
+        return gemPaths;
     }
 
     private void initializeGemPaths() {
         Enumeration<URL> gems = FrameworkUtil.getBundle(LocalFileManagementService.class)
                 .findEntries("gems", "*", false);
-        gemPaths = Optional.of(new ArrayList<>());
+        List<String> list = new ArrayList<>();
         while (gems.hasMoreElements()) {
             URL g = gems.nextElement();
-            gemPaths.get().add("uri:classloader:" + g.getPath() + "lib");
+            list.add("uri:classloader:" + g.getPath() + "lib");
         }
+        gemPaths = Collections.unmodifiableList(list);
     }
 
 }
