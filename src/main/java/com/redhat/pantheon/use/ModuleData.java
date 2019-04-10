@@ -1,6 +1,5 @@
 package com.redhat.pantheon.use;
 
-import com.google.common.collect.Lists;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.scripting.sightly.pojo.Use;
@@ -10,12 +9,10 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.query.Query;
 import javax.script.Bindings;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by ben on 3/5/19.
@@ -26,6 +23,7 @@ public class ModuleData implements Use {
 
     private ResourceResolver resolver;
     private Resource currentResource;
+    private String searchTerm;
 
     private final Logger log = LoggerFactory.getLogger(ModuleData.class);
 
@@ -33,22 +31,31 @@ public class ModuleData implements Use {
     public void init(Bindings bindings) {
         resolver = (ResourceResolver) bindings.get("resolver");
         currentResource = (Resource) bindings.get("resource");
+        searchTerm = (String) bindings.get("query");
     }
 
     public List<Map<String, Object>> getModulesNameSort() {
-        return getModules("order by a.[jcr:title] asc");
+        return getModules(searchTerm, "order by a.[jcr:title] asc");
     }
 
     public List<Map<String, Object>> getModulesCreateSort() {
-        return getModules("order by a.[jcr:created] desc");
+        return getModules(searchTerm, "order by a.[jcr:created] desc");
     }
 
-    private List<Map<String, Object>> getModules(String querySuffix) {
+    private List<Map<String, Object>> getModules(String query, String querySuffix) {
+      	if (query.equals("") || query.equals("*") || query == null) {
+      	    query = "";
+      	} else {
+      		query = "AND (a.[jcr:title] like "+ "'%"+query+"%' "+
+      				"OR a.[jcr:description] like "+ "'%"+query+"%' "+
+      				"OR a.[jcr:created] like "+ "'%"+query+"%') ";
+      	}
+
         Iterator<Resource> resources = resolver.findResources("select * from [pant:module] as a " +
                 "where [sling:resourceType] = 'pantheon/modules' " +
                 "and (isdescendantnode(a, '/content/repositories') " +
                     "or isdescendantnode(a, '/content/modules') " +
-                    "or isdescendantnode(a, '/content/sandboxes')) " +
+                    "or isdescendantnode(a, '/content/sandboxes')) " + query +
                 querySuffix, Query.JCR_SQL2);
 
         List<Map<String, Object>> ret = new ArrayList<>();
