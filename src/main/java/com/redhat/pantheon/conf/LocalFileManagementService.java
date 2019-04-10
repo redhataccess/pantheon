@@ -1,6 +1,7 @@
 package com.redhat.pantheon.conf;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 
 @Component(
         service = LocalFileManagementService.class,
@@ -27,7 +29,7 @@ public class LocalFileManagementService {
 
     private static final Logger log = LoggerFactory.getLogger(LocalFileManagementService.class);
 
-    private File templateDirectory;
+    private Optional<File> templateDirectory = Optional.empty();
 
     private List<String> gemPaths;
 
@@ -38,32 +40,58 @@ public class LocalFileManagementService {
     }
 
     public void initializeTemplateDirectories() throws IOException {
-        Enumeration<URL> urls = FrameworkUtil.getBundle(LocalFileManagementService.class)
-                .findEntries("apps/pantheon/templates/haml/html5", "*", false);
+//        Enumeration<URL> urls = FrameworkUtil.getBundle(LocalFileManagementService.class)
+//                .findEntries("apps/pantheon/templates/haml/html5", "*", false);
+        Optional<Enumeration<URL>> urls = Optional.ofNullable(FrameworkUtil.getBundle(LocalFileManagementService.class)
+                .findEntries("apps/pantheon/templates/haml/html5", "*", false));
         Path p = Files.createTempDirectory("templates");
 
         log.info("Initializing template directories at " + p.toString());
 
-        if (urls != null && urls.hasMoreElements()) {
-            templateDirectory = p.toFile();
-        }
+//        if (urls != null && urls.hasMoreElements()) {
+//            templateDirectory = Optional.of(p.toFile());
+//        }
+        // This .filter(a -> a) is subtle. I believe it is necessary - without the filter, if the Enumeration is not
+        // null BUT it has no elements, the ifPresent call will execute. WITH the filter, the ifPresent call would NOT
+        // execute in the same scenario.
+        urls.map(Enumeration::hasMoreElements).filter(a -> a).ifPresent(a -> templateDirectory = Optional.of(p.toFile()));
 
-        while (urls != null && urls.hasMoreElements()) {
-            URL url = urls.nextElement();
-            String filename = url.toString();
-            filename = filename.substring(filename.lastIndexOf("/") + 1);
-
-            File f = new File(templateDirectory, filename);
-            f.deleteOnExit();
-
-            InputStream is = url.openConnection().getInputStream();
-
-            FileUtils.copyInputStreamToFile(is, f);
-        }
+//        while (urls != null && urls.hasMoreElements()) {
+//            URL url = urls.nextElement();
+//            String filename = url.toString();
+//            filename = filename.substring(filename.lastIndexOf("/") + 1);
+//
+//            File f = new File(templateDirectory.get(), filename);
+//            f.deleteOnExit();
+//
+//            InputStream is = url.openConnection().getInputStream();
+//
+//            FileUtils.copyInputStreamToFile(is, f);
+//        }
+        Collections.list(urls.orElse(Collections.emptyEnumeration()))
+                .stream()
+                .map(url -> Pair.of(url, url.toString()))
+                .map(pair -> Pair.of(pair.getLeft(), pair.getRight().substring(pair.getRight().lastIndexOf("/") + 1)))
+                .map(pair -> Pair.of(pair.getLeft(), new File(templateDirectory.get(), pair.getRight())))
+                .peek(pair -> pair.getRight().deleteOnExit())
+                .map(pair -> {
+                    try {
+                        return Pair.of(pair.getLeft().openConnection().getInputStream(), pair.getRight());
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                })
+                .forEach(pair -> {
+                    try {
+                        FileUtils.copyInputStreamToFile(pair.getLeft(), pair.getRight());
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                });
     }
 
-    public File getTemplateDirectory() {
-        if (templateDirectory == null) {
+    public Optional<File> getTemplateDirectory() {
+        if (!templateDirectory.isPresent()) {
             log.warn("LocalFileManagementService.getTemplateDirectory() is returning a null value. If this is " +
                     "running in a Red Hat environment, this is ALMOST CERTAINLY a project misconfiguration. Check " +
                     "to ensure that there are no broken symlinks in your build environment.");

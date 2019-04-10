@@ -132,7 +132,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         .forEach(p -> atts.attribute(p.getName().replaceFirst("ctx_", ""), p.getString()));
 
         // generate html
-        OptionsBuilder ob = OptionsBuilder.options()
+        final OptionsBuilder ob = OptionsBuilder.options()
                 // we're generating html
                 .backend("html")
                 // no physical file is being generated
@@ -143,9 +143,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
                 // Generate the html header and footer
                 .headerFooter(true)
                 .attributes(atts);
-        if (localFileManagementService.getTemplateDirectory() != null) {
-            ob = ob.templateDir(localFileManagementService.getTemplateDirectory());
-        }
+        localFileManagementService.getTemplateDirectory().ifPresent(a -> ob.templateDir(a));
 
         long start = System.currentTimeMillis();
         Asciidoctor asciidoctor = asciidoctorPoolService.requestInstance(resource);
