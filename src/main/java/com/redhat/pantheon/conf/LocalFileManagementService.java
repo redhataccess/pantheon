@@ -46,7 +46,9 @@ public class LocalFileManagementService {
 
         log.info("Initializing template directories at " + p.toString());
 
-        urls.ifPresent(a -> templateDirectory = Optional.of(p.toFile()));
+        if (urls.isPresent()) {
+            templateDirectory = Optional.of(p.toFile());
+        }
 
         Collections.list(urls.orElse(Collections.emptyEnumeration()))
                 .stream()
