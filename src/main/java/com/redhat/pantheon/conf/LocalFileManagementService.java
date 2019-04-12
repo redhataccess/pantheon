@@ -51,10 +51,9 @@ public class LocalFileManagementService {
 //        if (urls != null && urls.hasMoreElements()) {
 //            templateDirectory = Optional.of(p.toFile());
 //        }
-        // This .filter(a -> a) is subtle. I believe it is necessary - without the filter, if the Enumeration is not
-        // null BUT it has no elements, the ifPresent call will execute. WITH the filter, the ifPresent call would NOT
-        // execute in the same scenario.
-        urls.map(Enumeration::hasMoreElements).filter(a -> a).ifPresent(a -> templateDirectory = Optional.of(p.toFile()));
+        if (urls.orElse(Collections.emptyEnumeration()).hasMoreElements()) {
+            templateDirectory = Optional.of(p.toFile());
+        }
 
 //        while (urls != null && urls.hasMoreElements()) {
 //            URL url = urls.nextElement();
