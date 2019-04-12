@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -59,7 +60,7 @@ public class AsciidocRenderingServletTest {
         lenient().when(module.getCachedContent()).thenReturn(cachedContent);
         lenient().when(module.getAsciidocContent()).thenReturn(asciidocContent);
         lenient().when(lfmService.getGemPaths()).thenReturn(getGemPaths());
-        lenient().when(lfmService.getTemplateDirectory()).thenReturn(null);
+        lenient().when(lfmService.getTemplateDirectory()).thenReturn(Optional.empty());
         lenient().when(apService.requestInstance(resource)).thenReturn(Asciidoctor.Factory.create(getGemPaths()));
         slingContext.request().setResource(resource);
 

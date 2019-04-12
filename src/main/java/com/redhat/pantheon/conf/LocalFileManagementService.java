@@ -1,6 +1,7 @@
 package com.redhat.pantheon.conf;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -10,11 +11,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +31,7 @@ public class LocalFileManagementService {
 
     private Optional<File> templateDirectory = Optional.empty();
 
-    private Optional<List<String>> gemPaths = Optional.empty();
+    private List<String> gemPaths;
 
     @Activate
     public void activate() throws IOException {
@@ -38,54 +40,60 @@ public class LocalFileManagementService {
     }
 
     public void initializeTemplateDirectories() throws IOException {
-        Enumeration<URL> urls = FrameworkUtil.getBundle(LocalFileManagementService.class)
-                .findEntries("apps/pantheon/templates/haml/html5", "*", false);
+        Optional<Enumeration<URL>> urls = Optional.ofNullable(FrameworkUtil.getBundle(LocalFileManagementService.class)
+                .findEntries("apps/pantheon/templates/haml/html5", "*", false));
         Path p = Files.createTempDirectory("templates");
 
         log.info("Initializing template directories at " + p.toString());
 
-        templateDirectory = Optional.of(p.toFile());
-
-        while (urls.hasMoreElements()) {
-            URL url = urls.nextElement();
-            String filename = url.toString();
-            filename = filename.substring(filename.lastIndexOf("/") + 1);
-
-            File f = new File(templateDirectory.get(), filename);
-            f.deleteOnExit();
-
-            InputStream is = url.openConnection().getInputStream();
-
-            FileUtils.copyInputStreamToFile(is, f);
+        if (urls.isPresent()) {
+            templateDirectory = Optional.of(p.toFile());
         }
+
+        Collections.list(urls.orElse(Collections.emptyEnumeration()))
+                .stream()
+                .map(url -> Pair.of(url, url.toString()))
+                .map(pair -> Pair.of(pair.getLeft(), pair.getRight().substring(pair.getRight().lastIndexOf("/") + 1)))
+                .map(pair -> Pair.of(pair.getLeft(), new File(templateDirectory.get(), pair.getRight())))
+                .peek(pair -> pair.getRight().deleteOnExit())
+                .map(pair -> {
+                    try {
+                        return Pair.of(pair.getLeft().openConnection().getInputStream(), pair.getRight());
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                })
+                .forEach(pair -> {
+                    try {
+                        FileUtils.copyInputStreamToFile(pair.getLeft(), pair.getRight());
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                });
     }
 
-    public synchronized File getTemplateDirectory() {
+    public Optional<File> getTemplateDirectory() {
         if (!templateDirectory.isPresent()) {
-            try {
-                initializeTemplateDirectories();
-            } catch (IOException e) {
-                log.error("Error initializing template directory", e);
-            }
+            log.warn("LocalFileManagementService.getTemplateDirectory() is returning a null value. If this is " +
+                    "running in a Red Hat environment, this is ALMOST CERTAINLY a project misconfiguration. Check " +
+                    "to ensure that there are no broken symlinks in your build environment.");
         }
-        return templateDirectory.get();
+        return templateDirectory;
     }
 
-    public synchronized List<String> getGemPaths() throws IOException {
-        if (!gemPaths.isPresent()) {
-            initializeGemPaths();
-        }
-        return gemPaths.get();
+    public List<String> getGemPaths() {
+        return gemPaths;
     }
 
     private void initializeGemPaths() {
         Enumeration<URL> gems = FrameworkUtil.getBundle(LocalFileManagementService.class)
                 .findEntries("gems", "*", false);
-        gemPaths = Optional.of(new ArrayList<>());
+        List<String> list = new ArrayList<>();
         while (gems.hasMoreElements()) {
             URL g = gems.nextElement();
-            gemPaths.get().add("uri:classloader:" + g.getPath() + "lib");
+            list.add("uri:classloader:" + g.getPath() + "lib");
         }
+        gemPaths = Collections.unmodifiableList(list);
     }
 
 }
