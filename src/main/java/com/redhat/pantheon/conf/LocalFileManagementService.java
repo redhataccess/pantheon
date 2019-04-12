@@ -40,33 +40,14 @@ public class LocalFileManagementService {
     }
 
     public void initializeTemplateDirectories() throws IOException {
-//        Enumeration<URL> urls = FrameworkUtil.getBundle(LocalFileManagementService.class)
-//                .findEntries("apps/pantheon/templates/haml/html5", "*", false);
         Optional<Enumeration<URL>> urls = Optional.ofNullable(FrameworkUtil.getBundle(LocalFileManagementService.class)
                 .findEntries("apps/pantheon/templates/haml/html5", "*", false));
         Path p = Files.createTempDirectory("templates");
 
         log.info("Initializing template directories at " + p.toString());
 
-//        if (urls != null && urls.hasMoreElements()) {
-//            templateDirectory = Optional.of(p.toFile());
-//        }
-        if (urls.orElse(Collections.emptyEnumeration()).hasMoreElements()) {
-            templateDirectory = Optional.of(p.toFile());
-        }
+        urls.ifPresent(a -> templateDirectory = Optional.of(p.toFile()));
 
-//        while (urls != null && urls.hasMoreElements()) {
-//            URL url = urls.nextElement();
-//            String filename = url.toString();
-//            filename = filename.substring(filename.lastIndexOf("/") + 1);
-//
-//            File f = new File(templateDirectory.get(), filename);
-//            f.deleteOnExit();
-//
-//            InputStream is = url.openConnection().getInputStream();
-//
-//            FileUtils.copyInputStreamToFile(is, f);
-//        }
         Collections.list(urls.orElse(Collections.emptyEnumeration()))
                 .stream()
                 .map(url -> Pair.of(url, url.toString()))
