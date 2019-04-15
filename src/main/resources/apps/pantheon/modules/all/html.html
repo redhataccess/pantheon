@@ -50,11 +50,11 @@ function sortTable(n) {
   rows.sort(function(a, b) {
     var t1, t2;
     if (a.cells[n].firstElementChild == null) {
-        t1 = a.cells[n].innerText;
-        t2 = b.cells[n].innerText;
+        t1 = a.cells[n].innerText.toLowerCase();
+        t2 = b.cells[n].innerText.toLowerCase();
     } else {
-        t1 = a.cells[n].firstElementChild.innerText;
-        t2 = b.cells[n].firstElementChild.innerText;
+        t1 = a.cells[n].firstElementChild.innerText.toLowerCase();
+        t2 = b.cells[n].firstElementChild.innerText.toLowerCase();
     }
     if (t1 == t2) { return 0; }
     else if (t1 > t2) { return 1; }
