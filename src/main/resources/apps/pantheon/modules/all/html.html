@@ -10,6 +10,10 @@
         <a class="btn btn-primary" href="/modules.add.html">New Module</a>
     </p>
 
+    <p>
+    <input type="text" id="searchTerms" onkeyup="search()" placeholder="Search for names..">
+    </p>
+
     <table id="myTable">
         <tr>
             <th width="200px"><a href="#" onclick="sortTable(0)">Name</a></th>
@@ -19,6 +23,8 @@
             <th><a href="#" onclick="sortTable(4)">Upload Time</a></th>
         </tr>
 
+<sly data-sly-test.searchIsNull="${!request.requestParameterMap['search']}"></sly> 
+  <sly data-sly-use.moduleData="${'com.redhat.pantheon.use.ModuleData' @ query=(searchIsNull ? '*' : request.requestParameterMap['search'][0].toString )}">
         <sly data-sly-list="${moduleData.getModulesCreateSort}">
             <tr>
                 <td>
@@ -37,7 +43,7 @@
                     <sly data-sly-use.date="${'com.redhat.pantheon.use.DateFormatter' @ format='yyyy/MM/dd HH:mm:ss', date=item.jcr:created}">${date.value}</sly>
                 </td>
             </tr>
-        </sly>
+        </sly></sly>
     </table>
 </div>
 
@@ -89,6 +95,26 @@ function sortTable(n) {
   }
 }
 </script>
+<script>
+function search() {
+  // Declare variables
+  var input;
+  //mySearchTerm = input/filter
 
+  document.getElementById("searchTerms")
+    .addEventListener("keyup", function(event) {
+    event.preventDefault();
+    if (event.keyCode === 13) {
+    	  input = document.getElementById("searchTerms");
+    	  //refresh table
+    	  if ('URLSearchParams' in window) {
+    	      var searchParams = new URLSearchParams(window.location.search);
+    	      searchParams.set("search", input.value);
+    	      window.location.search = searchParams.toString();
+    	  }
+    }
+});
+}
+</script>
 </body>
 </html>
