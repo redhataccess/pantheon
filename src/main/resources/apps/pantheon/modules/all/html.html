@@ -13,17 +13,25 @@
     <table id="myTable">
         <tr>
             <th width="200px"><a href="#" onclick="sortTable(0)">Name</a></th>
-            <th width="325px"><a href="#" onclick="sortTable(1)">Description</th>
-            <th><a href="#" onclick="sortTable(2)">Upload Time</a></th>
+            <th width="325px"><a href="#" onclick="sortTable(1)">Description</a></th>
+            <th width="150px"><a href="#" onclick="sortTable(2)">Source Type</a></th>
+            <th width="250px"><a href="#" onclick="sortTable(3)">Source Name</a></th>
+            <th><a href="#" onclick="sortTable(4)">Upload Time</a></th>
         </tr>
 
         <sly data-sly-list="${moduleData.getModulesCreateSort}">
             <tr>
                 <td>
-                    <a href="${item.name @ prependPath='modules/', addSelectors=['preview']}">${item.jcr:title}</a>
+                    <a href="${item.pant:transientPath}.preview">${item.jcr:title}</a>
                 </td>
                 <td>
-                    <a href="${item.name @ prependPath='modules/', addSelectors=['preview']}">${item.jcr:description}</a>
+                    <a href="${item.pant:transientPath}.preview">${item.jcr:description}</a>
+                </td>
+                <td>
+                    ${item.pant:transientSource}
+                </td>
+                <td>
+                    ${item.pant:transientSourceName}
                 </td>
                 <td>
                     <sly data-sly-use.date="${'com.redhat.pantheon.use.DateFormatter' @ format='yyyy/MM/dd HH:mm:ss', date=item.jcr:created}">${date.value}</sly>
