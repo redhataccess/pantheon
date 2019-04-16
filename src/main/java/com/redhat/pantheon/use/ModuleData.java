@@ -47,8 +47,7 @@ public class ModuleData implements Use {
       	    query = "";
       	} else {
       		query = "AND (a.[jcr:title] like "+ "'%"+query+"%' "+
-      				"OR a.[jcr:description] like "+ "'%"+query+"%' "+
-      				"OR a.[jcr:created] like "+ "'%"+query+"%') ";
+      				"OR a.[jcr:description] like "+ "'%"+query+"%') ";
       	}
 
         Iterator<Resource> resources = resolver.findResources("select * from [pant:module] as a " +
