@@ -26,7 +26,7 @@ import java.util.Map;
                 Constants.SERVICE_DESCRIPTION + "=Servlet which provides initial module listing and search functionality",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
-@SlingServletPaths(value = "/modules")
+@SlingServletPaths(value = "/modules.json")
 public class ModuleListingServlet extends SlingSafeMethodsServlet {
 
     @Override
