@@ -15,11 +15,11 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
     private final Logger log = LoggerFactory.getLogger(SlingResourceIncludeProcessor.class);
 
     private ResourceResolver resolver;
-    private Resource resource;
+    private Resource parent;
 
     public SlingResourceIncludeProcessor(final Resource resource) {
         this.resolver = resource.getResourceResolver();
-        this.resource = resource;
+        this.parent = resource.getParent();
     }
 
     @Override
@@ -30,19 +30,18 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
     @Override
     public void process(Document document, PreprocessorReader reader, String target, Map<String, Object> attributes) {
         log.trace("Attempting to include {}", target);
-        log.trace("Resource: {}", resource);
+        log.trace("Parent: {}", parent);
+        log.trace("reader.getDir(): {}", reader.getDir());
+        log.trace("reader.getFile(): {}", reader.getFile());
 
-        // Find the included file relative to the current resource's location
-        Resource parent = resource.getParent();
-        log.trace("Resource parent: {}", parent);
-        Resource includeResource = resolver.getResource(parent, target);
-        // Odds are good that our fist attempt was looking for something like "include.adoc", but our resource was
-        // simply named "include", so try again after dropping the suffix.
-        if (includeResource == null && target.contains(".")) {
-            String newTarget = target.substring(0, target.lastIndexOf('.'));
-            log.trace("Could not find {}, searching for {}", target, newTarget);
-            includeResource = resolver.getResource(parent, newTarget);
+        String fixedTarget = target;
+        if (reader.getFile().isEmpty()) {
+            log.trace("At top level, no need to fix target");
+        } else {
+            fixedTarget = reader.getDir() + "/" + target;
+            log.trace("Fixed target: " + fixedTarget);
         }
+        Resource includeResource = resolver.getResource(parent, fixedTarget);
         String content = "Invalid include: " + target;
 
         if(includeResource != null) {
