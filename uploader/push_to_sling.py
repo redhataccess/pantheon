@@ -40,70 +40,73 @@ print('Using server: ' + args.server)
 print('Using repository: ' + args.repository)
 print('--------------')
 
-pathlist = Path(args.directory).glob('**/*')
+# pathlist = Path(args.directory).glob('**/*')
 
-for path in pathlist:
-    base_name = path.stem
+# for path in pathlist:
+for root, dirs, files in os.walk(args.directory, followlinks=True):
+    for file in files:
+        path = PurePath(root + '/' + file)
+        base_name = path.stem
 
-    ppath = path
-    hiddenFolder = False
-    while not ppath == PurePath(args.directory):
-        logger.debug('ppath: %s', str(ppath.stem))
-        if ppath.stem[0] == '.':
-            hiddenFolder = True
-            break
-        ppath = ppath.parent
-    if hiddenFolder:
-        logger.info('Skipping %s because it is hidden.', str(path))
-        continue
+        ppath = path
+        hiddenFolder = False
+        while not ppath == PurePath(args.directory):
+            logger.debug('ppath: %s', str(ppath.stem))
+            if ppath.stem[0] == '.':
+                hiddenFolder = True
+                break
+            ppath = ppath.parent
+        if hiddenFolder:
+            logger.info('Skipping %s because it is hidden.', str(path))
+            continue
 
-    if not path.is_file():
-        logger.info('Skipping %s because it is not a file.', str(path))
-        continue
+        # if not path.is_file() and not path.is_symlink():
+        #     logger.info('Skipping %s because it is not a file.', str(path))
+        #     continue
 
-    # parent directory
-    parent_dir_str = str(path.parent.relative_to(args.directory))
-    if parent_dir_str == '.':
-        parent_dir_str = ''
-    logger.debug('parent_dir_str: %s', parent_dir_str)
-    # file becomes a/file/name (no extension)
+        # parent directory
+        parent_dir_str = str(path.parent.relative_to(args.directory))
+        if parent_dir_str == '.':
+            parent_dir_str = ''
+        logger.debug('parent_dir_str: %s', parent_dir_str)
+        # file becomes a/file/name (no extension)
 
-    url = args.server + "/content/repositories/" + args.repository
-    if parent_dir_str:
-        url += '/' + parent_dir_str
+        url = args.server + "/content/repositories/" + args.repository
+        if parent_dir_str:
+            url += '/' + parent_dir_str
 
-    logger.debug('base name: %s', base_name)
+        logger.debug('base name: %s', base_name)
 
-    # Asciidoc content (treat as a module)
-    if path.suffix == '.adoc' or path.suffix == '.asciidoc':
-        print(path)
-        url += '/' + path.name
-        logger.debug(url)
-        data = {"jcr:primaryType": 'pant:module',
-                "jcr:title": base_name,
-                "jcr:description": base_name,
-                "sling:resourceType": 'pantheon/modules',
-                "pant:originalName": path.name,
-                "asciidoc@TypeHint": 'nt:file'}
-        files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
+        # Asciidoc content (treat as a module)
+        if path.suffix == '.adoc' or path.suffix == '.asciidoc':
+            print(path)
+            url += '/' + path.name
+            logger.debug(url)
+            data = {"jcr:primaryType": 'pant:module',
+                    "jcr:title": base_name,
+                    "jcr:description": base_name,
+                    "sling:resourceType": 'pantheon/modules',
+                    "pant:originalName": path.name,
+                    "asciidoc@TypeHint": 'nt:file'}
+            files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
 
-        # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
-        # It is text/x-asciidoc. Here's why:
-        # https://tools.ietf.org/html/rfc2045#section-6.3
-        # Paraphrased: "If it's not an IANA standard, use the 'x-' prefix.
-        # Here's the list of standards; text/asciidoc isn't in it.
-        # https://www.iana.org/assignments/media-types/media-types.xhtml#text
+            # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
+            # It is text/x-asciidoc. Here's why:
+            # https://tools.ietf.org/html/rfc2045#section-6.3
+            # Paraphrased: "If it's not an IANA standard, use the 'x-' prefix.
+            # Here's the list of standards; text/asciidoc isn't in it.
+            # https://www.iana.org/assignments/media-types/media-types.xhtml#text
 
-        r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
-        print(r.status_code, r.reason)
-        print()
-    # Otherwise just upload as a regular file
-    else:
-        print(path)
-        logger.debug(url)
-        files = {path.name: (path.name, open(path, 'rb'))}
-        r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
-        print(r.status_code, r.reason)
-        print()
+            r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
+            print(r.status_code, r.reason)
+            print()
+        # Otherwise just upload as a regular file
+        else:
+            print(path)
+            logger.debug(url)
+            files = {path.name: (path.name, open(path, 'rb'))}
+            r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
+            print(r.status_code, r.reason)
+            print()
 
 print('Finished!')
