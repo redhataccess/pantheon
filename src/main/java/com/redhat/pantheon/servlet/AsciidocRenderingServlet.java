@@ -41,6 +41,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -183,6 +184,13 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     private class Content {
         public String html;
         public String asciidoc;
+    }
+    
+    protected void doPost(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
+    	Resource r = request.getResourceResolver().getResource("pantheon/modules");
+        log.debug("myResource is '{}'", r);
+        //request.getResourceResolver().delete(r);
+        //request.getResourceResolver().commit();
     }
 }
 

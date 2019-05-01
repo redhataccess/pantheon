@@ -13,20 +13,23 @@
     <p>
     <input type="text" id="searchTerms" onkeyup="search()" placeholder="Search for names..">
     </p>
-
+    <form method="POST" id="moduleList" action="/content/modules/delete" enctype="multipart/form-data">
+    
     <table id="myTable">
         <tr>
+            <th></th>
             <th width="200px"><a href="#" onclick="sortTable(0)">Name</a></th>
             <th width="325px"><a href="#" onclick="sortTable(1)">Description</a></th>
             <th width="150px"><a href="#" onclick="sortTable(2)">Source Type</a></th>
             <th width="250px"><a href="#" onclick="sortTable(3)">Source Name</a></th>
             <th><a href="#" onclick="sortTable(4)">Upload Time</a></th>
         </tr>
-
+        
 <sly data-sly-test.searchIsNull="${!request.requestParameterMap['search']}"></sly> 
   <sly data-sly-use.moduleData="${'com.redhat.pantheon.use.ModuleData' @ query=(searchIsNull ? '*' : request.requestParameterMap['search'][0].toString )}">
         <sly data-sly-list="${moduleData.getModulesCreateSort}">
             <tr>
+               <td><input name="module" id="${item.pant:transientPath}" type="checkbox" value="true" /></td>
                 <td>
                     <a href="${item.pant:transientPath}.preview">${item.jcr:title}</a>
                 </td>
@@ -42,9 +45,14 @@
                 <td>
                     <sly data-sly-use.date="${'com.redhat.pantheon.use.DateFormatter' @ format='yyyy/MM/dd HH:mm:ss', date=item.jcr:created}">${date.value}</sly>
                 </td>
+                <td>
+                	
+                </td>
             </tr>
         </sly></sly>
     </table>
+    <div id="bulkOperation"> </div>
+    </form>
 </div>
 
 <div data-sly-include="${'/apps/pantheon/partials/footer.html'}">
@@ -115,6 +123,53 @@ function search() {
     }
 });
 }
+</script>
+<script>
+  let checkboxes = document.querySelectorAll("[name=module]");
+  let deleteButton;
+  let item = 0;
+  let form = document.getElementById("moduleList");
+  for (let checkbox of Array.from(checkboxes)) {
+	  checkbox.addEventListener("change", () => {
+		  if (checkbox.checked == true) {
+			  document.body.style.background = "lightgrey";
+			  console.log("module selected for deletion: ", checkbox.id);
+			  //checkbox.setAttribute("name", "module@delete");
+			  
+			  item = item +1;
+		  } else {
+			  document.body.style.background = "";
+			  if (checkbox.name !== "module") {
+				  checkbox.setAttribute("name", "module");
+			  }
+			  if (item > 0) {
+				  item = item - 1;
+			  }
+		  }		  
+		  if(item > 0) {
+			  let btn = document.getElementById("delete");
+			  if (! btn) {
+			    deleteButton = document.createElement("input");
+			    deleteButton.setAttribute("type", "submit");
+			    deleteButton.setAttribute("value", "Delete");
+			    deleteButton.setAttribute("id", "delete");
+			    deleteButton.setAttribute("class", "btn btn-primary");
+			    deleteButton.setAttribute("onclick", "form.submit()");
+			    document.getElementById("bulkOperation").appendChild(deleteButton);
+			    form.setAttribute("action", "/content/" + checkbox.id);
+	
+			    hiddenEle = document.createElement("input");
+			    hiddenEle.setAttribute("type", "hidden");
+			    hiddenEle.setAttribute("name", ":operation");
+			    hiddenEle.setAttribute("value", "delete");
+			    
+			    
+			  }
+		  } 
+	  });
+	    
+  }
+  
 </script>
 </body>
 </html>

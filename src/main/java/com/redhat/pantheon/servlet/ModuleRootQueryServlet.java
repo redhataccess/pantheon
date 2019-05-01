@@ -7,6 +7,8 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.jcr.query.Query;
@@ -40,7 +42,8 @@ import java.util.Iterator;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
 public class ModuleRootQueryServlet extends SlingSafeMethodsServlet {
-
+	private final Logger logger = LoggerFactory.getLogger(ModuleRootQueryServlet.class);
+	
     @Override
     protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
 
@@ -61,5 +64,13 @@ public class ModuleRootQueryServlet extends SlingSafeMethodsServlet {
             request.getRequestDispatcher(resources.next(), options)
                     .forward(request, response);
         }
+    }
+    
+
+    protected void doPost(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
+    	Resource r = request.getResourceResolver().getResource("pantheon/modules");
+        logger.debug("myResource is '{}'", r);
+        //request.getResourceResolver().delete(r);
+        //request.getResourceResolver().commit();
     }
 }
