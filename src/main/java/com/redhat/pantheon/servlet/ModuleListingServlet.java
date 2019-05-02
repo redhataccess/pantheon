@@ -32,7 +32,12 @@ public class ModuleListingServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
         ModuleDataRetriever mdr = new ModuleDataRetriever(request.getResourceResolver());
-        List<Map<String, Object>> payload = mdr.getModulesCreateSort("*");
+        String searchParam = "*";
+        if (request.getParameterMap().containsKey("search")) {
+            searchParam = request.getRequestParameter("search").toString();
+        }
+
+        List<Map<String, Object>> payload = mdr.getModulesCreateSort(searchParam);
 
         response.setContentType("application/json");
         Writer w = response.getWriter();
