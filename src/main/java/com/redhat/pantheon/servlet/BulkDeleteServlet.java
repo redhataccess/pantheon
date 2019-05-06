@@ -19,28 +19,26 @@
 package com.redhat.pantheon.servlet;
 
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.jcr.Session;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceNotFoundException;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
 
 @Component(
         service = Servlet.class,
@@ -52,35 +50,45 @@ import org.slf4j.LoggerFactory;
 )
 @SlingServletResourceTypes(
         resourceTypes="pantheon/modules",
-        methods= "POST",
-        extensions="html")
+        methods= "POST")
 @SuppressWarnings("serial")
-public class ModuleListServlet extends SlingAllMethodsServlet {
-	private final Logger logger = LoggerFactory.getLogger(ModuleListServlet.class);
+public class BulkDeleteServlet extends SlingAllMethodsServlet {
+	private final Logger logger = LoggerFactory.getLogger(BulkDeleteServlet.class);
 
-    public ModuleListServlet() {
+    public BulkDeleteServlet() {
     }
     
-    @Override
+	@Override
     protected void doPost(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
-        final Map<String, Object> base = new LinkedHashMap<>();
-        final ValueMapDecorator parameters = new ValueMapDecorator(base);
-        final Enumeration<String> names = request.getParameterNames();
-        while (names.hasMoreElements()) {
-            final String name = names.nextElement();
-            parameters.put(name, request.getRequestParameter(name));
+    	Session session = request.getResourceResolver().adaptTo(Session.class);
+    	
+        String[] checkboxValues = request.getParameterValues("module");
+		List<String> resourcePaths = Arrays.asList(checkboxValues);
+		ResourceResolver resourceResolver = request.getResourceResolver();
+        try {
+        	
+        	for ( String rPath: resourcePaths) {
+        		Resource res = resourceResolver.getResource("/content/" + rPath);
+        		// Delete the resource.
+        		if (res != null) {
+        			resourceResolver.delete(res);
+        		} else {
+        			String msg = "Missing Resource /content/" + rPath + " for delete";
+        			response.sendError(HttpServletResponse.SC_NOT_FOUND, msg);
+        			throw new ResourceNotFoundException(msg);
+        		}
+        	}
+        	
+        } 
+        catch (Exception e) {
+        	// Log the error.
+        } finally {
+        	resourceResolver.commit();
+        	response.sendRedirect("/modules.html");
+        	
+        	// When done, close the ResourceResolver.
+        	//resourceResolver.close();
         }
-        logger.debug("parameters: {}", parameters);
-
-       
-        final String resourcePath = request.getRequestPathInfo().getResourcePath();
-        logger.debug("resourcePath is '{}'", resourcePath);
         
-            
-        Resource r = request.getResourceResolver().getResource("pantheon/modules");
-        logger.debug("myResource is '{}'", r);
-        //request.getResourceResolver().delete(r);
-        //request.getResourceResolver().commit();
-       
     }    
 }

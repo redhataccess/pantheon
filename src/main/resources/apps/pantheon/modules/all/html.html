@@ -13,7 +13,7 @@
     <p>
     <input type="text" id="searchTerms" onkeyup="search()" placeholder="Search for names..">
     </p>
-    <form method="POST" id="moduleList" action="/content/modules/delete" enctype="multipart/form-data">
+    <form method="POST" id="moduleList" action="/modules.html" enctype="multipart/form-data">
     
     <table id="myTable">
         <tr>
@@ -29,7 +29,7 @@
   <sly data-sly-use.moduleData="${'com.redhat.pantheon.use.ModuleData' @ query=(searchIsNull ? '*' : request.requestParameterMap['search'][0].toString )}">
         <sly data-sly-list="${moduleData.getModulesCreateSort}">
             <tr>
-               <td><input name="module" id="${item.pant:transientPath}" type="checkbox" value="true" /></td>
+               <td><input name="module" id="${item.pant:transientPath}" type="checkbox" value="${item.pant:transientPath}" /></td>
                 <td>
                     <a href="${item.pant:transientPath}.preview">${item.jcr:title}</a>
                 </td>
@@ -130,46 +130,32 @@ function search() {
   let item = 0;
   let form = document.getElementById("moduleList");
   for (let checkbox of Array.from(checkboxes)) {
-	  checkbox.addEventListener("change", () => {
-		  if (checkbox.checked == true) {
-			  document.body.style.background = "lightgrey";
-			  console.log("module selected for deletion: ", checkbox.id);
-			  //checkbox.setAttribute("name", "module@delete");
-			  
-			  item = item +1;
-		  } else {
-			  document.body.style.background = "";
-			  if (checkbox.name !== "module") {
-				  checkbox.setAttribute("name", "module");
-			  }
-			  if (item > 0) {
-				  item = item - 1;
-			  }
-		  }		  
-		  if(item > 0) {
-			  let btn = document.getElementById("delete");
-			  if (! btn) {
-			    deleteButton = document.createElement("input");
-			    deleteButton.setAttribute("type", "submit");
-			    deleteButton.setAttribute("value", "Delete");
-			    deleteButton.setAttribute("id", "delete");
-			    deleteButton.setAttribute("class", "btn btn-primary");
-			    deleteButton.setAttribute("onclick", "form.submit()");
-			    document.getElementById("bulkOperation").appendChild(deleteButton);
-			    form.setAttribute("action", "/content/" + checkbox.id);
-	
-			    hiddenEle = document.createElement("input");
-			    hiddenEle.setAttribute("type", "hidden");
-			    hiddenEle.setAttribute("name", ":operation");
-			    hiddenEle.setAttribute("value", "delete");
-			    
-			    
-			  }
-		  } 
-	  });
-	    
+    checkbox.addEventListener("change", () => {
+      if (checkbox.checked == true) {
+	    document.body.style.background = "lightgrey";
+	    //console.log("module selected for deletion: ", checkbox.id);
+	    item++;
+	  } else {
+	    item--;
+      if (item == 0) {
+		   document.body.style.background = "";
+		  }
+	  }
+	  if(item > 0) {
+	    let btn = document.getElementById("delete");
+		if (! btn) {
+		  deleteButton = document.createElement("input");
+		  deleteButton.setAttribute("type", "submit");
+		  deleteButton.setAttribute("value", "Delete");
+		  deleteButton.setAttribute("id", "delete");
+		  deleteButton.setAttribute("class", "btn btn-primary");
+		  deleteButton.setAttribute("onclick", "form.submit()");
+		  document.getElementById("bulkOperation").appendChild(deleteButton);
+		  form.setAttribute("action", "/content/" + checkbox.id);
+		}
+	  }
+	});
   }
-  
 </script>
 </body>
 </html>
