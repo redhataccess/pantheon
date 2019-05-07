@@ -50,7 +50,7 @@ public class ModuleRootQueryServlet extends SlingSafeMethodsServlet {
         // Get the query parameter(s)
         String moduleName = request.getParameter("name");
 
-        Iterator<Resource> resources = request.getResourceResolver().findResources("SELECT * from [pant:module2] AS modules WHERE ISDESCENDANTNODE(\"" +
+        Iterator<Resource> resources = request.getResourceResolver().findResources("SELECT * from [pant:module] AS modules WHERE ISDESCENDANTNODE(\"" +
                 request.getResource().getPath() + "\") " +
                 "and name(modules) like '%" + moduleName + "%'", Query.JCR_SQL2);
 
