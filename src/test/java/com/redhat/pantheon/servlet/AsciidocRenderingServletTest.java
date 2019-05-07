@@ -4,7 +4,6 @@ import com.redhat.pantheon.conf.AsciidoctorPoolService;
 import com.redhat.pantheon.conf.LocalFileManagementService;
 import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.model.Module.CachedContent;
-import com.redhat.pantheon.use.ModuleData;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.MockSling;
@@ -23,7 +22,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -72,22 +70,6 @@ public class AsciidocRenderingServletTest {
         assertTrue(slingContext.response().getOutputAsString().contains("This is a title"));
         assertTrue(slingContext.response().getOutputAsString().contains("And this is some text"));
         assertEquals("text/html", slingContext.response().getContentType());
-    }
-
-    @Test
-    @DisplayName("Search for available modules")
-    public void testSearchAvailableModules() throws Exception {
-        // Given
-    	//TO-DO Need to figure out way to add modules to mock.
-
-        // When
-        // Normally this is instantiated thru sly in the html
-    	ModuleData moduleData = mock(ModuleData.class);
-        List<Map<String, Object>> data = moduleData.getModulesCreateSort();
-
-        // Then
-        //We Expect an empty list because we have not added any modules.
-        assertEquals("[]", data.toString());
     }
 
     private List<String> getGemPaths() throws IOException {
