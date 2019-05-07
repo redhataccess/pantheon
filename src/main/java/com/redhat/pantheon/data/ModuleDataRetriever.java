@@ -42,7 +42,12 @@ public class ModuleDataRetriever {
                     "OR a.[jcr:description] like "+ "'%"+query+"%') ";
         }
 
-        Iterator<Resource> resources = resolver.findResources("select * from [pant:module] as a " +
+        //FIXME - we had "select * from [pant:module]..." here, BUT we were seeing problems that after a very small
+        //FIXME - number of module upload/delete operations, this query would suddenly return only a very small number
+        //FIXME - of modules. Changing this to [nt:base] seems to fix it, but I don't know why. Perhaps it's some bug
+        //FIXME - related to 'nodetypes.cnd' getting reinstalled on every package deployment, resulting in the
+        //FIXME - pant:module nodetype being assigned some new internal id, but that's pure speculation.
+        Iterator<Resource> resources = resolver.findResources("select * from [nt:base] as a " +
                 "where [sling:resourceType] = 'pantheon/modules' " +
                 "and (isdescendantnode(a, '/content/repositories') " +
                 "or isdescendantnode(a, '/content/modules') " +
