@@ -18,12 +18,14 @@
  */
 package com.redhat.pantheon.servlet;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
-import com.redhat.pantheon.conf.AsciidoctorPoolService;
-import com.redhat.pantheon.conf.LocalFileManagementService;
-import com.redhat.pantheon.model.Module;
+import static java.util.stream.Collectors.toList;
+
+import java.io.IOException;
+import java.io.Writer;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.PersistenceException;
@@ -41,13 +43,12 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.io.Writer;
-
-import static java.util.stream.Collectors.toList;
+import com.google.common.base.Charsets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.redhat.pantheon.conf.AsciidoctorPoolService;
+import com.redhat.pantheon.conf.LocalFileManagementService;
+import com.redhat.pantheon.model.Module;
 
 
 @Component(
@@ -184,13 +185,6 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     private class Content {
         public String html;
         public String asciidoc;
-    }
-    
-    protected void doPost(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
-    	Resource r = request.getResourceResolver().getResource("pantheon/modules");
-        log.debug("myResource is '{}'", r);
-        //request.getResourceResolver().delete(r);
-        //request.getResourceResolver().commit();
     }
 }
 

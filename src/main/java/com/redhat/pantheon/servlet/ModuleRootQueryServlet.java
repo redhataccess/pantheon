@@ -65,12 +65,4 @@ public class ModuleRootQueryServlet extends SlingSafeMethodsServlet {
                     .forward(request, response);
         }
     }
-    
-
-    protected void doPost(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
-    	Resource r = request.getResourceResolver().getResource("pantheon/modules");
-        logger.debug("myResource is '{}'", r);
-        //request.getResourceResolver().delete(r);
-        //request.getResourceResolver().commit();
-    }
 }

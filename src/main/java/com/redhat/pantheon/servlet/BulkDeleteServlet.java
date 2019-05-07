@@ -53,8 +53,11 @@ import org.slf4j.LoggerFactory;
         methods= "POST")
 @SuppressWarnings("serial")
 public class BulkDeleteServlet extends SlingAllMethodsServlet {
-	private final Logger logger = LoggerFactory.getLogger(BulkDeleteServlet.class);
 
+	private final Logger logger = LoggerFactory.getLogger(BulkDeleteServlet.class);
+	
+	private static final String CONTENT_PATH_PREFIX = "/content/";
+	
     public BulkDeleteServlet() {
     }
     
@@ -68,12 +71,12 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
         try {
         	
         	for ( String rPath: resourcePaths) {
-        		Resource res = resourceResolver.getResource("/content/" + rPath);
+        		Resource res = resourceResolver.getResource(CONTENT_PATH_PREFIX + rPath);
         		// Delete the resource.
         		if (res != null) {
         			resourceResolver.delete(res);
         		} else {
-        			String msg = "Missing Resource /content/" + rPath + " for delete";
+        			String msg = "Missing Resource " + CONTENT_PATH_PREFIX + rPath + " for delete";
         			response.sendError(HttpServletResponse.SC_NOT_FOUND, msg);
         			throw new ResourceNotFoundException(msg);
         		}
@@ -82,12 +85,13 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
         } 
         catch (Exception e) {
         	// Log the error.
+        	logger.error("Module deletion failed: {}", e.getMessage(), e);
         } finally {
         	resourceResolver.commit();
         	response.sendRedirect("/modules.html");
         	
         	// When done, close the ResourceResolver.
-        	//resourceResolver.close();
+        	resourceResolver.close();
         }
         
     }    
