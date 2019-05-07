@@ -9,7 +9,7 @@ export default class Index extends Component {
     redirectLocation: '',
     input: '',
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
-    data: [{"jcr:created": '', "name": "search_intro_message_thn","jcr:title": "Search is case sensitive. Enter '*' for all modules.", "jcr:description": "", "sling:resourceType": "", "pant:transientSource":""}]
+    data: [{"pant:transientPath": '',"jcr:created": '', "name": "search_intro_message_thn","jcr:title": "Search is case sensitive. Enter '*' for all modules.", "jcr:description": "", "sling:resourceType": "", "pant:transientSource":""}]
   };
   public render() {
     const { columns, input } = this.state;
@@ -24,10 +24,9 @@ export default class Index extends Component {
             <Table aria-label="table-header" rows={[]} cells={columns} >
               <TableHeader />
             </Table>
-            {this.renderPreview()}
             {this.state.data.map(data => (
-              <Table id="table-rows" aria-label="table-data" key={data.name} rows={[[data["jcr:title"], data["jcr:description"], data["sling:resourceType"], data["pant:transientSource"], data["jcr:created"].toString()]]} cells={columns} >
-                <TableBody onRowClick={() => this.setPreview(data.name)} />
+              <Table id="table-rows" aria-label="table-data" key={data["pant:transientPath"]} rows={[[data["jcr:title"], data["jcr:description"], data["sling:resourceType"], data["pant:transientSource"], data["jcr:created"].toString()]]} cells={columns} >
+                <TableBody onRowClick={() => this.setPreview(data["pant:transientPath"])} />
               </Table>
             ))}
           </div>
@@ -55,22 +54,11 @@ export default class Index extends Component {
   };
 
 
-  private setPreview(name: string) {
-    console.log("what do I when you click ? " + name)
-    if (name != "search_intro_message_thn") {
-      this.setState({
-        redirect: true,
-        redirectLocation: name
-      })
-    }
-  };
-
-  renderPreview = () => {
-    if (this.state.redirect) {
-      console.log(this.state.redirect)
-      return window.location.assign("/modules/" + this.state.redirectLocation + ".preview");
+  private setPreview(path: string) {
+    console.log("what do I see when you click ? " + path)
+    if (path != "") {      
+      return window.open("/" + path + ".preview");
     } else {
-      console.log(this.state.redirect)
       return ""
     }
   };
