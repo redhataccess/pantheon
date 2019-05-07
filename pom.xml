@@ -30,10 +30,25 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.jupiter.version>5.3.1</junit.jupiter.version>
+        <frontendSrcDir>${project.basedir}/frontend</frontendSrcDir>
+        <node.version>v10.15.3</node.version>
+        <yarn.version>v1.15.2</yarn.version>
+<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
     </properties>
 
     <build>
-        <!--TODO Build the Angular content as part of the build-->
+    <!--Copies React dist to the content directory to be later added to the JCR-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>frontend/dist</directory>
+                <targetPath>SLING-INF/content/pantheon/</targetPath>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -141,6 +156,48 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+    <groupId>com.github.eirslett</groupId>
+    <artifactId>frontend-maven-plugin</artifactId>
+    <version>${frontend-maven-plugin.version}</version>
+
+    <configuration>
+        <nodeVersion>${node.version}</nodeVersion>
+        <yarnVersion>${yarn.version}</yarnVersion>
+        <workingDirectory>${frontendSrcDir}</workingDirectory>
+        <installDirectory>${project.build.directory}</installDirectory>
+    </configuration>
+
+    <executions>
+        <execution>
+            <id>install-frontend-tools</id>
+            <goals>
+                <goal>install-node-and-yarn</goal>
+            </goals>
+        </execution>
+
+        <execution>
+            <id>yarn-install</id>
+            <goals>
+                <goal>yarn</goal>
+            </goals>
+            <configuration>
+                <arguments>install</arguments>
+            </configuration>
+        </execution>
+
+        <execution>
+            <id>build-frontend</id>
+            <goals>
+                <goal>yarn</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+                <arguments>build</arguments>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
         </plugins>
     </build>
     <profiles>
