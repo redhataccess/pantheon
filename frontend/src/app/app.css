@@ -1,0 +1,41 @@
+:root {
+  --myApp-global--spacer--md: 30px;
+}
+
+.app-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--myApp-global--spacer--md);
+}
+
+a {
+  float: top;
+  display: flex;
+  padding: 8px;
+  justify-content: center;
+}
+
+ul {
+  display: flex;
+  justify-content: center;
+  flex-direction:row;
+  background-color: #dddddd;
+}
+
+.input-file {
+  color: #dddddd;
+}
+
+#table-rows:hover * {
+  background: #99ccff;
+}
+
+body {
+  background-color: rgb(36, 36, 36);
+}
+
+.row-view {
+  display:flex; 
+  flex-direction:row;
+}
