@@ -2,8 +2,8 @@
 <head data-sly-include="${'/apps/pantheon/partials/header.html'}">
 </head>
 <body>
-<div class="container" data-sly-test="${currentSession.getUserID != 'anonymous'}">
-<div class="container-fluid" data-sly-use.moduleData="com.redhat.pantheon.use.ModuleData">
+<div data-sly-test="${currentSession.getUserID != 'anonymous'}">
+  <div class="container-fluid" data-sly-use.moduleData="com.redhat.pantheon.use.ModuleData">
     <h1>All Modules</h1>
 
     <p>
@@ -55,8 +55,8 @@
     </form>
 </div>
 </div>
-<div class="container" data-sly-test="${currentSession.getUserID == 'anonymous'}">
-        You must <a href="/system/sling/login.html">log in</a> before attempting to delete a module.
+<div data-sly-test="${currentSession.getUserID == 'anonymous'}">
+  Your session expired. Please <a href="/system/sling/login.html">log in</a>.
 </div>
 <div data-sly-include="${'/apps/pantheon/partials/footer.html'}">
 </div>
