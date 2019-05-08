@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.conf.AsciidoctorPoolService;
 import com.redhat.pantheon.conf.LocalFileManagementService;
+import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -44,6 +45,7 @@ public class AsciidocRenderingServletTest {
                 .resource("/module/asciidoc/jcr:content",
                         "jcr:data", asciidocContent)
                 .commit();
+        slingContext.addModelsForClasses(Module.class, Module.CachedContent.class);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         // needed mocks
         LocalFileManagementService lfmService = mock(LocalFileManagementService.class);
@@ -81,6 +83,7 @@ public class AsciidocRenderingServletTest {
                 .resource("/module/asciidoc/jcr:content",
                         "jcr:data", "")
                 .commit();
+        slingContext.addModelsForClasses(Module.class, Module.CachedContent.class);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         // needed mocks
         LocalFileManagementService lfmService = mock(LocalFileManagementService.class);
