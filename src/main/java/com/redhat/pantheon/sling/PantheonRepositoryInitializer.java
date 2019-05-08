@@ -43,11 +43,9 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
             User admin = (User) s.getUserManager().getAuthorizable("admin");
             admin.changePassword("ccsadmin"); // FIXME - hardcoding admin passwords is a Bad Thing
 
-            for (String path : new String[] {"/content/modules", "/content/repositories"}) {
-                // http://jackrabbit.apache.org/api/2.16/org/apache/jackrabbit/core/security/authorization/GlobPattern.html
-                assignPermissionToPrincipal(s, "anonymous", path, "/*/cachedContent*", Privilege.JCR_MODIFY_PROPERTIES); // No idea why the trailing * is necessary but it doesn't work without it
-                assignPermissionToPrincipal(s, "demo", path, null, Privilege.JCR_WRITE, Privilege.JCR_NODE_TYPE_MANAGEMENT);
-            }
+            // Give the pantheon service user permissions to the whole /content path
+            assignPermissionToPrincipal(s, "pantheon", "/content", "*", Privilege.JCR_ALL);
+
             s.save();
         } catch (Exception e) {
             e.printStackTrace();
