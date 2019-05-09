@@ -88,7 +88,11 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
         		resourceResolver.commit();
         	} catch (PersistenceException e) {
         		// Log the error.
-        		logger.error("Module delete commit failed {}", e.getMessage(), e);;
+        		logger.error("Module delete commit failed {}", e.getMessage(), e);
+        		// Revert all pending changes.
+        		resourceResolver.revert();
+        		String commitError = "Something unexpected happened.";
+        		response.sendError(HttpServletResponse.SC_BAD_REQUEST, commitError);
         	}
         	response.sendRedirect("/modules.html");
         	
