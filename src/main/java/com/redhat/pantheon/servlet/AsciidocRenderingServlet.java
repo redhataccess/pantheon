@@ -18,14 +18,12 @@
  */
 package com.redhat.pantheon.servlet;
 
-import static java.util.stream.Collectors.toList;
-
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-
+import com.google.common.base.Charsets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.redhat.pantheon.conf.AsciidoctorPoolService;
+import com.redhat.pantheon.conf.LocalFileManagementService;
+import com.redhat.pantheon.model.Module;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.PersistenceException;
@@ -43,12 +41,12 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
-import com.redhat.pantheon.conf.AsciidoctorPoolService;
-import com.redhat.pantheon.conf.LocalFileManagementService;
-import com.redhat.pantheon.model.Module;
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.io.Writer;
+
+import static java.util.stream.Collectors.toList;
 
 
 @Component(
