@@ -90,9 +90,11 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
         		// Log the error.
         		logger.error("Module delete commit failed {}", e.getMessage(), e);
         		// Revert all pending changes.
-        		resourceResolver.revert();
-        		String commitError = "Something unexpected happened.";
-        		response.sendError(HttpServletResponse.SC_BAD_REQUEST, commitError);
+        		if (resourceResolver.hasChanges()) {
+        			resourceResolver.revert();
+        			String commitError = "Something unexpected happened.";
+        			response.sendError(HttpServletResponse.SC_BAD_REQUEST, commitError);
+        		}
         	}
         	response.sendRedirect("/modules.html");
         	
