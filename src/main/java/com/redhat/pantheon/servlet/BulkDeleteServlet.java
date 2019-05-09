@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceNotFoundException;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -78,18 +79,21 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
         			throw new ResourceNotFoundException(msg);
         		}
         	}
-        	
         } 
         catch (Exception e) {
         	// Log the error.
         	logger.error("Module deletion failed: {}", e.getMessage(), e);
         } finally {
-        	resourceResolver.commit();
+        	try {
+        		resourceResolver.commit();
+        	} catch (PersistenceException e) {
+        		// Log the error.
+        		logger.error("Module delete commit failed {}", e.getMessage(), e);;
+        	}
         	response.sendRedirect("/modules.html");
         	
         	// When done, close the ResourceResolver.
         	resourceResolver.close();
-        }
-        
-    }    
+        }   
+    }
 }
