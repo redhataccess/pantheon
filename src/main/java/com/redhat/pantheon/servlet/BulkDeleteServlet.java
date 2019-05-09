@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.jcr.Session;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -63,8 +62,6 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
     
 	@Override
     protected void doPost(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
-    	Session session = request.getResourceResolver().adaptTo(Session.class);
-    	
         String[] checkboxValues = request.getParameterValues("module");
 		List<String> resourcePaths = Arrays.asList(checkboxValues);
 		ResourceResolver resourceResolver = request.getResourceResolver();
