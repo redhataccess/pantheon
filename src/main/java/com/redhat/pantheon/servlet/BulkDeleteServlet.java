@@ -54,14 +54,14 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("serial")
 public class BulkDeleteServlet extends SlingAllMethodsServlet {
 
-	private final Logger logger = LoggerFactory.getLogger(BulkDeleteServlet.class);
+    private final Logger logger = LoggerFactory.getLogger(BulkDeleteServlet.class);
 	
-	private static final String CONTENT_PATH_PREFIX = "/content/";
+    private static final String CONTENT_PATH_PREFIX = "/content/";
 	
     public BulkDeleteServlet() {
     }
     
-	@Override
+    @Override
     protected void doPost(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
         String[] checkboxValues = request.getParameterValues("module");
         List<String> resourcePaths = Arrays.asList(checkboxValues);
@@ -80,25 +80,19 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
         			throw new ResourceNotFoundException(msg);
         		}
         	}
+		resourceResolver.commit();
+        	response.sendRedirect(referrer);
         } 
         catch (Exception e) {
         	// Log the error.
         	logger.error("Module deletion failed: {}", e.getMessage(), e);
+		// Revert all pending changes.
+		if (resourceResolver.hasChanges()) {
+			resourceResolver.revert();
+			String commitError = "Something unexpected happened. Message was: " + e.getMessage();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, commitError);
+		}
         } finally {
-        	try {
-        		resourceResolver.commit();
-        	} catch (PersistenceException e) {
-        		// Log the error.
-        		logger.error("Module delete commit failed {}", e.getMessage(), e);
-        		// Revert all pending changes.
-        		if (resourceResolver.hasChanges()) {
-        			resourceResolver.revert();
-        			String commitError = "Something unexpected happened.";
-        			response.sendError(HttpServletResponse.SC_BAD_REQUEST, commitError);
-        		}
-        	}
-        	response.sendRedirect(referrer);
-        	
         	// When done, close the ResourceResolver.
         	resourceResolver.close();
         }   
