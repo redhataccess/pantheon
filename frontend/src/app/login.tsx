@@ -3,31 +3,26 @@ import { Button, BackgroundImage, BackgroundImageSrc, TextInput } from '@pattern
 import '@app/app.css';
 import { Redirect } from 'react-router-dom'
 
-export default class Module extends Component {
+export default class Login extends Component {
   public state = {
-    moduleName: '',
-    moduleDescription: '',
-    moduleFile: File,
-    redirect: false,
-    login: false,
-    failedPost: false,
-    username: 'anonymous'
+    username: '',
+    password: '',
+    currentLogin: 'anonymous'
   };
 
   public render() {
-    const { moduleName, moduleDescription } = this.state;
+    const { username, password } = this.state;
     return (
       <React.Fragment>
         <div className="app-container">
           <div>
-            <TextInput id="module-name" type="text" placeholder="Module Name" value={moduleName} onChange={this.handleTextInputChange1} />
-            <TextInput id="module-description" type="text" placeholder="Module Description" value={moduleDescription} onChange={this.handleTextInputChange2} />
-            <input id="input" className="input-file" color="#dddddd" type="file" onChange={(e) => this.handleFileChange(e.target.files)} />
+            <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.handleTextInputChange1} />
+            <TextInput id="password" type="text" placeholder="Password" value={username} onChange={this.handleTextInputChange2} />
             <div>
               {this.loginRedirect()}
               {this.renderRedirect()}
               {this.checkAuth()}
-              <Button onClick={this.saveModule}>Save</Button>
+              <Button onClick={this.login}>Log In</Button>
             </div>
           </div>
         </div>
@@ -45,21 +40,13 @@ export default class Module extends Component {
     console.log("Desc " + moduleDescription)
   };
 
-  handleFileChange = selectorFiles => {
-    this.setState({ moduleFile: selectorFiles })
-    console.log(selectorFiles);
-  }
-
-  saveModule = (postBody) => {
-    console.log("My name is: " + this.state.moduleName + " and my desc is " + this.state.moduleDescription + " and my files are " + this.state.moduleFile)
-
+  login = (postBody) => {
+    console.log("My name is: " + this.state.username + " and my pw is " + this.state.password + " and my current login is " + this.state.currentLogin)
 
     const hdrs = {
       'cache-control': 'no-cache',
       'Accept': 'application/json'
     }
-    console.log("The file is: " + this.state.moduleFile)
-    const blob = new Blob([this.state.moduleFile[0]])
     const formData = new FormData();
     formData.append("jcr:title", this.state.moduleName)
     formData.append("jcr:description", this.state.moduleDescription)
@@ -85,22 +72,6 @@ export default class Module extends Component {
         this.setState({ failedPost: true })
       }
     });
-  }
-
-  renderRedirect = () => {
-    if (this.state.redirect) {
-      return <Redirect to='/' />
-    } else {
-      return ""
-    }
-  }
-
-  loginRedirect = () => {
-    if (this.state.login) {
-      return window.location.assign("/system/sling/login.html");
-    } else {
-      return ""
-    }
   }
 
   checkAuth = () => {
