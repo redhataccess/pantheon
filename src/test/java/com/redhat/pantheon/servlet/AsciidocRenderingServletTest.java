@@ -3,17 +3,14 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.conf.AsciidoctorPoolService;
 import com.redhat.pantheon.conf.LocalFileManagementService;
 import com.redhat.pantheon.model.Module;
-import com.redhat.pantheon.model.Module.CachedContent;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.testing.mock.sling.MockSling;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.asciidoctor.Asciidoctor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
@@ -36,32 +33,33 @@ public class AsciidocRenderingServletTest {
 
     private final SlingContext slingContext = new SlingContext();
 
-    private ResourceResolver resourceResolver = MockSling.newResourceResolver(slingContext.bundleContext());
-
-    @Mock
-    private Resource resource;
-
     @Test
     @DisplayName("Generate html content from asciidoc")
     public void testGenerateHtmlFromAsciidoc() throws Exception {
 
         // Given
-        Module module = mock(Module.class);
-        CachedContent cachedContent = mock(CachedContent.class);
+        String asciidocContent = "== This is a title \n\n And this is some text";
+        slingContext.build()
+                .resource("/module")
+                .resource("cachedContent")
+                .resource("/module/asciidoc/jcr:content",
+                        "jcr:data", asciidocContent)
+                .commit();
+        slingContext.addModelsForClasses(Module.class, Module.CachedContent.class);
+        Resource resource = slingContext.resourceResolver().getResource("/module");
+        // needed mocks
         LocalFileManagementService lfmService = mock(LocalFileManagementService.class);
         AsciidoctorPoolService apService = mock(AsciidoctorPoolService.class);
-        String asciidocContent = "== This is a title \n\n And this is some text";
-        AsciidocRenderingServlet servlet = new AsciidocRenderingServlet(lfmService, apService);
+        ServiceResourceResolverProvider serResResolverProvider = mock(ServiceResourceResolverProvider.class);
+        // Test class
+        AsciidocRenderingServlet servlet = new AsciidocRenderingServlet(lfmService, apService, serResResolverProvider);
         servlet.init();
 
         // When
-        lenient().when(resource.getPath()).thenReturn("/content");
-        lenient().when(resource.adaptTo(Module.class)).thenReturn(module);
-        lenient().when(module.getCachedContent()).thenReturn(cachedContent);
-        lenient().when(module.getAsciidocContent()).thenReturn(asciidocContent);
         lenient().when(lfmService.getGemPaths()).thenReturn(getGemPaths());
         lenient().when(lfmService.getTemplateDirectory()).thenReturn(Optional.empty());
         lenient().when(apService.requestInstance(resource)).thenReturn(Asciidoctor.Factory.create(getGemPaths()));
+        lenient().when(serResResolverProvider.getServiceResourceResolver()).thenReturn(slingContext.resourceResolver());
         slingContext.request().setResource(resource);
 
         servlet.doGet(slingContext.request(), slingContext.response());
@@ -69,6 +67,43 @@ public class AsciidocRenderingServletTest {
         // Then
         assertTrue(slingContext.response().getOutputAsString().contains("This is a title"));
         assertTrue(slingContext.response().getOutputAsString().contains("And this is some text"));
+        assertEquals("text/html", slingContext.response().getContentType());
+    }
+
+    @Test
+    @DisplayName("Generate html content as cached")
+    public void testRenderCachedHtmlContent() throws Exception {
+
+        // Given
+        slingContext.build()
+                .resource("/module")
+                .resource("cachedContent",
+                        "jcr:data", "This is cached content",
+                        "pant:hash", "01000000")
+                .resource("/module/asciidoc/jcr:content",
+                        "jcr:data", "")
+                .commit();
+        slingContext.addModelsForClasses(Module.class, Module.CachedContent.class);
+        Resource resource = slingContext.resourceResolver().getResource("/module");
+        // needed mocks
+        LocalFileManagementService lfmService = mock(LocalFileManagementService.class);
+        AsciidoctorPoolService apService = mock(AsciidoctorPoolService.class);
+        ServiceResourceResolverProvider serResResolverProvider = mock(ServiceResourceResolverProvider.class);
+        // Test class
+        AsciidocRenderingServlet servlet = new AsciidocRenderingServlet(lfmService, apService, serResResolverProvider);
+        servlet.init();
+
+        // When
+        lenient().when(lfmService.getGemPaths()).thenReturn(getGemPaths());
+        lenient().when(lfmService.getTemplateDirectory()).thenReturn(Optional.empty());
+        lenient().when(apService.requestInstance(resource)).thenReturn(Asciidoctor.Factory.create(getGemPaths()));
+        lenient().when(serResResolverProvider.getServiceResourceResolver()).thenReturn(slingContext.resourceResolver());
+        slingContext.request().setResource(resource);
+
+        servlet.doGet(slingContext.request(), slingContext.response());
+
+        // Then
+        assertTrue(slingContext.response().getOutputAsString().contains("This is cached content"));
         assertEquals("text/html", slingContext.response().getContentType());
     }
 

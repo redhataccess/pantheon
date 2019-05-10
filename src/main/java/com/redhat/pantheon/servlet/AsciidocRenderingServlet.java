@@ -24,10 +24,12 @@ import com.google.common.hash.Hashing;
 import com.redhat.pantheon.conf.AsciidoctorPoolService;
 import com.redhat.pantheon.conf.LocalFileManagementService;
 import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.asciidoctor.Asciidoctor;
@@ -66,13 +68,16 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
     private LocalFileManagementService localFileManagementService;
     private AsciidoctorPoolService asciidoctorPoolService;
+    private ServiceResourceResolverProvider serviceResourceResolverProvider;
 
     @Activate
     public AsciidocRenderingServlet(
             @Reference LocalFileManagementService localFileManagementService,
-            @Reference AsciidoctorPoolService asciidoctorPoolService) {
+            @Reference AsciidoctorPoolService asciidoctorPoolService,
+            @Reference ServiceResourceResolverProvider serviceResourceResolverProvider) {
         this.localFileManagementService = localFileManagementService;
         this.asciidoctorPoolService = asciidoctorPoolService;
+        this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
 
     @Override
@@ -159,13 +164,18 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         return c;
     }
 
-    private void cacheContent(SlingHttpServletRequest request, Module module, Content content) {
+    private void cacheContent(final SlingHttpServletRequest request, final Module readOnlyModule, final Content content) {
         try {
+            ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
+            // reload from the service
+            Module module = serviceResourceResolver.getResource(readOnlyModule.getPath()).adaptTo(Module.class);
+
             module.getCachedContent()
                 .setHash(hash(content.asciidoc).toString());
             module.getCachedContent()
                 .setData(content.html);
-            request.getResourceResolver().commit();
+            serviceResourceResolver.commit();
+            serviceResourceResolver.close();
         } catch (Exception e) {
             e.printStackTrace(); // FIXME
             throw new RuntimeException(e);

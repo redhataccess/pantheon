@@ -5,6 +5,7 @@ import org.apache.jackrabbit.api.security.JackrabbitAccessControlList;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlManager;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlPolicy;
 import org.apache.jackrabbit.api.security.principal.PrincipalManager;
+import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.jcr.api.SlingRepositoryInitializer;
@@ -43,11 +44,15 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
             User admin = (User) s.getUserManager().getAuthorizable("admin");
             admin.changePassword("ccsadmin"); // FIXME - hardcoding admin passwords is a Bad Thing
 
-            for (String path : new String[] {"/content/modules", "/content/repositories"}) {
-                // http://jackrabbit.apache.org/api/2.16/org/apache/jackrabbit/core/security/authorization/GlobPattern.html
-                assignPermissionToPrincipal(s, "anonymous", path, "/*/cachedContent*", Privilege.JCR_MODIFY_PROPERTIES); // No idea why the trailing * is necessary but it doesn't work without it
-                assignPermissionToPrincipal(s, "demo", path, null, Privilege.JCR_WRITE, Privilege.JCR_NODE_TYPE_MANAGEMENT);
+            try {
+                s.getUserManager().createSystemUser("pantheon", null);
+                log.info("Created pantheon service account");
+                // Give the pantheon service user permissions to the whole /content path
+                assignPermissionToPrincipal(s, "pantheon", "/content", "*", Privilege.JCR_ALL);
+            } catch (AuthorizableExistsException aee) {
+                log.info("Pantheon service account already exists");
             }
+
             s.save();
         } catch (Exception e) {
             e.printStackTrace();
