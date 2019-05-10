@@ -66,6 +66,7 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
         String[] checkboxValues = request.getParameterValues("module");
         List<String> resourcePaths = Arrays.asList(checkboxValues);
         ResourceResolver resourceResolver = request.getResourceResolver();
+        String referrer = request.getHeader("referer");
         try {
         	
         	for ( String rPath: resourcePaths) {
@@ -96,7 +97,7 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
         			response.sendError(HttpServletResponse.SC_BAD_REQUEST, commitError);
         		}
         	}
-        	response.sendRedirect("/modules.html");
+        	response.sendRedirect(referrer);
         	
         	// When done, close the ResourceResolver.
         	resourceResolver.close();
