@@ -5,6 +5,7 @@ import org.apache.jackrabbit.api.security.JackrabbitAccessControlList;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlManager;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlPolicy;
 import org.apache.jackrabbit.api.security.principal.PrincipalManager;
+import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.jcr.api.SlingRepositoryInitializer;
@@ -43,8 +44,14 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
             User admin = (User) s.getUserManager().getAuthorizable("admin");
             admin.changePassword("ccsadmin"); // FIXME - hardcoding admin passwords is a Bad Thing
 
-            // Give the pantheon service user permissions to the whole /content path
-            assignPermissionToPrincipal(s, "pantheon", "/content", "*", Privilege.JCR_ALL);
+            try {
+                s.getUserManager().createSystemUser("pantheon", null);
+                log.info("Created pantheon service account");
+                // Give the pantheon service user permissions to the whole /content path
+                assignPermissionToPrincipal(s, "pantheon", "/content", "*", Privilege.JCR_ALL);
+            } catch (AuthorizableExistsException aee) {
+                log.info("Pantheon service account already exists");
+            }
 
             s.save();
         } catch (Exception e) {

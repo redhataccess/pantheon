@@ -71,7 +71,7 @@
                             SLING-INF/content;overwrite:=false;uninstall:=false;path:=/content,
                             SLING-INF/users;overwrite:=false;uninstall:=false,
                             SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index,
-                            SLING-INF/config/sysusers;overwrite:=true;path:=/libs/system/config
+                            SLING-INF/config;overwrite:=true;path:=/libs/system/config
                         ]]></Sling-Initial-Content>
                         <Sling-Model-Packages>
                             com.redhat.pantheon.model,
