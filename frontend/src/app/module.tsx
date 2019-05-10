@@ -26,7 +26,6 @@ export default class Module extends Component {
             <div>
               {this.loginRedirect()}
               {this.renderRedirect()}
-              {this.checkAuth()}
               <Button onClick={this.saveModule}>Save</Button>
             </div>
           </div>
@@ -100,19 +99,6 @@ export default class Module extends Component {
       return window.location.assign("/system/sling/login.html");
     } else {
       return ""
-    }
-  }
-
-  checkAuth = () => {
-    console.log('Check auth: ' + this.state.username)
-    if (this.state.username == 'anonymous') {
-      fetch("/system/sling/info.sessionInfo.json")
-        .then(response => response.json())
-        .then(responseJSON => {
-          if (responseJSON["userID"] != 'anonymous') {
-            this.setState({ username: responseJSON["userID"] })
-          }
-        })
     }
   }
 }

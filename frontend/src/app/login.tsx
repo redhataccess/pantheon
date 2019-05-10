@@ -17,10 +17,8 @@ export default class Login extends Component {
         <div className="app-container">
           <div>
             <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.handleTextInputChange1} />
-            <TextInput id="password" type="text" placeholder="Password" value={username} onChange={this.handleTextInputChange2} />
+            <TextInput id="password" type="text" placeholder="Password" value={password} onChange={this.handleTextInputChange2} />
             <div>
-              {this.loginRedirect()}
-              {this.renderRedirect()}
               {this.checkAuth()}
               <Button onClick={this.login}>Log In</Button>
             </div>
@@ -30,60 +28,48 @@ export default class Login extends Component {
     );
   }
 
-  handleTextInputChange1 = moduleName => {
-    this.setState({ moduleName });
-    console.log("Name " + moduleName)
+  handleTextInputChange1 = username => {
+    this.setState({ username });
+    console.log("Name " + username)
 
   };
-  handleTextInputChange2 = moduleDescription => {
-    this.setState({ moduleDescription });
-    console.log("Desc " + moduleDescription)
+  handleTextInputChange2 = password => {
+    this.setState({ password });
+    console.log("Pass " + password)
   };
 
   login = (postBody) => {
     console.log("My name is: " + this.state.username + " and my pw is " + this.state.password + " and my current login is " + this.state.currentLogin)
 
-    const hdrs = {
-      'cache-control': 'no-cache',
-      'Accept': 'application/json'
-    }
     const formData = new FormData();
-    formData.append("jcr:title", this.state.moduleName)
-    formData.append("jcr:description", this.state.moduleDescription)
-    formData.append("sling:resourceType", "pantheon/modules")
-    formData.append("jcr:primaryType", 'pant:module')
-    formData.append("asciidoc@TypeHint", 'nt:file')
-    formData.append("asciidoc/jcr:content/jcr:mimeType", "text/x-asciidoc")
-    formData.append("asciidoc", blob)
+    formData.append("j_username", this.state.username)
+    formData.append("j_password", this.state.password)
 
-    fetch('/content/modules/' + this.state.moduleName, {
+    fetch('/j_security_check', {
       method: 'post',
-      headers: hdrs,
       body: formData
     }).then(response => {
-      if (response.status == 201 || response.status == 200) {
+      if (response.status == 200) {
         console.log(" Works " + response.status)
-        this.setState({ redirect: true })
-      } else  if (response.status == 500) {
-        console.log(" Needs login " + response.status)
-        this.setState({ login: true })
+        this.checkAuth()
       } else {
         console.log(" Failed " + response.status)
-        this.setState({ failedPost: true })
+        this.checkAuth()
       }
     });
   }
 
   checkAuth = () => {
-    console.log('Check auth: ' + this.state.username)
-    if (this.state.username == 'anonymous') {
+    console.log('Check auth: ' + this.state.currentLogin)
+    if (this.state.currentLogin == 'anonymous') {
       fetch("/system/sling/info.sessionInfo.json")
         .then(response => response.json())
         .then(responseJSON => {
           if (responseJSON["userID"] != 'anonymous') {
-            this.setState({ username: responseJSON["userID"] })
+            this.setState({ currentLogin: responseJSON["userID"] })
           }
         })
     }
+    return "Current login: " + this.state.currentLogin
   }
 }
