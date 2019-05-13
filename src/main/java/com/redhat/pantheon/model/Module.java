@@ -76,6 +76,10 @@ public class Module {
         return cachedContent;
     }
 
+    public String getPath() {
+        return resource.getPath();
+    }
+
     /**
      * Model class to represent a Module's cached html content.
      * It is a nested class under Module as it only makes sense
@@ -99,7 +103,8 @@ public class Module {
         }
 
         public void setHash(String hash) {
-            resource.adaptTo(ModifiableValueMap.class).put("pant:hash", hash);
+            resource.adaptTo(ModifiableValueMap.class)
+                    .put("pant:hash", hash);
             this.hash = hash;
         }
 

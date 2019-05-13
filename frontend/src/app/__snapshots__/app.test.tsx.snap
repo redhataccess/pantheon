@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App tests should render default App component 1`] = `
+<Fragment>
+  <div
+    className="app-container"
+  >
+    <div>
+      <div
+        className="row-view"
+      >
+        <Label
+          className=""
+          isCompact={false}
+        >
+          Search:
+        </Label>
+        <TextInput
+          aria-label={null}
+          className=""
+          id="search"
+          isDisabled={false}
+          isReadOnly={false}
+          isRequired={false}
+          isValid={true}
+          onChange={[Function]}
+          placeholder="*"
+          type="text"
+          value=""
+        />
+      </div>
+      <Table
+        aria-label="table-header"
+        borders={true}
+        cells={
+          Array [
+            "Name",
+            "Description",
+            "Source Type",
+            "Source Name",
+            "Upload Time",
+          ]
+        }
+        className=""
+        contentId="expanded-content"
+        dropdownDirection="down"
+        dropdownPosition="right"
+        expandId="expandable-toggle"
+        gridBreakPoint="grid-md"
+        onCollapse={null}
+        onExpand={null}
+        rowLabeledBy="simple-node"
+        rows={Array []}
+        variant={null}
+      >
+        <TableHeader
+          className=""
+        />
+      </Table>
+      <Table
+        aria-label="table-data"
+        borders={true}
+        cells={
+          Array [
+            "Name",
+            "Description",
+            "Source Type",
+            "Source Name",
+            "Upload Time",
+          ]
+        }
+        className=""
+        contentId="expanded-content"
+        dropdownDirection="down"
+        dropdownPosition="right"
+        expandId="expandable-toggle"
+        gridBreakPoint="grid-md"
+        id="table-rows"
+        key="search_intro_message_thn"
+        onCollapse={null}
+        onExpand={null}
+        rowLabeledBy="simple-node"
+        rows={
+          Array [
+            Array [
+              "Search is case sensitive. Enter '*' for all modules.",
+              "",
+              "",
+              "",
+              "",
+            ],
+          ]
+        }
+        variant={null}
+      >
+        <TableBody
+          className=""
+          onRowClick={[Function]}
+          rowKey="id"
+        />
+      </Table>
+    </div>
+  </div>
+</Fragment>
+`;
