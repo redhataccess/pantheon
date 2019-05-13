@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Button, BackgroundImage, BackgroundImageSrc, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
-import { Redirect } from 'react-router-dom'
 
 export default class Login extends Component {
   public state = {
@@ -51,7 +50,7 @@ export default class Login extends Component {
     }).then(response => {
       if (response.status == 200) {
         console.log(" Works " + response.status)
-        this.checkAuth()
+        window.location.href = "/pantheon"
       } else {
         console.log(" Failed " + response.status)
         this.checkAuth()

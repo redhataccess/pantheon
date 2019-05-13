@@ -40,9 +40,11 @@ function Header() {
     </ul>
   );
 }
+
 class LoginLink extends React.Component {
   public state = {
-    linkText: 'Log In'
+    linkText: 'Log In',
+    linkTarget: '/login'
   }
 
   render() {
@@ -52,10 +54,18 @@ class LoginLink extends React.Component {
         .then(responseJSON => {
           if (responseJSON['userID'] != 'anonymous') {
             this.setState({ linkText: 'Log Out [' + responseJSON['userID'] + ']' })
+            this.setState({ linkTarget: '/system/sling/logout' })
           }
         })
     }
-    return <Link to="/login">{this.state.linkText}</Link>
+    return <Link to={this.state.linkTarget} onClick={this.conditionalRedirect}>{this.state.linkText}</Link>
+  }
+
+  conditionalRedirect() {
+    console.log("Conditional redirect")
+    // if (this.state.linkTarget.startsWith("Log Out")) {
+    //   window.location.href = "/pantheon"
+    // }  
   }
 }
 
