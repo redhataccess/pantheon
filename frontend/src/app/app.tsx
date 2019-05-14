@@ -54,18 +54,19 @@ class LoginLink extends React.Component {
         .then(responseJSON => {
           if (responseJSON['userID'] != 'anonymous') {
             this.setState({ linkText: 'Log Out [' + responseJSON['userID'] + ']' })
-            this.setState({ linkTarget: '/system/sling/logout' })
+            this.setState({ linkTarget: '/logout' })
           }
         })
     }
     return <Link to={this.state.linkTarget} onClick={this.conditionalRedirect}>{this.state.linkText}</Link>
   }
 
-  conditionalRedirect() {
+  conditionalRedirect = () => {
     console.log("Conditional redirect")
-    // if (this.state.linkTarget.startsWith("Log Out")) {
-    //   window.location.href = "/pantheon"
-    // }  
+    if (this.state.linkText.startsWith("Log Out")) {
+      fetch('/system/sling/logout')
+          .then(response => window.location.href = "/pantheon")
+    }  
   }
 }
 

@@ -15,8 +15,8 @@ export default class Login extends Component {
       <React.Fragment>
         <div className="app-container">
           <div>
-            <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.handleTextInputChange1} />
-            <TextInput id="password" type="text" placeholder="Password" value={password} onChange={this.handleTextInputChange2} />
+            <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.onUsernameChange} />
+            <TextInput id="password" type="password" placeholder="Password" value={password} onChange={this.onPasswordChange} />
             <div>
               {this.checkAuth()}
               <Button onClick={this.login}>Log In</Button>
@@ -27,19 +27,15 @@ export default class Login extends Component {
     );
   }
 
-  handleTextInputChange1 = username => {
+  onUsernameChange = username => {
     this.setState({ username });
-    console.log("Name " + username)
 
   };
-  handleTextInputChange2 = password => {
+  onPasswordChange = password => {
     this.setState({ password });
-    console.log("Pass " + password)
   };
 
   login = (postBody) => {
-    console.log("My name is: " + this.state.username + " and my pw is " + this.state.password + " and my current login is " + this.state.currentLogin)
-
     const formData = new FormData();
     formData.append("j_username", this.state.username)
     formData.append("j_password", this.state.password)
@@ -69,6 +65,5 @@ export default class Login extends Component {
           }
         })
     }
-    return "Current login: " + this.state.currentLogin
   }
 }
