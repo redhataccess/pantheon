@@ -87,8 +87,8 @@ export default class Index extends Component {
   private formatDate(date: Date) {
     //2019/05/07 14:21:36
     var dateStr = date.getFullYear().toString() + "/" +
-      date.getMonth().toString() + "/" +
-      date.getDay().toString() + " " +
+      (date.getMonth()+1).toString() + "/" +
+      date.getDate().toString() + " " +
       date.getHours().toString() + ":" +
       date.getMinutes().toString() + ":" +
       date.getSeconds().toString()

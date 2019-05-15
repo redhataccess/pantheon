@@ -31,7 +31,7 @@ import java.util.Map;
 @Component(service = SlingRepositoryInitializer.class)
 public class PantheonRepositoryInitializer implements SlingRepositoryInitializer {
 
-    private static final Logger log = LoggerFactory.getLogger(SlingRepositoryInitializer.class);
+    private static final Logger log = LoggerFactory.getLogger(PantheonRepositoryInitializer.class);
 
     @Override
     public void processRepository(SlingRepository slingRepository) throws Exception {
@@ -41,22 +41,29 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
     private void initializeRepositoryACLs(SlingRepository slingRepository) throws RepositoryException {
         JackrabbitSession s = (JackrabbitSession) slingRepository.loginAdministrative(null);
         try {
-            User admin = (User) s.getUserManager().getAuthorizable("admin");
-            admin.changePassword("ccsadmin"); // FIXME - hardcoding admin passwords is a Bad Thing
-
+            // Create and give the pantheon service user permissions to the whole /content path
             try {
                 s.getUserManager().createSystemUser("pantheon", null);
+                s.save();
                 log.info("Created pantheon service account");
-                // Give the pantheon service user permissions to the whole /content path
-                assignPermissionToPrincipal(s, "pantheon", "/content", "*", Privilege.JCR_ALL);
-            } catch (AuthorizableExistsException aee) {
+            } catch (AuthorizableExistsException aeex) {
                 log.info("Pantheon service account already exists");
             }
+            assignPermissionToPrincipal(s, "pantheon", "/content", "*", Privilege.JCR_ALL);
+
+            // Create and grant permissions to the pantheon-users group
+            try {
+                s.getUserManager().createGroup("pantheon-users");
+                s.save();
+                log.info("Created pantheon-users group");
+            } catch (AuthorizableExistsException aeex) {
+                log.info("pantheon-users group already exists");
+            }
+            assignPermissionToPrincipal(s,"pantheon-users","/content/repositories", null, Privilege.JCR_ALL);
 
             s.save();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+        } catch (Exception ex) {
+            log.error("Error initizaling pantheon JCR repository", ex);
         } finally {
             s.logout();
         }
