@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { Button, BackgroundImage, BackgroundImageSrc, TextInput } from '@patternfly/react-core';
+import { Button, Alert, AlertActionCloseButton, BackgroundImage, BackgroundImageSrc, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 
 export default class Login extends Component {
   public state = {
     username: '',
     password: '',
-    currentLogin: 'anonymous'
+    currentLogin: 'anonymous',
+    authMessage: ''
   };
 
   public render() {
@@ -15,6 +16,7 @@ export default class Login extends Component {
       <React.Fragment>
         <div className="app-container">
           <div>
+            {this.failedAuthMessage()}
             <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.onUsernameChange} />
             <TextInput id="password" type="password" placeholder="Password" value={password} onChange={this.onPasswordChange} />
             <div>
@@ -25,6 +27,14 @@ export default class Login extends Component {
         </div>
       </React.Fragment>
     );
+  }
+
+  failedAuthMessage = () => {
+    return this.state.authMessage.length > 0 && <div className="notification-container">
+      <Alert variant="danger"
+          title={this.state.authMessage}
+        action={<AlertActionCloseButton onClose={() => { this.setState({ failedAuth: false })}} />} />
+    </div>
   }
 
   onUsernameChange = username => {
@@ -47,9 +57,10 @@ export default class Login extends Component {
       if (response.status == 200) {
         console.log(" Works " + response.status)
         window.location.href = "/pantheon"
+      } else if (response.status == 403) {
+        this.setState({ authMessage: "Login failed, please try again." })
       } else {
-        console.log(" Failed " + response.status)
-        this.checkAuth()
+        this.setState({ authMessage: "Unknown failure - HTTP " + response.status + ": " + response.statusText})
       }
     });
   }
