@@ -5,60 +5,49 @@ import Module from '@app/module';
 import Login from '@app/login';
 
 function App() {
-  return (
-    <Router>
-      <div>
-        <Header />
-        <Route exact path="/" component={Index} />
-        <Route exact path="/new-module" component={Module} />
-        <Route exact path="/login" component={Login} />
-      </div>
-    </Router>
-  );
+  return <Routes />
 }
 
-function Home() {
-  return <h2>Search</h2>;
-}
-
-function New() {
-  return <h2>New Module</h2>;
-}
-
-function Header() {
-  return (
-    <ul>
-      <li>
-        <Link to="/">Search</Link>
-      </li>
-      <li>
-        <Link to="/new-module">New Module</Link>
-      </li>
-      <li id='loginParent'>
-        <LoginLink />
-      </li>
-    </ul>
-  );
-}
-
-class LoginLink extends React.Component {
+class Routes extends React.Component {
   public state = {
-    linkText: 'Log In',
-    linkTarget: '/login'
+    isLoggedIn: false,
+    linkText: 'Log In'
   }
 
   render() {
-    if (this.state.linkText == 'Log In') {
+    if (!this.state.isLoggedIn) {
       fetch("/system/sling/info.sessionInfo.json")
         .then(response => response.json())
         .then(responseJSON => {
           if (responseJSON['userID'] != 'anonymous') {
             this.setState({ linkText: 'Log Out [' + responseJSON['userID'] + ']' })
-            this.setState({ linkTarget: '/logout' })
+            this.setState({ isLoggedIn: true })
           }
         })
     }
-    return <Link to={this.state.linkTarget} onClick={this.conditionalRedirect}>{this.state.linkText}</Link>
+    return <Router>
+      <div>
+        <ul>
+          <li>
+            <Link to="/">Search</Link>
+          </li>
+          { this.state.isLoggedIn && 
+            <li>
+              <Link to="/new-module">New Module</Link>
+            </li>
+          }
+          <li id='loginParent'>
+            <Link to={this.state.isLoggedIn ? '/logout' : '/login'}
+                onClick={this.conditionalRedirect}>
+              {this.state.linkText}
+            </Link>
+          </li>
+        </ul>
+        <Route exact path="/" component={Index} />
+        <Route exact path="/new-module" component={Module} />
+        <Route exact path="/login" component={Login} />
+      </div>
+    </Router>
   }
 
   conditionalRedirect = () => {
