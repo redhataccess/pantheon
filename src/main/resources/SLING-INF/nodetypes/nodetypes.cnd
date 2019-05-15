@@ -27,12 +27,12 @@
 
 <pant = 'http://redhat.com/pantheon'>
 
-// Base type for a product definition
-[pant:product] > nt:base, mix:referenceable, mix:created, mix:lastModified
-	- pant:canonicalName (string) mandatory
-	- pant:otherNames (string) multiple
-
 // Base type for modules
-[pant:module] > nt:unstructured, sling:Folder
+[pant:module] > nt:unstructured
 	- sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
+    + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated
+
+// Base type for titles
+[pant:title] > nt:unstructured
+	- sling:resourceType (string) = 'pantheon/titles' mandatory autocreated
     + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated

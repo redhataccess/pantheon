@@ -6,13 +6,16 @@ import getpass
 import logging
 import yaml
 import socket
+import sys
+import base64
 from pathlib import PurePath
 
 DEFAULT_SERVER = 'http://localhost:8080'
 DEFAULT_REPOSITORY = getpass.getuser() + '_' + socket.gethostname()
 DEFAULT_USER = 'demo'
-DEFAULT_PASSWORD = 'demo'
+DEFAULT_PASSWORD = base64.b64decode(b'ZGVtbw==').decode()
 DEFAULT_LINKS = False
+CONFIG_FILE = 'pantheon2.yml'
 
 HEADERS = {'cache-control': 'no-cache',
            'Accept': 'application/json'}
@@ -26,11 +29,30 @@ def matches(path, globs, globType):
     return False
 
 
+def _generate_data(jcr_primary_type, base_name, sling_resource_type, path_name, asccidoc_type):
+    """
+    Generate the data object for the API call.
+    """
+    data = {}
+    if jcr_primary_type:
+        data["jcr:primaryType"] = jcr_primary_type
+    if base_name:
+        data["jcr:title"] = base_name
+        data["jcr:description"] = base_name
+    if sling_resource_type:
+        data["sling:resourceType"] = sling_resource_type
+    if path_name:
+        data["pant:originalName"] = path_name
+    if asccidoc_type:
+        data["asciidoc@TypeHint"] = asccidoc_type
+
+    return data
+
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, description='''\
 Red Hat bulk upload module for Pantheon 2. This tool will scan a directory recursively and upload relevant files.
 
-Both this uploader and Pantheon 2 are ALPHA software and features may update or change over time. 
- 
+Both this uploader and Pantheon 2 are ALPHA software and features may update or change over time.
+
 ''')
 parser.add_argument('--server', '-s', help='The Pantheon server to upload modules to, default ' + DEFAULT_SERVER)
 parser.add_argument('--repository', '-r', help='The name of the Pantheon repository, default is username_hostname (' + DEFAULT_REPOSITORY + ')')
@@ -73,11 +95,10 @@ if pw == '-':
 
 config = None
 try:
-    config = yaml.safe_load(open(args.directory + '/pantheon2.yml'))
+    config = yaml.safe_load(open(args.directory + '/' + CONFIG_FILE))
 except FileNotFoundError:
-    logger.warning('Could not find a valid config file in this directory; all files will be treated as resource uploads.')
+    logger.warning('Could not find a valid config file(' + CONFIG_FILE + ') in this directory; all files will be treated as resource uploads.')
 logger.debug('config: %s', config)
-
 
 def resolveOption(parserVal, configKey, default):
     if parserVal is not None:
@@ -99,6 +120,11 @@ print('--------------')
 titleGlobs = config['titles'] if config is not None else ()
 moduleGlobs = config['modules'] if config is not None else ()
 resourceGlobs = config['resources'] if config is not None else '*'
+unspecified_files = 0
+logger.debug('titleGlobs: %s', titleGlobs)
+logger.debug('moduleGlobs: %s', moduleGlobs)
+logger.debug('resourceGlobs: %s', resourceGlobs)
+
 
 for root, dirs, files in os.walk(args.directory, followlinks=links):
     for file in files:
@@ -109,11 +135,14 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
         path = PurePath(root + '/' + file)
 
         # These distinctions aren't important right now but they set us up for later
-        isTitle = matches(path, titleGlobs, 'title')
-        isModule = matches(path, moduleGlobs, 'module') if not isTitle else False
-        isResource = matches(path, resourceGlobs, 'resource') if not isModule else False
-
-        if isTitle or isModule or isResource:
+        isTitle = matches(path, titleGlobs, 'titles')
+        isModule = matches(path, moduleGlobs, 'modules') if not isTitle else False
+        isResource = matches(path, resourceGlobs, 'resources') if not isModule else False
+        url = server + "/content/repositories/" + repository
+        logger.debug('isTitle: %s', isTitle)
+        logger.debug('isModule: %s', isModule)
+        logger.debug('isResource: %s', isResource)
+        if isModule or isTitle or isResource:
             base_name = path.stem
 
             ppath = path
@@ -136,7 +165,7 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
             logger.debug('parent_dir_str: %s', parent_dir_str)
             # file becomes a/file/name (no extension)
 
-            url = server + "/content/repositories/" + repository
+
             if parent_dir_str:
                 url += '/' + parent_dir_str
 
@@ -146,13 +175,10 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
             if path.suffix == '.adoc' or path.suffix == '.asciidoc':
                 print(path)
                 url += '/' + path.name
-                logger.debug(url)
-                data = {"jcr:primaryType": 'pant:module',
-                        "jcr:title": base_name,
-                        "jcr:description": base_name,
-                        "sling:resourceType": 'pantheon/modules',
-                        "pant:originalName": path.name,
-                        "asciidoc@TypeHint": 'nt:file'}
+                logger.debug('url: %s', url)
+                jcr_primary_type = "pant:module" if isModule else "pant:title"
+                sling_resource_type = "pantheon/modules" if isModule else "pantheon/titles"
+                data = _generate_data(jcr_primary_type, base_name, sling_resource_type, path.name, asccidoc_type="nt:file");
                 files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
 
                 # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
@@ -166,17 +192,25 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
                     r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
                     print(r.status_code, r.reason)
                 logger.debug('')
-            # Otherwise just upload as a regular file
             else:
+                # Upload as a regular file(nt:file)
                 print(path)
-                logger.debug(url)
-                files = {path.name: (path.name, open(path, 'rb'))}
+                url += '/' + path.name
+                logger.debug('url: %s', url)
+                jcr_primary_type = "nt:file"
+                sling_resource_type = None
+                data = _generate_data(jcr_primary_type, base_name, sling_resource_type, path.name, asccidoc_type=None);
+                #files = {path.name: (path.name, open(path, 'rb'))}
+                files = {path.name: open(path, 'rb')}
                 if not args.dry:
                     r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
                     print(r.status_code, r.reason)
                 logger.debug('')
         else:
-            logger.debug('File %s does not match the given glob pattern(s).', file)
-            logger.debug('')
+            # Ignore the files are not specified in .yml file.
+            unspecified_files += 1
 
+
+if unspecified_files > 0:
+    print (f'{unspecified_files} additional files detected. Only files specified in ' + CONFIG_FILE +' are handled for upload.')
 print('Finished!')

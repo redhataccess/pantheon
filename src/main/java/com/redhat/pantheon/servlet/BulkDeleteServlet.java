@@ -50,7 +50,8 @@ import org.slf4j.LoggerFactory;
 )
 @SlingServletResourceTypes(
         resourceTypes="pantheon/modules",
-        methods= "POST")
+        methods= "POST",
+        selectors="delete")
 @SuppressWarnings("serial")
 public class BulkDeleteServlet extends SlingAllMethodsServlet {
 
