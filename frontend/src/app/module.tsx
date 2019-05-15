@@ -96,7 +96,7 @@ export default class Module extends Component {
 
   loginRedirect = () => {
     if (this.state.login) {
-      return window.location.assign("/system/sling/login.html");
+      return <Redirect to='/login' />
     } else {
       return ""
     }

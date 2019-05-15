@@ -1,4 +1,4 @@
 {
   "sling:resourceType": "sling:redirect",
-  "sling:target": "/"
+  "sling:target": "/pantheon"
 }
