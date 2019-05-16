@@ -195,13 +195,11 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
             else:
                 # Upload as a regular file(nt:file)
                 print(path)
-                url += '/' + path.name
                 logger.debug('url: %s', url)
                 jcr_primary_type = "nt:file"
                 sling_resource_type = None
                 data = _generate_data(jcr_primary_type, base_name, sling_resource_type, path.name, asccidoc_type=None);
                 files = {path.name: (path.name, open(path, 'rb'))}
-                #files = {path.name: open(path, 'rb')}
                 if not args.dry:
                     r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
                     print(r.status_code, r.reason)
