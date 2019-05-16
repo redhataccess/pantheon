@@ -6,7 +6,6 @@ import getpass
 import logging
 import yaml
 import socket
-import sys
 import base64
 from pathlib import PurePath
 
@@ -54,6 +53,7 @@ Red Hat bulk upload module for Pantheon 2. This tool will scan a directory recur
 Both this uploader and Pantheon 2 are ALPHA software and features may update or change over time.
 
 ''')
+parser.add_argument('push', nargs='+', help='Type of operation, default push')
 parser.add_argument('--server', '-s', help='The Pantheon server to upload modules to, default ' + DEFAULT_SERVER)
 parser.add_argument('--repository', '-r', help='The name of the Pantheon repository, default is username_hostname (' + DEFAULT_REPOSITORY + ')')
 parser.add_argument('--user', '-u', help='Username for authentication, default \'' + DEFAULT_USER + '\'', default=DEFAULT_USER)
@@ -139,9 +139,9 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
         isModule = matches(path, moduleGlobs, 'modules') if not isTitle else False
         isResource = matches(path, resourceGlobs, 'resources') if not isModule else False
         url = server + "/content/repositories/" + repository
-        logger.debug('isTitle: %s', isTitle)
-        logger.debug('isModule: %s', isModule)
-        logger.debug('isResource: %s', isResource)
+        #logger.debug('isTitle: %s', isTitle)
+        #logger.debug('isModule: %s', isModule)
+        #logger.debug('isResource: %s', isResource)
         if isModule or isTitle or isResource:
             base_name = path.stem
 
@@ -200,8 +200,8 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
                 jcr_primary_type = "nt:file"
                 sling_resource_type = None
                 data = _generate_data(jcr_primary_type, base_name, sling_resource_type, path.name, asccidoc_type=None);
-                #files = {path.name: (path.name, open(path, 'rb'))}
-                files = {path.name: open(path, 'rb')}
+                files = {path.name: (path.name, open(path, 'rb'))}
+                #files = {path.name: open(path, 'rb')}
                 if not args.dry:
                     r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
                     print(r.status_code, r.reason)
