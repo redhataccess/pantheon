@@ -10,6 +10,10 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.Row;
+import javax.jcr.query.qom.Ordering;
+import javax.jcr.query.qom.QueryObjectModel;
+import javax.jcr.query.qom.QueryObjectModelFactory;
+import javax.jcr.query.qom.Selector;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
@@ -30,7 +34,7 @@ public class JcrQueryHelper {
      * @param query A full JCR SQL2 query
      * @param limit the number of results to return (for pagination)
      * @param offset i.e. How many results to skip (for pagination)
-     * @return
+     * @return A stream of sling resources resulting from the query
      * @throws RepositoryException
      */
     public Stream<Resource> query(String query, long limit, long offset)
@@ -44,6 +48,58 @@ public class JcrQueryHelper {
         QueryResult result = queryObj.execute();
 
         // Transform to sling resources
+        return transform(result);
+    }
+
+    /**
+     * A convenience method to run a query against the JCR Repository adding limit and offset values useful for
+     * pagination.
+     * @param query A full JCR SQL2 query
+     * @return A stream of sling resources resulting from the query
+     * @throws RepositoryException
+     */
+    public Stream<Resource> query(String query)
+            throws RepositoryException {
+        return query(query, Long.MAX_VALUE, 0);
+    }
+
+    /**
+     * Queries all resources for a given JCR node type
+     * @param nodeType The node type to query for
+     * @param limit
+     * @param offset
+     * @return
+     * @throws RepositoryException
+     */
+    public Stream<Resource> queryAll(String nodeType, long limit, long offset) throws RepositoryException {
+        QueryObjectModelFactory qomFactory = getQueryObjectModelFactory();
+        Selector selector = qomFactory.selector(nodeType, "r");
+        // Default ordering by node path
+        Ordering sortByPath = qomFactory.ascending(qomFactory.propertyValue("r", "jcr:path"));
+        QueryObjectModel query = qomFactory.createQuery(selector, null, new Ordering[]{sortByPath}, null);
+        query.setLimit(limit);
+        query.setOffset(offset);
+        QueryResult result = query.execute();
+        return transform(result);
+    }
+
+    public Stream<Resource> queryAll(String nodeType) throws RepositoryException {
+        return queryAll(nodeType, Long.MAX_VALUE, 0);
+    }
+
+    public QueryObjectModelFactory getQueryObjectModelFactory() throws RepositoryException {
+        Session session = resourceResolver.adaptTo(Session.class);
+        QueryManager queryManager = session.getWorkspace().getQueryManager();
+        return queryManager.getQOMFactory();
+    }
+
+    /**
+     * Transforms a JCR query result into a stream of Sling resources
+     * @param result the result to transform
+     * @return A stream of sling resources
+     * @throws RepositoryException
+     */
+    private Stream<Resource> transform(QueryResult result) throws RepositoryException {
         // TODO This might be a costly transformation if done on large result sets
         return Lists.newArrayList((Iterator<Row>) result.getRows())
                 .stream()
@@ -56,9 +112,5 @@ public class JcrQueryHelper {
                 });
     }
 
-    public Stream<Resource> query(String query)
-            throws RepositoryException {
-        return query(query, -1, 0);
-    }
 
 }
