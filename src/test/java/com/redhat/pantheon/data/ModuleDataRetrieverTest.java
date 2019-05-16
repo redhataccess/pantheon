@@ -2,6 +2,7 @@ package com.redhat.pantheon.data;
 
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.jcr.MockJcr;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.AfterEach;
@@ -17,9 +18,6 @@ import javax.jcr.Session;
 import java.util.List;
 import java.util.Map;
 
-import static com.beust.jcommander.internal.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
-import static org.apache.sling.testing.mock.jcr.MockJcr.setQueryResult;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -27,7 +25,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 public class ModuleDataRetrieverTest {
 
-    private final SlingContext slingContext = new SlingContext();
+    // Running with a full JCR implementation
+    private final SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
     private ResourceResolver resourceResolver;
 
     @BeforeEach
@@ -73,23 +72,17 @@ public class ModuleDataRetrieverTest {
     public void testSearchModulesCreateSort() throws Exception {
         // Given
         slingContext.build()
-                .resource("/content/repos/test/module1", newHashMap())
-                .resource("/content/repos/test/module2", newHashMap())
-                .resource("/content/repos/test/module3", newHashMap())
+                .resource("/content/modules/test/module1",
+                        "sling:resourceType", "pantheon/modules")
+                .resource("/content/modules/test/module2",
+                        "sling:resourceType", "pantheon/modules")
+                .resource("/content/modules/test/module3",
+                        "sling:resourceType", "pantheon/modules")
                 .commit();
-        Session mockSession = MockJcr.newSession();
         ModuleDataRetriever retriever = new ModuleDataRetriever(resourceResolver);
 
         // When
-        when(resourceResolver.adaptTo(Session.class)).thenReturn(mockSession);
-        setQueryResult(mockSession,
-                newArrayList(
-                        mockNode("/content/repos/test/module1"),
-                        mockNode("/content/repos/test/module2"),
-                        mockNode("/content/repos/test/module3")
-                )
-        );
-        List<Map<String, Object>> results = retriever.getModulesCreateSort("any search term");
+        List<Map<String, Object>> results = retriever.getModulesCreateSort("");
 
         // Then
         assertEquals(3, results.size());
@@ -100,23 +93,17 @@ public class ModuleDataRetrieverTest {
     public void testSearchModulesNameSort() throws Exception {
         // Given
         slingContext.build()
-                .resource("/content/repos/test/module1", newHashMap())
-                .resource("/content/repos/test/module2", newHashMap())
-                .resource("/content/repos/test/module3", newHashMap())
+                .resource("/content/modules/test/module1",
+                        "sling:resourceType", "pantheon/modules")
+                .resource("/content/modules/test/module2",
+                        "sling:resourceType", "pantheon/modules")
+                .resource("/content/modules/test/module3",
+                        "sling:resourceType", "pantheon/modules")
                 .commit();
-        Session mockSession = MockJcr.newSession();
         ModuleDataRetriever retriever = new ModuleDataRetriever(resourceResolver);
 
         // When
-        when(resourceResolver.adaptTo(Session.class)).thenReturn(mockSession);
-        setQueryResult(mockSession,
-                newArrayList(
-                        mockNode("/content/repos/test/module1"),
-                        mockNode("/content/repos/test/module2"),
-                        mockNode("/content/repos/test/module3")
-                )
-        );
-        List<Map<String, Object>> results = retriever.getModulesNameSort("any search term");
+        List<Map<String, Object>> results = retriever.getModulesNameSort("");
 
         // Then
         assertEquals(3, results.size());

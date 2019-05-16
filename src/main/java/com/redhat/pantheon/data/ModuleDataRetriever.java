@@ -67,7 +67,7 @@ public class ModuleDataRetriever {
                 .append("or isdescendantnode(a, '/content/sandboxes')) ")
                 .append(query);
         if (!isEmpty(orderBy)) {
-            queryBuilder.append("order by").append(orderBy);
+            queryBuilder.append(" order by ").append(orderBy);
         }
 
         Stream<Resource> results = new JcrQueryHelper(resolver).query(queryBuilder.toString());
