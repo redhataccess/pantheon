@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Alert, AlertActionCloseButton, TextInput, Label,
+  Alert, AlertActionCloseButton, Button, TextInput, Label,
   DataList, DataListItem, DataListItemRow, DataListItemCells, DataListCell
 } from '@patternfly/react-core';
 import '@app/app.css';
@@ -9,19 +9,25 @@ export default class Index extends Component {
   public state = {
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
     data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
-    input: '',
+    input: '*',
     isEmptyResults: false,
     isSortedUp: true,
     redirect: false,
     redirectLocation: '',
-    sortKey: ''
+    sortKey: '',
+    pageNum: 1,
+    pageCount: 5
   };
   public render() {
     const { columns, isEmptyResults, input, isSortedUp,sortKey } = this.state;
     return (
       <React.Fragment>
+        {this.doSearch()}
         <div className="app-container">
           <div>
+            <TextInput id="pageNum" type="text" pattern="[0-9]*" value={this.state.pageNum} />
+            <TextInput id="pageCount" type="text" pattern="[0-9]*" value={this.state.pageCount} />
+            <Button onClick={this.doSearch}>Search</Button>
             {isEmptyResults && (
               <div className="notification-container">
                 <Alert
@@ -33,7 +39,7 @@ export default class Index extends Component {
             )}
             <div className="row-view">
               <Label>Search:</Label>
-              <TextInput id="search" onKeyDown={(event) => this.getRows(event)} type="text" />
+              <TextInput id="search" onKeyDown={(event) => this.getRows(event)} type="text" value={this.state.input} />
             </div>
             <DataList aria-label="Simple data list example">
               <DataListItem aria-labelledby="simple-item1">
@@ -93,33 +99,32 @@ export default class Index extends Component {
 
   private getRows = (event) => {
     if (event.key === 'Enter') {
-      console.log("what do I see? " + event.target.value)
-      this.setState({
-        input: event.target.value
-      }, () => {
-        console.log("Now I get the expected value down " + this.state.input)
-        let backend = "/modules.json?search="
-        if (this.state.input != null && this.state.input != "" && this.state.input != "*") {
-          backend = backend + this.state.input + "&key=" + "jcr:created" + "&direction=" + "desc"
-          console.log(backend)
-        }
-        fetch(backend)
-          .then(response => response.json())
-          .then(responseJSON => this.setState({ data: responseJSON }))
-          .then(() => {
-            // console.log("JSON string is " + JSON.stringify(this.state.data))
-            if (JSON.stringify(this.state.data) == "[]") {
-              this.setState({
-                data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
-                isEmptyResults: true
-              })
-            } else {
-              this.setState({ isEmptyResults: false })
-            }
-          })
-      })
+      this.doSearch()
     }
   };
+
+  private doSearch = () => {
+    console.log("Now I get the expected value down " + this.state.input)
+    let backend = "/modules.json?search="
+    if (this.state.input != null && this.state.input != "" && this.state.input != "*") {
+      backend = backend + this.state.input + "&key=" + "jcr:created" + "&direction=" + "desc"
+      console.log(backend)
+    }
+    fetch(backend)
+      .then(response => response.json())
+      .then(responseJSON => this.setState({ data: responseJSON }))
+      .then(() => {
+        // console.log("JSON string is " + JSON.stringify(this.state.data))
+        if (JSON.stringify(this.state.data) == "[]") {
+          this.setState({
+            data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
+            isEmptyResults: true
+          })
+        } else {
+          this.setState({ isEmptyResults: false })
+        }
+      })
+  }
 
   private setPreview(path: string) {
     console.log("what do I see when you click ? " + path)

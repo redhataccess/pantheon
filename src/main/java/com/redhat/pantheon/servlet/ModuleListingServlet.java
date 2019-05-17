@@ -32,24 +32,24 @@ public class ModuleListingServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
         ModuleDataRetriever mdr = new ModuleDataRetriever(request.getResourceResolver());
-        String searchParam = "";
-        String keyParam = "";
-        String directionParam = "";
-
-        if (request.getParameterMap().containsKey("search")) {
-            searchParam = request.getRequestParameter("search").toString();
-        }
-        if (request.getParameterMap().containsKey("key")) {
-            keyParam = request.getRequestParameter("key").toString();
-        }
-        if (request.getParameterMap().containsKey("direction")) {
-            directionParam = request.getRequestParameter("direction").toString();
-        }
+        String searchParam = getParam(request, "search");
+        String keyParam = getParam(request, "key");
+        String directionParam = getParam(request, "direction");
+        String offset = getParam(request, "offset");
+        String count = getParam(request, "count");
 
         List<Map<String, Object>> payload = mdr.getModulesSort(searchParam, keyParam, directionParam);
 
         response.setContentType("application/json");
         Writer w = response.getWriter();
         w.write(new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(payload));
+    }
+
+    private String getParam(SlingHttpServletRequest request, String param) {
+        String ret = "";
+        if (request.getParameterMap().containsKey(param)) {
+            ret = request.getRequestParameter(param).toString();
+        }
+        return ret;
     }
 }
