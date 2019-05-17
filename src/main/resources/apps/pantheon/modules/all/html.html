@@ -141,8 +141,8 @@ function search() {
 		   document.body.style.background = "";
 		  }
 	  }
+      let btn = document.getElementById("delete");
 	  if(item > 0) {
-	    let btn = document.getElementById("delete");
 		if (! btn) {
 		  deleteButton = document.createElement("input");
 		  deleteButton.setAttribute("type", "submit");
@@ -153,6 +153,9 @@ function search() {
 		  document.getElementById("bulkOperation").appendChild(deleteButton);
 		  form.setAttribute("action", "/content/" + checkbox.id);
 		}
+	  } else {
+		  if (btn)
+		  document.getElementById("bulkOperation").removeChild(deleteButton);
 	  }
 	});
   }
