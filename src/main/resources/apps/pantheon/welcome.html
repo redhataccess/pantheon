@@ -4,6 +4,31 @@
 
     <body>
         <div>This is a welcome page 2!</div>
+
+        <form id="loginform" method="POST" action="/j_security_check" enctype="multipart/form-data" accept-charset="UTF-8">
+
+            <input type="hidden" name="_charset_" value="UTF-8" />
+            <input type="hidden" name="sling.auth.redirect" value="/modules.html" />
+
+            <div>
+                <label for="j_username" accesskey="u">Username:</label>
+            </div>
+            <div>
+                <input id="j_username" name="j_username" type="text" />
+            </div>
+
+            <div>
+                <label for="j_password" accesskey="p">Password:</label>
+            </div>
+            <div>
+                <input id="j_password" name="j_password" type="password" />
+            </div>
+
+            <div class="buttongroup">
+                <button id="login" accesskey="l" class="form-button" type="submit">Login</button>
+            </div>
+        </form>
+
         <div data-sly-include="${'/apps/pantheon/partials/footer.html'}"></div>
     </body>
 </html>
