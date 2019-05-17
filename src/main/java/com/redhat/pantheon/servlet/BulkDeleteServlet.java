@@ -64,18 +64,17 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
     
     @Override
     protected void doPost(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
-    	
-        String[] checkboxValues = request.getParameterValues(FORM_PARAMETER);
-        if (checkboxValues.length == 0) {
-    		logger.info("No modules selected for delete");
-    		return;
-    	}
+    	ResourceResolver resourceResolver = request.getResourceResolver();
+    	try {
+    		String[] checkboxValues = request.getParameterValues(FORM_PARAMETER);
+    		if (checkboxValues.length == 0) {
+    			logger.info("No modules selected for delete");
+    			return;
+    		}
 
-        List<String> resourcePaths = Arrays.asList(checkboxValues);
-        ResourceResolver resourceResolver = request.getResourceResolver();
-        String referrer = request.getHeader("referer");
-        try {
-        	
+    		List<String> resourcePaths = Arrays.asList(checkboxValues);
+    		String referrer = request.getHeader("referer");
+
         	for ( String rPath: resourcePaths) {
         		Resource res = resourceResolver.getResource(CONTENT_PATH_PREFIX + rPath);
         		// Delete the resource.
