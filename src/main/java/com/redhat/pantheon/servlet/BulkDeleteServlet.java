@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceNotFoundException;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -57,13 +56,19 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
     private final Logger logger = LoggerFactory.getLogger(BulkDeleteServlet.class);
 	
     private static final String CONTENT_PATH_PREFIX = "/content/";
+    
+    private static final String FORM_PARAMETER = "module";
 	
     public BulkDeleteServlet() {
     }
     
     @Override
     protected void doPost(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
-        String[] checkboxValues = request.getParameterValues("module");
+        String[] checkboxValues = request.getParameterValues(FORM_PARAMETER);
+        if (checkboxValues.length == 0) {
+    		logger.info("No modules selected for delete");
+    		return;
+    	}
         List<String> resourcePaths = Arrays.asList(checkboxValues);
         ResourceResolver resourceResolver = request.getResourceResolver();
         String referrer = request.getHeader("referer");
