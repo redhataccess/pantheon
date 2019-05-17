@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, BackgroundImage, BackgroundImageSrc, TextInput } from '@patternfly/react-core';
+import { Button, Alert, AlertActionCloseButton, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 import { Redirect } from 'react-router-dom'
 
@@ -11,15 +11,27 @@ export default class Module extends Component {
     redirect: false,
     login: false,
     failedPost: false,
-    username: 'anonymous'
+    isMissingFields: false
   };
 
   public render() {
-    const { moduleName, moduleDescription } = this.state;
+    const { moduleName, moduleDescription, isMissingFields } = this.state;
     return (
       <React.Fragment>
+
         <div className="app-container">
+
           <div>
+          {isMissingFields && (
+            <div className="notification-container">
+              <Alert
+                variant="warning"
+                  title="A module name and choosing a file is required."
+                action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+              >
+              </Alert>
+            </div>
+          )}
             <TextInput id="module-name" type="text" placeholder="Module Name" value={moduleName} onChange={this.handleTextInputChange1} />
             <TextInput id="module-description" type="text" placeholder="Module Description" value={moduleDescription} onChange={this.handleTextInputChange2} />
             <input id="input" className="input-file" color="#dddddd" type="file" onChange={(e) => this.handleFileChange(e.target.files)} />
@@ -50,9 +62,10 @@ export default class Module extends Component {
   }
 
   saveModule = (postBody) => {
-    console.log("My name is: " + this.state.moduleName + " and my desc is " + this.state.moduleDescription + " and my files are " + this.state.moduleFile)
-
-
+    console.log("My data is: " + this.state.moduleName + " and my desc is " + this.state.moduleDescription + " and my files are " + this.state.moduleFile)
+    if (this.state.moduleName == "" || this.state.moduleFile[0] == undefined){
+      this.setState({ isMissingFields: true })
+    } else {
     const hdrs = {
       'cache-control': 'no-cache',
       'Accept': 'application/json'
@@ -84,6 +97,7 @@ export default class Module extends Component {
         this.setState({ failedPost: true })
       }
     });
+   }
   }
 
   renderRedirect = () => {
@@ -101,4 +115,9 @@ export default class Module extends Component {
       return ""
     }
   }
+
+  private dismissNotification = () => {
+    this.setState({ isMissingFields: false });
+  };
+
 }

@@ -2,8 +2,8 @@
 <head data-sly-include="${'/apps/pantheon/partials/header.html'}">
 </head>
 <body>
-
-<div class="container-fluid" data-sly-use.moduleData="com.redhat.pantheon.use.ModuleData">
+<div data-sly-test="${currentSession.getUserID != 'anonymous'}">
+  <div class="container-fluid" data-sly-use.moduleData="com.redhat.pantheon.use.ModuleData">
     <h1>All Modules</h1>
 
     <p>
@@ -13,20 +13,23 @@
     <p>
     <input type="text" id="searchTerms" onkeyup="search()" placeholder="Search for names..">
     </p>
-
+    <form method="POST" id="moduleList" action="/modules.html" enctype="multipart/form-data">
+    
     <table id="myTable">
         <tr>
+            <th></th>
             <th width="200px"><a href="#" onclick="sortTable(0)">Name</a></th>
             <th width="325px"><a href="#" onclick="sortTable(1)">Description</a></th>
             <th width="150px"><a href="#" onclick="sortTable(2)">Source Type</a></th>
             <th width="250px"><a href="#" onclick="sortTable(3)">Source Name</a></th>
             <th><a href="#" onclick="sortTable(4)">Upload Time</a></th>
         </tr>
-
+        
 <sly data-sly-test.searchIsNull="${!request.requestParameterMap['search']}"></sly> 
   <sly data-sly-use.moduleData="${'com.redhat.pantheon.use.ModuleData' @ query=(searchIsNull ? '*' : request.requestParameterMap['search'][0].toString )}">
         <sly data-sly-list="${moduleData.getModulesCreateSort}">
             <tr>
+               <td><input name="module" id="${item.pant:transientPath}" type="checkbox" value="${item.pant:transientPath}" /></td>
                 <td>
                     <a href="${item.pant:transientPath}.preview">${item.jcr:title}</a>
                 </td>
@@ -45,8 +48,13 @@
             </tr>
         </sly></sly>
     </table>
+    <div id="bulkOperation"> </div>
+    </form>
 </div>
-
+</div>
+<div data-sly-test="${currentSession.getUserID == 'anonymous'}">
+  Your session expired. Please <a href="/system/sling/login.html">log in</a>.
+</div>
 <div data-sly-include="${'/apps/pantheon/partials/footer.html'}">
 </div>
 
@@ -115,6 +123,39 @@ function search() {
     }
 });
 }
+</script>
+<script>
+  let checkboxes = document.querySelectorAll("[name=module]");
+  let deleteButton;
+  let item = 0;
+  let form = document.getElementById("moduleList");
+  for (let checkbox of Array.from(checkboxes)) {
+    checkbox.addEventListener("change", () => {
+      if (checkbox.checked == true) {
+	    document.body.style.background = "lightgrey";
+	    //console.log("module selected for deletion: ", checkbox.id);
+	    item++;
+	  } else {
+	    item--;
+      if (item == 0) {
+		   document.body.style.background = "";
+		  }
+	  }
+	  if(item > 0) {
+	    let btn = document.getElementById("delete");
+		if (! btn) {
+		  deleteButton = document.createElement("input");
+		  deleteButton.setAttribute("type", "submit");
+		  deleteButton.setAttribute("value", "Delete");
+		  deleteButton.setAttribute("id", "delete");
+		  deleteButton.setAttribute("class", "btn btn-primary");
+		  deleteButton.setAttribute("onclick", "form.submit()");
+		  document.getElementById("bulkOperation").appendChild(deleteButton);
+		  form.setAttribute("action", "/content/" + checkbox.id);
+		}
+	  }
+	});
+  }
 </script>
 </body>
 </html>

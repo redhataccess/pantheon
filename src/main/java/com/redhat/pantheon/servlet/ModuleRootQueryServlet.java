@@ -7,6 +7,8 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.jcr.query.Query;
@@ -40,14 +42,15 @@ import java.util.Iterator;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
 public class ModuleRootQueryServlet extends SlingSafeMethodsServlet {
-
+	private final Logger logger = LoggerFactory.getLogger(ModuleRootQueryServlet.class);
+	
     @Override
     protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
 
         // Get the query parameter(s)
         String moduleName = request.getParameter("name");
 
-        Iterator<Resource> resources = request.getResourceResolver().findResources("SELECT * from [pant:module2] AS modules WHERE ISDESCENDANTNODE(\"" +
+        Iterator<Resource> resources = request.getResourceResolver().findResources("SELECT * from [pant:module] AS modules WHERE ISDESCENDANTNODE(\"" +
                 request.getResource().getPath() + "\") " +
                 "and name(modules) like '%" + moduleName + "%'", Query.JCR_SQL2);
 
