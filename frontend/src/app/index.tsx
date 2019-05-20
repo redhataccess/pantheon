@@ -16,13 +16,14 @@ export default class Index extends Component {
     redirectLocation: '',
     sortKey: '',
     pageNum: 1,
-    pageCount: 5
+    pageCount: 5,
+    initialLoad: true
   };
   public render() {
     const { columns, isEmptyResults, input, isSortedUp,sortKey } = this.state;
     return (
       <React.Fragment>
-        {this.doSearch()}
+        {this.state.initialLoad && this.doSearch()}
         <div className="app-container">
           <div>
             <TextInput id="pageNum" type="text" pattern="[0-9]*" value={this.state.pageNum} />
@@ -104,6 +105,7 @@ export default class Index extends Component {
   };
 
   private doSearch = () => {
+    this.setState({ initialLoad: false })
     console.log("Now I get the expected value down " + this.state.input)
     let backend = "/modules.json?search="
     if (this.state.input != null && this.state.input != "" && this.state.input != "*") {

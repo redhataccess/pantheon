@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redhat.pantheon.data.ModuleDataRetriever;
+import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
@@ -10,6 +11,7 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
 import javax.annotation.Nonnull;
+import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -36,13 +38,16 @@ public class ModuleListingServlet extends SlingSafeMethodsServlet {
         String keyParam = getParam(request, "key");
         String directionParam = getParam(request, "direction");
         String offset = getParam(request, "offset");
-        String count = getParam(request, "count");
+        String limit = getParam(request, "limit");
 
-        List<Map<String, Object>> payload = mdr.getModulesSort(searchParam, keyParam, directionParam);
-
-        response.setContentType("application/json");
-        Writer w = response.getWriter();
-        w.write(new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(payload));
+        try {
+            List<Map<String, Object>> payload = mdr.getModulesSort(searchParam, keyParam, directionParam, offset, limit);
+            response.setContentType("application/json");
+            Writer w = response.getWriter();
+            w.write(new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(payload));
+        } catch (RepositoryException e) {
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
     private String getParam(SlingHttpServletRequest request, String param) {

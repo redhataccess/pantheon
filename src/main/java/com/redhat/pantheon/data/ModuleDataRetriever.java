@@ -29,7 +29,8 @@ public class ModuleDataRetriever {
         this.resolver = resolver;
     }
 
-	public List<Map<String, Object>> getModulesSort(String searchTerm, String key, String direction) {
+	public List<Map<String, Object>> getModulesSort(String searchTerm, String key, String direction,
+                                                    String offset, String limit) throws RepositoryException {
 		if (searchTerm == null || searchTerm.isEmpty()) {
 			searchTerm.equals("*");
 		}
@@ -39,12 +40,12 @@ public class ModuleDataRetriever {
 		if (direction == null || !direction.equals("desc")) {
 			direction = "asc";
 		}
-		return getModules(searchTerm, "order by a.[" + key + "] " + direction);
+		return getModules(searchTerm, "order by a.[" + key + "] " + direction, null, null);
 	}
 
     public List<Map<String, Object>> getModulesNameSort(String searchTerm) {
         try {
-            return getModules(searchTerm, "a.[jcr:title] asc");
+            return getModules(searchTerm, "a.[jcr:title] asc", null, null);
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
@@ -52,13 +53,13 @@ public class ModuleDataRetriever {
 
     public List<Map<String, Object>> getModulesCreateSort(String searchTerm) {
         try {
-            return getModules(searchTerm, "a.[jcr:created] desc");
+            return getModules(searchTerm, "a.[jcr:created] desc", null, null);
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private List<Map<String, Object>> getModules(String query, String orderBy)
+    private List<Map<String, Object>> getModules(String query, String orderBy, String offset, String limit)
             throws RepositoryException {
         if (query.equals("") || query.equals("*") || query == null) {
             query = "";
@@ -66,8 +67,6 @@ public class ModuleDataRetriever {
             query = "AND (a.[jcr:title] like " + "'%" + query + "%' " +
                     "OR a.[jcr:description] like " + "'%" + query + "%') ";
         }
-        
-        log.trace("Ordering query: " + querySuffix );
 
         //FIXME - we had "select * from [pant:module]..." here, BUT we were seeing problems that after a very small
         //FIXME - number of module upload/delete operations, this query would suddenly return only a very small number
@@ -85,7 +84,10 @@ public class ModuleDataRetriever {
             queryBuilder.append(" order by ").append(orderBy);
         }
 
-        Stream<Resource> results = new JcrQueryHelper(resolver).query(queryBuilder.toString());
+        long lOffset = offset == null ? 0 : Long.valueOf(offset);
+        long lLimit = limit == null ? Long.MAX_VALUE : Long.valueOf(limit);
+
+        Stream<Resource> results = new JcrQueryHelper(resolver).query(queryBuilder.toString(), lLimit, lOffset);
 
         return results.map(r -> {
             Map<String, Object> m = new HashMap(r.getValueMap());
