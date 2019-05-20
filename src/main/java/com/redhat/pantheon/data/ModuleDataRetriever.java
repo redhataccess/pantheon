@@ -39,8 +39,12 @@ public class ModuleDataRetriever {
 		if (direction == null || !direction.equals("desc")) {
 			direction = "asc";
 		}
-		return getModules(searchTerm, "order by a.[" + key + "] " + direction);
-	}
+        try {
+            return getModules(searchTerm, "a.[" + key + "] " + direction);
+        } catch (RepositoryException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public List<Map<String, Object>> getModulesNameSort(String searchTerm) {
         try {
@@ -67,7 +71,7 @@ public class ModuleDataRetriever {
                     "OR a.[jcr:description] like " + "'%" + query + "%') ";
         }
         
-        log.trace("Ordering query: " + querySuffix );
+        log.trace("Ordering query: " + orderBy );
 
         //FIXME - we had "select * from [pant:module]..." here, BUT we were seeing problems that after a very small
         //FIXME - number of module upload/delete operations, this query would suddenly return only a very small number
