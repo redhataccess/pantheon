@@ -1,5 +1,6 @@
 {
   "security:principals": [
-    { "name": "demo", "password": "demo" }
+    { "name": "demo", "password": "demo" },
+    { "name": "pantheon-users", "isgroup": true, "members": ["demo"] }
   ]
 }
