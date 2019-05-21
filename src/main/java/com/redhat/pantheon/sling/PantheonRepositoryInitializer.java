@@ -50,16 +50,8 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
                 log.info("Pantheon service account already exists");
             }
             assignPermissionToPrincipal(s, "pantheon", "/content", "*", Privilege.JCR_ALL);
-
-            // Create and grant permissions to the pantheon-users group
-            try {
-                s.getUserManager().createGroup("pantheon-users");
-                s.save();
-                log.info("Created pantheon-users group");
-            } catch (AuthorizableExistsException aeex) {
-                log.info("pantheon-users group already exists");
-            }
-            assignPermissionToPrincipal(s,"pantheon-users","/content/repositories", null, Privilege.JCR_ALL);
+            assignPermissionToPrincipal(s,"pantheon-users","/content/repositories", null, Privilege.JCR_WRITE, Privilege.JCR_NODE_TYPE_MANAGEMENT);
+            assignPermissionToPrincipal(s,"pantheon-users","/content/modules", null, Privilege.JCR_WRITE, Privilege.JCR_NODE_TYPE_MANAGEMENT);
 
             s.save();
         } catch (Exception ex) {
