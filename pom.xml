@@ -83,6 +83,7 @@
                             !org.apache.tools.ant,!org.joda.convert,!org.objectweb.asm,!sun.misc,*
                         </Import-Package>
                         <!-- Embed the necessary dependencies -->
+                        <!-- The `inline=true` is important, don't remove it unless you want cryptic problems such as servlets that suddenly stop resolving without explanation -->
                         <Embed-Dependency>*;scope=compile;inline=true</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Require-Capability>osgi.ee;filter:="(&amp;(osgi.ee=JavaSE)(version=1.8))"</Require-Capability>
