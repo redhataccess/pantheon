@@ -15,7 +15,7 @@ export default class Index extends Component {
     redirect: false,
     redirectLocation: '',
     sortKey: '',
-    pageNum: 1,
+    pageOffset: 1,
     pageCount: 5,
     initialLoad: true
   };
@@ -26,8 +26,8 @@ export default class Index extends Component {
         {this.state.initialLoad && this.doSearch()}
         <div className="app-container">
           <div>
-            <TextInput id="pageNum" type="text" pattern="[0-9]*" value={this.state.pageNum} />
-            <TextInput id="pageCount" type="text" pattern="[0-9]*" value={this.state.pageCount} />
+            <TextInput id="pageNum" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageOffset: event })} value={this.state.pageOffset} />
+            <TextInput id="pageCount" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageCount: event })} value={this.state.pageCount} />
             <Button onClick={this.doSearch}>Search</Button>
             {isEmptyResults && (
               <div className="notification-container">
@@ -40,7 +40,7 @@ export default class Index extends Component {
             )}
             <div className="row-view">
               <Label>Search:</Label>
-              <TextInput id="search" onKeyDown={(event) => this.getRows(event)} type="text" value={this.state.input} />
+              <TextInput id="search" type="text" onChange={(event) => this.setState({ input: event })} value={this.state.input} />
             </div>
             <DataList aria-label="Simple data list example">
               <DataListItem aria-labelledby="simple-item1">
@@ -106,13 +106,7 @@ export default class Index extends Component {
 
   private doSearch = () => {
     this.setState({ initialLoad: false })
-    console.log("Now I get the expected value down " + this.state.input)
-    let backend = "/modules.json?search="
-    if (this.state.input != null && this.state.input != "" && this.state.input != "*") {
-      backend = backend + this.state.input + "&key=" + "jcr:created" + "&direction=" + "desc"
-      console.log(backend)
-    }
-    fetch(backend)
+    fetch(this.buildSearchUrl())
       .then(response => response.json())
       .then(responseJSON => this.setState({ data: responseJSON }))
       .then(() => {
@@ -165,19 +159,7 @@ export default class Index extends Component {
   };
 
   private getSortedRows() {
-    console.log("Now I get the expected value down " + this.state.input)
-    let direction = ""
-    if (this.state.isSortedUp) {
-      direction = "asc"
-    }else {
-      direction = "desc"
-    }
-    let backend = "/modules.json?search="+ "&key=" + this.state.sortKey + "&direction=" + direction
-    if (this.state.input != null && this.state.input !== "" && this.state.input !== "*") {
-      backend = "/modules.json?search=" + this.state.input + "&key=" + this.state.sortKey + "&direction=" + direction
-      console.log(backend)
-    }
-    fetch(backend)
+    fetch(this.buildSearchUrl())
       .then(response => response.json())
       .then(responseJSON => this.setState({ data: responseJSON }))
       .then(() => {
@@ -192,4 +174,17 @@ export default class Index extends Component {
         }
       })
   };
+
+  private buildSearchUrl() {
+    let backend = "/modules.json?search="
+    if (this.state.input != null && this.state.input !== "") {
+      backend += this.state.input
+    } else {
+      backend += "*"
+    }
+    backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "asc" : "desc")
+    backend += "&offset=" + (this.state.pageOffset - 1) + "&limit=" + this.state.pageCount
+    console.log(backend)
+    return backend
+  }
 }

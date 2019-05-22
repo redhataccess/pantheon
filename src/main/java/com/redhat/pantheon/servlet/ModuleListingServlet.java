@@ -9,6 +9,8 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
@@ -30,6 +32,8 @@ import java.util.Map;
         })
 @SlingServletPaths(value = "/modules.json")
 public class ModuleListingServlet extends SlingSafeMethodsServlet {
+
+    private final Logger log = LoggerFactory.getLogger(ModuleListingServlet.class);
 
     @Override
     protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
@@ -55,6 +59,7 @@ public class ModuleListingServlet extends SlingSafeMethodsServlet {
         if (request.getParameterMap().containsKey(param)) {
             ret = request.getRequestParameter(param).toString();
         }
+        log.debug("Search param: {}, value: {}", param, ret);
         return ret;
     }
 }
