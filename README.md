@@ -1,6 +1,6 @@
 # Pantheon 2.x
 
-[![Code Coverage](https://img.shields.io/codecov/c/github/pvorb/property-providers/develop.svg)](https://codecov.io/github/redhataccess/pantheon?branch=master)
+[![Code Coverage](https://codecov.io/gh/redhataccess/pantheon/branch/master/graph/badge.svg)](https://codecov.io/github/redhataccess/pantheon?branch=master)
 
 ### Prerequsistes
 Docker
