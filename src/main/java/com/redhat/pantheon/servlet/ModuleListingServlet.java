@@ -50,6 +50,7 @@ public class ModuleListingServlet extends SlingSafeMethodsServlet {
             Writer w = response.getWriter();
             w.write(new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(payload));
         } catch (RepositoryException e) {
+            log.error("/modules.json error", e);
             response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }

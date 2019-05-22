@@ -40,12 +40,12 @@ public class ModuleDataRetriever {
 		if (direction == null || !direction.equals("desc")) {
 			direction = "asc";
 		}
-		return getModules(searchTerm, "order by a.[" + key + "] " + direction, null, null);
+		return getModules(searchTerm, key, direction, offset, limit);
 	}
 
     public List<Map<String, Object>> getModulesNameSort(String searchTerm) {
         try {
-            return getModules(searchTerm, "a.[jcr:title] asc", null, null);
+            return getModules(searchTerm, "jcr:title", "asc", null, null);
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
@@ -53,13 +53,13 @@ public class ModuleDataRetriever {
 
     public List<Map<String, Object>> getModulesCreateSort(String searchTerm) {
         try {
-            return getModules(searchTerm, "a.[jcr:created] desc", null, null);
+            return getModules(searchTerm, "jcr:created", "desc", null, null);
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private List<Map<String, Object>> getModules(String query, String orderBy, String offset, String limit)
+    private List<Map<String, Object>> getModules(String query, String orderByKey, String orderByDirection, String offset, String limit)
             throws RepositoryException {
         if (query.equals("") || query.equals("*") || query == null) {
             query = "";
@@ -80,8 +80,8 @@ public class ModuleDataRetriever {
                 .append("or isdescendantnode(a, '/content/modules') ")
                 .append("or isdescendantnode(a, '/content/sandboxes')) ")
                 .append(query);
-        if (!isEmpty(orderBy)) {
-            queryBuilder.append(" order by ").append(orderBy);
+        if (!isEmpty(orderByKey) && !isEmpty(orderByDirection)) {
+            queryBuilder.append(" order by a.[").append(orderByKey).append("] ").append(orderByDirection);
         }
 
         long lOffset = offset == null ? 0 : Long.valueOf(offset);
