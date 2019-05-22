@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/redhataccess/pantheon.png)](https://travis-ci.org/redhataccess/pantheon)
 [![Code Coverage](https://codecov.io/gh/redhataccess/pantheon/branch/master/graph/badge.svg)](https://codecov.io/github/redhataccess/pantheon?branch=master)
 
-Pantheon 2 is a modular documentation management and puclication system based on asciidoc
+Pantheon 2 is a modular documentation management and publication system based on asciidoc
 and built on top of Apache sling.
 
 ### Prerequsistes
