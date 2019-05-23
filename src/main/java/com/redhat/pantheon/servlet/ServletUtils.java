@@ -2,7 +2,6 @@ package com.redhat.pantheon.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +24,7 @@ public final class ServletUtils {
      * @param defaultValue
      * @return
      */
-    public static @Nonnull String paramValue(final HttpServletRequest request, final String paramName,
+    public static @Nullable String paramValue(final HttpServletRequest request, final String paramName,
                       final String defaultValue) {
         String paramVal = defaultValue;
         String requestParamVal = request.getParameter(paramName);
@@ -55,7 +54,7 @@ public final class ServletUtils {
      * @param defaultValue
      * @return
      */
-    public static @Nonnull Long paramValueAsLong(final HttpServletRequest request, final String paramName,
+    public static @Nullable Long paramValueAsLong(final HttpServletRequest request, final String paramName,
                                              final Long defaultValue) {
         Long paramVal = defaultValue;
         String requestParamVal = request.getParameter(paramName);
