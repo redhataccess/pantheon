@@ -27,7 +27,20 @@ ul {
   color: #dddddd;
 }
 
-#table-rows:hover * {
+.sp-prop {
+  font-weight: bold
+}
+
+.sp-prop-nosort {
+  font-weight: bold
+}
+
+.sp-prop:hover {
+  font-weight: bold;
+  color: #99ccff;
+}
+
+#data-rows:hover * {
   background: #99ccff;
 }
 

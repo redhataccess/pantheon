@@ -64,42 +64,43 @@ public class BulkDeleteServlet extends SlingAllMethodsServlet {
     
     @Override
     protected void doPost(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
-    	
-    	try {
-    		ResourceResolver resourceResolver = request.getResourceResolver();
-    		String[] checkboxValues = request.getParameterValues(FORM_PARAMETER);
-    		
-            if (checkboxValues != null && checkboxValues.length > 0) {
-            	List<String> resourcePaths = Arrays.asList(checkboxValues);
-            	String referrer = request.getHeader("referer");
 
-            	for ( String rPath: resourcePaths) {
-            		Resource res = resourceResolver.getResource(CONTENT_PATH_PREFIX + rPath);
-            		// Delete the resource.
-            		if (res != null) {
-            			resourceResolver.delete(res);
-            		} else {
-            			String msg = "Missing Resource " + CONTENT_PATH_PREFIX + rPath + " for delete";
-            			response.sendError(HttpServletResponse.SC_NOT_FOUND, msg);
-            			throw new ResourceNotFoundException(msg);
-            		}
-            	}
-            	resourceResolver.commit();
-            	response.sendRedirect(referrer);
-            }
-        }
+        String[] checkboxValues = request.getParameterValues(FORM_PARAMETER);
+        if (checkboxValues.length == 0) {
+    		logger.info("No modules selected for delete");
+    		return;
+    	}
+        List<String> resourcePaths = Arrays.asList(checkboxValues);
+        ResourceResolver resourceResolver = request.getResourceResolver();
+        String referrer = request.getHeader("referer");
+        try {
+        	
+        	for ( String rPath: resourcePaths) {
+        		Resource res = resourceResolver.getResource(CONTENT_PATH_PREFIX + rPath);
+        		// Delete the resource.
+        		if (res != null) {
+        			resourceResolver.delete(res);
+        		} else {
+        			String msg = "Missing Resource " + CONTENT_PATH_PREFIX + rPath + " for delete";
+        			response.sendError(HttpServletResponse.SC_NOT_FOUND, msg);
+        			throw new ResourceNotFoundException(msg);
+        		}
+        	}
+        	resourceResolver.commit();
+        	response.sendRedirect(referrer);
+        } 
         catch (Exception e) {
         	// Log the error.
         	logger.error("Module deletion failed: {}", e.getMessage(), e);
-		// Revert all pending changes.
-		if (request.getResourceResolver().hasChanges()) {
-			request.getResourceResolver().revert();
-			String commitError = "Something unexpected happened. Message was: " + e.getMessage();
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, commitError);
-		}
+        	// Revert all pending changes.
+        	if (resourceResolver.hasChanges()) {
+        		resourceResolver.revert();
+        		String commitError = "Something unexpected happened. Message was: " + e.getMessage();
+        		response.sendError(HttpServletResponse.SC_BAD_REQUEST, commitError);
+        	}
         } finally {
         	// When done, close the ResourceResolver.
-        	request.getResourceResolver().close();
-        }   
+        	resourceResolver.close();
+        }
     }
 }

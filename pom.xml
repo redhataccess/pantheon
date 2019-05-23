@@ -67,6 +67,7 @@
                         <_metatypeannotations>*</_metatypeannotations>
                         <Sling-Nodetypes>SLING-INF/nodetypes/nodetypes.cnd</Sling-Nodetypes>
                         <Sling-Initial-Content><![CDATA[
+                            SLING-INF/root;overwrite:=false;overwriteProperties:=true;uninstall:=false;path:=/,
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
                             SLING-INF/content;overwrite:=false;uninstall:=false;path:=/content,
                             SLING-INF/users;overwrite:=false;uninstall:=false,
@@ -82,6 +83,7 @@
                             !org.apache.tools.ant,!org.joda.convert,!org.objectweb.asm,!sun.misc,*
                         </Import-Package>
                         <!-- Embed the necessary dependencies -->
+                        <!-- The `inline=true` is important, don't remove it unless you want cryptic problems such as servlets that suddenly stop resolving without explanation -->
                         <Embed-Dependency>*;scope=compile;inline=true</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Require-Capability>osgi.ee;filter:="(&amp;(osgi.ee=JavaSE)(version=1.8))"</Require-Capability>
@@ -388,6 +390,7 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <scope>provided</scope>
         </dependency>
+        <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -422,6 +425,12 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock.junit5</artifactId>
             <version>2.3.8</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
+            <version>2.1.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
