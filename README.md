@@ -3,6 +3,9 @@
 [![Build Status](https://travis-ci.org/redhataccess/pantheon.png)](https://travis-ci.org/redhataccess/pantheon)
 [![Code Coverage](https://codecov.io/gh/redhataccess/pantheon/branch/master/graph/badge.svg)](https://codecov.io/github/redhataccess/pantheon?branch=master)
 
+Pantheon 2 is a modular documentation management and publication system based on asciidoc
+and built on top of Apache sling.
+
 ### Prerequsistes
 Docker
 Maven
@@ -16,21 +19,10 @@ mvn test
 
 ### How to run this App
 
-The purpose of this project is to demonstrate the capabilities of the Sling framework
-on content management.
-
-To run this demo, you need to run the Apache Sling docker container. First, build the
-container image which is based off the original apache sling image.
+To run the application, run the Apache sling docker container.
 
 ```sh
-cd src/main/dockerfiles
-docker build -t cptools/sling . 
-```
-
-then run the image container
-
-```sh
-docker run -p 8080:8080 --name slingapp cptools/sling 
+docker run -p 8080:8080 --name slingapp apache/sling 
 ```
 
 This will create a container called `slingapp`.
@@ -49,23 +41,9 @@ be previewed and modified.
 
 ### What To do once running
 
-You can look around the different parts of code which mostly try to render a sample type of 
-JCR resource (modules) in different ways. The application loads a sample set of data under the 
-JCR path `content/modules` with three modules used for testing.
+Head to http://localhost:8080/pantheon for the application's entry point.
 
-A basic module management application can be found at `http://localhost:8080/modules.html`
-
-You can also retrieve product definitions at `http://localhost:8080/products.tidy.2.json`.
-A brief explanation on the url:
-
-`http://localhost:8080/products` is the location of the resource (the content)
-
-`.tidy` is a selector, which pretty prints the requested json
-
-`.2` is the recursion level, it means fetch 2 levels from the content tree
-
-`.json` is the format in which to render the requested resource
-
+For sling's management UI, you can head to http://localhost:8080/starter/index.html
 
 ### How to run against a Mongo datastore
 
@@ -79,9 +57,9 @@ Run a mongo db container (were are calling it `slingmongo` here)
 docker run --name slingmongo -d mongo
 ```
 
-Run a transient container which stores everything in the linked mongo db:
+Run a transient Sling container which stores everything in the linked mongo db:
 ```sh
-docker run --rm -d -p 8080:8080 --link slingmongo:mongo -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://mongo:27017' cptools/sling
+docker run --rm -d -p 8080:8080 --link slingmongo:mongo -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://mongo:27017' apache/sling
 ```
 
 ### more to come...
