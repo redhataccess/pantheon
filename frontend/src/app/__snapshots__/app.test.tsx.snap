@@ -2,10 +2,50 @@
 
 exports[`App tests should render default App component 1`] = `
 <Fragment>
-  <div
-    className="app-container"
-  >
+  <div>
     <div>
+      <TextInput
+        aria-label={null}
+        className=""
+        id="pageNum"
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        pattern="[0-9]*"
+        type="text"
+        value={1}
+      />
+      <TextInput
+        aria-label={null}
+        className=""
+        id="pageCount"
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        pattern="[0-9]*"
+        type="text"
+        value={5}
+      />
+      <Button
+        aria-label={null}
+        className=""
+        component="button"
+        isActive={false}
+        isBlock={false}
+        isDisabled={false}
+        isFocus={false}
+        isHover={false}
+        isInline={false}
+        onClick={[Function]}
+        type="button"
+        variant="primary"
+      >
+        Search
+      </Button>
       <div
         className="row-view"
       >
@@ -24,81 +64,174 @@ exports[`App tests should render default App component 1`] = `
           isRequired={false}
           isValid={true}
           onChange={[Function]}
-          placeholder="*"
           type="text"
-          value=""
+          value="*"
         />
       </div>
-      <Table
-        aria-label="table-header"
-        borders={true}
-        cells={
-          Array [
-            "Name",
-            "Description",
-            "Source Type",
-            "Source Name",
-            "Upload Time",
-          ]
-        }
+      <DataList
+        aria-label="Simple data list example"
         className=""
-        contentId="expanded-content"
-        dropdownDirection="down"
-        dropdownPosition="right"
-        expandId="expandable-toggle"
-        gridBreakPoint="grid-md"
-        onCollapse={null}
-        onExpand={null}
-        rowLabeledBy="simple-node"
-        rows={Array []}
-        variant={null}
       >
-        <TableHeader
+        <DataListItem
+          aria-labelledby="simple-item1"
           className=""
-        />
-      </Table>
-      <Table
-        aria-label="table-data"
-        borders={true}
-        cells={
-          Array [
-            "Name",
-            "Description",
-            "Source Type",
-            "Source Name",
-            "Upload Time",
-          ]
-        }
-        className=""
-        contentId="expanded-content"
-        dropdownDirection="down"
-        dropdownPosition="right"
-        expandId="expandable-toggle"
-        gridBreakPoint="grid-md"
-        id="table-rows"
-        key="search_intro_message_thn"
-        onCollapse={null}
-        onExpand={null}
-        rowLabeledBy="simple-node"
-        rows={
-          Array [
-            Array [
-              "Search is case sensitive. Enter '*' for all modules.",
-              "",
-              "",
-              "",
-              "",
-            ],
-          ]
-        }
-        variant={null}
+          isExpanded={false}
+        >
+          <DataListItemRow
+            className=""
+            id="data-rows-header"
+          >
+            <DataListItemCells
+              className=""
+              dataListCells={
+                Array [
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    onClick={[Function]}
+                    width={4}
+                  >
+                    <span
+                      className="sp-prop"
+                      id="span-name"
+                    >
+                      Name
+                    </span>
+                  </DataListCell>,
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    onClick={[Function]}
+                    width={4}
+                  >
+                    <span
+                      className="sp-prop"
+                      id="span-description"
+                    >
+                      Description
+                    </span>
+                  </DataListCell>,
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    width={1}
+                  >
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-type"
+                    >
+                      Source Type
+                    </span>
+                  </DataListCell>,
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    width={1}
+                  >
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-name"
+                    >
+                      Source Name
+                    </span>
+                  </DataListCell>,
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    onClick={[Function]}
+                    width={1}
+                  >
+                    <span
+                      className="sp-prop"
+                      id="span-upload-time"
+                    >
+                      Upload Time
+                    </span>
+                  </DataListCell>,
+                ]
+              }
+            />
+          </DataListItemRow>
+          <DataListItemRow
+            className=""
+            id="data-rows"
+            key=""
+            onClick={[Function]}
+          >
+            <DataListItemCells
+              className=""
+              dataListCells={
+                Array [
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    width={4}
+                  >
+                    
+                  </DataListCell>,
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    width={4}
+                  >
+                    
+                  </DataListCell>,
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    width={1}
+                  />,
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    width={1}
+                  >
+                    
+                  </DataListCell>,
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    width={1}
+                  >
+                    
+                  </DataListCell>,
+                ]
+              }
+            />
+          </DataListItemRow>
+        </DataListItem>
+      </DataList>
+      <div
+        className="notification-container"
       >
-        <TableBody
+        <Alert
+          action={null}
           className=""
-          onRowClick={[Function]}
-          rowKey="id"
+          title="Search is case sensitive. Type '*' and press 'Enter' for all modules."
+          variant="info"
+          variantLabel={null}
         />
-      </Table>
+      </div>
     </div>
   </div>
 </Fragment>

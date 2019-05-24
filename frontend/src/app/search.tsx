@@ -5,7 +5,7 @@ import {
 } from '@patternfly/react-core';
 import '@app/app.css';
 
-export default class Index extends Component {
+export default class Search extends Component {
   public state = {
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
     data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
@@ -20,11 +20,11 @@ export default class Index extends Component {
     initialLoad: true
   };
   public render() {
-    const { columns, isEmptyResults, input, isSortedUp,sortKey } = this.state;
+    const { columns, isEmptyResults, input, isSortedUp,sortKey} = this.state;
     return (
       <React.Fragment>
         {this.state.initialLoad && this.doSearch()}
-        <div className="app-container">
+        <div>
           <div>
             <TextInput id="pageNum" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageOffset: event })} value={this.state.pageOffset} />
             <TextInput id="pageCount" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageCount: event })} value={this.state.pageCount} />

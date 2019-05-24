@@ -1,62 +1,38 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import Index from '@app/index';
-import Module from '@app/module';
-import Login from '@app/login';
+import {
+  Page,
+  PageSection,
+  PageSectionVariants
+} from '@patternfly/react-core';
+import { Header } from '@app/components/Chrome/Header/Header';
+import { Sidebar } from '@app/components/Chrome/Sidebar/Sidebar';
+import { SubHeader } from '@app/components/Chrome/SubHeader/SubHeader';
+import { Routes } from '@app/routes';
+import '@app/app.css';
 
-function App() {
-  return <Routes />
-}
-
-class Routes extends React.Component {
+export default class App extends Component {
   public state = {
-    isLoggedIn: false,
-    linkText: 'Log In'
-  }
-
-  render() {
-    if (!this.state.isLoggedIn) {
-      fetch("/system/sling/info.sessionInfo.json")
-        .then(response => response.json())
-        .then(responseJSON => {
-          if (responseJSON['userID'] != 'anonymous') {
-            this.setState({ linkText: 'Log Out [' + responseJSON['userID'] + ']' })
-            this.setState({ isLoggedIn: true })
-          }
+    isNavOpen: true,
+    setIsNavOpen: Boolean
+  };
+  public render() {
+    const { isNavOpen, setIsNavOpen} = this.state;
+      const onNavToggle = () => {
+        this.setState({
+          isNavOpen: !isNavOpen
         })
-    }
-    return <Router>
-      <div>
-        <ul>
-          <li>
-            <Link to="/">Search</Link>
-          </li>
-          { this.state.isLoggedIn && 
-            <li>
-              <Link to="/new-module">New Module</Link>
-            </li>
-          }
-          <li id='loginParent'>
-            <Link to={this.state.isLoggedIn ? '/logout' : '/login'}
-                onClick={this.conditionalRedirect}>
-              {this.state.linkText}
-            </Link>
-          </li>
-        </ul>
-        <Route exact path="/" component={Index} />
-        <Route exact path="/new-module" component={Module} />
-        <Route exact path="/login" component={Login} />
-      </div>
-    </Router>
-  }
-
-  conditionalRedirect = () => {
-    console.log("Conditional redirect")
-    if (this.state.linkText.startsWith("Log Out")) {
-      fetch('/system/sling/logout')
-          .then(response => window.location.href = "/pantheon")
-    }  
+      }
+    
+    return (
+      <React.Fragment>
+       <Page
+          header={<Header isNavOpen={isNavOpen} onNavToggle={onNavToggle} />}
+          sidebar={<Sidebar isNavOpen={isNavOpen} />}>
+          <PageSection variant={PageSectionVariants.light}>
+            <Routes />
+          </PageSection>
+        </Page>
+      </React.Fragment>
+    );
   }
 }
-
-export default App;
