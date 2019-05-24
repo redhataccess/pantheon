@@ -28,11 +28,11 @@
 <pant = 'http://redhat.com/pantheon'>
 
 // Base type for modules
-[pant:module] > nt:unstructured
+[pant:module] > nt:unstructured, nt:hierarchyNode, sling:Resource
 	- sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
     + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated
 
 // Base type for titles
-[pant:title] > nt:unstructured
+[pant:title] > nt:unstructured, nt:hierarchyNode, sling:Resource
 	- sling:resourceType (string) = 'pantheon/titles' mandatory autocreated
     + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated

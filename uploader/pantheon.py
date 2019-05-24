@@ -28,7 +28,7 @@ def matches(path, globs, globType):
     return False
 
 
-def _generate_data(jcr_primary_type, base_name, sling_resource_type, path_name, asccidoc_type):
+def _generate_data(jcr_primary_type, base_name, path_name, asccidoc_type):
     """
     Generate the data object for the API call.
     """
@@ -38,8 +38,6 @@ def _generate_data(jcr_primary_type, base_name, sling_resource_type, path_name, 
     if base_name:
         data["jcr:title"] = base_name
         data["jcr:description"] = base_name
-    if sling_resource_type:
-        data["sling:resourceType"] = sling_resource_type
     if path_name:
         data["pant:originalName"] = path_name
     if asccidoc_type:
@@ -177,8 +175,7 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
                 url += '/' + path.name
                 logger.debug('url: %s', url)
                 jcr_primary_type = "pant:module" if isModule else "pant:title"
-                sling_resource_type = "pantheon/modules" if isModule else "pantheon/titles"
-                data = _generate_data(jcr_primary_type, base_name, sling_resource_type, path.name, asccidoc_type="nt:file");
+                data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type="nt:file");
                 files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
 
                 # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
@@ -197,8 +194,7 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
                 print(path)
                 logger.debug('url: %s', url)
                 jcr_primary_type = "nt:file"
-                sling_resource_type = None
-                data = _generate_data(jcr_primary_type, base_name, sling_resource_type, path.name, asccidoc_type=None);
+                data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type=None);
                 files = {path.name: (path.name, open(path, 'rb'))}
                 if not args.dry:
                     r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
