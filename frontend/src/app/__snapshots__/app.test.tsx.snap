@@ -113,11 +113,26 @@ exports[`App tests should render default App component 1`] = `
                 Array [
                   <DataListCell
                     alignRight={false}
+                    aria-labelledby="width-ex1-check1"
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    width={1}
+                  >
+                    <span
+                      className="sp-prop"
+                      id="span-check"
+                    >
+                      Select
+                    </span>
+                  </DataListCell>,
+                  <DataListCell
+                    alignRight={false}
                     className=""
                     isFilled={true}
                     isIcon={false}
                     onClick={[Function]}
-                    width={4}
+                    width={2}
                   >
                     <span
                       className="sp-prop"
@@ -132,7 +147,7 @@ exports[`App tests should render default App component 1`] = `
                     isFilled={true}
                     isIcon={false}
                     onClick={[Function]}
-                    width={4}
+                    width={2}
                   >
                     <span
                       className="sp-prop"
@@ -175,7 +190,7 @@ exports[`App tests should render default App component 1`] = `
                     isFilled={true}
                     isIcon={false}
                     onClick={[Function]}
-                    width={2}
+                    width={1}
                   >
                     <span
                       className="sp-prop"
@@ -191,9 +206,18 @@ exports[`App tests should render default App component 1`] = `
           <DataListItemRow
             className=""
             id="data-rows"
-            key=""
-            onClick={[Function]}
           >
+            <DataListCheck
+              aria-label="controlled checkbox example"
+              aria-labelledby="width-ex1-check1"
+              className=""
+              id="check"
+              isChecked={false}
+              isDisabled={false}
+              isValid={true}
+              name=""
+              onChange={[Function]}
+            />
             <DataListItemCells
               className=""
               dataListCells={
@@ -203,34 +227,11 @@ exports[`App tests should render default App component 1`] = `
                     className=""
                     isFilled={true}
                     isIcon={false}
-                    width={4}
+                    width={2}
                   >
-                    
-                  </DataListCell>,
-                  <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
-                    width={4}
-                  >
-                    
-                  </DataListCell>,
-                  <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
-                    width={1}
-                  />,
-                  <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
-                    width={1}
-                  >
-                    
+                    <span>
+                      
+                    </span>
                   </DataListCell>,
                   <DataListCell
                     alignRight={false}
@@ -239,14 +240,67 @@ exports[`App tests should render default App component 1`] = `
                     isIcon={false}
                     width={2}
                   >
-                    
+                    <span>
+                      
+                    </span>
+                  </DataListCell>,
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    width={1}
+                  >
+                    <span />
+                  </DataListCell>,
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    width={1}
+                  >
+                    <span>
+                      
+                    </span>
+                  </DataListCell>,
+                  <DataListCell
+                    alignRight={false}
+                    className=""
+                    isFilled={true}
+                    isIcon={false}
+                    width={1}
+                  >
+                    <span>
+                      
+                    </span>
                   </DataListCell>,
                 ]
               }
+              key=""
+              onClick={[Function]}
             />
           </DataListItemRow>
+          <DataListItemRow
+            className=""
+            id="data-rows"
+          />
         </DataListItem>
       </DataList>
+      <div
+        className="alert"
+      />
+      <div
+        className="notification-container"
+      >
+        <Alert
+          action={null}
+          className=""
+          title="Search is case sensitive. Type '*' and press 'Enter' for all modules."
+          variant="info"
+          variantLabel={null}
+        />
+      </div>
     </div>
   </div>
 </Fragment>

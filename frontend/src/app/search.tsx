@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 import {
-  Alert, AlertActionCloseButton, Button, TextInput, Label,
-  DataList, DataListItem, DataListItemRow, DataListItemCells, DataListCell
+  Alert, AlertActionCloseButton, TextInput, Label,
+  DataList, DataListItem, DataListItemRow, DataListItemCells, DataListCell, Button, Checkbox, DataListCheck
 } from '@patternfly/react-core';
 import '@app/app.css';
 
 export default class Search extends Component {
   public state = {
+    alertOneVisible: true ,
+    check: false,
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
+    countOfCheckedBoxes: 0,
     data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
-    initialLoad: true,
+    deleteButtonVisible: false,
+    delstate: '',
     input: '*',
     isEmptyResults: false,
     isSortedUp: true,
@@ -17,8 +21,16 @@ export default class Search extends Component {
     pageOffset: 1,
     redirect: false,
     redirectLocation: '',
-    sortKey: ''
+    sortKey: '',
+    initialLoad: true,
   };
+
+  public hideAlertOne = () => this.setState({ alertOneVisible: false }, () => {
+    window.location.href = "/pantheon"
+  });
+
+  public tpaths : string[] = [];
+
   public render() {
     const { columns, isEmptyResults, input, isSortedUp,sortKey} = this.state;
     return (
@@ -53,51 +65,154 @@ export default class Search extends Component {
             <DataList aria-label="Simple data list example">
               <DataListItem aria-labelledby="simple-item1">
                 <DataListItemRow id="data-rows-header" >
-                  <DataListItemCells
-                    dataListCells={[
-                      <DataListCell width={4} key="title" onClick={() => this.sort("jcr:title")}>
-                        <span className="sp-prop" id="span-name">Name</span>
-                      </DataListCell>,
-                      <DataListCell width={4} key="description" onClick={() => this.sort("jcr:description")}>
-                        <span className="sp-prop" id="span-description">Description</span>
-                      </DataListCell>,
-                      <DataListCell key="resource source">
-                        <span className="sp-prop-nosort" id="span-source-type">Source Type</span>
-                      </DataListCell>,
-                      <DataListCell key="source name">
-                        <span className="sp-prop-nosort" id="span-source-name">Source Name</span>
-                      </DataListCell>,
-                      <DataListCell width={2} key="upload time" onClick={() => this.sort("jcr:created")}>
-                        <span className="sp-prop" id="span-upload-time">Upload Time</span>
-                      </DataListCell>,]} />
+                  <DataListItemCells 
+                        dataListCells={[
+                          <DataListCell key="checkbox" aria-labelledby="width-ex1-check1">
+                            <span className="sp-prop" id="span-check">Select</span>
+                          </DataListCell>,
+                          <DataListCell width={2} key="title" onClick={() => this.sort("jcr:title")}>
+                            <span className="sp-prop" id="span-name">Name</span>
+                          </DataListCell>,
+                          <DataListCell width={2} key="description" onClick={() => this.sort("jcr:description")}>
+                            <span className="sp-prop" id="span-description">Description</span>
+                          </DataListCell>,
+                          <DataListCell key="resource source">
+                            <span className="sp-prop-nosort" id="span-source-type">Source Type</span>
+                          </DataListCell>,
+                          <DataListCell key="source name">
+                            <span className="sp-prop-nosort" id="span-source-name">Source Name</span>
+                          </DataListCell>,
+                          <DataListCell key="upload time" onClick={() => this.sort("jcr:created")}>
+                            <span className="sp-prop" id="span-upload-time">Upload Time</span>
+                          </DataListCell>,
+                        ]} 
+                  />
                 </DataListItemRow>
                 {this.state.data.map(data => (
-                  <DataListItemRow id="data-rows" key={data["pant:transientPath"]} onClick={() => this.setPreview(data["pant:transientPath"])}>
-                    <DataListItemCells
-                      dataListCells={[
-                        <DataListCell width={4} key="title">
-                          {data["jcr:title"]}
-                        </DataListCell>,
-                        <DataListCell width={4} key="description">
-                          {data["jcr:description"]}
-                        </DataListCell>,
-                        <DataListCell key="resource source">
-                          {data["pant:transientSource"]}
-                        </DataListCell>,
-                        <DataListCell key="source name">
-                          {data["pant:transientSourceName"]}
-                        </DataListCell>,
-                        <DataListCell width={2} key="upload time">
-                          {this.formatDate(new Date(data["jcr:created"]))}
-                        </DataListCell>,]} />
+                  <DataListItemRow id="data-rows">
+                    <DataListCheck aria-labelledby="width-ex1-check1"
+                        isChecked={this.state.check}
+                        onChange={this.handleDeleteCheckboxChange}
+                        aria-label="controlled checkbox example"
+                        id="check"
+                        name={data["pant:transientPath"]}
+                    />
+                    <DataListItemCells key={data["pant:transientPath"]} onClick={() => this.setPreview(data["pant:transientPath"])}
+                          dataListCells={[      
+                                <DataListCell width={2}>
+                                  <span>{data["jcr:title"]}</span>
+                                </DataListCell>,
+                                <DataListCell width={2}>
+                                  <span>{data["jcr:description"]}</span>
+                                </DataListCell>,
+                                <DataListCell>
+                                  <span>{data["pant:transientSource"]}</span>
+                                </DataListCell>,
+                                <DataListCell>
+                                  <span>{data["pant:transientSourceName"]}</span>
+                                </DataListCell>,
+                                <DataListCell>
+                                <span >{this.formatDate(new Date(data["jcr:created"]))}</span>
+                                </DataListCell>
+                          ]} 
+                    />      
                   </DataListItemRow>
                 ))}
+                <DataListItemRow id="data-rows" key={this.state.data["pant:transientPath"]}>
+                    {
+                      this.state.deleteButtonVisible?              
+                        <Button variant="primary" onClick={() => this.delete(event, this.tpaths)}>Delete</Button>
+                      :null
+                    }
+                </DataListItemRow>
               </DataListItem>
             </DataList>
+            <div className="alert">
+              {this.state.delstate=='positive' && <Alert
+                    variant="success"
+                    title="Success"
+                    action={<AlertActionCloseButton onClose={this.hideAlertOne} />}
+                    >
+                      Selected items are deleted!!!
+                </Alert>}
+                {this.state.delstate=='negative' && <Alert
+                    variant="danger"
+                    title="Failure"
+                    action={<AlertActionCloseButton onClose={this.hideAlertOne} />}
+                    >
+                      Selected items not found!!!
+                </Alert>}
+                {this.state.delstate=='unknown' && <Alert
+                    variant="danger"
+                    title="Failure"
+                    action={<AlertActionCloseButton onClose={this.hideAlertOne} />}
+                    >
+                      An error has occured, please check if you are logged in!!!
+                </Alert>}
+            </div>
+            <div className="notification-container">
+              <Alert
+                variant="info"
+                title="Search is case sensitive. Type '*' and press 'Enter' for all modules."
+              />
+            </div>
           </div>
         </div>
       </React.Fragment>
     );
+  }
+
+  private handleDeleteCheckboxChange = (checked, event) => {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    this.setState({ [name]: value }, ()=> {
+      if(checked === true){
+        this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes+1}, () => {
+          if(this.state.countOfCheckedBoxes === 0){
+            this.setState({deleteButtonVisible: false})
+          }else{
+            this.setState({deleteButtonVisible: true})
+          }
+        })
+        this.tpaths.push(name);   
+        console.log('tpaths:'+this.tpaths)
+      }else{
+        this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes-1}, () => {
+          if(this.state.countOfCheckedBoxes === 0){
+            this.setState({deleteButtonVisible: false})
+          }else{
+            this.setState({deleteButtonVisible: true})
+          }
+        })
+        this.tpaths.splice(this.tpaths.indexOf(name))
+        console.log('tpaths:'+this.tpaths)
+      }
+    });
+  };
+
+  delete = (event, keydata) => {
+    console.log('in the delete function')
+      const formData = new FormData();
+      formData.append(':operation', 'delete')
+    for(var i=0;i<keydata.length;i++){
+      formData.append(':applyTo', '/content/'+keydata[i])
+    }
+      fetch('/content/'+keydata[0], {
+        method: 'post',
+        body: formData
+      }).then(response => {
+        if (response.status == 200) {
+          this.setState({ delstate: 'positive' })
+          console.log('delstate:'+this.state.delstate)
+        } else if (response.status == 403) {
+          this.setState({ delstate: 'negative' })
+          console.log('delstate:'+this.state.delstate)
+        } else {
+          this.setState({ delstate: 'unknown' })
+          console.log('delstate:'+this.state.delstate)
+        }
+      });
   }
 
   private getRows = (event) => {
@@ -186,7 +301,7 @@ export default class Search extends Component {
     }
     backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
     backend += "&offset=" + (this.state.pageOffset - 1) + "&limit=" + this.state.pageCount
-    console.log(backend)
+    console.log(backend)  
     return backend
   }
 }
