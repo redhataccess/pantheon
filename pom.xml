@@ -37,7 +37,7 @@
     </properties>
 
     <build>
-    <!--Copies React dist to the content directory to be later added to the JCR-->
+        <!--Copies React dist to the content directory to be later added to the JCR-->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -48,7 +48,7 @@
                 <filtering>false</filtering>
             </resource>
         </resources>
-    
+
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -161,47 +161,47 @@
                 </executions>
             </plugin>
             <plugin>
-    <groupId>com.github.eirslett</groupId>
-    <artifactId>frontend-maven-plugin</artifactId>
-    <version>${frontend-maven-plugin.version}</version>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend-maven-plugin.version}</version>
 
-    <configuration>
-        <nodeVersion>${node.version}</nodeVersion>
-        <yarnVersion>${yarn.version}</yarnVersion>
-        <workingDirectory>${frontendSrcDir}</workingDirectory>
-        <installDirectory>${project.build.directory}</installDirectory>
-    </configuration>
+                <configuration>
+                    <nodeVersion>${node.version}</nodeVersion>
+                    <yarnVersion>${yarn.version}</yarnVersion>
+                    <workingDirectory>${frontendSrcDir}</workingDirectory>
+                    <installDirectory>${project.build.directory}</installDirectory>
+                </configuration>
 
-    <executions>
-        <execution>
-            <id>install-frontend-tools</id>
-            <goals>
-                <goal>install-node-and-yarn</goal>
-            </goals>
-        </execution>
+                <executions>
+                    <execution>
+                        <id>install-frontend-tools</id>
+                        <goals>
+                            <goal>install-node-and-yarn</goal>
+                        </goals>
+                    </execution>
 
-        <execution>
-            <id>yarn-install</id>
-            <goals>
-                <goal>yarn</goal>
-            </goals>
-            <configuration>
-                <arguments>install</arguments>
-            </configuration>
-        </execution>
+                    <execution>
+                        <id>yarn-install</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
 
-        <execution>
-            <id>build-frontend</id>
-            <goals>
-                <goal>yarn</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-                <arguments>build</arguments>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
+                    <execution>
+                        <id>build-frontend</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <arguments>build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <profiles>
