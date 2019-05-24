@@ -5,22 +5,20 @@ import { Redirect } from 'react-router-dom'
 
 export default class Module extends Component {
   public state = {
-    moduleName: '',
+    failedPost: false,
+    isMissingFields: false,
+    login: false,
     moduleDescription: '',
     moduleFile: File,
-    redirect: false,
-    login: false,
-    failedPost: false,
-    isMissingFields: false
+    moduleName: '',
+    redirect: false
   };
 
   public render() {
     const { moduleName, moduleDescription, isMissingFields } = this.state;
     return (
       <React.Fragment>
-
         <div className="app-container">
-
           <div>
           {isMissingFields && (
             <div className="notification-container">
@@ -28,12 +26,11 @@ export default class Module extends Component {
                 variant="warning"
                   title="A module name and choosing a file is required."
                 action={<AlertActionCloseButton onClose={this.dismissNotification} />}
-              >
-              </Alert>
+              />
             </div>
           )}
-            <TextInput id="module-name" type="text" placeholder="Module Name" value={moduleName} onChange={this.handleTextInputChange1} />
-            <TextInput id="module-description" type="text" placeholder="Module Description" value={moduleDescription} onChange={this.handleTextInputChange2} />
+            <TextInput id="module-name" type="text" placeholder="Module Name" value={moduleName} onChange={this.handleNameInput} />
+            <TextInput id="module-description" type="text" placeholder="Module Description" value={moduleDescription} onChange={this.handleModuleInput} />
             <input id="input" className="input-file" color="#dddddd" type="file" onChange={(e) => this.handleFileChange(e.target.files)} />
             <div>
               {this.loginRedirect()}
@@ -46,22 +43,23 @@ export default class Module extends Component {
     );
   }
 
-  handleTextInputChange1 = moduleName => {
+  private handleNameInput = moduleName => {
     this.setState({ moduleName });
     console.log("Name " + moduleName)
 
   };
-  handleTextInputChange2 = moduleDescription => {
+
+  private handleModuleInput = moduleDescription => {
     this.setState({ moduleDescription });
     console.log("Desc " + moduleDescription)
   };
 
-  handleFileChange = selectorFiles => {
+  private handleFileChange = selectorFiles => {
     this.setState({ moduleFile: selectorFiles })
     console.log(selectorFiles);
   }
 
-  saveModule = (postBody) => {
+  private saveModule = (postBody) => {
     console.log("My data is: " + this.state.moduleName + " and my desc is " + this.state.moduleDescription + " and my files are " + this.state.moduleFile)
     if (this.state.moduleName == "" || this.state.moduleFile[0] == undefined){
       this.setState({ isMissingFields: true })
@@ -82,9 +80,9 @@ export default class Module extends Component {
     formData.append("asciidoc", blob)
 
     fetch('/content/modules/' + this.state.moduleName, {
-      method: 'post',
+      body: formData,
       headers: hdrs,
-      body: formData
+      method: 'post'
     }).then(response => {
       if (response.status == 201 || response.status == 200) {
         console.log(" Works " + response.status)
@@ -100,7 +98,7 @@ export default class Module extends Component {
    }
   }
 
-  renderRedirect = () => {
+  private renderRedirect = () => {
     if (this.state.redirect) {
       return <Redirect to='/' />
     } else {
@@ -108,7 +106,7 @@ export default class Module extends Component {
     }
   }
 
-  loginRedirect = () => {
+  private loginRedirect = () => {
     if (this.state.login) {
       return <Redirect to='/login' />
     } else {
