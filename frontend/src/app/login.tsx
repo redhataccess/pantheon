@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Alert, AlertActionCloseButton, BackgroundImage, BackgroundImageSrc, TextInput } from '@patternfly/react-core';
+import { Button, Alert, AlertActionCloseButton, BackgroundImage, BackgroundImageSrc, TextInput, KEY_CODES } from '@patternfly/react-core';
 import '@app/app.css';
 
 export default class Login extends Component {
@@ -17,7 +17,7 @@ export default class Login extends Component {
         <div className="app-container">
           <div>
             {this.failedAuthMessage()}
-            <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.onUsernameChange} />
+            <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.onUsernameChange} onKeyPress={this.onLoginKeyPress} />
             <TextInput id="password" type="password" placeholder="Password" value={password} onChange={this.onPasswordChange} />
             <div>
               {this.checkAuth()}
@@ -27,6 +27,12 @@ export default class Login extends Component {
         </div>
       </React.Fragment>
     );
+  }
+
+  private onLoginKeyPress = (event) => {
+    if (event.getKey == KEY_CODES.ENTER) {
+      this.login()
+    }
   }
 
   private failedAuthMessage = () => {
@@ -45,7 +51,7 @@ export default class Login extends Component {
     this.setState({ password });
   };
 
-  private login = (postBody) => {
+  private login = () => {
     const formData = new FormData();
     formData.append("j_username", this.state.username)
     formData.append("j_password", this.state.password)
