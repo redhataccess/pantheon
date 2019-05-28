@@ -13,7 +13,7 @@
     <p>
     <input type="text" id="searchTerms" onkeyup="search()" placeholder="Search for names..">
     </p>
-    <form method="POST" id="moduleList" action="/modules.html" enctype="multipart/form-data">
+    <form method="POST" id="moduleList" action="/pantheon" enctype="multipart/form-data">
     
     <table id="myTable">
         <tr>
@@ -29,7 +29,7 @@
   <sly data-sly-use.moduleData="${'com.redhat.pantheon.use.ModuleData' @ query=(searchIsNull ? '*' : request.requestParameterMap['search'][0].toString )}">
         <sly data-sly-list="${moduleData.getModulesCreateSort}">
             <tr>
-               <td><input name="module" id="${item.pant:transientPath}" type="checkbox" value="${item.pant:transientPath}" /></td>
+               <td><input name="module" id="${item.pant:transientPath}" type="checkbox" value="/content/${item.pant:transientPath}" /></td>
                 <td>
                     <a href="${item.pant:transientPath}.preview">${item.jcr:title}</a>
                 </td>
@@ -48,6 +48,7 @@
             </tr>
         </sly></sly>
     </table>
+    <input name=":redirect" type="hidden" value="/modules.html"/> 
     <div id="bulkOperation"> </div>
     </form>
 </div>
@@ -129,14 +130,31 @@ function search() {
   let deleteButton;
   let item = 0;
   let form = document.getElementById("moduleList");
+  let hiddenElementApplyTo = null;
+  let hiddenElementOperation = null;
   for (let checkbox of Array.from(checkboxes)) {
     checkbox.addEventListener("change", () => {
       if (checkbox.checked == true) {
 	    document.body.style.background = "lightgrey";
-	    //console.log("module selected for deletion: ", checkbox.id);
+	    console.log("module selected for deletion: ", checkbox.id);
+	    
+	    hiddenElementApplyTo = document.createElement("input");
+	    hiddenElementApplyTo.setAttribute("type", "hidden");
+	    hiddenElementApplyTo.setAttribute("name", ":applyTo");
+	    hiddenElementApplyTo.setAttribute("value", checkbox.value);
+	    form.appendChild(hiddenElementApplyTo);
+	    console.log("checkbox value: ", checkbox.value);
+	    
+	    hiddenElementOperation = document.createElement("input");
+        hiddenElementOperation.setAttribute("type", "hidden");
+        hiddenElementOperation.setAttribute("name", ":operation");
+        hiddenElementOperation.setAttribute("value", "delete");
+        form.appendChild(hiddenElementOperation);
+	    console.log("form", form);
 	    item++;
 	  } else {
 	    item--;
+	    // clean up
       if (item == 0) {
 		   document.body.style.background = "";
 		  }
@@ -151,13 +169,15 @@ function search() {
 		  deleteButton.setAttribute("class", "btn btn-primary");
 		  deleteButton.setAttribute("onclick", "form.submit()");
 		  document.getElementById("bulkOperation").appendChild(deleteButton);
-		  form.setAttribute("action", "/content/" + checkbox.id);
+		  
+		  
 		}
 	  } else {
 		  if (btn)
 		  document.getElementById("bulkOperation").removeChild(deleteButton);
 	  }
 	});
+    
   }
 </script>
 </body>
