@@ -9,15 +9,15 @@ export default class Search extends Component {
   public state = {
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
     data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
+    initialLoad: true,
     input: '*',
     isEmptyResults: false,
     isSortedUp: true,
+    pageCount: 5,
+    pageOffset: 1,
     redirect: false,
     redirectLocation: '',
-    sortKey: '',
-    pageOffset: 1,
-    pageCount: 5,
-    initialLoad: true
+    sortKey: ''
   };
   public render() {
     const { columns, isEmptyResults, input, isSortedUp,sortKey} = this.state;
@@ -26,9 +26,12 @@ export default class Search extends Component {
         {this.state.initialLoad && this.doSearch()}
         <div>
           <div>
+          <div className="row-view">
+          <Label>page Number:</Label>
             <TextInput id="pageNum" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageOffset: event })} value={this.state.pageOffset} />
+            <Label>page Count:</Label>
             <TextInput id="pageCount" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageCount: event })} value={this.state.pageCount} />
-            <Button onClick={this.doSearch}>Search</Button>
+            </div>
             {isEmptyResults && (
               <div className="notification-container">
                 <Alert
@@ -39,9 +42,10 @@ export default class Search extends Component {
               </div>
             )}
             <div className="row-view">
-              <Label>Search:</Label>
+              <Label>Search Query:</Label>
               <TextInput id="search" type="text" onChange={(event) => this.setState({ input: event })} value={this.state.input} />
             </div>
+            <Button onClick={this.doSearch}>Search</Button>
             <DataList aria-label="Simple data list example">
               <DataListItem aria-labelledby="simple-item1">
                 <DataListItemRow id="data-rows-header" >
@@ -89,7 +93,7 @@ export default class Search extends Component {
             <div className="notification-container">
               <Alert
                 variant="info"
-                title="Search is case sensitive. Type '*' and press 'Enter' for all modules."
+                title="Search is case sensitive. Type '*' and click the Search button for all modules."
               />
             </div>
           </div>

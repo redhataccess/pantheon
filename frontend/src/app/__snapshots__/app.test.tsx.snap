@@ -4,32 +4,70 @@ exports[`App tests should render default App component 1`] = `
 <Fragment>
   <div>
     <div>
-      <TextInput
-        aria-label={null}
-        className=""
-        id="pageNum"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
-        onChange={[Function]}
-        pattern="[0-9]*"
-        type="text"
-        value={1}
-      />
-      <TextInput
-        aria-label={null}
-        className=""
-        id="pageCount"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
-        onChange={[Function]}
-        pattern="[0-9]*"
-        type="text"
-        value={5}
-      />
+      <div
+        className="row-view"
+      >
+        <Label
+          className=""
+          isCompact={false}
+        >
+          page Number:
+        </Label>
+        <TextInput
+          aria-label={null}
+          className=""
+          id="pageNum"
+          isDisabled={false}
+          isReadOnly={false}
+          isRequired={false}
+          isValid={true}
+          onChange={[Function]}
+          pattern="[0-9]*"
+          type="text"
+          value={1}
+        />
+        <Label
+          className=""
+          isCompact={false}
+        >
+          page Count:
+        </Label>
+        <TextInput
+          aria-label={null}
+          className=""
+          id="pageCount"
+          isDisabled={false}
+          isReadOnly={false}
+          isRequired={false}
+          isValid={true}
+          onChange={[Function]}
+          pattern="[0-9]*"
+          type="text"
+          value={5}
+        />
+      </div>
+      <div
+        className="row-view"
+      >
+        <Label
+          className=""
+          isCompact={false}
+        >
+          Search Query:
+        </Label>
+        <TextInput
+          aria-label={null}
+          className=""
+          id="search"
+          isDisabled={false}
+          isReadOnly={false}
+          isRequired={false}
+          isValid={true}
+          onChange={[Function]}
+          type="text"
+          value="*"
+        />
+      </div>
       <Button
         aria-label={null}
         className=""
@@ -46,28 +84,6 @@ exports[`App tests should render default App component 1`] = `
       >
         Search
       </Button>
-      <div
-        className="row-view"
-      >
-        <Label
-          className=""
-          isCompact={false}
-        >
-          Search:
-        </Label>
-        <TextInput
-          aria-label={null}
-          className=""
-          id="search"
-          isDisabled={false}
-          isReadOnly={false}
-          isRequired={false}
-          isValid={true}
-          onChange={[Function]}
-          type="text"
-          value="*"
-        />
-      </div>
       <DataList
         aria-label="Simple data list example"
         className=""
@@ -227,7 +243,7 @@ exports[`App tests should render default App component 1`] = `
         <Alert
           action={null}
           className=""
-          title="Search is case sensitive. Type '*' and press 'Enter' for all modules."
+          title="Search is case sensitive. Type '*' and click the Search button for all modules."
           variant="info"
           variantLabel={null}
         />

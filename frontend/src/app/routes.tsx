@@ -31,7 +31,7 @@ const routes: IAppRoute[] = [
     component: Login,
     exact: true,
     icon: null,
-    label: 'Login',
+    label: '', // Empty because we are using the Brand component to render the text.
     path: '/login'
   }
 ];
