@@ -33,7 +33,7 @@ export default class Login extends Component {
     return this.state.authMessage.length > 0 && <div className="notification-container">
       <Alert variant="danger"
           title={this.state.authMessage}
-        action={<AlertActionCloseButton onClose={() => { this.setState({ failedAuth: false })}} />} />
+        action={<AlertActionCloseButton onClose={() => { this.setState({ authMessage: '' })}} />} />
     </div>
   }
 
