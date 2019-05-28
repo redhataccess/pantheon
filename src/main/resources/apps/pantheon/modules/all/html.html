@@ -130,54 +130,59 @@ function search() {
   let deleteButton;
   let item = 0;
   let form = document.getElementById("moduleList");
-  let hiddenElementApplyTo = null;
+  
   let hiddenElementOperation = null;
+  let bulkOperation = document.getElementById("bulkOperation");
   for (let checkbox of Array.from(checkboxes)) {
     checkbox.addEventListener("change", () => {
+        
       if (checkbox.checked == true) {
 	    document.body.style.background = "lightgrey";
-	    console.log("module selected for deletion: ", checkbox.id);
+	    //console.log("module selected for deletion: ", checkbox.id);
+	    let hiddenElementApplyTo = document.createElement("input");
+        hiddenElementApplyTo.setAttribute("type", "hidden");
+        hiddenElementApplyTo.setAttribute("name", ":applyTo");
+        hiddenElementApplyTo.setAttribute("id", checkbox.value);
+        hiddenElementApplyTo.setAttribute("value", checkbox.value);
+	    bulkOperation.appendChild(hiddenElementApplyTo);
 	    
-	    hiddenElementApplyTo = document.createElement("input");
-	    hiddenElementApplyTo.setAttribute("type", "hidden");
-	    hiddenElementApplyTo.setAttribute("name", ":applyTo");
-	    hiddenElementApplyTo.setAttribute("value", checkbox.value);
-	    form.appendChild(hiddenElementApplyTo);
-	    console.log("checkbox value: ", checkbox.value);
-	    
-	    hiddenElementOperation = document.createElement("input");
-        hiddenElementOperation.setAttribute("type", "hidden");
-        hiddenElementOperation.setAttribute("name", ":operation");
-        hiddenElementOperation.setAttribute("value", "delete");
-        form.appendChild(hiddenElementOperation);
-	    console.log("form", form);
 	    item++;
 	  } else {
+		  if (document.getElementById(checkbox.value) !== null) {
+		    bulkOperation.removeChild(document.getElementById(checkbox.value));
+		  }
 	    item--;
-	    // clean up
-      if (item == 0) {
+	    
+        if (item == 0) {
 		   document.body.style.background = "";
 		  }
-	  }
-      let btn = document.getElementById("delete");
-	  if(item > 0) {
-		if (! btn) {
-		  deleteButton = document.createElement("input");
-		  deleteButton.setAttribute("type", "submit");
-		  deleteButton.setAttribute("value", "Delete");
-		  deleteButton.setAttribute("id", "delete");
-		  deleteButton.setAttribute("class", "btn btn-primary");
-		  deleteButton.setAttribute("onclick", "form.submit()");
-		  document.getElementById("bulkOperation").appendChild(deleteButton);
-		  
-		  
-		}
-	  } else {
-		  if (btn)
-		  document.getElementById("bulkOperation").removeChild(deleteButton);
-	  }
-	});
-    
+	    }
+        let btn = document.getElementById("delete");
+        let op = document.getElementById("operation");
+	    if(item > 0) {
+		  if (! btn) {
+		    deleteButton = document.createElement("input");
+		    deleteButton.setAttribute("type", "submit");
+		    deleteButton.setAttribute("value", "Delete");
+		    deleteButton.setAttribute("id", "delete");
+		    deleteButton.setAttribute("class", "btn btn-primary");
+		    deleteButton.setAttribute("onclick", "form.submit()");
+		    bulkOperation.appendChild(deleteButton);
+		  }
+		  if (!op) {
+			  hiddenElementOperation = document.createElement("input");
+		      hiddenElementOperation.setAttribute("type", "hidden");
+		      hiddenElementOperation.setAttribute("name", ":operation");
+		      hiddenElementOperation.setAttribute("id", "operation");
+		      hiddenElementOperation.setAttribute("value", "delete");
+		      bulkOperation.appendChild(hiddenElementOperation);  
+		  }
+	    } else {
+		  if (btn) {
+			  bulkOperation.removeChild(deleteButton);
+	      }
+	    }  
+    });
   }
 </script>
 </body>
