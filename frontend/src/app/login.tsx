@@ -18,7 +18,7 @@ export default class Login extends Component {
           <div>
             {this.failedAuthMessage()}
             <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.onUsernameChange} onKeyPress={this.onLoginKeyPress} />
-            <TextInput id="password" type="password" placeholder="Password" value={password} onChange={this.onPasswordChange} />
+            <TextInput id="password" type="password" placeholder="Password" value={password} onChange={this.onPasswordChange} onKeyPress={this.onLoginKeyPress} />
             <div>
               {this.checkAuth()}
               <Button onClick={this.login}>Log In</Button>
@@ -30,7 +30,7 @@ export default class Login extends Component {
   }
 
   private onLoginKeyPress = (event) => {
-    if (event.getKey == KEY_CODES.ENTER) {
+    if (event.key == 'Enter') {
       this.login()
     }
   }
