@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Alert, AlertActionCloseButton, BackgroundImage, BackgroundImageSrc, TextInput, KEY_CODES } from '@patternfly/react-core';
+import { Button, Alert, AlertActionCloseButton, BackgroundImage, BackgroundImageSrc, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 
 export default class Login extends Component {
