@@ -7,6 +7,8 @@ import logging
 import yaml
 import socket
 import base64
+import sys
+import requests
 from pathlib import PurePath
 
 DEFAULT_SERVER = 'http://localhost:8080'
@@ -106,10 +108,23 @@ def resolveOption(parserVal, configKey, default):
     else:
         return default
 
+def exists(path):
+    try:
+        resp = requests.head(path)
+        logger.debug('HEAD request to remote server status_code: %s', resp.status_code)
+        return resp.status_code < 400
+    except Exception:
+        return False
 
 server = resolveOption(args.server, 'server', DEFAULT_SERVER)
 repository = resolveOption(args.repository, 'repository', DEFAULT_REPOSITORY)
 links = resolveOption(args.links, 'followlinks', DEFAULT_LINKS)
+
+# Check if server url path reachable
+if exists(server+'/pantheon'):
+    logger.debug('server: %s is reachable', server)
+else:
+    sys.exit("server " + server + " is not reachable")
 
 print('Using server: ' + server)
 print('Using repository: ' + repository)
