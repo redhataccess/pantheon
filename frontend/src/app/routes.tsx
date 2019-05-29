@@ -24,7 +24,7 @@ const routes: IAppRoute[] = [
     component: Module,
     exact: true,
     icon: null,
-    label: 'Module',
+    label: '',
     path: '/module'
   },
   {

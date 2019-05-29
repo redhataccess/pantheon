@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 
-export default class Brand extends Component {
+export default class NavLinks extends Component {
     public state = {
         isLoggedIn: false,
-        linkText: 'Pantheon | Log In'
+        moduleText: '',
+        searchText: 'Search'
     };
 
     public render() {
@@ -14,7 +15,7 @@ export default class Brand extends Component {
                 .then(response => response.json())
                 .then(responseJSON => {
                     if (responseJSON[id] !== 'anonymous') {
-                        this.setState({ linkText: 'Pantheon | Log Out [' + responseJSON[id] + ']' })
+                        this.setState({ moduleText: 'New Module' })
                         this.setState({ isLoggedIn: true })
                     }
                 })
@@ -22,18 +23,17 @@ export default class Brand extends Component {
 
         return (
             <React.Fragment>
-                <Link to={this.state.isLoggedIn ? '/logout' : '/login'}
-                    onClick={this.conditionalRedirect}>
-                    {this.state.linkText}
-                </Link>
+                <li>
+                    <Link to='/search'>
+                        {this.state.searchText}
+                    </Link>
+                </li>
+                {(this.state.moduleText.length > 0) && (<li>
+                    <Link to='/module'>
+                        {this.state.moduleText}
+                    </Link>
+                </li>)}
             </React.Fragment>
         );
-    }
-
-    private conditionalRedirect = () => {
-        if (this.state.linkText.includes("Log Out")) {
-            fetch('/system/sling/logout')
-                .then(response => window.location.href = "/pantheon")
-        }
     }
 }
