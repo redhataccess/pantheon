@@ -11,6 +11,24 @@ exports[`App tests should render default App component 1`] = `
           className=""
           isCompact={false}
         >
+          Search Query:
+        </Label>
+        <TextInput
+          aria-label={null}
+          className=""
+          id="search"
+          isDisabled={false}
+          isReadOnly={false}
+          isRequired={false}
+          isValid={true}
+          onChange={[Function]}
+          type="text"
+          value="*"
+        />
+        <Label
+          className=""
+          isCompact={false}
+        >
           page Number:
         </Label>
         <TextInput
@@ -49,41 +67,34 @@ exports[`App tests should render default App component 1`] = `
       <div
         className="row-view"
       >
-        <Label
-          className=""
-          isCompact={false}
+        <div
+          className="notification-container"
         >
-          Search Query:
-        </Label>
-        <TextInput
+          <Alert
+            action={null}
+            className=""
+            title="Search is case sensitive. Type '*' and click the Search button for all modules."
+            variant="info"
+            variantLabel={null}
+          />
+        </div>
+        <Button
           aria-label={null}
           className=""
-          id="search"
+          component="button"
+          isActive={false}
+          isBlock={false}
           isDisabled={false}
-          isReadOnly={false}
-          isRequired={false}
-          isValid={true}
-          onChange={[Function]}
-          type="text"
-          value="*"
-        />
+          isFocus={false}
+          isHover={false}
+          isInline={false}
+          onClick={[Function]}
+          type="button"
+          variant="primary"
+        >
+          Search
+        </Button>
       </div>
-      <Button
-        aria-label={null}
-        className=""
-        component="button"
-        isActive={false}
-        isBlock={false}
-        isDisabled={false}
-        isFocus={false}
-        isHover={false}
-        isInline={false}
-        onClick={[Function]}
-        type="button"
-        variant="primary"
-      >
-        Search
-      </Button>
       <DataList
         aria-label="Simple data list example"
         className=""
@@ -165,7 +176,7 @@ exports[`App tests should render default App component 1`] = `
                     isFilled={true}
                     isIcon={false}
                     onClick={[Function]}
-                    width={1}
+                    width={2}
                   >
                     <span
                       className="sp-prop"
@@ -227,7 +238,7 @@ exports[`App tests should render default App component 1`] = `
                     className=""
                     isFilled={true}
                     isIcon={false}
-                    width={1}
+                    width={2}
                   >
                     
                   </DataListCell>,
@@ -237,17 +248,6 @@ exports[`App tests should render default App component 1`] = `
           </DataListItemRow>
         </DataListItem>
       </DataList>
-      <div
-        className="notification-container"
-      >
-        <Alert
-          action={null}
-          className=""
-          title="Search is case sensitive. Type '*' and click the Search button for all modules."
-          variant="info"
-          variantLabel={null}
-        />
-      </div>
     </div>
   </div>
 </Fragment>

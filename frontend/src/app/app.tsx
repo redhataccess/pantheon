@@ -6,7 +6,6 @@ import {
 } from '@patternfly/react-core';
 import { Header } from '@app/components/Chrome/Header/Header';
 import { Sidebar } from '@app/components/Chrome/Sidebar/Sidebar';
-import { SubHeader } from '@app/components/Chrome/SubHeader/SubHeader';
 import { Routes } from '@app/routes';
 import '@app/app.css';
 

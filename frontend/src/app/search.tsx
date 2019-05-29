@@ -26,11 +26,13 @@ export default class Search extends Component {
         {this.state.initialLoad && this.doSearch()}
         <div>
           <div>
-          <div className="row-view">
-          <Label>page Number:</Label>
-            <TextInput id="pageNum" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageOffset: event })} value={this.state.pageOffset} />
-            <Label>page Count:</Label>
-            <TextInput id="pageCount" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageCount: event })} value={this.state.pageCount} />
+            <div className="row-view">
+              <Label>Search Query:</Label>
+              <TextInput id="search" type="text" onChange={(event) => this.setState({ input: event })} value={this.state.input} />
+              <Label>page Number:</Label>
+              <TextInput id="pageNum" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageOffset: event })} value={this.state.pageOffset} />
+              <Label>page Count:</Label>
+              <TextInput id="pageCount" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageCount: event })} value={this.state.pageCount} />
             </div>
             {isEmptyResults && (
               <div className="notification-container">
@@ -42,10 +44,14 @@ export default class Search extends Component {
               </div>
             )}
             <div className="row-view">
-              <Label>Search Query:</Label>
-              <TextInput id="search" type="text" onChange={(event) => this.setState({ input: event })} value={this.state.input} />
+              <div className="notification-container">
+                <Alert
+                  variant="info"
+                  title="Search is case sensitive. Type '*' and click the Search button for all modules."
+                />
+              </div>
+              <Button onClick={this.doSearch}>Search</Button>
             </div>
-            <Button onClick={this.doSearch}>Search</Button>
             <DataList aria-label="Simple data list example">
               <DataListItem aria-labelledby="simple-item1">
                 <DataListItemRow id="data-rows-header" >
@@ -63,7 +69,7 @@ export default class Search extends Component {
                       <DataListCell key="source name">
                         <span className="sp-prop-nosort" id="span-source-name">Source Name</span>
                       </DataListCell>,
-                      <DataListCell key="upload time" onClick={() => this.sort("jcr:created")}>
+                      <DataListCell width={2} key="upload time" onClick={() => this.sort("jcr:created")}>
                         <span className="sp-prop" id="span-upload-time">Upload Time</span>
                       </DataListCell>,]} />
                 </DataListItemRow>
@@ -83,19 +89,13 @@ export default class Search extends Component {
                         <DataListCell key="source name">
                           {data["pant:transientSourceName"]}
                         </DataListCell>,
-                        <DataListCell key="upload time">
+                        <DataListCell width={2} key="upload time">
                           {this.formatDate(new Date(data["jcr:created"]))}
                         </DataListCell>,]} />
                   </DataListItemRow>
                 ))}
               </DataListItem>
             </DataList>
-            <div className="notification-container">
-              <Alert
-                variant="info"
-                title="Search is case sensitive. Type '*' and click the Search button for all modules."
-              />
-            </div>
           </div>
         </div>
       </React.Fragment>
@@ -115,7 +115,7 @@ export default class Search extends Component {
       .then(responseJSON => this.setState({ data: responseJSON }))
       .then(() => {
         // console.log("JSON string is " + JSON.stringify(this.state.data))
-        if (JSON.stringify(this.state.data) == "[]") {
+        if (JSON.stringify(this.state.data) === "[]") {
           this.setState({
             data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
             isEmptyResults: true
