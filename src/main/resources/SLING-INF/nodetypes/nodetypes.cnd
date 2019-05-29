@@ -19,10 +19,10 @@
 
 //
 //  You can find out more documentation on this topic 
-//	by following these links:
+//  by following these links:
 //
 //    -  http://sling.apache.org/site/content-loading.html
-//	  -	 http://jackrabbit.apache.org/node-type-notation.html
+//    -  http://jackrabbit.apache.org/node-type-notation.html
 //
 
 <pant = 'http://redhat.com/pantheon'>
@@ -37,7 +37,13 @@
 // sling:resource defines the sling:resourceType, not sure if it's necessary since we're doing it manually
 //    right here anyways but it probably doesn't hurt for clarity's sake - https://cwiki.apache.org/confluence/display/SLING/sling-Resource
 [pant:module] > nt:unstructured, nt:hierarchyNode, sling:Resource
-	- sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
+    - sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
+    + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated
+
+
+// Base type for titles
+[pant:title] > nt:unstructured, nt:hierarchyNode, sling:Resource
+	- sling:resourceType (string) = 'pantheon/titles' mandatory autocreated
     + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated
 
 // Additional types:
