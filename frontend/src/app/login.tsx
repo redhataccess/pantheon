@@ -4,15 +4,14 @@ import '@app/app.css';
 
 export default class Login extends Component {
   public state = {
-    username: '',
-    password: '',
+    authMessage: '',
     currentLogin: 'anonymous',
-    authMessage: ''
+    password: '',
+    username: ''
   };
-  
+
   public render() {
     const { username, password } = this.state;
-    
     return (
       <React.Fragment>
         <div className="app-container">
@@ -44,11 +43,11 @@ export default class Login extends Component {
     </div>
   }
 
-  onUsernameChange = username => {
+  private onUsernameChange = username => {
     this.setState({ username });
 
   };
-  onPasswordChange = password => {
+  private onPasswordChange = password => {
     this.setState({ password });
   };
 
@@ -56,14 +55,15 @@ export default class Login extends Component {
     const formData = new FormData();
     formData.append("j_username", this.state.username)
     formData.append("j_password", this.state.password)
+
     fetch('/j_security_check', {
+      body: formData,
       method: 'post',
-      body: formData
     }).then(response => {
-      if (response.status == 200) {
+      if (response.status === 200) {
         console.log(" Works " + response.status)
         window.location.href = "/pantheon"
-      } else if (response.status == 403) {
+      } else if (response.status === 403) {
         this.setState({ authMessage: "Login failed, please try again." })
       } else {
         this.setState({ authMessage: "Unknown failure - HTTP " + response.status + ": " + response.statusText})
@@ -71,10 +71,9 @@ export default class Login extends Component {
     });
   }
 
-  
-  checkAuth = () => {
+  private checkAuth = () => {
     console.log('Check auth: ' + this.state.currentLogin)
-    if (this.state.currentLogin == 'anonymous') {
+    if (this.state.currentLogin === 'anonymous') {
       fetch("/system/sling/info.sessionInfo.json")
         .then(response => response.json())
         .then(responseJSON => {
