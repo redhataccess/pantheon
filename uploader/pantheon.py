@@ -23,6 +23,9 @@ HEADERS = {'cache-control': 'no-cache',
 
 
 def matches(path, globs, globType):
+    if globs is None:
+        return False
+
     for glob in globs:
         if path.match(glob):
             logger.debug('File %s matches on %s glob %s', file, globType, glob)
@@ -103,7 +106,7 @@ logger.debug('config: %s', config)
 def resolveOption(parserVal, configKey, default):
     if parserVal is not None:
         return parserVal
-    elif config is not None and config[configKey] is not None:
+    elif config is not None and configKey in config:
         return config[configKey]
     else:
         return default
@@ -226,7 +229,7 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
 
 if len(unspecified_files) > 0:
     num = len(unspecified_files)
-    print (f'{num} additional files detected. Only files specified in ' + CONFIG_FILE +' are handled for upload.')
+    print (f'{num} additional files detected but not uploaded. Only files specified in ' + CONFIG_FILE +' are handled for upload.')
     for file in unspecified_files:
         print(file)
 
