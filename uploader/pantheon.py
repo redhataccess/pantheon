@@ -111,16 +111,22 @@ def resolveOption(parserVal, configKey, default):
 def exists(path):
     try:
         resp = requests.head(path)
-        logger.debug('HEAD request to remote server status_code: %s', resp.status_code)
+        logger.debug('HEAD request to remote server. Response status_code: %s', resp.status_code)
         return resp.status_code < 400
     except Exception:
         return False
+
+def remove_trailing_slash(path):
+    if path.endswith('/'):
+        path = path[:-1]
+    return path
 
 server = resolveOption(args.server, 'server', DEFAULT_SERVER)
 repository = resolveOption(args.repository, 'repository', DEFAULT_REPOSITORY)
 links = resolveOption(args.links, 'followlinks', DEFAULT_LINKS)
 
 # Check if server url path reachable
+server = remove_trailing_slash(server)
 if exists(server+'/pantheon'):
     logger.debug('server: %s is reachable', server)
 else:
@@ -130,21 +136,20 @@ print('Using server: ' + server)
 print('Using repository: ' + repository)
 print('--------------')
 
-titleGlobs = config['titles'] if config is not None else ()
-moduleGlobs = config['modules'] if config is not None else ()
-resourceGlobs = config['resources'] if config is not None else '*'
-unspecified_files = 0
+titleGlobs = config['titles'] if config is not None and 'titles' in config else ()
+moduleGlobs = config['modules'] if config is not None and 'modules' in config else ()
+resourceGlobs = config['resources'] if config is not None and 'resources' in config else '*'
+unspecified_files = []
 logger.debug('titleGlobs: %s', titleGlobs)
 logger.debug('moduleGlobs: %s', moduleGlobs)
 logger.debug('resourceGlobs: %s', resourceGlobs)
-
 
 for root, dirs, files in os.walk(args.directory, followlinks=links):
     for file in files:
         if file == 'pantheon2.yml':
             continue
-        logger.debug('root: %s', root)
-        logger.debug('file: %s', file)
+        #logger.debug('root: %s', root)
+        #logger.debug('file: %s', file)
         path = PurePath(root + '/' + file)
 
         # These distinctions aren't important right now but they set us up for later
@@ -152,9 +157,7 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
         isModule = matches(path, moduleGlobs, 'modules') if not isTitle else False
         isResource = matches(path, resourceGlobs, 'resources') if not isModule else False
         url = server + "/content/repositories/" + repository
-        #logger.debug('isTitle: %s', isTitle)
-        #logger.debug('isModule: %s', isModule)
-        #logger.debug('isResource: %s', isResource)
+
         if isModule or isTitle or isResource:
             base_name = path.stem
 
@@ -217,9 +220,14 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
                 logger.debug('')
         else:
             # Ignore the files are not specified in .yml file.
-            unspecified_files += 1
+            unspecified_files.append(path)
+            logger.debug('Unspecified_files detected: %s', path)
 
 
-if unspecified_files > 0:
-    print (f'{unspecified_files} additional files detected. Only files specified in ' + CONFIG_FILE +' are handled for upload.')
+if len(unspecified_files) > 0:
+    num = len(unspecified_files)
+    print (f'{num} additional files detected. Only files specified in ' + CONFIG_FILE +' are handled for upload.')
+    for file in unspecified_files:
+        print(file)
+
 print('Finished!')
