@@ -224,7 +224,6 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
         else:
             # Ignore the files are not specified in .yml file.
             unspecified_files.append(path)
-            logger.debug('Unspecified_files detected: %s', path)
 
 
 if len(unspecified_files) > 0:

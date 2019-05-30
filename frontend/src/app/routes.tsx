@@ -24,14 +24,14 @@ const routes: IAppRoute[] = [
     component: Module,
     exact: true,
     icon: null,
-    label: 'Module',
+    label: '',
     path: '/module'
   },
   {
     component: Login,
     exact: true,
     icon: null,
-    label: 'Login',
+    label: '', // Empty because we are using the Brand component to render the text.
     path: '/login'
   }
 ];

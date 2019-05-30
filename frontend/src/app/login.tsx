@@ -17,8 +17,8 @@ export default class Login extends Component {
         <div className="app-container">
           <div>
             {this.failedAuthMessage()}
-            <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.onUsernameChange} />
-            <TextInput id="password" type="password" placeholder="Password" value={password} onChange={this.onPasswordChange} />
+            <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.onUsernameChange} onKeyPress={this.onLoginKeyPress} />
+            <TextInput id="password" type="password" placeholder="Password" value={password} onChange={this.onPasswordChange} onKeyPress={this.onLoginKeyPress} />
             <div>
               {this.checkAuth()}
               <Button onClick={this.login}>Log In</Button>
@@ -29,11 +29,17 @@ export default class Login extends Component {
     );
   }
 
+  private onLoginKeyPress = (event) => {
+    if (event.key == 'Enter') {
+      this.login()
+    }
+  }
+
   private failedAuthMessage = () => {
     return this.state.authMessage.length > 0 && <div className="notification-container">
       <Alert variant="danger"
           title={this.state.authMessage}
-        action={<AlertActionCloseButton onClose={() => { this.setState({ failedAuth: false })}} />} />
+        action={<AlertActionCloseButton onClose={() => { this.setState({ authMessage: '' })}} />} />
     </div>
   }
 
@@ -45,7 +51,7 @@ export default class Login extends Component {
     this.setState({ password });
   };
 
-  private login = (postBody) => {
+  private login = () => {
     const formData = new FormData();
     formData.append("j_username", this.state.username)
     formData.append("j_password", this.state.password)

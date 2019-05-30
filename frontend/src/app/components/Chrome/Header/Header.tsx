@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PageHeader } from '@patternfly/react-core';
-import { Brand } from '../Header/Brand/Brand';
+import Brand from '../Header/Brand/Brand';
 
 export interface IHeaderProps {
   isNavOpen: boolean;
