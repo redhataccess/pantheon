@@ -28,11 +28,12 @@ export default class Search extends Component {
           <div>
             <div className="row-view">
               <Label>Search Query:</Label>
-              <TextInput id="search" type="text" onChange={(event) => this.setState({ input: event })} value={this.state.input} />
+              <TextInput id="search" type="text" onKeyDown={this.getRows} onChange={(event) => this.setState({ input: event })} value={this.state.input} />
               <Label>page Number:</Label>
-              <TextInput id="pageNum" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageOffset: event })} value={this.state.pageOffset} />
+              <TextInput id="pageNum" type="text" pattern="[0-9]*" onKeyDown={this.getRows} onChange={(event) => this.setState({ pageOffset: event })} value={this.state.pageOffset} />
               <Label>page Count:</Label>
-              <TextInput id="pageCount" type="text" pattern="[0-9]*" onChange={(event) => this.setState({ pageCount: event })} value={this.state.pageCount} />
+              <TextInput id="pageCount" type="text" pattern="[0-9]*" onKeyDown={this.getRows} onChange={(event) => this.setState({ pageCount: event })} value={this.state.pageCount} />
+              <Button onClick={this.doSearch}>Search</Button>
             </div>
             {isEmptyResults && (
               <div className="notification-container">
@@ -43,14 +44,11 @@ export default class Search extends Component {
                 />
               </div>
             )}
-            <div className="row-view">
-              <div className="notification-container">
-                <Alert
-                  variant="info"
-                  title="Search is case sensitive. Type '*' and click the Search button for all modules."
-                />
-              </div>
-              <Button onClick={this.doSearch}>Search</Button>
+            <div className="notification-container">
+              <Alert
+                variant="info"
+                title="Search is case sensitive. Type '*' and press 'Enter' for all the modules."
+              />
             </div>
             <DataList aria-label="Simple data list example">
               <DataListItem aria-labelledby="simple-item1">
@@ -186,7 +184,7 @@ export default class Search extends Component {
     } else {
       backend += "*"
     }
-    backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "asc" : "desc")
+    backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
     backend += "&offset=" + (this.state.pageOffset - 1) + "&limit=" + this.state.pageCount
     console.log(backend)
     return backend
