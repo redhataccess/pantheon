@@ -22,6 +22,7 @@ exports[`App tests should render default App component 1`] = `
           isRequired={false}
           isValid={true}
           onChange={[Function]}
+          onKeyDown={[Function]}
           type="text"
           value="*"
         />
@@ -40,6 +41,7 @@ exports[`App tests should render default App component 1`] = `
           isRequired={false}
           isValid={true}
           onChange={[Function]}
+          onKeyDown={[Function]}
           pattern="[0-9]*"
           type="text"
           value={1}
@@ -59,25 +61,11 @@ exports[`App tests should render default App component 1`] = `
           isRequired={false}
           isValid={true}
           onChange={[Function]}
+          onKeyDown={[Function]}
           pattern="[0-9]*"
           type="text"
           value={5}
         />
-      </div>
-      <div
-        className="row-view"
-      >
-        <div
-          className="notification-container"
-        >
-          <Alert
-            action={null}
-            className=""
-            title="Search is case sensitive. Type '*' and click the Search button for all modules."
-            variant="info"
-            variantLabel={null}
-          />
-        </div>
         <Button
           aria-label={null}
           className=""
@@ -94,6 +82,17 @@ exports[`App tests should render default App component 1`] = `
         >
           Search
         </Button>
+      </div>
+      <div
+        className="notification-container"
+      >
+        <Alert
+          action={null}
+          className=""
+          title="Search is case sensitive. Type '*' and press 'Enter' for all the modules."
+          variant="info"
+          variantLabel={null}
+        />
       </div>
       <DataList
         aria-label="Simple data list example"
