@@ -107,25 +107,21 @@ exports[`App tests should render default App component 1`] = `
             className=""
             id="data-rows-header"
           >
+            <DataListCheck
+              aria-label="controlled checkbox example"
+              aria-labelledby="width-ex1-check1"
+              className=""
+              id="check"
+              isChecked={false}
+              isDisabled={false}
+              isValid={true}
+              onChange={[Function]}
+              onClick={[Function]}
+            />
             <DataListItemCells
               className=""
               dataListCells={
                 Array [
-                  <DataListCell
-                    alignRight={false}
-                    aria-labelledby="width-ex1-check1"
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
-                    width={1}
-                  >
-                    <span
-                      className="sp-prop"
-                      id="span-check"
-                    >
-                      Select
-                    </span>
-                  </DataListCell>,
                   <DataListCell
                     alignRight={false}
                     className=""
@@ -196,7 +192,7 @@ exports[`App tests should render default App component 1`] = `
                       className="sp-prop"
                       id="span-upload-time"
                     >
-                      Upload Time
+                        Upload Time
                     </span>
                   </DataListCell>,
                 ]
@@ -209,14 +205,15 @@ exports[`App tests should render default App component 1`] = `
           >
             <DataListCheck
               aria-label="controlled checkbox example"
-              aria-labelledby="width-ex1-check1"
+              aria-labelledby="width-ex3-check1"
               className=""
-              id="check"
+              id=""
               isChecked={false}
               isDisabled={false}
               isValid={true}
               name=""
               onChange={[Function]}
+              onClick={[Function]}
             />
             <DataListItemCells
               className=""
@@ -241,7 +238,7 @@ exports[`App tests should render default App component 1`] = `
                     width={2}
                   >
                     <span>
-                      
+                      No items found to be displayed
                     </span>
                   </DataListCell>,
                   <DataListCell

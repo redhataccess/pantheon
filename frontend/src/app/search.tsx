@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   Alert, AlertActionCloseButton, TextInput, Label,
-  DataList, DataListItem, DataListItemRow, DataListItemCells, DataListCell, Button, Checkbox, DataListCheck
+  DataList, DataListItem, DataListItemRow, DataListItemCells, DataListCell, Button, Checkbox, DataListCheck, Modal, AlertActionLink
 } from '@patternfly/react-core';
 import '@app/app.css';
 
@@ -11,9 +11,9 @@ export default class Search extends Component {
     check: false,
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
     countOfCheckedBoxes: 0,
-    data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
+    data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
     deleteButtonVisible: false,
-    delstate: '',
+    deleteState: '',
     input: '*',
     isEmptyResults: false,
     isSortedUp: true,
@@ -23,16 +23,18 @@ export default class Search extends Component {
     redirectLocation: '',
     sortKey: '',
     initialLoad: true,
+    allPaths: [''],
+    isModalOpen: false,
+    confirmDelete: false
   };
 
-  public hideAlertOne = () => this.setState({ alertOneVisible: false }, () => {
-    window.location.href = "/pantheon"
-  });
-
   public tpaths : string[] = [];
+  public selectallpath : string[] = [];
+  public events : any = [];
 
   public render() {
     const { columns, isEmptyResults, input, isSortedUp,sortKey} = this.state;
+    
     return (
       <React.Fragment>
         {this.state.initialLoad && this.doSearch()}
@@ -64,12 +66,16 @@ export default class Search extends Component {
             </div>
             <DataList aria-label="Simple data list example">
               <DataListItem aria-labelledby="simple-item1">
-                <DataListItemRow id="data-rows-header" >
+                <DataListItemRow id="data-rows-header" >  
+                  <DataListCheck aria-labelledby="width-ex1-check1"
+                        isChecked={this.state.check}
+                        aria-label="controlled checkbox example"
+                        id="check"
+                        onClick={this.handleSelectAll}
+                        isDisabled={false}
+                  />
                   <DataListItemCells 
                         dataListCells={[
-                          <DataListCell key="checkbox" aria-labelledby="width-ex1-check1">
-                            <span className="sp-prop" id="span-check">Select</span>
-                          </DataListCell>,
                           <DataListCell width={2} key="title" onClick={() => this.sort("jcr:title")}>
                             <span className="sp-prop" id="span-name">Name</span>
                           </DataListCell>,
@@ -83,27 +89,27 @@ export default class Search extends Component {
                             <span className="sp-prop-nosort" id="span-source-name">Source Name</span>
                           </DataListCell>,
                           <DataListCell key="upload time" onClick={() => this.sort("jcr:created")}>
-                            <span className="sp-prop" id="span-upload-time">Upload Time</span>
+                            <span className="sp-prop" id="span-upload-time">  Upload Time</span>
                           </DataListCell>,
                         ]} 
                   />
                 </DataListItemRow>
                 {this.state.data.map(data => (
                   <DataListItemRow id="data-rows">
-                    <DataListCheck aria-labelledby="width-ex1-check1"
-                        isChecked={this.state.check}
-                        onChange={this.handleDeleteCheckboxChange}
+                    <DataListCheck aria-labelledby="width-ex3-check1" 
+                        isChecked={data["checkedItem"]}
                         aria-label="controlled checkbox example"
-                        id="check"
+                        id={data["pant:transientPath"]}
                         name={data["pant:transientPath"]}
+                        onClick={() => this.handleDeleteCheckboxChange(data["pant:transientPath"])}
                     />
-                    <DataListItemCells key={data["pant:transientPath"]} onClick={() => this.setPreview(data["pant:transientPath"])}
+                    <DataListItemCells key={data["pant:transientPath"]} onClick={() => this.setPreview(data["pant:transientPath"])} 
                           dataListCells={[      
                                 <DataListCell width={2}>
                                   <span>{data["jcr:title"]}</span>
                                 </DataListCell>,
                                 <DataListCell width={2}>
-                                  <span>{data["jcr:description"]}</span>
+                                  <span>{data["jcr:description"]===""?"No items found to be displayed":data["jcr:description"]}</span>
                                 </DataListCell>,
                                 <DataListCell>
                                   <span>{data["pant:transientSource"]}</span>
@@ -121,34 +127,50 @@ export default class Search extends Component {
                 <DataListItemRow id="data-rows" key={this.state.data["pant:transientPath"]}>
                     {
                       this.state.deleteButtonVisible?              
-                        <Button variant="primary" onClick={() => this.delete(event, this.tpaths)}>Delete</Button>
+                        <Button variant="primary" onClick={() => this.confirmDeleteOperation(event)}>Delete</Button>
                       :null
                     }
                 </DataListItemRow>
               </DataListItem>
             </DataList>
             <div className="alert">
-              {this.state.delstate=='positive' && <Alert
-                    variant="success"
+              {this.state.confirmDelete===true && <Modal
+                    isSmall
+                    title="Confirmation"
+                    isOpen={!this.state.isModalOpen}
+                    onClose={this.hideAlertOne}
+                    actions={[<Button key="yes" variant="primary" onClick={() => this.delete(event, this.tpaths)}>Yes</Button>,
+                              <Button key="no" variant="secondary" onClick={this.cancelDeleteOperation}>No</Button>]}
+                    >
+                      Are you sure you want to delete the selected items?
+                </Modal>}
+              {this.state.deleteState=='positive' && <Modal
+                    isSmall
                     title="Success"
-                    action={<AlertActionCloseButton onClose={this.hideAlertOne} />}
+                    isOpen={!this.state.isModalOpen}
+                    onClose={this.hideAlertOne}
+                    actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
                     >
                       Selected items are deleted!!!
-                </Alert>}
-                {this.state.delstate=='negative' && <Alert
-                    variant="danger"
+                </Modal>}
+                {this.state.deleteState=='negative' && <Modal
+                    isSmall
                     title="Failure"
-                    action={<AlertActionCloseButton onClose={this.hideAlertOne} />}
+                    isOpen={!this.state.isModalOpen}
+                    onClose={this.hideAlertOne}
+                    actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
                     >
-                      Selected items not found!!!
-                </Alert>}
-                {this.state.delstate=='unknown' && <Alert
-                    variant="danger"
-                    title="Failure"
-                    action={<AlertActionCloseButton onClose={this.hideAlertOne} />}
+                      Selected items are not found!!!
+                </Modal>}
+                {this.state.deleteState=='unknown' && <Modal
+                    isSmall
+                    title="Error"
+                    isOpen={!this.state.isModalOpen}
+                    onClose={this.hideAlertOne}
+                    actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
                     >
-                      An error has occured, please check if you are logged in!!!
-                </Alert>}
+                      An unknown error occured, please check if you are logged in!!!
+                </Modal>}
             </div>
             <div className="notification-container">
               <Alert
@@ -161,37 +183,91 @@ export default class Search extends Component {
       </React.Fragment>
     );
   }
+    
 
-  private handleDeleteCheckboxChange = (checked, event) => {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-    this.setState({ [name]: value }, ()=> {
-      if(checked === true){
-        this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes+1}, () => {
-          if(this.state.countOfCheckedBoxes === 0){
-            this.setState({deleteButtonVisible: false})
-          }else{
-            this.setState({deleteButtonVisible: true})
-          }
+  private handleSelectAll = (event) => {
+    console.log('handleSelectAll')
+    console.log('selecall path:'+this.selectallpath)
+    this.setState({check: !this.state.check}, () => {
+      this.setState(prevState => {
+        const selectAllcheck = this.state.data.map(dataitem => {
+              dataitem["checkedItem"] = this.state.check
+              console.log(dataitem["pant:transientPath"]+":"+dataitem["checkedItem"])
+              this.state.check?this.state.allPaths.push(dataitem["pant:transientPath"]):delete this.state.allPaths[this.state.allPaths.indexOf(dataitem["pant:transientPath"])]
+          return dataitem
         })
-        this.tpaths.push(name);   
-        console.log('tpaths:'+this.tpaths)
-      }else{
-        this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes-1}, () => {
-          if(this.state.countOfCheckedBoxes === 0){
-            this.setState({deleteButtonVisible: false})
+        this.tpaths=this.state.allPaths
+        this.tpaths.map(e => e === "" ? delete this.tpaths[this.tpaths.indexOf(e)] : e)
+        console.log('final tpaths:'+this.tpaths)
+        console.log('all paths out:'+this.state.allPaths)
+        if(this.state.check === true){
+          this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes+this.state.data.length}, () => {
+                console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
+                if(this.state.countOfCheckedBoxes > 0){
+                  this.setState({deleteButtonVisible: true})
+                }else{
+                  this.setState({deleteButtonVisible: false})
+                }
+              })
+        }else{
+          this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes-this.state.data.length}, () => {
+                console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
+                if(this.state.countOfCheckedBoxes > 0){
+                  this.setState({deleteButtonVisible: true})
+                }else{
+                  this.setState({deleteButtonVisible: false})
+                }
+              })
+              this.tpaths = []
+              console.log('tpaths:'+this.tpaths)
+        }
+        return{
+          data: selectAllcheck
+        }
+      })
+
+    }) 
+  }
+
+  private handleDeleteCheckboxChange = (id) => {
+    this.setState(prevState => {
+      const updatedData = this.state.data.map(data => {
+        if(data["pant:transientPath"] === id){
+          data["checkedItem"] = !data["checkedItem"]
+          if(data["checkedItem"] === true){
+            this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes+1}, () => {
+              console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
+              if(this.state.countOfCheckedBoxes > 0){
+                this.setState({deleteButtonVisible: true})
+              }else{
+                this.setState({deleteButtonVisible: false})
+              }
+            })
+            this.tpaths.push(data["pant:transientPath"]);   
+            console.log('tpaths:'+this.tpaths)
           }else{
-            this.setState({deleteButtonVisible: true})
+            this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes-1}, () => {
+              console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
+              if(this.state.countOfCheckedBoxes > 0){
+                this.setState({deleteButtonVisible: true})
+              }else{
+                this.setState({deleteButtonVisible: false})
+              }
+            })
+            delete this.tpaths[this.tpaths.indexOf(id)]
+            console.log('tpaths:'+this.tpaths)
           }
-        })
-        this.tpaths.splice(this.tpaths.indexOf(name))
-        console.log('tpaths:'+this.tpaths)
+        }
+        return data
+      })
+      return{
+        data: updatedData
       }
-    });
+    })
   };
 
   delete = (event, keydata) => {
+    console.log(keydata)
     console.log('in the delete function')
       const formData = new FormData();
       formData.append(':operation', 'delete')
@@ -203,14 +279,14 @@ export default class Search extends Component {
         body: formData
       }).then(response => {
         if (response.status == 200) {
-          this.setState({ delstate: 'positive' })
-          console.log('delstate:'+this.state.delstate)
+          this.setState({ deleteState: 'positive'}) 
+          console.log('deleteState:'+this.state.deleteState)
         } else if (response.status == 403) {
-          this.setState({ delstate: 'negative' })
-          console.log('delstate:'+this.state.delstate)
+          this.setState({ deleteState: 'negative' })
+          console.log('deleteState:'+this.state.deleteState)
         } else {
-          this.setState({ delstate: 'unknown' })
-          console.log('delstate:'+this.state.delstate)
+          this.setState({ deleteState: 'unknown' })
+          console.log('deleteState:'+this.state.deleteState)
         }
       });
   }
@@ -227,7 +303,6 @@ export default class Search extends Component {
       .then(response => response.json())
       .then(responseJSON => this.setState({ data: responseJSON }))
       .then(() => {
-        // console.log("JSON string is " + JSON.stringify(this.state.data))
         if (JSON.stringify(this.state.data) === "[]") {
           this.setState({
             data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
@@ -280,11 +355,12 @@ export default class Search extends Component {
       .then(response => response.json())
       .then(responseJSON => this.setState({ data: responseJSON }))
       .then(() => {
-        // console.log("JSON string is " + JSON.stringify(this.state.data))
         if (JSON.stringify(this.state.data) === "[]") {
           this.setState({
             data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
             isEmptyResults: true
+          }, () =>{
+            console.log('transient path:'+this.state.data[0])
           })
         } else {
           this.setState({ isEmptyResults: false })
@@ -304,4 +380,17 @@ export default class Search extends Component {
     console.log(backend)  
     return backend
   }
+
+  public hideAlertOne = () => this.setState({ alertOneVisible: false }, () => {
+      window.location.href = "/pantheon"
+    });
+
+  public confirmDeleteOperation = (event) => this.setState({confirmDelete: !this.state.confirmDelete},() =>{
+      console.log('confirmDelete:'+this.state.confirmDelete)
+    });
+
+  public cancelDeleteOperation = () => this.setState({confirmDelete: !this.state.confirmDelete},() =>{
+    console.log('confirmDelete cancelled:'+this.state.confirmDelete)
+  });
+
 }
