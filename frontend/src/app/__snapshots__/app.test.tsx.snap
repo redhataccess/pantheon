@@ -287,17 +287,6 @@ exports[`App tests should render default App component 1`] = `
       <div
         className="alert"
       />
-      <div
-        className="notification-container"
-      >
-        <Alert
-          action={null}
-          className=""
-          title="Search is case sensitive. Type '*' and press 'Enter' for all modules."
-          variant="info"
-          variantLabel={null}
-        />
-      </div>
     </div>
   </div>
 </Fragment>
