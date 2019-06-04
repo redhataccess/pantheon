@@ -308,7 +308,8 @@ export default class Search extends Component {
         } else {
           this.setState({ isEmptyResults: false,
             deleteButtonVisible: false,
-            countOfCheckedBoxes: 0
+            countOfCheckedBoxes: 0,
+            check: false
            }, () => {this.transientPaths=[]})
         }
       })
