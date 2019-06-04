@@ -13,7 +13,7 @@ export default class Search extends Component {
     input: '*',
     isEmptyResults: false,
     isSortedUp: true,
-    pageCount: 5,
+    pageCount: 50,
     pageOffset: 1,
     redirect: false,
     redirectLocation: '',
@@ -29,9 +29,9 @@ export default class Search extends Component {
             <div className="row-view">
               <Label>Search Query:</Label>
               <TextInput id="search" type="text" onKeyDown={this.getRows} onChange={(event) => this.setState({ input: event })} value={this.state.input} />
-              <Label>page Number:</Label>
+              <Label>Start At:</Label>
               <TextInput id="pageNum" type="text" pattern="[0-9]*" onKeyDown={this.getRows} onChange={(event) => this.setState({ pageOffset: event })} value={this.state.pageOffset} />
-              <Label>page Count:</Label>
+              <Label>Result Count:</Label>
               <TextInput id="pageCount" type="text" pattern="[0-9]*" onKeyDown={this.getRows} onChange={(event) => this.setState({ pageCount: event })} value={this.state.pageCount} />
               <Button onClick={this.doSearch}>Search</Button>
             </div>
