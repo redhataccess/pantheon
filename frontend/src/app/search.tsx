@@ -170,12 +170,6 @@ export default class Search extends Component {
                       An unknown error occured, please check if you are logged in!!!
                 </Modal>}
             </div>
-            <div className="notification-container">
-              <Alert
-                variant="info"
-                title="Search is case sensitive. Type '*' and press 'Enter' for all modules."
-              />
-            </div>
           </div>
         </div>
       </React.Fragment>
