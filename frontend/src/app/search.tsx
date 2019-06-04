@@ -303,7 +303,8 @@ export default class Search extends Component {
         if (JSON.stringify(this.state.data) === "[]") {
           this.setState({
             data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
-            isEmptyResults: true
+            isEmptyResults: true,
+            check: false
           })
         } else {
           this.setState({ isEmptyResults: false,
