@@ -110,7 +110,7 @@ exports[`App tests should render default App component 1`] = `
             <DataListCheck
               aria-label="controlled checkbox example"
               aria-labelledby="width-ex1-check1"
-              className=""
+              className="checkbox"
               id="check"
               isChecked={false}
               isDisabled={false}
@@ -206,7 +206,7 @@ exports[`App tests should render default App component 1`] = `
             <DataListCheck
               aria-label="controlled checkbox example"
               aria-labelledby="width-ex3-check1"
-              className=""
+              className="checkbox"
               id=""
               isChecked={false}
               isDisabled={false}

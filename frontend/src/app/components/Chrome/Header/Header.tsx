@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { PageHeader } from '@patternfly/react-core';
-import Brand from '../Header/Brand/Brand';
+import { Brand } from '../Header/Brand/Brand';
+import { User }  from '../Header/User';
 
 export interface IHeaderProps {
   isNavOpen: boolean;
@@ -14,6 +15,7 @@ export const Header: React.FunctionComponent<IHeaderProps> = ({
   return (
     <PageHeader
       logo={<Brand />}
+      toolbar={<User />}
       showNavToggle={true}
       isNavOpen={isNavOpen}
       onNavToggle={onNavToggle}

@@ -7,7 +7,7 @@
 }
 
 .sp-prop {
-  font-weight: bold
+  font-weight: bold;
 }
 
 .sp-prop-nosort {
@@ -17,10 +17,16 @@
 .sp-prop:hover {
   font-weight: bold;
   color: #99ccff;
+  cursor: pointer;
 }
 
-#data-rows:hover * {
+#data-rows:hover {
   background: #99ccff;
+  cursor: pointer;
+}
+
+#checkbox:hover {
+  cursor: default;
 }
 
 body {
