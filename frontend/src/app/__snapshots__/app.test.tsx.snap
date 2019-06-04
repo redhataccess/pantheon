@@ -64,7 +64,7 @@ exports[`App tests should render default App component 1`] = `
           onKeyDown={[Function]}
           pattern="[0-9]*"
           type="text"
-          value={55}
+          value={5}
         />
         <Button
           aria-label={null}
