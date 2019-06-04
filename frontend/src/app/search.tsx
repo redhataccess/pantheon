@@ -28,9 +28,7 @@ export default class Search extends Component {
     confirmDelete: false
   };
 
-  public tpaths : string[] = [];
-  public selectallpath : string[] = [];
-  public events : any = [];
+  public transientPaths : string[] = [];
 
   public render() {
     const { columns, isEmptyResults, input, isSortedUp,sortKey} = this.state;
@@ -139,7 +137,7 @@ export default class Search extends Component {
                     title="Confirmation"
                     isOpen={!this.state.isModalOpen}
                     onClose={this.hideAlertOne}
-                    actions={[<Button key="yes" variant="primary" onClick={() => this.delete(event, this.tpaths)}>Yes</Button>,
+                    actions={[<Button key="yes" variant="primary" onClick={() => this.delete(event, this.transientPaths)}>Yes</Button>,
                               <Button key="no" variant="secondary" onClick={this.cancelDeleteOperation}>No</Button>]}
                     >
                       Are you sure you want to delete the selected items?
@@ -187,7 +185,6 @@ export default class Search extends Component {
 
   private handleSelectAll = (event) => {
     console.log('handleSelectAll')
-    console.log('selecall path:'+this.selectallpath)
     this.setState({check: !this.state.check}, () => {
       this.setState(prevState => {
         const selectAllcheck = this.state.data.map(dataitem => {
@@ -196,9 +193,9 @@ export default class Search extends Component {
               this.state.check?this.state.allPaths.push(dataitem["pant:transientPath"]):delete this.state.allPaths[this.state.allPaths.indexOf(dataitem["pant:transientPath"])]
           return dataitem
         })
-        this.tpaths=this.state.allPaths
-        this.tpaths.map(e => e === "" ? delete this.tpaths[this.tpaths.indexOf(e)] : e)
-        console.log('final tpaths:'+this.tpaths)
+        this.transientPaths=this.state.allPaths
+        this.transientPaths.map(e => e === "" ? delete this.transientPaths[this.transientPaths.indexOf(e)] : e)
+        console.log('final transientPaths:'+this.transientPaths)
         console.log('all paths out:'+this.state.allPaths)
         if(this.state.check === true){
           this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes+this.state.data.length}, () => {
@@ -218,8 +215,8 @@ export default class Search extends Component {
                   this.setState({deleteButtonVisible: false})
                 }
               })
-              this.tpaths = []
-              console.log('tpaths:'+this.tpaths)
+              this.transientPaths = []
+              console.log('transientPaths:'+this.transientPaths)
         }
         return{
           data: selectAllcheck
@@ -243,8 +240,8 @@ export default class Search extends Component {
                 this.setState({deleteButtonVisible: false})
               }
             })
-            this.tpaths.push(data["pant:transientPath"]);   
-            console.log('tpaths:'+this.tpaths)
+            this.transientPaths.push(data["pant:transientPath"]);   
+            console.log('transientPaths:'+this.transientPaths)
           }else{
             this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes-1}, () => {
               console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
@@ -254,8 +251,8 @@ export default class Search extends Component {
                 this.setState({deleteButtonVisible: false})
               }
             })
-            delete this.tpaths[this.tpaths.indexOf(id)]
-            console.log('tpaths:'+this.tpaths)
+            delete this.transientPaths[this.transientPaths.indexOf(id)]
+            console.log('transientPaths:'+this.transientPaths)
           }
         }
         return data
@@ -309,7 +306,10 @@ export default class Search extends Component {
             isEmptyResults: true
           })
         } else {
-          this.setState({ isEmptyResults: false })
+          this.setState({ isEmptyResults: false,
+            deleteButtonVisible: false,
+            countOfCheckedBoxes: 0
+           }, () => {this.transientPaths=[]})
         }
       })
   }
