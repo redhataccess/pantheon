@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Calendar;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,6 +53,23 @@ class JcrModelTest {
                 .get()
                 .GRANDCHILD
                 .get();
+    }
+
+    @Test
+    public void getDeepField() throws Exception {
+        // Given
+        slingContext.build()
+                .resource("/content/module1")
+                .resource("child")
+                .resource("grandchild",
+                        "jcr:name", "grandchild-name")
+                .commit();
+
+        // When
+        TestModel model = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
+
+        // Then
+        assertEquals("grandchild-name", model.GRANDCHILD_NAME.get());
     }
 
     @Test
@@ -184,11 +202,52 @@ class JcrModelTest {
         assertEquals(new Long(25), storedModel.NUMBER.get());
     }
 
+    @Test
+    public void simpleToMap() {
+        // Given
+        slingContext.build()
+                .resource("/content/module1",
+                        "jcr:name", "my-module",
+                        "jcr:date", Calendar.getInstance(),
+                        "jcr:number", 26)
+                .commit();
+
+        // When
+        Map<String, Object> map = new TestModel(slingContext.resourceResolver().getResource("/content/module1")).toMap();
+
+        // Then
+        assertEquals("my-module", map.get("jcr:name"));
+        assertEquals(26L, map.get("jcr:number"));
+        assertTrue(map.containsKey("jcr:date"));
+    }
+
+    @Test
+    public void toMapWithExclusions() {
+        // Given
+        slingContext.build()
+                .resource("/content/module1",
+                        "jcr:name", "my-module",
+                        "jcr:date", Calendar.getInstance(),
+                        "jcr:number", 26)
+                .commit();
+
+        // When
+        Map<String, Object> map = new TestModel(slingContext.resourceResolver().getResource("/content/module1"))
+                .toMap("jcr:name", "jcr:date");
+
+        // Then
+        assertFalse(map.containsKey("jcr:name"));
+        assertFalse(map.containsKey("jcr:date"));
+        assertTrue(map.containsKey("jcr:number"));
+    }
+
     public static class TestModel extends JcrModel {
 
         public final Field<String> NAME = new Field<>(String.class, "jcr:name");
         public final Field<Calendar> DATE = new Field<>(Calendar.class, "jcr:date");
         public final Field<Long> NUMBER = new Field<>(Long.class, "jcr:number");
+
+        public final DeepField<String> GRANDCHILD_NAME = new DeepField<>(String.class, "child/grandchild/jcr:name");
 
         public final ChildResource<Child> CHILD = new ChildResource<>(Child.class, "child");
 
@@ -206,6 +265,9 @@ class JcrModelTest {
     }
 
     public static class Grandchild extends JcrModel {
+
+        public final Field<String> NAME = new Field<>(String.class, "jcr:name");
+
         public Grandchild(Resource resource) {
             super(resource);
         }

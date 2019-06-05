@@ -7,12 +7,13 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -34,7 +35,7 @@ public class JcrModel implements Adaptable {
     }
 
     protected final Stream<Field> getFields() {
-        return Arrays.stream(this.getClass().getDeclaredFields())
+        return stream(this.getClass().getDeclaredFields())
                 // only fields of type JcrModel.Field
                 .filter(field -> field.getType() == Field.class)
                 // convert to the field values
@@ -49,8 +50,24 @@ public class JcrModel implements Adaptable {
                 .filter(jcrField -> jcrField != null);
     }
 
+    protected final Stream<DeepField> getDeepFields() {
+        return stream(this.getClass().getDeclaredFields())
+                // only fields of type JcrModel.Field
+                .filter(field -> field.getType() == DeepField.class)
+                // convert to the field values
+                .map(field -> {
+                    try {
+                        return (JcrModel.DeepField)field.get(JcrModel.this);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                // only fields with a non-null value
+                .filter(jcrField -> jcrField != null);
+    }
+
     protected final Stream<ChildResource> getChildResources() {
-        return Arrays.stream(this.getClass().getDeclaredFields())
+        return stream(this.getClass().getDeclaredFields())
                 // only fields of type JcrModel.ChildResource
                 .filter(field -> field.getType() == ChildResource.class)
                 // convert to the field values
@@ -65,14 +82,29 @@ public class JcrModel implements Adaptable {
                 .filter(jcrChildRes -> jcrChildRes != null);
     }
 
-    private Map<String, Object> collectDefaultFields() {
-        return getFields()
-                // only fields with a default value
-                .filter(jcrField -> jcrField.defaultValue.isPresent())
-                // as a map
-                .collect(toMap(
-                        f -> f.getName(),
-                        f -> f.defaultValue.get()));
+    public Map<String, Object> toMap(String ... excluding) {
+        // get the fields first
+        Map<String, Object> returnMap = getFields()
+                .filter(field ->
+                        stream(excluding).noneMatch(arrayField -> arrayField.equals(field.getName())))
+                .collect(Collectors.toMap(
+                        field -> field.getName(),
+                        field -> field.get()
+                ));
+
+        // add the deep fields
+        returnMap.putAll(
+                getDeepFields().filter(deepField ->
+                        stream(excluding).noneMatch(arrayField -> arrayField.equals(deepField.getPath())))
+                // get rid of null values
+                .filter(deepField -> deepField.get() != null)
+                .collect(Collectors.toMap(
+                        deepField -> deepField.getPath(),
+                        deepField -> deepField.get()
+                ))
+        );
+
+        return returnMap;
     }
 
     /**
@@ -105,26 +137,26 @@ public class JcrModel implements Adaptable {
     public final class DeepField<TYPE> implements Supplier<TYPE> {
 
         private final Class<TYPE> fieldType;
-        private final String name;
+        private final String path;
 
-        public DeepField(Class<TYPE> fieldType, String name) {
+        public DeepField(Class<TYPE> fieldType, String path) {
             this.fieldType = fieldType;
-            this.name = name;
+            this.path = path;
         }
 
         @Override
         public TYPE get() {
             return JcrModel.this.getResource()
                     .adaptTo(ValueMap.class)
-                    .get(getName(), getFieldType());
+                    .get(getPath(), getFieldType());
         }
 
         private Class<TYPE> getFieldType() {
             return fieldType;
         }
 
-        String getName() {
-            return name;
+        String getPath() {
+            return path;
         }
     }
 
@@ -218,6 +250,10 @@ public class JcrModel implements Adaptable {
                 throw new RuntimeException("Unable to construct new instance of child model", e);
             }
             return childModel;
+        }
+
+        public JcrModel getParent() {
+            return JcrModel.this;
         }
 
         public RESOURCETYPE getOrCreate() {
