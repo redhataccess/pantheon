@@ -23,11 +23,6 @@ if [ ! -h "$PANTHEON_BIN" ]; then
   echo "Create a symlink to $PANTHEON_BIN"
   ln -s ${UPLOADER_HOME}/pantheon.py $PANTHEON_BIN
 fi
-# Add a new directory into PATH variable
-echo "Adding ${PANTHEON_BIN} to PATH variable"
-PATH=$PATH:$PANTHEON_BIN
-export PATH
-echo $PATH | grep $PANTHEON_BIN
 
 # Show full path for pantheon command
 echo
