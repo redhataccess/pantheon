@@ -11,8 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Calendar;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 @Disabled
@@ -38,16 +37,18 @@ class JcrModelTest {
 
     @Test
     public void childMapping() throws Exception {
+        // Given
         slingContext.build()
                 .resource("/content/module1")
                 .resource("child")
                 .resource("grandchild")
                 .commit();
 
+        // When
         TestModel model = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
 
-        model
-                .CHILD
+        // Then
+        model.CHILD
                 .get()
                 .GRANDCHILD
                 .get();
@@ -55,6 +56,7 @@ class JcrModelTest {
 
     @Test
     public void fieldEditing() throws Exception {
+        // Given
         slingContext.build()
                 .resource("/content/module1",
                         "jcr:primaryType", "pant:module",
@@ -62,6 +64,7 @@ class JcrModelTest {
                         "jcr:createdBy", "auser")
                 .commit();
 
+        // When
         TestModel model = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, 1);
@@ -71,6 +74,7 @@ class JcrModelTest {
         model.NAME.set("someoneelse");
         model.NUMBER.set(15L);
 
+        // Then
         assertEquals(1, model.DATE.get().get(Calendar.MONTH));
         assertEquals(1, model.DATE.get().get(Calendar.DATE));
         assertEquals(2019, model.DATE.get().get(Calendar.YEAR));
@@ -96,6 +100,31 @@ class JcrModelTest {
         // Then
         assertNotNull(model.CHILD.get());
         assertEquals("prop-value", model.CHILD.get().getResource().getValueMap().get("jcr:property"));
+    }
+
+    @Test
+    public void testIsPresent() {
+        // Given
+        slingContext.build()
+                .resource("/content/module1",
+                        "jcr:primaryType", "pant:module",
+                        "jcr:created", Calendar.getInstance(),
+                        "jcr:createdBy", "auser")
+                .resource("child",
+                        "jcr:property", "prop-value")
+                .resource("/content/module2",
+                        "jcr:primaryType", "pant:module",
+                        "jcr:created", Calendar.getInstance(),
+                        "jcr:createdBy", "auser")
+                .commit();
+
+        // When
+        TestModel model1 = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
+        TestModel model2 = new TestModel(slingContext.resourceResolver().getResource("/content/module2"));
+
+        // Then
+        assertTrue(model1.CHILD.isPresent());
+        assertFalse(model2.CHILD.isPresent());
     }
 
     @Test
@@ -133,7 +162,6 @@ class JcrModelTest {
 
         // Then
         assertNotNull(model.CHILD.getOrCreate());
-//        assertEquals("prop-value", model.CHILD.get().getResource().getValueMap().get("jcr:property"));
     }
 
     @Test
