@@ -43,6 +43,6 @@ public class AsciidocContentRenderingServlet extends SlingSafeMethodsServlet {
 
         response.setContentType("html");
         Writer w = response.getWriter();
-        w.write(module.getAsciidocContent());
+        w.write(module.asciidocContent.get());
     }
 }

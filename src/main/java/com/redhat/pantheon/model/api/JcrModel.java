@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model;
+package com.redhat.pantheon.model.api;
 
 import org.apache.sling.api.adapter.Adaptable;
 import org.apache.sling.api.resource.*;
