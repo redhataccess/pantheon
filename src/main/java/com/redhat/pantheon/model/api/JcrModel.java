@@ -34,6 +34,23 @@ public class JcrModel implements Adaptable {
         return resource;
     }
 
+    /**
+     * Initializes all fields which have a default value set, and which aren't already set.
+     * This method is only meant to be called after new resources are created.
+     */
+    protected void initDefaultValues() {
+        getFields()
+                // discard fields which already have a value set
+                .filter(field -> !field.isSet())
+                // only consider fields which have a default value
+                .filter(field -> field.defaultValue.isPresent())
+                .forEach(field -> field.set(field.defaultValue.get()));
+    }
+
+    /**
+     * Returns all the Field typed members for this JCR model object. It will not return
+     * non-initialized Field-typed members.
+     */
     protected final Stream<Field> getFields() {
         return stream(this.getClass().getDeclaredFields())
                 // only fields of type JcrModel.Field
@@ -46,10 +63,14 @@ public class JcrModel implements Adaptable {
                         throw new RuntimeException(e);
                     }
                 })
-                // only fields with a non-null value
+                // only initialized fields
                 .filter(jcrField -> jcrField != null);
     }
 
+    /**
+     * Returns all the DeepField typed members for this JCR model object. It will not return
+     * non-initialized DeepField typed members.
+     */
     protected final Stream<DeepField> getDeepFields() {
         return stream(this.getClass().getDeclaredFields())
                 // only fields of type JcrModel.Field
@@ -62,10 +83,14 @@ public class JcrModel implements Adaptable {
                         throw new RuntimeException(e);
                     }
                 })
-                // only fields with a non-null value
+                // only initialized fields
                 .filter(jcrField -> jcrField != null);
     }
 
+    /**
+     * Returns all the ChildResource typed members for this JCR model object. It will not return
+     * non-initialized ChildResource typed members.
+     */
     protected final Stream<ChildResource> getChildResources() {
         return stream(this.getClass().getDeclaredFields())
                 // only fields of type JcrModel.ChildResource
@@ -82,6 +107,12 @@ public class JcrModel implements Adaptable {
                 .filter(jcrChildRes -> jcrChildRes != null);
     }
 
+    /**
+     * Returns a map with all the fields (deep fields included) for this model. The keys for the map
+     * are the jcr field names.
+     * @param excluding A list of JCR field names to exclude from the returned map.
+     * @return
+     */
     public Map<String, Object> toMap(String ... excluding) {
         // get the fields first
         Map<String, Object> returnMap = getFields()
@@ -199,6 +230,12 @@ public class JcrModel implements Adaptable {
                     .adaptTo(ModifiableValueMap.class)
                     .put(this.name, value);
         }
+
+        public boolean isSet() {
+            return JcrModel.this.getResource()
+                    .getValueMap()
+                    .containsKey(getName());
+        }
     }
 
     /*public final class SyntheticField<TYPE> implements Supplier<TYPE> {
@@ -218,33 +255,33 @@ public class JcrModel implements Adaptable {
 
     /**
      * A Child resource. Useful to build deep and modifiable JCR content structures.
-     * @param <RESOURCETYPE>
+     * @param <MODELTYPE>
      */
-    public final class ChildResource<RESOURCETYPE extends JcrModel> implements Supplier<RESOURCETYPE> {
+    public final class ChildResource<MODELTYPE extends JcrModel> implements Supplier<MODELTYPE> {
 
-        private final Class<RESOURCETYPE> resourceType;
+        private final Class<MODELTYPE> modelType;
         private final String name;
 
-        public ChildResource(Class<RESOURCETYPE> resourceType, String name) {
-            this.resourceType = resourceType;
+        public ChildResource(Class<MODELTYPE> modelType, String name) {
+            this.modelType = modelType;
             this.name = name;
         }
 
-        Class<RESOURCETYPE> getResourceType() {
-            return resourceType;
+        Class<MODELTYPE> getModelType() {
+            return modelType;
         }
 
         public String getName() {
             return name;
         }
 
-        public RESOURCETYPE get() {
+        public MODELTYPE get() {
             Resource childResource = JcrModel.this.getResource().getChild(this.name);
 
             // the resource type should have a one arg constructor which takes a resource
-            RESOURCETYPE childModel = null;
+            MODELTYPE childModel = null;
             try {
-                childModel = getResourceType().getConstructor(Resource.class)
+                childModel = getModelType().getConstructor(Resource.class)
                         .newInstance(childResource);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new RuntimeException("Unable to construct new instance of child model", e);
@@ -256,7 +293,7 @@ public class JcrModel implements Adaptable {
             return JcrModel.this;
         }
 
-        public RESOURCETYPE getOrCreate() {
+        public MODELTYPE getOrCreate() {
             Resource parent = JcrModel.this.getResource();
             if(!this.isPresent()) {
                 ResourceResolver resourceResolver = parent.getResourceResolver();
@@ -266,7 +303,9 @@ public class JcrModel implements Adaptable {
                     throw new RuntimeException(e);
                 }
             }
-            return get();
+            MODELTYPE model = get();
+            model.initDefaultValues();
+            return model;
         }
 
         public boolean isPresent() {

@@ -241,6 +241,24 @@ class JcrModelTest {
         assertTrue(map.containsKey("jcr:number"));
     }
 
+    @Test void testInitDefaultValues() {
+        // Given
+        slingContext.build()
+                .resource("/content/test")
+                .commit();
+
+        // When
+        Grandchild grandChild = new TestModel(slingContext.resourceResolver().getResource("/content/test"))
+                .CHILD.getOrCreate()
+                .GRANDCHILD.getOrCreate();
+
+        // Then
+        // default values are set
+        assertEquals("DEFAULT_VALUE", grandChild.DEFAULT_VAL.get());
+        // non-default values aren't
+        assertFalse(grandChild.NAME.isSet());
+    }
+
     public static class TestModel extends JcrModel {
 
         public final Field<String> NAME = new Field<>(String.class, "jcr:name");
@@ -267,6 +285,7 @@ class JcrModelTest {
     public static class Grandchild extends JcrModel {
 
         public final Field<String> NAME = new Field<>(String.class, "jcr:name");
+        public final Field<String> DEFAULT_VAL = new Field<>(String.class, "jcr:defaulted", "DEFAULT_VALUE");
 
         public Grandchild(Resource resource) {
             super(resource);
