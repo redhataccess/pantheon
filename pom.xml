@@ -211,6 +211,17 @@
                             <arguments>test</arguments>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>yarn-update-test</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <phase>nophase</phase> <!-- to call: mvn frontend:yarn@yarn-update-test -->
+                        <configuration>
+                            <arguments>test -u</arguments>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
