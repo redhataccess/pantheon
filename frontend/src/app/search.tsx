@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   Alert, AlertActionCloseButton, TextInput, Label,
-  DataList, DataListItem, DataListItemRow, DataListItemCells, DataListCell, Button, Checkbox, DataListCheck, Modal, AlertActionLink
+  DataList, DataListItem, DataListItemRow, DataListItemCells, DataListCell, Button, DataListCheck, Modal
 } from '@patternfly/react-core';
 import '@app/app.css';
 
@@ -66,6 +66,7 @@ export default class Search extends Component {
               <DataListItem aria-labelledby="simple-item1">
                 <DataListItemRow id="data-rows-header" >  
                   <DataListCheck aria-labelledby="width-ex1-check1"
+                        className="checkbox"
                         isChecked={this.state.check}
                         aria-label="controlled checkbox example"
                         id="check"
@@ -95,6 +96,7 @@ export default class Search extends Component {
                 {this.state.data.map(data => (
                   <DataListItemRow id="data-rows">
                     <DataListCheck aria-labelledby="width-ex3-check1" 
+                        className="checkbox"
                         isChecked={data["checkedItem"]}
                         aria-label="controlled checkbox example"
                         id={data["pant:transientPath"]}
@@ -106,7 +108,7 @@ export default class Search extends Component {
                                 <DataListCell width={2}>
                                   <span>{data["jcr:title"]}</span>
                                 </DataListCell>,
-                                <DataListCell width={2}>
+                                <DataListCell  width={2}>
                                   <span>{data["jcr:description"]===""?"No items found to be displayed":data["jcr:description"]}</span>
                                 </DataListCell>,
                                 <DataListCell>
@@ -125,7 +127,7 @@ export default class Search extends Component {
                 <DataListItemRow id="data-rows" key={this.state.data["pant:transientPath"]}>
                     {
                       this.state.deleteButtonVisible?              
-                        <Button variant="primary" onClick={() => this.confirmDeleteOperation(event)}>Delete</Button>
+                        <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
                       :null
                     }
                 </DataListItemRow>
@@ -137,7 +139,7 @@ export default class Search extends Component {
                     title="Confirmation"
                     isOpen={!this.state.isModalOpen}
                     onClose={this.hideAlertOne}
-                    actions={[<Button key="yes" variant="primary" onClick={() => this.delete(event, this.transientPaths)}>Yes</Button>,
+                    actions={[<Button key="yes" variant="primary" onClick={() => this.delete(this.transientPaths)}>Yes</Button>,
                               <Button key="no" variant="secondary" onClick={this.cancelDeleteOperation}>No</Button>]}
                     >
                       Are you sure you want to delete the selected items?
@@ -257,7 +259,7 @@ export default class Search extends Component {
     })
   };
 
-  delete = (event, keydata) => {
+  private delete = (keydata) => {
     console.log(keydata)
     console.log('in the delete function')
       const formData = new FormData();
@@ -377,15 +379,15 @@ export default class Search extends Component {
     return backend
   }
 
-  public hideAlertOne = () => this.setState({ alertOneVisible: false }, () => {
+  private hideAlertOne = () => this.setState({ alertOneVisible: false }, () => {
       window.location.href = "/pantheon"
     });
 
-  public confirmDeleteOperation = (event) => this.setState({confirmDelete: !this.state.confirmDelete},() =>{
+  private confirmDeleteOperation = () => this.setState({confirmDelete: !this.state.confirmDelete},() =>{
       console.log('confirmDelete:'+this.state.confirmDelete)
     });
 
-  public cancelDeleteOperation = () => this.setState({confirmDelete: !this.state.confirmDelete},() =>{
+  private cancelDeleteOperation = () => this.setState({confirmDelete: !this.state.confirmDelete},() =>{
     console.log('confirmDelete cancelled:'+this.state.confirmDelete)
   });
 
