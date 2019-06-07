@@ -2,7 +2,7 @@
 
 # Variables
 UPLOADER_HOME=~/.pantheon
-PANTHEON_BIN=/usr/local/bin/pantheon
+PANTHEON_BIN=~/bin/pantheon
 
 # Create UPLOADER_HOME directory if not exists
 if [ ! -d "$UPLOADER_HOME" ]; then
@@ -18,10 +18,10 @@ curl -o ${UPLOADER_HOME}/pantheon.py https://raw.githubusercontent.com/redhatacc
 echo "Ensure uploader script is executble"
 chmod +x ${UPLOADER_HOME}/pantheon.py 
 
-# Create a symlink to /usr/local/bin if not exists
+# Create a symlink to ~/bin/pantheon if not exists
 if [ ! -h "$PANTHEON_BIN" ]; then
   echo "Create a symlink to $PANTHEON_BIN"
-  sudo ln -s ${UPLOADER_HOME}/pantheon.py $PANTHEON_BIN
+  ln -s ${UPLOADER_HOME}/pantheon.py $PANTHEON_BIN
 fi
 
 # Show full path for pantheon command
