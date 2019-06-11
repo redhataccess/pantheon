@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { NavLink } from 'react-router-dom';
 import {
   PageSidebar,
 } from '@patternfly/react-core';
-import NavLinks  from './NavLinks';
+import { NavLinks }  from './NavLinks';
 
 export interface ISideBarProps {
   isNavOpen: boolean;

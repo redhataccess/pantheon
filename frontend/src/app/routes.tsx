@@ -1,8 +1,8 @@
 import React from 'react';
-import { BrowserRouter, Route, RouteComponentProps, Switch } from 'react-router-dom';
+import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import Search from '@app/search';
-import Module from '@app/module';
-import Login from '@app/login';
+import { Module } from '@app/module';
+import { Login } from '@app/login';
 
 export interface IAppRoute {
   label: string;
