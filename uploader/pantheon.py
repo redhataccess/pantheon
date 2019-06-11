@@ -66,6 +66,13 @@ parser.add_argument('--links', '-l', help='Resolve symlinks when searching for f
 parser.add_argument('--verbose', '-v', help='Print information that may be helpful for debugging', action='store_const', const=True)
 parser.add_argument('--dry', '-D', help='Dry run; print information about what would be uploaded, but don\'t actually upload', action='store_const', const=True)
 parser.add_argument('--sample', '-S', help='Print a sample pantheon2.yml file to stdout (which you may want to redirect to a file).', action='version', version='''\
+# Config file for Pantheon v2 uploader
+## server: Pantheon server URL
+## repository: a unique name, which is visible in the user facing URL
+## followlinks: true/false
+## If you set the followLinks to true then all the asciidoc files resolved via symlinks will be included and uploaded.
+## If you set the followLinks to false then all the asciidoc files resolved via symlinks will be ignored and not be uploaded.
+
 server: http://localhost:8080
 repository: pantheonSampleRepo
 followlinks: true
