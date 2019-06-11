@@ -3,7 +3,7 @@ import { Button, Alert, AlertActionCloseButton, TextInput } from '@patternfly/re
 import '@app/app.css';
 import { Redirect } from 'react-router-dom'
 
-export default class Module extends Component {
+class Module extends Component {
   public state = {
     failedPost: false,
     isMissingFields: false,
@@ -31,7 +31,7 @@ export default class Module extends Component {
           )}
             <TextInput id="module-name" type="text" placeholder="Module Name" value={moduleName} onChange={this.handleNameInput} />
             <TextInput id="module-description" type="text" placeholder="Module Description" value={moduleDescription} onChange={this.handleModuleInput} />
-            <input id="input" className="input-file" color="#dddddd" type="file" onChange={(e) => this.handleFileChange(e.target.files)} />
+            <input id="input" className="input-file" color="#dddddd" type="file" onChange={this.handleFileChange} />
             <div>
               {this.loginRedirect()}
               {this.renderRedirect()}
@@ -54,19 +54,23 @@ export default class Module extends Component {
     console.log("Desc " + moduleDescription)
   };
 
-  private handleFileChange = selectorFiles => {
+  private handleFileChange = (event) => {
+    this.setFile(event.target.files)
+  }
+
+  private setFile = selectorFiles => {
     this.setState({ moduleFile: selectorFiles })
     console.log(selectorFiles);
   }
 
   private saveModule = (postBody) => {
     console.log("My data is: " + this.state.moduleName + " and my desc is " + this.state.moduleDescription + " and my files are " + this.state.moduleFile)
-    if (this.state.moduleName == "" || this.state.moduleFile[0] == undefined){
+    if (this.state.moduleName === "" || this.state.moduleFile[0] === undefined){
       this.setState({ isMissingFields: true })
     } else {
     const hdrs = {
-      'cache-control': 'no-cache',
-      'Accept': 'application/json'
+      'Accept': 'application/json',
+      'cache-control': 'no-cache'
     }
     console.log("The file is: " + this.state.moduleFile)
     const blob = new Blob([this.state.moduleFile[0]])
@@ -84,10 +88,10 @@ export default class Module extends Component {
       headers: hdrs,
       method: 'post'
     }).then(response => {
-      if (response.status == 201 || response.status == 200) {
+      if (response.status === 201 || response.status === 200) {
         console.log(" Works " + response.status)
         this.setState({ redirect: true })
-      } else  if (response.status == 500) {
+      } else  if (response.status === 500) {
         console.log(" Needs login " + response.status)
         this.setState({ login: true })
       } else {
@@ -119,3 +123,5 @@ export default class Module extends Component {
   };
 
 }
+
+export { Module }

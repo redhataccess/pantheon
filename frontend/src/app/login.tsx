@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, Alert, AlertActionCloseButton, BackgroundImage, BackgroundImageSrc, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 
-export default class Login extends Component {
+class Login extends Component {
   public state = {
     authMessage: '',
     currentLogin: 'anonymous',
@@ -30,7 +30,7 @@ export default class Login extends Component {
   }
 
   private onLoginKeyPress = (event) => {
-    if (event.key == 'Enter') {
+    if (event.key === 'Enter') {
       this.login()
     }
   }
@@ -39,8 +39,12 @@ export default class Login extends Component {
     return this.state.authMessage.length > 0 && <div className="notification-container">
       <Alert variant="danger"
           title={this.state.authMessage}
-        action={<AlertActionCloseButton onClose={() => { this.setState({ authMessage: '' })}} />} />
+        action={<AlertActionCloseButton onClose={this.resetAuthMessage} />} />
     </div>
+  }
+
+  private resetAuthMessage = () => {
+    this.setState({ authMessage: '' })
   }
 
   private onUsernameChange = username => {
@@ -77,10 +81,13 @@ export default class Login extends Component {
       fetch("/system/sling/info.sessionInfo.json")
         .then(response => response.json())
         .then(responseJSON => {
-          if (responseJSON["userID"] != 'anonymous') {
-            this.setState({ currentLogin: responseJSON["userID"] })
+          const key = "userID"
+          if (responseJSON[key] !== 'anonymous') {
+            this.setState({ currentLogin: responseJSON[key] })
           }
         })
     }
   }
 }
+
+export { Login }

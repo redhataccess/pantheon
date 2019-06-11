@@ -9,7 +9,7 @@ import { Sidebar } from '@app/components/Chrome/Sidebar/Sidebar';
 import { Routes } from '@app/routes';
 import '@app/app.css';
 
-export default class App extends Component {
+class App extends Component {
   public state = {
     isNavOpen: true,
     setIsNavOpen: Boolean
@@ -35,3 +35,5 @@ export default class App extends Component {
     );
   }
 }
+
+export { App }
