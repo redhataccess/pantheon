@@ -9,7 +9,6 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,7 +37,7 @@ public class SlingResource implements Adaptable {
      * This method is only meant to be called after new resources are created.
      */
     protected void initDefaultValues() {
-        getFields()
+        getMembers(Field.class)
                 // discard fields which already have a value set
                 .filter(field -> !field.isSet())
                 // only consider fields which have a default value
@@ -47,74 +46,43 @@ public class SlingResource implements Adaptable {
     }
 
     /**
-     * Returns all the Field typed members for this JCR model object. It will not return
-     * non-initialized Field-typed members.
+     * Returns all SlingModel members (assigned fields which implement the ResourceMember interdace
+     * @return
      */
-    protected final Stream<Field> getFields() {
+    private Stream<ResourceMember> allMembers() {
         return stream(this.getClass().getDeclaredFields())
-                // only fields of type SlingResource.Field
-                .filter(field -> field.getType() == Field.class)
+                // only fields which implement ResourceMember
+                .filter(reflectedField -> ResourceMember.class.isAssignableFrom(reflectedField.getType()))
                 // convert to the field values
                 .map(field -> {
                     try {
-                        return (SlingResource.Field)field.get(SlingResource.this);
+                        return (ResourceMember) field.get(SlingResource.this);
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException(e);
                     }
                 })
                 // only initialized fields
-                .filter(jcrField -> jcrField != null);
+                .filter(field -> field != null);
     }
 
     /**
-     * Returns all the DeepField typed members for this JCR model object. It will not return
-     * non-initialized DeepField typed members.
+     * Returns all SlingModel members of a specific implementation.
      */
-    protected final Stream<DeepField> getDeepFields() {
-        return stream(this.getClass().getDeclaredFields())
-                // only fields of type SlingResource.Field
-                .filter(field -> field.getType() == DeepField.class)
-                // convert to the field values
-                .map(field -> {
-                    try {
-                        return (SlingResource.DeepField)field.get(SlingResource.this);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                // only initialized fields
-                .filter(jcrField -> jcrField != null);
-    }
-
-    /**
-     * Returns all the ChildResource typed members for this JCR model object. It will not return
-     * non-initialized ChildResource typed members.
-     */
-    protected final Stream<ChildResource> getChildResources() {
-        return stream(this.getClass().getDeclaredFields())
-                // only fields of type SlingResource.ChildResource
-                .filter(field -> field.getType() == ChildResource.class)
-                // convert to the field values
-                .map(field -> {
-                    try {
-                        return (SlingResource.ChildResource)field.get(SlingResource.this);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                // only fields with a non-null value
-                .filter(jcrChildRes -> jcrChildRes != null);
+    private <A extends ResourceMember> Stream<A> getMembers(@Nonnull Class<A> memberClass) {
+        return (Stream<A>) allMembers()
+                .filter(resourceMember -> memberClass.isAssignableFrom(resourceMember.getClass()));
     }
 
     /**
      * Returns a map with all the fields (deep fields included) for this model. The keys for the map
      * are the jcr field names.
+     *
      * @param excluding A list of JCR field names to exclude from the returned map.
      * @return
      */
     public Map<String, Object> toMap(String ... excluding) {
         // get the fields first
-        Map<String, Object> returnMap = getFields()
+        Map<String, Object> returnMap = getMembers(Field.class)
                 .filter(field ->
                         stream(excluding).noneMatch(arrayField -> arrayField.equals(field.getName())))
                 .collect(Collectors.toMap(
@@ -124,14 +92,15 @@ public class SlingResource implements Adaptable {
 
         // add the deep fields
         returnMap.putAll(
-                getDeepFields().filter(deepField ->
-                        stream(excluding).noneMatch(arrayField -> arrayField.equals(deepField.getPath())))
-                // get rid of null values
-                .filter(deepField -> deepField.get() != null)
-                .collect(Collectors.toMap(
-                        deepField -> deepField.getPath(),
-                        deepField -> deepField.get()
-                ))
+                getMembers(DeepField.class)
+                        .filter(deepField ->
+                            stream(excluding).noneMatch(arrayField -> arrayField.equals(deepField.getPath())))
+                        // get rid of null values
+                        .filter(deepField -> deepField.get() != null)
+                        .collect(Collectors.toMap(
+                                deepField -> deepField.getPath(),
+                                deepField -> deepField.get()
+                        ))
         );
 
         return returnMap;
@@ -139,6 +108,7 @@ public class SlingResource implements Adaptable {
 
     /**
      * Commit any changes made to this resource.
+     *
      * @throws PersistenceException If there is a problem making the changes
      */
     public void commit() throws PersistenceException {
@@ -149,6 +119,7 @@ public class SlingResource implements Adaptable {
 
     /**
      * Calls the {@link Resource#adaptTo(Class)} method on the wrapped resource.
+     *
      * @param type
      * @param <AdapterType>
      * @return
@@ -162,9 +133,10 @@ public class SlingResource implements Adaptable {
      * A deep field (not directly set on the resource, but instead on a child resource). These fields may be read
      * but not modified as they belong to a different resource. To edit them, use the {@link ChildResource} field
      * type instead.
+     *
      * @param <TYPE>
      */
-    public final class DeepField<TYPE> implements Supplier<TYPE> {
+    public final class DeepField<TYPE> implements Accessor<TYPE> {
 
         private final Class<TYPE> fieldType;
         private final String path;
@@ -192,9 +164,10 @@ public class SlingResource implements Adaptable {
 
     /**
      * A simple scalar Field or property in the SlingModel object.
+     *
      * @param <TYPE> The type of the field to map.
      */
-    public final class Field<TYPE> implements Supplier<TYPE> {
+    public final class Field<TYPE> implements Accessor<TYPE>, Mutator<TYPE> {
 
         private final Class<TYPE> fieldType;
         private final String name;
@@ -239,9 +212,10 @@ public class SlingResource implements Adaptable {
 
     /**
      * A Child resource. Useful to build deep and modifiable content structures.
+     *
      * @param <MODELTYPE>
      */
-    public final class ChildResource<MODELTYPE extends SlingResource> implements Supplier<MODELTYPE> {
+    public final class ChildResource<MODELTYPE extends SlingResource> implements Accessor<MODELTYPE> {
 
         private final Class<MODELTYPE> modelType;
         private final String name;
@@ -279,7 +253,7 @@ public class SlingResource implements Adaptable {
 
         public MODELTYPE getOrCreate() {
             Resource parent = SlingResource.this.getResource();
-            if(!this.isPresent()) {
+            if (!this.isPresent()) {
                 ResourceResolver resourceResolver = parent.getResourceResolver();
                 try {
                     resourceResolver.create(parent, name, null);
