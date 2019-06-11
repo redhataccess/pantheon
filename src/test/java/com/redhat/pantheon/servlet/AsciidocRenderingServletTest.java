@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet;
 
+import com.google.common.base.Function;
 import com.redhat.pantheon.conf.AsciidoctorPoolService;
 import com.redhat.pantheon.conf.LocalFileManagementService;
 import com.redhat.pantheon.model.Module;
@@ -33,6 +34,8 @@ public class AsciidocRenderingServletTest {
 
     private final SlingContext slingContext = new SlingContext();
 
+    final Function<Resource, Module> mockSlingResourceAdapter = input -> new Module(input);
+
     @Test
     @DisplayName("Generate html content from asciidoc")
     public void testGenerateHtmlFromAsciidoc() throws Exception {
@@ -47,6 +50,8 @@ public class AsciidocRenderingServletTest {
                 .commit();
         slingContext.addModelsForClasses(Module.class, Module.CachedContent.class);
         Resource resource = slingContext.resourceResolver().getResource("/module");
+        // adapter (mock)
+        slingContext.registerAdapter(Resource.class, Module.class, mockSlingResourceAdapter);
         // needed mocks
         LocalFileManagementService lfmService = mock(LocalFileManagementService.class);
         AsciidoctorPoolService apService = mock(AsciidoctorPoolService.class);
@@ -85,6 +90,8 @@ public class AsciidocRenderingServletTest {
                 .commit();
         slingContext.addModelsForClasses(Module.class, Module.CachedContent.class);
         Resource resource = slingContext.resourceResolver().getResource("/module");
+        // adapter (mock)
+        slingContext.registerAdapter(Resource.class, Module.class, mockSlingResourceAdapter);
         // needed mocks
         LocalFileManagementService lfmService = mock(LocalFileManagementService.class);
         AsciidoctorPoolService apService = mock(AsciidoctorPoolService.class);

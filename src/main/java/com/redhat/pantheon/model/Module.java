@@ -1,6 +1,6 @@
 package com.redhat.pantheon.model;
 
-import com.redhat.pantheon.model.api.JcrModel;
+import com.redhat.pantheon.model.api.SlingResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
 
@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * Model class to represent modules
  */
-public class Module extends JcrModel {
+public class Module extends SlingResource {
 
     @Default(values = "pantheon/modules")
     public final Field<String> slingResourceType = new Field<>(String.class, "sling:resourceType");
@@ -36,7 +36,7 @@ public class Module extends JcrModel {
      * It is a nested class under Module as it only makes sense
      * for these nodes to be generated under a Module.
      */
-    public static class CachedContent extends JcrModel {
+    public static class CachedContent extends SlingResource {
 
         public final Field<String> hash = new Field<>(String.class, "pant:hash");
 

@@ -4,7 +4,6 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,8 +14,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
-@Disabled
-class JcrModelTest {
+class SlingResourceTest {
 
     private final SlingContext slingContext = new SlingContext();
 
@@ -29,7 +27,7 @@ class JcrModelTest {
                         "jcr:number", "10")
                 .commit();
 
-        TestModel model = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
+        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
 
         assertEquals("my-name", model.NAME.get());
         assertEquals(new Long(10), model.NUMBER.get());
@@ -46,7 +44,7 @@ class JcrModelTest {
                 .commit();
 
         // When
-        TestModel model = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
+        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
 
         // Then
         model.CHILD
@@ -66,7 +64,7 @@ class JcrModelTest {
                 .commit();
 
         // When
-        TestModel model = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
+        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
 
         // Then
         assertEquals("grandchild-name", model.GRANDCHILD_NAME.get());
@@ -83,7 +81,7 @@ class JcrModelTest {
                 .commit();
 
         // When
-        TestModel model = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
+        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, 1);
         cal.set(Calendar.DATE, 1);
@@ -113,7 +111,7 @@ class JcrModelTest {
                 .commit();
 
         // When
-        TestModel model = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
+        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
 
         // Then
         assertNotNull(model.CHILD.get());
@@ -137,8 +135,8 @@ class JcrModelTest {
                 .commit();
 
         // When
-        TestModel model1 = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
-        TestModel model2 = new TestModel(slingContext.resourceResolver().getResource("/content/module2"));
+        TestResource model1 = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
+        TestResource model2 = new TestResource(slingContext.resourceResolver().getResource("/content/module2"));
 
         // Then
         assertTrue(model1.CHILD.isPresent());
@@ -158,7 +156,7 @@ class JcrModelTest {
                 .commit();
 
         // When
-        TestModel model = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
+        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
 
         // Then
         assertNotNull(model.CHILD.getOrCreate());
@@ -176,7 +174,7 @@ class JcrModelTest {
                 .commit();
 
         // When
-        TestModel model = new TestModel(slingContext.resourceResolver().getResource("/content/module1"));
+        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
 
         // Then
         assertNotNull(model.CHILD.getOrCreate());
@@ -189,7 +187,7 @@ class JcrModelTest {
         Resource root = resourceResolver.getResource("/");
 
         // When
-        TestModel model = new TestModel(
+        TestResource model = new TestResource(
                 resourceResolver.create(root,"test", null));
         model.NAME.set("my-new-node");
         model.NUMBER.set(25L);
@@ -197,7 +195,7 @@ class JcrModelTest {
 
         // Then
         Resource storedResource = resourceResolver.getResource("/test");
-        TestModel storedModel = new TestModel(storedResource);
+        TestResource storedModel = new TestResource(storedResource);
         assertEquals("my-new-node", storedModel.NAME.get());
         assertEquals(new Long(25), storedModel.NUMBER.get());
     }
@@ -213,7 +211,7 @@ class JcrModelTest {
                 .commit();
 
         // When
-        Map<String, Object> map = new TestModel(slingContext.resourceResolver().getResource("/content/module1")).toMap();
+        Map<String, Object> map = new TestResource(slingContext.resourceResolver().getResource("/content/module1")).toMap();
 
         // Then
         assertEquals("my-module", map.get("jcr:name"));
@@ -232,7 +230,7 @@ class JcrModelTest {
                 .commit();
 
         // When
-        Map<String, Object> map = new TestModel(slingContext.resourceResolver().getResource("/content/module1"))
+        Map<String, Object> map = new TestResource(slingContext.resourceResolver().getResource("/content/module1"))
                 .toMap("jcr:name", "jcr:date");
 
         // Then
@@ -248,7 +246,7 @@ class JcrModelTest {
                 .commit();
 
         // When
-        Grandchild grandChild = new TestModel(slingContext.resourceResolver().getResource("/content/test"))
+        Grandchild grandChild = new TestResource(slingContext.resourceResolver().getResource("/content/test"))
                 .CHILD.getOrCreate()
                 .GRANDCHILD.getOrCreate();
 
@@ -259,7 +257,7 @@ class JcrModelTest {
         assertFalse(grandChild.NAME.isSet());
     }
 
-    public static class TestModel extends JcrModel {
+    public static class TestResource extends SlingResource {
 
         public final Field<String> NAME = new Field<>(String.class, "jcr:name");
         public final Field<Calendar> DATE = new Field<>(Calendar.class, "jcr:date");
@@ -269,12 +267,12 @@ class JcrModelTest {
 
         public final ChildResource<Child> CHILD = new ChildResource<>(Child.class, "child");
 
-        public TestModel(Resource resource) {
+        public TestResource(Resource resource) {
             super(resource);
         }
     }
 
-    public static class Child extends JcrModel {
+    public static class Child extends SlingResource {
         public final ChildResource<Grandchild> GRANDCHILD = new ChildResource<>(Grandchild.class, "grandchild");
 
         public Child(Resource resource) {
@@ -282,7 +280,7 @@ class JcrModelTest {
         }
     }
 
-    public static class Grandchild extends JcrModel {
+    public static class Grandchild extends SlingResource {
 
         public final Field<String> NAME = new Field<>(String.class, "jcr:name");
         public final Field<String> DEFAULT_VAL = new Field<>(String.class, "jcr:defaulted", "DEFAULT_VALUE");

@@ -14,8 +14,8 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES;
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
 
 /**
- * An adapter factory for model objects of type JcrModel. This component makes sure that
- * calls to {@link Resource#adaptTo(Class)} with a subtype of {@link JcrModel} as a parameter
+ * An adapter factory for model objects of type SlingResource. This component makes sure that
+ * calls to {@link Resource#adaptTo(Class)} with a subtype of {@link SlingResource} as a parameter
  * will return an object.
  *
  * Types need to registered as adapter classes by simply adding a property in the @{@link Component}
@@ -29,35 +29,35 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.Module",
         }
 )
-public class JcrModelAdapterFactory implements AdapterFactory {
+public class SlingResourceAdapterFactory implements AdapterFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(JcrModelAdapterFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(SlingResourceAdapterFactory.class);
 
     @Override
     public <AdapterType> @Nullable AdapterType getAdapter(@NotNull Object adaptable, @NotNull Class<AdapterType> type) {
 
-        // ensure the adapter type is a subclass of JcrModel
-        if(!JcrModel.class.isAssignableFrom(type)) {
-            log.error("Error in " + this.getClass().getSimpleName() + ": adapter type not a subclass of JcrModel ("
+        // ensure the adapter type is a subclass of SlingResource
+        if(!SlingResource.class.isAssignableFrom(type)) {
+            log.error("Error in " + this.getClass().getSimpleName() + ": adapter type not a subclass of SlingResource ("
                     + type.getName() + ")");
             return null;
         }
 
         // Ensure the adaptable object is of an appropriate type
         if (!(adaptable instanceof Resource) || (adaptable == null)) {
-            log.error("Trying to adapt object {" + adaptable + "} to JcrModel, but object is null or not of type Resource");
+            log.error("Trying to adapt object {" + adaptable + "} to SlingResource, but object is null or not of type Resource");
             return null;
         }
 
         Resource resource = ((Resource) adaptable);
 
-        // the adapter type (sublass of JcrModel) should have a one arg constructor which takes a resource
+        // the adapter type (sublass of SlingResource) should have a one arg constructor which takes a resource
         AdapterType adapter = null;
         try {
             adapter = type.getConstructor(Resource.class)
                     .newInstance(resource);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            log.error("Error when adapting object to JcrModel",  e);
+            log.error("Error when adapting object to SlingResource",  e);
         }
 
         return adapter;

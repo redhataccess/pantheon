@@ -14,19 +14,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toMap;
 
 /**
- * An Editable JCR model object. These are simple objects made up of a single constructor based on an existing
+ * An Editable Sling resource model object. These are simple objects made up of a single constructor based on an existing
  * sling resource, and a set of fields or child resources mapped to the resource. Fields and child resources are
- * strongly typed and they can be modified. JcrModels are wrappers around existing sling resources and as such the
- * resource needs to exist before it can be wrapped by a model.
+ * strongly typed and they can be modified. SlingResources are wrappers around existing sling resources and as such the
+ * resource needs to exist before it can be wrapped by one of these.
  */
-public class JcrModel implements Adaptable {
+public class SlingResource implements Adaptable {
 
     private final Resource resource;
 
-    public JcrModel(@Nonnull Resource resource) {
+    public SlingResource(@Nonnull Resource resource) {
         this.resource = resource;
     }
 
@@ -53,12 +52,12 @@ public class JcrModel implements Adaptable {
      */
     protected final Stream<Field> getFields() {
         return stream(this.getClass().getDeclaredFields())
-                // only fields of type JcrModel.Field
+                // only fields of type SlingResource.Field
                 .filter(field -> field.getType() == Field.class)
                 // convert to the field values
                 .map(field -> {
                     try {
-                        return (JcrModel.Field)field.get(JcrModel.this);
+                        return (SlingResource.Field)field.get(SlingResource.this);
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException(e);
                     }
@@ -73,12 +72,12 @@ public class JcrModel implements Adaptable {
      */
     protected final Stream<DeepField> getDeepFields() {
         return stream(this.getClass().getDeclaredFields())
-                // only fields of type JcrModel.Field
+                // only fields of type SlingResource.Field
                 .filter(field -> field.getType() == DeepField.class)
                 // convert to the field values
                 .map(field -> {
                     try {
-                        return (JcrModel.DeepField)field.get(JcrModel.this);
+                        return (SlingResource.DeepField)field.get(SlingResource.this);
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException(e);
                     }
@@ -93,12 +92,12 @@ public class JcrModel implements Adaptable {
      */
     protected final Stream<ChildResource> getChildResources() {
         return stream(this.getClass().getDeclaredFields())
-                // only fields of type JcrModel.ChildResource
+                // only fields of type SlingResource.ChildResource
                 .filter(field -> field.getType() == ChildResource.class)
                 // convert to the field values
                 .map(field -> {
                     try {
-                        return (JcrModel.ChildResource)field.get(JcrModel.this);
+                        return (SlingResource.ChildResource)field.get(SlingResource.this);
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException(e);
                     }
@@ -139,7 +138,7 @@ public class JcrModel implements Adaptable {
     }
 
     /**
-     * Commit any changes made to this model.
+     * Commit any changes made to this resource.
      * @throws PersistenceException If there is a problem making the changes
      */
     public void commit() throws PersistenceException {
@@ -177,7 +176,7 @@ public class JcrModel implements Adaptable {
 
         @Override
         public TYPE get() {
-            return JcrModel.this.getResource()
+            return SlingResource.this.getResource()
                     .adaptTo(ValueMap.class)
                     .get(getPath(), getFieldType());
         }
@@ -192,7 +191,7 @@ public class JcrModel implements Adaptable {
     }
 
     /**
-     * A simple scalar Field or property in the JCR object.
+     * A simple scalar Field or property in the SlingModel object.
      * @param <TYPE> The type of the field to map.
      */
     public final class Field<TYPE> implements Supplier<TYPE> {
@@ -220,44 +219,29 @@ public class JcrModel implements Adaptable {
         }
 
         public TYPE get() {
-            return JcrModel.this.getResource()
+            return SlingResource.this.getResource()
                     .getValueMap()
                     .get(getName(), getFieldType());
         }
 
         public void set(TYPE value) {
-            JcrModel.this.getResource()
+            SlingResource.this.getResource()
                     .adaptTo(ModifiableValueMap.class)
                     .put(this.name, value);
         }
 
         public boolean isSet() {
-            return JcrModel.this.getResource()
+            return SlingResource.this.getResource()
                     .getValueMap()
                     .containsKey(getName());
         }
     }
 
-    /*public final class SyntheticField<TYPE> implements Supplier<TYPE> {
-
-        private final String name;
-        private final Function<Resource, TYPE> generator;
-
-        public SyntheticField(@Nonnull String name, @Nonnull Function<Resource, TYPE> generator) {
-            this.name = name;
-            this.generator = generator;
-        }
-
-        public TYPE get() {
-            return generator.apply(JcrModel.this.getResource());
-        }
-    }*/
-
     /**
-     * A Child resource. Useful to build deep and modifiable JCR content structures.
+     * A Child resource. Useful to build deep and modifiable content structures.
      * @param <MODELTYPE>
      */
-    public final class ChildResource<MODELTYPE extends JcrModel> implements Supplier<MODELTYPE> {
+    public final class ChildResource<MODELTYPE extends SlingResource> implements Supplier<MODELTYPE> {
 
         private final Class<MODELTYPE> modelType;
         private final String name;
@@ -276,7 +260,7 @@ public class JcrModel implements Adaptable {
         }
 
         public MODELTYPE get() {
-            Resource childResource = JcrModel.this.getResource().getChild(this.name);
+            Resource childResource = SlingResource.this.getResource().getChild(this.name);
 
             // the resource type should have a one arg constructor which takes a resource
             MODELTYPE childModel = null;
@@ -289,12 +273,12 @@ public class JcrModel implements Adaptable {
             return childModel;
         }
 
-        public JcrModel getParent() {
-            return JcrModel.this;
+        public SlingResource getParent() {
+            return SlingResource.this;
         }
 
         public MODELTYPE getOrCreate() {
-            Resource parent = JcrModel.this.getResource();
+            Resource parent = SlingResource.this.getResource();
             if(!this.isPresent()) {
                 ResourceResolver resourceResolver = parent.getResourceResolver();
                 try {
@@ -309,7 +293,7 @@ public class JcrModel implements Adaptable {
         }
 
         public boolean isPresent() {
-            Resource parent = JcrModel.this.getResource();
+            Resource parent = SlingResource.this.getResource();
             return parent.getChild(name) != null;
         }
     }
