@@ -4,6 +4,7 @@ import {
   DataList, DataListItem, DataListItemRow, DataListItemCells, DataListCell, Button, DataListCheck, Modal
 } from '@patternfly/react-core';
 import '@app/app.css';
+import {Pagination} from '@app/Pagination';
 
 export default class Search extends Component {
   public state = {
@@ -17,8 +18,6 @@ export default class Search extends Component {
     input: '*',
     isEmptyResults: false,
     isSortedUp: true,
-    pageCount: 50,
-    pageOffset: 1,
     redirect: false,
     redirectLocation: '',
     sortKey: '',
@@ -26,8 +25,11 @@ export default class Search extends Component {
     allPaths: [''],
     isModalOpen: false,
     confirmDelete: false,
-    loggedinStatus: false
+    loggedinStatus: false,
+    pageLimit: 10,
+    page: 1
   };
+
 
   public transientPaths : string[] = [];
 
@@ -51,11 +53,7 @@ export default class Search extends Component {
           <div>
             <div className="row-view">
               <Label>Search Query:</Label>
-              <TextInput id="search" type="text" onKeyDown={this.getRows} onChange={(event) => this.setState({ input: event,initialLoad: false })} value={this.state.input} />
-              <Label>Start At:</Label>
-              <TextInput id="pageNum" type="text" pattern="[0-9]*" onKeyDown={this.getRows} onChange={(event) => this.setState({ pageOffset: event,initialLoad: false })} value={this.state.pageOffset} />
-              <Label>Result Count:</Label>
-              <TextInput id="pageCount" type="text" pattern="[0-9]*" onKeyDown={this.getRows} onChange={(event) => this.setState({ pageCount: event,initialLoad: false })} value={this.state.pageCount} />
+              <TextInput id="search" type="text" onKeyDown={this.getRows} onChange={(event) => this.setState({ input: event })} value={this.state.input} />
               <Button onClick={this.doSearch}>Search</Button>
             </div>
             {isEmptyResults && (
@@ -72,6 +70,12 @@ export default class Search extends Component {
                 variant="info"
                 title="Search is case sensitive. Type '*' and press 'Enter' for all the modules."
               />
+              <Pagination
+                handleMoveLeft={() => this.updatePageCounter("L")}
+                handleMoveRight={() => this.updatePageCounter("R")}
+                newPage={this.state.page}
+                isNextPageRequied={this.state.data.length}
+              ></Pagination>
             </div>
             <DataList aria-label="Simple data list example">
               <DataListItem aria-labelledby="simple-item1">
@@ -202,6 +206,9 @@ export default class Search extends Component {
     );
   }
     
+  onChangePage(newPage){
+    this.setState({page: newPage},()=>{console.log("New page number: "+this.state.page)})
+  }
 
   private handleSelectAll = (event) => {
     console.log('handleSelectAll')
@@ -260,6 +267,7 @@ export default class Search extends Component {
             })
             this.transientPaths.push(data["pant:transientPath"]);   
             console.log('transientPaths:'+this.transientPaths)
+            console.log('all Paths:'+this.state.allPaths)
           }else{
             this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes-1}, () => {
               console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
@@ -271,6 +279,7 @@ export default class Search extends Component {
             })
             this.transientPaths.splice(this.transientPaths.indexOf(id),1)
             console.log('transientPaths:'+this.transientPaths)
+            console.log('all Paths:'+this.state.allPaths)
           }
         }
         return data
@@ -400,7 +409,7 @@ export default class Search extends Component {
       backend += "*"
     }
     backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
-    backend += "&offset=" + (this.state.pageOffset - 1) + "&limit=" + this.state.pageCount
+    backend += "&offset=" + ((this.state.page - 1)*this.state.pageLimit) + "&limit=" + this.state.pageLimit
     console.log(backend)  
     return backend
   }
@@ -418,5 +427,13 @@ export default class Search extends Component {
   private cancelDeleteOperation = () => this.setState({confirmDelete: !this.state.confirmDelete},() =>{
     console.log('confirmDelete cancelled:'+this.state.confirmDelete)
   });
+
+  private updatePageCounter = (direction) => {
+    if(direction==="L" && this.state.page>1){
+      this.setState({page: this.state.page - 1, initialLoad: true})
+    }else if(direction==="R"){
+      this.setState({page: this.state.page + 1, initialLoad: true})      
+    }
+  }
 
 }
