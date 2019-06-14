@@ -204,6 +204,7 @@ export default class Search extends Component {
     this.setState({check: !this.state.check}, () => {
       this.setState(prevState => {
         this.state.allPaths=[]
+        this.transientPaths=[]
         const selectAllcheck = this.state.data.map(dataitem => {
               dataitem["checkedItem"] = this.state.check
               console.log(dataitem["pant:transientPath"]+":"+dataitem["checkedItem"])
@@ -213,7 +214,7 @@ export default class Search extends Component {
         this.transientPaths=this.state.allPaths
         this.transientPaths.map(e => e === "" ? this.transientPaths.splice(this.transientPaths.indexOf(e)) : e)
         if(this.state.check === true){
-          this.setState({countOfCheckedBoxes: this.state.data.length}, () => {                console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
+          this.setState({countOfCheckedBoxes: this.state.data.length}, () => {console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
                 if(this.state.countOfCheckedBoxes > 0){
                   this.setState({deleteButtonVisible: true})
                 }else{
@@ -225,9 +226,9 @@ export default class Search extends Component {
             console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
               this.setState({deleteButtonVisible: false})
           })
+        }
           this.transientPaths = []
               console.log('transientPaths:'+this.transientPaths)
-        }
         return{
           data: selectAllcheck
         }
