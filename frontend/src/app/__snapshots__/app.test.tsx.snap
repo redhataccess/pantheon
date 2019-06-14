@@ -107,17 +107,6 @@ exports[`App tests should render default App component 1`] = `
             className=""
             id="data-rows-header"
           >
-            <DataListCheck
-              aria-label="controlled checkbox example"
-              aria-labelledby="width-ex1-check1"
-              className="checkbox"
-              id="check"
-              isChecked={false}
-              isDisabled={false}
-              isValid={true}
-              onChange={[Function]}
-              onClick={[Function]}
-            />
             <DataListItemCells
               className=""
               dataListCells={
@@ -202,19 +191,11 @@ exports[`App tests should render default App component 1`] = `
           <DataListItemRow
             className=""
             id="data-rows"
+          />
+          <DataListItemRow
+            className=""
+            id="data-rows"
           >
-            <DataListCheck
-              aria-label="controlled checkbox example"
-              aria-labelledby="width-ex3-check1"
-              className="checkbox"
-              id=""
-              isChecked={false}
-              isDisabled={false}
-              isValid={true}
-              name=""
-              onChange={[Function]}
-              onClick={[Function]}
-            />
             <DataListItemCells
               className=""
               dataListCells={

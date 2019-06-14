@@ -25,7 +25,8 @@ export default class Search extends Component {
     initialLoad: true,
     allPaths: [''],
     isModalOpen: false,
-    confirmDelete: false
+    confirmDelete: false,
+    loggedinStatus: false
   };
 
   public transientPaths : string[] = [];
@@ -33,6 +34,16 @@ export default class Search extends Component {
   public render() {
     const { columns, isEmptyResults, input, isSortedUp,sortKey} = this.state;
     
+    const id = 'userID';
+    if (!this.state.loggedinStatus) {
+      fetch("/system/sling/info.sessionInfo.json")
+        .then(response => response.json())
+        .then(responseJSON => {
+          if (responseJSON[id] !== 'anonymous') {
+            this.setState({ loggedinStatus: true })
+          }
+        })
+    }
     return (
       <React.Fragment>
         {this.state.initialLoad && this.doSearch()}
@@ -64,15 +75,16 @@ export default class Search extends Component {
             </div>
             <DataList aria-label="Simple data list example">
               <DataListItem aria-labelledby="simple-item1">
-                <DataListItemRow id="data-rows-header" >  
-                  <DataListCheck aria-labelledby="width-ex1-check1"
-                        className="checkbox"
-                        isChecked={this.state.check}
-                        aria-label="controlled checkbox example"
-                        id="check"
-                        onClick={this.handleSelectAll}
-                        isDisabled={false}
-                  />
+                <DataListItemRow id="data-rows-header" > 
+                  {this.state.loggedinStatus &&
+                    <DataListCheck aria-labelledby="width-ex1-check1"
+                      className="checkbox"
+                      isChecked={this.state.check}
+                      aria-label="controlled checkbox example"
+                      id="check"
+                      onClick={this.handleSelectAll}
+                      isDisabled={false}
+                    />}
                   <DataListItemCells 
                         dataListCells={[
                           <DataListCell width={2} key="title" onClick={() => this.sort("jcr:title")}>
@@ -93,16 +105,24 @@ export default class Search extends Component {
                         ]} 
                   />
                 </DataListItemRow>
+                <DataListItemRow id="data-rows" key={this.state.data["pant:transientPath"]}>
+                  {
+                    this.state.deleteButtonVisible ?
+                      <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
+                      : null
+                  }
+                </DataListItemRow>
                 {this.state.data.map(data => (
                   <DataListItemRow id="data-rows">
-                    <DataListCheck aria-labelledby="width-ex3-check1" 
+                    {this.state.loggedinStatus &&
+                      <DataListCheck aria-labelledby="width-ex3-check1"
                         className="checkbox"
                         isChecked={data["checkedItem"]}
                         aria-label="controlled checkbox example"
                         id={data["pant:transientPath"]}
                         name={data["pant:transientPath"]}
                         onClick={() => this.handleDeleteCheckboxChange(data["pant:transientPath"])}
-                    />
+                      />}
                     <DataListItemCells key={data["pant:transientPath"]} onClick={() => this.setPreview(data["pant:transientPath"])} 
                           dataListCells={[      
                                 <DataListCell width={2}>
@@ -151,7 +171,7 @@ export default class Search extends Component {
                     onClose={this.hideAlertOne}
                     actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
                     >
-                      Selected items are deleted!!!
+                      Selected items were deleted.
                 </Modal>}
                 {this.state.deleteState=='negative' && <Modal
                     isSmall
@@ -160,7 +180,7 @@ export default class Search extends Component {
                     onClose={this.hideAlertOne}
                     actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
                     >
-                      Selected items are not found!!!
+                      Selected items were not found.
                 </Modal>}
                 {this.state.deleteState=='unknown' && <Modal
                     isSmall
@@ -169,7 +189,7 @@ export default class Search extends Component {
                     onClose={this.hideAlertOne}
                     actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
                     >
-                      An unknown error occured, please check if you are logged in!!!
+                      An unknown error occured, please check if you are logged in.
                 </Modal>}
             </div>
           </div>
@@ -186,16 +206,13 @@ export default class Search extends Component {
         const selectAllcheck = this.state.data.map(dataitem => {
               dataitem["checkedItem"] = this.state.check
               console.log(dataitem["pant:transientPath"]+":"+dataitem["checkedItem"])
-              this.state.check?this.state.allPaths.push(dataitem["pant:transientPath"]):delete this.state.allPaths[this.state.allPaths.indexOf(dataitem["pant:transientPath"])]
+              this.state.check?this.state.allPaths.push(dataitem["pant:transientPath"]):this.state.allPaths.splice(this.state.allPaths.indexOf(dataitem["pant:transientPath"]),1)
           return dataitem
         })
         this.transientPaths=this.state.allPaths
-        this.transientPaths.map(e => e === "" ? delete this.transientPaths[this.transientPaths.indexOf(e)] : e)
-        console.log('final transientPaths:'+this.transientPaths)
-        console.log('all paths out:'+this.state.allPaths)
+        this.transientPaths.map(e => e === "" ? this.transientPaths.splice(this.transientPaths.indexOf(e)) : e)
         if(this.state.check === true){
-          this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes+this.state.data.length}, () => {
-                console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
+          this.setState({countOfCheckedBoxes: this.state.data.length}, () => {                console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
                 if(this.state.countOfCheckedBoxes > 0){
                   this.setState({deleteButtonVisible: true})
                 }else{
@@ -203,15 +220,11 @@ export default class Search extends Component {
                 }
               })
         }else{
-          this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes-this.state.data.length}, () => {
-                console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
-                if(this.state.countOfCheckedBoxes > 0){
-                  this.setState({deleteButtonVisible: true})
-                }else{
-                  this.setState({deleteButtonVisible: false})
-                }
-              })
-              this.transientPaths = []
+          this.setState({countOfCheckedBoxes: 0}, () => {
+            console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
+              this.setState({deleteButtonVisible: false})
+          })
+          this.transientPaths = []
               console.log('transientPaths:'+this.transientPaths)
         }
         return{
@@ -247,7 +260,7 @@ export default class Search extends Component {
                 this.setState({deleteButtonVisible: false})
               }
             })
-            delete this.transientPaths[this.transientPaths.indexOf(id)]
+            this.transientPaths.splice(this.transientPaths.indexOf(id))
             console.log('transientPaths:'+this.transientPaths)
           }
         }
@@ -307,7 +320,7 @@ export default class Search extends Component {
             deleteButtonVisible: false,
             countOfCheckedBoxes: 0,
             check: false
-           }, () => {this.transientPaths=[]})
+           })
         }
       })
   }
@@ -380,8 +393,10 @@ export default class Search extends Component {
   }
 
   private hideAlertOne = () => this.setState({ alertOneVisible: false }, () => {
-      window.location.href = "/pantheon"
-    });
+    this.setState({
+      initialLoad: true, page: 1, deleteState: '', confirmDelete: false
+    }, () => { this.doSearch });
+  });
 
   private confirmDeleteOperation = () => this.setState({confirmDelete: !this.state.confirmDelete},() =>{
       console.log('confirmDelete:'+this.state.confirmDelete)
