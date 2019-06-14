@@ -203,6 +203,7 @@ export default class Search extends Component {
     console.log('handleSelectAll')
     this.setState({check: !this.state.check}, () => {
       this.setState(prevState => {
+        this.state.allPaths=[]
         const selectAllcheck = this.state.data.map(dataitem => {
               dataitem["checkedItem"] = this.state.check
               console.log(dataitem["pant:transientPath"]+":"+dataitem["checkedItem"])
