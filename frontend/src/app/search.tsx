@@ -76,7 +76,7 @@ export default class Search extends Component {
             <DataList aria-label="Simple data list example">
               <DataListItem aria-labelledby="simple-item1">
                 <DataListItemRow id="data-rows-header" > 
-                  {this.state.loggedinStatus &&
+                  {this.state.loggedinStatus && !this.state.isEmptyResults &&
                     <DataListCheck aria-labelledby="width-ex1-check1"
                       className="checkbox"
                       isChecked={this.state.check}
@@ -114,7 +114,7 @@ export default class Search extends Component {
                 </DataListItemRow>
                 {this.state.data.map(data => (
                   <DataListItemRow id="data-rows">
-                    {this.state.loggedinStatus &&
+                    {this.state.loggedinStatus && !this.state.isEmptyResults &&
                       <DataListCheck aria-labelledby="width-ex3-check1"
                         className="checkbox"
                         isChecked={data["checkedItem"]}
@@ -212,7 +212,7 @@ export default class Search extends Component {
           return dataitem
         })
         this.transientPaths=this.state.allPaths
-        this.transientPaths.map(e => e === "" ? this.transientPaths.splice(this.transientPaths.indexOf(e)) : e)
+        this.transientPaths.map(e => e === "" ? this.transientPaths.splice(this.transientPaths.indexOf(e),1) : e)
         if(this.state.check === true){
           this.setState({countOfCheckedBoxes: this.state.data.length}, () => {
             console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
@@ -221,6 +221,7 @@ export default class Search extends Component {
                 }else{
                   this.setState({deleteButtonVisible: false})
                 }
+                console.log('transientPaths:'+this.transientPaths)
               })
         }else{
           this.setState({countOfCheckedBoxes: 0}, () => {
@@ -263,7 +264,7 @@ export default class Search extends Component {
                 this.setState({deleteButtonVisible: false})
               }
             })
-            this.transientPaths.splice(this.transientPaths.indexOf(id))
+            this.transientPaths.splice(this.transientPaths.indexOf(id),1)
             console.log('transientPaths:'+this.transientPaths)
           }
         }
@@ -316,6 +317,7 @@ export default class Search extends Component {
           this.setState({
             data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
             isEmptyResults: true,
+            deleteButtonVisible: false,
             check: false
           })
         } else {
