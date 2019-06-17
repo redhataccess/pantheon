@@ -289,13 +289,16 @@ export default class Search extends Component {
         body: formData
       }).then(response => {
         if (response.status == 200) {
-          this.setState({ deleteState: 'positive'}) 
+          this.setState({ deleteState: 'positive'},() => 
+          this.transientPaths=[]) 
           console.log('deleteState:'+this.state.deleteState)
         } else if (response.status == 403) {
-          this.setState({ deleteState: 'negative' })
+          this.setState({ deleteState: 'negative'},() => 
+          this.transientPaths=[])
           console.log('deleteState:'+this.state.deleteState)
         } else {
-          this.setState({ deleteState: 'unknown' })
+          this.setState({ deleteState: 'unknown'},() => 
+          this.transientPaths=[])
           console.log('deleteState:'+this.state.deleteState)
         }
       });
