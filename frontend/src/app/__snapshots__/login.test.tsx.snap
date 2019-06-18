@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login tests should render Login component 1`] = `
+<Fragment>
+  <Bullseye
+    className=""
+    component="div"
+  >
+    <div
+      className="app-container"
+    >
+      <div>
+        <FormGroup
+          className=""
+          fieldId="username"
+          isInline={false}
+          isRequired={false}
+          isValid={true}
+          label="Username:"
+        >
+          <TextInput
+            aria-label={null}
+            className=""
+            id="username"
+            isDisabled={false}
+            isReadOnly={false}
+            isRequired={false}
+            isValid={true}
+            onChange={[Function]}
+            onKeyPress={[Function]}
+            placeholder="Username"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <FormGroup
+          className=""
+          fieldId="password"
+          isInline={false}
+          isRequired={false}
+          isValid={true}
+          label="Password:"
+        >
+          <TextInput
+            aria-label={null}
+            className=""
+            id="password"
+            isDisabled={false}
+            isReadOnly={false}
+            isRequired={false}
+            isValid={true}
+            onChange={[Function]}
+            onKeyPress={[Function]}
+            placeholder="Password"
+            type="password"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <div>
+          <Button
+            aria-label={null}
+            className=""
+            component="button"
+            isActive={false}
+            isBlock={false}
+            isDisabled={false}
+            isFocus={false}
+            isHover={false}
+            isInline={false}
+            onClick={[Function]}
+            type="button"
+            variant="primary"
+          >
+            Log In
+          </Button>
+        </div>
+      </div>
+    </div>
+  </Bullseye>
+</Fragment>
+`;

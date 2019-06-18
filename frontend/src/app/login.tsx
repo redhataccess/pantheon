@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Alert, AlertActionCloseButton, BackgroundImage, BackgroundImageSrc, TextInput } from '@patternfly/react-core';
+import { Bullseye, Button, Alert, AlertActionCloseButton, FormGroup, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 
 class Login extends Component {
@@ -14,17 +14,31 @@ class Login extends Component {
     const { username, password } = this.state;
     return (
       <React.Fragment>
-        <div className="app-container">
-          <div>
-            {this.failedAuthMessage()}
-            <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.onUsernameChange} onKeyPress={this.onLoginKeyPress} />
-            <TextInput id="password" type="password" placeholder="Password" value={password} onChange={this.onPasswordChange} onKeyPress={this.onLoginKeyPress} />
+        <Bullseye>
+          <div className="app-container">
             <div>
-              {this.checkAuth()}
-              <Button onClick={this.login}>Log In</Button>
+              {this.failedAuthMessage()}
+              <FormGroup
+                label="Username:"
+                fieldId="username"
+              >
+                <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.onUsernameChange} onKeyPress={this.onLoginKeyPress} />
+              </FormGroup>
+              <br />
+              <FormGroup
+                label="Password:"
+                fieldId="password"
+              >
+                <TextInput id="password" type="password" placeholder="Password" value={password} onChange={this.onPasswordChange} onKeyPress={this.onLoginKeyPress} />
+              </FormGroup>
+              <br />
+              <div>
+                {this.checkAuth()}
+                <Button onClick={this.login}>Log In</Button>
+              </div>
             </div>
           </div>
-        </div>
+        </Bullseye>
       </React.Fragment>
     );
   }
@@ -38,7 +52,7 @@ class Login extends Component {
   private failedAuthMessage = () => {
     return this.state.authMessage.length > 0 && <div className="notification-container">
       <Alert variant="danger"
-          title={this.state.authMessage}
+        title={this.state.authMessage}
         action={<AlertActionCloseButton onClose={this.resetAuthMessage} />} />
     </div>
   }
@@ -70,7 +84,7 @@ class Login extends Component {
       } else if (response.status === 403) {
         this.setState({ authMessage: "Login failed, please try again." })
       } else {
-        this.setState({ authMessage: "Unknown failure - HTTP " + response.status + ": " + response.statusText})
+        this.setState({ authMessage: "Unknown failure - HTTP " + response.status + ": " + response.statusText })
       }
     });
   }
