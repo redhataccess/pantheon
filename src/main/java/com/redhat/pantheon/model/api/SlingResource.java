@@ -85,9 +85,11 @@ public class SlingResource implements Adaptable {
         Map<String, Object> returnMap = getMembers(Field.class)
                 .filter(field ->
                         stream(excluding).noneMatch(arrayField -> arrayField.equals(field.getName())))
+                // don't consider null values
+                .filter(field -> field.get() != null)
                 .collect(Collectors.toMap(
-                        field -> field.getName(),
-                        field -> field.get()
+                        Field::getName,
+                        Field::get
                 ));
 
         // add the deep fields
@@ -95,11 +97,11 @@ public class SlingResource implements Adaptable {
                 getMembers(DeepField.class)
                         .filter(deepField ->
                             stream(excluding).noneMatch(arrayField -> arrayField.equals(deepField.getPath())))
-                        // get rid of null values
+                        // don't consider null values
                         .filter(deepField -> deepField.get() != null)
                         .collect(Collectors.toMap(
-                                deepField -> deepField.getPath(),
-                                deepField -> deepField.get()
+                                DeepField::getPath,
+                                DeepField::get
                         ))
         );
 
