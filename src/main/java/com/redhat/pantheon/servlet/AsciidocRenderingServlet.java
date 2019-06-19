@@ -86,7 +86,6 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             IOException {
         Resource resource = request.getResource();
         String html = "NO CONTENT";
-        // TODO Turn this into an adaptable
         final Module module = resource.adaptTo(Module.class);
         String cachedContent = module.cachedHtmlContent.get();
 
@@ -116,7 +115,6 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
     private Content generateHtml(SlingHttpServletRequest request, Resource resource) throws PersistenceException, IOException {
         Content c = new Content();
-        // TODO Turn this to an adaptable
         Module module = resource.adaptTo(Module.class);
         c.asciidoc = module.asciidocContent.get();
 
@@ -169,12 +167,14 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         try {
             ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
             // reload from the service-level resolver
-            // TODO turn to an adaptable
             Module module = serviceResourceResolver.getResource(readOnlyModule.getResource().getPath())
                                 .adaptTo(Module.class);
 
-            module.cachedContent.get().hash
-                .set(hash(content.asciidoc).toString());
+            module.cachedContent.get()
+                    .hash.set(
+                            hash(content.asciidoc)
+                                    .toString()
+                    );
             module.cachedContent.get()
                 .data.set(content.html);
             serviceResourceResolver.commit();

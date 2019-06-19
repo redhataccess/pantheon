@@ -33,7 +33,7 @@ public class SlingResource implements Adaptable {
     }
 
     /**
-     * Initializes all fields which have a default value set, and which aren't already set.
+     * Initializes all fields which have a default value, and which aren't already initialized.
      * This method is only meant to be called after new resources are created.
      */
     protected void initDefaultValues() {
@@ -46,14 +46,14 @@ public class SlingResource implements Adaptable {
     }
 
     /**
-     * Returns all SlingModel members (assigned fields which implement the ResourceMember interdace
-     * @return
+     * Returns all SlingModel members (assigned fields which implement the ResourceMember interface
+     * @return A stream with all resource members in this object.
      */
     private Stream<ResourceMember> allMembers() {
         return stream(this.getClass().getDeclaredFields())
-                // only fields which implement ResourceMember
+                // only class fields which implement ResourceMember
                 .filter(reflectedField -> ResourceMember.class.isAssignableFrom(reflectedField.getType()))
-                // convert to the field values
+                // convert to big-Field values
                 .map(field -> {
                     try {
                         return (ResourceMember) field.get(SlingResource.this);
@@ -235,6 +235,10 @@ public class SlingResource implements Adaptable {
 
         public MODELTYPE get() {
             Resource childResource = SlingResource.this.getResource().getChild(this.name);
+
+            if(childResource == null) {
+                return null;
+            }
 
             // the resource type should have a one arg constructor which takes a resource
             MODELTYPE childModel = null;

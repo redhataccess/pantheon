@@ -24,13 +24,16 @@ class SlingResourceTest {
                 .resource("/content/module1",
                         "jcr:name", "my-name",
                         "jcr:date", Calendar.getInstance(),
-                        "jcr:number", "10")
+                        "jcr:number", "10",
+                        "jcr:boolean", false)
                 .commit();
 
         TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
 
+        // test conversions to the specific field-declared types
         assertEquals("my-name", model.NAME.get());
         assertEquals(new Long(10), model.NUMBER.get());
+        assertEquals(false, model.BOOLEAN.get());
         assertNotNull(model.DATE.get());
     }
 
@@ -77,7 +80,8 @@ class SlingResourceTest {
                 .resource("/content/module1",
                         "jcr:primaryType", "pant:module",
                         "jcr:created", Calendar.getInstance(),
-                        "jcr:createdBy", "auser")
+                        "jcr:createdBy", "auser",
+                        "jcr:boolean", false)
                 .commit();
 
         // When
@@ -89,6 +93,7 @@ class SlingResourceTest {
         model.DATE.set(cal);
         model.NAME.set("someoneelse");
         model.NUMBER.set(15L);
+        model.BOOLEAN.set(true);
 
         // Then
         assertEquals(1, model.DATE.get().get(Calendar.MONTH));
@@ -96,6 +101,7 @@ class SlingResourceTest {
         assertEquals(2019, model.DATE.get().get(Calendar.YEAR));
         assertEquals("someoneelse", model.NAME.get());
         assertEquals(new Long(15), model.NUMBER.get());
+        assertEquals(true, model.BOOLEAN.get());
     }
 
     @Test
@@ -141,6 +147,7 @@ class SlingResourceTest {
         // Then
         assertTrue(model1.CHILD.isPresent());
         assertFalse(model2.CHILD.isPresent());
+        assertNull(model2.CHILD.get());
     }
 
     @Test
@@ -262,6 +269,7 @@ class SlingResourceTest {
         public final Field<String> NAME = new Field<>(String.class, "jcr:name");
         public final Field<Calendar> DATE = new Field<>(Calendar.class, "jcr:date");
         public final Field<Long> NUMBER = new Field<>(Long.class, "jcr:number");
+        public final Field<Boolean> BOOLEAN = new Field<>(Boolean.class, "jcr:boolean");
 
         public final DeepField<String> GRANDCHILD_NAME = new DeepField<>(String.class, "child/grandchild/jcr:name");
 
