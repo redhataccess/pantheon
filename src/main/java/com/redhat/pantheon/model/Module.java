@@ -1,83 +1,34 @@
 package com.redhat.pantheon.model;
 
-import org.apache.sling.api.resource.ModifiableValueMap;
+import com.redhat.pantheon.model.api.SlingResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.Via;
-import org.apache.sling.models.annotations.injectorspecific.Self;
-import org.apache.sling.models.annotations.via.ChildResource;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.annotation.Nonnull;
 import java.util.Calendar;
 
 /**
  * Model class to represent modules
  */
-@Model(
-    adaptables = Resource.class,
-    defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class Module {
+public class Module extends SlingResource {
 
-    @Self
-    private Resource resource;
-
-    @Inject @Named("sling:resourceType")
     @Default(values = "pantheon/modules")
-    private String slingResourceType;
+    public final Field<String> slingResourceType = new Field<>(String.class, "sling:resourceType");
 
-    @Inject @Named("jcr:created")
-    private Calendar created;
+    public final Field<Calendar> created = new Field<>(Calendar.class, "jcr:created");
 
-    @Inject @Named("jcr:createdBy")
-    private String createdBy;
+    public final Field<String> createdBy = new Field<>(String.class, "jcr:createdBy");
 
-    @Inject @Named("jcr:primaryType")
-    private String primaryType;
+    public final Field<String> primaryType = new Field<>(String.class, "jcr:primaryType");
 
-    @Inject @Named("jcr:data")
-    @Via(value = "asciidoc/jcr:content", type = ChildResource.class)
-    private String asciidocContent;
+    public final DeepField<String> asciidocContent = new DeepField<>(String.class, "asciidoc/jcr:content/jcr:data");
 
-    @Inject @Named("jcr:data")
-    @Via(value = "cachedContent", type = ChildResource.class)
-    private String cachedHtmlContent;
+    public final DeepField<String> cachedHtmlContent = new DeepField<>(String.class, "cachedContent/jcr:data");
 
-    @Inject
-    private CachedContent cachedContent;
+    public final ChildResource<CachedContent> cachedContent = new ChildResource<>(CachedContent.class, "cachedContent");
 
-    public String getSlingResourceType() {
-        return slingResourceType;
-    }
-
-    public Calendar getCreated() {
-        return created;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public String getPrimaryType() {
-        return primaryType;
-    }
-
-    public String getAsciidocContent() {
-        return asciidocContent;
-    }
-
-    public String getCachedHtmlContent() {
-        return cachedHtmlContent;
-    }
-
-    public CachedContent getCachedContent() {
-        return cachedContent;
-    }
-
-    public String getPath() {
-        return resource.getPath();
+    public Module(@Nonnull Resource resource) {
+        super(resource);
     }
 
     /**
@@ -85,36 +36,14 @@ public class Module {
      * It is a nested class under Module as it only makes sense
      * for these nodes to be generated under a Module.
      */
-    @Model(adaptables = Resource.class,
-        defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-    public static class CachedContent {
+    public static class CachedContent extends SlingResource {
 
-        @Self
-        private Resource resource;
+        public final Field<String> hash = new Field<>(String.class, "pant:hash");
 
-        @Inject @Named("pant:hash")
-        private String hash;
+        public final Field<String> data = new Field<>(String.class, "jcr:data");
 
-        @Inject @Named("jcr:data")
-        private String data;
-
-        public String getHash() {
-            return hash;
-        }
-
-        public void setHash(String hash) {
-            resource.adaptTo(ModifiableValueMap.class)
-                    .put("pant:hash", hash);
-            this.hash = hash;
-        }
-
-        public String getData() {
-            return data;
-        }
-
-        public void setData(String data) {
-            resource.adaptTo(ModifiableValueMap.class).put("jcr:data", data);
-            this.data = data;
+        public CachedContent(@Nonnull Resource resource) {
+            super(resource);
         }
     }
 }

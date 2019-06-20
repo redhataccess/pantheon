@@ -87,7 +87,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         Resource resource = request.getResource();
         String html = "NO CONTENT";
         final Module module = resource.adaptTo(Module.class);
-        String cachedContent = module.getCachedHtmlContent();
+        String cachedContent = module.cachedHtmlContent.get();
 
         // If the content doesn't exist yet, generate and save it
         if( cachedContent == null || !generatedContentHashMatches(resource) || request.getParameter("rerender") != null) {
@@ -95,7 +95,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             cacheContent(request, module, c);
             html = c.html;
         } else {
-            html = module.getCachedHtmlContent();
+            html = module.cachedHtmlContent.get();
         }
 
         response.setContentType("text/html");
@@ -115,9 +115,8 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
     private Content generateHtml(SlingHttpServletRequest request, Resource resource) throws PersistenceException, IOException {
         Content c = new Content();
-        // TODO remove the use of Resource (if possible)
         Module module = resource.adaptTo(Module.class);
-        c.asciidoc = module.getAsciidocContent();
+        c.asciidoc = module.asciidocContent.get();
 
         // build the attributes (default + those coming from http parameters)
         AttributesBuilder atts = AttributesBuilder.attributes()
@@ -167,13 +166,17 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     private void cacheContent(final SlingHttpServletRequest request, final Module readOnlyModule, final Content content) {
         try {
             ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
-            // reload from the service
-            Module module = serviceResourceResolver.getResource(readOnlyModule.getPath()).adaptTo(Module.class);
+            // reload from the service-level resolver
+            Module module = serviceResourceResolver.getResource(readOnlyModule.getResource().getPath())
+                                .adaptTo(Module.class);
 
-            module.getCachedContent()
-                .setHash(hash(content.asciidoc).toString());
-            module.getCachedContent()
-                .setData(content.html);
+            module.cachedContent.get()
+                    .hash.set(
+                            hash(content.asciidoc)
+                                    .toString()
+                    );
+            module.cachedContent.get()
+                .data.set(content.html);
             serviceResourceResolver.commit();
             serviceResourceResolver.close();
         } catch (Exception e) {
