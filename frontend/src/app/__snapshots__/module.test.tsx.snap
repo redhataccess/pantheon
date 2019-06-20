@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login tests should render Login component 1`] = `
+<Fragment>
+  <Bullseye
+    className=""
+    component="div"
+  >
+    <div
+      className="app-container"
+    >
+      <div>
+        <FormGroup
+          className=""
+          fieldId="module-name"
+          isInline={false}
+          isRequired={false}
+          isValid={true}
+          label="Module Name"
+        >
+          <TextInput
+            aria-label={null}
+            className=""
+            id="module-name"
+            isDisabled={false}
+            isReadOnly={false}
+            isRequired={false}
+            isValid={true}
+            onChange={[Function]}
+            placeholder="Module Name"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <FormGroup
+          className=""
+          fieldId="module-description"
+          isInline={false}
+          isRequired={false}
+          isValid={true}
+          label="Module Description"
+        >
+          <TextInput
+            aria-label={null}
+            className=""
+            id="module-description"
+            isDisabled={false}
+            isReadOnly={false}
+            isRequired={false}
+            isValid={true}
+            onChange={[Function]}
+            placeholder="Module Description"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <FormGroup
+          className=""
+          fieldId="input-file"
+          isInline={false}
+          isRequired={false}
+          isValid={true}
+          label="Upload .adoc file: "
+        >
+          <input
+            className="input-file"
+            color="#dddddd"
+            id="input"
+            onChange={[Function]}
+            type="file"
+          />
+        </FormGroup>
+        <br />
+        <Button
+          aria-label="Uploads the .adoc file with the Name and Description specified."
+          className=""
+          component="button"
+          isActive={false}
+          isBlock={false}
+          isDisabled={false}
+          isFocus={false}
+          isHover={false}
+          isInline={false}
+          onClick={[Function]}
+          type="button"
+          variant="primary"
+        >
+          Save
+        </Button>
+        <div />
+      </div>
+    </div>
+  </Bullseye>
+</Fragment>
+`;
