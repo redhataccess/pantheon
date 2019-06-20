@@ -105,6 +105,7 @@ export default class Search extends Component {
                         ]} 
                   />
                 </DataListItemRow>
+                {/* Delete button at the top */}
                 <DataListItemRow id="data-rows" key={this.state.data["pant:transientPath"]}>
                   {
                     this.state.deleteButtonVisible ?
@@ -144,6 +145,7 @@ export default class Search extends Component {
                     />      
                   </DataListItemRow>
                 ))}
+                {/* Delete button at the bottom */}
                 <DataListItemRow id="data-rows" key={this.state.data["pant:transientPath"]}>
                     {
                       this.state.deleteButtonVisible?              
@@ -153,6 +155,7 @@ export default class Search extends Component {
                 </DataListItemRow>
               </DataListItem>
             </DataList>
+            {/* Alert for delete confirmation */}
             <div className="alert">
               {this.state.confirmDelete===true && <Modal
                     isSmall
@@ -164,6 +167,7 @@ export default class Search extends Component {
                     >
                       Are you sure you want to delete the selected items?
                 </Modal>}
+                {/* Alerts after confirmation on delete */}
               {this.state.deleteState=='positive' && <Modal
                     isSmall
                     title="Success"
@@ -212,7 +216,6 @@ export default class Search extends Component {
           return dataitem
         })
         this.transientPaths=this.state.allPaths
-        this.transientPaths.map(e => e === "" ? this.transientPaths.splice(this.transientPaths.indexOf(e),1) : e)
         if(this.state.check === true){
           this.setState({countOfCheckedBoxes: this.state.data.length}, () => {
             console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
