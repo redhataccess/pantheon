@@ -35,7 +35,7 @@ export default class Search extends Component {
     const { columns, isEmptyResults, input, isSortedUp,sortKey} = this.state;
     
     const id = 'userID';
-    if (!this.state.loggedinStatus) {
+    if (!this.state.loggedinStatus && this.state.initialLoad==true) {
       fetch("/system/sling/info.sessionInfo.json")
         .then(response => response.json())
         .then(responseJSON => {
@@ -51,11 +51,11 @@ export default class Search extends Component {
           <div>
             <div className="row-view">
               <Label>Search Query:</Label>
-              <TextInput id="search" type="text" onKeyDown={this.getRows} onChange={(event) => this.setState({ input: event })} value={this.state.input} />
+              <TextInput id="search" type="text" onKeyDown={this.getRows} onChange={(event) => this.setState({ input: event,initialLoad: false })} value={this.state.input} />
               <Label>Start At:</Label>
-              <TextInput id="pageNum" type="text" pattern="[0-9]*" onKeyDown={this.getRows} onChange={(event) => this.setState({ pageOffset: event })} value={this.state.pageOffset} />
+              <TextInput id="pageNum" type="text" pattern="[0-9]*" onKeyDown={this.getRows} onChange={(event) => this.setState({ pageOffset: event,initialLoad: false })} value={this.state.pageOffset} />
               <Label>Result Count:</Label>
-              <TextInput id="pageCount" type="text" pattern="[0-9]*" onKeyDown={this.getRows} onChange={(event) => this.setState({ pageCount: event })} value={this.state.pageCount} />
+              <TextInput id="pageCount" type="text" pattern="[0-9]*" onKeyDown={this.getRows} onChange={(event) => this.setState({ pageCount: event,initialLoad: false })} value={this.state.pageCount} />
               <Button onClick={this.doSearch}>Search</Button>
             </div>
             {isEmptyResults && (
@@ -212,7 +212,9 @@ export default class Search extends Component {
         const selectAllcheck = this.state.data.map(dataitem => {
               dataitem["checkedItem"] = this.state.check
               console.log(dataitem["pant:transientPath"]+":"+dataitem["checkedItem"])
-              this.state.check?this.state.allPaths.push(dataitem["pant:transientPath"]):this.state.allPaths.splice(this.state.allPaths.indexOf(dataitem["pant:transientPath"]),1)
+              if(this.state.check){
+                this.state.allPaths.push(dataitem["pant:transientPath"])
+              }
           return dataitem
         })
         this.transientPaths=this.state.allPaths
