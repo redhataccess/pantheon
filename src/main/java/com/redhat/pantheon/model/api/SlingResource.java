@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.api;
 
+import com.google.common.collect.Streams;
 import org.apache.sling.api.adapter.Adaptable;
 import org.apache.sling.api.resource.*;
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +10,7 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -81,31 +83,17 @@ public class SlingResource implements Adaptable {
      * @return
      */
     public Map<String, Object> toMap(String ... excluding) {
-        // get the fields first
-        Map<String, Object> returnMap = getMembers(Field.class)
-                .filter(field ->
-                        stream(excluding).noneMatch(arrayField -> arrayField.equals(field.getName())))
-                // don't consider null values
-                .filter(field -> field.get() != null)
+        return Streams.concat(getMembers(Field.class), getMembers(DeepField.class))
+                // ignore null values
+                .filter(accessor -> accessor.get() != null)
+                // ignore the listed names
+                .filter(accessor ->
+                        stream(excluding).noneMatch(arrayField -> arrayField.equals(accessor.getName())))
+                // convert to a map
                 .collect(Collectors.toMap(
-                        Field::getName,
-                        Field::get
+                        ResourceMember::getName,
+                        Supplier::get
                 ));
-
-        // add the deep fields
-        returnMap.putAll(
-                getMembers(DeepField.class)
-                        .filter(deepField ->
-                            stream(excluding).noneMatch(arrayField -> arrayField.equals(deepField.getPath())))
-                        // don't consider null values
-                        .filter(deepField -> deepField.get() != null)
-                        .collect(Collectors.toMap(
-                                DeepField::getPath,
-                                DeepField::get
-                        ))
-        );
-
-        return returnMap;
     }
 
     /**
@@ -162,6 +150,11 @@ public class SlingResource implements Adaptable {
         String getPath() {
             return path;
         }
+
+        @Override
+        public String getName() {
+            return getPath();
+        }
     }
 
     /**
@@ -185,7 +178,8 @@ public class SlingResource implements Adaptable {
             this(fieldType, name, null);
         }
 
-        String getName() {
+        @Override
+        public String getName() {
             return name;
         }
 
@@ -231,6 +225,7 @@ public class SlingResource implements Adaptable {
             return modelType;
         }
 
+        @Override
         public String getName() {
             return name;
         }
