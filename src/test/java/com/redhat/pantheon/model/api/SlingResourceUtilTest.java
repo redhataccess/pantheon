@@ -1,8 +1,10 @@
 package com.redhat.pantheon.model.api;
 
+import com.google.common.collect.Maps;
 import com.redhat.pantheon.model.Module;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ValueMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +26,7 @@ class SlingResourceUtilTest {
         Resource child = mock(Resource.class);
         ResourceResolver resourceResolver = mock(ResourceResolver.class);
         lenient().when(parent.getResourceResolver()).thenReturn(resourceResolver);
+        lenient().when(child.getValueMap()).thenReturn(mock(ValueMap.class));
         lenient().when(resourceResolver.create(eq(parent), eq("child"), anyMap()))
                 .thenReturn(child);
 
