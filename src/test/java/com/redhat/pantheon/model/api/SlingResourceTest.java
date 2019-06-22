@@ -133,6 +133,23 @@ class SlingResourceTest {
     }
 
     @Test
+    public void testGetChildNotPresent() throws Exception {
+        // Given
+        slingContext.build()
+                .resource("/content/module1",
+                        "jcr:primaryType", "pant:module",
+                        "jcr:created", Calendar.getInstance(),
+                        "jcr:createdBy", "auser")
+                .commit();
+
+        // When
+        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
+
+        // Then
+        assertNull(model.CHILD.get());
+    }
+
+    @Test
     public void testIsPresent() {
         // Given
         slingContext.build()

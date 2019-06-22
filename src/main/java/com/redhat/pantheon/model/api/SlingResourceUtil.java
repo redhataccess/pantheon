@@ -39,6 +39,7 @@ final class SlingResourceUtil {
                     create(parent, childName, emptyMap());
             // create the model
             T model = toSlingResource(childResource, modelType);
+            model.initDefaultValues();
             return model;
         } catch (PersistenceException e) {
             throw new RuntimeException("Exception while creating new resource: " + parent.getPath() + "/"

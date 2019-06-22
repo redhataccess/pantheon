@@ -101,6 +101,18 @@ public class SlingResource implements Adaptable {
     }
 
     /**
+     * Adds a new child to this {@link SlingResource} and returns the corresponding model.
+     * @param modelType The model type to adapt the new resource to.
+     * @param name The name of the new child resource
+     * @param <R>
+     * @return A {@link SlingResource} model for the newly created child resource
+     * @see SlingResourceUtil#createNewSlingResource(Resource, String, Class)
+     */
+    protected <R extends SlingResource> R addChild(Class<R> modelType, String name) {
+        return SlingResourceUtil.createNewSlingResource(getResource(), name, modelType);
+    }
+
+    /**
      * Returns a map with all the fields (deep fields included) for this model. The keys for the map
      * are the jcr field names.
      *
@@ -240,6 +252,7 @@ public class SlingResource implements Adaptable {
 
         private final Class<MODELTYPE> modelType;
         private final String name;
+        private Optional<MODELTYPE> cachedModelInstance = Optional.empty();
 
         public ChildResource(Class<MODELTYPE> modelType, String name) {
             this.modelType = modelType;
@@ -256,21 +269,20 @@ public class SlingResource implements Adaptable {
         }
 
         public MODELTYPE get() {
-            Resource childResource = SlingResource.this.getResource().getChild(this.name);
+            // initialize the cached model instance if necessary
+            if(!cachedModelInstance.isPresent()) {
 
-            if(childResource == null) {
-                return null;
-            }
+                Resource childResource = SlingResource.this.getResource().getChild(this.name);
 
-            // the resource type should have a one arg constructor which takes a resource
-            MODELTYPE childModel = null;
-            try {
-                childModel = getModelType().getConstructor(Resource.class)
-                        .newInstance(childResource);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                throw new RuntimeException("Unable to construct new instance of child model", e);
+                if (childResource == null) {
+                    return null;
+                }
+
+                // the resource type should have a one arg constructor which takes a resource
+                MODELTYPE modelInstance = toSlingResource(childResource, modelType);
+                cachedModelInstance = Optional.of(modelInstance);
             }
-            return childModel;
+            return cachedModelInstance.get();
         }
 
         public SlingResource getParent() {
@@ -278,18 +290,12 @@ public class SlingResource implements Adaptable {
         }
 
         public MODELTYPE getOrCreate() {
-            Resource parent = SlingResource.this.getResource();
+            Resource parent = getParent().getResource();
             if (!this.isPresent()) {
-                ResourceResolver resourceResolver = parent.getResourceResolver();
-                try {
-                    resourceResolver.create(parent, name, null);
-                } catch (PersistenceException e) {
-                    throw new RuntimeException(e);
-                }
+                // throw away the created instance (let a new instance be cached below)
+                SlingResourceUtil.createNewSlingResource(parent, name, modelType);
             }
-            MODELTYPE model = get();
-            model.initDefaultValues();
-            return model;
+            return get();
         }
 
         public boolean isPresent() {
