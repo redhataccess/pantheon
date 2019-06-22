@@ -8,12 +8,16 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.redhat.pantheon.model.api.SlingResourceUtil.toSlingResource;
 import static java.util.Arrays.stream;
 
 /**
@@ -73,6 +77,27 @@ public class SlingResource implements Adaptable {
     private <A extends ResourceMember> Stream<A> getMembers(@Nonnull Class<A> memberClass) {
         return (Stream<A>) allMembers()
                 .filter(resourceMember -> memberClass.isAssignableFrom(resourceMember.getClass()));
+    }
+
+    /**
+     * Gets a sub-set of this resource's children as a specific {@link SlingResource} subclass. This method accepts
+     * one ore more predicates to filter out certain children. All predicates must be met in order for a child resource
+     * to be returned.
+     *
+     * @param modelType The {@link SlingResource} model type to return
+     * @param filterPredicates An array of predicates to filter out children
+     * @param <R>
+     * @return A stream of this {@link SlingResource}'s children which satisfy all the predicates.
+     */
+    protected <R extends SlingResource> Stream<R> getChildren(Class<R> modelType,
+                                                              Predicate<R> ... filterPredicates) {
+        return Streams.stream(getResource().listChildren())
+                // convert the resources to the model type
+                .map(r -> toSlingResource(r, modelType))
+                // reduce all predicates to a single conjunction (AND) and filter out the children
+                .filter(
+                        Arrays.stream(filterPredicates).reduce(r -> true, Predicate::and)
+                );
     }
 
     /**

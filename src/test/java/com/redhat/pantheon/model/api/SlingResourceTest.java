@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Calendar;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -277,6 +278,35 @@ class SlingResourceTest {
         assertFalse(grandChild.NAME.isSet());
     }
 
+    @Test void testGetChildren() {
+        // Given
+        slingContext.build()
+                .resource("/content/module1",
+                        "jcr:primaryType", "pant:module",
+                        "jcr:created", Calendar.getInstance(),
+                        "jcr:createdBy", "auser")
+                .resource("child",
+                        "jcr:name", "child1",
+                        "jcr:property", "prop-value")
+                .commit();
+
+        // When
+        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
+
+        // Then
+        assertEquals(1, model.getChildren(Child.class).collect(Collectors.toList()).size());
+        assertEquals(0, model.getChildren(Child.class, r -> r.getResource().getName().equals("nonexistent"))
+                .collect(Collectors.toList()).size());
+        assertEquals(1, model.getChildren(Child.class, r -> r.getResource().getName().equals("child"))
+                .collect(Collectors.toList()).size());
+        assertEquals(1, model.getChildren(Child.class, r -> r.getResource().getName().equals("child"),
+                r -> !r.getResource().hasChildren())
+                .collect(Collectors.toList()).size());
+        assertEquals(0, model.getChildren(Child.class, r -> r.getResource().getName().equals("child"),
+                r -> r.getResource().hasChildren())
+                .collect(Collectors.toList()).size());
+    }
+
     public static class TestResource extends SlingResource {
 
         public final Field<String> NAME = new Field<>(String.class, "jcr:name");
@@ -295,6 +325,8 @@ class SlingResourceTest {
     }
 
     public static class Child extends SlingResource {
+        public final Field<String> NAME = new Field<>(String.class, "jcr:name");
+
         public final ChildResource<Grandchild> GRANDCHILD = new ChildResource<>(Grandchild.class, "grandchild");
 
         public Child(Resource resource) {
