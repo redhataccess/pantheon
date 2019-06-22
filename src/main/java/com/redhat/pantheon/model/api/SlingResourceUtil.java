@@ -19,7 +19,8 @@ final class SlingResourceUtil {
 
     /**
      * Creates a new {@link SlingResource} of a given type.
-     * @param parent The parent resource (where the new resource will reside)
+     *
+     * @param parent    The parent resource (where the new resource will reside)
      * @param childName The name of the child resource to create.
      * @param modelType The specific class of {@link SlingResource} to return.
      * @param <T>
@@ -49,37 +50,26 @@ final class SlingResourceUtil {
 
     /**
      * Converts a {@link Resource} into a {@link SlingResource}
+     *
      * @param backingResource The resource to convert
-     * @param modelType The type of {@link SlingResource} to convert to.
+     * @param modelType       The type of {@link SlingResource} to convert to.
      * @param <T>
      * @return A new object of class modelType wrapping the backingResource
      */
     public static <T extends SlingResource> T toSlingResource(Resource backingResource, Class<T> modelType) {
-        // If there is a one-arg constructor, invoke it
         try {
+            // If there is a one-arg constructor, invoke it
             Constructor<T> constructor = modelType.getConstructor(Resource.class);
 
             if (constructor != null) {
                 return constructor.newInstance(backingResource);
+            } else {
+                // Otherwise, throw an exception
+                throw new RuntimeException("SlingModel sub classes need an empty constructor with one argument " +
+                        "of type " + Resource.class.getName());
             }
-
-            // Otherwise, just invoke the empty constructor and reflectively set the 'resource' property
-            constructor = modelType.getConstructor();
-
-            if (constructor == null) {
-                throw new RuntimeException("The class " + modelType.getName() + " need one of the following constructors: " +
-                        "SlingResource(Resource) or SlingResource()");
-            }
-
-            T newInstance = constructor.newInstance();
-            Field resourceField = SlingResource.class.getDeclaredField("resource");
-            resourceField.setAccessible(true);
-            resourceField.set(newInstance, backingResource);
-
-            return newInstance;
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                InvocationTargetException | NoSuchFieldException e) {
-            throw new RuntimeException("Exception while creating a SlingResource of type: " + modelType.getName(), e);
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Exception while converting a Resource to a SlingResource", e);
         }
     }
 }
