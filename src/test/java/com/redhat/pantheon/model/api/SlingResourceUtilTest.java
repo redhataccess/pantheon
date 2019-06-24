@@ -12,8 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith({MockitoExtension.class})
@@ -36,6 +35,20 @@ class SlingResourceUtilTest {
         // Then
         assertNotNull(model);
         assertEquals(child, model.getResource());
+    }
+
+    @Test
+    void createNewSlingResourcePathAlreadyExists() throws Exception {
+        // Given
+        Resource parent = mock(Resource.class);
+        ResourceResolver resourceResolver = mock(ResourceResolver.class);
+        lenient().when(parent.getResourceResolver()).thenReturn(resourceResolver);
+
+        // When
+
+        // Then
+        assertThrows(RuntimeException.class,
+                () -> SlingResourceUtil.createNewSlingResource(parent, "child", Module.class));
     }
 
     @Test
