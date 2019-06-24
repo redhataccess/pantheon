@@ -57,7 +57,7 @@ exports[`App tests should render default App component 1`] = `
           handleMoveLeft={[Function]}
           handleMoveRight={[Function]}
           isNextPageRequied={1}
-          newPage={1}
+          pageNumber={1}
         />
       </div>
       <DataList
@@ -231,6 +231,16 @@ exports[`App tests should render default App component 1`] = `
           />
         </DataListItem>
       </DataList>
+      <div
+        className="notification-container"
+      >
+        <Pagination
+          handleMoveLeft={[Function]}
+          handleMoveRight={[Function]}
+          isNextPageRequied={1}
+          pageNumber={1}
+        />
+      </div>
       <div
         className="alert"
       />

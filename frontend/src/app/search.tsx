@@ -73,7 +73,7 @@ export default class Search extends Component {
               <Pagination
                 handleMoveLeft={() => this.updatePageCounter("L")}
                 handleMoveRight={() => this.updatePageCounter("R")}
-                newPage={this.state.page}
+                pageNumber={this.state.page}
                 isNextPageRequied={this.state.data.length}
               ></Pagination>
             </div>
@@ -159,6 +159,14 @@ export default class Search extends Component {
                 </DataListItemRow>
               </DataListItem>
             </DataList>
+            <div className="notification-container">
+              <Pagination
+                handleMoveLeft={() => this.updatePageCounter("L")}
+                handleMoveRight={() => this.updatePageCounter("R")}
+                pageNumber={this.state.page}
+                isNextPageRequied={this.state.data.length}
+              ></Pagination>
+            </div>
             {/* Alert for delete confirmation */}
             <div className="alert">
               {this.state.confirmDelete===true && <Modal

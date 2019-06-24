@@ -5,7 +5,7 @@ import { Badge } from '@patternfly/react-core';
 export interface IProps{
     handleMoveLeft: Function
     handleMoveRight: Function
-    newPage: number
+    pageNumber : number
     isNextPageRequied: number
 }
 
@@ -27,7 +27,7 @@ render() {
         <nav aria-label="Countries Pagination">
             { blocks.map((page, index) => {
               if (page === "LEFT") return (
-                this.props.newPage===1 ?
+                this.props.pageNumber ===1 ?
                 <Button isDisabled href="#" target="_blank" variant="primary" onClick={() => this.props.handleMoveLeft()}>Previous</Button>
                 : 
                 <Button href="#" variant="primary" onClick={() => this.props.handleMoveLeft()}>Previous</Button>
@@ -41,7 +41,7 @@ render() {
               );
 
               return (
-                <Badge>Page No: {this.props.newPage}</Badge>
+                <Badge>Page No: {this.props.pageNumber}</Badge>
               );
             }) }
         </nav>
