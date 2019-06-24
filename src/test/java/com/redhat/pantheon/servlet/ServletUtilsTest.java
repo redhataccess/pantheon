@@ -1,24 +1,28 @@
 package com.redhat.pantheon.servlet;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.Map;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ServletUtilsTest {
 
     @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private HttpServletResponse response;
 
     @Test
     void paramValue() {
@@ -87,5 +91,23 @@ class ServletUtilsTest {
         Assertions.assertEquals(new Long(20), ServletUtils.paramValueAsLong(request, "nullLongParam", 20L));
         Assertions.assertEquals(new Long(20), ServletUtils.paramValueAsLong(request, "unparseableParam", 20L));
         Assertions.assertEquals(new Long(-15), ServletUtils.paramValueAsLong(request, "negativeParam", 20L));
+    }
+
+    @Test
+    void writeAsJson() throws Exception {
+        // Given
+        response = spy(response);
+        PrintWriter w = mock(PrintWriter.class);
+        lenient().when(response.getWriter()).thenReturn(w);
+        Map obj = newHashMap();
+        obj.put("name", "a-value");
+        obj.put("number", 10);
+
+        // When
+        ServletUtils.writeAsJson(response, obj);
+
+        // Then
+        verify(response).setContentType("application/json");
+        verify(response).getWriter();
     }
 }

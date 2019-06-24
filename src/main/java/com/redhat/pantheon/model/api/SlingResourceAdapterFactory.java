@@ -49,17 +49,12 @@ public class SlingResourceAdapterFactory implements AdapterFactory {
             return null;
         }
 
-        Resource resource = ((Resource) adaptable);
+        Resource resource = (Resource) adaptable;
+        Class<? extends SlingResource> slingResourceType = (Class<? extends SlingResource>)type;
 
         // the adapter type (sublass of SlingResource) should have a one arg constructor which takes a resource
-        AdapterType adapter = null;
-        try {
-            adapter = type.getConstructor(Resource.class)
-                    .newInstance(resource);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            log.error("Error when adapting object to SlingResource",  e);
-        }
+        SlingResource adapter = SlingResourceUtil.toSlingResource(resource, slingResourceType);
 
-        return adapter;
+        return (AdapterType) adapter;
     }
 }

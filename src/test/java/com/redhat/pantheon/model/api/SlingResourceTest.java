@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Calendar;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +19,8 @@ class SlingResourceTest {
 
     private final SlingContext slingContext = new SlingContext();
 
+    private final String[] stringArrayValue = {"one", "two", "three"};
+
     @Test
     public void fieldMapping() throws Exception {
         slingContext.build()
@@ -25,7 +28,8 @@ class SlingResourceTest {
                         "jcr:name", "my-name",
                         "jcr:date", Calendar.getInstance(),
                         "jcr:number", "10",
-                        "jcr:boolean", false)
+                        "jcr:boolean", false,
+                        "jcr:stringArray", stringArrayValue)
                 .commit();
 
         TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
@@ -35,6 +39,7 @@ class SlingResourceTest {
         assertEquals(new Long(10), model.NUMBER.get());
         assertEquals(false, model.BOOLEAN.get());
         assertNotNull(model.DATE.get());
+        assertEquals(stringArrayValue, model.STRINGARRAY.get());
     }
 
     @Test
@@ -81,7 +86,8 @@ class SlingResourceTest {
                         "jcr:primaryType", "pant:module",
                         "jcr:created", Calendar.getInstance(),
                         "jcr:createdBy", "auser",
-                        "jcr:boolean", false)
+                        "jcr:boolean", false,
+                        "jcr:stringArray", new String[]{})
                 .commit();
 
         // When
@@ -94,6 +100,7 @@ class SlingResourceTest {
         model.NAME.set("someoneelse");
         model.NUMBER.set(15L);
         model.BOOLEAN.set(true);
+        model.STRINGARRAY.set(stringArrayValue);
 
         // Then
         assertEquals(1, model.DATE.get().get(Calendar.MONTH));
@@ -102,6 +109,7 @@ class SlingResourceTest {
         assertEquals("someoneelse", model.NAME.get());
         assertEquals(new Long(15), model.NUMBER.get());
         assertEquals(true, model.BOOLEAN.get());
+        assertEquals(stringArrayValue, model.STRINGARRAY.get());
     }
 
     @Test
@@ -122,6 +130,23 @@ class SlingResourceTest {
         // Then
         assertNotNull(model.CHILD.get());
         assertEquals("prop-value", model.CHILD.get().getResource().getValueMap().get("jcr:property"));
+    }
+
+    @Test
+    public void testGetChildNotPresent() throws Exception {
+        // Given
+        slingContext.build()
+                .resource("/content/module1",
+                        "jcr:primaryType", "pant:module",
+                        "jcr:created", Calendar.getInstance(),
+                        "jcr:createdBy", "auser")
+                .commit();
+
+        // When
+        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
+
+        // Then
+        assertNull(model.CHILD.get());
     }
 
     @Test
@@ -214,7 +239,9 @@ class SlingResourceTest {
                 .resource("/content/module1",
                         "jcr:name", "my-module",
                         "jcr:date", Calendar.getInstance(),
-                        "jcr:number", 26)
+                        "jcr:number", 26,
+                        "jcr:boolean", true,
+                        "jcr:stringArray", stringArrayValue)
                 .commit();
 
         // When
@@ -224,6 +251,10 @@ class SlingResourceTest {
         assertEquals("my-module", map.get("jcr:name"));
         assertEquals(26L, map.get("jcr:number"));
         assertTrue(map.containsKey("jcr:date"));
+        assertTrue(map.containsKey("jcr:boolean"));
+        assertEquals(true, map.get("jcr:boolean"));
+        assertTrue(map.containsKey("jcr:stringArray"));
+        assertArrayEquals(stringArrayValue, (String[])map.get("jcr:stringArray"));
     }
 
     @Test
@@ -264,12 +295,42 @@ class SlingResourceTest {
         assertFalse(grandChild.NAME.isSet());
     }
 
+    @Test void testGetChildren() {
+        // Given
+        slingContext.build()
+                .resource("/content/module1",
+                        "jcr:primaryType", "pant:module",
+                        "jcr:created", Calendar.getInstance(),
+                        "jcr:createdBy", "auser")
+                .resource("child",
+                        "jcr:name", "child1",
+                        "jcr:property", "prop-value")
+                .commit();
+
+        // When
+        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
+
+        // Then
+        assertEquals(1, model.getChildren(Child.class).collect(Collectors.toList()).size());
+        assertEquals(0, model.getChildren(Child.class, r -> r.getResource().getName().equals("nonexistent"))
+                .collect(Collectors.toList()).size());
+        assertEquals(1, model.getChildren(Child.class, r -> r.getResource().getName().equals("child"))
+                .collect(Collectors.toList()).size());
+        assertEquals(1, model.getChildren(Child.class, r -> r.getResource().getName().equals("child"),
+                r -> !r.getResource().hasChildren())
+                .collect(Collectors.toList()).size());
+        assertEquals(0, model.getChildren(Child.class, r -> r.getResource().getName().equals("child"),
+                r -> r.getResource().hasChildren())
+                .collect(Collectors.toList()).size());
+    }
+
     public static class TestResource extends SlingResource {
 
         public final Field<String> NAME = new Field<>(String.class, "jcr:name");
         public final Field<Calendar> DATE = new Field<>(Calendar.class, "jcr:date");
         public final Field<Long> NUMBER = new Field<>(Long.class, "jcr:number");
         public final Field<Boolean> BOOLEAN = new Field<>(Boolean.class, "jcr:boolean");
+        public final Field<String[]> STRINGARRAY = new Field<>(String[].class, "jcr:stringArray");
 
         public final DeepField<String> GRANDCHILD_NAME = new DeepField<>(String.class, "child/grandchild/jcr:name");
 
@@ -281,6 +342,8 @@ class SlingResourceTest {
     }
 
     public static class Child extends SlingResource {
+        public final Field<String> NAME = new Field<>(String.class, "jcr:name");
+
         public final ChildResource<Grandchild> GRANDCHILD = new ChildResource<>(Grandchild.class, "grandchild");
 
         public Child(Resource resource) {
