@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import {
   Alert, AlertActionCloseButton, TextInput, Label,
-  DataList, DataListItem, DataListItemRow, DataListItemCells, DataListCell, Button, DataListCheck, Modal
+  DataList, DataListItem, DataListItemRow, DataListItemCells,
+  DataListCell, Button, DataListCheck, Modal,
+  Level, LevelItem
 } from '@patternfly/react-core';
 import '@app/app.css';
 import {Pagination} from '@app/Pagination';
@@ -58,20 +60,13 @@ export default class Search extends Component {
               <TextInput id="search" type="text" onKeyDown={this.getRows} onChange={(event) => this.setState({ input: event })} value={this.state.input} />
               <Button onClick={this.doSearch}>Search</Button>
             </div>
-            {isEmptyResults && (
-              <div className="notification-container">
-                <Alert
-                  variant="warning"
-                  title={"No modules found with your search of: " + this.state.input}
-                  action={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                />
-              </div>
-            )}
             <div className="notification-container">
               <Alert
                 variant="info"
                 title="Search is case sensitive. Type '*' and press 'Enter' for all the modules."
               />
+              { console.log("this.state.data: ") }
+            { console.log(this.state.data) }
               <Pagination
                 handleMoveLeft={() => this.updatePageCounter("L")}
                 handleMoveRight={() => this.updatePageCounter("R")}
@@ -137,7 +132,7 @@ export default class Search extends Component {
                                   <span>{data["jcr:title"]}</span>
                                 </DataListCell>,
                                 <DataListCell  width={2}>
-                                  <span>{data["jcr:description"]===""?"No items found to be displayed":data["jcr:description"]}</span>
+                                  <span>{data["jcr:description"]}</span>
                                 </DataListCell>,
                                 <DataListCell>
                                   <span>{data["pant:transientSource"]}</span>
@@ -159,9 +154,30 @@ export default class Search extends Component {
                         <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
                       :null
                     }
+                    
                 </DataListItemRow>
+                {isEmptyResults && (
+                      <Level gutter="md">
+                        <LevelItem />
+                        <LevelItem>
+                          <div className="notification-container">
+                      <br />
+                      <br />
+                        <Alert
+                          variant="warning"
+                          title={"No modules found with your search of: " + this.state.input}
+                          action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                        />
+                        <br />
+                        <br />
+                      </div></LevelItem>
+                        <LevelItem />
+                      </Level>
+                      
+                    )}
               </DataListItem>
             </DataList>
+
             <div className="notification-container">
               <Pagination
                 handleMoveLeft={() => this.updatePageCounter("L")}
@@ -338,23 +354,12 @@ export default class Search extends Component {
 
   private doSearch = () => {
     this.setState({ initialLoad: false })
-    fetch(this.checkNextPage())
-    .then(response => response.json())
-    .then(responseJSON => this.setState({ checkNextPageRow: responseJSON }))
-    .then(() => {
-      if (JSON.stringify(this.state.checkNextPageRow) === "[]") {
-        this.setState({nextPageRowCount: 0},()=> {console.log("next page count: "+this.state.nextPageRowCount)})
-      }else{
-        this.setState({nextPageRowCount: 1},()=> {console.log("next page count: "+this.state.nextPageRowCount)})
-      }
-    })  
     fetch(this.buildSearchUrl())
       .then(response => response.json())
-      .then(responseJSON => this.setState({ data: responseJSON }))
+      .then(responseJSON => this.setState({ data: responseJSON.data, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
       .then(() => {
         if (JSON.stringify(this.state.data) === "[]") {
           this.setState({
-            data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
             isEmptyResults: true,
             deleteButtonVisible: false,
             check: false
@@ -408,7 +413,7 @@ export default class Search extends Component {
   private getSortedRows() {
     fetch(this.buildSearchUrl())
       .then(response => response.json())
-      .then(responseJSON => this.setState({ data: responseJSON }))
+      .then(responseJSON => this.setState({ data: responseJSON.data, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0  }))
       .then(() => {
         if (JSON.stringify(this.state.data) === "[]") {
           this.setState({
@@ -422,19 +427,6 @@ export default class Search extends Component {
         }
       })
   };
-
-  private checkNextPage(){
-    let checkRowsForNextPage = "/modules.json?search="
-    if (this.state.input != null && this.state.input !== "") {
-      checkRowsForNextPage += this.state.input
-    } else {
-      checkRowsForNextPage += "*"
-    }
-    checkRowsForNextPage += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
-    checkRowsForNextPage += "&offset=" + ((this.state.page)*this.state.pageLimit) + "&limit=" + 1
-    console.log(checkRowsForNextPage)   
-    return checkRowsForNextPage
-  }
 
   private buildSearchUrl() {
     let backend = "/modules.json?search="
