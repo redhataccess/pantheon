@@ -27,7 +27,9 @@ export default class Search extends Component {
     confirmDelete: false,
     loggedinStatus: false,
     pageLimit: 10,
-    page: 1
+    page: 1,
+    checkNextPageRow: "",
+    nextPageRowCount: 1
   };
 
 
@@ -74,7 +76,8 @@ export default class Search extends Component {
                 handleMoveLeft={() => this.updatePageCounter("L")}
                 handleMoveRight={() => this.updatePageCounter("R")}
                 pageNumber={this.state.page}
-                nextPageRecordCount={this.state.data.length}
+                nextPageRecordCount={this.state.nextPageRowCount}
+                noOfRecordsOnPage={this.state.data.length}
               ></Pagination>
             </div>
             <DataList aria-label="Simple data list example">
@@ -164,7 +167,8 @@ export default class Search extends Component {
                 handleMoveLeft={() => this.updatePageCounter("L")}
                 handleMoveRight={() => this.updatePageCounter("R")}
                 pageNumber={this.state.page}
-                nextPageRecordCount={this.state.data.length}
+                nextPageRecordCount={this.state.nextPageRowCount}
+                noOfRecordsOnPage={this.state.data.length}
               ></Pagination>
             </div>
             {/* Alert for delete confirmation */}
@@ -334,6 +338,16 @@ export default class Search extends Component {
 
   private doSearch = () => {
     this.setState({ initialLoad: false })
+    fetch(this.checkNextPage())
+    .then(response => response.json())
+    .then(responseJSON => this.setState({ checkNextPageRow: responseJSON }))
+    .then(() => {
+      if (JSON.stringify(this.state.checkNextPageRow) === "[]") {
+        this.setState({nextPageRowCount: 0},()=> {console.log("next page count: "+this.state.nextPageRowCount)})
+      }else{
+        this.setState({nextPageRowCount: 1},()=> {console.log("next page count: "+this.state.nextPageRowCount)})
+      }
+    })  
     fetch(this.buildSearchUrl())
       .then(response => response.json())
       .then(responseJSON => this.setState({ data: responseJSON }))
@@ -353,7 +367,7 @@ export default class Search extends Component {
            })
         }
       })
-  }
+    }
 
   private setPreview(path: string) {
     console.log("what do I see when you click ? " + path)
@@ -408,6 +422,19 @@ export default class Search extends Component {
         }
       })
   };
+
+  private checkNextPage(){
+    let checkRowsForNextPage = "/modules.json?search="
+    if (this.state.input != null && this.state.input !== "") {
+      checkRowsForNextPage += this.state.input
+    } else {
+      checkRowsForNextPage += "*"
+    }
+    checkRowsForNextPage += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
+    checkRowsForNextPage += "&offset=" + ((this.state.page)*this.state.pageLimit) + "&limit=" + 1
+    console.log(checkRowsForNextPage)   
+    return checkRowsForNextPage
+  }
 
   private buildSearchUrl() {
     let backend = "/modules.json?search="

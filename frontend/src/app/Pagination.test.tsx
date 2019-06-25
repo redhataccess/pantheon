@@ -15,6 +15,7 @@ describe('Tests for Pagination', () => {
     handleMoveRight={() => {}}
     pageNumber={1}
     nextPageRecordCount={1}
+    noOfRecordsOnPage={1}
 />);
     expect(view).toMatchSnapshot();
   });
@@ -25,6 +26,7 @@ describe('Tests for Pagination', () => {
       handleMoveRight={() => {}}
       pageNumber={1}
       nextPageRecordCount={1}
+      noOfRecordsOnPage={1}
     />);
     const NavigatePageButton = wrapper.find(Button);
     expect(NavigatePageButton.exists()).toBe(true)
@@ -36,6 +38,7 @@ describe('Tests for Pagination', () => {
       handleMoveRight={() => {}}
       pageNumber={1}
       nextPageRecordCount={1}
+      noOfRecordsOnPage={1}
     />);
     const pageNumberDisplay = wrapper.find(Badge);
     expect(pageNumberDisplay.exists()).toBe(true)

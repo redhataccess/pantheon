@@ -57,6 +57,7 @@ exports[`App tests should render default App component 1`] = `
           handleMoveLeft={[Function]}
           handleMoveRight={[Function]}
           nextPageRecordCount={1}
+          noOfRecordsOnPage={1}
           pageNumber={1}
         />
       </div>
@@ -238,6 +239,7 @@ exports[`App tests should render default App component 1`] = `
           handleMoveLeft={[Function]}
           handleMoveRight={[Function]}
           nextPageRecordCount={1}
+          noOfRecordsOnPage={1}
           pageNumber={1}
         />
       </div>
