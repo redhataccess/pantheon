@@ -18,6 +18,8 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,8 +46,27 @@ public class ModuleListingServlet extends SlingSafeMethodsServlet {
         String offset = getParam(request, "offset");
         String limit = getParam(request, "limit");
 
+        long lOffset = offset == null ? 0 : Long.valueOf(offset);
+        long pageLimit = limit == null ? Long.MAX_VALUE : Long.valueOf(limit);
+
+        long lLimit = pageLimit == Long.MAX_VALUE ? pageLimit : pageLimit + 1;
+
         try {
-            List<Map<String, Object>> payload = mdr.getModulesSort(searchParam, keyParam, directionParam, offset, limit);
+            List<Map<String, Object>> resultSet = mdr.getModulesSort(searchParam, keyParam, directionParam, lOffset, lLimit);
+
+            List<Map<String, Object>> data = new ArrayList<>(resultSet);
+            boolean hasNextPage = false;
+            if (data.size() > pageLimit) {
+                data.remove(data.size() - 1); //Removing the +1 element that we added for the next page
+                hasNextPage = true;
+            }
+
+
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("hasNextPage", hasNextPage);
+            payload.put("data", data);
+
+
             response.setContentType("application/json");
             Writer w = response.getWriter();
             w.write(new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(payload));

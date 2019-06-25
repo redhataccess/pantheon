@@ -30,7 +30,7 @@ public class ModuleDataRetriever {
     }
 
 	public List<Map<String, Object>> getModulesSort(String searchTerm, String key, String direction,
-                                                    String offset, String limit) throws RepositoryException {
+                                                    long offset, long limit) throws RepositoryException {
 		if (searchTerm == null || searchTerm.isEmpty()) {
 			searchTerm.equals("*");
 		}
@@ -59,7 +59,7 @@ public class ModuleDataRetriever {
         }
     }
 
-    private List<Map<String, Object>> getModules(String query, String orderByKey, String orderByDirection, String offset, String limit)
+    private List<Map<String, Object>> getModules(String query, String orderByKey, String orderByDirection, Long offset, Long limit)
             throws RepositoryException {
         if (query.equals("") || query.equals("*") || query == null) {
             query = "";
@@ -84,8 +84,8 @@ public class ModuleDataRetriever {
             queryBuilder.append(" order by a.[").append(orderByKey).append("] ").append(orderByDirection);
         }
 
-        long lOffset = offset == null ? 0 : Long.valueOf(offset);
-        long lLimit = limit == null ? Long.MAX_VALUE : Long.valueOf(limit);
+        long lLimit = limit == null ? Long.MAX_VALUE : limit;
+        long lOffset = offset == null ? 0 : offset;
 
         Stream<Resource> results = new JcrQueryHelper(resolver).query(queryBuilder.toString(), lLimit, lOffset);
 
