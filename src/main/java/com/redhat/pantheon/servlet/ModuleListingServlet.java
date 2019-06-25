@@ -1,6 +1,5 @@
 package com.redhat.pantheon.servlet;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redhat.pantheon.data.ModuleDataRetriever;
 import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -23,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
+import static com.redhat.pantheon.servlet.ServletUtils.writeAsJson;
+
 /**
  * Created by ben on 4/18/19.
  */
@@ -40,11 +42,11 @@ public class ModuleListingServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
         ModuleDataRetriever mdr = new ModuleDataRetriever(request.getResourceResolver());
-        String searchParam = getParam(request, "search");
-        String keyParam = getParam(request, "key");
-        String directionParam = getParam(request, "direction");
-        String offset = getParam(request, "offset");
-        String limit = getParam(request, "limit");
+        String searchParam = paramValue(request, "search");
+        String keyParam = paramValue(request, "key");
+        String directionParam = paramValue(request, "direction");
+        String offset = paramValue(request, "offset");
+        String limit = paramValue(request, "limit");
 
         long lOffset = offset == null ? 0 : Long.valueOf(offset);
         long pageLimit = limit == null ? Long.MAX_VALUE : Long.valueOf(limit);
@@ -61,27 +63,13 @@ public class ModuleListingServlet extends SlingSafeMethodsServlet {
                 hasNextPage = true;
             }
 
-
             Map<String, Object> payload = new HashMap<>();
             payload.put("hasNextPage", hasNextPage);
             payload.put("data", data);
-
-
-            response.setContentType("application/json");
-            Writer w = response.getWriter();
-            w.write(new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(payload));
+            writeAsJson(response, payload);
         } catch (RepositoryException e) {
             log.error("/modules.json error", e);
             response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private String getParam(SlingHttpServletRequest request, String param) {
-        String ret = "";
-        if (request.getParameterMap().containsKey(param)) {
-            ret = request.getRequestParameter(param).toString();
-        }
-        log.debug("Search param: {}, value: {}", param, ret);
-        return ret;
     }
 }
