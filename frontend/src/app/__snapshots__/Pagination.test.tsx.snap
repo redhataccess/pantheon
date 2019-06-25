@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tests for Pagination should render Pagination component 1`] = `
+<Fragment>
+  <nav
+    aria-label="Countries Pagination"
+  >
+    <Button
+      aria-label={null}
+      className=""
+      component="button"
+      href="#"
+      isActive={false}
+      isBlock={false}
+      isDisabled={true}
+      isFocus={false}
+      isHover={false}
+      isInline={false}
+      onClick={[Function]}
+      target="_blank"
+      type="button"
+      variant="primary"
+    >
+      Previous
+    </Button>
+    <Button
+      aria-label={null}
+      className=""
+      component="button"
+      href="#"
+      isActive={false}
+      isBlock={false}
+      isDisabled={true}
+      isFocus={false}
+      isHover={false}
+      isInline={false}
+      onClick={[Function]}
+      target="_blank"
+      type="button"
+      variant="secondary"
+    >
+      Next
+    </Button>
+    <Badge
+      className=""
+      isRead={false}
+    >
+      Page No: 
+      1
+    </Badge>
+  </nav>
+</Fragment>
+`;

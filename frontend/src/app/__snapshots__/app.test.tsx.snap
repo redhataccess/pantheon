@@ -56,7 +56,7 @@ exports[`App tests should render default App component 1`] = `
         <Pagination
           handleMoveLeft={[Function]}
           handleMoveRight={[Function]}
-          isNextPageRequied={1}
+          nextPageRecordCount={1}
           pageNumber={1}
         />
       </div>
@@ -237,7 +237,7 @@ exports[`App tests should render default App component 1`] = `
         <Pagination
           handleMoveLeft={[Function]}
           handleMoveRight={[Function]}
-          isNextPageRequied={1}
+          nextPageRecordCount={1}
           pageNumber={1}
         />
       </div>

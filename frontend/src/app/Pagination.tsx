@@ -6,16 +6,16 @@ export interface IProps{
     handleMoveLeft: Function
     handleMoveRight: Function
     pageNumber : number
-    isNextPageRequied: number
+    nextPageRecordCount: number
 }
 
 export class Pagination extends React.Component<IProps> {
 
 private fetchBlocks = () => {
     const totalBlocks = 2;
-    const LEFT_PAGE = 'LEFT';
-    const RIGHT_PAGE = 'RIGHT';
-    const pages = [LEFT_PAGE,RIGHT_PAGE,totalBlocks];
+    const PREVIOUS_PAGE = 'PREVIOUS';
+    const NEXT_PAGE = 'NEXT';
+    const pages = [PREVIOUS_PAGE,NEXT_PAGE,totalBlocks];
     return pages;
 }
 
@@ -26,15 +26,15 @@ render() {
       <Fragment>
         <nav aria-label="Countries Pagination">
             { blocks.map((page, index) => {
-              if (page === "LEFT") return (
+              if (page === "PREVIOUS") return (
                 this.props.pageNumber ===1 ?
                 <Button isDisabled href="#" target="_blank" variant="primary" onClick={() => this.props.handleMoveLeft()}>Previous</Button>
                 : 
                 <Button href="#" variant="primary" onClick={() => this.props.handleMoveLeft()}>Previous</Button>
               );
 
-              if (page === "RIGHT") return (
-                this.props.isNextPageRequied<10?
+              if (page === "NEXT") return (
+                this.props.nextPageRecordCount<10?
                 <Button isDisabled href="#" target="_blank" variant="secondary" onClick={() => this.props.handleMoveRight()}>Next</Button>
                 : 
                 <Button href="#" variant="secondary" onClick={() => this.props.handleMoveRight()}>Next</Button>
@@ -50,3 +50,5 @@ render() {
 
   }
 } 
+
+export default IProps;

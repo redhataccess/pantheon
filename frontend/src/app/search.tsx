@@ -74,7 +74,7 @@ export default class Search extends Component {
                 handleMoveLeft={() => this.updatePageCounter("L")}
                 handleMoveRight={() => this.updatePageCounter("R")}
                 pageNumber={this.state.page}
-                isNextPageRequied={this.state.data.length}
+                nextPageRecordCount={this.state.data.length}
               ></Pagination>
             </div>
             <DataList aria-label="Simple data list example">
@@ -164,7 +164,7 @@ export default class Search extends Component {
                 handleMoveLeft={() => this.updatePageCounter("L")}
                 handleMoveRight={() => this.updatePageCounter("R")}
                 pageNumber={this.state.page}
-                isNextPageRequied={this.state.data.length}
+                nextPageRecordCount={this.state.data.length}
               ></Pagination>
             </div>
             {/* Alert for delete confirmation */}
