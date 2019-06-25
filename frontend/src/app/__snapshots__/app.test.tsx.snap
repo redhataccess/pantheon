@@ -26,46 +26,6 @@ exports[`App tests should render default App component 1`] = `
           type="text"
           value="*"
         />
-        <Label
-          className=""
-          isCompact={false}
-        >
-          Start At:
-        </Label>
-        <TextInput
-          aria-label={null}
-          className=""
-          id="pageNum"
-          isDisabled={false}
-          isReadOnly={false}
-          isRequired={false}
-          isValid={true}
-          onChange={[Function]}
-          onKeyDown={[Function]}
-          pattern="[0-9]*"
-          type="text"
-          value={1}
-        />
-        <Label
-          className=""
-          isCompact={false}
-        >
-          Result Count:
-        </Label>
-        <TextInput
-          aria-label={null}
-          className=""
-          id="pageCount"
-          isDisabled={false}
-          isReadOnly={false}
-          isRequired={false}
-          isValid={true}
-          onChange={[Function]}
-          onKeyDown={[Function]}
-          pattern="[0-9]*"
-          type="text"
-          value={50}
-        />
         <Button
           aria-label={null}
           className=""
@@ -92,6 +52,13 @@ exports[`App tests should render default App component 1`] = `
           title="Search is case sensitive. Type '*' and press 'Enter' for all the modules."
           variant="info"
           variantLabel={null}
+        />
+        <Pagination
+          handleMoveLeft={[Function]}
+          handleMoveRight={[Function]}
+          nextPageRecordCount={1}
+          noOfRecordsOnPage={1}
+          pageNumber={1}
         />
       </div>
       <DataList
@@ -219,7 +186,7 @@ exports[`App tests should render default App component 1`] = `
                     width={2}
                   >
                     <span>
-                      No items found to be displayed
+                      
                     </span>
                   </DataListCell>,
                   <DataListCell
@@ -265,6 +232,17 @@ exports[`App tests should render default App component 1`] = `
           />
         </DataListItem>
       </DataList>
+      <div
+        className="notification-container"
+      >
+        <Pagination
+          handleMoveLeft={[Function]}
+          handleMoveRight={[Function]}
+          nextPageRecordCount={1}
+          noOfRecordsOnPage={1}
+          pageNumber={1}
+        />
+      </div>
       <div
         className="alert"
       />
