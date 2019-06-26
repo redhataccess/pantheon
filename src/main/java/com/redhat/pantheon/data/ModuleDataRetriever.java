@@ -65,8 +65,8 @@ public class ModuleDataRetriever {
             query = "";
         } else {
             query=query.replace('*','%');
-            query = "AND (a.[jcr:title] like " + "'" + query + "'" +
-                    " OR a.[jcr:description] like " + "'" + query + "'" + ")";
+            query = "AND (a.[jcr:title] like " + "'%" + query + "%'" +
+                    " OR a.[jcr:description] like " + "'%" + query + "%'" + ")";
         }
 
         //FIXME - we had "select * from [pant:module]..." here, BUT we were seeing problems that after a very small
