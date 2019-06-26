@@ -1,0 +1,13 @@
+server: http://localhost:8080
+repository: ankit_test
+followlinks: true
+
+titles:
+ - banana
+
+modules:
+ - ./*
+
+resources:
+ - banana
+

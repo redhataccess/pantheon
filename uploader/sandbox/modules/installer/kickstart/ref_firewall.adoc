@@ -1,0 +1,39 @@
+[id="firewall_{context}"]
+= firewall
+
+The [command]`firewall` Kickstart command is optional. It specifies the firewall configuration for the installed system.
+
+.Syntax 
+
+[subs="quotes,macros"]
+----
+[command]``firewall --enabled|--disabled __device__ [__options__]``
+----
+
+.Mandatory options
+
+* [option]`--enabled` or [option]`--enable` - Reject incoming connections that are not in response to outbound requests, such as DNS replies or DHCP requests. If access to services running on this machine is needed, you can choose to allow specific services through the firewall.
+
+* [option]`--disabled` or [option]`--disable` - Do not configure any iptables rules.
+
+* __device__ - the device for which to configure firewall.
+
+.Optional options
+
+* [option]`--trust=` - Listing a device here, such as em1, allows all traffic coming to and from that device to go through the firewall. To list more than one device, use [option]`--trust em1 --trust em2`. Do NOT use a comma-separated format such as [option]`--trust em1, em2`.
+
+* __incoming__ - Replace with one or more of the following to allow the specified services through the firewall.
++
+======
+* [option]`--ssh`
+* [option]`--smtp`
+* [option]`--http`
+* [option]`--ftp`
+======
+
+* [option]`--port=` - You can specify that ports be allowed through the firewall using the port:protocol format. For example, to allow IMAP access through your firewall, specify `imap:tcp`. Numeric ports can also be specified explicitly; for example, to allow UDP packets on port 1234 through, specify `1234:udp`. To specify multiple ports, separate them by commas.
+
+* [option]`--service=` - This option provides a higher-level way to allow services through the firewall. Some services (like `cups`, `avahi`, and so on.) require multiple ports to be open or other special configuration in order for the service to work. You can specify each individual port with the [option]`--port` option, or specify [command]`--service=` and open them all at once.
++
+Valid options are anything recognized by the firewall-offline-cmd program in the [package]*firewalld* package. If `firewalld` is running, [command]`firewall-cmd --get-services` provides a list of known service names.
+
