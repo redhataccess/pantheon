@@ -1,18 +1,16 @@
 import React from 'react';
 import { Pagination } from '@app/Pagination';
 import "isomorphic-fetch"
-import Search from '@app/search';
 
 import { mount, shallow } from 'enzyme';
-import { Button } from '@patternfly/react-core';
-import { Badge } from '@patternfly/react-core';
+import { Button, Label } from '@patternfly/react-core';
 
 describe('Tests for Pagination', () => {
 
   test('should render Pagination component', () => {
     const view = shallow(<Pagination 
-    handleMoveLeft={() => {}}
-    handleMoveRight={() => {}}
+    handleMoveLeft={move}
+    handleMoveRight={move}
     pageNumber={1}
     nextPageRecordCount={1}
     noOfRecordsOnPage={1}
@@ -22,8 +20,8 @@ describe('Tests for Pagination', () => {
 
   it('should render a Previous/Next Button', () => {
     const wrapper = mount(<Pagination 
-      handleMoveLeft={() => {}}
-      handleMoveRight={() => {}}
+      handleMoveLeft={move}
+      handleMoveRight={move}
       pageNumber={1}
       nextPageRecordCount={1}
       noOfRecordsOnPage={1}
@@ -32,16 +30,19 @@ describe('Tests for Pagination', () => {
     expect(NavigatePageButton.exists()).toBe(true)
   });
 
-  it('should render Badge for displaying page number', () => {
+  it('should render Label for displaying page number', () => {
     const wrapper = mount(<Pagination 
-      handleMoveLeft={() => {}}
-      handleMoveRight={() => {}}
+      handleMoveLeft={move}
+      handleMoveRight={move}
       pageNumber={1}
       nextPageRecordCount={1}
       noOfRecordsOnPage={1}
     />);
-    const pageNumberDisplay = wrapper.find(Badge);
+    const pageNumberDisplay = wrapper.find(Label);
     expect(pageNumberDisplay.exists()).toBe(true)
   });  
 
+  function move(){
+    return "R"
+  }
 });
