@@ -1,7 +1,5 @@
 import * as React from 'react';
-import {
-  PageSidebar,
-} from '@patternfly/react-core';
+import { PageSidebar, Nav, NavList } from '@patternfly/react-core';
 import { NavLinks }  from './NavLinks';
 
 export interface ISideBarProps {
@@ -11,11 +9,11 @@ export interface ISideBarProps {
 export const Sidebar: React.FunctionComponent<ISideBarProps> = ({isNavOpen}) => {
   const nav = () => (
     <aside className="pf-c-page__sidebar">
-      <nav className="pf-c-nav" id="page-layout-default-nav-primary-nav" aria-label="Primary Nav Default Example">
-        <ul className="pf-c-nav__list">
+      <Nav className="pf-c-nav" id="page-layout-default-nav-primary-nav" aria-label="Primary Nav Default Example">
+        <NavList className="pf-c-nav__list">
           <NavLinks />
-        </ul>
-      </nav>
+        </NavList>
+      </Nav>
     </aside>
   );
 

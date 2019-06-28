@@ -2,12 +2,11 @@
   --myApp-global--spacer--md: 30px;
 }
 
-.input-file {
-  color: #dddddd;
-}
-
 .sp-prop {
   font-weight: bold;
+  padding: 0;
+  border: 0;
+  background: none;
 }
 
 .sp-prop-nosort {

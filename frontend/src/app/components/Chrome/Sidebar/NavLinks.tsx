@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { NavItem } from '@patternfly/react-core';
 import { Link } from "react-router-dom";
 
 class NavLinks extends Component {
@@ -23,16 +24,16 @@ class NavLinks extends Component {
 
         return (
             <React.Fragment>
-                <li>
+                <NavItem>
                     <Link to='/search'>
                         {this.state.searchText}
                     </Link>
-                </li>
-                {(this.state.moduleText.length > 0) && (<li>
+                </NavItem>
+                {(this.state.moduleText.length > 0) && (<NavItem>
                     <Link to='/module'>
                         {this.state.moduleText}
                     </Link>
-                </li>)}
+                </NavItem>)}
             </React.Fragment>
         );
     }
