@@ -1,8 +1,0 @@
-[id="using-virtual-scsi_{context}"]
-= Using virtual SCSI
-
-If you are using virtual SCSI resources, rather than native SCSI, a 'link' must be configured to the virtual SCSI serving partition, then configure the virtual SCSI serving partition itself. You create a 'link' between the virtual SCSI client and server slots using the HMC. You can configure a virtual SCSI server on either Virtual I/O Server (VIOS) or IBM{nbsp}i, depending on which model and options you have.
-
-If you are installing using Intel iSCSI Remote Boot, all attached iSCSI storage devices must be disabled. Otherwise, the installation will succeed but the installed system will not boot.
-
-For more information on using virtual devices, see the IBM Redbooks publication _Virtualizing an Infrastructure with System p and Linux_ at: link:++http://publib-b.boulder.ibm.com/abstracts/sg247499.html++[http://publib-b.boulder.ibm.com/abstracts/sg247499.html]

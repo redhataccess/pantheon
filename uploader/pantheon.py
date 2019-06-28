@@ -82,6 +82,7 @@ resources:
  - shared/*.jpg
  - shared/*.svg
 ''')
+
 args = parser.parse_args()
 
 logStr = 'DEBUG' if args.verbose is not None else 'WARNING'
@@ -147,14 +148,24 @@ logger.debug('titleGlobs: %s', titleGlobs)
 logger.debug('moduleGlobs: %s', moduleGlobs)
 logger.debug('resourceGlobs: %s', resourceGlobs)
 
-for root, dirs, files in os.walk(args.directory, followlinks=links):
-    for file in files:
+file_args = sys.argv
+file_args = file_args[2:]
+
+#for root, dirs, files in os.walk(args.directory, followlinks=links):
+for file in file_args:
         if file == 'pantheon2.yml':
             continue
         #logger.debug('root: %s', root)
         #logger.debug('file: %s', file)
-        path = PurePath(root + '/' + file)
+        #file = './'+file
+        parent_directory = args.directory
 
+        path = PurePath(parent_directory,file)
+        if(os.path.islink(path)):
+            linked_path = os.path.realpath(path)
+            path = PurePath(linked_path)
+            parent_directory = linked_path
+        
         # These distinctions aren't important right now but they set us up for later
         isTitle = matches(path, titleGlobs, 'titles')
         isModule = matches(path, moduleGlobs, 'modules') if not isTitle else False
@@ -165,10 +176,13 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
             base_name = path.stem
 
             ppath = path
+            hidden_file_check = ppath.stem[0]
             hiddenFolder = False
-            while not ppath == PurePath(args.directory):
+            parent_folder = ppath.parent
+            while not ppath == parent_folder:
                 logger.debug('ppath: %s', str(ppath.stem))
-                if ppath.stem[0] == '.':
+                
+                if hidden_file_check == '.':
                     hiddenFolder = True
                     break
                 ppath = ppath.parent
@@ -178,7 +192,7 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
                 continue
 
             # parent directory
-            parent_dir_str = str(path.parent.relative_to(args.directory))
+            parent_dir_str = str(path.parent.relative_to(parent_directory))
             if parent_dir_str == '.':
                 parent_dir_str = ''
             logger.debug('parent_dir_str: %s', parent_dir_str)
@@ -190,7 +204,7 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
 
             logger.debug('base name: %s', base_name)
 
-            # Asciidoc content (treat as a module)
+            ## Asciidoc content (treat as a module)
             if path.suffix == '.adoc' or path.suffix == '.asciidoc':
                 print(path)
                 url += '/' + path.name
