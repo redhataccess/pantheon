@@ -6,3 +6,5 @@ uploader/.idea
 .project
 .settings
 .vscode
+tools/git2pantheon/git2pantheon
+tools/git2pantheon/pantheon.py

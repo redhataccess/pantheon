@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NavLinks tests should render NavLinks component 1`] = `
+<Fragment>
+  <NavItem
+    className=""
+    groupId={null}
+    isActive={false}
+    itemId={null}
+    onClick={null}
+    preventDefault={false}
+    to=""
+  >
+    <Link
+      to="/search"
+    >
+      Search
+    </Link>
+  </NavItem>
+</Fragment>
+`;

@@ -3,6 +3,7 @@ import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import Search from '@app/search';
 import { Module } from '@app/module';
 import { Login } from '@app/login';
+import { GitImport } from './gitImport';
 
 export interface IAppRoute {
   label: string;
@@ -26,6 +27,13 @@ const routes: IAppRoute[] = [
     icon: null,
     label: '',
     path: '/module'
+  },
+  {
+    component: GitImport,
+    exact: true,
+    icon: null,
+    label: '',
+    path: '/git'
   },
   {
     component: Login,

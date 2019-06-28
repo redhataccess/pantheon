@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sidebar tests should render Sidebar component 1`] = `
+<PageSidebar
+  className=""
+  isNavOpen={true}
+  nav={
+    <aside
+      className="pf-c-page__sidebar"
+    >
+      <Nav
+        aria-label="Primary Nav Default Example"
+        className="pf-c-nav"
+        id="page-layout-default-nav-primary-nav"
+        onSelect={[Function]}
+        onToggle={[Function]}
+      >
+        <NavList
+          className="pf-c-nav__list"
+          variant="default"
+        >
+          <NavLinks />
+        </NavList>
+      </Nav>
+    </aside>
+  }
+/>
+`;
