@@ -3,7 +3,7 @@ import { Pagination } from '@app/Pagination';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import { Button, Label } from '@patternfly/react-core';
+import { Button, Badge } from '@patternfly/react-core';
 
 describe('Tests for Pagination', () => {
 
@@ -30,7 +30,7 @@ describe('Tests for Pagination', () => {
     expect(NavigatePageButton.exists()).toBe(true)
   });
 
-  it('should render Label for displaying page number', () => {
+  it('should render Badge for displaying page number', () => {
     const wrapper = mount(<Pagination 
       handleMoveLeft={move}
       handleMoveRight={move}
@@ -38,7 +38,7 @@ describe('Tests for Pagination', () => {
       nextPageRecordCount={1}
       noOfRecordsOnPage={1}
     />);
-    const pageNumberDisplay = wrapper.find(Label);
+    const pageNumberDisplay = wrapper.find(Badge);
     expect(pageNumberDisplay.exists()).toBe(true)
   });  
 

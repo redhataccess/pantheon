@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Button, Label, Level, LevelItem } from '@patternfly/react-core';
+import { Button, Badge, Level, LevelItem } from '@patternfly/react-core';
 
 export interface IProps {
   handleMoveLeft: () => any
@@ -23,28 +23,28 @@ class Pagination extends React.Component<IProps> {
                 if (page === "PREVIOUS") {
                   return (
                     this.props.pageNumber === 1 ?
-                      <Button className="pagination-btn" isDisabled={true} href="#" target="_blank" variant="primary" onClick={this.props.handleMoveLeft}>Previous</Button>
+                      <Button isDisabled={true} href="#" target="_blank" variant="primary" onClick={this.props.handleMoveLeft}>Previous</Button>
                       :
-                      <Button className="pagination-btn" href="#" variant="primary" onClick={this.props.handleMoveLeft}>Previous</Button>
+                      <Button href="#" variant="primary" onClick={this.props.handleMoveLeft}>Previous</Button>
                   );
                 }
                 if (page === "NEXT") {
 
                   return (
                     this.props.nextPageRecordCount === 0 ?
-                      <Button className="pagination-btn" isDisabled={true} href="#" target="_blank" variant="secondary" onClick={this.props.handleMoveRight}>Next</Button>
+                      <Button isDisabled={true} href="#" target="_blank" variant="secondary" onClick={this.props.handleMoveRight}>Next</Button>
                       :
-                      <Button className="pagination-btn" href="#" variant="secondary" onClick={this.props.handleMoveRight}>Next</Button>
+                      <Button href="#" variant="secondary" onClick={this.props.handleMoveRight}>Next</Button>
                   );
                 }
                 return (
-                  <Label className="page-lbl" key="pageNumber">Page No: {this.props.pageNumber}</Label>
+                  <Badge key="pageNumber">Page No: {this.props.pageNumber}</Badge>
                 );
               })}
             </nav>
           </LevelItem>
           <LevelItem>
-            <Label className="page-lbl">No. of records on page: {this.props.noOfRecordsOnPage}</Label>
+            <Badge>No. of records on page: {this.props.noOfRecordsOnPage}</Badge>
           </LevelItem>
         </Level>
       </Fragment>

@@ -12,7 +12,7 @@ exports[`Tests for Pagination should render Pagination component 1`] = `
       >
         <Button
           aria-label={null}
-          className="pagination-btn"
+          className=""
           component="button"
           href="#"
           isActive={false}
@@ -30,7 +30,7 @@ exports[`Tests for Pagination should render Pagination component 1`] = `
         </Button>
         <Button
           aria-label={null}
-          className="pagination-btn"
+          className=""
           component="button"
           href="#"
           isActive={false}
@@ -45,24 +45,24 @@ exports[`Tests for Pagination should render Pagination component 1`] = `
         >
           Next
         </Button>
-        <Label
-          className="page-lbl"
-          isCompact={false}
+        <Badge
+          className=""
+          isRead={false}
           key="pageNumber"
         >
           Page No: 
           1
-        </Label>
+        </Badge>
       </nav>
     </LevelItem>
     <LevelItem>
-      <Label
-        className="page-lbl"
-        isCompact={false}
+      <Badge
+        className=""
+        isRead={false}
       >
         No. of records on page: 
         1
-      </Label>
+      </Badge>
     </LevelItem>
   </Level>
 </Fragment>

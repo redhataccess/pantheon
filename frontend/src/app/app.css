@@ -2,18 +2,6 @@
   --myApp-global--spacer--md: 30px;
 }
 
-.page-lbl {
-  color: black;
-  background: gainsboro;
-}
-
-.pagination-btn {
-  padding: 2.5px;
-  padding-right: 10px;
-  padding-left: 10px;
-  border: 0;
-}
-
 .sp-prop {
   font-weight: bold;
   padding: 0;
