@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Bullseye, Button, Alert, AlertActionCloseButton, FormGroup, TextInput } from '@patternfly/react-core';
+import { Bullseye, Button, Alert, Modal, AlertActionCloseButton, FormGroup, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 import { Redirect } from 'react-router-dom'
 
@@ -22,6 +22,16 @@ class GitImport extends Component {
       <React.Fragment>
         <Bullseye>
           <div className="app-container">
+            {isFormSubmitted && isSucess && (
+              <Modal
+                isSmall={true}
+                title="Request submitted."
+                isOpen={true}
+                onClose={this.dismissNotification}
+                actions={[<Button key="yes" variant="primary" onClick={this.setRedirect}>Yes</Button>,
+                <Button key="no" variant="secondary" onClick={this.dismissNotification}>No</Button>]}>
+                {this.state.submitMsg} Do you want to be redirected to the module library?
+              </Modal>)}
             <div>
               {isMissingFields && (
                 <div className="notification-container">
@@ -32,16 +42,7 @@ class GitImport extends Component {
                   />
                 </div>
               )}
-              {isFormSubmitted && isSucess && (
-                <div className="notification-container">
-                  <Alert
-                    variant="success"
-                    title={this.state.submitMsg}
-                    action={<AlertActionCloseButton onClose={this.setRedirect} />}
-                  />
-                </div>
-              )}
-             {isFormSubmitted && !isSucess && (
+              {isFormSubmitted && !isSucess && (
                 <div className="notification-container">
                   <Alert
                     variant="danger"
@@ -97,35 +98,40 @@ class GitImport extends Component {
         'cache-control': 'no-cache'
       }
 
-      fetch('/content/repositories/GIT_INTEGRATION_URL')
+      fetch('/content/repositories/pantGitServiceURL')
         .then((resp) => resp.text()).then((text) => {
           this.setState({ git2pantheonURL: text })
         }).then(() => {
-          console.log("The git2pantheon URL is: " + this.state.git2pantheonURL)
-          const payload = {
-            branch: this.state.branch,
-            repo: this.state.repository
-          };
-          fetch(this.state.git2pantheonURL + "/clone", {
-            body: JSON.stringify(payload),
-            method: "POST"
-          }).then(response => {
-            if (response.status === 201 || response.status === 200) {
-              console.log(" Works " + response.status)
-              this.setState({ isFormSubmitted: true, isSucess: true, msgType: "success", submitMsg: "The git import has been submitted it might take up to 1 minute to see it in the module library" })
-            } else if (response.status === 500) {
+          if (this.state.git2pantheonURL.includes("DOCTYPE html")) {
+            this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, could not find the git2pantheon URL configuration." })
+          } else {
+            console.log("The git2pantheon URL is: " + this.state.git2pantheonURL)
+            const payload = {
+              branch: this.state.branch,
+              repo: this.state.repository
+            };
+            fetch(this.state.git2pantheonURL + "/clone", {
+              body: JSON.stringify(payload),
+              method: "POST"
+            }).then(response => {
+              if (response.status === 201 || response.status === 200) {
+                console.log(" Works " + response.status)
+                this.setState({ isFormSubmitted: true, isSucess: true, msgType: "success", submitMsg: "The git import has been submitted it might take up to 1 minute to see it in the module library." })
+              } else if (response.status === 500) {
                 console.log(" Failed " + response.status)
                 response.text().then((text) => {
                   this.setState({ submitMsg: text })
                 });
               } else {
-                this.setState({isSucess: false, msgType: "danger", submitMsg: "The git import submission has failed."}) 
+                this.setState({ isSucess: false, msgType: "danger", submitMsg: "The git import submission has failed." })
               }
               this.setState({ isFormSubmitted: true })
             })
-          .catch(err => {
-            console.log("Error occurred, it is likely that react could not connect to the git2pantheon URL. The error was:", err);
-            });
+              .catch(err => {
+                this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, it is likely that react could not connect to the git2pantheon URL." })
+                console.log("Error occurred, it is likely that react could not connect to the git2pantheon URL. The error was:", err);
+              });
+          }
         })
     }
   }
