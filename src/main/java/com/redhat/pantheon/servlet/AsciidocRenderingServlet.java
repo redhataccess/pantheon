@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
@@ -55,9 +56,9 @@ import static java.util.stream.Collectors.toMap;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
 @SlingServletResourceTypes(
-        resourceTypes="pantheon/modules",
-        methods= "GET",
-        extensions="preview")
+        resourceTypes = { "pantheon/module", "pantheon/moduleLocalization", "pantheon/moduleVersion" },
+        methods = "GET",
+        extensions = "preview")
 @SuppressWarnings("serial")
 public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
@@ -75,8 +76,20 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
     @Override
     protected void doGet(SlingHttpServletRequest request,
-            SlingHttpServletResponse response) throws IOException {
+            SlingHttpServletResponse response) throws ServletException, IOException {
         Resource resource = request.getResource();
+
+        switch (resource.getResourceType()) {
+            case "pantheon/module":
+                resource = resource.getChild("en_US"); //FIXME - don't assume locale
+            case "pantheon/moduleLocalization":
+                resource = resource.getChild("v" + resource.getValueMap().get("latestVersion", String.class));
+            case "pantheon/moduleVersion":
+                break;
+            default:
+                throw new ServletException("Cannot render a Resource of type " + resource.getResourceType());
+        }
+
         final Module module = resource.adaptTo(Module.class);
 
         // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj

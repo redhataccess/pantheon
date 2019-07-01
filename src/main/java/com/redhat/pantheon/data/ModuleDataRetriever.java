@@ -73,7 +73,7 @@ public class ModuleDataRetriever {
         //FIXME - pant:module nodetype being assigned some new internal id, but that's pure speculation.
         StringBuilder queryBuilder = new StringBuilder()
                 .append("select * from [nt:base] as a ")
-                .append("where [sling:resourceType] = 'pantheon/modules' ")
+                .append("where [sling:resourceType] = 'pantheon/module' ")
                 .append("and (isdescendantnode(a, '/content/repositories') ")
                 .append("or isdescendantnode(a, '/content/modules') ")
                 .append("or isdescendantnode(a, '/content/sandbox')) ")
