@@ -10,6 +10,7 @@ import base64
 import sys
 import requests
 from pathlib import PurePath
+from pathlib import Path
 
 DEFAULT_SERVER = 'http://localhost:8080'
 DEFAULT_REPOSITORY = getpass.getuser() + '_' + socket.gethostname()
@@ -17,6 +18,7 @@ DEFAULT_USER = 'demo'
 DEFAULT_PASSWORD = base64.b64decode(b'ZGVtbw==').decode()
 DEFAULT_LINKS = False
 CONFIG_FILE = 'pantheon2.yml'
+HOME = str(Path.home())
 
 HEADERS = {'cache-control': 'no-cache',
            'Accept': 'application/json'}
@@ -99,7 +101,7 @@ if pw == '-':
 
 config = None
 try:
-    config = yaml.safe_load(open(args.directory + '/' + CONFIG_FILE))
+    config = yaml.safe_load(open(HOME + '/bin/' + CONFIG_FILE))
 except FileNotFoundError:
     logger.warning('Could not find a valid config file(' + CONFIG_FILE + ') in this directory; all files will be treated as resource uploads.')
 logger.debug('config: %s', config)
@@ -149,9 +151,16 @@ logger.debug('moduleGlobs: %s', moduleGlobs)
 logger.debug('resourceGlobs: %s', resourceGlobs)
 
 file_args = sys.argv
-file_args = file_args[2:]
 
-#for root, dirs, files in os.walk(args.directory, followlinks=links):
+if 'push' in file_args:
+    file_args = file_args[file_args.index('push')+1:]
+    if not file_args:
+        for root, dirs, file_names in os.walk(args.directory, followlinks=links):
+            for name in file_names:
+                file_args.append(os.path.join(root, name))
+else:
+    sys.exit("pantheon.py: error: the following arguments are required: push")
+
 for file in file_args:
         if file == 'pantheon2.yml':
             continue
