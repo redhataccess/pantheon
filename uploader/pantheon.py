@@ -11,6 +11,7 @@ import sys
 import requests
 from pathlib import PurePath
 from pathlib import Path
+import os.path
 
 DEFAULT_SERVER = 'http://localhost:8080'
 DEFAULT_REPOSITORY = getpass.getuser() + '_' + socket.gethostname()
@@ -18,11 +19,10 @@ DEFAULT_USER = 'demo'
 DEFAULT_PASSWORD = base64.b64decode(b'ZGVtbw==').decode()
 DEFAULT_LINKS = False
 CONFIG_FILE = 'pantheon2.yml'
-HOME = str(Path.home())
+YML_DIR = ''
 
 HEADERS = {'cache-control': 'no-cache',
            'Accept': 'application/json'}
-
 
 def matches(path, globs, globType):
     if globs is None:
@@ -59,6 +59,7 @@ Both this uploader and Pantheon 2 are ALPHA software and features may update or 
 
 ''')
 parser.add_argument('push', nargs='+', help='Type of operation, default push')
+parser.add_argument('--files',nargs='+', help='Add files to be uploaded')
 parser.add_argument('--server', '-s', help='The Pantheon server to upload modules to, default ' + DEFAULT_SERVER)
 parser.add_argument('--repository', '-r', help='The name of the Pantheon repository, default is username_hostname (' + DEFAULT_REPOSITORY + ')')
 parser.add_argument('--user', '-u', help='Username for authentication, default \'' + DEFAULT_USER + '\'', default=DEFAULT_USER)
@@ -87,6 +88,19 @@ resources:
 
 args = parser.parse_args()
 
+current_dir = os.getcwd()
+while True:
+    list_currdir = os.listdir(current_dir)
+    parentdir = os.path.dirname(current_dir)
+    if 'pantheon2.yml' in list_currdir:
+        YML_DIR = current_dir
+        break
+    else:
+        if current_dir == parentdir:
+            break
+        else:
+            current_dir = parentdir
+
 logStr = 'DEBUG' if args.verbose is not None else 'WARNING'
 numeric_level = getattr(logging, logStr, None)
 if not isinstance(numeric_level, int):
@@ -101,7 +115,7 @@ if pw == '-':
 
 config = None
 try:
-    config = yaml.safe_load(open(HOME + '/bin/' + CONFIG_FILE))
+    config = yaml.safe_load(open(YML_DIR + '/' + CONFIG_FILE))
 except FileNotFoundError:
     logger.warning('Could not find a valid config file(' + CONFIG_FILE + ') in this directory; all files will be treated as resource uploads.')
 logger.debug('config: %s', config)
@@ -153,11 +167,15 @@ logger.debug('resourceGlobs: %s', resourceGlobs)
 file_args = sys.argv
 
 if 'push' in file_args:
-    file_args = file_args[file_args.index('push')+1:]
-    if not file_args:
+    if len(args.push) >1 :
+        sys.exit('pantheon.py: error: arguments not required with push');
+    if not args.files:
+        file_args = []
         for root, dirs, file_names in os.walk(args.directory, followlinks=links):
             for name in file_names:
                 file_args.append(os.path.join(root, name))
+    else:
+        file_args = args.files
 else:
     sys.exit("pantheon.py: error: the following arguments are required: push")
 
