@@ -23,4 +23,4 @@ matrix:
         - go test
       after_success:
       # Move the code coverage results to codecov
-      - bash <(curl -s https://codecov.io/bash) -cF go
+      - bash <(curl -s https://codecov.io/bash) -f "*.go"
