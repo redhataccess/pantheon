@@ -20,7 +20,7 @@ matrix:
         - go get gopkg.in/src-d/go-git.v4
       script:
         - go build
-        - go test
+        - go test -race -coverprofile=coverage.txt -covermode=atomic
       after_success:
       # Move the code coverage results to codecov
       - bash <(curl -s https://codecov.io/bash) -cF go
