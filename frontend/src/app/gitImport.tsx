@@ -94,40 +94,49 @@ class GitImport extends Component {
       this.setState({ isMissingFields: true })
     } else {
       fetch('/content/repositories/pantGitServiceURL')
-        .then((resp) => resp.text()).then((text) => {
-          this.setState({ git2pantheonURL: text })
-        }).then(() => {
-          if (this.state.git2pantheonURL.includes("DOCTYPE html") || this.state.git2pantheonURL === "") {
+        .then((resp => {
+          if (!resp.ok) {
             this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, could not find the git2pantheon URL configuration." })
+            console.log("The status code received is: " + resp.status)
           } else {
-            console.log("The git2pantheon URL is: " + this.state.git2pantheonURL)
-            const payload = {
-              branch: this.state.branch,
-              repo: this.state.repository
-            };
-            fetch(this.state.git2pantheonURL + "/clone", {
-              body: JSON.stringify(payload),
-              method: "POST"
-            }).then(response => {
-              if (response.status === 201 || response.status === 200) {
-                console.log(" Works " + response.status)
-                this.setState({ isFormSubmitted: true, isSucess: true, msgType: "success", submitMsg: "The git import has been submitted it might take up to 1 minute to see it in the module library." })
-              } else if (response.status === 500) {
-                console.log(" Failed " + response.status)
-                response.text().then((text) => {
-                  this.setState({ submitMsg: text })
-                });
-              } else {
-                this.setState({ isSucess: false, msgType: "danger", submitMsg: "The git import submission has failed." })
-              }
-              this.setState({ isFormSubmitted: true })
+            resp.text().then((text) => {
+              this.setState({ git2pantheonURL: text })
+              console.log("The response text from pantGitServiceURL is: " + text)
             })
-              .catch(err => {
-                this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, it is likely that react could not connect to the git2pantheon URL." })
-                console.log("Error occurred, it is likely that react could not connect to the git2pantheon URL. The error was:", err);
-              });
+              .then(() => {
+                if (this.state.git2pantheonURL.includes("DOCTYPE html") || this.state.git2pantheonURL === "") {
+                  this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, could not find the git2pantheon URL configuration." })
+                } else {
+                  console.log("The git2pantheon URL is: " + this.state.git2pantheonURL)
+                  const payload = {
+                    branch: this.state.branch,
+                    repo: this.state.repository
+                  };
+                  fetch(this.state.git2pantheonURL + "/clone", {
+                    body: JSON.stringify(payload),
+                    method: "POST"
+                  }).then(response => {
+                    if (response.status === 201 || response.status === 200) {
+                      console.log(" Works " + response.status)
+                      this.setState({ isFormSubmitted: true, isSucess: true, msgType: "success", submitMsg: "The git import has been submitted it might take up to 1 minute to see it in the module library." })
+                    } else if (response.status === 500) {
+                      console.log(" Failed " + response.status)
+                      response.text().then((text) => {
+                        this.setState({ submitMsg: text })
+                      });
+                    } else {
+                      this.setState({ isSucess: false, msgType: "danger", submitMsg: "The git import submission has failed." })
+                    }
+                    this.setState({ isFormSubmitted: true })
+                  })
+                    .catch(err => {
+                      this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, it is likely that react could not connect to the git2pantheon URL." })
+                      console.log("Error occurred, it is likely that react could not connect to the git2pantheon URL. The error was:", err);
+                    });
+                }
+              })
           }
-        })
+        }))
     }
   }
 
