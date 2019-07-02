@@ -93,16 +93,11 @@ class GitImport extends Component {
     if (this.state.repository === "") {
       this.setState({ isMissingFields: true })
     } else {
-      const hdrs = {
-        'Accept': 'application/json',
-        'cache-control': 'no-cache'
-      }
-
       fetch('/content/repositories/pantGitServiceURL')
         .then((resp) => resp.text()).then((text) => {
           this.setState({ git2pantheonURL: text })
         }).then(() => {
-          if (this.state.git2pantheonURL.includes("DOCTYPE html")) {
+          if (this.state.git2pantheonURL.includes("DOCTYPE html") || this.state.git2pantheonURL === "") {
             this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, could not find the git2pantheon URL configuration." })
           } else {
             console.log("The git2pantheon URL is: " + this.state.git2pantheonURL)
