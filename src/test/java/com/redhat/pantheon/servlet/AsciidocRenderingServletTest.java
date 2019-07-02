@@ -13,16 +13,15 @@ import org.asciidoctor.Asciidoctor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.AdditionalMatchers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -86,5 +85,35 @@ public class AsciidocRenderingServletTest {
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
         verify(asciidoctorService).getModuleHtml(any(Module.class), anyMap(), eq(true));
+    }
+
+    @Test
+    @DisplayName("Generate html content from asciidoc specifying context parameters")
+    public void testGenerateHtmlFromAsciidocWithContext() throws Exception {
+
+        // Given
+        slingContext.request().setResource(resource);
+        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
+        slingContext.request().getParameterMap().put("ctx_arg", new String[]{"value"});
+        slingContext.request().getParameterMap().put("non_ctx_arg", new String[]{"unaccepted"});
+        lenient().when(resource.adaptTo(Module.class)).thenReturn(mock(Module.class));
+        lenient().when(asciidoctorService.getModuleHtml(any(Module.class), anyMap(), anyBoolean()))
+                .thenReturn("A generated html string");
+
+        // Test class
+        AsciidocRenderingServlet servlet = new AsciidocRenderingServlet(asciidoctorService);
+        servlet.init();
+
+        // When
+        servlet.doGet(slingContext.request(), slingContext.response());
+
+        // Then
+        assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
+        assertEquals("text/html", slingContext.response().getContentType());
+
+        ArgumentCaptor<Map> contextArguments = ArgumentCaptor.forClass(Map.class);
+        verify(asciidoctorService).getModuleHtml(any(Module.class), contextArguments.capture(), eq(true));
+        assertEquals(1, contextArguments.getValue().size());
+        assertTrue(contextArguments.getValue().containsKey("arg"));
     }
 }
