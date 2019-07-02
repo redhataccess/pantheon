@@ -97,15 +97,14 @@ class GitImport extends Component {
         .then((resp => {
           if (!resp.ok) {
             this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, could not find the git2pantheon URL configuration." })
-            console.log("The status code received is: " + resp.status)
           } else {
             resp.text().then((text) => {
               this.setState({ git2pantheonURL: text })
               console.log("The response text from pantGitServiceURL is: " + text)
             })
               .then(() => {
-                if (this.state.git2pantheonURL.includes("DOCTYPE html") || this.state.git2pantheonURL === "") {
-                  this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, could not find the git2pantheon URL configuration." })
+                if (this.state.git2pantheonURL === "") {
+                  this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, the git2pantheon URL configuration is blank." })
                 } else {
                   console.log("The git2pantheon URL is: " + this.state.git2pantheonURL)
                   const payload = {
