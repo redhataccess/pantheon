@@ -94,6 +94,28 @@ class ServletUtilsTest {
     }
 
     @Test
+    void paramValueAsBoolean() {
+        // Given
+        lenient().when(request.getParameter(eq("booleanParam"))).thenReturn("true");
+        lenient().when(request.getParameter(eq("emptyParam"))).thenReturn("");
+        lenient().when(request.getParameter(eq("nullParam"))).thenReturn(null);
+        lenient().when(request.getParameter(eq("yesParam"))).thenReturn("yes");
+        lenient().when(request.getParameter(eq("caseSensitiveParam"))).thenReturn("tRuE");
+        lenient().when(request.getParameter(eq("numericParam"))).thenReturn("1");
+
+        // When
+
+        // Then
+        Assertions.assertTrue(ServletUtils.paramValueAsBoolean(request, "booleanParam"));
+        Assertions.assertTrue(ServletUtils.paramValueAsBoolean(request, "caseSensitiveParam"));
+
+        Assertions.assertFalse(ServletUtils.paramValueAsBoolean(request, "emptyParam"));
+        Assertions.assertFalse(ServletUtils.paramValueAsBoolean(request, "nullParam"));
+        Assertions.assertFalse(ServletUtils.paramValueAsBoolean(request, "yesParam"));
+        Assertions.assertFalse(ServletUtils.paramValueAsBoolean(request, "numericParam"));
+    }
+
+    @Test
     void writeAsJson() throws Exception {
         // Given
         response = spy(response);
