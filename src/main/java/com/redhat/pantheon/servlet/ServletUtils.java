@@ -80,6 +80,18 @@ public final class ServletUtils {
     }
 
     /**
+     * Returns a servlet request parameter as a boolean. This method will only return true if the
+     * parameter value is the string 'True' (not case-sensitive)
+     * @param request
+     * @param paramName
+     * @return
+     */
+    public static
+    boolean paramValueAsBoolean(final HttpServletRequest request, final String paramName) {
+        return Boolean.parseBoolean(request.getParameter(paramName));
+    }
+
+    /**
      * Writes the given payload as a json string to the servlet response.
      * @param response The servlet response on which to write
      * @param payload The object to turn to json and write
