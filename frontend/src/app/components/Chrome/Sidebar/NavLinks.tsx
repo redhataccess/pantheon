@@ -4,7 +4,9 @@ import { Link } from "react-router-dom";
 
 class NavLinks extends Component {
     public state = {
+        adminPage: 'Admin Panel',
         gitText: '',
+        isAdmin: false,
         isLoggedIn: false,
         moduleText: '',
         searchText: 'Search'
@@ -17,9 +19,13 @@ class NavLinks extends Component {
                 .then(response => response.json())
                 .then(responseJSON => {
                     if (responseJSON[id] !== 'anonymous') {
+                        console.log('response[id] in navlinks: '+responseJSON[id])
                         this.setState({ moduleText: 'New Module' })
                         this.setState({ gitText: 'Git Import' })
                         this.setState({ isLoggedIn: true })
+                    }
+                    if(responseJSON[id] === 'admin'){
+                        this.setState({isAdmin: true})
                     }
                 })
         }
@@ -42,6 +48,13 @@ class NavLinks extends Component {
                     </Link>
                 </NavItem>)}
 
+                {(this.state.isLoggedIn) && (this.state.isAdmin) && (
+                <NavItem>
+                    <Link to='/admin'>
+                        {this.state.adminPage}
+                    </Link>
+                </NavItem>)
+                }
             </React.Fragment>
         );
     }

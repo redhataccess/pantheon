@@ -6,6 +6,7 @@ class Login extends Component {
   public state = {
     authMessage: '',
     currentLogin: 'anonymous',
+    isAdmin: false,
     password: '',
     username: ''
   };
@@ -41,6 +42,20 @@ class Login extends Component {
         </Bullseye>
       </React.Fragment>
     );
+  }
+
+  public checkAuth = () => {
+    console.log('Check auth: ' + this.state.currentLogin)
+    if (this.state.currentLogin === 'anonymous') {
+      fetch("/system/sling/info.sessionInfo.json")
+        .then(response => response.json())
+        .then(responseJSON => {
+          const key = "userID"
+          if (responseJSON[key] !== 'anonymous') {
+            this.setState({ currentLogin: responseJSON[key] })
+          }
+        })
+    }
   }
 
   private onLoginKeyPress = (event) => {
@@ -80,27 +95,13 @@ class Login extends Component {
     }).then(response => {
       if (response.status === 200) {
         console.log(" Works " + response.status)
-        window.location.href = "/pantheon"
+          window.location.href = "/pantheon"
       } else if (response.status === 403) {
         this.setState({ authMessage: "Login failed, please try again." })
       } else {
         this.setState({ authMessage: "Unknown failure - HTTP " + response.status + ": " + response.statusText })
       }
     });
-  }
-
-  private checkAuth = () => {
-    console.log('Check auth: ' + this.state.currentLogin)
-    if (this.state.currentLogin === 'anonymous') {
-      fetch("/system/sling/info.sessionInfo.json")
-        .then(response => response.json())
-        .then(responseJSON => {
-          const key = "userID"
-          if (responseJSON[key] !== 'anonymous') {
-            this.setState({ currentLogin: responseJSON[key] })
-          }
-        })
-    }
   }
 }
 
