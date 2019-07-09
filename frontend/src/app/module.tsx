@@ -54,6 +54,7 @@ class Module extends Component {
               <br />
               <Button aria-label="Uploads the .adoc file with the Name and Description specified." onClick={this.saveModule}>Save</Button>
               <div>
+                {this.checkAuth()}
                 {this.loginRedirect()}
                 {this.renderRedirect()}
               </div>
@@ -139,6 +140,17 @@ class Module extends Component {
     }
   }
 
+  private checkAuth = () => {
+    fetch("/system/sling/info.sessionInfo.json")
+      .then(response => response.json())
+      .then(responseJSON => {
+        const key = "userID"
+        if (responseJSON[key] === 'anonymous') {
+          this.setState({ login: true })
+        }
+      })
+  }
+  
   private dismissNotification = () => {
     this.setState({ isMissingFields: false });
   };

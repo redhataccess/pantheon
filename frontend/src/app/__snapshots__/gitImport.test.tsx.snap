@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login tests should render Login component 1`] = `
+<Fragment>
+  <Bullseye
+    className=""
+    component="div"
+  >
+    <div
+      className="app-container"
+    >
+      <div>
+        <FormGroup
+          className=""
+          fieldId="repository-url"
+          isInline={false}
+          isRequired={false}
+          isValid={true}
+          label="Repository URL"
+        >
+          <TextInput
+            aria-label={null}
+            className=""
+            id="repository-url"
+            isDisabled={false}
+            isReadOnly={false}
+            isRequired={false}
+            isValid={true}
+            onChange={[Function]}
+            placeholder="Repository"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <FormGroup
+          className=""
+          fieldId="branch-name"
+          isInline={false}
+          isRequired={false}
+          isValid={true}
+          label="Branch"
+        >
+          <TextInput
+            aria-label={null}
+            className=""
+            id="branch-name"
+            isDisabled={false}
+            isReadOnly={false}
+            isRequired={false}
+            isValid={true}
+            onChange={[Function]}
+            placeholder="Branch"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <Button
+          aria-label="Submit the repository and branch information to the git integration service."
+          className=""
+          component="button"
+          isActive={false}
+          isBlock={false}
+          isDisabled={false}
+          isFocus={false}
+          isHover={false}
+          isInline={false}
+          onClick={[Function]}
+          type="button"
+          variant="primary"
+        >
+          Submit
+        </Button>
+        <div />
+      </div>
+    </div>
+  </Bullseye>
+</Fragment>
+`;

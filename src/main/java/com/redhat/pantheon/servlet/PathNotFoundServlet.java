@@ -71,7 +71,7 @@ public class PathNotFoundServlet extends SlingSafeMethodsServlet {
             log.debug("Request {} does not appear file-based; delivering index.html", path);
             Resource index = request.getResourceResolver().getResource(PANTHEON_PATH + "/index.html/jcr:content");
             String indexHtml = index.getValueMap().get("jcr:data", String.class);
-
+            response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
             response.setContentType("text/html");
             response.getWriter().write(indexHtml);
         }
