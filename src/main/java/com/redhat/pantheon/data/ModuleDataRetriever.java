@@ -79,7 +79,7 @@ public class ModuleDataRetriever {
                 .append("where [sling:resourceType] = 'pantheon/modules' ")
                 .append("and (isdescendantnode(a, '/content/repositories') ")
                 .append("or isdescendantnode(a, '/content/modules') ")
-                .append("or isdescendantnode(a, '/content/sandboxes')) ")
+                .append("or isdescendantnode(a, '/content/sandbox')) ")
                 .append(query);
         if (!isEmpty(orderByKey) && !isEmpty(orderByDirection)) {
             queryBuilder.append(" order by a.[").append(orderByKey).append("] ").append(orderByDirection);
