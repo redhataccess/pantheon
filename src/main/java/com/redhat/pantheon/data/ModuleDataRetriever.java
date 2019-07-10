@@ -31,9 +31,6 @@ public class ModuleDataRetriever {
 
 	public List<Map<String, Object>> getModulesSort(String searchTerm, String key, String direction,
                                                     long offset, long limit) throws RepositoryException {
-		if (searchTerm == null || searchTerm.isEmpty()) {
-			searchTerm.equals("*");
-		}
 		if (key == null || (!key.equals("jcr:title") && !key.equals("jcr:description"))) {
 			key = "jcr:created";
 		}
@@ -61,7 +58,7 @@ public class ModuleDataRetriever {
 
     private List<Map<String, Object>> getModules(String query, String orderByKey, String orderByDirection, Long offset, Long limit)
             throws RepositoryException {
-        if (query.equals("") || query.equals("*") || query == null) {
+        if (query == null || query.equals("") || query.equals("*")) {
             query = "";
         } else {
             query=query.replace('*','%');
