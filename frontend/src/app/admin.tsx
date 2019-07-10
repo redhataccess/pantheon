@@ -11,7 +11,7 @@ class Admin extends Component {
     public render() {
         const id = 'userID';
         if(this.state.buildDate===''){
-            fetch("builddate.json?")
+            fetch("/pantheon/builddate.json?")
             .then(response => response.json())
             .then(responseJSON => {
                     this.setState({ buildDate: responseJSON.buildDate }, () => {
@@ -30,7 +30,7 @@ class Admin extends Component {
                         <Button isBlock={true} onClick={this.browserLink()}>Browser link</Button>{'\n'}
                         <Button isBlock={true} variant="secondary" onClick={this.welcomeLink()}>Welcome link</Button>{'\n'}
                         <Button isBlock={true} onClick={this.consoleLink()}>Console link</Button>
-                        Build Data: {this.state.buildDate}               
+                        Build Date: {this.state.buildDate}               
             </div>
             </React.Fragment>
 

@@ -44,20 +44,6 @@ class Login extends Component {
     );
   }
 
-  public checkAuth = () => {
-    console.log('Check auth: ' + this.state.currentLogin)
-    if (this.state.currentLogin === 'anonymous') {
-      fetch("/system/sling/info.sessionInfo.json")
-        .then(response => response.json())
-        .then(responseJSON => {
-          const key = "userID"
-          if (responseJSON[key] !== 'anonymous') {
-            this.setState({ currentLogin: responseJSON[key] })
-          }
-        })
-    }
-  }
-
   private onLoginKeyPress = (event) => {
     if (event.key === 'Enter') {
       this.login()
@@ -103,6 +89,21 @@ class Login extends Component {
       }
     });
   }
+
+  private checkAuth = () => {
+    console.log('Check auth: ' + this.state.currentLogin)
+    if (this.state.currentLogin === 'anonymous') {
+      fetch("/system/sling/info.sessionInfo.json")
+        .then(response => response.json())
+        .then(responseJSON => {
+          const key = "userID"
+          if (responseJSON[key] !== 'anonymous') {
+            this.setState({ currentLogin: responseJSON[key] })
+          }
+        })
+    }
+  }
+
 }
 
 export { Login }

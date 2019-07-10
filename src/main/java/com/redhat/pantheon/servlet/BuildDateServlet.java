@@ -32,7 +32,7 @@ import com.redhat.pantheon.use.PlatformData;
                 Constants.SERVICE_DESCRIPTION + "=Servlet to fetch the current build date in the Admin Panel",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
-@SlingServletPaths(value = "/builddate.json")
+@SlingServletPaths(value = "/pantheon/builddate.json")
 public class BuildDateServlet extends SlingSafeMethodsServlet {
 
     private final Logger log = LoggerFactory.getLogger(BuildDateServlet.class);
@@ -40,7 +40,7 @@ public class BuildDateServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
         try {
-            String buildDate = PlatformData.getJarBuildDate();
+            String buildDate = getDate();
             Map<String, Object> currentBuildDate = new HashMap<>();
             currentBuildDate.put("buildDate",buildDate);
             writeAsJson(response, currentBuildDate);
@@ -48,5 +48,9 @@ public class BuildDateServlet extends SlingSafeMethodsServlet {
             log.error("/builddate.json error", e);
             response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    protected String getDate(){ 
+        return PlatformData.getJarBuildDate();
     }
 }
