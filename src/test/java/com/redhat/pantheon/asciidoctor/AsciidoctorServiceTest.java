@@ -51,7 +51,7 @@ class AsciidoctorServiceTest {
 
         // When
         lenient().when(localFileManagementService.getTemplateDirectory()).thenReturn(Optional.empty());
-        lenient().when(asciidoctorPool.borrowAsciidoctorObject(resource))
+        lenient().when(asciidoctorPool.borrowObject(resource))
                 .thenReturn(Asciidoctor.Factory.create());
         lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
                 .thenReturn(slingContext.resourceResolver());
@@ -84,7 +84,7 @@ class AsciidoctorServiceTest {
 
         // When
         lenient().when(localFileManagementService.getTemplateDirectory()).thenReturn(Optional.empty());
-        lenient().when(asciidoctorPool.borrowAsciidoctorObject(resource))
+        lenient().when(asciidoctorPool.borrowObject(resource))
                 .thenReturn(Asciidoctor.Factory.create());
         lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
                 .thenReturn(slingContext.resourceResolver());

@@ -132,7 +132,7 @@ public class AsciidoctorService {
         localFileManagementService.getTemplateDirectory().ifPresent(ob::templateDir);
 
         long start = System.currentTimeMillis();
-        Asciidoctor asciidoctor = asciidoctorPool.borrowAsciidoctorObject(base);
+        Asciidoctor asciidoctor = asciidoctorPool.borrowObject(base);
         String html = "";
         try {
             html = asciidoctor.convert(

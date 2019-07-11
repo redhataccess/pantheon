@@ -24,7 +24,7 @@ class AsciidoctorPoolTest {
     Resource resource;
 
     @Test
-    void borrowAsciidoctorObject() {
+    void borrowObject() {
         // Given
         Asciidoctor asciidoctor = mock(Asciidoctor.class);
         JavaExtensionRegistry extensionReg = mock(JavaExtensionRegistry.class);
@@ -33,7 +33,7 @@ class AsciidoctorPoolTest {
         AsciidoctorPool pool = new AsciidoctorPool(lifecycle);
 
         // When
-        Asciidoctor obtainedInstance = pool.borrowAsciidoctorObject(resource);
+        Asciidoctor obtainedInstance = pool.borrowObject(resource);
 
         // Then
         assertNotNull(obtainedInstance);

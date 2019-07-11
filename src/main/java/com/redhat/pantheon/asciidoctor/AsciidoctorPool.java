@@ -42,7 +42,7 @@ public class AsciidoctorPool extends ObjectPool<Asciidoctor> {
      * @param base The base resource to use
      * @return An {@link Asciidoctor} instance to generate output based on a sling {@link Resource}
      */
-    public Asciidoctor borrowAsciidoctorObject(Resource base) {
+    public Asciidoctor borrowObject(Resource base) {
         Asciidoctor asciidoctor = super.borrowObject();
         asciidoctor.javaExtensionRegistry().includeProcessor(
                 new SlingResourceIncludeProcessor(base));
