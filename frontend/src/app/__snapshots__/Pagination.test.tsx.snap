@@ -45,24 +45,24 @@ exports[`Tests for Pagination should render Pagination component 1`] = `
         >
           Next
         </Button>
-        <Badge
+        <Label
           className=""
-          isRead={false}
+          isCompact={false}
           key="pageNumber"
         >
           Page No: 
           1
-        </Badge>
+        </Label>
       </nav>
     </LevelItem>
     <LevelItem>
-      <Badge
+      <Label
         className=""
-        isRead={false}
+        isCompact={false}
       >
         No. of records on page: 
         1
-      </Badge>
+      </Label>
     </LevelItem>
   </Level>
 </Fragment>

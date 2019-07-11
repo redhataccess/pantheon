@@ -62,7 +62,7 @@ export default class Search extends Component {
             >
               <div className="row-view">
                 <TextInput id="search" type="text" onKeyDown={this.getRows} onChange={this.setInput} value={this.state.input} />
-                <Button onClick={this.doSearch}>Search</Button>
+                <Button onClick={this.newSearch}>Search</Button>
               </div>
             </FormGroup>
             <div className="notification-container">
@@ -347,9 +347,17 @@ export default class Search extends Component {
 
   private getRows = (event) => {
     if (event.key === 'Enter') {
-      this.doSearch()
+      this.setState({page: 1, initialLoad: true},()=>{
+        this.doSearch()
+      })
     }
   };
+
+  private newSearch = () => {
+    this.setState({page: 1, initialLoad: true},()=>{
+      this.doSearch()
+    })
+  }
 
   private doSearch = () => {
     this.setState({ initialLoad: false })

@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { Button, Badge, Level, LevelItem } from '@patternfly/react-core';
+import { Label } from '@patternfly/react-core';
 
 export interface IProps {
   handleMoveLeft: () => any
@@ -38,13 +39,13 @@ class Pagination extends React.Component<IProps> {
                   );
                 }
                 return (
-                  <Badge key="pageNumber">Page No: {this.props.pageNumber}</Badge>
+                  <Label key="pageNumber">Page No: {this.props.pageNumber}</Label>
                 );
               })}
             </nav>
           </LevelItem>
           <LevelItem>
-            <Badge>No. of records on page: {this.props.noOfRecordsOnPage}</Badge>
+            <Label>No. of records on page: {this.props.noOfRecordsOnPage}</Label>
           </LevelItem>
         </Level>
       </Fragment>
