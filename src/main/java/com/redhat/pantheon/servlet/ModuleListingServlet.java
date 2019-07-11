@@ -62,7 +62,7 @@ public class ModuleListingServlet extends SlingSafeMethodsServlet {
                 data.remove(data.size() - 1); //Removing the +1 element that we added for the next page
                 hasNextPage = true;
             }
-            
+
             Map<String, Object> payload = new HashMap<>();
             payload.put("hasNextPage", hasNextPage);
             payload.put("data", data);
