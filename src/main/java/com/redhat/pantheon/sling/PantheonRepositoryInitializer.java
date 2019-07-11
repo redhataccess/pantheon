@@ -7,6 +7,7 @@ import org.apache.jackrabbit.api.security.JackrabbitAccessControlPolicy;
 import org.apache.jackrabbit.api.security.principal.PrincipalManager;
 import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
 import org.apache.jackrabbit.api.security.user.User;
+import org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.jcr.api.SlingRepositoryInitializer;
 import org.osgi.service.component.annotations.Component;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils.privilegesFromNames;
 
 /**
  * Created by ben on 3/7/19.
@@ -49,9 +52,18 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
             } catch (AuthorizableExistsException aeex) {
                 log.info("Pantheon service account already exists");
             }
+
+            // JCR_WRITE and JCR_NODE_TYPE_MANAGEMENT are necessary to push content
+            // see: https://docs.adobe.com/docs/en/spec/jsr170/javadocs/jcr-2.0/javax/jcr/security/Privilege.html
             assignPermissionToPrincipal(s, "pantheon", "/content", "*", Privilege.JCR_ALL);
             assignPermissionToPrincipal(s,"pantheon-users","/content/repositories", null, Privilege.JCR_WRITE, Privilege.JCR_NODE_TYPE_MANAGEMENT);
             assignPermissionToPrincipal(s,"pantheon-users","/content/modules", null, Privilege.JCR_WRITE, Privilege.JCR_NODE_TYPE_MANAGEMENT);
+            // this is another way to do the above
+            AccessControlUtils.addAccessControlEntry(s,
+                    "/content/sandbox",
+                    AccessControlUtils.getPrincipal(s, "pantheon-users"),
+                    privilegesFromNames(s, Privilege.JCR_WRITE, Privilege.JCR_NODE_TYPE_MANAGEMENT),
+                    true);
 
             s.save();
         } catch (Exception ex) {

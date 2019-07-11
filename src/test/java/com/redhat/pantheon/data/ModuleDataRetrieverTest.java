@@ -39,16 +39,6 @@ public class ModuleDataRetrieverTest {
     public void cleanUpTest() {
     }
 
-    private static Node mockNode(String path) {
-        Node mockNode = mock(Node.class);
-        try {
-            when(mockNode.getPath()).thenReturn(path);
-        } catch (RepositoryException e) {
-            throw new RuntimeException(e);
-        }
-        return mockNode;
-    }
-
     @Test
     @DisplayName("Search for available modules and get empty results")
     public void testSearchAvailableModulesEmptyResult() throws Exception {
@@ -65,6 +55,28 @@ public class ModuleDataRetrieverTest {
         //We Expect an empty list because we have not added any modules.
         assertTrue(createSortResults.isEmpty());
         assertTrue(nameSortResults.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Search for modules with a null search term")
+    public void testSearchModulesNullArgs() throws Exception {
+        // Given
+        slingContext.build()
+                .resource("/content/modules/test/module1",
+                        "sling:resourceType", "pantheon/modules")
+                .resource("/content/modules/test/module2",
+                        "sling:resourceType", "pantheon/modules")
+                .resource("/content/modules/test/module3",
+                        "sling:resourceType", "pantheon/modules")
+                .commit();
+        ModuleDataRetriever retriever = new ModuleDataRetriever(resourceResolver);
+
+        // When
+        List<Map<String, Object>> results = retriever.getModulesSort(null, null, null, 0, 10);
+
+        // Then
+        // should return all modules
+        assertEquals(3, results.size());
     }
 
     @Test

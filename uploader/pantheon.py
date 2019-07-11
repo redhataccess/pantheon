@@ -12,7 +12,7 @@ import requests
 from pathlib import PurePath
 
 DEFAULT_SERVER = 'http://localhost:8080'
-DEFAULT_REPOSITORY = getpass.getuser() + '_' + socket.gethostname()
+DEFAULT_REPOSITORY = getpass.getuser()
 DEFAULT_USER = 'demo'
 DEFAULT_PASSWORD = base64.b64decode(b'ZGVtbw==').decode()
 DEFAULT_LINKS = False
@@ -50,6 +50,35 @@ def _generate_data(jcr_primary_type, base_name, path_name, asccidoc_type):
 
     return data
 
+def _info(message):
+    """
+    Print an info message on the console. Warning messages are cyan
+    """
+    print("\033[96m{}\033[00m" .format(message))
+
+def _warn(message):
+    """
+    Print a warning message on the console. Warning messages are yellow
+    """
+    print("\033[93m{}\033[00m" .format(message))
+
+def _error(message):
+    """
+    Print an error message on the console. Warning messages are red
+    """
+    print("\033[91m{}\033[00m" .format(message))
+
+def _print_response(response_code, reason):
+    """
+    Prints an http response in the appropriate terminal color
+    """
+    if 200 <= response_code < 300:
+        _info(str(response_code) + " " + reason)
+    elif response_code >= 500:
+        _error(str(response_code) + " " + reason)
+    else:
+        print(response_code, reason)
+
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, description='''\
 Red Hat bulk upload module for Pantheon 2. This tool will scan a directory recursively and upload relevant files.
 
@@ -65,6 +94,7 @@ parser.add_argument('--directory', '-d', help='Directory to upload, default is c
 parser.add_argument('--links', '-l', help='Resolve symlinks when searching for files to upload', action='store_const', const=True)
 parser.add_argument('--verbose', '-v', help='Print information that may be helpful for debugging', action='store_const', const=True)
 parser.add_argument('--dry', '-D', help='Dry run; print information about what would be uploaded, but don\'t actually upload', action='store_const', const=True)
+parser.add_argument('--sandbox', '-b', help='Push to the user\'s personal sandbox. This parameter overrides --repository', action='store_const', const=True)
 parser.add_argument('--sample', '-S', help='Print a sample pantheon2.yml file to stdout (which you may want to redirect to a file).', action='version', version='''\
 # Config file for Pantheon v2 uploader
 ## server: Pantheon server URL
@@ -134,6 +164,11 @@ def remove_trailing_slash(path):
 server = resolveOption(args.server, 'server', DEFAULT_SERVER)
 repository = resolveOption(args.repository, 'repository', DEFAULT_REPOSITORY)
 links = resolveOption(args.links, 'followlinks', DEFAULT_LINKS)
+mode = 'sandbox' if args.sandbox else 'repository'
+
+# override repository if sandbox is chosen (sandbox name is the user name)
+if args.sandbox:
+    repository = args.user
 
 # Check if server url path reachable
 server = remove_trailing_slash(server)
@@ -142,8 +177,8 @@ if exists(server+'/pantheon'):
 else:
     sys.exit("server " + server + " is not reachable")
 
-print('Using server: ' + server)
-print('Using repository: ' + repository)
+_info('Using server: ' + server)
+_info('Using ' + mode + ': ' + repository)
 print('--------------')
 
 titleGlobs = config['titles'] if config is not None and 'titles' in config else ()
@@ -166,7 +201,8 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
         isTitle = matches(path, titleGlobs, 'titles')
         isModule = matches(path, moduleGlobs, 'modules') if not isTitle else False
         isResource = matches(path, resourceGlobs, 'resources') if not isModule else False
-        url = server + "/content/repositories/" + repository
+        content_root = 'sandbox' if args.sandbox else 'repositories'
+        url = server + "/content/" + content_root + "/" + repository
 
         if isModule or isTitle or isResource:
             base_name = path.stem
@@ -215,7 +251,7 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
 
                 if not args.dry:
                     r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
-                    print(r.status_code, r.reason)
+                    _print_response(r.status_code, r.reason)
                 logger.debug('')
             else:
                 # Upload as a regular file(nt:file)
@@ -226,7 +262,7 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
                 files = {path.name: (path.name, open(path, 'rb'))}
                 if not args.dry:
                     r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
-                    print(r.status_code, r.reason)
+                    _print_response(r.status_code, r.reason)
                 logger.debug('')
         else:
             # Ignore the files are not specified in .yml file.
@@ -235,8 +271,8 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
 
 if len(unspecified_files) > 0:
     num = len(unspecified_files)
-    print (f'{num} additional files detected but not uploaded. Only files specified in ' + CONFIG_FILE +' are handled for upload.')
-    for file in unspecified_files:
-        print(file)
+    _warn(f'{num} additional files detected but not uploaded. Only files specified in ' + CONFIG_FILE +' are handled for upload.')
+    # for file in unspecified_files:
+    #     print(file)
 
 print('Finished!')
