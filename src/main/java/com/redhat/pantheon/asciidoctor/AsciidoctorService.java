@@ -3,7 +3,6 @@ package com.redhat.pantheon.asciidoctor;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import com.redhat.pantheon.conf.AsciidoctorPoolService;
 import com.redhat.pantheon.conf.LocalFileManagementService;
 import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
@@ -38,16 +37,16 @@ public class AsciidoctorService {
     private static final Logger log = LoggerFactory.getLogger(AsciidoctorService.class);
 
     private LocalFileManagementService localFileManagementService;
-    private AsciidoctorPoolService asciidoctorPoolService;
+    private AsciidoctorPool asciidoctorPool;
     private ServiceResourceResolverProvider serviceResourceResolverProvider;
 
     @Activate
     public AsciidoctorService(
             @Reference LocalFileManagementService localFileManagementService,
-            @Reference AsciidoctorPoolService asciidoctorPoolService,
+            @Reference AsciidoctorPool asciidoctorPool,
             @Reference ServiceResourceResolverProvider serviceResourceResolverProvider) {
         this.localFileManagementService = localFileManagementService;
-        this.asciidoctorPoolService = asciidoctorPoolService;
+        this.asciidoctorPool = asciidoctorPool;
         this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
 
@@ -133,14 +132,14 @@ public class AsciidoctorService {
         localFileManagementService.getTemplateDirectory().ifPresent(ob::templateDir);
 
         long start = System.currentTimeMillis();
-        Asciidoctor asciidoctor = asciidoctorPoolService.requestInstance(base);
+        Asciidoctor asciidoctor = asciidoctorPool.borrowAsciidoctorObject(base);
         String html = "";
         try {
             html = asciidoctor.convert(
                     asciidoc,
                     ob.get());
         } finally {
-            asciidoctorPoolService.releaseInstance(asciidoctor);
+            asciidoctorPool.returnObject(asciidoctor);
         }
         log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
 
