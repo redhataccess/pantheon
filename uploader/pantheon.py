@@ -25,18 +25,6 @@ CONFIG_FILE = 'pantheon2.yml'
 HEADERS = {'cache-control': 'no-cache',
            'Accept': 'application/json'}
 
-
-def matches(path, globs, globType):
-    if globs is None:
-        return False
-
-    for glob in globs:
-        if path.match(glob):
-            logger.debug('File %s matches on %s glob %s', file, globType, glob)
-            return True
-    return False
-
-
 def _generate_data(jcr_primary_type, base_name, path_name, asccidoc_type):
     """
     Generate the data object for the API call.
