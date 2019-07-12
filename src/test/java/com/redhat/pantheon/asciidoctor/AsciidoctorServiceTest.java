@@ -1,7 +1,6 @@
 package com.redhat.pantheon.asciidoctor;
 
 import com.google.common.base.Function;
-import com.redhat.pantheon.conf.AsciidoctorPoolService;
 import com.redhat.pantheon.conf.LocalFileManagementService;
 import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
@@ -15,14 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.Optional;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +30,7 @@ class AsciidoctorServiceTest {
     @Mock
     LocalFileManagementService localFileManagementService;
     @Mock
-    AsciidoctorPoolService asciidoctorPoolService;
+    AsciidoctorPool asciidoctorPool;
     @Mock
     ServiceResourceResolverProvider serviceResourceResolverProvider;
 
@@ -58,14 +50,14 @@ class AsciidoctorServiceTest {
         slingContext.registerAdapter(Resource.class, Module.class, mockSlingResourceAdapter);
 
         // When
-        lenient().when(localFileManagementService.getGemPaths()).thenReturn(getGemPaths());
         lenient().when(localFileManagementService.getTemplateDirectory()).thenReturn(Optional.empty());
-        lenient().when(asciidoctorPoolService.requestInstance(resource)).thenReturn(Asciidoctor.Factory.create(getGemPaths()));
+        lenient().when(asciidoctorPool.borrowObject(resource))
+                .thenReturn(Asciidoctor.Factory.create());
         lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
                 .thenReturn(slingContext.resourceResolver());
 
         AsciidoctorService asciidoctorService =
-                new AsciidoctorService(localFileManagementService, asciidoctorPoolService, serviceResourceResolverProvider);
+                new AsciidoctorService(localFileManagementService, asciidoctorPool, serviceResourceResolverProvider);
         String generatedHtml = asciidoctorService.getModuleHtml(resource.adaptTo(Module.class), newHashMap(), false);
 
         // Then
@@ -91,37 +83,17 @@ class AsciidoctorServiceTest {
         slingContext.registerAdapter(Resource.class, Module.class, mockSlingResourceAdapter);
 
         // When
-        lenient().when(localFileManagementService.getGemPaths()).thenReturn(getGemPaths());
         lenient().when(localFileManagementService.getTemplateDirectory()).thenReturn(Optional.empty());
-        lenient().when(asciidoctorPoolService.requestInstance(resource))
-                .thenReturn(Asciidoctor.Factory.create(getGemPaths()));
+        lenient().when(asciidoctorPool.borrowObject(resource))
+                .thenReturn(Asciidoctor.Factory.create());
         lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
                 .thenReturn(slingContext.resourceResolver());
 
         AsciidoctorService asciidoctorService =
-                new AsciidoctorService(localFileManagementService, asciidoctorPoolService, serviceResourceResolverProvider);
+                new AsciidoctorService(localFileManagementService, asciidoctorPool, serviceResourceResolverProvider);
         String generatedHtml = asciidoctorService.getModuleHtml(resource.adaptTo(Module.class), newHashMap(), false);
 
         // Then
         assertTrue(generatedHtml.contains("This is cached content"));
-    }
-
-    private List<String> getGemPaths() throws IOException {
-        List<String> gems = new ArrayList<>();
-        Enumeration<URL> en = Thread.currentThread().getContextClassLoader().getResources("gems");
-        if (en.hasMoreElements()) {
-            URL url = en.nextElement();
-            JarURLConnection urlcon = (JarURLConnection) (url.openConnection());
-            try (JarFile jar = urlcon.getJarFile()) {
-                Enumeration<JarEntry> entries = jar.entries();
-                while (entries.hasMoreElements()) {
-                    String entry = entries.nextElement().getName();
-                    if (entry.startsWith("gems/") && entry.endsWith("/lib/")) {
-                        gems.add("uri:classloader:/" + entry.substring(0, entry.lastIndexOf('/')));
-                    }
-                }
-            }
-        }
-        return gems;
     }
 }
