@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tests for Admin Panel should render Admin component 1`] = `
+<Fragment>
+  <div>
+    <Button
+      aria-label={null}
+      className=""
+      component="button"
+      isActive={false}
+      isBlock={true}
+      isDisabled={false}
+      isFocus={false}
+      isHover={false}
+      isInline={false}
+      onClick={[Function]}
+      type="button"
+      variant="primary"
+    >
+      Browser link
+    </Button>
+    
+
+    <Button
+      aria-label={null}
+      className=""
+      component="button"
+      isActive={false}
+      isBlock={true}
+      isDisabled={false}
+      isFocus={false}
+      isHover={false}
+      isInline={false}
+      onClick={[Function]}
+      type="button"
+      variant="secondary"
+    >
+      Welcome link
+    </Button>
+    
+
+    <Button
+      aria-label={null}
+      className=""
+      component="button"
+      isActive={false}
+      isBlock={true}
+      isDisabled={false}
+      isFocus={false}
+      isHover={false}
+      isInline={false}
+      onClick={[Function]}
+      type="button"
+      variant="primary"
+    >
+      Console link
+    </Button>
+    Build Date: 
+  </div>
+</Fragment>
+`;

@@ -33,6 +33,7 @@ public class PlatformData implements Use {
             String lastmod = mf.getMainAttributes().getValue("Bnd-LastModified");
             Date d = new Date(Long.valueOf(lastmod));
             ret = d.toString();
+            log.info(ret);
         } catch (Exception e) {
             log.error(ret, e);
         }
