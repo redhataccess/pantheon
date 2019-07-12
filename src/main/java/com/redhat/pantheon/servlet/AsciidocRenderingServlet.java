@@ -36,6 +36,7 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
@@ -78,17 +79,26 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     protected void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws ServletException, IOException {
         Resource resource = request.getResource();
-
-        switch (resource.getResourceType()) {
-            case "pantheon/module":
-                resource = resource.getChild("en_US"); //FIXME - don't assume locale
-            case "pantheon/moduleLocalization":
-                resource = resource.getChild("v" + resource.getValueMap().get("latestVersion", String.class));
-            case "pantheon/moduleVersion":
-                break;
-            default:
-                throw new ServletException("Cannot render a Resource of type " + resource.getResourceType());
+        String locale = request.getParameter("locale");
+        if (locale == null || locale.isEmpty()) {
+            log.info("Locale not set via request.");
+            locale = new Locale("en", "US").toString();
         }
+        log.info("Locale set to: " + locale);
+
+            if (resource.getResourceType() != null) { //TODO why this can be null?
+            switch (resource.getResourceType()) {
+                case "pantheon/module":
+                    resource = resource.getChild(locale);
+                case "pantheon/moduleLocalization":
+                    resource = resource.getChild("v" + resource.getValueMap().get("latestVersion", String.class));
+                case "pantheon/moduleVersion":
+                    break;
+                default:
+                    throw new ServletException("Cannot render a Resource of type " + resource.getResourceType());
+            }
+        }
+
 
         final Module module = resource.adaptTo(Module.class);
 

@@ -25,7 +25,7 @@ import java.io.Writer;
 @Component(
         service = Servlet.class,
         property = {
-                "sling.servlet.resourceTypes=pantheon/modules",
+                "sling.servlet.resourceTypes=pantheon/module",
                 "sling.servlet.extensions=adoc",
                 Constants.SERVICE_DESCRIPTION+"=Renders asciidoc content in its raw original form",
                 Constants.SERVICE_VENDOR+"=Red Hat Content Tooling team"

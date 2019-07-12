@@ -12,7 +12,7 @@ import java.util.Calendar;
  */
 public class Module extends SlingResource {
 
-    @Default(values = "pantheon/modules")
+    @Default(values = "pantheon/module")
     public final Field<String> slingResourceType = new Field<>(String.class, "sling:resourceType");
 
     public final Field<Calendar> created = new Field<>(Calendar.class, "jcr:created");

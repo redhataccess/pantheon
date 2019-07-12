@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -89,15 +90,23 @@ public class ModuleUploadServlet extends SlingAllMethodsServlet {
         try {
             Resource moduleMaster = request.getResource();
             log.info("ModuleUploadServlet handling request for {}", moduleMaster.getPath());
-            String contentType = request.getRequestParameter("en_US/v1/asciidoc").getContentType();
-            String content = getContent(request, "en_US/v1/asciidoc");
+            // Use en_US if nothing is specified in the request.
+            String locale = request.getParameter("locale");
+            if (locale == null || locale.isEmpty()) {
+                log.info("Locale not set via request.");
+                locale = new Locale("en", "US").toString();
+            }
+            log.info("Locale set to: " + locale);
 
-            if (contentMatches(moduleMaster, "en_US", content)) { //FIXME - don't assume locale
+            String contentType = request.getRequestParameter(locale+"/v1/asciidoc").getContentType();
+            String content = getContent(request, locale+"/v1/asciidoc");
+
+            if (contentMatches(moduleMaster, locale, content)) {
                 log.debug("New and old content match, doing nothing.");
-                response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 log.debug("New content differs from old content, creating new version...");
-                Resource newVersion = storeNewVersion(request.getResourceResolver(), moduleMaster, "en_US", content, contentType); //FIXME - don't assume locale
+                Resource newVersion = storeNewVersion(request.getResourceResolver(), moduleMaster, locale, content, contentType);
                 log.debug("Created new version at " + newVersion.getPath());
                 response.setStatus(HttpServletResponse.SC_CREATED);
             }
