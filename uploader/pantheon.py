@@ -9,6 +9,10 @@ import socket
 import base64
 import sys
 import requests
+import pathlib
+import fnmatch
+import re
+import glob
 from pathlib import PurePath
 
 DEFAULT_SERVER = 'http://localhost:8080'
@@ -134,6 +138,10 @@ if pw == '-':
     pw = getpass.getpass()
 
 config = None
+
+if not os.path.exists(args.directory):
+    raise ValueError("Directory not found {}".format(args.directory))
+
 try:
     config = yaml.safe_load(open(args.directory + '/' + CONFIG_FILE))
 except FileNotFoundError:
@@ -161,6 +169,146 @@ def remove_trailing_slash(path):
         path = path[:-1]
     return path
 
+def recursive_glob(directory, pattern='*'):
+    if not os.path.exists(directory):
+        raise ValueError("Directory not found {}".format(directory))
+
+    matches = []
+    for root, dirnames, filenames in os.walk(directory):
+        for filename in filenames:
+            if filename == 'pantheon2.yml':
+                continue
+            full_path = os.path.join(root, filename)
+            if fnmatch.filter(full_path, pattern):
+                matches.append(os.path.join(root, filename))
+    return matches
+
+def define_resource(path, titleGlobs, moduleGlobs, resourceGlobs):
+    isTitle = matches(path, titleGlobs, 'titles')
+    isModule = matches(path, moduleGlobs, 'modules') if not isTitle else False
+    isResource = matches(path, resourceGlobs, 'resources') if not isModule else False
+
+    if isTitle:
+        resouce_type = "titles"
+    if isModule:
+        resouce_type = "modules"
+    if isResource:
+        resouce_type = "resources"
+    return resource_type
+
+def is_slash_wildcard(pattern):
+    return bool(re.match(r"^.*([a-z]?[/]+[*]?$)", pattern.lower()))
+
+def get_subdir(pattern):
+    delimiter = '/*'
+    pos = pattern.find(delimiter)
+    return pattern[0:pos]
+
+def find_files(patterns, directory):
+    files = []
+
+    if patterns:
+        for pattern in patterns:
+            if is_slash_wildcard(pattern):
+                subdir = get_subdir(pattern)
+                #Use recursive_glob(directory, pattern) for /*
+                items = recursive_glob(directory + '/' + subdir)
+                print("pattern in globs: ", pattern)
+                print("items found: ", items)
+                files = files + items
+            else:
+                items = []
+                for file in glob.iglob(directory + '/**/' + pattern, recursive=True):
+                    items.append(file)
+                if len(items) > 0:
+                    files = files + items
+    return files
+
+def process_file(path, type):
+    global processed_files
+    isTitle = True if type == 'titles' else False
+    isModule = True if type == 'modules' else False
+    isResource = True if type =='resources' else False
+    url = server + "/content/repositories/" + repository
+
+    if isModule or isTitle or isResource:
+        path = PurePath(path)
+        base_name = path.stem
+
+        ppath = path
+        hiddenFolder = False
+        while not ppath == PurePath(args.directory):
+            logger.debug('ppath: %s', str(ppath.stem))
+            if ppath.stem[0] == '.':
+                hiddenFolder = True
+                break
+            ppath = ppath.parent
+        if hiddenFolder:
+            logger.info('Skipping %s because it is hidden.', str(path))
+            logger.info('')
+            #continue
+
+        # parent directory
+        parent_dir_str = str(path.parent.relative_to(args.directory))
+        if parent_dir_str == '.':
+            parent_dir_str = ''
+        logger.debug('parent_dir_str: %s', parent_dir_str)
+        # file becomes a/file/name (no extension)
+
+        if parent_dir_str:
+            url += '/' + parent_dir_str
+
+        logger.debug('base name: %s', base_name)
+
+        # Asciidoc content (treat as a module)
+        if path.suffix == '.adoc' or path.suffix == '.asciidoc':
+            print(path)
+            url += '/' + path.name
+            logger.debug('url: %s', url)
+            jcr_primary_type = "pant:module" if isModule else "pant:title"
+            data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type="nt:file");
+            files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
+
+            # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
+            # It is text/x-asciidoc. Here's why:
+            # https://tools.ietf.org/html/rfc2045#section-6.3
+            # Paraphrased: "If it's not an IANA standard, use the 'x-' prefix.
+            # Here's the list of standards; text/asciidoc isn't in it.
+            # https://www.iana.org/assignments/media-types/media-types.xhtml#text
+
+            if not args.dry:
+                r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
+                _print_response(r.status_code, r.reason)
+            processed_files.append(path)
+            logger.debug('')
+        else:
+            # Upload as a regular file(nt:file)
+            print(path)
+            logger.debug('url: %s', url)
+            jcr_primary_type = "nt:file"
+            data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type=None);
+            files = {path.name: (path.name, open(path, 'rb'))}
+            if not args.dry:
+                r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
+                _print_response(r.status_code, r.reason)
+            processed_files.append(path)
+            logger.debug('')
+
+    return (r.status_code, r.reason)
+
+def get_unspecified_files(directory, processed_files, follow_links=True):
+    unspecified_files = []
+    for root, dirs, files in os.walk(directory, follow_links):
+        for file in files:
+            if file == 'pantheon2.yml':
+                continue
+
+            path = PurePath(root + '/' + file)
+            if path not in processed_files:
+                unspecified_files.append(path)
+
+    return unspecified_files
+
 server = resolveOption(args.server, 'server', DEFAULT_SERVER)
 repository = resolveOption(args.repository, 'repository', DEFAULT_REPOSITORY)
 links = resolveOption(args.links, 'followlinks', DEFAULT_LINKS)
@@ -185,90 +333,36 @@ titleGlobs = config['titles'] if config is not None and 'titles' in config else 
 moduleGlobs = config['modules'] if config is not None and 'modules' in config else ()
 resourceGlobs = config['resources'] if config is not None and 'resources' in config else '*'
 unspecified_files = []
+processed_files = []
 logger.debug('titleGlobs: %s', titleGlobs)
 logger.debug('moduleGlobs: %s', moduleGlobs)
 logger.debug('resourceGlobs: %s', resourceGlobs)
+logger.debug('args.directory: %s', args.directory)
 
-for root, dirs, files in os.walk(args.directory, followlinks=links):
-    for file in files:
-        if file == 'pantheon2.yml':
-            continue
-        #logger.debug('root: %s', root)
-        #logger.debug('file: %s', file)
-        path = PurePath(root + '/' + file)
+title_files = find_files(titleGlobs, args.directory)
+if title_files:
+    for f in title_files:
+        print("title files matched: ", f)
+        # Process files
+        (status_code, reason) = process_file(f, "titles")
 
-        # These distinctions aren't important right now but they set us up for later
-        isTitle = matches(path, titleGlobs, 'titles')
-        isModule = matches(path, moduleGlobs, 'modules') if not isTitle else False
-        isResource = matches(path, resourceGlobs, 'resources') if not isModule else False
-        content_root = 'sandbox' if args.sandbox else 'repositories'
-        url = server + "/content/" + content_root + "/" + repository
+module_files = find_files(moduleGlobs, args.directory)
+if module_files:
+    logger.debug('module_files: %s', module_files)
+    for f in module_files:
+        print("module files matched: ", f)
+        # Process files
+        logger.debug('File path: %s', f)
+        (status_code, reason) = process_file(f, "modules")
 
-        if isModule or isTitle or isResource:
-            base_name = path.stem
+resource_files = find_files(resourceGlobs, args.directory)
+if resource_files:
+    for f in resource_files:
+        print("resource files matched: ", f)
+        # Process files
+        (status_code, reason) = process_file(f, "resources")
 
-            ppath = path
-            hiddenFolder = False
-            while not ppath == PurePath(args.directory):
-                logger.debug('ppath: %s', str(ppath.stem))
-                if ppath.stem[0] == '.':
-                    hiddenFolder = True
-                    break
-                ppath = ppath.parent
-            if hiddenFolder:
-                logger.info('Skipping %s because it is hidden.', str(path))
-                logger.info('')
-                continue
-
-            # parent directory
-            parent_dir_str = str(path.parent.relative_to(args.directory))
-            if parent_dir_str == '.':
-                parent_dir_str = ''
-            logger.debug('parent_dir_str: %s', parent_dir_str)
-            # file becomes a/file/name (no extension)
-
-
-            if parent_dir_str:
-                url += '/' + parent_dir_str
-
-            logger.debug('base name: %s', base_name)
-
-            # Asciidoc content (treat as a module)
-            if path.suffix == '.adoc' or path.suffix == '.asciidoc':
-                print(path)
-                url += '/' + path.name
-                logger.debug('url: %s', url)
-                jcr_primary_type = "pant:module" if isModule else "pant:title"
-                data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type="nt:file");
-                files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
-
-                # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
-                # It is text/x-asciidoc. Here's why:
-                # https://tools.ietf.org/html/rfc2045#section-6.3
-                # Paraphrased: "If it's not an IANA standard, use the 'x-' prefix.
-                # Here's the list of standards; text/asciidoc isn't in it.
-                # https://www.iana.org/assignments/media-types/media-types.xhtml#text
-
-                if not args.dry:
-                    r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
-                    _print_response(r.status_code, r.reason)
-                logger.debug('')
-            else:
-                # Upload as a regular file(nt:file)
-                print(path)
-                logger.debug('url: %s', url)
-                jcr_primary_type = "nt:file"
-                data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type=None);
-                files = {path.name: (path.name, open(path, 'rb'))}
-                if not args.dry:
-                    r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
-                    _print_response(r.status_code, r.reason)
-                logger.debug('')
-        else:
-            # Ignore the files are not specified in .yml file.
-            unspecified_files.append(path)
-
-
+unspecified_files = get_unspecified_files(args.directory, processed_files, links)
 if len(unspecified_files) > 0:
     num = len(unspecified_files)
     _warn(f'{num} additional files detected but not uploaded. Only files specified in ' + CONFIG_FILE +' are handled for upload.')
