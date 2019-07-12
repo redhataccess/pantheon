@@ -6,7 +6,7 @@ import {
   Level, LevelItem
 } from '@patternfly/react-core';
 import '@app/app.css';
-import {Pagination} from '@app/Pagination';
+import {Paginate} from '@app/Pagination';
 
 export default class Search extends Component {
   public state = {
@@ -68,9 +68,10 @@ export default class Search extends Component {
             <div className="notification-container">
               { console.log("this.state.data: ") }
             { console.log(this.state.data) }
-              <Pagination
+              <Paginate
                 handleMoveLeft={this.updatePageCounter("L")}
                 handleMoveRight={this.updatePageCounter("R")}
+                handleMoveToFirst={this.updatePageCounter("F")}
                 pageNumber={this.state.page}
                 nextPageRecordCount={this.state.nextPageRowCount}
                 noOfRecordsOnPage={this.state.data.length}
@@ -180,9 +181,10 @@ export default class Search extends Component {
             </DataList>
 
             <div className="notification-container">
-              <Pagination
+              <Paginate
                 handleMoveLeft={this.updatePageCounter("L")}
                 handleMoveRight={this.updatePageCounter("R")}
+                handleMoveToFirst={this.updatePageCounter("F")}
                 pageNumber={this.state.page}
                 nextPageRecordCount={this.state.nextPageRowCount}
                 noOfRecordsOnPage={this.state.data.length}
@@ -483,6 +485,8 @@ export default class Search extends Component {
       this.setState({page: this.state.page - 1, initialLoad: true})
     }else if(direction==="R"){
       this.setState({page: this.state.page + 1, initialLoad: true})      
+    }else if(direction==="F"){
+      this.setState({page: 1, initialLoad: true})
     }
   }
 
