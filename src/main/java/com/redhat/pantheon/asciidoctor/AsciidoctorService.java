@@ -3,7 +3,7 @@ package com.redhat.pantheon.asciidoctor;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import com.redhat.pantheon.conf.LocalFileManagementService;
+import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.Resource;
@@ -36,16 +36,16 @@ public class AsciidoctorService {
 
     private static final Logger log = LoggerFactory.getLogger(AsciidoctorService.class);
 
-    private LocalFileManagementService localFileManagementService;
+    private GlobalConfig globalConfig;
     private AsciidoctorPool asciidoctorPool;
     private ServiceResourceResolverProvider serviceResourceResolverProvider;
 
     @Activate
     public AsciidoctorService(
-            @Reference LocalFileManagementService localFileManagementService,
+            @Reference GlobalConfig globalConfig,
             @Reference AsciidoctorPool asciidoctorPool,
             @Reference ServiceResourceResolverProvider serviceResourceResolverProvider) {
-        this.localFileManagementService = localFileManagementService;
+        this.globalConfig = globalConfig;
         this.asciidoctorPool = asciidoctorPool;
         this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
@@ -129,7 +129,7 @@ public class AsciidoctorService {
                 .headerFooter(true)
                 // use the provided attributes
                 .attributes(atts);
-        localFileManagementService.getTemplateDirectory().ifPresent(ob::templateDir);
+        globalConfig.getTemplateDirectory().ifPresent(ob::templateDir);
 
         long start = System.currentTimeMillis();
         Asciidoctor asciidoctor = asciidoctorPool.borrowObject(base);

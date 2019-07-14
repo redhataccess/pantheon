@@ -1,7 +1,7 @@
 package com.redhat.pantheon.asciidoctor;
 
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
-import com.redhat.pantheon.conf.LocalFileManagementService;
+import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.util.pool.ObjectPool;
 import com.redhat.pantheon.util.pool.PooledObjectLifecycle;
 import org.apache.sling.api.resource.Resource;
@@ -24,8 +24,8 @@ public class AsciidoctorPool extends ObjectPool<Asciidoctor> {
     protected static final int MAX_SIZE = 10;
 
     @Activate
-    public AsciidoctorPool(@Reference LocalFileManagementService localFileManagementService) {
-        this(new AsciidoctorLifecycle(localFileManagementService));
+    public AsciidoctorPool(@Reference GlobalConfig globalConfig) {
+        this(new AsciidoctorLifecycle(globalConfig));
     }
 
     /**

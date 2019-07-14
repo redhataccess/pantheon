@@ -1,7 +1,7 @@
 package com.redhat.pantheon.asciidoctor;
 
 import com.google.common.base.Function;
-import com.redhat.pantheon.conf.LocalFileManagementService;
+import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.Resource;
@@ -28,7 +28,7 @@ class AsciidoctorServiceTest {
     final Function<Resource, Module> mockSlingResourceAdapter = input -> new Module(input);
 
     @Mock
-    LocalFileManagementService localFileManagementService;
+    GlobalConfig globalConfig;
     @Mock
     AsciidoctorPool asciidoctorPool;
     @Mock
@@ -50,14 +50,14 @@ class AsciidoctorServiceTest {
         slingContext.registerAdapter(Resource.class, Module.class, mockSlingResourceAdapter);
 
         // When
-        lenient().when(localFileManagementService.getTemplateDirectory()).thenReturn(Optional.empty());
+        lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
         lenient().when(asciidoctorPool.borrowObject(resource))
                 .thenReturn(Asciidoctor.Factory.create());
         lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
                 .thenReturn(slingContext.resourceResolver());
 
         AsciidoctorService asciidoctorService =
-                new AsciidoctorService(localFileManagementService, asciidoctorPool, serviceResourceResolverProvider);
+                new AsciidoctorService(globalConfig, asciidoctorPool, serviceResourceResolverProvider);
         String generatedHtml = asciidoctorService.getModuleHtml(resource.adaptTo(Module.class), newHashMap(), false);
 
         // Then
@@ -83,14 +83,14 @@ class AsciidoctorServiceTest {
         slingContext.registerAdapter(Resource.class, Module.class, mockSlingResourceAdapter);
 
         // When
-        lenient().when(localFileManagementService.getTemplateDirectory()).thenReturn(Optional.empty());
+        lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
         lenient().when(asciidoctorPool.borrowObject(resource))
                 .thenReturn(Asciidoctor.Factory.create());
         lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
                 .thenReturn(slingContext.resourceResolver());
 
         AsciidoctorService asciidoctorService =
-                new AsciidoctorService(localFileManagementService, asciidoctorPool, serviceResourceResolverProvider);
+                new AsciidoctorService(globalConfig, asciidoctorPool, serviceResourceResolverProvider);
         String generatedHtml = asciidoctorService.getModuleHtml(resource.adaptTo(Module.class), newHashMap(), false);
 
         // Then

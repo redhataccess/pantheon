@@ -1,6 +1,6 @@
 package com.redhat.pantheon.asciidoctor;
 
-import com.redhat.pantheon.conf.LocalFileManagementService;
+import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.util.pool.PooledObjectLifecycle;
 import org.asciidoctor.Asciidoctor;
 
@@ -12,15 +12,15 @@ import org.asciidoctor.Asciidoctor;
  */
 class AsciidoctorLifecycle implements PooledObjectLifecycle<Asciidoctor> {
 
-    final LocalFileManagementService localFileManagementService;
+    final GlobalConfig globalConfig;
 
-    AsciidoctorLifecycle(LocalFileManagementService localFileManagementService) {
-        this.localFileManagementService = localFileManagementService;
+    AsciidoctorLifecycle(GlobalConfig globalConfig) {
+        this.globalConfig = globalConfig;
     }
 
     @Override
     public Asciidoctor createInstance() {
-        return Asciidoctor.Factory.create(localFileManagementService.getGemPaths());
+        return Asciidoctor.Factory.create(globalConfig.getGemPaths());
     }
 
     @Override
