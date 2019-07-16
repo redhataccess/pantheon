@@ -18,8 +18,12 @@
  */
 package com.redhat.pantheon.servlet;
 
+import com.google.common.base.Strings;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
+import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.ModuleRevision;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -34,11 +38,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
 import static java.util.stream.Collectors.toMap;
 
@@ -57,7 +65,7 @@ import static java.util.stream.Collectors.toMap;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
 @SlingServletResourceTypes(
-        resourceTypes = { "pantheon/module", "pantheon/moduleLocalization", "pantheon/moduleVersion" },
+        resourceTypes = { "pantheon/module" },
         methods = "GET",
         extensions = "preview")
 @SuppressWarnings("serial")
@@ -78,45 +86,46 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws ServletException, IOException {
-        Resource resource = request.getResource();
-        String locale = request.getParameter("locale");
-        if (locale == null || locale.isEmpty()) {
-            log.info("Locale not set via request.");
-            locale = new Locale("en", "US").toString();
-        }
+        String locale = paramValue(request, "locale", DEFAULT_MODULE_LOCALE.toString());
+        String revision = paramValue(request, "rev");
         log.info("Locale set to: " + locale);
 
-            if (resource.getResourceType() != null) { //TODO why this can be null?
-            switch (resource.getResourceType()) {
-                case "pantheon/module":
-                    resource = resource.getChild(locale);
-                case "pantheon/moduleLocalization":
-                    resource = resource.getChild("v" + resource.getValueMap().get("latestVersion", String.class));
-                case "pantheon/moduleVersion":
-                    break;
-                default:
-                    throw new ServletException("Cannot render a Resource of type " + resource.getResourceType());
-            }
+        Module module = request.getResource().adaptTo(Module.class);
+
+        Module.Revisions revisions = module.locales.get()
+                .getModuleLocale(LocaleUtils.toLocale(locale))
+                .revisions.get();
+
+        ModuleRevision moduleRevision;
+        if(isNullOrEmpty(revision)) {
+            moduleRevision = revisions.getDefaultRevision();
+        }
+        else {
+            moduleRevision = revisions.getChild(revision, ModuleRevision.class);
         }
 
+        if(moduleRevision == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Revision " + revision + " not found for" +
+                    " module at " + request.getResource().getPath());
+        }
+        else {
+            // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
+            // parameters
+            Map<String, Object> context = request.getRequestParameterList().stream().filter(
+                    p -> p.getName().toLowerCase().startsWith("ctx_")
+            )
+            .collect(toMap(
+                    reqParam -> reqParam.getName().replaceFirst("ctx_", ""),
+                    reqParam -> reqParam.getString())
+            );
 
-        final Module module = resource.adaptTo(Module.class);
+            String html = asciidoctorService.getModuleHtml(
+                    moduleRevision, context, paramValueAsBoolean(request, PARAM_RERENDER));
 
-        // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
-        // parameters
-        Map<String, Object> context = request.getRequestParameterList().stream().filter(
-                p -> p.getName().toLowerCase().startsWith("ctx_")
-        )
-        .collect(toMap(
-                reqParam -> reqParam.getName().replaceFirst("ctx_", ""),
-                reqParam -> reqParam.getString())
-        );
-
-        String html = asciidoctorService.getModuleHtml(module, context, paramValueAsBoolean(request, PARAM_RERENDER));
-
-        response.setContentType("text/html");
-        Writer w = response.getWriter();
-        w.write(html);
+            response.setContentType("text/html");
+            Writer w = response.getWriter();
+            w.write(html);
+        }
     }
 }
 

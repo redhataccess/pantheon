@@ -8,8 +8,6 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
-
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES;
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
 
@@ -27,6 +25,7 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
         property = {
                 ADAPTABLE_CLASSES + "=org.apache.sling.api.resource.Resource",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.Module",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.ModuleRevision",
         }
 )
 public class SlingResourceAdapterFactory implements AdapterFactory {

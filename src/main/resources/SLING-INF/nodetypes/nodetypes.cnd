@@ -41,17 +41,9 @@
 // mix:lastModified gives us lastModified and lastModifiedBy fields
 [pant:module] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/module' mandatory autocreated
-    + en_US (pant:moduleLocalization) = pant:moduleLocalization mandatory autocreated
-
-[pant:moduleLocalization] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
-    - sling:resourceType (string) = 'pantheon/moduleLocalization' mandatory autocreated
-    - latestVersion (long) = '1' mandatory autocreated
-    + v1 (pant:moduleVersion) = pant:moduleVersion mandatory autocreated
 
 [pant:moduleVersion] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/moduleVersion' mandatory autocreated
-    - version (long) = '1' mandatory autocreated
-    + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated
 
 
 // Base type for titles

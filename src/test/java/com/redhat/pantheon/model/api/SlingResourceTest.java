@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Calendar;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -129,7 +128,7 @@ class SlingResourceTest {
 
         // Then
         assertNotNull(model.CHILD.get());
-        assertEquals("prop-value", model.CHILD.get().getResource().getValueMap().get("jcr:property"));
+        assertEquals("prop-value", model.CHILD.get().getProperty("jcr:property", String.class));
     }
 
     @Test
@@ -170,8 +169,7 @@ class SlingResourceTest {
         TestResource model2 = new TestResource(slingContext.resourceResolver().getResource("/content/module2"));
 
         // Then
-        assertTrue(model1.CHILD.isPresent());
-        assertFalse(model2.CHILD.isPresent());
+        assertNotNull(model1.CHILD.get() != null);
         assertNull(model2.CHILD.get());
     }
 
@@ -192,7 +190,7 @@ class SlingResourceTest {
 
         // Then
         assertNotNull(model.CHILD.getOrCreate());
-        assertEquals("prop-value", model.CHILD.get().getResource().getValueMap().get("jcr:property"));
+        assertEquals("prop-value", model.CHILD.get().getProperty("jcr:property", String.class));
     }
 
     @Test
@@ -223,7 +221,7 @@ class SlingResourceTest {
                 resourceResolver.create(root,"test", null));
         model.NAME.set("my-new-node");
         model.NUMBER.set(25L);
-        model.commit();
+        model.getResourceResolver().commit();
 
         // Then
         Resource storedResource = resourceResolver.getResource("/test");
@@ -239,13 +237,13 @@ class SlingResourceTest {
                 .resource("/content/module1",
                         "jcr:name", "my-module",
                         "jcr:date", Calendar.getInstance(),
-                        "jcr:number", 26,
+                        "jcr:number", 26L,
                         "jcr:boolean", true,
                         "jcr:stringArray", stringArrayValue)
                 .commit();
 
         // When
-        Map<String, Object> map = new TestResource(slingContext.resourceResolver().getResource("/content/module1")).toMap();
+        Map<String, Object> map = new TestResource(slingContext.resourceResolver().getResource("/content/module1")).getValueMap();
 
         // Then
         assertEquals("my-module", map.get("jcr:name"));
@@ -257,104 +255,36 @@ class SlingResourceTest {
         assertArrayEquals(stringArrayValue, (String[])map.get("jcr:stringArray"));
     }
 
-    @Test
-    public void toMapWithExclusions() {
-        // Given
-        slingContext.build()
-                .resource("/content/module1",
-                        "jcr:name", "my-module",
-                        "jcr:date", Calendar.getInstance(),
-                        "jcr:number", 26)
-                .commit();
-
-        // When
-        Map<String, Object> map = new TestResource(slingContext.resourceResolver().getResource("/content/module1"))
-                .toMap("jcr:name", "jcr:date");
-
-        // Then
-        assertFalse(map.containsKey("jcr:name"));
-        assertFalse(map.containsKey("jcr:date"));
-        assertTrue(map.containsKey("jcr:number"));
-    }
-
-    @Test void testInitDefaultValues() {
-        // Given
-        slingContext.build()
-                .resource("/content/test")
-                .commit();
-
-        // When
-        Grandchild grandChild = new TestResource(slingContext.resourceResolver().getResource("/content/test"))
-                .CHILD.getOrCreate()
-                .GRANDCHILD.getOrCreate();
-
-        // Then
-        // default values are set
-        assertEquals("DEFAULT_VALUE", grandChild.DEFAULT_VAL.get());
-        // non-default values aren't
-        assertFalse(grandChild.NAME.isSet());
-    }
-
-    @Test void testGetChildren() {
-        // Given
-        slingContext.build()
-                .resource("/content/module1",
-                        "jcr:primaryType", "pant:module",
-                        "jcr:created", Calendar.getInstance(),
-                        "jcr:createdBy", "auser")
-                .resource("child",
-                        "jcr:name", "child1",
-                        "jcr:property", "prop-value")
-                .commit();
-
-        // When
-        TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
-
-        // Then
-        assertEquals(1, model.getChildren(Child.class).collect(Collectors.toList()).size());
-        assertEquals(0, model.getChildren(Child.class, r -> r.getResource().getName().equals("nonexistent"))
-                .collect(Collectors.toList()).size());
-        assertEquals(1, model.getChildren(Child.class, r -> r.getResource().getName().equals("child"))
-                .collect(Collectors.toList()).size());
-        assertEquals(1, model.getChildren(Child.class, r -> r.getResource().getName().equals("child"),
-                r -> !r.getResource().hasChildren())
-                .collect(Collectors.toList()).size());
-        assertEquals(0, model.getChildren(Child.class, r -> r.getResource().getName().equals("child"),
-                r -> r.getResource().hasChildren())
-                .collect(Collectors.toList()).size());
-    }
-
     public static class TestResource extends SlingResource {
 
-        public final Field<String> NAME = new Field<>(String.class, "jcr:name");
-        public final Field<Calendar> DATE = new Field<>(Calendar.class, "jcr:date");
-        public final Field<Long> NUMBER = new Field<>(Long.class, "jcr:number");
-        public final Field<Boolean> BOOLEAN = new Field<>(Boolean.class, "jcr:boolean");
-        public final Field<String[]> STRINGARRAY = new Field<>(String[].class, "jcr:stringArray");
+        public final Field<String> NAME = stringField("jcr:name");
+        public final Field<Calendar> DATE = dateField("jcr:date");
+        public final Field<Long> NUMBER = field("jcr:number", Long.class);
+        public final Field<Boolean> BOOLEAN = field("jcr:boolean", Boolean.class);
+        public final Field<String[]> STRINGARRAY = field("jcr:stringArray", String[].class);
 
-        public final DeepField<String> GRANDCHILD_NAME = new DeepField<>(String.class, "child/grandchild/jcr:name");
+        public final Field<String> GRANDCHILD_NAME = stringField("child/grandchild/jcr:name");
 
-        public final ChildResource<Child> CHILD = new ChildResource<>(Child.class, "child");
+        public final Child<ChildResource> CHILD = child("child", ChildResource.class);
 
         public TestResource(Resource resource) {
             super(resource);
         }
     }
 
-    public static class Child extends SlingResource {
-        public final Field<String> NAME = new Field<>(String.class, "jcr:name");
+    public static class ChildResource extends SlingResource {
+        public final Field<String> NAME = stringField("jcr:name");
 
-        public final ChildResource<Grandchild> GRANDCHILD = new ChildResource<>(Grandchild.class, "grandchild");
+        public final Child<Grandchild> GRANDCHILD = child("grandchild", Grandchild.class);
 
-        public Child(Resource resource) {
+        public ChildResource(Resource resource) {
             super(resource);
         }
     }
 
     public static class Grandchild extends SlingResource {
 
-        public final Field<String> NAME = new Field<>(String.class, "jcr:name");
-        public final Field<String> DEFAULT_VAL = new Field<>(String.class, "jcr:defaulted", "DEFAULT_VALUE");
+        public final Field<String> NAME = stringField("jcr:name");
 
         public Grandchild(Resource resource) {
             super(resource);

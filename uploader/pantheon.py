@@ -46,7 +46,8 @@ def _generate_data(jcr_primary_type, base_name, path_name, asccidoc_type):
     if path_name:
         data["pant:originalName"] = path_name
     if asccidoc_type:
-        data["en_US/v1/asciidoc@TypeHint"] = asccidoc_type
+        data["asciidoc@TypeHint"] = asccidoc_type
+    data[":operation"] = "pant:newModuleRevision"
 
     return data
 
@@ -240,7 +241,7 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
                 logger.debug('url: %s', url)
                 jcr_primary_type = "pant:module" if isModule else "pant:title"
                 data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type="nt:file");
-                files = {'en_US/v1/asciidoc': ('en_US/v1/asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
+                files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
 
                 # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
                 # It is text/x-asciidoc. Here's why:
@@ -250,7 +251,6 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
                 # https://www.iana.org/assignments/media-types/media-types.xhtml#text
 
                 if not args.dry:
-                    logger.debug('data: %s', data)
                     r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
                     _print_response(r.status_code, r.reason)
                 logger.debug('')

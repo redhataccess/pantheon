@@ -4,7 +4,7 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.ModuleRevision;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -58,7 +58,7 @@ public class AsciidoctorService {
      * @return true if the generated html content was generated from the Module's asciidoc
      * content. False otherwise.
      */
-    private boolean generatedContentHashMatches(Module module) {
+    private boolean generatedContentHashMatches(ModuleRevision module) {
         String srcContent = module.asciidocContent.get();
         String existingHash = module.cachedContent.get()
                 .hash.get();
@@ -76,14 +76,14 @@ public class AsciidoctorService {
      * @return The module's html representation based on its current asciidoc content
      * @throws IOException If there is a problem generating the html content
      */
-    public String getModuleHtml(Module module, Map<String, Object> context, boolean forceRegen) throws IOException {
+    public String getModuleHtml(ModuleRevision module, Map<String, Object> context, boolean forceRegen) throws IOException {
         String html = module.cachedHtmlContent.get();
 
         // If regeneration is forced, the content doesn't exist yet, or it needs generation because the original
         // asciidoc has changed,
         // then generate and save it
         if( forceRegen || html == null || !generatedContentHashMatches(module) ) {
-            html = generateHtml(module.asciidocContent.get(), module.getResource(), context);
+            html = generateHtml(module.asciidocContent.get(), module, context);
             cacheContent(module, html);
         }
 
@@ -153,19 +153,18 @@ public class AsciidoctorService {
      * @param module The module on which to cache the content.
      * @param html The html that was generated
      */
-    private void cacheContent(final Module module, final String html) {
+    private void cacheContent(final ModuleRevision module, final String html) {
         try {
             String asciidoc = module.asciidocContent.get();
             ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
             // reload from the service-level resolver
-            Module writeableModule = serviceResourceResolver.getResource(module.getResource().getPath())
-                    .adaptTo(Module.class);
+            ModuleRevision writeableModule = new ModuleRevision(serviceResourceResolver.getResource(module.getPath()));
 
-            writeableModule.cachedContent.get()
+            writeableModule.cachedContent.getOrCreate()
                     .hash.set(
                         hash(asciidoc).toString()
                     );
-            writeableModule.cachedContent.get()
+            writeableModule.cachedContent.getOrCreate()
                     .data.set(html);
             serviceResourceResolver.commit();
             serviceResourceResolver.close();
