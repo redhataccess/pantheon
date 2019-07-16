@@ -6,7 +6,7 @@ import {
   Level, LevelItem
 } from '@patternfly/react-core';
 import '@app/app.css';
-import {Paginate} from '@app/Pagination';
+import { Pagination } from '@app/Pagination';
 
 export default class Search extends Component {
   public state = {
@@ -68,13 +68,13 @@ export default class Search extends Component {
             <div className="notification-container">
               { console.log("this.state.data: ") }
             { console.log(this.state.data) }
-              <Paginate
+              <Pagination
                 handleMoveLeft={this.updatePageCounter("L")}
                 handleMoveRight={this.updatePageCounter("R")}
                 handleMoveToFirst={this.updatePageCounter("F")}
                 pageNumber={this.state.page}
                 nextPageRecordCount={this.state.nextPageRowCount}
-                noOfRecordsOnPage={this.state.data.length}
+                handlePerPageLimit={this.changePerPageLimit}
               />
             </div>
             <DataList aria-label="Simple data list example">
@@ -179,15 +179,14 @@ export default class Search extends Component {
                     )}
               </DataListItem>
             </DataList>
-
             <div className="notification-container">
-              <Paginate
+              <Pagination
                 handleMoveLeft={this.updatePageCounter("L")}
                 handleMoveRight={this.updatePageCounter("R")}
                 handleMoveToFirst={this.updatePageCounter("F")}
                 pageNumber={this.state.page}
                 nextPageRecordCount={this.state.nextPageRowCount}
-                noOfRecordsOnPage={this.state.data.length}
+                handlePerPageLimit={this.changePerPageLimit}
               />
             </div>
             {/* Alert for delete confirmation */}
@@ -459,6 +458,7 @@ export default class Search extends Component {
     }
     backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
     backend += "&offset=" + ((this.state.page - 1)*this.state.pageLimit) + "&limit=" + this.state.pageLimit
+    console.log('itemsPerPaeProp: '+this.state.pageLimit)
     console.log(backend)  
     return backend
   }
@@ -488,6 +488,13 @@ export default class Search extends Component {
     }else if(direction==="F"){
       this.setState({page: 1, initialLoad: true})
     }
+  }
+
+  private changePerPageLimit = (pageLimitValue) => {
+    this.setState({pageLimit: pageLimitValue, initialLoad: true},()=>{
+      console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
+      return (this.state.pageLimit+" items per page")
+    })
   }
 
 }

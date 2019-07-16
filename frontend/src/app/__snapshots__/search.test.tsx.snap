@@ -50,12 +50,12 @@ exports[`Search tests should render default Search component 1`] = `
       <div
         className="notification-container"
       >
-        <Paginate
+        <Pagination
           handleMoveLeft={[Function]}
           handleMoveRight={[Function]}
           handleMoveToFirst={[Function]}
+          handlePerPageLimit={[Function]}
           nextPageRecordCount={1}
-          noOfRecordsOnPage={1}
           pageNumber={1}
         />
       </div>
@@ -236,12 +236,12 @@ exports[`Search tests should render default Search component 1`] = `
       <div
         className="notification-container"
       >
-        <Paginate
+        <Pagination
           handleMoveLeft={[Function]}
           handleMoveRight={[Function]}
           handleMoveToFirst={[Function]}
+          handlePerPageLimit={[Function]}
           nextPageRecordCount={1}
-          noOfRecordsOnPage={1}
           pageNumber={1}
         />
       </div>
