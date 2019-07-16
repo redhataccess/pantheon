@@ -184,19 +184,11 @@ def recursive_glob(directory, pattern='*'):
                 matches.append(os.path.join(root, filename))
     return matches
 
-def is_slash_wildcard(pattern):
-    """Check if a given file path pattern is of type subdir/* and returns True/False"""
-    return bool(re.match(r"^.*([a-z]?[/]+[*]?$)", pattern.lower()))
-
-def get_subdir(pattern):
-    """Retrieve the subdir value from a given pattern if it matches subdir/* and returns a string"""
-    delimiter = '/*'
-    pos = pattern.find(delimiter)
-    return pattern[0:pos]
-
 def find_files(patterns, directory):
     """
-    Finds files matching patterns defined in patheon2.yml.
+    Finds files matching patterns defined in patheon2.yml. To match everything
+    under a subdirectory, use pattern:
+    subdir/**/*
 
     Paramters:
     patterns (list): A list of file path patterns
@@ -209,19 +201,10 @@ def find_files(patterns, directory):
 
     if patterns:
         for pattern in patterns:
-            if is_slash_wildcard(pattern):
-                subdir = get_subdir(pattern)
-                #Use recursive_glob(directory, pattern) for /*
-                items = recursive_glob(directory + '/' + subdir)
-                print("pattern in globs: ", pattern)
-                print("items found: ", items)
-                files = files + items
-            else:
-                items = []
-                for file in glob.iglob(directory + '/**/' + pattern, recursive=True):
-                    items.append(file)
-                if len(items) > 0:
-                    files = files + items
+            for file in glob.iglob(directory + '/' + pattern, recursive=True):
+                if os.path.isfile(file):
+                    files.append(file)
+
     return files
 
 def process_file(path, type):
@@ -307,7 +290,7 @@ def process_file(path, type):
     return (r.status_code, r.reason)
 
 def get_unspecified_files(directory, processed_files, follow_links=True):
-    """Collects files from the given directory that were not specified in patheon2.yml file  and returns a list"""
+    """Collects files from the given directory that were not specified in patheon2.yml file and returns a list"""
     unspecified_files = []
     for root, dirs, files in os.walk(directory, follow_links):
         for file in files:
