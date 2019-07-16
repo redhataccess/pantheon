@@ -145,6 +145,7 @@ def resolveOption(parserVal, configKey, default):
         return default
 
 def exists(path):
+    """Makes a head request to the given path and returns a status_code"""
     try:
         resp = requests.head(path)
         logger.debug('HEAD request to remote server. Response status_code: %s', resp.status_code)
@@ -153,11 +154,23 @@ def exists(path):
         return False
 
 def remove_trailing_slash(path):
+    """Removes the trailing slash from path if exists and returns a string"""
     if path.endswith('/'):
         path = path[:-1]
     return path
 
 def recursive_glob(directory, pattern='*'):
+    """
+    Matching files beginning with a pattern from given directory and subdirectories.
+    It ignores pantheon2.yml file for pattern match. It returns a list of files matched
+
+    Parameters:
+    directory (string): Path to a directory that contains files to be uploaded
+    pattern (string): File pattern. Can be a wild card(*).
+
+    Returns:
+    list: A list of files matched
+    """
     if not os.path.exists(directory):
         raise ValueError("Directory not found {}".format(directory))
 
@@ -171,28 +184,27 @@ def recursive_glob(directory, pattern='*'):
                 matches.append(os.path.join(root, filename))
     return matches
 
-def define_resource(path, titleGlobs, moduleGlobs, resourceGlobs):
-    isTitle = matches(path, titleGlobs, 'titles')
-    isModule = matches(path, moduleGlobs, 'modules') if not isTitle else False
-    isResource = matches(path, resourceGlobs, 'resources') if not isModule else False
-
-    if isTitle:
-        resouce_type = "titles"
-    if isModule:
-        resouce_type = "modules"
-    if isResource:
-        resouce_type = "resources"
-    return resource_type
-
 def is_slash_wildcard(pattern):
+    """Check if a given file path pattern is of type subdir/* and returns True/False"""
     return bool(re.match(r"^.*([a-z]?[/]+[*]?$)", pattern.lower()))
 
 def get_subdir(pattern):
+    """Retrieve the subdir value from a given pattern if it matches subdir/* and returns a string"""
     delimiter = '/*'
     pos = pattern.find(delimiter)
     return pattern[0:pos]
 
 def find_files(patterns, directory):
+    """
+    Finds files matching patterns defined in patheon2.yml.
+
+    Paramters:
+    patterns (list): A list of file path patterns
+    directory (string): A directory that contains files to be uploaded
+
+    Returns:
+    list: A list of files matched
+    """
     files = []
 
     if patterns:
@@ -213,6 +225,16 @@ def find_files(patterns, directory):
     return files
 
 def process_file(path, type):
+    """
+    Processes the matched files and upload to pantheon through sling api call
+
+    Paramters:
+    path (string): A file patch
+    type (string): A type of file(titles, modules or resources)
+
+    Returns:
+    list: It returns a list with value of the API call status_code and reason
+    """
     global processed_files
     isTitle = True if type == 'titles' else False
     isModule = True if type == 'modules' else False
@@ -232,8 +254,8 @@ def process_file(path, type):
                 break
             ppath = ppath.parent
         if hiddenFolder:
-            logger.info('Skipping %s because it is hidden.', str(path))
-            logger.info('')
+            logger.debug('Skipping %s because it is hidden.', str(path))
+            logger.debug('')
             #continue
 
         # parent directory
@@ -285,6 +307,7 @@ def process_file(path, type):
     return (r.status_code, r.reason)
 
 def get_unspecified_files(directory, processed_files, follow_links=True):
+    """Collects files from the given directory that were not specified in patheon2.yml file  and returns a list"""
     unspecified_files = []
     for root, dirs, files in os.walk(directory, follow_links):
         for file in files:
