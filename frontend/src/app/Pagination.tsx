@@ -9,6 +9,7 @@ export interface IProps {
   handlePerPageLimit: (itemsPerPage) => any
   pageNumber: number
   nextPageRecordCount: number
+  perPageLimit:number
 }
 
 class Pagination extends React.Component<IProps> {
@@ -50,7 +51,7 @@ class Pagination extends React.Component<IProps> {
                       <div className="pf-c-dropdown">
                         <div className="pf-c-options-menu__toggle pf-m-plain pf-m-text">
                         Showing <ContextSelector
-                          toggleText={this.state.selected}
+                          toggleText={this.props.perPageLimit+" items per page"}
                           onSearchInputChange={this.onSearchInputChange}
                           isOpen={isOpen}
                           searchInputValue={searchValue}
@@ -84,7 +85,7 @@ class Pagination extends React.Component<IProps> {
                           <div className="pf-c-dropdown">
                             <div className="pf-c-options-menu__toggle pf-m-plain pf-m-text">
                             Showing <ContextSelector
-                              toggleText={this.state.selected}
+                              toggleText={this.props.perPageLimit+" items per page"}
                               onSearchInputChange={this.onSearchInputChange}
                               isOpen={isOpen}
                               searchInputValue={searchValue}
@@ -119,7 +120,7 @@ class Pagination extends React.Component<IProps> {
                           <div className="pf-c-dropdown">
                             <div className="pf-c-options-menu__toggle pf-m-plain pf-m-text">
                               Showing <ContextSelector
-                                toggleText={selected}
+                                toggleText={this.props.perPageLimit+" items per page"}
                                 onSearchInputChange={this.onSearchInputChange}
                                 isOpen={isOpen}
                                 searchInputValue={searchValue}
@@ -154,7 +155,7 @@ class Pagination extends React.Component<IProps> {
                           <div className="pf-c-dropdown">
                             <div className="pf-c-options-menu__toggle pf-m-plain pf-m-text">
                               Showing <ContextSelector
-                                toggleText={selected}
+                                toggleText={this.props.perPageLimit+" items per page"}
                                 onSearchInputChange={this.onSearchInputChange}
                                 isOpen={isOpen}
                                 searchInputValue={searchValue}

@@ -75,6 +75,7 @@ export default class Search extends Component {
                 pageNumber={this.state.page}
                 nextPageRecordCount={this.state.nextPageRowCount}
                 handlePerPageLimit={this.changePerPageLimit}
+                perPageLimit={this.state.pageLimit}
               />
             </div>
             <DataList aria-label="Simple data list example">
@@ -187,6 +188,7 @@ export default class Search extends Component {
                 pageNumber={this.state.page}
                 nextPageRecordCount={this.state.nextPageRowCount}
                 handlePerPageLimit={this.changePerPageLimit}
+                perPageLimit={this.state.pageLimit}
               />
             </div>
             {/* Alert for delete confirmation */}
@@ -491,7 +493,7 @@ export default class Search extends Component {
   }
 
   private changePerPageLimit = (pageLimitValue) => {
-    this.setState({pageLimit: pageLimitValue, initialLoad: true},()=>{
+    this.setState({pageLimit: pageLimitValue, initialLoad: true,page: 1},()=>{
       console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
       return (this.state.pageLimit+" items per page")
     })

@@ -41,7 +41,7 @@ exports[`Tests for Pagination should render Pagination component 1`] = `
                       searchButtonAriaLabel="Search menu items"
                       searchInputPlaceholder="Search"
                       searchInputValue=""
-                      toggleText="10 items per page"
+                      toggleText="1 items per page"
                     >
                       <ContextSelectorItem
                         className=""
