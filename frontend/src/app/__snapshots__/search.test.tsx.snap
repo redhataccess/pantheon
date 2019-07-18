@@ -58,6 +58,7 @@ exports[`Search tests should render default Search component 1`] = `
           nextPageRecordCount={1}
           pageNumber={1}
           perPageLimit={10}
+          showOptions={true}
         />
       </div>
       <DataList
@@ -245,6 +246,7 @@ exports[`Search tests should render default Search component 1`] = `
           nextPageRecordCount={1}
           pageNumber={1}
           perPageLimit={10}
+          showOptions={false}
         />
       </div>
       <div

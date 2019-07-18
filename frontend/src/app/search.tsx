@@ -32,7 +32,8 @@ export default class Search extends Component {
     pageLimit: 10,
     redirect: false,
     redirectLocation: '',
-    sortKey: ''
+    showOptions: true,
+    sortKey: ''    
   };
 
   public transientPaths : string[] = [];
@@ -76,6 +77,7 @@ export default class Search extends Component {
                 nextPageRecordCount={this.state.nextPageRowCount}
                 handlePerPageLimit={this.changePerPageLimit}
                 perPageLimit={this.state.pageLimit}
+                showOptions={this.state.showOptions}
               />
             </div>
             <DataList aria-label="Simple data list example">
@@ -189,6 +191,7 @@ export default class Search extends Component {
                 nextPageRecordCount={this.state.nextPageRowCount}
                 handlePerPageLimit={this.changePerPageLimit}
                 perPageLimit={this.state.pageLimit}
+                showOptions={!this.state.showOptions}
               />
             </div>
             {/* Alert for delete confirmation */}
