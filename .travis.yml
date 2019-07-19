@@ -40,7 +40,8 @@ matrix:
         - zip pantheon_macos.zip pantheon.app
       deploy:
         provider: releases
-        api_key: "GITHUB OAUTH TOKEN"
+        api_key:
+          secure: TWwM5LrrDviIOpaMn8PI4Qyw87iBETFb9Jt604el2vOgs2MTJroA8aJ315I9xJY25mx84BzOSzIkKPOqC6F4VvP/24viWe/bQThFWfgNFQaRzc7ly+URzxqjvxaDHUIVHlg5Cu7JJ2FvoP4B3bYAapA0e4jfcLw4/YIa9PwaFt7/bofciPl9imkyg1nuovXbU9YaOmiVVXdWmA4WK7tOIYsLJ2MZ9SWrTMC1M01/irnF8GANPBZvQd8XerbLHfcPPPvI+5fuGTEQY8RIjCssXhKAuYw8aD8o8SBKq7liu0vy+08IDR7ztDErfXJYmVs37fYGoB9bqj98n3gKX8gAgEPs6u6RiWCIZSEOx7UQw9T0BUypxA0nZnjSLX0oyC8ioDEZRB+OSf55B5tb4JJq3PipWnsjQpGqKPSmFNsdiASYb63UeC86RWz+YRjGgmgBqiakVpISHbeH10+R/2RNtnQLJdoIranvOL50a6LxeP025rDfyZ+5U2HATCrCtDLhNmq0KODlTKr8o2UREoKxVnqNtCIxC6+o9VnUgjDr2uA7Bq+iVwemQhK74pwlHB+FOofwsUx3N3PEqGp4sPUEt3tXEpEARtWpBN9PvIWgUryyg8w+oPDY4hH8F08GrATIQ9PQOwLMfjLTmFAggSBqOD9DNSHTeSZD1FIJboEarrA=
         file: pantheon.zip
         skip_cleanup: true
         on:
