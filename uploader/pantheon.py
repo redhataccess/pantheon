@@ -222,7 +222,8 @@ def process_file(path, type):
     isTitle = True if type == 'titles' else False
     isModule = True if type == 'modules' else False
     isResource = True if type =='resources' else False
-    url = server + "/content/repositories/" + repository
+    content_root = 'sandbox' if args.sandbox else 'repositories'
+    url = server + "/content/" + content_root + "/" + repository
 
     if isModule or isTitle or isResource:
         path = PurePath(path)
