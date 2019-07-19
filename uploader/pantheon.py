@@ -11,7 +11,6 @@ import sys
 import requests
 import pathlib
 import fnmatch
-import re
 import glob
 from pathlib import PurePath
 
