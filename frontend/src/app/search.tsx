@@ -78,6 +78,7 @@ export default class Search extends Component {
                 handlePerPageLimit={this.changePerPageLimit}
                 perPageLimit={this.state.pageLimit}
                 showOptions={this.state.showOptions}
+                bottom={false}
               />
             </div>
             <DataList aria-label="Simple data list example">
@@ -192,6 +193,7 @@ export default class Search extends Component {
                 handlePerPageLimit={this.changePerPageLimit}
                 perPageLimit={this.state.pageLimit}
                 showOptions={!this.state.showOptions}
+                bottom={true}
               />
             </div>
             {/* Alert for delete confirmation */}

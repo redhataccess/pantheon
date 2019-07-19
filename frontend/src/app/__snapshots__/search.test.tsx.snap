@@ -51,6 +51,7 @@ exports[`Search tests should render default Search component 1`] = `
         className="notification-container"
       >
         <Pagination
+          bottom={false}
           handleMoveLeft={[Function]}
           handleMoveRight={[Function]}
           handleMoveToFirst={[Function]}
@@ -239,6 +240,7 @@ exports[`Search tests should render default Search component 1`] = `
         className="notification-container"
       >
         <Pagination
+          bottom={true}
           handleMoveLeft={[Function]}
           handleMoveRight={[Function]}
           handleMoveToFirst={[Function]}

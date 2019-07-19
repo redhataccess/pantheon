@@ -17,6 +17,7 @@ describe('Tests for Pagination', () => {
     handlePerPageLimit={move}
     perPageLimit={1}
     showOptions={true}
+    bottom={true}
 />);
     expect(view).toMatchSnapshot();
   });
@@ -31,6 +32,7 @@ describe('Tests for Pagination', () => {
       handlePerPageLimit={move}
       perPageLimit={1}
       showOptions={true}
+      bottom={true}
     />);
     const pageNumberDisplay = wrapper.find(LevelItem);
     expect(pageNumberDisplay.exists()).toBe(true)

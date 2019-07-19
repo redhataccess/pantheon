@@ -12,6 +12,7 @@ export interface IProps {
   nextPageRecordCount: number
   perPageLimit:number
   showOptions: boolean
+  bottom: boolean
 }
 
 class Pagination extends React.Component<IProps> {
@@ -31,128 +32,74 @@ class Pagination extends React.Component<IProps> {
     renderSearch: false,
     searchValue: '',
     selected: this.dropdownItems[0]
+
   };
+
+  public button1 = true;
+  public button2 = true;
+  public button3 = true;
 
   public render() {
     const { isOpen, filteredItems } = this.state;
 
+    if(this.props.pageNumber === 1 && this.props.nextPageRecordCount !== 0){
+        this.button1=true;
+        this.button2=true;
+        this.button3=false;
+    }
+    if(this.props.nextPageRecordCount === 0 && this.props.pageNumber !== 1){
+      this.button1=false;
+      this.button2=false;
+      this.button3=true;
+    }
+    if(this.props.pageNumber !== 1 && this.props.nextPageRecordCount !== 0){
+      this.button1=false;
+      this.button2=false;
+      this.button3=false;
+    }
+    if(this.props.pageNumber === 1 && this.props.nextPageRecordCount === 0){
+      this.button1=true;
+      this.button2=true;
+      this.button3=true;
+    }
+    
     return (
       <Fragment>
         <Level gutter="md">
-          <LevelItem/>
-          <LevelItem/>
+          <LevelItem />
+          <LevelItem />
           <LevelItem>
             <nav aria-label="Countries Pagination">
               <div>
-                {this.props.pageNumber === 1 && this.props.nextPageRecordCount !== 0 &&
+                <div>
                   <div className="example">
                     <div className="ws-preview">
                       <div className="pf-c-pagination" id="pagination-options-menu-top">
-                      <div className="pf-c-dropdown">
-                        <div className="pf-c-options-menu__toggle pf-m-plain pf-m-text">
-                          {this.props.showOptions &&
-                            <Dropdown
-                              perPageValue={this.dropDownValue}
-                              newPerPagevalue={this.state.itemsPerPage+" items per page"}
-                            />}
-                            <button disabled={true} data-action="first" aria-label="Go to first page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveToFirst}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img">
+                        <div className="pf-c-dropdown">
+                          <div className="pf-c-options-menu__toggle pf-m-plain pf-m-text">
+                            {!this.props.showOptions && !this.props.bottom &&
+                              <ContextSelector
+                                isOpen={isOpen}
+                                onToggle={this.onToggle}
+                              />}
+                            {this.props.showOptions &&
+                              <Dropdown
+                                perPageValue={this.dropDownValue}
+                                newPerPagevalue={this.state.itemsPerPage + " items per page"}
+                              />
+                            }
+                            <button disabled={this.button1} data-action="first" aria-label="Go to first page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveToFirst}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img">
                               <path d="M223.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L319.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L393.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34zm-192 34l136 136c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9L127.9 256l96.4-96.4c9.4-9.4 9.4-24.6 0-33.9L201.7 103c-9.4-9.4-24.6-9.4-33.9 0l-136 136c-9.5 9.4-9.5 24.6-.1 34z" transform="" /></svg></button>
-                            <button disabled={true} data-action="previous" aria-label="Go to previous page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveLeft}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
+                            <button disabled={this.button2} data-action="previous" aria-label="Go to previous page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveLeft}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
                               <path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z" transform="" /></svg></button>
                             Page: {this.props.pageNumber}
-                            <button disabled={false} data-action="next" aria-label="Go to next page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveRight}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
+                            <button disabled={this.button3} data-action="next" aria-label="Go to next page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveRight}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
                               <path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z" transform="" /></svg></button>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                }
-                {this.props.nextPageRecordCount === 0 && this.props.pageNumber !== 1 &&
-                  <div>
-                    <div className="example">
-                      <div className="ws-preview">
-                        <div className="pf-c-pagination" id="pagination-options-menu-top">
-                          <div className="pf-c-dropdown">
-                            <div className="pf-c-options-menu__toggle pf-m-plain pf-m-text">
-                            {
-                                this.props.showOptions && <Dropdown
-                                  perPageValue={this.dropDownValue}
-                                  newPerPagevalue={this.state.itemsPerPage+" items per page"} 
-                                />
-                              }
-                              <button disabled={false} data-action="first" aria-label="Go to first page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveToFirst}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img">
-                                <path d="M223.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L319.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L393.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34zm-192 34l136 136c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9L127.9 256l96.4-96.4c9.4-9.4 9.4-24.6 0-33.9L201.7 103c-9.4-9.4-24.6-9.4-33.9 0l-136 136c-9.5 9.4-9.5 24.6-.1 34z" transform="" /></svg></button>
-                              <button disabled={false} data-action="previous" aria-label="Go to previous page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveLeft}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
-                                <path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z" transform="" /></svg></button>
-                              Page: {this.props.pageNumber}
-                              <button disabled={true} data-action="next" aria-label="Go to next page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveRight}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
-                                <path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z" transform="" /></svg></button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div> </div>
-                }
-                {
-                  this.props.pageNumber !== 1 && this.props.nextPageRecordCount !== 0 &&
-                  <div>
-                    <div className="example">
-                      <div className="ws-preview">
-                        <div className="pf-c-pagination" id="pagination-options-menu-top">
-                          <div className="pf-c-dropdown">
-                            <div className="pf-c-options-menu__toggle pf-m-plain pf-m-text">
-                            {this.props.showOptions &&
-                                <Dropdown
-                                  perPageValue={this.dropDownValue}
-                                  newPerPagevalue={this.state.itemsPerPage+" items per page"}
-                                />
-                              }
-                              <button disabled={false} data-action="first" aria-label="Go to first page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveToFirst}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img">
-                                <path d="M223.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L319.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L393.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34zm-192 34l136 136c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9L127.9 256l96.4-96.4c9.4-9.4 9.4-24.6 0-33.9L201.7 103c-9.4-9.4-24.6-9.4-33.9 0l-136 136c-9.5 9.4-9.5 24.6-.1 34z" transform="" /></svg></button>
-                              <button disabled={false} data-action="previous" aria-label="Go to previous page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveLeft}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
-                                <path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z" transform="" /></svg></button>
-                              Page: {this.props.pageNumber}
-                              <button disabled={false} data-action="next" aria-label="Go to next page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveRight}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
-                                <path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z" transform="" /></svg></button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div></div>
-                }
-                {
-                  this.props.pageNumber === 1 && this.props.nextPageRecordCount === 0 &&
-                  <div>
-                    <div className="example">
-                      <div className="ws-preview">
-                        <div className="pf-c-pagination" id="pagination-options-menu-top">
-                          <div className="pf-c-dropdown">
-                            <div className="pf-c-options-menu__toggle pf-m-plain pf-m-text">
-                            {!this.props.showOptions &&
-                                  <ContextSelector
-                                  isOpen={isOpen}
-                                  onToggle={this.onToggle}
-                                />}
-                               {this.props.showOptions &&
-                                <Dropdown
-                                  perPageValue={this.dropDownValue}
-                                  newPerPagevalue={this.state.itemsPerPage+" items per page"}
-                                />
-                              }
-                              <button disabled={true} data-action="first" aria-label="Go to first page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveToFirst}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img">
-                                <path d="M223.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L319.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L393.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34zm-192 34l136 136c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9L127.9 256l96.4-96.4c9.4-9.4 9.4-24.6 0-33.9L201.7 103c-9.4-9.4-24.6-9.4-33.9 0l-136 136c-9.5 9.4-9.5 24.6-.1 34z" transform="" /></svg></button>
-                              <button disabled={true} data-action="previous" aria-label="Go to previous page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveLeft}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
-                                <path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z" transform="" /></svg></button>
-                              Page: {this.props.pageNumber}
-                              <button disabled={true} data-action="next" aria-label="Go to next page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveRight}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
-                                <path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z" transform="" /></svg></button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div></div>
-                }
+                  </div></div>
               </div>
             </nav>
           </LevelItem>
