@@ -24,3 +24,24 @@ matrix:
       after_success:
       # Move the code coverage results to codecov
       - bash <(curl -s https://codecov.io/bash) -cF go
+
+    - os: osx
+      sudo: false
+      addons:
+        homebrew:
+          packages:
+          - python
+      before_script:
+        - cd uploader
+        - pip3 install requests pyyaml py2app
+      script:
+        - python3 setup.py py2app
+        - cd dist
+        - zip pantheon_macos.zip pantheon.app
+      deploy:
+        provider: releases
+        api_key: "GITHUB OAUTH TOKEN"
+        file: pantheon.zip
+        skip_cleanup: true
+        on:
+          tags: true
