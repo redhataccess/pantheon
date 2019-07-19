@@ -43,6 +43,11 @@
     - sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
     + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated
 
+[pant:product] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/product' mandatory autocreated
+
+[pant:productVersion] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/productVersion' mandatory autocreated
 
 // Base type for titles
 [pant:title] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
