@@ -7,6 +7,12 @@ import org.apache.sling.api.resource.Resource;
 
 import java.util.Calendar;
 
+/**
+ * A {@link SlingResource} which describes the structure for a module revision.
+ * Contains all the properties and content for the state of a given module at
+ * a given time. ModuleRevisions should differ in content when part of the same
+ * parent, but this is not validated.
+ */
 public class ModuleRevision extends SlingResource {
 
     public final Child<CachedContent> cachedContent = child("cachedContent", CachedContent.class);
@@ -27,6 +33,10 @@ public class ModuleRevision extends SlingResource {
         super(wrapped);
     }
 
+    /**
+     * A child resource for a {@link ModuleRevision} which contains cached data
+     * when a resource is generated.
+     */
     public static class CachedContent extends SlingResource {
 
         public final Field<String> hash = stringField("pant:hash");
