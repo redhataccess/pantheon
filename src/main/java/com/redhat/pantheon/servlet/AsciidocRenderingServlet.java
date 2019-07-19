@@ -23,6 +23,7 @@ import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.model.ModuleRevision;
+import com.redhat.pantheon.util.function.FunctionalUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -48,6 +49,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
+import static com.redhat.pantheon.util.function.FunctionalUtils.nullSafe;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -91,18 +93,8 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         log.info("Locale set to: " + locale);
 
         Module module = request.getResource().adaptTo(Module.class);
-
-        Module.Revisions revisions = module.locales.get()
-                .getModuleLocale(LocaleUtils.toLocale(locale))
-                .revisions.get();
-
-        ModuleRevision moduleRevision;
-        if(isNullOrEmpty(revision)) {
-            moduleRevision = revisions.getDefaultRevision();
-        }
-        else {
-            moduleRevision = revisions.getChild(revision, ModuleRevision.class);
-        }
+        Locale localeObj = LocaleUtils.toLocale(locale);
+        ModuleRevision moduleRevision = module.findRevision(localeObj, revision);
 
         if(moduleRevision == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Revision " + revision + " not found for" +
@@ -120,7 +112,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             );
 
             String html = asciidoctorService.getModuleHtml(
-                    moduleRevision, context, paramValueAsBoolean(request, PARAM_RERENDER));
+                    module, localeObj, revision, context, paramValueAsBoolean(request, PARAM_RERENDER));
 
             response.setContentType("text/html");
             Writer w = response.getWriter();

@@ -47,7 +47,6 @@ def _generate_data(jcr_primary_type, base_name, path_name, asccidoc_type):
         data["pant:originalName"] = path_name
     if asccidoc_type:
         data["asciidoc@TypeHint"] = asccidoc_type
-    data[":operation"] = "pant:newModuleRevision"
 
     return data
 
@@ -235,12 +234,14 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
             logger.debug('base name: %s', base_name)
 
             # Asciidoc content (treat as a module)
-            if path.suffix == '.adoc' or path.suffix == '.asciidoc':
+            if isModule:
                 print(path)
                 url += '/' + path.name
                 logger.debug('url: %s', url)
                 jcr_primary_type = "pant:module" if isModule else "pant:title"
                 data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type="nt:file");
+                # This is needed to add a new module revision, otherwise it won't be handled
+                data[":operation"] = "pant:newModuleRevision"
                 files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
 
                 # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
@@ -254,13 +255,17 @@ for root, dirs, files in os.walk(args.directory, followlinks=links):
                     r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
                     _print_response(r.status_code, r.reason)
                 logger.debug('')
-            else:
+            elif isResource:
+                # determine the file content type, for some common ones
+                file_type = None
+                if path.suffix in ['.adoc', '.asciidoc']:
+                    file_type = "text/x-asciidoc"
                 # Upload as a regular file(nt:file)
                 print(path)
                 logger.debug('url: %s', url)
                 jcr_primary_type = "nt:file"
                 data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type=None);
-                files = {path.name: (path.name, open(path, 'rb'))}
+                files = {path.name: (path.name, open(path, 'rb'), file_type)}
                 if not args.dry:
                     r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
                     _print_response(r.status_code, r.reason)

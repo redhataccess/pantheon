@@ -24,6 +24,8 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
         service = AdapterFactory.class,
         property = {
                 ADAPTABLE_CLASSES + "=org.apache.sling.api.resource.Resource",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.api.SlingResource",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.api.FileResource",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.Module",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.ModuleRevision",
         }

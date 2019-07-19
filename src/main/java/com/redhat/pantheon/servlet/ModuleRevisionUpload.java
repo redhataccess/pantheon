@@ -2,7 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.google.common.collect.Maps;
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.FileResource;
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.model.ModuleRevision;
 import org.apache.commons.lang3.LocaleUtils;
@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -42,6 +41,7 @@ public class ModuleRevisionUpload implements PostOperation {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
             String asciidocContent = ServletUtils.paramValue(request, "asciidoc");
             String path = request.getResource().getPath();
+            String moduleName = ResourceUtil.getName(path);
 
             log.info("Locale: " + locale);
             log.info("Content: " + asciidocContent);
@@ -71,10 +71,7 @@ public class ModuleRevisionUpload implements PostOperation {
 
             // If the revision is empty, then create the new node
             if(!revisions.hasChildren()) {
-                ModuleRevision newRevision = revisions.getOrCreateModuleRevision("v1");
-                FileResource asciidoc = newRevision.asciidoc.getOrCreate();
-                asciidoc.jcrContent.getOrCreate().jcrData.set(asciidocContent);
-                asciidoc.jcrContent.getOrCreate().mimeType.set("text/x-asciidoc");
+                createNewRevision(revisions, "v1", moduleName, asciidocContent);
                 response.setStatus(HttpServletResponse.SC_CREATED, "New revision created");
             }
             else {
@@ -90,14 +87,7 @@ public class ModuleRevisionUpload implements PostOperation {
                 // create a new revision
                 else {
                     String revisionName = "v" + (stream(revisions.getChildren()).collect(Collectors.counting()) + 1);
-                    ModuleRevision newRevision = revisions
-                            .createModuleRevision(revisionName);
-                    FileResource.JcrContent jcrContent = newRevision
-                            .asciidoc.getOrCreate()
-                            .jcrContent.getOrCreate();
-                    jcrContent.jcrData.set(asciidocContent);
-                    jcrContent.mimeType.set("text/x-asciidoc");
-
+                    createNewRevision(revisions, revisionName, moduleName, asciidocContent);
                     response.setStatus(HttpServletResponse.SC_CREATED, "New revision created");
                 }
             }
@@ -107,6 +97,17 @@ public class ModuleRevisionUpload implements PostOperation {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private ModuleRevision createNewRevision(Module.Revisions revisions, String name, String title, String asciidocContent) {
+        ModuleRevision newRevision = revisions.getOrCreateModuleRevision(name);
+        // TODO these should be extracted from the content
+        newRevision.title.set(title);
+        newRevision.description.set("");
+        FileResource asciidoc = newRevision.asciidoc.getOrCreate();
+        asciidoc.jcrContent.getOrCreate().jcrData.set(asciidocContent);
+        asciidoc.jcrContent.getOrCreate().mimeType.set("text/x-asciidoc");
+        return newRevision;
     }
 
 }

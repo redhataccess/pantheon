@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model;
+package com.redhat.pantheon.model.api;
 
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;

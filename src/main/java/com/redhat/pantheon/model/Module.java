@@ -1,6 +1,7 @@
 package com.redhat.pantheon.model;
 
 import com.google.common.collect.Streams;
+import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.SlingResource;
 import org.apache.sling.api.resource.Resource;
@@ -8,6 +9,8 @@ import org.apache.sling.api.resource.Resource;
 import javax.annotation.Nonnull;
 import java.util.Locale;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.redhat.pantheon.util.function.FunctionalUtils.nullSafe;
 import static com.redhat.pantheon.util.function.FunctionalUtils.toLastElement;
 
 /**
@@ -20,6 +23,30 @@ public class Module extends SlingResource {
 
     public Module(@Nonnull Resource resource) {
         super(resource);
+    }
+
+    /**
+     * Finds a module revision inside this module
+     * @param locale The specific locale for the revision. Could be null, if not provided, the default locale is assumed
+     *               per {@link com.redhat.pantheon.conf.GlobalConfig#DEFAULT_MODULE_LOCALE}
+     * @param name The specific name for the revision to find. Could be null, if not provided the default revision is
+     *             assumed.
+     * @return The found module revision resource, or null if it can't find one
+     */
+    public ModuleRevision findRevision(Locale locale, String name) {
+        boolean isDefaultRevision = isNullOrEmpty(name);
+
+        return nullSafe(() -> {
+            Revisions revisions = locales.get()
+                    .getModuleLocale(locale == null ? GlobalConfig.DEFAULT_MODULE_LOCALE : locale)
+                    .revisions.get();
+            if(isDefaultRevision) {
+                return revisions.getDefaultRevision();
+            }
+            else {
+                return revisions.getModuleRevision(name);
+            }
+        });
     }
 
     /**

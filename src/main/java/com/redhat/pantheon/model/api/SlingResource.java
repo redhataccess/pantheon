@@ -1,6 +1,5 @@
 package com.redhat.pantheon.model.api;
 
-import com.redhat.pantheon.model.FileResource;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.resource.*;
 

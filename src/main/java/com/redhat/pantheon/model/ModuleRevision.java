@@ -2,6 +2,7 @@ package com.redhat.pantheon.model;
 
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingResource;
 import org.apache.sling.api.resource.Resource;
 
@@ -18,6 +19,10 @@ public class ModuleRevision extends SlingResource {
     public final Child<CachedContent> cachedContent = child("cachedContent", CachedContent.class);
 
     public final Child<FileResource> asciidoc = file("asciidoc");
+
+    public final Field<String> title = stringField("jcr:title");
+
+    public final Field<String> description = stringField("jcr:description");
 
     public final Field<Calendar> created = dateField("jcr:created");
 

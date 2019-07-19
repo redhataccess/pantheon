@@ -2,6 +2,7 @@ package com.redhat.pantheon.model.api;
 
 import com.google.common.collect.Maps;
 
+import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.function.Supplier;
 
