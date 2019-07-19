@@ -20,7 +20,7 @@ public class Product extends SlingResource {
 
     public final Field<String> primaryType = new Field<>(String.class, "jcr:primaryType");
 
-    //public final Field<String> name = new Field<>(String.class, "name");
+    public final Field<String> name = new Field<>(String.class, "name");
     
     public final Field<String> productDescription = new Field<>(String.class, "productDescription");
     
