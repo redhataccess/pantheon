@@ -3,7 +3,6 @@ package com.redhat.pantheon.asciidoctor;
 import com.google.common.base.Function;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.Module;
-import com.redhat.pantheon.model.ModuleRevision;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -27,7 +26,7 @@ class AsciidoctorServiceTest {
 
     final SlingContext slingContext = new SlingContext();
 
-    final Function<Resource, ModuleRevision> mockSlingResourceAdapter = input -> new ModuleRevision(input);
+    final Function<Resource, Module> mockSlingResourceAdapter = input -> new Module(input);
 
     @Mock
     GlobalConfig globalConfig;
@@ -51,7 +50,7 @@ class AsciidoctorServiceTest {
                 .commit();
         Resource resource = slingContext.resourceResolver().getResource("/module");
         // adapter (mock)
-        slingContext.registerAdapter(Resource.class, ModuleRevision.class, mockSlingResourceAdapter);
+        slingContext.registerAdapter(Resource.class, Module.class, mockSlingResourceAdapter);
         lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
         lenient().when(asciidoctorPool.borrowObject(any()))
                 .thenReturn(Asciidoctor.Factory.create());
@@ -86,7 +85,7 @@ class AsciidoctorServiceTest {
                 .commit();
         Resource resource = slingContext.resourceResolver().getResource("/module");
         // adapter (mock)
-        slingContext.registerAdapter(Resource.class, ModuleRevision.class, mockSlingResourceAdapter);
+        slingContext.registerAdapter(Resource.class, Module.class, mockSlingResourceAdapter);
 
         // When
         lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());

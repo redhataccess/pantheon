@@ -44,7 +44,7 @@ public class AsciidocRenderingServletTest {
         slingContext.request().setResource(resource);
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(Module.class), any(Locale.class), anyString(), anyMap(), anyBoolean()))
+                        any(Module.class), any(Locale.class), isNull(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
 
         // Test class
@@ -57,7 +57,7 @@ public class AsciidocRenderingServletTest {
         // Then
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), anyMap(), eq(false));
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), isNull(), anyMap(), eq(false));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class AsciidocRenderingServletTest {
         slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(Module.class), any(Locale.class), anyString(), anyMap(), anyBoolean()))
+                        any(Module.class), any(Locale.class), isNull(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
 
         // Test class
@@ -88,7 +88,7 @@ public class AsciidocRenderingServletTest {
         // Then
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), anyMap(), eq(true));
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), isNull(), anyMap(), eq(true));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class AsciidocRenderingServletTest {
         slingContext.request().getParameterMap().put("non_ctx_arg", new String[]{"unaccepted"});
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(Module.class), any(Locale.class), anyString(), anyMap(), anyBoolean()))
+                        any(Module.class), any(Locale.class), isNull(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
 
         // Test class
@@ -124,7 +124,7 @@ public class AsciidocRenderingServletTest {
 
         ArgumentCaptor<Map> contextArguments = ArgumentCaptor.forClass(Map.class);
         verify(asciidoctorService)
-                .getModuleHtml(any(Module.class), any(Locale.class), anyString(), contextArguments.capture(), eq(true));
+                .getModuleHtml(any(Module.class), any(Locale.class), isNull(), contextArguments.capture(), eq(true));
         assertEquals(1, contextArguments.getValue().size());
         assertTrue(contextArguments.getValue().containsKey("arg"));
     }
