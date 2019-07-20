@@ -41,23 +41,4 @@ public class FunctionalUtils {
     public static <T> BinaryOperator<T> toLastElement() {
         return (T o1, T o2) -> o2;
     }
-
-    /**
-     * Provides a null-safe way to execute code.
-     * This is useful when chaining several calls together and ignoring any
-     * {@link NullPointerException}s which may happen in between, instead
-     * turning those into a final null result. This function effectively
-     * replaces all NullPointerExceptions with a single null result
-     * @param nonNullSafe the piece of code which may throw a {@link NullPointerException}
-     * @param <T>
-     * @return The final value, or null of there was a NullPointerException thrown.
-     */
-    public static @Nullable
-    <T> T nullSafe(final Supplier<T> nonNullSafe) {
-        try {
-            return nonNullSafe.get();
-        } catch (NullPointerException npe) {
-            return null;
-        }
-    }
 }

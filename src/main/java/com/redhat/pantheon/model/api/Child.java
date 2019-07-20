@@ -4,6 +4,9 @@ import com.google.common.collect.Maps;
 
 import java.lang.reflect.Proxy;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.redhat.pantheon.model.api.SlingResourceUtil.createNewSlingResource;
@@ -73,5 +76,25 @@ public class Child<T extends SlingResource> implements Supplier<T> {
         Map<String, Object> propsMap = Maps.newHashMap();
         propsMap.put("jcr:primaryType", primaryType);
         return createNewSlingResource(owner, name, propsMap, type);
+    }
+
+    /**
+     * Provides a null-safe way to operate on the value of the child, and return an
+     * {@link Optional} with the result of the operation. This allowes the caller to
+     * continue to operapate in a null-safe fashion.
+     * @param func The function to apply to the value
+     * @param <R>
+     * @return An optional indicating the result of the operation. If the operation
+     * returns null, or if the value of this child was not present in the first place,
+     * this returns an empty Optional
+     */
+    public <R> Optional<R> map(Function<? super T, ? extends R> func) {
+        T value = get();
+        if(value == null) {
+            return Optional.empty();
+        }
+        else {
+            return Optional.ofNullable(func.apply(value));
+        }
     }
 }

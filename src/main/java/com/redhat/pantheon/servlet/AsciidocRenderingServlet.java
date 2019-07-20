@@ -18,16 +18,12 @@
  */
 package com.redhat.pantheon.servlet;
 
-import com.google.common.base.Strings;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
-import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.model.ModuleRevision;
-import com.redhat.pantheon.util.function.FunctionalUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.osgi.framework.Constants;
@@ -45,11 +41,9 @@ import java.io.Writer;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
-import static com.redhat.pantheon.util.function.FunctionalUtils.nullSafe;
 import static java.util.stream.Collectors.toMap;
 
 /**
