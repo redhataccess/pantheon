@@ -27,7 +27,6 @@ export default class Search extends Component {
     isModalOpen: false,
     isSortedUp: true,
     loggedinStatus: false,
-    nameKey: "name",
     nextPageRowCount: 1,
     page: 1,
     pageLimit: 10,
@@ -91,7 +90,7 @@ export default class Search extends Component {
                     />}
                   <DataListItemCells 
                         dataListCells={[
-                          <DataListCell width={2} key="name">
+                          <DataListCell width={2} key="title">
                             <button onClick={this.sortByName} className="sp-prop" id="span-name" aria-label="sort column by name">Name</button>
                           </DataListCell>,
                           <DataListCell width={2} key="description">
@@ -128,10 +127,10 @@ export default class Search extends Component {
                         name={data["pant:transientPath"]}
                         onClick={this.handleDeleteCheckboxChange(data["pant:transientPath"])}
                       />}
-                    <DataListItemCells key={data["pant:transientPath"]} onClick={this.setPreview(data["pant:transientPath"])}
+                    <DataListItemCells key={data["pant:transientPath"]} onClick={this.setPreview(data["pant:transientPath"])} 
                           dataListCells={[      
                                 <DataListCell key="div-title" width={2}>
-                                  <span>{data[this.state.nameKey]}</span>
+                                  <span>{data["jcr:title"]}</span>
                                 </DataListCell>,
                                 <DataListCell  key="div-description" width={2}>
                                   <span>{data["jcr:description"]===""?"No items found to be displayed":data["jcr:description"]}</span>
@@ -404,7 +403,7 @@ export default class Search extends Component {
   };
 
   private sortByName = () => {
-    this.sort("name")
+    this.sort("jcr:title")
   }
 
   private sortByDescription = () => {

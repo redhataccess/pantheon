@@ -54,6 +54,7 @@ public class ModuleRevisionUpload implements PostOperation {
             String asciidocContent = ServletUtils.paramValue(request, "asciidoc");
             String path = request.getResource().getPath();
             String moduleName = ResourceUtil.getName(path);
+            String description = ServletUtils.paramValue(request, "jcr:description");
 
             log.debug("Pushing new module revision at: " + path + " with locale: " + locale);
             log.trace("and content: " + asciidocContent);
@@ -64,6 +65,9 @@ public class ModuleRevisionUpload implements PostOperation {
             if(moduleResource == null) {
                 Map<String, Object> props = Maps.newHashMap();
                 props.put("jcr:primaryType", "pant:module");
+                props.put("jcr:title", moduleName);
+                props.put("jcr:description", description);
+
 
                 moduleResource =
                         ResourceUtil.getOrCreateResource(
