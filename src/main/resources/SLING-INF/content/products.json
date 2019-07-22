@@ -1,4 +1,3 @@
 {
-  "jcr:primaryType": "sling:Folder",
-  "sling:resourceType": "pantheon/product/all"
+  "jcr:primaryType": "sling:Folder"
 }
