@@ -95,21 +95,23 @@ class Module extends Component {
         'cache-control': 'no-cache'
       }
       console.log("The file is: " + this.state.moduleFile)
-      const blob = new Blob([this.state.moduleFile[0]], { type: "text/x-asciidoc" })
+      const blob = new Blob([this.state.moduleFile[0]])
       const formData = new FormData();
       formData.append("jcr:title", this.state.moduleName)
       formData.append("jcr:description", this.state.moduleDescription)
-      formData.append("sling:resourceType", "pantheon/module")
+      formData.append("sling:resourceType", "pantheon/modules")
       formData.append("jcr:primaryType", 'pant:module')
-      formData.append("en_US/v1/asciidoc@TypeHint", 'nt:file')
-      formData.append("en_US/v1/asciidoc", blob)
+      formData.append("asciidoc@TypeHint", 'nt:file')
+      formData.append("asciidoc/jcr:content/jcr:mimeType", "text/x-asciidoc")
+      formData.append("asciidoc", blob)
+      formData.append(":operation", "pant:newModuleRevision")
 
       fetch('/content/modules/' + this.state.moduleName, {
         body: formData,
         headers: hdrs,
         method: 'post'
       }).then(response => {
-        if (response.status === 201 || response.status === 200 || response.status === 202) {
+        if (response.status === 201 || response.status === 200) {
           console.log(" Works " + response.status)
           this.setState({ redirect: true })
         } else if (response.status === 500) {
