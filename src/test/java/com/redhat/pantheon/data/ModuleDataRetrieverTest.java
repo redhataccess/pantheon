@@ -63,11 +63,11 @@ public class ModuleDataRetrieverTest {
         // Given
         slingContext.build()
                 .resource("/content/modules/test/module1",
-                        "sling:resourceType", "pantheon/modules")
+                        "sling:resourceType", "pantheon/module")
                 .resource("/content/modules/test/module2",
-                        "sling:resourceType", "pantheon/modules")
+                        "sling:resourceType", "pantheon/module")
                 .resource("/content/modules/test/module3",
-                        "sling:resourceType", "pantheon/modules")
+                        "sling:resourceType", "pantheon/module")
                 .commit();
         ModuleDataRetriever retriever = new ModuleDataRetriever(resourceResolver);
 
@@ -85,11 +85,11 @@ public class ModuleDataRetrieverTest {
         // Given
         slingContext.build()
                 .resource("/content/modules/test/module1",
-                        "sling:resourceType", "pantheon/modules")
+                        "sling:resourceType", "pantheon/module")
                 .resource("/content/modules/test/module2",
-                        "sling:resourceType", "pantheon/modules")
+                        "sling:resourceType", "pantheon/module")
                 .resource("/content/modules/test/module3",
-                        "sling:resourceType", "pantheon/modules")
+                        "sling:resourceType", "pantheon/module")
                 .commit();
         ModuleDataRetriever retriever = new ModuleDataRetriever(resourceResolver);
 
@@ -106,11 +106,11 @@ public class ModuleDataRetrieverTest {
         // Given
         slingContext.build()
                 .resource("/content/modules/test/module1",
-                        "sling:resourceType", "pantheon/modules")
+                        "sling:resourceType", "pantheon/module")
                 .resource("/content/modules/test/module2",
-                        "sling:resourceType", "pantheon/modules")
+                        "sling:resourceType", "pantheon/module")
                 .resource("/content/modules/test/module3",
-                        "sling:resourceType", "pantheon/modules")
+                        "sling:resourceType", "pantheon/module")
                 .commit();
         ModuleDataRetriever retriever = new ModuleDataRetriever(resourceResolver);
 

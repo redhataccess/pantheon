@@ -1,6 +1,6 @@
 package com.redhat.pantheon.model.api;
 
-import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.ModuleRevision;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
@@ -28,8 +28,8 @@ class SlingResourceAdapterFactoryTest {
                 .commit();
 
         // When
-        Module adapter = modelAdapterFactory.getAdapter(slingContext.resourceResolver().getResource("/content/module1"),
-                Module.class);
+        ModuleRevision adapter = modelAdapterFactory.getAdapter(slingContext.resourceResolver().getResource("/content/module1"),
+                ModuleRevision.class);
 
         // Then
         assertNotNull(adapter);

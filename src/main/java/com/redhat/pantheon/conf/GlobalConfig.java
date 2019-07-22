@@ -35,6 +35,8 @@ public class GlobalConfig {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalConfig.class);
 
+    public static final Locale DEFAULT_MODULE_LOCALE = Locale.US;
+
     private final LoadableValue<List<String>> GEM_PATHS = new LoadableValue<>(this::loadGemPaths);
 
     private final LoadableValue<Optional<File>> TEMPLATE_DIRECTORY =

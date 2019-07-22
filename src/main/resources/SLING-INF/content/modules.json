@@ -1,4 +1,4 @@
 {
   "jcr:primaryType": "sling:Folder",
-  "sling:resourceType": "pantheon/modules/all"
+  "sling:resourceType": "pantheon/module/all"
 }
