@@ -175,7 +175,6 @@ public class SlingResource implements Resource {
      * Creates a new File-typed resource definition for this resource.
      * File resources contain a very specific structure.
      * @param name child resource name
-     * @param <T>
      * @return A new File-type child definition for this SlingResource
      */
     protected Child<FileResource> file(String name) {

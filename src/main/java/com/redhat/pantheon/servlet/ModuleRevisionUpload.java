@@ -23,6 +23,18 @@ import java.util.stream.Collectors;
 
 import static com.google.common.collect.Streams.stream;
 
+/**
+ * Post operation to add a new Module revision to the system.
+ * Only thre parameters are expected in the post request:
+ * 1. locale - Optional; indicates the locale that the module content is in
+ * 2. :operation - This value must be 'pant:newModuleRevision'
+ * 3. asciidoc - The file upload (multipart) containing the asciidoc content file for the new module revision.
+ *
+ * The url to POST a request to the server is the path of the new or existing module to host the content.
+ * If there is no content for said url, the module is created and a single revision along with it.
+ *
+ * @author Carlos Munoz
+ */
 @Component(
         service = PostOperation.class,
         property = {
@@ -43,8 +55,8 @@ public class ModuleRevisionUpload implements PostOperation {
             String path = request.getResource().getPath();
             String moduleName = ResourceUtil.getName(path);
 
-            log.info("Locale: " + locale);
-            log.info("Content: " + asciidocContent);
+            log.debug("Pushing new module revision at: " + path + " with locale: " + locale);
+            log.trace("and content: " + asciidocContent);
 
             // Try to find the module
             Resource moduleResource = request.getResourceResolver().getResource(path);

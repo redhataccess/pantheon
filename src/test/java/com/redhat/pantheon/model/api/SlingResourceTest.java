@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.api;
 
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -11,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Calendar;
 import java.util.Map;
 
+import static org.apache.commons.lang3.tuple.Pair.of;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
@@ -75,6 +77,86 @@ class SlingResourceTest {
 
         // Then
         assertEquals("grandchild-name", model.GRANDCHILD_NAME.get());
+    }
+
+    @Test
+    public void createChild() throws Exception {
+        // Given
+        slingContext.build()
+                .resource("/node")
+                .commit();
+        SlingResource model = new SlingResource(slingContext.resourceResolver().getResource("/node"));
+
+        // When
+        SlingResource child = model.createChild("child");
+        SlingResource grandchild = model.createChild("/grand/child");
+        SlingResource childWithProps = model.createChild("childWithProps",
+                of("name", "aName"),
+                of("age", 15L));
+
+
+        // Then
+        assertNotNull(child);
+        assertThrows(PersistenceException.class, () -> model.createChild("child"), "Same child cannot be created twice");
+        assertNotNull(grandchild);
+        assertNotNull(childWithProps);
+        assertEquals("aName", childWithProps.getProperty("name", String.class));
+        assertEquals(new Long(15), childWithProps.getProperty("age", Long.class));
+    }
+
+    @Test
+    public void createChildUsingDefinition() {
+        // Given
+        slingContext.build()
+                .resource("/node")
+                .commit();
+        SlingResource model = new SlingResource(slingContext.resourceResolver().getResource("/node"));
+
+        // When
+        SlingResource child = model.createChild(model.child("child", SlingResource.class, "nt:unstructured"));
+        SlingResource grandchild = model.createChild(model.child("/grand/child", SlingResource.class));
+
+
+        // Then
+        assertNotNull(child);
+        assertThrows(RuntimeException.class, () -> model.createChild(model.child("child", SlingResource.class)),
+                "Same child cannot be created twice");
+        assertNotNull(grandchild);
+    }
+
+    @Test
+    public void getChild() {
+        // Given
+        slingContext.build()
+                .resource("/node/child")
+                .commit();
+        SlingResource model = new SlingResource(slingContext.resourceResolver().getResource("/node"));
+
+        // When
+        SlingResource child = model.getChild("child", SlingResource.class);
+
+        // Then
+        assertNotNull(child);
+        assertNull(model.getChild("non-existent", SlingResource.class));
+    }
+
+    @Test
+    public void getOrCreateChild() throws Exception {
+        // Given
+        slingContext.build()
+                .resource("/node/child")
+                .commit();
+        SlingResource model = new SlingResource(slingContext.resourceResolver().getResource("/node"));
+
+        // When
+        SlingResource child = model.getOrCreateChild("child");
+        SlingResource nonExistentChild = model.getOrCreateChild("new-child",
+                of("name", "newChild"));
+
+        // Then
+        assertNotNull(child);
+        assertNotNull(nonExistentChild);
+        assertEquals("newChild", nonExistentChild.getProperty("name", String.class));
     }
 
     @Test
