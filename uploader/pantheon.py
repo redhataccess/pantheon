@@ -158,31 +158,6 @@ def remove_trailing_slash(path):
         path = path[:-1]
     return path
 
-def recursive_glob(directory, pattern='*'):
-    """
-    Matching files beginning with a pattern from given directory and subdirectories.
-    It ignores pantheon2.yml file for pattern match. It returns a list of files matched
-
-    Parameters:
-    directory (string): Path to a directory that contains files to be uploaded
-    pattern (string): File pattern. Can be a wild card(*).
-
-    Returns:
-    list: A list of files matched
-    """
-    if not os.path.exists(directory):
-        raise ValueError("Directory not found {}".format(directory))
-
-    matches = []
-    for root, dirnames, filenames in os.walk(directory):
-        for filename in filenames:
-            if filename == 'pantheon2.yml':
-                continue
-            full_path = os.path.join(root, filename)
-            if fnmatch.filter(full_path, pattern):
-                matches.append(os.path.join(root, filename))
-    return matches
-
 def find_files(patterns, directory):
     """
     Finds files matching patterns defined in patheon2.yml. To match everything
@@ -201,6 +176,9 @@ def find_files(patterns, directory):
     if patterns:
         for pattern in patterns:
             for file in glob.iglob(directory + '/' + pattern, recursive=True):
+                logger.debug('file %s', file)
+                if file == directory + '/' + 'pantheon2.yml':
+                    continue
                 if os.path.isfile(file):
                     files.append(file)
 
