@@ -32,7 +32,7 @@ export default class Search extends Component {
     pageLimit: 10,
     redirect: false,
     redirectLocation: '',
-    showOptions: true,
+    showDropdownOptions: true,
     sortKey: ''    
   };
 
@@ -77,7 +77,7 @@ export default class Search extends Component {
                 nextPageRecordCount={this.state.nextPageRowCount}
                 handlePerPageLimit={this.changePerPageLimit}
                 perPageLimit={this.state.pageLimit}
-                showOptions={this.state.showOptions}
+                showDropdownOptions={this.state.showDropdownOptions}
                 bottom={false}
               />
             </div>
@@ -192,7 +192,7 @@ export default class Search extends Component {
                 nextPageRecordCount={this.state.nextPageRowCount}
                 handlePerPageLimit={this.changePerPageLimit}
                 perPageLimit={this.state.pageLimit}
-                showOptions={!this.state.showOptions}
+                showDropdownOptions={!this.state.showDropdownOptions}
                 bottom={true}
               />
             </div>

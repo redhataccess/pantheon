@@ -15,7 +15,7 @@ describe('Tests for Dropdown', () => {
     expect(view).toMatchSnapshot();
   });
 
-  it('should render button for dropdown list', () => {
+  it('should render dropdown list', () => {
     const wrapper = mount(<Dropdown
         perPageValue={move}
         newPerPagevalue={"25 items per page"}

@@ -11,7 +11,7 @@ export interface IProps {
   pageNumber: number
   nextPageRecordCount: number
   perPageLimit:number
-  showOptions: boolean
+  showDropdownOptions: boolean
   bottom: boolean
 }
 
@@ -35,32 +35,32 @@ class Pagination extends React.Component<IProps> {
 
   };
 
-  public button1 = true;
-  public button2 = true;
-  public button3 = true;
+  public firstPageButton = true;
+  public previousPageButton = true;
+  public nextPageButton = true;
 
   public render() {
     const { isOpen, filteredItems } = this.state;
 
     if(this.props.pageNumber === 1 && this.props.nextPageRecordCount !== 0){
-        this.button1=true;
-        this.button2=true;
-        this.button3=false;
+        this.firstPageButton=true;
+        this.previousPageButton=true;
+        this.nextPageButton=false;
     }
     if(this.props.nextPageRecordCount === 0 && this.props.pageNumber !== 1){
-      this.button1=false;
-      this.button2=false;
-      this.button3=true;
+      this.firstPageButton=false;
+      this.previousPageButton=false;
+      this.nextPageButton=true;
     }
     if(this.props.pageNumber !== 1 && this.props.nextPageRecordCount !== 0){
-      this.button1=false;
-      this.button2=false;
-      this.button3=false;
+      this.firstPageButton=false;
+      this.previousPageButton=false;
+      this.nextPageButton=false;
     }
     if(this.props.pageNumber === 1 && this.props.nextPageRecordCount === 0){
-      this.button1=true;
-      this.button2=true;
-      this.button3=true;
+      this.firstPageButton=true;
+      this.previousPageButton=true;
+      this.nextPageButton=true;
     }
     
     return (
@@ -77,23 +77,23 @@ class Pagination extends React.Component<IProps> {
                       <div className="pf-c-pagination" id="pagination-options-menu-top">
                         <div className="pf-c-dropdown">
                           <div className="pf-c-options-menu__toggle pf-m-plain pf-m-text">
-                            {!this.props.showOptions && !this.props.bottom &&
+                            {!this.props.showDropdownOptions && !this.props.bottom &&
                               <ContextSelector
                                 isOpen={isOpen}
                                 onToggle={this.onToggle}
                               />}
-                            {this.props.showOptions &&
+                            {this.props.showDropdownOptions &&
                               <Dropdown
                                 perPageValue={this.dropDownValue}
                                 newPerPagevalue={this.state.itemsPerPage + " items per page"}
                               />
                             }
-                            <button disabled={this.button1} data-action="first" aria-label="Go to first page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveToFirst}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img">
+                            <button disabled={this.firstPageButton} data-action="first" aria-label="Go to first page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveToFirst}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img">
                               <path d="M223.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L319.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L393.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34zm-192 34l136 136c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9L127.9 256l96.4-96.4c9.4-9.4 9.4-24.6 0-33.9L201.7 103c-9.4-9.4-24.6-9.4-33.9 0l-136 136c-9.5 9.4-9.5 24.6-.1 34z" transform="" /></svg></button>
-                            <button disabled={this.button2} data-action="previous" aria-label="Go to previous page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveLeft}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
+                            <button disabled={this.previousPageButton} data-action="previous" aria-label="Go to previous page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveLeft}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
                               <path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z" transform="" /></svg></button>
                             Page: {this.props.pageNumber}
-                            <button disabled={this.button3} data-action="next" aria-label="Go to next page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveRight}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
+                            <button disabled={this.nextPageButton} data-action="next" aria-label="Go to next page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveRight}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512" aria-hidden="true" role="img">
                               <path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z" transform="" /></svg></button>
                           </div>
                         </div>

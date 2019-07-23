@@ -16,7 +16,7 @@ describe('Tests for Pagination', () => {
     nextPageRecordCount={1}
     handlePerPageLimit={move}
     perPageLimit={1}
-    showOptions={true}
+    showDropdownOptions={true}
     bottom={true}
 />);
     expect(view).toMatchSnapshot();
@@ -31,7 +31,7 @@ describe('Tests for Pagination', () => {
       nextPageRecordCount={1}
       handlePerPageLimit={move}
       perPageLimit={1}
-      showOptions={true}
+      showDropdownOptions={true}
       bottom={true}
     />);
     const pageNumberDisplay = wrapper.find(LevelItem);
