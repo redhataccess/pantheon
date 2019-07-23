@@ -44,7 +44,7 @@ class Admin extends Component {
                 <GridItem span={3} rowSpan={2}/>
                 <GridItem span={2} rowSpan={2}>
                   <Card>
-                    <CardHeader><Button isBlock={true} variant={"secondary"} onClick={this.browserLink()}><img src={Browseri} style={{height: "100px"}}/></Button></CardHeader>
+                    <CardHeader><Button isBlock={true} variant={"secondary"} onClick={this.browserLink()}><img src={"./images/sample.png"} style={{height: "100px"}}/></Button></CardHeader>
                     <CardBody style={{fontSize: "16px"}}>Browser link</CardBody>
                   </Card>
                 </GridItem>
