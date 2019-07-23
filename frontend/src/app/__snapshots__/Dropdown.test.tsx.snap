@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tests for Dropdown should render Dropdown component 1`] = `
+<Fragment>
+  <div
+    className="pf-c-context-selector"
+  >
+    <button
+      aria-expanded="false"
+      aria-labelledby="pf-context-selector-label-id-0 pf-context-selector-toggle-id-0"
+      className="pf-c-context-selector__toggle"
+      id="pf-context-selector-toggle-id-0"
+      onClick={[Function]}
+      type="button"
+    >
+      <span
+        className="pf-c-context-selector__toggle-text"
+      >
+        25 items per page
+      </span>
+      <svg
+        aria-hidden="true"
+        className="pf-c-context-selector__toggle-icon"
+        fill="currentColor"
+        height="1em"
+        role="img"
+        viewBox="0 0 320 512"
+        width="1em"
+      >
+        <path
+          d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+          transform=""
+        />
+      </svg>
+    </button>
+  </div>
+</Fragment>
+`;

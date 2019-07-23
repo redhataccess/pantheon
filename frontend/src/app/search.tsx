@@ -6,7 +6,7 @@ import {
   Level, LevelItem
 } from '@patternfly/react-core';
 import '@app/app.css';
-import {Pagination} from '@app/Pagination';
+import { Pagination } from '@app/Pagination';
 
 export default class Search extends Component {
   public state = {
@@ -32,7 +32,8 @@ export default class Search extends Component {
     pageLimit: 10,
     redirect: false,
     redirectLocation: '',
-    sortKey: ''
+    showDropdownOptions: true,
+    sortKey: ''    
   };
 
   public transientPaths : string[] = [];
@@ -62,7 +63,7 @@ export default class Search extends Component {
             >
               <div className="row-view">
                 <TextInput id="search" type="text" onKeyDown={this.getRows} onChange={this.setInput} value={this.state.input} />
-                <Button onClick={this.doSearch}>Search</Button>
+                <Button onClick={this.newSearch}>Search</Button>
               </div>
             </FormGroup>
             <div className="notification-container">
@@ -71,9 +72,13 @@ export default class Search extends Component {
               <Pagination
                 handleMoveLeft={this.updatePageCounter("L")}
                 handleMoveRight={this.updatePageCounter("R")}
+                handleMoveToFirst={this.updatePageCounter("F")}
                 pageNumber={this.state.page}
                 nextPageRecordCount={this.state.nextPageRowCount}
-                noOfRecordsOnPage={this.state.data.length}
+                handlePerPageLimit={this.changePerPageLimit}
+                perPageLimit={this.state.pageLimit}
+                showDropdownOptions={this.state.showDropdownOptions}
+                bottom={false}
               />
             </div>
             <DataList aria-label="Simple data list example">
@@ -178,14 +183,17 @@ export default class Search extends Component {
                     )}
               </DataListItem>
             </DataList>
-
             <div className="notification-container">
               <Pagination
                 handleMoveLeft={this.updatePageCounter("L")}
                 handleMoveRight={this.updatePageCounter("R")}
+                handleMoveToFirst={this.updatePageCounter("F")}
                 pageNumber={this.state.page}
                 nextPageRecordCount={this.state.nextPageRowCount}
-                noOfRecordsOnPage={this.state.data.length}
+                handlePerPageLimit={this.changePerPageLimit}
+                perPageLimit={this.state.pageLimit}
+                showDropdownOptions={!this.state.showDropdownOptions}
+                bottom={true}
               />
             </div>
             {/* Alert for delete confirmation */}
@@ -347,9 +355,17 @@ export default class Search extends Component {
 
   private getRows = (event) => {
     if (event.key === 'Enter') {
-      this.doSearch()
+      this.setState({page: 1, initialLoad: true},()=>{
+        this.doSearch()
+      })
     }
   };
+
+  private newSearch = () => {
+    this.setState({page: 1, initialLoad: true},()=>{
+      this.doSearch()
+    })
+  }
 
   private doSearch = () => {
     this.setState({ initialLoad: false })
@@ -449,6 +465,7 @@ export default class Search extends Component {
     }
     backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
     backend += "&offset=" + ((this.state.page - 1)*this.state.pageLimit) + "&limit=" + this.state.pageLimit
+    console.log('itemsPerPaeProp: '+this.state.pageLimit)
     console.log(backend)  
     return backend
   }
@@ -475,7 +492,16 @@ export default class Search extends Component {
       this.setState({page: this.state.page - 1, initialLoad: true})
     }else if(direction==="R"){
       this.setState({page: this.state.page + 1, initialLoad: true})      
+    }else if(direction==="F"){
+      this.setState({page: 1, initialLoad: true})
     }
+  }
+
+  private changePerPageLimit = (pageLimitValue) => {
+    this.setState({pageLimit: pageLimitValue, initialLoad: true,page: 1},()=>{
+      console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
+      return (this.state.pageLimit+" items per page")
+    })
   }
 
 }
