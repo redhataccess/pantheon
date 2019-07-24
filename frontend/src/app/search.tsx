@@ -33,7 +33,7 @@ export default class Search extends Component {
     redirect: false,
     redirectLocation: '',
     showDropdownOptions: true,
-    sortKey: ''    
+    sortKey: ''
   };
 
   public transientPaths : string[] = [];
@@ -441,7 +441,7 @@ export default class Search extends Component {
   private getSortedRows() {
     fetch(this.buildSearchUrl())
       .then(response => response.json())
-      .then(responseJSON => this.setState({ data: responseJSON.data, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0  }))
+      .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0  }))
       .then(() => {
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
@@ -458,8 +458,8 @@ export default class Search extends Component {
 
   private buildSearchUrl() {
     let backend = "/modules.json?search="
-    if (this.state.input == null) {
-      backend += "*"
+    if (this.state.input != null) {
+      backend += this.state.input
     }
     backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
     backend += "&offset=" + ((this.state.page - 1)*this.state.pageLimit) + "&limit=" + this.state.pageLimit
