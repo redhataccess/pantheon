@@ -176,8 +176,10 @@ def find_files(patterns, directory):
     if patterns:
         for pattern in patterns:
             for file in glob.iglob(directory + '/' + pattern, recursive=True):
-                logger.debug('file %s', file)
-                if file == directory + '/' + 'pantheon2.yml':
+                #logger.debug('file %s', file)
+                file = PurePath(file)
+                name = file.name
+                if name == 'pantheon2.yml':
                     continue
                 if os.path.isfile(file):
                     files.append(file)
