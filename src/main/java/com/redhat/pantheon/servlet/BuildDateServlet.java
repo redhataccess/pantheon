@@ -1,6 +1,6 @@
 package com.redhat.pantheon.servlet;
 
-import com.redhat.pantheon.data.ModuleDataRetriever;
+import com.redhat.pantheon.use.PlatformData;
 import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -12,19 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.writeAsJson;
-import com.redhat.pantheon.use.PlatformData;
 
 @Component(
         service = Servlet.class,
