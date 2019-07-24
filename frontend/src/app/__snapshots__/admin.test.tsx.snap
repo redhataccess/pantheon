@@ -268,7 +268,7 @@ exports[`Tests for Admin Panel should render Admin component 1`] = `
             variant="secondary"
           >
             <img
-              src="./images/sample.png"
+              src="test-file-stub"
               style={
                 Object {
                   "height": "100px",

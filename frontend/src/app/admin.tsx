@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
 import { Grid, GridItem } from '@patternfly/react-core';
-import Browseri from './images/browseri.svg';
-import consolei from './images/consolei.svg';
-import wSelcomei from './images/welcomei.svg';
+import Browseri from '@app/images/browseri.svg';
+import Consolei from '@app/images/consolei.svg';
+import Welcomei from '@app/images/welcomei.svg';
 import { Dropdown, DropdownToggle, DropdownItem, DropdownSeparator, DropdownPosition, DropdownDirection, KebabToggle, Card, CardHeader, CardBody } from '@patternfly/react-core';
 
 class Admin extends Component {
@@ -24,6 +24,7 @@ class Admin extends Component {
                     })
             })
         }
+        const browserLogo = require("@app/images/browseri.svg") as string;
 
         return (  
             <React.Fragment>
@@ -44,7 +45,7 @@ class Admin extends Component {
                 <GridItem span={3} rowSpan={2}/>
                 <GridItem span={2} rowSpan={2}>
                   <Card>
-                    <CardHeader><Button isBlock={true} variant={"secondary"} onClick={this.browserLink()}><img src={"./images/sample.png"} style={{height: "100px"}}/></Button></CardHeader>
+                    <CardHeader><Button isBlock={true} variant={"secondary"} onClick={this.browserLink()}><img src={browserLogo} style={{height: "100px"}}/></Button></CardHeader>
                     <CardBody style={{fontSize: "16px"}}>Browser link</CardBody>
                   </Card>
                 </GridItem>
