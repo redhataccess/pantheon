@@ -22,6 +22,8 @@ public class ModuleRevision extends SlingResource {
 
     public final Field<String> title = stringField("jcr:title");
 
+    public final Field<String> mAbstract = stringField("pant:abstract");
+
     public final Field<String> description = stringField("jcr:description");
 
     public final Field<Calendar> created = dateField("jcr:created");

@@ -1,6 +1,9 @@
 package com.redhat.pantheon.servlet;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.redhat.pantheon.asciidoctor.AsciidoctorPool;
+import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.Module;
@@ -9,18 +12,22 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceUtil;
-import org.apache.sling.servlets.post.PostOperation;
-import org.apache.sling.servlets.post.PostResponse;
-import org.apache.sling.servlets.post.SlingPostProcessor;
+import org.apache.sling.servlets.post.*;
+import org.asciidoctor.Asciidoctor;
 import org.osgi.framework.Constants;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Streams.stream;
 
 /**
@@ -42,12 +49,19 @@ import static com.google.common.collect.Streams.stream;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
                 PostOperation.PROP_OPERATION_NAME + "=pant:newModuleRevision"
         })
-public class ModuleRevisionUpload implements PostOperation {
+public class ModuleRevisionUpload extends AbstractPostOperation {
 
     private static final Logger log = LoggerFactory.getLogger(ModuleRevisionUpload.class);
 
+    private AsciidoctorPool asciidoctorPool;
+
+    @Activate
+    public ModuleRevisionUpload(@Reference AsciidoctorPool asciidoctorPool) {
+        this.asciidoctorPool = asciidoctorPool;
+    }
+
     @Override
-    public void run(SlingHttpServletRequest request, PostResponse response, SlingPostProcessor[] processors) {
+    protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
 
         try {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
@@ -111,7 +125,7 @@ public class ModuleRevisionUpload implements PostOperation {
             request.getResourceResolver().commit();
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RepositoryException("Error uploading a module revision", e);
         }
     }
 
@@ -123,7 +137,25 @@ public class ModuleRevisionUpload implements PostOperation {
         FileResource asciidoc = newRevision.asciidoc.getOrCreate();
         asciidoc.jcrContent.getOrCreate().jcrData.set(asciidocContent);
         asciidoc.jcrContent.getOrCreate().mimeType.set("text/x-asciidoc");
+        extractMetadata(newRevision);
         return newRevision;
+    }
+
+    private void extractMetadata(ModuleRevision moduleRevision) {
+        log.info("=== Start extracting metadata ");
+        long startTime = System.currentTimeMillis();
+        Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
+        try {
+            asciidoctor.javaExtensionRegistry().treeprocessor(
+                    new MetadataExtractorTreeProcessor(moduleRevision));
+
+            asciidoctor.load(moduleRevision.asciidocContent.get(), newHashMap());
+        }
+        finally {
+            asciidoctorPool.returnObject(asciidoctor);
+        }
+        long endTime = System.currentTimeMillis();
+        log.info("=== End extracting metadata. Time it took: " + (endTime-startTime)/1000 + " secs");
     }
 
 }
