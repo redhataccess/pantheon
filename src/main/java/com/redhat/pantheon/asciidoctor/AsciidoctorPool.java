@@ -20,7 +20,7 @@ import org.osgi.service.component.annotations.*;
 public class AsciidoctorPool extends ObjectPool<Asciidoctor> {
 
     // Hardcoding these values for now
-    protected static final int INITIAL_SIZE = 5;
+    protected static final int INITIAL_SIZE = 1;
     protected static final int MAX_SIZE = 10;
 
     @Activate
@@ -47,6 +47,12 @@ public class AsciidoctorPool extends ObjectPool<Asciidoctor> {
         asciidoctor.javaExtensionRegistry().includeProcessor(
                 new SlingResourceIncludeProcessor(base));
         return asciidoctor;
+    }
+
+    @Override
+    public void returnObject(Asciidoctor obj) {
+        obj.unregisterAllExtensions();
+        super.returnObject(obj);
     }
 
     @Override

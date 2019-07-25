@@ -4,7 +4,6 @@ import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.servlets.post.HtmlResponse;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +22,7 @@ class ModuleRevisionUploadTest {
     @Test
     void createFirstRevision() {
         // Given
-        ModuleRevisionUpload upload = new ModuleRevisionUpload();
+        ModuleRevisionUpload upload = new ModuleRevisionUpload(null);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the adoc content");
@@ -44,7 +43,7 @@ class ModuleRevisionUploadTest {
                 .resource("/new/module/locales/es_ES/revisions/v1/asciidoc/jcr:content",
                         "jcr:data", "This is the old adoc content")
                 .commit();
-        ModuleRevisionUpload upload = new ModuleRevisionUpload();
+        ModuleRevisionUpload upload = new ModuleRevisionUpload(null);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the adoc content");
@@ -66,7 +65,7 @@ class ModuleRevisionUploadTest {
                 .resource("/new/module/locales/es_ES/revisions/v1/asciidoc/jcr:content",
                         "jcr:data", "This is the old adoc content")
                 .commit();
-        ModuleRevisionUpload upload = new ModuleRevisionUpload();
+        ModuleRevisionUpload upload = new ModuleRevisionUpload(null);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the old adoc content");
