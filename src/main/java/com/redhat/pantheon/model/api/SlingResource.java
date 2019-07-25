@@ -1,306 +1,258 @@
 package com.redhat.pantheon.model.api;
 
-import com.google.common.collect.Streams;
-import org.apache.sling.api.adapter.Adaptable;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.resource.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static com.redhat.pantheon.model.api.SlingResourceUtil.toSlingResource;
-import static java.util.Arrays.stream;
 
 /**
- * An Editable Sling resource model object. These are simple objects made up of a single constructor based on an existing
- * sling resource, and a set of fields or child resources mapped to the resource. Fields and child resources are
- * strongly typed and they can be modified. SlingResources are wrappers around existing sling resources and as such the
- * resource needs to exist before it can be wrapped by one of these.
+ * An implementation of Sling's {@link Resource}, which wraps around an existing reource and
+ * provides additional flexibility for use in domain services. For example, the ability to access
+ * children, and modify properties directly on the object.
+ *
+ * It also adds the possibility to create strongly-typed fields and child resources to prevent
+ * the proliferation of magic strings in the code, as well as a defined node structure when
+ * required.
+ *
+ * @author Carlos Munoz
  */
-public class SlingResource implements Adaptable {
+public class SlingResource implements Resource {
 
-    private final Resource resource;
+    private static final String DEFAULT_PRIMARY_TYPE = "nt:unstructured";
 
-    public SlingResource(@Nonnull Resource resource) {
-        this.resource = resource;
-    }
+    private final Resource wrapped;
 
-    public Resource getResource() {
-        return resource;
-    }
-
-    /**
-     * Initializes all fields which have a default value, and which aren't already initialized.
-     * This method is only meant to be called after new resources are created.
-     */
-    protected void initDefaultValues() {
-        getMembers(Field.class)
-                // discard fields which already have a value set
-                .filter(field -> !field.isSet())
-                // only consider fields which have a default value
-                .filter(field -> field.defaultValue.isPresent())
-                .forEach(field -> field.set(field.defaultValue.get()));
+    public SlingResource(Resource wrapped) {
+        this.wrapped = wrapped;
     }
 
     /**
-     * Returns all SlingModel members (assigned fields which implement the ResourceMember interface
-     * @return A stream with all resource members in this object.
+     * Creates a child resource given a name and a set of initial properties
+     * @param name The child's name
+     * @param props The initial properties to be stored on the child resource
+     * @return The newly created child resource
+     * @throws PersistenceException If there is a problem creating the child resource
      */
-    private Stream<ResourceMember> allMembers() {
-        return stream(this.getClass().getDeclaredFields())
-                // only class fields which implement ResourceMember
-                .filter(reflectedField -> ResourceMember.class.isAssignableFrom(reflectedField.getType()))
-                // convert to big-Field values
-                .map(field -> {
-                    try {
-                        return (ResourceMember) field.get(SlingResource.this);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                // only initialized fields
-                .filter(field -> field != null);
+    public SlingResource createChild(String name, Pair<String, ?>... props) throws PersistenceException {
+        Map<String, Object> propsMap =
+                Arrays.stream(props).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return new SlingResource(wrapped.getResourceResolver().create(wrapped, name, propsMap));
     }
 
     /**
-     * Returns all SlingModel members of a specific implementation.
+     * Returns a child resource
+     * @param name The child's name
+     * @param type The type of SlingResource to interpret it as
+     * @param <T>
+     * @return The child resource or null if one doesn't exist by the given name
      */
-    private <A extends ResourceMember> Stream<A> getMembers(@Nonnull Class<A> memberClass) {
-        return (Stream<A>) allMembers()
-                .filter(resourceMember -> memberClass.isAssignableFrom(resourceMember.getClass()));
+    public <T extends SlingResource> T getChild(String name, Class<T> type) {
+        return toSlingResource(getChild(name), type);
     }
 
     /**
-     * Gets a sub-set of this resource's children as a specific {@link SlingResource} subclass. This method accepts
-     * one ore more predicates to filter out certain children. All predicates must be met in order for a child resource
-     * to be returned.
-     *
-     * @param modelType The {@link SlingResource} model type to return
-     * @param filterPredicates An array of predicates to filter out children
-     * @param <R>
-     * @return A stream of this {@link SlingResource}'s children which satisfy all the predicates.
+     * Returns a child resource, creating it if it doesn't exist.
+     * @param name The child's name
+     * @param props The properties to set on the child only if being created.
+     * @return The found or created child resource
+     * @throws PersistenceException If there is a problem creating the new child resource
      */
-    protected <R extends SlingResource> Stream<R> getChildren(Class<R> modelType,
-                                                              Predicate<R> ... filterPredicates) {
-        return Streams.stream(getResource().listChildren())
-                // convert the resources to the model type
-                .map(r -> toSlingResource(r, modelType))
-                // reduce all predicates to a single conjunction (AND) and filter out the children
-                .filter(
-                        Arrays.stream(filterPredicates).reduce(r -> true, Predicate::and)
-                );
+    public SlingResource getOrCreateChild(String name, Pair<String, ?>... props) throws PersistenceException {
+        if(wrapped.getChild(name) == null) {
+            return createChild(name, props);
+        }
+        return new SlingResource(wrapped.getChild(name));
     }
 
     /**
-     * Adds a new child to this {@link SlingResource} and returns the corresponding model.
-     * @param modelType The model type to adapt the new resource to.
-     * @param name The name of the new child resource
-     * @param <R>
-     * @return A {@link SlingResource} model for the newly created child resource
-     * @see SlingResourceUtil#createNewSlingResource(Resource, String, Class)
+     * Attempts to create a child resource. This method might throw an exception if there are
+     * problems creating the new child resource.
+     * @param child The child resource definition
+     * @param <T>
+     * @return The newly create child resource.
      */
-    protected <R extends SlingResource> R addChild(Class<R> modelType, String name) {
-        return SlingResourceUtil.createNewSlingResource(getResource(), name, modelType);
+    public <T extends SlingResource> T createChild(Child<T> child) {
+        Map<String, Object> props = newHashMap();
+        props.put("jcr:primaryType", child.getPrimaryType());
+        return SlingResourceUtil.createNewSlingResource(wrapped, child.getName(), props, child.getType());
     }
 
     /**
-     * Returns a map with all the fields (deep fields included) for this model. The keys for the map
-     * are the jcr field names.
-     *
-     * @param excluding A list of JCR field names to exclude from the returned map.
-     * @return
+     * Returns a child resource, creating it if it doesn't exist.
+     * @param child The child resource definition
+     * @param <T> The found or created child resource
+     * @return The found or created child resource.
      */
-    public Map<String, Object> toMap(String ... excluding) {
-        return Streams.concat(getMembers(Field.class), getMembers(DeepField.class))
-                // ignore null values
-                .filter(accessor -> accessor.get() != null)
-                // ignore the listed names
-                .filter(accessor ->
-                        stream(excluding).noneMatch(arrayField -> arrayField.equals(accessor.getName())))
-                // convert to a map
-                .collect(Collectors.toMap(
-                        ResourceMember::getName,
-                        Supplier::get
-                ));
+    public <T extends SlingResource> T getOrCreateChild(Child<T> child) {
+        if(isPresent(child)) {
+            return toSlingResource(wrapped.getChild(child.getName()), child.getType());
+        }
+        return createChild(child);
     }
 
     /**
-     * Commit any changes made to this resource.
-     *
-     * @throws PersistenceException If there is a problem making the changes
+     * Returns a resource's property
+     * @param name The name of the property
+     * @param type The type into which to cast the property value
+     * @param <T>
+     * @return The property's value, or null if no such property exists
      */
-    public void commit() throws PersistenceException {
-        this.getResource()
-                .getResourceResolver()
-                .commit();
+    public <T> T getProperty(String name, Class<T> type) {
+        return wrapped.getValueMap().get(name, type);
     }
 
     /**
-     * Calls the {@link Resource#adaptTo(Class)} method on the wrapped resource.
-     *
-     * @param type
-     * @param <AdapterType>
-     * @return
+     * Indicates if a child exists
+     * @param child The child resource definition
+     * @return True if a child based on the definition's name exists, false otherwise.
      */
+    public boolean isPresent(Child<?> child) {
+        return wrapped.getChild(child.getName()) != null;
+    }
+
+    /**
+     * Creates a new field definition for this resource
+     * @param name Field name
+     * @param type Field type
+     * @param <T>
+     * @return A new field definition for this SlingResource.
+     */
+    protected <T> Field<T> field(String name, Class<T> type) {
+        return new Field<>(name, type, this);
+    }
+
+    /**
+     * Creates a new String-typed field definition for this resource
+     * @param name Field name
+     * @return A new String-typed field definition for this SlingResource.
+     */
+    protected Field<String> stringField(String name) {
+        return new Field<>(name, String.class, this);
+    }
+
+    /**
+     * Creates a new Calendar-typed field definition for this resource
+     * @param name Field name
+     * @return A new Calendar-typed field definition for this SlingResource.
+     */
+    protected Field<Calendar> dateField(String name) {
+        return new Field<>(name, Calendar.class, this);
+    }
+
+    /**
+     * Creates a new child resource definition for this resource
+     * @param name child resource name
+     * @param type the {@link SlingResource} type
+     * @param primaryType The jcr primary type to assign to the new child (important if relying on JCR to auto-assign
+     *                    values, or auto-create nodes.
+     * @param <T>
+     * @return A new child definition for this SlingResource
+     */
+    protected <T extends SlingResource> Child<T> child(String name, Class<T> type, String primaryType) {
+        return new Child<>(name, type, primaryType, this);
+    }
+
+    /**
+     * Creates a new child resource definition for this resource.
+     * The primary type of the created node is determined by the DEFAULT_PRIMARY_TYPE property.
+     * @param name child resource name
+     * @param type the {@link SlingResource} type
+     * @param <T>
+     * @return A new child definition for this SlingResource
+     */
+    protected <T extends SlingResource> Child<T> child(String name, Class<T> type) {
+        return child(name, type, DEFAULT_PRIMARY_TYPE);
+    }
+
+    /**
+     * Creates a new File-typed resource definition for this resource.
+     * File resources contain a very specific structure.
+     * @param name child resource name
+     * @return A new File-type child definition for this SlingResource
+     */
+    protected Child<FileResource> file(String name) {
+        return child(name, FileResource.class, "nt:file");
+    }
+
+    /*
+     * The methods below are all delgate methods around the wrapped resource
+     * to make sure SlingResource conforms to the Resource interface.
+     */
+
     @Override
-    public <AdapterType> @Nullable AdapterType adaptTo(@NotNull Class<AdapterType> type) {
-        return resource.adaptTo(type);
+    public String getPath() {
+        return wrapped.getPath();
     }
 
-    /**
-     * A deep field (not directly set on the resource, but instead on a child resource). These fields may be read
-     * but not modified as they belong to a different resource. To edit them, use the {@link ChildResource} field
-     * type instead.
-     *
-     * @param <TYPE>
-     */
-    public final class DeepField<TYPE> implements Accessor<TYPE> {
-
-        private final Class<TYPE> fieldType;
-        private final String path;
-
-        public DeepField(Class<TYPE> fieldType, String path) {
-            this.fieldType = fieldType;
-            this.path = path;
-        }
-
-        @Override
-        public TYPE get() {
-            return SlingResource.this.getResource()
-                    .adaptTo(ValueMap.class)
-                    .get(getPath(), getFieldType());
-        }
-
-        private Class<TYPE> getFieldType() {
-            return fieldType;
-        }
-
-        String getPath() {
-            return path;
-        }
-
-        @Override
-        public String getName() {
-            return getPath();
-        }
+    @Override
+    public String getName() {
+        return wrapped.getName();
     }
 
-    /**
-     * A simple scalar Field or property in the SlingModel object.
-     *
-     * @param <TYPE> The type of the field to map.
-     */
-    public final class Field<TYPE> implements Accessor<TYPE>, Mutator<TYPE> {
-
-        private final Class<TYPE> fieldType;
-        private final String name;
-        private final Optional<TYPE> defaultValue;
-
-        public Field(Class<TYPE> fieldType, String name, TYPE defaultValue) {
-            this.fieldType = fieldType;
-            this.name = name;
-            this.defaultValue = Optional.ofNullable(defaultValue);
-        }
-
-        public Field(Class<TYPE> fieldType, String name) {
-            this(fieldType, name, null);
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        private Class<TYPE> getFieldType() {
-            return fieldType;
-        }
-
-        public TYPE get() {
-            return SlingResource.this.getResource()
-                    .getValueMap()
-                    .get(getName(), getFieldType());
-        }
-
-        public void set(TYPE value) {
-            SlingResource.this.getResource()
-                    .adaptTo(ModifiableValueMap.class)
-                    .put(this.name, value);
-        }
-
-        public boolean isSet() {
-            return SlingResource.this.getResource()
-                    .getValueMap()
-                    .containsKey(getName());
-        }
+    @Override
+    public Resource getParent() {
+        return wrapped.getParent();
     }
 
-    /**
-     * A Child resource. Useful to build deep and modifiable content structures.
-     *
-     * @param <MODELTYPE>
-     */
-    public final class ChildResource<MODELTYPE extends SlingResource> implements Accessor<MODELTYPE> {
+    @Override
+    public Iterator<Resource> listChildren() {
+        return wrapped.listChildren();
+    }
 
-        private final Class<MODELTYPE> modelType;
-        private final String name;
-        private Optional<MODELTYPE> cachedModelInstance = Optional.empty();
+    @Override
+    public Iterable<Resource> getChildren() {
+        return wrapped.getChildren();
+    }
 
-        public ChildResource(Class<MODELTYPE> modelType, String name) {
-            this.modelType = modelType;
-            this.name = name;
-        }
+    @Override
+    public Resource getChild(String relPath) {
+        return wrapped.getChild(relPath);
+    }
 
-        Class<MODELTYPE> getModelType() {
-            return modelType;
-        }
+    @Override
+    public String getResourceType() {
+        return wrapped.getResourceType();
+    }
 
-        @Override
-        public String getName() {
-            return name;
-        }
+    @Override
+    public String getResourceSuperType() {
+        return wrapped.getResourceSuperType();
+    }
 
-        public MODELTYPE get() {
-            // initialize the cached model instance if necessary
-            if(!cachedModelInstance.isPresent()) {
+    @Override
+    public boolean hasChildren() {
+        return wrapped.hasChildren();
+    }
 
-                Resource childResource = SlingResource.this.getResource().getChild(this.name);
+    @Override
+    public boolean isResourceType(String resourceType) {
+        return wrapped.isResourceType(resourceType);
+    }
 
-                if (childResource == null) {
-                    return null;
-                }
+    @Override
+    public ResourceMetadata getResourceMetadata() {
+        return wrapped.getResourceMetadata();
+    }
 
-                // the resource type should have a one arg constructor which takes a resource
-                MODELTYPE modelInstance = toSlingResource(childResource, modelType);
-                cachedModelInstance = Optional.of(modelInstance);
-            }
-            return cachedModelInstance.get();
-        }
+    @Override
+    public ResourceResolver getResourceResolver() {
+        return wrapped.getResourceResolver();
+    }
 
-        public SlingResource getParent() {
-            return SlingResource.this;
-        }
+    @Override
+    public ValueMap getValueMap() {
+        return wrapped.getValueMap();
+    }
 
-        public MODELTYPE getOrCreate() {
-            Resource parent = getParent().getResource();
-            if (!this.isPresent()) {
-                // throw away the created instance (let a new instance be cached below)
-                SlingResourceUtil.createNewSlingResource(parent, name, modelType);
-            }
-            return get();
-        }
-
-        public boolean isPresent() {
-            Resource parent = SlingResource.this.getResource();
-            return parent.getChild(name) != null;
-        }
+    @Override
+    public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
+        return wrapped.adaptTo(type);
     }
 }

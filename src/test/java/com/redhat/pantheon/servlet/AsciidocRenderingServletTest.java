@@ -13,31 +13,38 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Locale;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 public class AsciidocRenderingServletTest {
 
     private final SlingContext slingContext = new SlingContext();
 
-    final Function<Resource, Module> mockSlingResourceAdapter = input -> new Module(input);
+    final Function<Resource, Module> mockModuleAdapter= input -> new Module(input);
 
     @Mock AsciidoctorService asciidoctorService;
-    @Mock Resource resource;
 
     @Test
     @DisplayName("Generate html content from asciidoc")
     public void testGenerateHtmlFromAsciidoc() throws Exception {
-
         // Given
+        slingContext.build()
+                .resource("/module/locales/en_US/revisions/v1/jcr:content",
+                        "jcr:data", "A generated html string")
+                .commit();
+        slingContext.registerAdapter(Resource.class, Module.class, mockModuleAdapter);
+        Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
-        lenient().when(resource.adaptTo(Module.class)).thenReturn(mock(Module.class));
-        lenient().when(asciidoctorService.getModuleHtml(any(Module.class), anyMap(), anyBoolean()))
+        lenient().when(
+                asciidoctorService.getModuleHtml(
+                        any(Module.class), any(Locale.class), isNull(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
 
         // Test class
@@ -50,7 +57,7 @@ public class AsciidocRenderingServletTest {
         // Then
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(any(Module.class), anyMap(), eq(false));
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), isNull(), anyMap(), eq(false));
     }
 
     @Test
@@ -58,10 +65,17 @@ public class AsciidocRenderingServletTest {
     public void testGenerateHtmlFromAsciidocWithRerender() throws Exception {
 
         // Given
+        slingContext.build()
+                .resource("/module/locales/en_US/revisions/v1/jcr:content",
+                        "jcr:data", "A generated html string")
+                .commit();
+        slingContext.registerAdapter(Resource.class, Module.class, mockModuleAdapter);
+        Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
         slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
-        lenient().when(resource.adaptTo(Module.class)).thenReturn(mock(Module.class));
-        lenient().when(asciidoctorService.getModuleHtml(any(Module.class), anyMap(), anyBoolean()))
+        lenient().when(
+                asciidoctorService.getModuleHtml(
+                        any(Module.class), any(Locale.class), isNull(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
 
         // Test class
@@ -74,7 +88,7 @@ public class AsciidocRenderingServletTest {
         // Then
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(any(Module.class), anyMap(), eq(true));
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), isNull(), anyMap(), eq(true));
     }
 
     @Test
@@ -82,12 +96,19 @@ public class AsciidocRenderingServletTest {
     public void testGenerateHtmlFromAsciidocWithContext() throws Exception {
 
         // Given
+        slingContext.build()
+                .resource("/module/locales/en_US/revisions/v1/jcr:content",
+                        "jcr:data", "A generated html string")
+                .commit();
+        slingContext.registerAdapter(Resource.class, Module.class, mockModuleAdapter);
+        Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
         slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
         slingContext.request().getParameterMap().put("ctx_arg", new String[]{"value"});
         slingContext.request().getParameterMap().put("non_ctx_arg", new String[]{"unaccepted"});
-        lenient().when(resource.adaptTo(Module.class)).thenReturn(mock(Module.class));
-        lenient().when(asciidoctorService.getModuleHtml(any(Module.class), anyMap(), anyBoolean()))
+        lenient().when(
+                asciidoctorService.getModuleHtml(
+                        any(Module.class), any(Locale.class), isNull(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
 
         // Test class
@@ -102,7 +123,8 @@ public class AsciidocRenderingServletTest {
         assertEquals("text/html", slingContext.response().getContentType());
 
         ArgumentCaptor<Map> contextArguments = ArgumentCaptor.forClass(Map.class);
-        verify(asciidoctorService).getModuleHtml(any(Module.class), contextArguments.capture(), eq(true));
+        verify(asciidoctorService)
+                .getModuleHtml(any(Module.class), any(Locale.class), isNull(), contextArguments.capture(), eq(true));
         assertEquals(1, contextArguments.getValue().size());
         assertTrue(contextArguments.getValue().containsKey("arg"));
     }

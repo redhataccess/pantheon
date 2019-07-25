@@ -40,8 +40,10 @@
 // mix:created gives us created and createdBy fields
 // mix:lastModified gives us lastModified and lastModifiedBy fields
 [pant:module] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
-    - sling:resourceType (string) = 'pantheon/modules' mandatory autocreated
-    + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated
+    - sling:resourceType (string) = 'pantheon/module' mandatory autocreated
+
+[pant:moduleVersion] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/moduleVersion' mandatory autocreated
 
 [pant:product] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/product' mandatory autocreated
@@ -51,7 +53,7 @@
 
 // Base type for titles
 [pant:title] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
-	- sling:resourceType (string) = 'pantheon/titles' mandatory autocreated
+	- sling:resourceType (string) = 'pantheon/title' mandatory autocreated
     + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated
 
 // Additional types:

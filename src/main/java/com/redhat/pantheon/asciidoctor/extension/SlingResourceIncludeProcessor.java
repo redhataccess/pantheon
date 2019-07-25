@@ -1,5 +1,9 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
+import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.api.SlingResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.asciidoctor.ast.Document;
@@ -45,18 +49,22 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
         String content = "Invalid include: " + target;
 
         if(includeResource != null) {
+            SlingResource sIncludeResource = includeResource.adaptTo(SlingResource.class);
+
             // Included resource might be a plain file or another module
-            if( includeResource.getChild("asciidoc") != null ) {
-                content = includeResource.getChild("asciidoc")
-                    .getChild("jcr:content")
-                    .getValueMap()
-                    .get("jcr:data", String.class);
+            if( sIncludeResource.getProperty("jcr:primaryType", String.class).equals("pant:module") ) {
+                Module module = sIncludeResource.adaptTo(Module.class);
+                // TODO, right now only default locale and latest version of the module are used
+                content = module.locales.get()
+                        .getModuleLocale(GlobalConfig.DEFAULT_MODULE_LOCALE)
+                        .revisions.get()
+                        .getDefaultRevision()
+                        .asciidocContent.get();
             } else {
                 // It's a plain file
-                content = includeResource
-                    .getChild("jcr:content")
-                    .getValueMap()
-                    .get("jcr:data", String.class);
+                FileResource file = sIncludeResource.adaptTo(FileResource.class);
+                content = file.jcrContent.get()
+                        .jcrData.get();
             }
         } else {
             log.warn("Could not find include for {}", target);

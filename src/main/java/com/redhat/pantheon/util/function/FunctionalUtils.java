@@ -1,5 +1,7 @@
 package com.redhat.pantheon.util.function;
 
+import javax.annotation.Nullable;
+import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 
 /**
@@ -29,5 +31,14 @@ public class FunctionalUtils {
                 throw new RuntimeException(e);
             }
         };
+    }
+
+    /**
+     * A binary operator which helps reduce a stream to its last element only.
+     * Should help to run something like:
+     * stream.reduce(toLastElement())
+     */
+    public static <T> BinaryOperator<T> toLastElement() {
+        return (T o1, T o2) -> o2;
     }
 }
