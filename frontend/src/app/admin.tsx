@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
-import { Button } from '@patternfly/react-core';
 import { Redirect } from 'react-router-dom';
+import { Button } from '@patternfly/react-core';
+import { Grid, GridItem } from '@patternfly/react-core';
+import Browseri from '@app/images/browseri.jpg';
+import Consolei from '@app/images/consolei.jpg';
+import Welcomei from '@app/images/welcomei.jpg';
+import { Card, CardHeader, CardBody } from '@patternfly/react-core';
 
 class Admin extends Component {
     public state = {
@@ -22,16 +27,43 @@ class Admin extends Component {
 
         return (  
             <React.Fragment>
-            <div>
                 {this.checkAuth()}
                 {this.loginRedirect()}
-                {/* {this.renderRedirect()} */}
-            
-                        <Button isBlock={true} onClick={this.browserLink()}>Browser link</Button>{'\n'}
-                        <Button isBlock={true} variant="secondary" onClick={this.welcomeLink()}>Welcome link</Button>{'\n'}
-                        <Button isBlock={true} onClick={this.consoleLink()}>Console link</Button>
-                        Build Date: {this.state.buildDate}               
-            </div>
+              <Grid gutter="md">
+                <GridItem span={12}/>
+                <GridItem span={12}/>
+                <GridItem span={12}/>
+                <GridItem span={12}/>
+                <GridItem span={12}/>
+                <GridItem span={12}/>
+                <GridItem span={12}/>
+                <GridItem span={12}/>
+                <GridItem span={12}/>
+                <GridItem span={12}/>
+                <GridItem span={12}/>
+                <GridItem span={3} rowSpan={2}/>
+                <GridItem span={2} rowSpan={2}>
+                  <Card>
+                    <CardHeader><Button isBlock={true} variant={"secondary"} onClick={this.browserLink()}><img src={Browseri} style={{height: "100px"}}/></Button></CardHeader>
+                    <CardBody style={{fontSize: "16px"}}>Browser link</CardBody>
+                  </Card>
+                </GridItem>
+                <GridItem span={2} rowSpan={2}>
+                  <Card>
+                    <CardHeader><Button isBlock={true} variant={"secondary"} onClick={this.consoleLink()}><img src={Consolei} style={{height: "100px"}}/></Button></CardHeader>
+                    <CardBody style={{fontSize: "16px"}}>Web Console Link</CardBody>
+                  </Card>
+                </GridItem>
+                <GridItem span={2} rowSpan={2}>
+                  <Card>
+                    <CardHeader><Button isBlock={true} variant={"secondary"} onClick={this.welcomeLink()}><img src={Welcomei} style={{height: "100px"}}/></Button></CardHeader>
+                    <CardBody style={{fontSize: "16px",alignItems:'center'}}>Sling Welcome Link</CardBody>
+                  </Card>
+                </GridItem>
+                <GridItem span={3} rowSpan={2}/>
+                <GridItem span={12} rowSpan={2}/>
+                <GridItem span={3}/><GridItem span={2}/><GridItem span={2} rowSpan={2} style={{fontSize: "16px",alignItems: 'center'}}><div>Build Date:</div><div>{this.state.buildDate}</div></GridItem><GridItem span={2}/><GridItem span={3}/>
+              </Grid>
             </React.Fragment>
 
         );
