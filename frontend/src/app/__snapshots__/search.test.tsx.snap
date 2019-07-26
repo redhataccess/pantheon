@@ -58,7 +58,7 @@ exports[`Search tests should render default Search component 1`] = `
           handlePerPageLimit={[Function]}
           nextPageRecordCount={1}
           pageNumber={1}
-          perPageLimit={10}
+          perPageLimit={25}
           showDropdownOptions={true}
         />
       </div>
@@ -247,7 +247,7 @@ exports[`Search tests should render default Search component 1`] = `
           handlePerPageLimit={[Function]}
           nextPageRecordCount={1}
           pageNumber={1}
-          perPageLimit={10}
+          perPageLimit={25}
           showDropdownOptions={false}
         />
       </div>

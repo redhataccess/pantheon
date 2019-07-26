@@ -29,7 +29,7 @@ export default class Search extends Component {
     loggedinStatus: false,
     nextPageRowCount: 1,
     page: 1,
-    pageLimit: 10,
+    pageLimit: 25,
     redirect: false,
     redirectLocation: '',
     showDropdownOptions: true,
