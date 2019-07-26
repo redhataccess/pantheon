@@ -14,7 +14,7 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
     <Link
       to="/search"
     >
-      Search
+      Modules
     </Link>
   </NavItem>
 </Fragment>

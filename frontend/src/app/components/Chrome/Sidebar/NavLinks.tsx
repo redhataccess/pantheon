@@ -9,7 +9,7 @@ class NavLinks extends Component {
         isAdmin: false,
         isLoggedIn: false,
         moduleText: '',
-        searchText: 'Search'
+        searchText: 'Modules'
     };
 
     public render() {
