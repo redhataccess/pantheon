@@ -1,0 +1,4 @@
+kind: "ImageStream"
+apiVersion: "v1"
+metadata:
+  name: "pantheon2"

@@ -62,4 +62,31 @@ Run a transient Sling container which stores everything in the linked mongo db:
 docker run --rm -d -p 8080:8080 --link slingmongo:mongo -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://mongo:27017' apache/sling
 ```
 
+### How to build and use the application on a container using buildah and podman
+
+1. Build the container
+
+```
+buildah -t YOURTAG bud container
+```
+
+2. To run the container using podman
+
+```
+podman run --network=host --rm -p 8080:8080  YOURTAG
+```
+**Notice the --network flag** this is only needed if you want to run other containers that talk to this container as a local service.
+For example the git2pantheon container.
+
+3. To get inside the container and debug
+
+get the container process
+```
+podman ps
+```
+
+```
+podman exec -it PROCESS bash
+```
+
 ### more to come...
