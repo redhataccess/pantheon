@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbHeading } from '@patternfly/react-core';
 import { Link } from "react-router-dom";
 import { Level, LevelItem } from '@patternfly/react-core';
-import { Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { Tooltip } from '@patternfly/react-core';
 import {
     DataList, DataListItem, DataListItemRow, DataListItemCells,
-    DataListCell, FormGroup, DataListCheck
+    DataListCell, Card, Text, TextContent, TextVariants
   } from '@patternfly/react-core';
 import { Revisions } from '@app/revisions';
 import { HelpIcon } from '@patternfly/react-icons';
@@ -32,15 +31,18 @@ class ModuleDisplay extends Component {
                 </div>
                 <div>
                     <Level gutter="md">
-                        <LevelItem>Module Name  
-                        <Tooltip
-                                position="right"
-                                content={
-                                    <div>Title updated in latest revision</div>
-                                }
-                        >
-                                <span><HelpIcon/></span>
-                            </Tooltip>
+                        <LevelItem>
+                            <TextContent>
+                                <Text component={TextVariants.h1}>Module Name{' '}
+                                    <Tooltip
+                                            position="right"
+                                            content={
+                                                <div>Title updated in latest revision</div>
+                                            }>
+                                        <span><HelpIcon/></span>
+                                    </Tooltip>
+                                </Text>  
+                            </TextContent>
                         </LevelItem>
                         <LevelItem />
                         <LevelItem>
@@ -96,7 +98,9 @@ class ModuleDisplay extends Component {
                 </DataList>
                 </div>
                 <div>
-                    <Revisions/>
+                    <Card>
+                        <Revisions/>
+                    </Card>
                 </div>
             </React.Fragment>
 
