@@ -7,6 +7,7 @@ import {
 } from '@patternfly/react-core';
 import '@app/app.css';
 import { Pagination } from '@app/Pagination';
+import { ModuleDisplay } from '@app/moduleDisplay';
 
 export default class Search extends Component {
   public state = {
@@ -27,6 +28,7 @@ export default class Search extends Component {
     isModalOpen: false,
     isSortedUp: true,
     loggedinStatus: false,
+    moduleDisplay: false,
     nextPageRowCount: 1,
     page: 1,
     pageLimit: 25,
@@ -53,7 +55,11 @@ export default class Search extends Component {
     }
     return (
       <React.Fragment>
+        {console.log("module display: ",this.state.moduleDisplay)}
+        {console.log("initial load: ",this.state.initialLoad)}
+        {this.state.moduleDisplay && <ModuleDisplay/>}
         {this.state.initialLoad && this.doSearch()}
+        {!this.state.moduleDisplay && 
         <div>
           <div>
           <FormGroup
@@ -160,7 +166,6 @@ export default class Search extends Component {
                         <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
                       :null
                     }
-
                 </DataListItemRow>
                 {isEmptyResults && (
                       <Level gutter="md">
@@ -239,6 +244,7 @@ export default class Search extends Component {
             </div>
           </div>
         </div>
+        }
       </React.Fragment>
     );
   }
@@ -393,9 +399,11 @@ export default class Search extends Component {
     private setPreview = (path: string) => (event: any) =>  {
       console.log("what do I see when you click ? " + path)
       if (path !== "") {
-        return window.open("/" + path + ".preview");
+        // return window.open("/" + path + ".preview");
+        this.setState({moduleDisplay: !this.state.moduleDisplay, initialLoad: !this.state.initialLoad})
       } else {
-        return ""
+      //   // return ""
+        this.setState({moduleDisplay: false, initialLoad: true})
       }
     };
 
