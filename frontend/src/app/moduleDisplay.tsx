@@ -6,7 +6,7 @@ import { Level, LevelItem } from '@patternfly/react-core';
 import { Tooltip } from '@patternfly/react-core';
 import {
     DataList, DataListItem, DataListItemRow, DataListItemCells,
-    DataListCell, Card, Text, TextContent, TextVariants
+    DataListCell, Card, Text, TextContent, TextVariants, Grid, GridItem
   } from '@patternfly/react-core';
 import { Revisions } from '@app/revisions';
 import { HelpIcon } from '@patternfly/react-icons';
@@ -32,17 +32,17 @@ class ModuleDisplay extends Component {
                 <div>
                     <Level gutter="md">
                         <LevelItem>
-                            <TextContent>
-                                <Text component={TextVariants.h1}>Module Name{' '}
+                                <TextContent>
+                                    <Text component={TextVariants.h1}>Module Name{'  '}
                                     <Tooltip
-                                            position="right"
-                                            content={
-                                                <div>Title updated in latest revision</div>
-                                            }>
-                                        <span><HelpIcon/></span>
-                                    </Tooltip>
-                                </Text>  
-                            </TextContent>
+                                                position="right"
+                                                content={
+                                                    <div>Title updated in latest revision</div>
+                                                }>
+                                            <span><HelpIcon/></span>
+                                        </Tooltip>
+                                    </Text>  
+                                </TextContent>
                         </LevelItem>
                         <LevelItem />
                         <LevelItem>
