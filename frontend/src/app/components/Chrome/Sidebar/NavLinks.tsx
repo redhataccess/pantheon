@@ -9,6 +9,7 @@ class NavLinks extends Component {
         isAdmin: false,
         isLoggedIn: false,
         moduleText: '',
+        productText: '',
         searchText: 'Search'
     };
 
@@ -21,6 +22,7 @@ class NavLinks extends Component {
                     if (responseJSON[id] !== 'anonymous') {
                         console.log('response[id] in navlinks: '+responseJSON[id])
                         this.setState({ moduleText: 'New Module' })
+                        this.setState({ productText: 'New Product' })
                         this.setState({ gitText: 'Git Import' })
                         this.setState({ isLoggedIn: true })
                     }
@@ -40,6 +42,11 @@ class NavLinks extends Component {
                 {(this.state.moduleText.length > 0) && (<NavItem>
                     <Link to='/module'>
                         {this.state.moduleText}
+                    </Link>
+                </NavItem>)}
+                {(this.state.productText.length > 0) && (<NavItem>
+                    <Link to='/product'>
+                        {this.state.productText}
                     </Link>
                 </NavItem>)}
                 {(this.state.gitText.length > 0) && (<NavItem>
