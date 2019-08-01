@@ -6,8 +6,14 @@ import {
     DropdownItem, DropdownSeparator, DropdownPosition, DropdownDirection,Grid, 
     GridItem, KebabToggle, Level, LevelItem
   } from '@patternfly/react-core';
+import CheckImage from '@app/images/check_image.jpg';
+import BlankImage from '@app/images/blank.jpg';
 
-class Revisions extends Component {
+  export interface IProps {
+    modulePath: string
+  }
+
+class Revisions extends Component<IProps> {
     public state = {
         isArchiveDropDownOpen: false,
         isArchiveSelect: false,
@@ -25,7 +31,7 @@ class Revisions extends Component {
                 <Card>
                     <div>
                         <DataList aria-label="Simple data list example">
-                            <DataListItem aria-labelledby="simple-item1">
+                            <DataListItem aria-labelledby="simple-item1" isExpanded={this.state.isHeadingToggle}>
                                 <DataListItemRow id="data-rows-header" >
                                     <DataListToggle
                                         onClick={()=>this.onHeadingToggle()}
@@ -35,6 +41,9 @@ class Revisions extends Component {
                                     />
                                     <DataListItemCells
                                         dataListCells={[
+                                            <DataListCell key="empty">
+                                                <span><img src={BlankImage} style={{height: "30px",width: "30px"}}/></span>
+                                            </DataListCell>,
                                             <DataListCell key="revision">
                                                 <span className="sp-prop-nosort" id="span-source-type">Revision</span>
                                             </DataListCell>,
@@ -44,7 +53,7 @@ class Revisions extends Component {
                                             <DataListCell key="updated">
                                                 <span className="sp-prop-nosort" id="span-source-type">Updated</span>
                                             </DataListCell>,
-                                            <DataListCell width={2} key="module_type">
+                                            <DataListCell key="module_type">
                                                 <span className="sp-prop-nosort" id="span-source-name" />
                                             </DataListCell>
                                         ]}
@@ -55,8 +64,10 @@ class Revisions extends Component {
                                     id="ex-expand1"
                                     isHidden={!this.state.isHeadingToggle}
                                     noPadding={true}
-                                >
+                                >                                   
                                     {/* this is the data list for the inner row */}
+                                <DataList aria-label="Simple data list example"> 
+                                    <DataListItem aria-labelledby="simple-item1" isExpanded={this.state.isRowToggle}>
                                         <DataListItemRow>
                                             <DataListToggle
                                                 onClick={()=>this.onExpandableToggle()}
@@ -66,6 +77,9 @@ class Revisions extends Component {
                                             />
                                             <DataListItemCells
                                                 dataListCells={[
+                                                    <DataListCell key="image">
+                                                        <span><img src={CheckImage} style={{height: "30px",width: "30px"}}/></span>
+                                                    </DataListCell>,
                                                     <DataListCell key="products">
                                                         <span>Dummy Revision</span>
                                                     </DataListCell>,
@@ -75,9 +89,9 @@ class Revisions extends Component {
                                                     <DataListCell key="updated">
                                                         <span>Dummy Date</span>
                                                     </DataListCell>,
-                                                    <DataListCell width={2} key="module_type">
+                                                    <DataListCell key="module_type">
                                                         <span><Button variant="primary">Publish</Button></span><span>{'  '}</span>
-                                                        <span><Button variant="secondary">Preview</Button></span>{'  '}
+                                                        <span><Button variant="secondary" onClick={this.previewDoc}>Preview</Button></span>{'  '}
                                                         <span>
                                                             <Dropdown
                                                                 isPlain={true}
@@ -122,7 +136,8 @@ class Revisions extends Component {
                                                 <GridItem span={1} />
                                             </Grid>
                                         </DataListContent>
-                                    
+                                        </DataListItem>
+                                    </DataList>        
                                 </DataListContent>
                             </DataListItem>
                         </DataList>
@@ -155,6 +170,11 @@ class Revisions extends Component {
         this.setState({
             isHeadingToggle: !this.state.isHeadingToggle
         });
+      }
+
+      private previewDoc = () => {
+          console.log("Preview path: ", "/", this.props.modulePath, ".preview")
+          return window.open("/" + this.props.modulePath + ".preview");
       }
 }
 

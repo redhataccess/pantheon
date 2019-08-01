@@ -35,7 +35,11 @@ export default class Search extends Component {
     redirect: false,
     redirectLocation: '',
     showDropdownOptions: true,
-    sortKey: ''
+    sortKey: '',
+    moduleName: '',
+    moduleType: '',
+    moduleUpdatedDate: '',
+    modulePath: ''
   };
 
   public transientPaths : string[] = [];
@@ -57,7 +61,12 @@ export default class Search extends Component {
       <React.Fragment>
         {console.log("module display: ",this.state.moduleDisplay)}
         {console.log("initial load: ",this.state.initialLoad)}
-        {this.state.moduleDisplay && <ModuleDisplay/>}
+        {this.state.moduleDisplay && <ModuleDisplay
+          moduleName={this.state.moduleName}
+          modulePath={this.state.modulePath}
+          moduleType={this.state.moduleType}
+          updated={this.state.moduleUpdatedDate}
+        />}
         {this.state.initialLoad && this.doSearch()}
         {!this.state.moduleDisplay && 
         <div>
@@ -138,7 +147,7 @@ export default class Search extends Component {
                         name={data["pant:transientPath"]}
                         onClick={this.handleDeleteCheckboxChange(data["pant:transientPath"])}
                       />}
-                    <DataListItemCells key={data["pant:transientPath"]} onClick={this.setPreview(data["pant:transientPath"])}
+                    <DataListItemCells key={data["pant:transientPath"]} onClick={this.setPreview(data)}
                           dataListCells={[
                                 <DataListCell key="div-title" width={2}>
                                   <span>{data["jcr:title"]}</span>
@@ -396,13 +405,16 @@ export default class Search extends Component {
       })
     }
 
-    private setPreview = (path: string) => (event: any) =>  {
-      console.log("what do I see when you click ? " + path)
-      if (path !== "") {
-        // return window.open("/" + path + ".preview");
-        this.setState({moduleDisplay: !this.state.moduleDisplay, initialLoad: !this.state.initialLoad})
+    private setPreview = (data) => (event: any) =>  {
+      // console.log("what do I see when you click ? " + path)
+      if (data !== []) {
+        this.setState({initialLoad: !this.state.initialLoad, moduleDisplay: !this.state.moduleDisplay,
+           moduleName: data["jcr:title"],
+           modulePath: data["pant:transientPath"],
+           moduleType: data["pant:transientSource"],
+           moduleUpdatedDate: this.formatDate(new Date(data["jcr:created"]))           
+          })
       } else {
-      //   // return ""
         this.setState({moduleDisplay: false, initialLoad: true})
       }
     };

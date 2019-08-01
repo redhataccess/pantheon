@@ -11,21 +11,23 @@ import {
 import { Revisions } from '@app/revisions';
 import { HelpIcon } from '@patternfly/react-icons';
 
-class ModuleDisplay extends Component {
-    public state = {
-        login: false  
-    };
+export interface IProps {
+    moduleName: string
+    modulePath: string
+    moduleType: string
+    updated: string    
+  }
+  
+  class ModuleDisplay extends Component<IProps> {
 
     public render() {
         return (  
             <React.Fragment>
                 <div>
-                    {/* {this.checkAuth()}
-                    {this.loginRedirect()} */}
                     <Breadcrumb>
                         <BreadcrumbItem to="/">Modules</BreadcrumbItem>
                         <BreadcrumbItem to="#" isActive={true}>
-                            Clicked Module
+                            {this.props.moduleName}
                         </BreadcrumbItem>
                     </Breadcrumb>
                 </div>
@@ -33,7 +35,7 @@ class ModuleDisplay extends Component {
                     <Level gutter="md">
                         <LevelItem>
                                 <TextContent>
-                                    <Text component={TextVariants.h1}>Module Name{'  '}
+                                    <Text component={TextVariants.h1}>{this.props.moduleName}{'  '}
                                     <Tooltip
                                                 position="right"
                                                 content={
@@ -51,55 +53,57 @@ class ModuleDisplay extends Component {
                     </Level>                
                 </div>
                 <div>
-                    <Link to='https://access.redhat.com'>Link to Customer Portal</Link>
+                    <a href='http://access.redhat.com'>View on Customer Portal</a>
                 </div>
                 <div>
-                <DataList aria-label="Simple data list example">
-                    <DataListItem aria-labelledby="simple-item1">
-                        <DataListItemRow id="data-rows-header" >
-                            <DataListItemCells
-                                dataListCells={[
-                                    <DataListCell width={2} key="products">
-                                        <span className="sp-prop-nosort" id="span-source-type">Products</span>
-                                    </DataListCell>,
-                                    <DataListCell key="published">
-                                        <span className="sp-prop-nosort" id="span-source-type">Published</span>
-                                    </DataListCell>,
-                                    <DataListCell key="updated">
-                                        <span className="sp-prop-nosort" id="span-source-type">Updated</span>
-                                    </DataListCell>,
-                                    <DataListCell key="module_type">
-                                        <span className="sp-prop-nosort" id="span-source-name">Module Type</span>
-                                    </DataListCell>
-                                ]}
-                            />
-                        </DataListItemRow>
+                    <DataList aria-label="single action data list example ">
+                        <DataListItem aria-labelledby="simple-item1">
+                            <DataListItemRow id="data-rows-header" >
+                                <DataListItemCells
+                                    dataListCells={[
+                                        <DataListCell width={2} key="products">
+                                            <span className="sp-prop-nosort" id="span-source-type">Products</span>                                            
+                                        </DataListCell>,
+                                        <DataListCell key="published">
+                                            <span className="sp-prop-nosort" id="span-source-type">Published</span>
+                                        </DataListCell>,
+                                        <DataListCell key="updated">
+                                            <span className="sp-prop-nosort" id="span-source-type">Updated</span>
+                                        </DataListCell>,
+                                        <DataListCell key="module_type">
+                                            <span className="sp-prop-nosort" id="span-source-name">Module Type</span>
+                                        </DataListCell>
+                                    ]}
+                                />
+                            </DataListItemRow>
 
-                  <DataListItemRow id="data-rows">
-                    <DataListItemCells 
-                          dataListCells={[
-                                <DataListCell width={2} key="products">
-                                  <span>Dummy Product</span>
-                                </DataListCell>,
-                                <DataListCell key="published">
-                                  <span>Dummy Publish</span>
-                                </DataListCell>,
-                                <DataListCell key="updated">
-                                  <span>Dummy Updated</span>
-                                </DataListCell>,
-                                <DataListCell key="module_type">
-                                  <span>Dummy Module Type</span>
-                                </DataListCell>,
-                          ]}
-                    />
-                  </DataListItemRow>
-                ))}
+                            <DataListItemRow id="data-rows">
+                                <DataListItemCells
+                                    dataListCells={[
+                                        <DataListCell width={2} key="products">
+                                            Dummy Product Name
+                                        </DataListCell>,
+                                        <DataListCell key="published">
+                                            Dummy Publish
+                                        </DataListCell>,
+                                        <DataListCell key="updated">
+                                            {this.props.updated}
+                                        </DataListCell>,
+                                        <DataListCell key="module_type">
+                                            {this.props.moduleType}
+                                        </DataListCell>,
+                                    ]}
+                                />
+                            </DataListItemRow>
+                            ))}
                     </DataListItem>
                 </DataList>
                 </div>
                 <div>
                     <Card>
-                        <Revisions/>
+                        <Revisions 
+                            modulePath={this.props.modulePath}
+                        />
                     </Card>
                 </div>
             </React.Fragment>
@@ -107,24 +111,6 @@ class ModuleDisplay extends Component {
         );
     }
     
-    //   private loginRedirect = () => {
-    //     if (this.state.login) {
-    //       return <Redirect to='/login' />
-    //     } else {
-    //       return ""
-    //     }
-    //   }
-    
-    //   private checkAuth = () => {
-    //     fetch("/system/sling/info.sessionInfo.json")
-    //       .then(response => response.json())
-    //       .then(responseJSON => {
-    //         const key = "userID"
-    //         if (responseJSON[key] !== 'admin') {
-    //           this.setState({ login: true })
-    //         }
-    //       })
-    //   }
 }
 
 export { ModuleDisplay }
