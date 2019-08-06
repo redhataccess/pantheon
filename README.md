@@ -7,7 +7,7 @@ Pantheon 2 is a modular documentation management and publication system based on
 and built on top of Apache sling.
 
 ### Prerequsistes
-Docker
+Podman
 Maven
 Java
 
@@ -19,10 +19,10 @@ mvn test
 
 ### How to run this App
 
-To run the application, run the Apache sling docker container.
+To run the application, run the Apache sling podman container.
 
 ```sh
-docker run -p 8080:8080 --name slingapp apache/sling 
+podman run -p 8080:8080 --name slingapp apache/sling 
 ```
 
 This will create a container called `slingapp`.
@@ -49,29 +49,31 @@ For sling's management UI, you can head to http://localhost:8080/starter/index.h
 
 Pull the mongo db image:
 ```sh
-docker pull mongo
+podman pull mongo
 ```
 
 Run a mongo db container (were are calling it `slingmongo` here)
 ```sh
-docker run --name slingmongo -d mongo
+podman run --network=host --name slingmongo -d mongo
 ```
 
 Run a transient Sling container which stores everything in the linked mongo db:
 ```sh
-docker run --rm -d -p 8080:8080 --link slingmongo:mongo -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://mongo:27017' apache/sling
+podman run --network=host --rm -d -p 8080:8080 -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://localhost:27017' apache/sling
 ```
+
+**Notice the --network flag** this is needed for both containers that talk to each other. You can see the --network flag documentation in this [Link.](https://github.com/containers/libpod/blob/master/docs/podman-create.1.md)
 
 ### Building the application in the a container.
 
-We also provide an Docker image under the container folder that does a two stage build that will generate a container with the application.
+We also provide an podman image under the container folder that does a two stage build that will generate a container with the application.
 
-Prerequsistes for this is only **Docker**
+Prerequsistes for this is only **podman** and **buildah**.
 
 1. Build the container
 
 ```
-docker build -t YOURTAG container
+buildah -t YOURTAG bud container
 ```
 
 2. To run the container
@@ -79,23 +81,23 @@ docker build -t YOURTAG container
 
 Run the container using the previously started mongo instance:
 ```sh
-docker run --rm -d -p 8080:8080 --link slingmongo:mongo -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://mongo:27017 -Dsling.fileinstall.dir=/install' YOURTAG
+podman run --network=host --rm -d -p 8080:8080 -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://localhost:27017 -Dsling.fileinstall.dir=/install' YOURTAG
 ```
 
 You can also run the container without Mongo, but this will result the data to be destroyed when the container gets destroyed.
 ```sh
-docker run --rm -p 8080:8080  YOURTAG
+podman run --rm -p 8080:8080  YOURTAG
 ```
 
 3. To get inside the container and debug
 
 get the container process
 ```
-docker ps
+podman ps
 ```
 
 ```
-docker exec -it PROCESS bash
+podman exec -it PROCESS bash
 ```
 
 ### more to come...
