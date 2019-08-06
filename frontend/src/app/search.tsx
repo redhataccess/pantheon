@@ -33,13 +33,14 @@ export default class Search extends Component {
     redirect: false,
     redirectLocation: '',
     showDropdownOptions: true,
-    sortKey: ''
+    sortKey: '',
+    searchOption: 'module'
   };
 
   public transientPaths : string[] = [];
 
   public render() {
-    const { columns, isEmptyResults, input, isSortedUp,sortKey} = this.state;
+    const { columns, isEmptyResults, input, isSortedUp,sortKey,searchOption} = this.state;
 
     const id = 'userID';
     if (!this.state.loggedinStatus && this.state.initialLoad===true) {
@@ -93,7 +94,9 @@ export default class Search extends Component {
                       onClick={this.handleSelectAll}
                       isDisabled={false}
                     />}
+                   {this.state.searchOption == 'module' && 
                   <DataListItemCells
+  
                         dataListCells={[
                           <DataListCell width={2} key="title">
                             <button onClick={this.sortByName} className="sp-prop" id="span-name" aria-label="sort column by name">Name</button>
@@ -111,8 +114,30 @@ export default class Search extends Component {
                             <button onClick={this.sortByUploadTime} className="sp-prop" id="span-name" aria-label="sort column by upload time">Upload Time</button>
                           </DataListCell>,
                         ]}
-                  />
-                </DataListItemRow>
+                  />}
+                  {this.state.searchOption == 'product' && 
+                  <DataListItemCells
+  
+                        dataListCells={[
+                          <DataListCell width={2} key="name">
+                            <button onClick={this.sortByProductName} className="sp-prop" id="span-name" aria-label="sort column by name">Name</button>
+                          </DataListCell>,
+                          <DataListCell width={2} key="description">
+                            <button onClick={this.sortByProductDescription} className="sp-prop" id="span-name" aria-label="sort column by description">Description</button>
+                          </DataListCell>,
+                          <DataListCell key="resource source">
+                            <span className="sp-prop-nosort" id="span-source-type">Source Type</span>
+                          </DataListCell>,
+                          <DataListCell key="source name">
+                            <span className="sp-prop-nosort" id="span-source-name">Source Name</span>
+                          </DataListCell>,
+                          <DataListCell key="upload time">
+                            <button onClick={this.sortByUploadTime} className="sp-prop" id="span-name" aria-label="sort column by upload time">Upload Time</button>
+                          </DataListCell>,
+                        ]}
+                  />}
+                </DataListItemRow> 
+
                 {/* Delete button at the top */}
                 <DataListItemRow id="data-rows" key={this.state.results["pant:transientPath"]}>
                   {
@@ -426,6 +451,14 @@ export default class Search extends Component {
     this.sort("jcr:description")
   }
 
+  private sortByProductName = () => {
+    this.sort("name")
+  }
+
+  private sortByProductDescription = () => {
+    this.sort("description")
+  }
+
   private sortByUploadTime = () => {
     this.sort("jcr:created")
   }
@@ -459,7 +492,13 @@ export default class Search extends Component {
   private buildSearchUrl() {
     let backend = "/modules.json?search="
     if (this.state.input != null) {
-      backend += this.state.input
+
+      if (this.state.input.trim().toLowerCase().startsWith("product:")) {
+        backend = "/products.query.json?nodeType=pant:product&orderby=name&where=[name] like \"%" + this.state.input.substring(8, this.state.input.length) + "%\""
+        backend += this.state.input.substring(8, this.state.input.length)
+      } else {
+        backend += this.state.input
+      }  
     }
     backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
     backend += "&offset=" + ((this.state.page - 1)*this.state.pageLimit) + "&limit=" + this.state.pageLimit
@@ -500,6 +539,15 @@ export default class Search extends Component {
       console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
       return (this.state.pageLimit+" items per page")
     })
+  }
+
+  private handleSearchOption = (input) => {
+    if(input.startsWith('product:')) {
+      this.setState({searchOption: 'product'})
+    } else {
+      this.setState({searchOption: 'module'})
+    }
+    console.log("searchOption: " + this.state.searchOption)
   }
 
 }

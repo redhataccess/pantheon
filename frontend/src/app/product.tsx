@@ -82,7 +82,7 @@ class Product extends Component {
       }
       
       // setup url fragment
-      var url_fragment = this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+      let url_fragment = this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
       
       const formData = new FormData();
       formData.append("name", this.state.productName)
