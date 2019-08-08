@@ -1,16 +1,21 @@
 package com.redhat.pantheon.model.api;
 
+import com.google.common.collect.ImmutableMap;
+import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
 /**
  * Utility functions to handle {@link SlingResource} objects.
@@ -18,26 +23,6 @@ import static com.google.common.collect.Maps.newHashMap;
 public final class SlingResourceUtil {
 
     private SlingResourceUtil() {
-    }
-
-    public static <T extends SlingResource> T
-    createNewSlingResource(Resource parent, String childName, Map<String, Object> initialProps, Class<T> modelType) {
-        if (parent.getChild(childName) != null) {
-            throw new RuntimeException("Tried to create a new resource in an existing path: " + parent.getPath() + "/"
-                    + childName);
-        }
-
-        try {
-            // create the resource
-            Resource childResource = parent.getResourceResolver().
-                    create(parent, childName, initialProps);
-            // create the model
-            T model = toSlingResource(childResource, modelType);
-            return model;
-        } catch (PersistenceException e) {
-            throw new RuntimeException("Exception while creating new resource: " + parent.getPath() + "/"
-                    + childName, e);
-        }
     }
 
     /**
@@ -52,7 +37,26 @@ public final class SlingResourceUtil {
      */
     public static <T extends SlingResource> T
     createNewSlingResource(Resource parent, String childName, Class<T> modelType) {
-        return createNewSlingResource(parent, childName, newHashMap(), modelType );
+        if (parent.getChild(childName) != null) {
+            throw new RuntimeException("Tried to create a new resource in an existing path: " + parent.getPath() + "/"
+                    + childName);
+        }
+
+        try {
+            // initial properties
+            Map<String, Object> initialProps = new ImmutableMap.Builder<String, Object>()
+                    .put(JCR_PRIMARYTYPE, getJcrPrimaryType(modelType))
+                    .build();
+            // create the resource
+            Resource childResource = parent.getResourceResolver().
+                    create(parent, childName, initialProps);
+            // create the model
+            T model = toSlingResource(childResource, modelType);
+            return model;
+        } catch (PersistenceException e) {
+            throw new RuntimeException("Exception while creating new resource: " + parent.getPath() + "/"
+                    + childName, e);
+        }
     }
 
     /**
@@ -82,6 +86,20 @@ public final class SlingResourceUtil {
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Exception while converting a Resource to a SlingResource", e);
         }
+    }
+
+    /**
+     * Returns the primary type for a given {@link SlingResource} class.
+     * @param resourceType The resource type
+     * @return A String containing the jcr:primaryType to use for the given resource type.
+     */
+    @Nonnull
+    private static final String getJcrPrimaryType(Class<? extends SlingResource> resourceType) {
+        JcrPrimaryType primaryType = resourceType.getAnnotation(JcrPrimaryType.class);
+        if(primaryType != null) {
+            return primaryType.value();
+        }
+        return SlingResource.DEFAULT_PRIMARY_TYPE;
     }
 
     public static final Pair<String, String> primaryType(String primaryType) {

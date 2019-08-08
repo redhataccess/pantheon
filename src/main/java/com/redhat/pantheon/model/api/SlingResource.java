@@ -25,7 +25,7 @@ import static com.redhat.pantheon.model.api.SlingResourceUtil.toSlingResource;
  */
 public class SlingResource implements Resource {
 
-    private static final String DEFAULT_PRIMARY_TYPE = "nt:unstructured";
+    static final String DEFAULT_PRIMARY_TYPE = "nt:unstructured";
 
     private final Resource wrapped;
 
@@ -106,6 +106,17 @@ public class SlingResource implements Resource {
      */
     public <T> T getProperty(String name, Class<T> type) {
         return wrapped.getValueMap().get(name, type);
+    }
+
+    /**
+     * Sets a resoruce's property. This is a convenience method. Be aware that the underlying
+     * implementation might throw an exception if the resource is not modifiable, or if the type
+     * of value is not recognized
+     * @param name The name of the property
+     * @param value The value to set
+     */
+    public void setProperty(String name, Object value) {
+        wrapped.adaptTo(ModifiableValueMap.class).put(name, value);
     }
 
     /**
