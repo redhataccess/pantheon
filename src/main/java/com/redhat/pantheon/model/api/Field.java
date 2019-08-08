@@ -34,6 +34,19 @@ public class Field<T> implements Supplier<T>, Consumer<T> {
     }
 
     /**
+     * Sets the default value for this field. The default value is only set if there is
+     * no value set on the field
+     * @param defVal The default value to use
+     * @return The field itself
+     */
+    public Field<T> defaultValue(final T defVal) {
+        if(this.get() == null) {
+            this.owner.setProperty(this.name, defVal);
+        }
+        return this;
+    }
+
+    /**
      * @return The field's value from the underlying resource.
      */
     @Override

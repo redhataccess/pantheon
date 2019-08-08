@@ -337,6 +337,20 @@ class SlingResourceTest {
         assertArrayEquals(stringArrayValue, (String[])map.get("jcr:stringArray"));
     }
 
+    @Test
+    public void fieldDefaultValue() {
+        // Given
+        slingContext.build()
+                .resource("/content/test")
+                .commit();
+
+        // When
+        TestResource resource = new TestResource(slingContext.resourceResolver().getResource("/content/test"));
+
+        // Then
+        assertEquals("default", resource.STRING_WITH_DEFAULT.get());
+    }
+
     public static class TestResource extends SlingResource {
 
         public final Field<String> NAME = stringField("jcr:name");
@@ -344,6 +358,7 @@ class SlingResourceTest {
         public final Field<Long> NUMBER = field("jcr:number", Long.class);
         public final Field<Boolean> BOOLEAN = field("jcr:boolean", Boolean.class);
         public final Field<String[]> STRINGARRAY = field("jcr:stringArray", String[].class);
+        public final Field<String> STRING_WITH_DEFAULT = stringField("stringWithDefault").defaultValue("default");
 
         public final Field<String> GRANDCHILD_NAME = stringField("child/grandchild/jcr:name");
 
