@@ -3,6 +3,7 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.http.entity.ContentType;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -61,6 +62,7 @@ public class AsciidocContentRenderingServlet extends SlingSafeMethodsServlet {
         }
 
         if(content.isPresent()) {
+            response.setContentType(ContentType.TEXT_PLAIN.toString());
             w.write(content.get().asciidocContent.get());
         } else {
             response.sendError(SC_NOT_FOUND, "Requested content not found for locale " + locale.toString()
