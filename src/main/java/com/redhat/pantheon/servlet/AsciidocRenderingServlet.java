@@ -1,26 +1,9 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
+import com.redhat.pantheon.model.ContentInstance;
+import com.redhat.pantheon.model.MetadataInstance;
 import com.redhat.pantheon.model.Module;
-import com.redhat.pantheon.model.ModuleRevision;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -83,16 +66,26 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     protected void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws ServletException, IOException {
         String locale = paramValue(request, "locale", DEFAULT_MODULE_LOCALE.toString());
-        String revision = paramValue(request, "rev");
-        log.info("Locale set to: " + locale);
+        boolean draft = paramValueAsBoolean(request, "draft");
 
         Module module = request.getResource().adaptTo(Module.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
-        ModuleRevision moduleRevision = module.findRevision(localeObj, revision);
 
-        if(moduleRevision == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Revision " + revision + " not found for" +
-                    " module at " + request.getResource().getPath());
+        MetadataInstance metadata;
+        ContentInstance content;
+
+        if(draft) {
+            metadata = module.getDraftMetadataInstance(localeObj);
+            content = module.getDraftContentInstance(localeObj);
+        } else {
+            metadata = module.getReleasedMetadataInstance(localeObj);
+            content = module.getReleasedContentInstance(localeObj);
+        }
+
+
+        if(metadata == null || content == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, (draft ? "Draft " : "Released ")
+                    + "content version not found for module at " + request.getResource().getPath());
         }
         else {
             // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
@@ -106,7 +99,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             );
 
             String html = asciidoctorService.getModuleHtml(
-                    module, localeObj, revision, context, paramValueAsBoolean(request, PARAM_RERENDER));
+                    content, metadata, module, context, paramValueAsBoolean(request, PARAM_RERENDER));
 
             response.setContentType("text/html");
             Writer w = response.getWriter();

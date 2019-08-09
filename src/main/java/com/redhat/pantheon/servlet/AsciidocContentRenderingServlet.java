@@ -1,6 +1,8 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.Module.Content;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -14,10 +16,10 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Locale;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
 
 /**
  * Renders the asciidoc content exactly as stored.
@@ -40,18 +42,27 @@ public class AsciidocContentRenderingServlet extends SlingSafeMethodsServlet {
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
         String locale = paramValue(request, "locale", DEFAULT_MODULE_LOCALE.toString());
-        String rev = paramValue(request, "rev");
+        // TODO right now, only allow draft and released content
+        boolean draft = paramValueAsBoolean(request, "draft");
 
         Resource resource = request.getResource();
         Module module = resource.adaptTo(Module.class);
 
         response.setContentType("html");
         Writer w = response.getWriter();
-        w.write(module
+        Content content = module
                 .locales.get()
-                .getModuleLocale(Locale.forLanguageTag(locale))
-                .revisions.get()
-                .getDefaultRevision()
-                .asciidocContent.get());
+                .getModuleLocale(LocaleUtils.toLocale(locale))
+                .content.get();
+        String asciidocContent;
+        if (draft) {
+            asciidocContent = content.draft.get()
+                    .asciidocContent.get();
+        } else {
+            asciidocContent = content.released.get()
+                    .asciidocContent.get();
+        }
+
+        w.write(asciidocContent);
     }
 }

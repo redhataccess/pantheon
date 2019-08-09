@@ -3,7 +3,6 @@ package com.redhat.pantheon.model.api;
 import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -14,7 +13,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
 /**
@@ -60,6 +58,23 @@ public final class SlingResourceUtil {
     }
 
     /**
+     * Creates a new {@link SlingResource} of a given type.
+     *
+     * @param resourceResolver The resource resolver used to create the child
+     * @param path The full absolute path where to create the resource
+     * @param modelType The specific type of {@link SlingResource} to return
+     * @param <T>
+     * @return The newly created resource
+     * @throws RuntimeException if the resource already exists at the path
+     */
+    public static <T extends SlingResource>
+    T createNewSlingResource(ResourceResolver resourceResolver, String path, Class<T> modelType) {
+        String parentPath = ResourceUtil.getParent(path);
+        String resourceName = ResourceUtil.getName(path);
+        return createNewSlingResource(resourceResolver.resolve(parentPath),  resourceName, modelType);
+    }
+
+    /**
      * Converts a {@link Resource} into a {@link SlingResource}
      *
      * @param backingResource The resource to convert
@@ -100,9 +115,5 @@ public final class SlingResourceUtil {
             return primaryType.value();
         }
         return SlingResource.DEFAULT_PRIMARY_TYPE;
-    }
-
-    public static final Pair<String, String> primaryType(String primaryType) {
-        return Pair.of("jcr:primaryType", primaryType);
     }
 }

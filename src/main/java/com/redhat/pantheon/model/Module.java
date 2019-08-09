@@ -1,21 +1,42 @@
 package com.redhat.pantheon.model;
 
-import com.google.common.collect.Streams;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.SlingResource;
+import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import org.apache.sling.api.resource.Resource;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
-import static com.redhat.pantheon.util.function.FunctionalUtils.toLastElement;
 
 /**
  * The definition of a Module resource in the system.
  * Module's contains different revisions for different languages.
+ * <br/><br/>
+ *
+ * A module's structure in the JCR tree is as follows:
+ * .../modulename
+ *               /locales
+ *                       /en-US
+ *                             /metadata
+ *                                      /draft
+ *                                      /released
+ *                             /content
+ *                                     /draft
+ *                                           /asciidoc
+ *                                           /cachedHtml
+ *                                     /released (latest is released)
+ *                                           /asciidoc
+ *                                           /cachedHtml
+ *                                     /v2 (older - just for historical purposes)
+ *                                           /asciidoc
+ *                                           /cachedHtml
+ *                                     /v1 (older - just for historical purposes)
+ *                                           /asciidoc
+ *                                           /cachedHtml
  */
+@JcrPrimaryType("pant:module")
 public class Module extends SlingResource {
 
     public final Child<Locales> locales = child("locales", Locales.class);
@@ -25,22 +46,47 @@ public class Module extends SlingResource {
     }
 
     /**
-     * Finds a module revision inside this module
-     * @param locale The specific locale for the revision. Could be null, if not provided, the default locale is assumed
-     *               per {@link com.redhat.pantheon.conf.GlobalConfig#DEFAULT_MODULE_LOCALE}
-     * @param name The specific name for the revision to find. Could be null, if not provided the default revision is
-     *             assumed.
-     * @return The found module revision resource, or null if it can't find one
+     * @param locale The locale to fetch the content instance for.
+     * @return The released content for a given locale
      */
-    public ModuleRevision findRevision(Locale locale, String name) {
-        boolean isDefaultRevision = isNullOrEmpty(name);
-        boolean isDefaultLocale = locale == null;
+    public ContentInstance getReleasedContentInstance(final Locale locale) {
+        return locales.map(l -> l.getModuleLocale(locale == null ? DEFAULT_MODULE_LOCALE : locale))
+                .map(moduleLocale -> moduleLocale.content.get())
+                .map(content -> content.released.get())
+                .get();
+    }
 
-        return locales.map(
-                    locales1 -> locales1.getModuleLocale(isDefaultLocale ? DEFAULT_MODULE_LOCALE : locale))
-                .map(moduleLocale -> moduleLocale.revisions.get())
-                .map(revisions -> isDefaultRevision ? revisions.getDefaultRevision() : revisions.getModuleRevision(name))
-                .orElse(null);
+    /**
+     * @param locale The locale to fetch the content instance for.
+     * @return The draft content for a given locale
+     */
+    public ContentInstance getDraftContentInstance(final Locale locale) {
+        return locales.map(l -> l.getModuleLocale(locale == null ? DEFAULT_MODULE_LOCALE : locale))
+                .map(moduleLocale -> moduleLocale.content.get())
+                .map(content -> content.draft.get())
+                .get();
+    }
+
+    /**
+     * @param locale The locale to fetch the content instance for.
+     * @return The released metadata for a given locale
+     */
+    public MetadataInstance getReleasedMetadataInstance(final Locale locale) {
+        return locales.map(l -> l.getModuleLocale(locale == null ? DEFAULT_MODULE_LOCALE : locale))
+                .map(moduleLocale -> moduleLocale.metadata.get())
+                .map(content -> content.released.get())
+                .get();
+    }
+
+    /**
+     * @param locale The locale to fetch the content instance for.
+     * @return The draft metadata for a given locale
+     */
+    public MetadataInstance getDraftMetadataInstance(final Locale locale) {
+        return locales.map(l -> l.getModuleLocale(locale == null ? DEFAULT_MODULE_LOCALE : locale))
+                .map(moduleLocale -> moduleLocale.metadata.get())
+                .map(content -> content.draft.get())
+                .get();
     }
 
     /**
@@ -72,48 +118,34 @@ public class Module extends SlingResource {
      */
     public static class ModuleLocale extends SlingResource {
 
-        public final Child<Revisions> revisions = child("revisions", Revisions.class, "sling:OrderedFolder");
+        public final Child<Metadata> metadata = child("metadata", Metadata.class);
+
+        public final Child<Content> content = child("content", Content.class);
 
         public ModuleLocale(@Nonnull Resource resource) {
             super(resource);
         }
     }
 
-    /**
-     * A container for all revision in for a locale and a module. Each child
-     * resource is named after the revision name, and each child can be adapted
-     * to a {@link ModuleRevision} resource.
-     * This intermediary node currently holds no other purpose than to act as
-     * a container for revisions.
-     */
-    public static class Revisions extends SlingResource {
+    public static class Metadata extends SlingResource {
 
-        public Revisions(@Nonnull Resource resource) {
-            super(resource);
+        public final Child<MetadataInstance> draft = child("draft", MetadataInstance.class);
+
+        public final Child<MetadataInstance> released = child("released", MetadataInstance.class);
+
+        public Metadata(Resource wrapped) {
+            super(wrapped);
         }
+    }
 
-        public ModuleRevision getModuleRevision(String revisionName) {
-            return child(revisionName, ModuleRevision.class).get();
-        }
+    public static class Content extends SlingResource {
 
-        public ModuleRevision getDefaultRevision() {
-            // right now returns the latest
-            return getLatestRevision();
-        }
+        public final Child<ContentInstance> draft = child("draft", ContentInstance.class);
 
-        public ModuleRevision getLatestRevision() {
-            Resource latestRevResource = Streams.stream(getChildren())
-                    .reduce(toLastElement())
-                    .orElse(null);
-            return latestRevResource == null ? null : new ModuleRevision(latestRevResource);
-        }
+        public final Child<ContentInstance> released = child("released", ContentInstance.class);
 
-        public ModuleRevision createModuleRevision(String revisionName) {
-            return child(revisionName, ModuleRevision.class, "pant:moduleVersion").create();
-        }
-
-        public ModuleRevision getOrCreateModuleRevision(String revisionName) {
-            return child(revisionName, ModuleRevision.class, "pant:moduleVersion").getOrCreate();
+        public Content(Resource wrapped) {
+            super(wrapped);
         }
     }
 }

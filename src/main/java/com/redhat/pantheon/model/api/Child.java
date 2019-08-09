@@ -1,11 +1,6 @@
 package com.redhat.pantheon.model.api;
 
-import com.google.common.collect.Maps;
-
-import java.lang.reflect.Proxy;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -24,13 +19,11 @@ public class Child<T extends SlingResource> implements Supplier<T> {
 
     private final String name;
     private final Class<T> type;
-    private final String primaryType;
     private final SlingResource owner;
 
-    Child(String name, Class<T> type, String primaryType, SlingResource owner) {
+    Child(String name, Class<T> type, SlingResource owner) {
         this.name = name;
         this.type = type;
-        this.primaryType = primaryType;
         this.owner = owner;
     }
 
@@ -40,10 +33,6 @@ public class Child<T extends SlingResource> implements Supplier<T> {
 
     public Class<T> getType() {
         return type;
-    }
-
-    public String getPrimaryType() {
-        return primaryType;
     }
 
     /**
@@ -73,9 +62,7 @@ public class Child<T extends SlingResource> implements Supplier<T> {
      * @return The newly created child resource
      */
     public T create() {
-        Map<String, Object> propsMap = Maps.newHashMap();
-        propsMap.put("jcr:primaryType", primaryType);
-        return createNewSlingResource(owner, name, propsMap, type);
+        return createNewSlingResource(owner, name, type);
     }
 
     /**
