@@ -27,7 +27,8 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.api.SlingResource",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.api.FileResource",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.Module",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.ModuleRevision",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.ContentInstance",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.MetadataInstance",
         }
 )
 public class SlingResourceAdapterFactory implements AdapterFactory {
