@@ -1,5 +1,7 @@
 package com.redhat.pantheon.servlet;
 
+import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.Module;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
@@ -13,6 +15,7 @@ import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 
 /**
@@ -50,16 +53,19 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         //FIXME - related to 'nodetypes.cnd' getting reinstalled on every package deployment, resulting in the
         //FIXME - pant:module nodetype being assigned some new internal id, but that's pure speculation.
         StringBuilder queryBuilder = new StringBuilder()
-                .append("select * from [nt:base] as a ")
-                .append("where [sling:resourceType] = 'pantheon/module' ")
-                .append("and (isdescendantnode(a, '/content/repositories') ")
-                .append("or isdescendantnode(a, '/content/modules') ")
-                .append("or isdescendantnode(a, '/content/sandbox')) ")
-                .append("AND (a.[jcr:title] like '%" + searchParam + "%' ")
-                .append("OR a.[jcr:description] like " + "'%" + searchParam + "%')");
+                .append("select * from [pant:module] as m ")
+                // TODO en_US only for now
+                .append("where (isdescendantnode(m, '/content/repositories') ")
+                    .append("or isdescendantnode(m, '/content/modules') ")
+                    .append("or isdescendantnode(m, '/content/sandbox')) ")
+                // look in both released and draft metadata
+                .append("AND (m.[locales/en_US/metadata/draft/jcr:title] like '%" + searchParam + "%' ")
+                    .append("OR m.[locales/en_US/metadata/draft/jcr:description] like " + "'%" + searchParam + "%' ")
+                    .append("OR m.[locales/en_US/metadata/released/jcr:title] like '%" + searchParam + "%' ")
+                    .append("OR m.[locales/en_US/metadata/released/jcr:description] like " + "'%" + searchParam + "%')");
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
-            queryBuilder.append(" order by a.[")
+            queryBuilder.append(" order by m.[")
                     .append(keyParam).append("] ")
                     .append(directionParam);
         }
@@ -69,9 +75,13 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
     @Override
     protected Map<String, Object> resourceToMap(Resource resource) {
+        // TODO Need some DTOs to convert to maps
+        Module module = resource.adaptTo(Module.class);
         Map<String, Object> m = super.resourceToMap(resource);
         String resourcePath = resource.getPath();
         m.put("name", resource.getName());
+        m.put("jcr:title", module.getDraftMetadataInstance(DEFAULT_MODULE_LOCALE).title.get());
+        m.put("jcr:description", module.getDraftMetadataInstance(DEFAULT_MODULE_LOCALE).description.get());
         // Assume the path is something like: /content/<something>/my/resource/path
         m.put("pant:transientPath", resourcePath.substring("/content/".length()));
         // Example path: /content/repositories/ben_2019-04-11_16-15-15/shared/attributes.module.adoc
