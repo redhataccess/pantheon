@@ -1,7 +1,6 @@
 package com.redhat.pantheon.servlet;
 
-import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
@@ -59,10 +58,10 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                     .append("or isdescendantnode(m, '/content/modules') ")
                     .append("or isdescendantnode(m, '/content/sandbox')) ")
                 // look in both released and draft metadata
-                .append("AND (m.[locales/en_US/metadata/draft/jcr:title] like '%" + searchParam + "%' ")
-                    .append("OR m.[locales/en_US/metadata/draft/jcr:description] like " + "'%" + searchParam + "%' ")
-                    .append("OR m.[locales/en_US/metadata/released/jcr:title] like '%" + searchParam + "%' ")
-                    .append("OR m.[locales/en_US/metadata/released/jcr:description] like " + "'%" + searchParam + "%')");
+                .append("AND (m.[locales/en_US/draft/metadata/jcr:title] like '%" + searchParam + "%' ")
+                    .append("OR m.[locales/en_US/draft/metadata/jcr:description] like " + "'%" + searchParam + "%' ")
+                    .append("OR m.[locales/en_US/released/metadata/jcr:title] like '%" + searchParam + "%' ")
+                    .append("OR m.[locales/en_US/released/metadata/jcr:description] like " + "'%" + searchParam + "%')");
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
             queryBuilder.append(" order by m.[")
@@ -80,8 +79,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         Map<String, Object> m = super.resourceToMap(resource);
         String resourcePath = resource.getPath();
         m.put("name", resource.getName());
-        m.put("jcr:title", module.getDraftMetadataInstance(DEFAULT_MODULE_LOCALE).title.get());
-        m.put("jcr:description", module.getDraftMetadataInstance(DEFAULT_MODULE_LOCALE).description.get());
+        m.put("jcr:title", module.getDraftMetadata(DEFAULT_MODULE_LOCALE).get().title.get());
+        m.put("jcr:description", module.getDraftMetadata(DEFAULT_MODULE_LOCALE).get().description.get());
         // Assume the path is something like: /content/<something>/my/resource/path
         m.put("pant:transientPath", resourcePath.substring("/content/".length()));
         // Example path: /content/repositories/ben_2019-04-11_16-15-15/shared/attributes.module.adoc

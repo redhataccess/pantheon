@@ -1,6 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
-import com.redhat.pantheon.model.MetadataInstance;
+import com.redhat.pantheon.model.module.Metadata;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
@@ -25,8 +25,8 @@ class MetadataExtractorTreeProcessorTest {
         slingContext.build()
                 .resource("/content/module1/locales/en_US/metadata/released")
                 .commit();
-        MetadataInstance metadata =
-                new MetadataInstance(
+        Metadata metadata =
+                new Metadata(
                     slingContext.resourceResolver().getResource(
                             "/content/module1/locales/en_US/metadata/released"));
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
@@ -52,8 +52,8 @@ class MetadataExtractorTreeProcessorTest {
         slingContext.build()
                 .resource("/content/module1/locales/en_US/metadata/released")
                 .commit();
-        MetadataInstance metadata =
-                new MetadataInstance(
+        Metadata metadata =
+                new Metadata(
                         slingContext.resourceResolver().getResource("/content/module1/locales/en_US/metadata/released"));
         Resource module = slingContext.resourceResolver().getResource("/content/module1");
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);

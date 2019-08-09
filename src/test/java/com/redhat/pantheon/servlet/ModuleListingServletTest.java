@@ -1,7 +1,6 @@
 package com.redhat.pantheon.servlet;
 
-import com.redhat.pantheon.model.Module;
-import com.redhat.pantheon.util.TestUtils;
+import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
@@ -56,7 +55,7 @@ class ModuleListingServletTest {
     void resourceToMap() {
         // Given
         slingContext.build()
-                .resource("/content/repositories/repo/module/locales/en_US/metadata/draft",
+                .resource("/content/repositories/repo/module/locales/en_US/draft/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description")
                 .commit();

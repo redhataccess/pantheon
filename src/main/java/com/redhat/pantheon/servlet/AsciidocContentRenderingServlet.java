@@ -1,7 +1,7 @@
 package com.redhat.pantheon.servlet;
 
-import com.redhat.pantheon.model.Module;
-import com.redhat.pantheon.model.Module.Content;
+import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.module.Module;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -16,10 +16,12 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
  * Renders the asciidoc content exactly as stored.
@@ -29,7 +31,7 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
         service = Servlet.class,
         property = {
                 "sling.servlet.resourceTypes=pantheon/module",
-                "sling.servlet.extensions=adoc",
+                "sling.servlet.extensions=raw",
                 Constants.SERVICE_DESCRIPTION+"=Renders asciidoc content in its raw original form",
                 Constants.SERVICE_VENDOR+"=Red Hat Content Tooling team"
         }
@@ -50,19 +52,19 @@ public class AsciidocContentRenderingServlet extends SlingSafeMethodsServlet {
 
         response.setContentType("html");
         Writer w = response.getWriter();
-        Content content = module
-                .locales.get()
-                .getModuleLocale(LocaleUtils.toLocale(locale))
-                .content.get();
-        String asciidocContent;
+
+        Optional<Content> content;
         if (draft) {
-            asciidocContent = content.draft.get()
-                    .asciidocContent.get();
+            content = module.getDraftContent(LocaleUtils.toLocale(locale));
         } else {
-            asciidocContent = content.released.get()
-                    .asciidocContent.get();
+            content = module.getReleasedContent(LocaleUtils.toLocale(locale));
         }
 
-        w.write(asciidocContent);
+        if(content.isPresent()) {
+            w.write(content.get().asciidocContent.get());
+        } else {
+            response.sendError(SC_NOT_FOUND, "Requested content not found for locale " + locale.toString()
+                    + " and in state " + (draft ? "'draft'" : "released"));
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
-import com.redhat.pantheon.model.MetadataInstance;
+import com.redhat.pantheon.model.module.Metadata;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.StructuralNode;
 import org.asciidoctor.extension.Treeprocessor;
@@ -27,10 +27,10 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public class MetadataExtractorTreeProcessor extends Treeprocessor {
 
-    private final MetadataInstance metadataInstance;
+    private final Metadata metadata;
 
-    public MetadataExtractorTreeProcessor(MetadataInstance metadataInstance) {
-        this.metadataInstance = metadataInstance;
+    public MetadataExtractorTreeProcessor(Metadata metadata) {
+        this.metadata = metadata;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
     private void extractDocTitle(Document document) {
         String docTitle = document.getDoctitle();
         if(!isNullOrEmpty(docTitle)) {
-            metadataInstance.title.set(docTitle);
+            metadata.title.set(docTitle);
         }
     }
 
@@ -54,7 +54,7 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
             if(firstBlock.getContent() != null) {
                 String abstractContent = firstBlock.getContent().toString();
                 if (!isNullOrEmpty(abstractContent)) {
-                    metadataInstance.mAbstract.set(abstractContent);
+                    metadata.mAbstract.set(abstractContent);
                 }
             }
         }

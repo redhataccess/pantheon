@@ -4,8 +4,9 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.ContentInstance;
-import com.redhat.pantheon.model.MetadataInstance;
+import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.ModuleRevision;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -59,7 +60,7 @@ public class AsciidoctorService {
      * @return true if the generated html content was generated from the Module's asciidoc
      * content. False otherwise.
      */
-    private boolean generatedContentHashMatches(ContentInstance content) {
+    private boolean generatedContentHashMatches(Content content) {
         String srcContent = content.asciidocContent.get();
         String existingHash = content.cachedHtml.get()
                 .hash.get();
@@ -69,8 +70,7 @@ public class AsciidoctorService {
 
     /**
      * Returns a module's html representation.
-     * @param content the module's stored content
-     * @param metadata the module's stored metadata
+     * @param moduleRevision The module revision to generate content for
      * @param base The resource base (probably at the module level) to find included artifacts
      * @param context any necessary context (attributes and their values) necessary to generate the html
      * @param forceRegen when true, the html content is always re-generated; the cached content is ignored
@@ -78,14 +78,14 @@ public class AsciidoctorService {
      *                   the context into account
      * @return The module's html representation based on its current asciidoc content
      */
-    public String getModuleHtml(@Nonnull ContentInstance content,
-                                @Nonnull MetadataInstance metadata,
+    public String getModuleHtml(@Nonnull ModuleRevision moduleRevision,
                                 @Nonnull Resource base,
                                 Map<String, Object> context,
                                 boolean forceRegen) {
 
+        Content content = moduleRevision.content.get();
+        Metadata metadata = moduleRevision.metadata.get();
         String html;
-
         // If regeneration is forced, the content doesn't exist yet, or it needs generation because the original
         // asciidoc has changed,
         // then generate and save it
@@ -162,18 +162,18 @@ public class AsciidoctorService {
      * @param content The module's content instance on which to cache the content.
      * @param html The html that was generated
      */
-    private void cacheContent(final ContentInstance content, final String html) {
+    private void cacheContent(final Content content, final String html) {
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
             String asciidoc = content.asciidocContent.get();
             // reload from the service-level resolver
-            ContentInstance writeableContentInstance =
-                    serviceResourceResolver.getResource(content.getPath()).adaptTo(ContentInstance.class);
+            Content writeableContent =
+                    serviceResourceResolver.getResource(content.getPath()).adaptTo(Content.class);
 
-            writeableContentInstance.cachedHtml.getOrCreate()
+            writeableContent.cachedHtml.getOrCreate()
                     .hash.set(
                         hash(asciidoc).toString()
                     );
-            writeableContentInstance.cachedHtml.getOrCreate()
+            writeableContent.cachedHtml.getOrCreate()
                     .data.set(html);
             serviceResourceResolver.commit();
         } catch (Exception e) {

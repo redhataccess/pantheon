@@ -1,9 +1,8 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
-import com.redhat.pantheon.model.ContentInstance;
-import com.redhat.pantheon.model.MetadataInstance;
-import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleRevision;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -23,6 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
@@ -71,19 +71,16 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         Module module = request.getResource().adaptTo(Module.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
 
-        MetadataInstance metadata;
-        ContentInstance content;
+        Optional<ModuleRevision> moduleRevision;
 
         if(draft) {
-            metadata = module.getDraftMetadataInstance(localeObj);
-            content = module.getDraftContentInstance(localeObj);
+            moduleRevision = module.getDraftRevision(localeObj);
         } else {
-            metadata = module.getReleasedMetadataInstance(localeObj);
-            content = module.getReleasedContentInstance(localeObj);
+            moduleRevision = module.getReleasedRevision(localeObj);
         }
 
 
-        if(metadata == null || content == null) {
+        if(!moduleRevision.isPresent()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, (draft ? "Draft " : "Released ")
                     + "content version not found for module at " + request.getResource().getPath());
         }
@@ -99,7 +96,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             );
 
             String html = asciidoctorService.getModuleHtml(
-                    content, metadata, module, context, paramValueAsBoolean(request, PARAM_RERENDER));
+                    moduleRevision.get(), module, context, paramValueAsBoolean(request, PARAM_RERENDER));
 
             response.setContentType("text/html");
             Writer w = response.getWriter();

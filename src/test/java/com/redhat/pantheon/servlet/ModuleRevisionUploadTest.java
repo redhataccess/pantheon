@@ -1,7 +1,7 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorPool;
-import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.module.Module;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.servlets.post.HtmlResponse;
@@ -45,14 +45,14 @@ class ModuleRevisionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/content/draft"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/metadata/draft"));
-        assertNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/content/released"));
-        assertNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/metadata/released"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/metadata"));
+        assertNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/content"));
+        assertNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/metadata"));
 
         Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
         assertEquals("This is the adoc content",
-                module.getDraftContentInstance(LocaleUtils.toLocale("es_ES")).asciidocContent.get()
+                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
         );
     }
 
@@ -61,8 +61,8 @@ class ModuleRevisionUploadTest {
         // Given
         slingContext.build()
                 // Released revision
-                .resource("/new/module/locales/es_ES/metadata/released")
-                .resource("/new/module/locales/es_ES/content/released/asciidoc/jcr:content",
+                .resource("/new/module/locales/es_ES/released/metadata")
+                .resource("/new/module/locales/es_ES/released/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
                 .commit();
 
@@ -79,17 +79,17 @@ class ModuleRevisionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/content/draft"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/metadata/draft"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/content/released"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/metadata/released"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/metadata"));
 
         Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
         assertEquals("Draft asciidoc content",
-                module.getDraftContentInstance(LocaleUtils.toLocale("es_ES")).asciidocContent.get()
+                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
         );
         assertEquals("This is the released adoc content",
-                module.getReleasedContentInstance(LocaleUtils.toLocale("es_ES")).asciidocContent.get()
+                module.getReleasedContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
         );
     }
 
@@ -98,12 +98,12 @@ class ModuleRevisionUploadTest {
         // Given
         slingContext.build()
                 // Draft revision
-                .resource("/new/module/locales/es_ES/metadata/draft")
-                .resource("/new/module/locales/es_ES/content/draft/asciidoc/jcr:content",
+                .resource("/new/module/locales/es_ES/draft/metadata")
+                .resource("/new/module/locales/es_ES/draft/content/asciidoc/jcr:content",
                         "jcr:data", "This is the draft adoc content")
                 // Released revision
-                .resource("/new/module/locales/es_ES/metadata/released")
-                .resource("/new/module/locales/es_ES/content/released/asciidoc/jcr:content",
+                .resource("/new/module/locales/es_ES/released/metadata")
+                .resource("/new/module/locales/es_ES/released/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
                 .commit();
 
@@ -120,17 +120,17 @@ class ModuleRevisionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/content/draft"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/metadata/draft"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/content/released"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/metadata/released"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/metadata"));
 
         Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
         assertEquals("Revised asciidoc content",
-                module.getDraftContentInstance(LocaleUtils.toLocale("es_ES")).asciidocContent.get()
+                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
         );
         assertEquals("This is the released adoc content",
-                module.getReleasedContentInstance(LocaleUtils.toLocale("es_ES")).asciidocContent.get()
+                module.getReleasedContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
         );
     }
 }

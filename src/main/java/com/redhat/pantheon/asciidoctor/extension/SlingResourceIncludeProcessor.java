@@ -1,7 +1,7 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingResource;
 import org.apache.sling.api.resource.Resource;
@@ -57,7 +57,8 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             if( sIncludeResource.getProperty(JCR_PRIMARYTYPE, String.class).equals("pant:module") ) {
                 Module module = sIncludeResource.adaptTo(Module.class);
                 // TODO, right now only default locale and latest (draft) version of the module are used
-                content = module.getDraftContentInstance(GlobalConfig.DEFAULT_MODULE_LOCALE)
+                content = module.getDraftContent(GlobalConfig.DEFAULT_MODULE_LOCALE)
+                            .get()
                             .asciidocContent.get();
             } else {
                 // It's a plain file

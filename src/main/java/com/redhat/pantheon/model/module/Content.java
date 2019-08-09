@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model;
+package com.redhat.pantheon.model.module;
 
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
@@ -10,7 +10,7 @@ import org.apache.sling.api.resource.Resource;
  * Models a single instance of a module's content. Multiple content instances may be found on a
  * given module representing several content revisions.
  */
-public class ContentInstance extends SlingResource {
+public class Content extends SlingResource {
 
     public final Field<String> asciidocContent = stringField("asciidoc/jcr:content/jcr:data");
 
@@ -18,7 +18,7 @@ public class ContentInstance extends SlingResource {
 
     public final Child<FileResource> asciidoc = file("asciidoc");
 
-    public ContentInstance(Resource wrapped) {
+    public Content(Resource wrapped) {
         super(wrapped);
     }
 

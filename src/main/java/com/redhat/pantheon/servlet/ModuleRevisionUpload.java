@@ -3,10 +3,10 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.asciidoctor.AsciidoctorPool;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.MetadataInstance;
-import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.model.api.FileResource.JcrContent;
 import com.redhat.pantheon.model.api.SlingResourceUtil;
+import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.Module;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -88,17 +88,17 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
             // modify only the draft content/metadata
             JcrContent jcrContent = module.locales.getOrCreate()
                     .getOrCreateModuleLocale(LocaleUtils.toLocale(locale))
-                    .content.getOrCreate()
                     .draft.getOrCreate()
+                    .content.getOrCreate()
                     .asciidoc.getOrCreate()
                     .jcrContent.getOrCreate();
             jcrContent.jcrData.set(asciidocContent);
             jcrContent.mimeType.set("text/x-asciidoc");
 
-            MetadataInstance metadata = module.locales.getOrCreate()
+            Metadata metadata = module.locales.getOrCreate()
                     .getOrCreateModuleLocale(LocaleUtils.toLocale(locale))
-                    .metadata.getOrCreate()
-                    .draft.getOrCreate();
+                    .draft.getOrCreate()
+                    .metadata.getOrCreate();
             metadata.title.set(moduleName);
             metadata.description.set(description);
 
@@ -111,7 +111,7 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
         }
     }
 
-    private void extractMetadata(JcrContent content, MetadataInstance metadata) {
+    private void extractMetadata(JcrContent content, Metadata metadata) {
         log.trace("=== Start extracting metadata ");
         long startTime = System.currentTimeMillis();
         Asciidoctor asciidoctor = asciidoctorPool.borrowObject();

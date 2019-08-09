@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model;
+package com.redhat.pantheon.model.module;
 
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.SlingResource;
@@ -11,7 +11,7 @@ import java.util.Calendar;
  * instances may found on a given module representing different
  * revisions of said metadata.
  */
-public class MetadataInstance extends SlingResource {
+public class Metadata extends SlingResource {
 
     public final Field<String> title = stringField("jcr:title");
 
@@ -25,7 +25,7 @@ public class MetadataInstance extends SlingResource {
 
     public final Field<String> primaryType = stringField("jcr:primaryType");
 
-    public MetadataInstance(Resource wrapped) {
+    public Metadata(Resource wrapped) {
         super(wrapped);
     }
 
