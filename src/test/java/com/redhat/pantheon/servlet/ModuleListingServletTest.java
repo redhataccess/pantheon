@@ -1,5 +1,7 @@
 package com.redhat.pantheon.servlet;
 
+import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.util.TestUtils;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
@@ -10,6 +12,7 @@ import javax.jcr.query.Query;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -52,11 +55,12 @@ class ModuleListingServletTest {
     @Test
     void resourceToMap() {
         // Given
-
         slingContext.build()
-                .resource("/content/repositories/repo/module")
+                .resource("/content/repositories/repo/module/locales/en_US/metadata/draft",
+                        "jcr:title", "A title",
+                        "jcr:description", "A description")
                 .commit();
-
+        registerMockAdapter(Module.class, slingContext);
         ModuleListingServlet servlet = new ModuleListingServlet();
 
         // When
