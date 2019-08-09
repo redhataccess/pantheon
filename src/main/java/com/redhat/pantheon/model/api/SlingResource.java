@@ -120,6 +120,14 @@ public class SlingResource implements Resource {
     }
 
     /**
+     * Deletes this resource from the repository.
+     * @throws PersistenceException If there was a problem deleting the node, such as a failed constraing validation
+     */
+    public void delete() throws PersistenceException {
+        wrapped.getResourceResolver().delete(this);
+    }
+
+    /**
      * Creates a new field definition for this resource
      * @param name Field name
      * @param type Field type

@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet;
 
+import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.Servlet;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
@@ -74,13 +76,17 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
     @Override
     protected Map<String, Object> resourceToMap(Resource resource) {
-        // TODO Need some DTOs to convert to maps
         Module module = resource.adaptTo(Module.class);
+        Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE);
+        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE);
+
+        // TODO Need some DTOs to convert to maps
         Map<String, Object> m = super.resourceToMap(resource);
         String resourcePath = resource.getPath();
         m.put("name", resource.getName());
-        m.put("jcr:title", module.getDraftMetadata(DEFAULT_MODULE_LOCALE).get().title.get());
-        m.put("jcr:description", module.getDraftMetadata(DEFAULT_MODULE_LOCALE).get().description.get());
+        // TODO need to provide both released and draft to the api caller
+        m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title.get() : releasedMetadata.get().title.get());
+        m.put("jcr:description", draftMetadata.isPresent() ? draftMetadata.get().description.get() : releasedMetadata.get().description.get());
         // Assume the path is something like: /content/<something>/my/resource/path
         m.put("pant:transientPath", resourcePath.substring("/content/".length()));
         // Example path: /content/repositories/ben_2019-04-11_16-15-15/shared/attributes.module.adoc

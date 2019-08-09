@@ -2,13 +2,14 @@ package com.redhat.pantheon.model.api;
 
 import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
 
 import javax.annotation.Nonnull;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
@@ -100,6 +101,25 @@ public final class SlingResourceUtil {
             }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Exception while converting a Resource to a SlingResource", e);
+        }
+    }
+
+    /**
+     * Renames a resource. This method only changes the name of the resource within its parent, it does not change
+     * the parent itself.
+     * @param target The resource to rename
+     * @param newName The new name for the resource
+     * @throws PersistenceException If there is a problem renaming the resource (e.g. another resource with that
+     * name already exists)
+     */
+    public static void rename(final Resource target, final String newName) throws PersistenceException {
+        Session jcrSession = target.getResourceResolver().adaptTo(Session.class);
+        String currentPath = target.getPath();
+        String newPath = target.getParent().getPath() + "/" + newName;
+        try {
+            jcrSession.move(currentPath, newPath);
+        } catch (RepositoryException e) {
+            throw new PersistenceException(e.getClass().getName() + ": " + e.getMessage(), e);
         }
     }
 

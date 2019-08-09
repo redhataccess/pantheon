@@ -3,6 +3,9 @@ package com.redhat.pantheon.model.api;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
+import org.apache.sling.testing.mock.sling.junit5.SlingContext;
+import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.invocation.InvocationOnMock;
@@ -10,12 +13,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.jcr.Node;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith({MockitoExtension.class})
+@ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 class SlingResourceUtilTest {
+
+    SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
     @Test
     void createNewSlingResource() throws Exception {
@@ -60,5 +64,21 @@ class SlingResourceUtilTest {
 
         // Then
         assertNotNull(model);
+    }
+
+    @Test
+    void rename() throws Exception {
+        // Given
+        slingContext.build()
+                .resource("/a/resource/name")
+                .commit();
+
+        // When
+        SlingResourceUtil.rename(slingContext.resourceResolver().getResource("/a/resource/name"), "new-name");
+        slingContext.resourceResolver().commit();
+
+        // Then
+        assertNull(slingContext.resourceResolver().getResource("/a/resource/name"));
+        assertNotNull(slingContext.resourceResolver().getResource("/a/resource/new-name"));
     }
 }
