@@ -1,10 +1,8 @@
 package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.api.SlingResourceUtil;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleRevision;
-import com.redhat.pantheon.util.function.FunctionalUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.servlets.post.AbstractPostOperation;
