@@ -149,6 +149,23 @@ class SlingResourceTest {
     }
 
     @Test
+    public void getOrCreateChildWithDefinition() {
+        // Given
+        slingContext.build()
+                .resource("/node/child")
+                .commit();
+        SlingResource model = new SlingResource(slingContext.resourceResolver().getResource("/node"));
+
+        // When
+        SlingResource child = model.getOrCreateChild(model.child("child", SlingResource.class));
+        SlingResource nonExistentChild = model.getOrCreateChild(model.child("new-child", SlingResource.class));
+
+        // Then
+        assertNotNull(child);
+        assertNotNull(nonExistentChild);
+    }
+
+    @Test
     public void fieldEditing() throws Exception {
         // Given
         slingContext.build()

@@ -2,7 +2,6 @@ package com.redhat.pantheon.model.api;
 
 import org.apache.sling.api.resource.*;
 
-import javax.jcr.Binary;
 import java.util.Calendar;
 import java.util.Iterator;
 

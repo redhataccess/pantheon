@@ -1,6 +1,9 @@
 package com.redhat.pantheon.util.function;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,5 +29,15 @@ class FunctionalUtilsTest {
 
         // Then
         assertThrows(RuntimeException.class, () -> FunctionalUtils.tryAndThrowRuntime(throwingSupplier).get());
+    }
+
+    @Test
+    void toLastElement() {
+        // Given
+        List<String> elements = Lists.asList("A", new String[]{"B", "C", "D", "E"});
+
+        // When
+        assertEquals("E", elements.stream().reduce(FunctionalUtils.toLastElement()).get());
+
     }
 }
