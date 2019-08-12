@@ -2,20 +2,35 @@
 
 exports[`NavLinks tests should render NavLinks component 1`] = `
 <Fragment>
-  <NavItem
+  <NavList
     className=""
-    groupId={null}
-    isActive={false}
-    itemId={null}
-    onClick={null}
-    preventDefault={false}
-    to=""
+    variant="default"
   >
-    <Link
-      to="/search"
+    <NavExpandable
+      className=""
+      groupId="grp-1"
+      id=""
+      isActive={true}
+      isExpanded={true}
+      srText=""
+      title="Modules"
     >
-      Search
-    </Link>
-  </NavItem>
+      <NavItem
+        className=""
+        groupId="grp-1"
+        isActive={true}
+        itemId="grp-1_itm-1"
+        onClick={null}
+        preventDefault={false}
+        to=""
+      >
+        <Link
+          to="/search"
+        >
+          Search
+        </Link>
+      </NavItem>
+    </NavExpandable>
+  </NavList>
 </Fragment>
 `;

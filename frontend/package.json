@@ -64,7 +64,6 @@
   },
   "dependencies": {
     "@patternfly/react-core": "^3.16.10",
-    "@patternfly/react-icons": "^3.9.1",
-    "yarn": "^1.17.3"
+    "@patternfly/react-icons": "^3.9.1"
   }
 }

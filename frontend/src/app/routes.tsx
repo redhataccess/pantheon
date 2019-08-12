@@ -3,6 +3,7 @@ import { Route, RouteComponentProps, Switch, Redirect } from 'react-router-dom';
 import Search from '@app/search';
 import { Module } from '@app/module';
 import { Product } from '@app/product';
+import { ProductListing } from '@app/productListing';
 import { Login } from '@app/login';
 import { GitImport } from './gitImport';
 import { Admin } from '@app/admin';
@@ -36,6 +37,13 @@ const routes: IAppRoute[] = [
     icon: null,
     label: '',
     path: '/product'
+  },
+  {
+    component: ProductListing,
+    exact: true,
+    icon: null,
+    label: '',
+    path: '/products'
   },
   {
     component: GitImport,

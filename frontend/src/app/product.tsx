@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Bullseye, Button, Alert, AlertActionCloseButton, FormGroup, TextInput } from '@patternfly/react-core';
+import { Bullseye, Button, Alert, AlertActionCloseButton, Form, FormGroup, TextInput,TextArea, ActionGroup } from '@patternfly/react-core';
 import '@app/app.css';
 import { Redirect } from 'react-router-dom'
 
@@ -12,7 +12,7 @@ class Product extends Component {
     productName: '',
     redirect: false
   };
-
+  
   // render method transforms the react components into DOM nodes for the browser.
   public render() {
     const { productName, productDescription, isMissingFields } = this.state;
@@ -20,13 +20,14 @@ class Product extends Component {
       <React.Fragment>
         {/* Bullseye makes sure everyhting is in the middle */}
         <Bullseye>
+          <Form>
           <div className="app-container">
             <div>
               {isMissingFields && (
                 <div className="notification-container">
                   <Alert
                     variant="warning"
-                    title="A Product name and choosing a file is required."
+                    title="A Product name is required."
                     action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                   />
                 </div>
@@ -34,27 +35,31 @@ class Product extends Component {
 
               <FormGroup
                 label="Product Name"
+                isRequired
                 fieldId="product-name"
+                helperText="Please provide the product name"
               >
-                <TextInput id="product-name" type="text" placeholder="Product Name" value={productName} onChange={this.handleNameInput} />
+                <TextInput isRequired id="product-name" type="text" placeholder="Product Name" value={productName} onChange={this.handleNameInput} />
               </FormGroup>
-              <br />
+              
               <FormGroup
                 label="Product Description"
                 fieldId="product-description"
               >
                 <TextInput id="product-description" type="text" placeholder="Product Description" value={productDescription} onChange={this.handleProductInput} />
               </FormGroup>
-              <br />
               
-              <Button aria-label="Uploads the .adoc file with the Name and Description specified." onClick={this.saveProduct}>Save</Button>
+              <ActionGroup>
+              <Button aria-label="Creates a new Product Name with Description specified." onClick={this.saveProduct}>Save</Button>
               <div>
                 {this.checkAuth()}
                 {this.loginRedirect()}
                 {this.renderRedirect()}
               </div>
+              </ActionGroup>
             </div>
           </div>
+          </Form>
         </Bullseye>
       </React.Fragment>
     );
