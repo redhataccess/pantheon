@@ -2,9 +2,12 @@ package com.redhat.pantheon.util;
 
 import com.google.common.base.Function;
 import com.redhat.pantheon.model.api.SlingResource;
+import org.apache.jackrabbit.JcrConstants;
+import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -37,5 +40,11 @@ public class TestUtils {
         };
 
         context.registerAdapter(Resource.class, adapterClass, adapterFunction);
+    }
+
+    public static void setReferenceValue(final Resource resource, final String refName, final Resource referenceable) {
+        resource.adaptTo(ModifiableValueMap.class)
+                .put(refName,
+                        referenceable.getValueMap().get(JcrConstants.JCR_UUID));
     }
 }

@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.util.TestUtils;
+import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.servlets.post.HtmlResponse;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.ModificationType;
@@ -28,12 +29,17 @@ class ReleaseDraftRevisionTest {
     @Test
     void doRun() throws Exception {
         // Given
-        slingContext.build()
-                .resource("/module/locales/en_US/draft/metadata",
-                        "jcr:title", "A draft title")
-                .resource("/module/locales/en_US/draft/content/asciidoc/jcr:content",
-                        "jcr:data", "The draft content")
-                .commit();
+        slingContext.create()
+                .resource("/module/en_US/v0",
+                        "jcr:primaryType", "pant:moduleRevision");
+        slingContext.create()
+                .resource("/module/en_US/v0/metadata",
+                        "jcr:title", "A draft title");
+        slingContext.create()
+                .resource("/module/en_US/v0/content/asciidoc/jcr:content",
+                        "jcr:data", "The draft content");
+        slingContext.resourceResolver().getResource("/module/en_US").adaptTo(ModifiableValueMap.class)
+                .put("draft", slingContext.resourceResolver().getResource("/module/en_US/v0").getValueMap().get("jcr:uuid"));
         registerMockAdapter(Module.class, slingContext);
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
@@ -44,12 +50,11 @@ class ReleaseDraftRevisionTest {
         operation.doRun(slingContext.request(), postResponse, changes);
 
         // Then
-        assertTrue(changes.size() == 1);
+        assertEquals(1, changes.size());
         assertEquals(ModificationType.MODIFY, changes.get(0).getType());
         assertEquals("/module", changes.get(0).getSource());
         assertEquals(HttpServletResponse.SC_OK, postResponse.getStatusCode());
-        assertNotNull(slingContext.resourceResolver().getResource("/module/locales/en_US/released/metadata"));
-        assertNotNull(slingContext.resourceResolver().getResource("/module/locales/en_US/released/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/module/en_US/released"));
     }
 
     @Test

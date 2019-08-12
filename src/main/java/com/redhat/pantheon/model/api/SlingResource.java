@@ -155,6 +155,10 @@ public class SlingResource implements Resource {
         return new Field<>(name, Calendar.class, this);
     }
 
+    protected <T extends SlingResource> ReferenceField<T> referenceField(String name, Class<T> refType) {
+        return new ReferenceField<>(name, refType, this);
+    }
+
     /**
      * Creates a new child resource definition for this resource.
      * The primary type of the created node is determined by the DEFAULT_PRIMARY_TYPE property.

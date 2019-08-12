@@ -1,15 +1,21 @@
 package com.redhat.pantheon.model.module;
 
 import com.redhat.pantheon.model.api.Child;
+import com.redhat.pantheon.model.api.ReferenceField;
 import com.redhat.pantheon.model.api.SlingResource;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import org.apache.sling.api.resource.Resource;
 
 import javax.annotation.Nonnull;
+import javax.jcr.RepositoryException;
 import java.util.Locale;
 import java.util.Optional;
 
+import static com.google.common.collect.Streams.stream;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.counting;
 
 /**
  * The definition of a Module resource in the system.
@@ -36,20 +42,44 @@ import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 @JcrPrimaryType("pant:module")
 public class Module extends SlingResource {
 
-    public final Child<Locales> locales = child("locales", Locales.class);
-
     public Module(@Nonnull Resource resource) {
         super(resource);
     }
 
-    public Optional<ModuleRevision> getDraftRevision(final Locale locale) {
-        return locales.map(l -> l.getModuleLocale(locale == null ? DEFAULT_MODULE_LOCALE : locale))
-                .map(moduleLocale -> moduleLocale.draft.get());
+    public ModuleLocale getModuleLocale(Locale locale) {
+        return child(locale.toString(), ModuleLocale.class).get();
     }
 
-    public Optional<ModuleRevision> getReleasedRevision(final Locale locale) {
-        return locales.map(l -> l.getModuleLocale(locale == null ? DEFAULT_MODULE_LOCALE : locale))
-                .map(moduleLocale -> moduleLocale.released.get());
+    public ModuleLocale getOrCreateModuleLocale(Locale locale) {
+        return child(locale.toString(), ModuleLocale.class).getOrCreate();
+    }
+
+    public ModuleLocale createModuleLocale(Locale locale) {
+        return child(locale.toString(), ModuleLocale.class).create();
+    }
+
+    public Optional<ModuleRevision> getDraftRevision(@Nonnull final Locale locale) {
+        ModuleLocale moduleLocale = getModuleLocale(locale);
+        if(moduleLocale != null) {
+            try {
+                return ofNullable( moduleLocale.draft.getReference() );
+            } catch (RepositoryException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return empty();
+    }
+
+    public Optional<ModuleRevision> getReleasedRevision(@Nonnull final Locale locale) {
+        ModuleLocale moduleLocale = getModuleLocale(locale);
+        if(moduleLocale != null) {
+            try {
+                return ofNullable( moduleLocale.released.getReference() );
+            } catch (RepositoryException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return empty();
     }
 
     /**
@@ -89,39 +119,30 @@ public class Module extends SlingResource {
     }
 
     /**
-     * An intermediary node which holds all available locales for this
-     * module. Every locale is available as a child node named after the
-     * locale code.
-     */
-    public static class Locales extends SlingResource {
-
-        public Locales(@Nonnull Resource resource) {
-            super(resource);
-        }
-
-        public ModuleLocale getModuleLocale(Locale locale) {
-            return child(locale.toString(), ModuleLocale.class).get();
-        }
-
-        public ModuleLocale getOrCreateModuleLocale(Locale locale) {
-            return child(locale.toString(), ModuleLocale.class).getOrCreate();
-        }
-
-        public ModuleLocale createModuleLocale(Locale locale) {
-            return child(locale.toString(), ModuleLocale.class).create();
-        }
-    }
-
-    /**
      * A specific module locale node which houses all the revisions for a specific language in the module.
      */
     public static class ModuleLocale extends SlingResource {
 
-        public final Child<ModuleRevision> released = child("released", ModuleRevision.class);
+        public final ReferenceField<ModuleRevision> released = referenceField("released", ModuleRevision.class);
 
-        public final Child<ModuleRevision> draft = child("draft", ModuleRevision.class);
+        public final ReferenceField<ModuleRevision> draft = referenceField("draft", ModuleRevision.class);
 
-        // TODO add other methods for historical module revisions
+        public ModuleRevision getRevision(String name) {
+            return child(name, ModuleRevision.class).get();
+        }
+
+        public ModuleRevision getOrCreateRevision(String name) {
+            return child(name, ModuleRevision.class).getOrCreate();
+        }
+
+        public ModuleRevision createNextRevision() {
+            // Generate a new revision name
+            return child(generateNextRevisionName(), ModuleRevision.class).create();
+        }
+
+        private String generateNextRevisionName() {
+            return "v" + stream(this.getChildren()).collect(counting());
+        }
 
         public ModuleLocale(@Nonnull Resource resource) {
             super(resource);

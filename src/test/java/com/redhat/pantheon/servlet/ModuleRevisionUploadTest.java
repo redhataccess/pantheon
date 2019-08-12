@@ -3,8 +3,10 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.asciidoctor.AsciidoctorPool;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.servlets.post.HtmlResponse;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.asciidoctor.Asciidoctor;
@@ -25,7 +27,7 @@ import static org.mockito.Mockito.mock;
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 class ModuleRevisionUploadTest {
 
-    private SlingContext slingContext = new SlingContext();
+    private SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
     @Mock
     AsciidoctorPool asciidoctorPool;
@@ -45,10 +47,10 @@ class ModuleRevisionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/metadata"));
-        assertNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/content"));
-        assertNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/v0/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/v0/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/draft"));
+        assertNull(slingContext.resourceResolver().getResource("/new/module/es_ES/released"));
 
         Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
         assertEquals("This is the adoc content",
@@ -61,10 +63,15 @@ class ModuleRevisionUploadTest {
         // Given
         slingContext.build()
                 // Released revision
-                .resource("/new/module/locales/es_ES/released/metadata")
-                .resource("/new/module/locales/es_ES/released/content/asciidoc/jcr:content",
+                .resource("/new/module/es_ES/v0",
+                        "jcr:primaryType", "pant:moduleRevision")
+                .resource("/new/module/es_ES/v0/metadata")
+                .resource("/new/module/es_ES/v0/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
                 .commit();
+        // set the draft and released 'pointers'
+        slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
+                .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/v0").getValueMap().get("jcr:uuid"));
 
         lenient().when(asciidoctorPool.borrowObject()).thenReturn(mock(Asciidoctor.class, RETURNS_DEEP_STUBS));
         ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorPool);
@@ -79,10 +86,10 @@ class ModuleRevisionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/metadata"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/v0/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/v0/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/v1/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/v1/metadata"));
 
         Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
         assertEquals("Draft asciidoc content",
@@ -97,15 +104,24 @@ class ModuleRevisionUploadTest {
     void modifyDraftRevision() throws Exception {
         // Given
         slingContext.build()
+                .resource("/new/module/es_ES/v0",
+                        "jcr:primaryType", "pant:moduleRevision") // released
+                .resource("/new/module/es_ES/v1",
+                        "jcr:primaryType", "pant:moduleRevision") // draft
                 // Draft revision
-                .resource("/new/module/locales/es_ES/draft/metadata")
-                .resource("/new/module/locales/es_ES/draft/content/asciidoc/jcr:content",
+                .resource("/new/module/es_ES/v1/metadata")
+                .resource("/new/module/es_ES/v1/content/asciidoc/jcr:content",
                         "jcr:data", "This is the draft adoc content")
                 // Released revision
-                .resource("/new/module/locales/es_ES/released/metadata")
-                .resource("/new/module/locales/es_ES/released/content/asciidoc/jcr:content",
+                .resource("/new/module/es_ES/v0/metadata")
+                .resource("/new/module/es_ES/v0/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
                 .commit();
+        // set the draft and released 'pointers'
+        slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
+                .put("draft", slingContext.resourceResolver().getResource("/new/module/es_ES/v1").getValueMap().get("jcr:uuid"));
+        slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
+                .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/v0").getValueMap().get("jcr:uuid"));
 
         lenient().when(asciidoctorPool.borrowObject()).thenReturn(mock(Asciidoctor.class, RETURNS_DEEP_STUBS));
         ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorPool);
@@ -120,10 +136,10 @@ class ModuleRevisionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/draft/metadata"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/locales/es_ES/released/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/v1/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/v1/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/v0/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/v0/metadata"));
 
         Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
         assertEquals("Revised asciidoc content",

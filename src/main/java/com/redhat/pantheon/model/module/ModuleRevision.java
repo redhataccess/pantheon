@@ -1,7 +1,9 @@
 package com.redhat.pantheon.model.module;
 
 import com.redhat.pantheon.model.api.Child;
+import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.SlingResource;
+import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import org.apache.sling.api.resource.Resource;
 
 /**
@@ -10,7 +12,10 @@ import org.apache.sling.api.resource.Resource;
  * a given time. ModuleRevisions should differ in content when part of the same
  * parent, but this is not validated.
  */
+@JcrPrimaryType("pant:moduleRevision")
 public class ModuleRevision extends SlingResource {
+
+    public final Field<String> uuid = stringField("jcr:uuid");
 
     public final Child<Content> content = child("content", Content.class);
 

@@ -3,7 +3,9 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.util.TestUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Map;
 
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
+import static com.redhat.pantheon.util.TestUtils.setReferenceValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
@@ -25,7 +28,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 public class AsciidocRenderingServletTest {
 
-    private final SlingContext slingContext = new SlingContext();
+    private final SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
     @Mock AsciidoctorService asciidoctorService;
 
@@ -34,10 +37,16 @@ public class AsciidocRenderingServletTest {
     public void testGenerateHtmlFromAsciidoc() throws Exception {
         // Given
         slingContext.build()
-                .resource("/module/locales/en_US/released/content/cachedHtml/jcr:content",
+                .resource("/module/en_US/v0",
+                        "jcr:primaryType", "pant:moduleRevision")
+                .resource("/module/en_US/v0/content/cachedHtml/jcr:content",
                         "jcr:data", "A generated html string")
-                .resource("/module/locales/en_US/released/metadata")
+                .resource("/module/en_US/v0/metadata")
                 .commit();
+        setReferenceValue(
+                slingContext.resourceResolver().getResource("/module/en_US"),
+                "released",
+                slingContext.resourceResolver().getResource("/module/en_US/v0"));
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
@@ -66,10 +75,15 @@ public class AsciidocRenderingServletTest {
 
         // Given
         slingContext.build()
-                .resource("/module/locales/en_US/released/content/cachedHtml/jcr:content",
+                .resource("/module/en_US/v0",
+                        "jcr:primaryType", "pant:moduleRevision")
+                .resource("/module/en_US/v0/content/cachedHtml/jcr:content",
                         "jcr:data", "A generated html string")
-                .resource("/module/locales/en_US/metadata/released")
                 .commit();
+        setReferenceValue(
+                slingContext.resourceResolver().getResource("/module/en_US"),
+                "released",
+                slingContext.resourceResolver().getResource("/module/en_US/v0"));
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
@@ -99,10 +113,15 @@ public class AsciidocRenderingServletTest {
 
         // Given
         slingContext.build()
-                .resource("/module/locales/en_US/released/content/cachedHtml/jcr:content",
+                .resource("/module/en_US/v0",
+                        "jcr:primaryType", "pant:moduleRevision")
+                .resource("/module/en_US/v0/content/cachedHtml/jcr:content",
                         "jcr:data", "A generated html string")
-                .resource("/module/locales/en_US/metadata/released")
                 .commit();
+        setReferenceValue(
+                slingContext.resourceResolver().getResource("/module/en_US"),
+                "released",
+                slingContext.resourceResolver().getResource("/module/en_US/v0"));
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);

@@ -7,6 +7,7 @@ import com.redhat.pantheon.model.api.FileResource.JcrContent;
 import com.redhat.pantheon.model.api.SlingResourceUtil;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleRevision;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -25,6 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -66,7 +69,7 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
             String asciidocContent = ServletUtils.paramValue(request, "asciidoc");
             String path = request.getResource().getPath();
             String moduleName = ResourceUtil.getName(path);
-            String description = ServletUtils.paramValue(request, "jcr:description");
+            String description = ServletUtils.paramValue(request, "jcr:description", "");
 
             log.debug("Pushing new module revision at: " + path + " with locale: " + locale);
             log.trace("and content: " + asciidocContent);
@@ -85,19 +88,26 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
                 module = moduleResource.adaptTo(Module.class);
             }
 
+            Locale localeObj = LocaleUtils.toLocale(locale);
+            Optional<ModuleRevision> draftRevision = module.getDraftRevision(localeObj);
+            // if there is no draft content, create it
+            if( !draftRevision.isPresent() ) {
+                draftRevision = Optional.of(
+                        module.getOrCreateModuleLocale(localeObj)
+                        .createNextRevision());
+                module.getOrCreateModuleLocale(localeObj)
+                        .draft.set( draftRevision.get().uuid.get() );
+            }
+
             // modify only the draft content/metadata
-            JcrContent jcrContent = module.locales.getOrCreate()
-                    .getOrCreateModuleLocale(LocaleUtils.toLocale(locale))
-                    .draft.getOrCreate()
+            JcrContent jcrContent = draftRevision.get()
                     .content.getOrCreate()
                     .asciidoc.getOrCreate()
                     .jcrContent.getOrCreate();
             jcrContent.jcrData.set(asciidocContent);
             jcrContent.mimeType.set("text/x-asciidoc");
 
-            Metadata metadata = module.locales.getOrCreate()
-                    .getOrCreateModuleLocale(LocaleUtils.toLocale(locale))
-                    .draft.getOrCreate()
+            Metadata metadata = draftRevision.get()
                     .metadata.getOrCreate();
             metadata.title.set(moduleName);
             metadata.description.set(description);
