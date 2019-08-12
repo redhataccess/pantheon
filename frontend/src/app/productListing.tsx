@@ -4,17 +4,14 @@ import '@app/app.css';
 import { Redirect } from 'react-router-dom'
 
 class ProductListing extends Component {
-  //constructor(props) {
-    //super(props);
+ 
   public state = {
     isOpen: false, 
     isDeleted: false,
     loggedinStatus: false,
     initialLoad: true,
     isEmptyResults: false,
-    //results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "description":"","sling:transientSource": "", "pant:transientSourceName": ""}],
     results: [],
-   // results: {},
     //@TODO. removed unused state variables
     login: false,
     productDescription: '',
@@ -22,11 +19,11 @@ class ProductListing extends Component {
     redirect: false
   };
 
-  public onToggle = isOpen => {
+  private onToggle = isOpen => {
     this.setState({ isOpen });
   };
 
-  public onSelect = event => {
+  private onSelect = event => {
     this.setState({
       isOpen: !this.state.isOpen
     });
@@ -83,7 +80,7 @@ class ProductListing extends Component {
           { !this.state.isEmptyResults && this.state.results.map(data => (
           <DataListItem aria-labelledby="multi-actions-item1">
             <DataListItemRow>
-              <DataListItemCells
+            <DataListItemCells key={data["jcr:uuid"]} 
                 dataListCells={[
                   <DataListCell key="primary content">
                     <span id="multi-actions-item1">{data["name"]}</span>
@@ -120,16 +117,8 @@ class ProductListing extends Component {
     this.setState({ initialLoad: false })
     fetch(this.getProductsUrl())
       .then(response => response.json())
-      .then((data) => {
-        const results = data
-        this.setState({ results })
-        console.log("data dump=>")
-        console.log(data)
-        console.log("results dump=>")
-        console.log(results)
-      })
-      //.then( data => this.setState({ results: data }))
-      //.then(() => {
+      .then(responseJSON => this.setState({ results: responseJSON.results }))
+      .then(() => {
         console.log("results => " + this.state.results)      
         console.log(this.state.loggedinStatus)
         if (Object.keys(this.state.results).length === 0) {
@@ -142,11 +131,12 @@ class ProductListing extends Component {
           });
         }
         console.log(this.state.isEmptyResults)
-      //})
+      })
     }
 
     private getProductsUrl() {
-      let backend = "/content/products.1.json"
+      //let backend = "/content/products.1.json"
+      let backend ="/content/products.query.json?nodeType=pant:product&orderby=name"
       console.log(backend)
       return backend
     }
