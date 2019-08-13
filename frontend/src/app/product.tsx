@@ -119,7 +119,7 @@ class Product extends Component {
 
   private renderRedirect = () => {
     if (this.state.redirect) {
-      return <Redirect to='/' />
+      return <Redirect to='/products' />
     } else {
       return ""
     }
