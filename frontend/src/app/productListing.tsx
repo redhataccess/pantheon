@@ -16,7 +16,8 @@ class ProductListing extends Component {
     login: false,
     productDescription: '',
     productName: '',
-    redirect: false
+    redirect: false,
+    isProductDetails: false
   };
 
   private onToggle = isOpen => {
@@ -25,7 +26,8 @@ class ProductListing extends Component {
 
   private onSelect = event => {
     this.setState({
-      isOpen: !this.state.isOpen
+      isOpen: !this.state.isOpen,
+      isProductDetails: true
     });
   };
 
@@ -48,7 +50,10 @@ class ProductListing extends Component {
     }
     return (
       <React.Fragment>
-        {this.state.initialLoad && this.getProducts()}
+        {this.state.isProductDetails && <ProductDetails 
+        productName=
+        />}
+        {this.state.initialLoad && this.getProducts() && !this.state.isProductDetails}
         <DataList aria-label="single action data list example ">
           {!this.state.isDeleted && (
             <DataListItem aria-labelledby="single-action-item1">
@@ -105,8 +110,7 @@ class ProductListing extends Component {
                   onSelect={this.onSelect}
                   toggle={<KebabToggle onToggle={this.onToggle} />}
                   dropdownItems={[
-                    <DropdownItem key="{data['jcr:uuid']}">Product Detail</DropdownItem>,
-                                      
+                    <DropdownItem key="{data['jcr:uuid']}">Product Detail</DropdownItem>,                                  
                   ]}
                 />
               </DataListAction>
