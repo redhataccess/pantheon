@@ -40,14 +40,14 @@ class Product extends Component {
               >
                 <TextInput isRequired id="product-name" type="text" placeholder="Product Name" value={productName} onChange={this.handleNameInput} />
               </FormGroup>
-              
+              <br />
               <FormGroup
                 label="Product Description"
                 fieldId="product-description"
               >
                 <TextInput id="product-description" type="text" placeholder="Product Description" value={productDescription} onChange={this.handleProductInput} />
               </FormGroup>
-              
+              <br />
               <ActionGroup>
               <Button aria-label="Creates a new Product Name with Description specified." onClick={this.saveProduct}>Save</Button>
               <div>
