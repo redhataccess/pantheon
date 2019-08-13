@@ -1,6 +1,5 @@
 package com.redhat.pantheon.model.module;
 
-import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.ReferenceField;
 import com.redhat.pantheon.model.api.SlingResource;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
@@ -12,7 +11,6 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static com.google.common.collect.Streams.stream;
-import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.counting;
@@ -24,14 +22,13 @@ import static java.util.stream.Collectors.counting;
  *
  * A module's structure in the JCR tree is as follows:
  * .../modulename
- *               /locales
  *                       /en-US
- *                             /draft
+ *                             /v4
  *                                   /content
  *                                           /asciidoc
  *                                           /cachedHtml
  *                                   /metadata
- *                             /released
+ *                             /v3
  *                                   /content
  *                                   /metadata
  *                             /v2 (older - just for historical purposes)
@@ -121,6 +118,7 @@ public class Module extends SlingResource {
     /**
      * A specific module locale node which houses all the revisions for a specific language in the module.
      */
+    @JcrPrimaryType("sling:OrderedFolder")
     public static class ModuleLocale extends SlingResource {
 
         public final ReferenceField<ModuleRevision> released = referenceField("released", ModuleRevision.class);

@@ -2,6 +2,11 @@ package com.redhat.pantheon.model.api;
 
 import javax.jcr.*;
 
+/**
+ * Specific implementation of a field of type reference.
+ * Referecne fields add convenience to fetch the referenced resource.
+ * @param <T>
+ */
 public class ReferenceField<T extends SlingResource> extends Field<String> {
 
     private final Class<T> referenceType;
@@ -11,6 +16,9 @@ public class ReferenceField<T extends SlingResource> extends Field<String> {
         this.referenceType = referenceType;
     }
 
+    /**
+     * @see Field#set(Object)
+     */
     @Override
     public void set(String value) {
         try {
@@ -21,6 +29,11 @@ public class ReferenceField<T extends SlingResource> extends Field<String> {
         }
     }
 
+    /**
+     * @return The referenced object as a {@link SlingResource}, or null if the reference is null or
+     * invalid
+     * @throws RepositoryException If there was a proble
+     */
     public T getReference() throws RepositoryException {
         if(get() == null) {
             return null;
