@@ -37,7 +37,6 @@ class Product extends Component {
                 label="Product Name"
                 isRequired
                 fieldId="product-name"
-                helperText="Please provide the product name"
               >
                 <TextInput isRequired id="product-name" type="text" placeholder="Product Name" value={productName} onChange={this.handleNameInput} />
               </FormGroup>

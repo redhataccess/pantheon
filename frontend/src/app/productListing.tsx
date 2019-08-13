@@ -29,6 +29,11 @@ class ProductListing extends Component {
     });
   };
 
+  //private onSelect = event => {
+  //  this.setState(prevState => ({
+  //    isOpen: !prevState.isOpen
+  //  }));
+  //};
   // render method transforms the react components into DOM nodes for the browser.
   public render() {
     const id = 'userID';
@@ -83,14 +88,14 @@ class ProductListing extends Component {
             <DataListItemCells key={data["jcr:uuid"]} 
                 dataListCells={[
                   <DataListCell key="primary content">
-                    <span id="multi-actions-item1">{data["name"]}</span>
+                    <span id="{data['name']}">{data["name"]}</span>
                   </DataListCell>,
                   <DataListCell key="secondary content">{data["description"]}</DataListCell>
                 ]}
               />
               <DataListAction
-                aria-labelledby="multi-actions-item1 multi-actions-action1"
-                id="multi-actions-action1"
+                aria-labelledby="multi-actions-item1 {data['jcr:uuid']}"
+                id="{data['jcr:uuid']}"
                 aria-label="Actions"
               >
                 <Dropdown
@@ -100,7 +105,7 @@ class ProductListing extends Component {
                   onSelect={this.onSelect}
                   toggle={<KebabToggle onToggle={this.onToggle} />}
                   dropdownItems={[
-                    <DropdownItem key="link">Product Detail</DropdownItem>,
+                    <DropdownItem key="{data['jcr:uuid']}">Product Detail</DropdownItem>,
                                       
                   ]}
                 />
