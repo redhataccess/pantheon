@@ -48,22 +48,15 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             directionParam = "asc";
         }
 
-        //FIXME - we had "select * from [pant:module]..." here, BUT we were seeing problems that after a very small
-        //FIXME - number of module upload/delete operations, this query would suddenly return only a very small number
-        //FIXME - of modules. Changing this to [nt:base] seems to fix it, but I don't know why. Perhaps it's some bug
-        //FIXME - related to 'nodetypes.cnd' getting reinstalled on every package deployment, resulting in the
-        //FIXME - pant:module nodetype being assigned some new internal id, but that's pure speculation.
         StringBuilder queryBuilder = new StringBuilder()
-                .append("select * from [pant:module] as m ")
-                // TODO en_US only for now
+                .append("select m.* from [pant:module] as m ")
+                    .append("INNER JOIN [pant:moduleRevision] as rev ON ISDESCENDANTNODE(rev, m) ")
                 .append("where (isdescendantnode(m, '/content/repositories') ")
                     .append("or isdescendantnode(m, '/content/modules') ")
                     .append("or isdescendantnode(m, '/content/sandbox')) ")
-                // look in both released and draft metadata
-                .append("AND (m.[locales/en_US/draft/metadata/jcr:title] like '%" + searchParam + "%' ")
-                    .append("OR m.[locales/en_US/draft/metadata/jcr:description] like " + "'%" + searchParam + "%' ")
-                    .append("OR m.[locales/en_US/released/metadata/jcr:title] like '%" + searchParam + "%' ")
-                    .append("OR m.[locales/en_US/released/metadata/jcr:description] like " + "'%" + searchParam + "%')");
+                // look in ALL revisions (all locales)
+                .append("AND (rev.[metadata/jcr:title] like '%" + searchParam + "%' ")
+                    .append("OR rev.[metadata/jcr:description] like " + "'%" + searchParam + "%') ");
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
             queryBuilder.append(" order by m.[")
