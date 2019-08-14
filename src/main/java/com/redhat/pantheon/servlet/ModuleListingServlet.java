@@ -1,5 +1,7 @@
 package com.redhat.pantheon.servlet;
 
+import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
@@ -10,9 +12,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.Servlet;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 
 /**
@@ -44,22 +48,18 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             directionParam = "asc";
         }
 
-        //FIXME - we had "select * from [pant:module]..." here, BUT we were seeing problems that after a very small
-        //FIXME - number of module upload/delete operations, this query would suddenly return only a very small number
-        //FIXME - of modules. Changing this to [nt:base] seems to fix it, but I don't know why. Perhaps it's some bug
-        //FIXME - related to 'nodetypes.cnd' getting reinstalled on every package deployment, resulting in the
-        //FIXME - pant:module nodetype being assigned some new internal id, but that's pure speculation.
         StringBuilder queryBuilder = new StringBuilder()
-                .append("select * from [nt:base] as a ")
-                .append("where [sling:resourceType] = 'pantheon/module' ")
-                .append("and (isdescendantnode(a, '/content/repositories') ")
-                .append("or isdescendantnode(a, '/content/modules') ")
-                .append("or isdescendantnode(a, '/content/sandbox')) ")
-                .append("AND (a.[jcr:title] like '%" + searchParam + "%' ")
-                .append("OR a.[jcr:description] like " + "'%" + searchParam + "%')");
+                .append("select m.* from [pant:module] as m ")
+                    .append("INNER JOIN [pant:moduleRevision] as rev ON ISDESCENDANTNODE(rev, m) ")
+                .append("where (isdescendantnode(m, '/content/repositories') ")
+                    .append("or isdescendantnode(m, '/content/modules') ")
+                    .append("or isdescendantnode(m, '/content/sandbox')) ")
+                // look in ALL revisions (all locales)
+                .append("AND (rev.[metadata/jcr:title] like '%" + searchParam + "%' ")
+                    .append("OR rev.[metadata/jcr:description] like " + "'%" + searchParam + "%') ");
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
-            queryBuilder.append(" order by a.[")
+            queryBuilder.append(" order by m.[")
                     .append(keyParam).append("] ")
                     .append(directionParam);
         }
@@ -69,9 +69,17 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
     @Override
     protected Map<String, Object> resourceToMap(Resource resource) {
+        Module module = resource.adaptTo(Module.class);
+        Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE);
+        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE);
+
+        // TODO Need some DTOs to convert to maps
         Map<String, Object> m = super.resourceToMap(resource);
         String resourcePath = resource.getPath();
         m.put("name", resource.getName());
+        // TODO need to provide both released and draft to the api caller
+        m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title.get() : releasedMetadata.get().title.get());
+        m.put("jcr:description", draftMetadata.isPresent() ? draftMetadata.get().description.get() : releasedMetadata.get().description.get());
         // Assume the path is something like: /content/<something>/my/resource/path
         m.put("pant:transientPath", resourcePath.substring("/content/".length()));
         // Example path: /content/repositories/ben_2019-04-11_16-15-15/shared/attributes.module.adoc

@@ -1,15 +1,10 @@
 package com.redhat.pantheon.model.api;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.resource.*;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import static com.google.common.collect.Maps.newHashMap;
 import static com.redhat.pantheon.model.api.SlingResourceUtil.toSlingResource;
 
 /**
@@ -25,7 +20,7 @@ import static com.redhat.pantheon.model.api.SlingResourceUtil.toSlingResource;
  */
 public class SlingResource implements Resource {
 
-    private static final String DEFAULT_PRIMARY_TYPE = "nt:unstructured";
+    static final String DEFAULT_PRIMARY_TYPE = "nt:unstructured";
 
     private final Resource wrapped;
 
@@ -36,14 +31,12 @@ public class SlingResource implements Resource {
     /**
      * Creates a child resource given a name and a set of initial properties
      * @param name The child's name
-     * @param props The initial properties to be stored on the child resource
+     * @param modelType The {@link SlingResource} type to create the child as.
      * @return The newly created child resource
      * @throws PersistenceException If there is a problem creating the child resource
      */
-    public SlingResource createChild(String name, Pair<String, ?>... props) throws PersistenceException {
-        Map<String, Object> propsMap =
-                Arrays.stream(props).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-        return new SlingResource(wrapped.getResourceResolver().create(wrapped, name, propsMap));
+    public <T extends SlingResource> T createChild(final String name, Class<T> modelType) {
+        return SlingResourceUtil.createNewSlingResource(wrapped, name, modelType);
     }
 
     /**
@@ -60,15 +53,14 @@ public class SlingResource implements Resource {
     /**
      * Returns a child resource, creating it if it doesn't exist.
      * @param name The child's name
-     * @param props The properties to set on the child only if being created.
      * @return The found or created child resource
      * @throws PersistenceException If there is a problem creating the new child resource
      */
-    public SlingResource getOrCreateChild(String name, Pair<String, ?>... props) throws PersistenceException {
+    public <T extends SlingResource> T getOrCreateChild(String name, Class<T> type) {
         if(wrapped.getChild(name) == null) {
-            return createChild(name, props);
+            return createChild(name, type);
         }
-        return new SlingResource(wrapped.getChild(name));
+        return getChild(name, type);
     }
 
     /**
@@ -79,9 +71,7 @@ public class SlingResource implements Resource {
      * @return The newly create child resource.
      */
     public <T extends SlingResource> T createChild(Child<T> child) {
-        Map<String, Object> props = newHashMap();
-        props.put("jcr:primaryType", child.getPrimaryType());
-        return SlingResourceUtil.createNewSlingResource(wrapped, child.getName(), props, child.getType());
+        return SlingResourceUtil.createNewSlingResource(wrapped, child.getName(), child.getType());
     }
 
     /**
@@ -109,12 +99,31 @@ public class SlingResource implements Resource {
     }
 
     /**
+     * Sets a resoruce's property. This is a convenience method. Be aware that the underlying
+     * implementation might throw an exception if the resource is not modifiable, or if the type
+     * of value is not recognized
+     * @param name The name of the property
+     * @param value The value to set
+     */
+    public void setProperty(String name, Object value) {
+        wrapped.adaptTo(ModifiableValueMap.class).put(name, value);
+    }
+
+    /**
      * Indicates if a child exists
      * @param child The child resource definition
      * @return True if a child based on the definition's name exists, false otherwise.
      */
     public boolean isPresent(Child<?> child) {
         return wrapped.getChild(child.getName()) != null;
+    }
+
+    /**
+     * Deletes this resource from the repository.
+     * @throws PersistenceException If there was a problem deleting the node, such as a failed constraing validation
+     */
+    public void delete() throws PersistenceException {
+        wrapped.getResourceResolver().delete(this);
     }
 
     /**
@@ -146,17 +155,8 @@ public class SlingResource implements Resource {
         return new Field<>(name, Calendar.class, this);
     }
 
-    /**
-     * Creates a new child resource definition for this resource
-     * @param name child resource name
-     * @param type the {@link SlingResource} type
-     * @param primaryType The jcr primary type to assign to the new child (important if relying on JCR to auto-assign
-     *                    values, or auto-create nodes.
-     * @param <T>
-     * @return A new child definition for this SlingResource
-     */
-    protected <T extends SlingResource> Child<T> child(String name, Class<T> type, String primaryType) {
-        return new Child<>(name, type, primaryType, this);
+    protected <T extends SlingResource> ReferenceField<T> referenceField(String name, Class<T> refType) {
+        return new ReferenceField<>(name, refType, this);
     }
 
     /**
@@ -168,7 +168,7 @@ public class SlingResource implements Resource {
      * @return A new child definition for this SlingResource
      */
     protected <T extends SlingResource> Child<T> child(String name, Class<T> type) {
-        return child(name, type, DEFAULT_PRIMARY_TYPE);
+        return new Child<>(name, type, this);
     }
 
     /**
@@ -178,7 +178,7 @@ public class SlingResource implements Resource {
      * @return A new File-type child definition for this SlingResource
      */
     protected Child<FileResource> file(String name) {
-        return child(name, FileResource.class, "nt:file");
+        return child(name, FileResource.class);
     }
 
     /*

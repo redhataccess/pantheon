@@ -1,6 +1,6 @@
 package com.redhat.pantheon.model.api;
 
-import com.redhat.pantheon.model.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleRevision;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
@@ -22,19 +22,19 @@ class SlingResourceAdapterFactoryTest {
     void getAdapter() {
         // Given
         slingContext.build()
-                .resource("/content/module1",
+                .resource("/content/module1/draft/metadata",
                         "jcr:createdBy", "a-user",
                         "jcr:created", Calendar.getInstance())
                 .commit();
 
         // When
-        ModuleRevision adapter = modelAdapterFactory.getAdapter(slingContext.resourceResolver().getResource("/content/module1"),
+        ModuleRevision adapter = modelAdapterFactory.getAdapter(slingContext.resourceResolver().getResource("/content/module1/draft"),
                 ModuleRevision.class);
 
         // Then
         assertNotNull(adapter);
-        assertEquals("a-user", adapter.createdBy.get());
-        assertNotNull(adapter.created.get());
+        assertEquals("a-user", adapter.metadata.get().createdBy.get());
+        assertNotNull(adapter.metadata.get().created.get());
     }
 
     @Test

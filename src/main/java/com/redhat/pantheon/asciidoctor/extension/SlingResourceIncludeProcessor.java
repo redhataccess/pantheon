@@ -1,8 +1,8 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.Module;
 import com.redhat.pantheon.model.api.SlingResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
 public class SlingResourceIncludeProcessor extends IncludeProcessor {
 
@@ -52,16 +54,16 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             SlingResource sIncludeResource = includeResource.adaptTo(SlingResource.class);
 
             // Included resource might be a plain file or another module
-            if( sIncludeResource.getProperty("jcr:primaryType", String.class).equals("pant:module") ) {
+            if( sIncludeResource.getProperty(JCR_PRIMARYTYPE, String.class).equals("pant:module") ) {
                 Module module = sIncludeResource.adaptTo(Module.class);
-                // TODO, right now only default locale and latest version of the module are used
-                content = module.locales.get()
-                        .getModuleLocale(GlobalConfig.DEFAULT_MODULE_LOCALE)
-                        .revisions.get()
-                        .getDefaultRevision()
-                        .asciidocContent.get();
+                // TODO, right now only default locale and latest (draft) version of the module are used
+                content = module.getDraftContent(GlobalConfig.DEFAULT_MODULE_LOCALE)
+                            .get()
+                            .asciidocContent.get();
             } else {
                 // It's a plain file
+                // TODO Resources (assets) will be revisioned too, and module revisions will have a record of their
+                // TODO specific asset version, so this extension will need to fetch the correct one
                 FileResource file = sIncludeResource.adaptTo(FileResource.class);
                 content = file.jcrContent.get()
                         .jcrData.get();

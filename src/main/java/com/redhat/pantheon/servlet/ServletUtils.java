@@ -1,12 +1,14 @@
 package com.redhat.pantheon.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.LocaleUtils;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Locale;
 
 /**
  * A set of utilities when working with servlets.
@@ -89,6 +91,31 @@ public final class ServletUtils {
     public static
     boolean paramValueAsBoolean(final HttpServletRequest request, final String paramName) {
         return Boolean.parseBoolean(request.getParameter(paramName));
+    }
+
+    /**
+     * Returns a servlet request parameter as a {@link Locale}, or the provided default value if the
+     * parameter was not present or was not in the appropriate format.
+     * @param request
+     * @param paramName
+     * @param defaultValue
+     * @return
+     * @see LocaleUtils accepted string formats
+     */
+    public static Locale paramValueAsLocale(final HttpServletRequest request,
+                                            final String paramName,
+                                            final Locale defaultValue) {
+        Locale paramVal = defaultValue;
+        String requestParamVal = request.getParameter(paramName);
+
+        try {
+            paramVal = LocaleUtils.toLocale(requestParamVal);
+        } catch (IllegalArgumentException iaex) {
+            // do nothing, proceed with the default value
+        }
+
+        // there is a chance the locale is null
+        return paramVal == null ? defaultValue : paramVal;
     }
 
     /**
