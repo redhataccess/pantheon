@@ -11,6 +11,9 @@ class NavLinks extends Component {
         moduleText: '',
         productText: '',
         productsText: '',
+        browserText: '',
+        consoleText: '',
+        slingHomeText: '',
         searchText: 'Search',
         isDropdownOpen: false,
         isKebabDropdownOpen: false,
@@ -62,6 +65,9 @@ class NavLinks extends Component {
                         this.setState({ productText: 'New Product' })
                         this.setState({ productsText: 'All Products' })
                         this.setState({ gitText: 'Git Import' })
+                        this.setState({ browserText: 'Content Browser' })
+                        this.setState({ slingHomeText: 'Sling Welcome' })
+                        this.setState({ consoleText: 'Web Console' })
                         this.setState({ isLoggedIn: true })
                     }
                     if(responseJSON[id] === 'admin'){
@@ -92,14 +98,31 @@ class NavLinks extends Component {
                   </NavItem>)}
                 </NavExpandable>)}
                 {(this.state.isLoggedIn) && (this.state.isAdmin) && (<NavExpandable title="Admin Panel" groupId="grp-3" isActive={this.state.activeGroup === 'grp-3'}>
-                  <NavItem groupId="grp-3" itemId="grp-3_itm-1" isActive={this.state.activeItem === 'grp-3_itm-1'}>
-                    <Link to='/admin'>{this.state.adminPage}</Link>
+                  <NavItem groupId="grp-3" itemId="grp-3_itm-1" isActive={this.state.activeItem === 'grp-3_itm-1'} onClick={this.welcomeLink()}>
+                    <Link to='/starter/index.html'>{this.state.slingHomeText}</Link>
+                  </NavItem>
+                  <NavItem groupId="grp-3" itemId="grp-3_itm-2" isActive={this.state.activeItem === 'grp-3_itm-2'} onClick={this.browserLink()}>
+                    <Link to='/bin/browser.html' >{this.state.browserText}</Link>
+                  </NavItem>
+                  <NavItem groupId="grp-3" itemId="grp-3_itm-3" isActive={this.state.activeItem === 'grp-3_itm-3'} onClick={this.consoleLink()}>
+                    <Link to='/system/console/bundles.html'>{this.state.consoleText}</Link>
                   </NavItem>
                 </NavExpandable>)}
               </NavList>
             </React.Fragment>
         );
     }
+    private browserLink = () => (event: any) =>  {
+      return window.open("/bin/browser.html");
+    };
+
+    private welcomeLink = () => (event: any) =>  {
+      return window.open("/starter/index.html");
+    };
+
+    private consoleLink = () => (event: any) =>  {
+      return window.open("/system/console/bundles.html");
+    };
 }
 
 export { NavLinks }
