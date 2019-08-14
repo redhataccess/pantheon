@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction } from '@patternfly/react-core';
+import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction,
+  OptionsMenu, OptionsMenuItem, OptionsMenuToggle } from '@patternfly/react-core';
 import '@app/app.css';
-import { Redirect } from 'react-router-dom'
+import { ProductDetails } from '@app/productDetails';
+import { Link } from "react-router-dom";
 
 class ProductListing extends Component {
  
@@ -18,17 +20,6 @@ class ProductListing extends Component {
     productName: '',
     redirect: false,
     isProductDetails: false
-  };
-
-  private onToggle = isOpen => {
-    this.setState({ isOpen });
-  };
-
-  private onSelect = event => {
-    this.setState({
-      isOpen: !this.state.isOpen,
-      isProductDetails: true
-    });
   };
 
   //private onSelect = event => {
@@ -48,12 +39,14 @@ class ProductListing extends Component {
           }
         })
     }
+
     return (
       <React.Fragment>
-        {this.state.isProductDetails && <ProductDetails 
-        productName=
-        />}
-        {this.state.initialLoad && this.getProducts() && !this.state.isProductDetails}
+        {this.state.isProductDetails && (<ProductDetails productName={this.state.productName}/>)}
+        {console.log('initial Load: ',this.state.initialLoad)}
+        {console.log('isProducDetails: ', this.state.isProductDetails)}
+        {this.state.initialLoad && this.getProducts()} 
+        {!this.state.isProductDetails && (
         <DataList aria-label="single action data list example ">
           {!this.state.isDeleted && (
             <DataListItem aria-labelledby="single-action-item1">
@@ -103,21 +96,30 @@ class ProductListing extends Component {
                 id="{data['jcr:uuid']}"
                 aria-label="Actions"
               >
-                <Dropdown
-                  isPlain
+                {/* <Dropdown
+                  isPlain={true}
                   position={DropdownPosition.right}
                   isOpen={this.state.isOpen}
-                  onSelect={this.onSelect}
-                  toggle={<KebabToggle onToggle={this.onToggle} />}
+                  onSelect={() => this.onSelect(event,data)}
+                  toggle={<KebabToggle onToggle={() => this.onToggle(this.state.isOpen,data)} />}
                   dropdownItems={[
-                    <DropdownItem key="{data['jcr:uuid']}">Product Detail</DropdownItem>,                                  
-                  ]}
-                />
+                    <DropdownItem key="action" href="@app/search">Product Details</DropdownItem>,                                  
+                  ]
+                }
+                /> */}
+                  <OptionsMenu
+                    isPlain={true}
+                    id="options-menu-single-option-example"
+                    menuItems={[
+                      <OptionsMenuItem onSelect={()=>this.onSelect(event,data)}>Product Details</OptionsMenuItem>]
+                    }
+                    isOpen={this.state.isOpen}
+                    toggle={<OptionsMenuToggle onToggle={this.onToggle}/>} />
+
               </DataListAction>
             </DataListItemRow>
           </DataListItem>))}
-        </DataList>
-
+        </DataList>)}
       </React.Fragment>
     );
   }
@@ -133,13 +135,12 @@ class ProductListing extends Component {
         if (Object.keys(this.state.results).length === 0) {
           this.setState({
             isEmptyResults : true
-          });
+          },()=>{console.log(this.state.isEmptyResults,this.state.initialLoad)});
         } else {
           this.setState({
             isEmptyResults : false
-          });
+          },()=>{console.log(this.state.isEmptyResults,this.state.initialLoad)});
         }
-        console.log(this.state.isEmptyResults)
       })
     }
 
@@ -149,6 +150,35 @@ class ProductListing extends Component {
       console.log(backend)
       return backend
     }
+
+    // private onToggle = (isOpen,data) => {
+    //   this.setState({ isOpen,
+    //     isProductDetails: !this.state.isProductDetails,
+    //     productName: data["name"]
+    //     },() => {console.log('isopen: ',this.state.isOpen)
+    //   console.log('toggled')});
+    // };
+  
+    // private onSelect = (event,data) => {
+    //   this.setState({
+    //     isOpen: !this.state.isOpen
+    //   },() => {console.log('isopen on select: ',this.state.isOpen)});
+    // };
+
+    private onToggle = () => {
+      this.setState({
+          isOpen: !this.state.isOpen
+      });
+     };
+  
+    private onSelect = (event,data) => {
+      this.setState({
+        initialLoad: false,
+        isProductDetails: !this.state.isProductDetails,
+        productName: data["name"]
+      });
+    };
+
 }
 
 export { ProductListing }
