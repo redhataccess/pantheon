@@ -17,6 +17,7 @@ import com.redhat.pantheon.use.PlatformData;
 
 import javax.servlet.ServletException;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,5 +40,22 @@ public class BuildDateServletTest {
         
         //Then
         assertEquals(true,date.contains(""));
+    }
+
+    @Test
+    @DisplayName("Test if the hash fetched.")
+    public void testCommitHash() throws Exception {
+        //Given
+        BuildDateServlet buildDate = new BuildDateServlet();
+
+        //When
+        String hash = buildDate.getCommitHash();
+
+        //Then
+        if (System.getenv("OPENSHIFT_BUILD_COMMIT") != null){
+            assertEquals(true, Pattern.compile( "[0-9]" ).matcher(hash).find());
+        } else {
+            assertEquals(true,hash.contains("OPENSHIFT_BUILD_COMMIT is not set"));
+        }
     }
 }

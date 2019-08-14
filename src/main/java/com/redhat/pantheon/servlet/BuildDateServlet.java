@@ -37,6 +37,7 @@ public class BuildDateServlet extends SlingSafeMethodsServlet {
             String buildDate = getDate();
             Map<String, Object> currentBuildDate = new HashMap<>();
             currentBuildDate.put("buildDate",buildDate);
+            currentBuildDate.put("commitHash", getCommitHash());
             writeAsJson(response, currentBuildDate);
         } catch (Exception e) {
             log.error("/builddate.json error", e);
@@ -46,5 +47,15 @@ public class BuildDateServlet extends SlingSafeMethodsServlet {
 
     protected String getDate(){ 
         return PlatformData.getJarBuildDate();
+    }
+
+    protected String getCommitHash(){
+        String commitHash;
+        if (System.getenv("OPENSHIFT_BUILD_COMMIT") != null){
+            commitHash = System.getenv("OPENSHIFT_BUILD_COMMIT");
+        } else {
+            commitHash = "OPENSHIFT_BUILD_COMMIT is not set, this might not be an OpenShift environment.";
+        }
+        return commitHash;
     }
 }
