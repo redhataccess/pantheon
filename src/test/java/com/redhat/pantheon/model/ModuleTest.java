@@ -1,11 +1,11 @@
 package com.redhat.pantheon.model;
 
+import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.jcr.Node;
@@ -20,71 +20,69 @@ class ModuleTest {
 
     private final SlingContext slingContext = new SlingContext();
 
-//    @Test
-//    void createNewRevision() throws Exception {
-//        // Given
-//        slingContext.build()
-//                .resource("/content/module1")
-//                .commit();
-//        slingContext.registerAdapter(Resource.class, Node.class, mock(Node.class));
-//        Module module = new Module(slingContext.resourceResolver().getResource("/content/module1"));
-//
-//        // When
-//        module.locales.getOrCreate()
-//                .createModuleLocale(new Locale("es", "ES"))
-//                .revisions.getOrCreate()
-//                .createModuleRevision("v1");
-//        module.getResourceResolver().commit();
-//
-//        // Then
-//        assertNotNull(slingContext.resourceResolver().getResource("/content/module1/locales/es_ES/revisions/v1"));
-//    }
-//
-//    @Test
-//    void getRevisionByLocaleAndRevisionName() throws Exception {
-//        // Given
-//        slingContext.build()
-//                // module 1, en_US
-//                .resource("/content/module1/locales/en_US/revisions/1")
-//                .resource("/content/module1/locales/en_US/revisions/2")
-//                // module 1, es_ES
-//                .resource("/content/module1/locales/es_ES/revisions/1")
-//                .resource("/content/module1/locales/es_ES/revisions/2")
-//                // module 2, en_US
-//                .resource("/content/module2/locales/en_US/revisions/1")
-//                .resource("/content/module2/locales/en_US/revisions/2")
-//                // module 2, es_ES
-//                .resource("/content/module2/locales/es_ES/revisions/1")
-//                .resource("/content/module2/locales/es_ES/revisions/2")
-//                .commit();
-//        slingContext.registerAdapter(Resource.class, Node.class, mock(Node.class));
-//
-//        // When
-//        Module module1 = new Module(slingContext.resourceResolver().getResource("/content/module1"));
-//        Module module2 = new Module(slingContext.resourceResolver().getResource("/content/module2"));
-//
-//        // Then
-//        assertNotNull(
-//                module1.locales.get().getModuleLocale(new Locale("en", "US")).revisions.get().getModuleRevision("1"));
-//        assertNotNull(
-//                module1.locales.get().getModuleLocale(new Locale("en", "US")).revisions.get().getModuleRevision("2"));
-//        assertNotNull(
-//                module1.locales.get().getModuleLocale(new Locale("es", "ES")).revisions.get().getModuleRevision("1"));
-//        assertNotNull(
-//                module1.locales.get().getModuleLocale(new Locale("es", "ES")).revisions.get().getModuleRevision("2"));
-//        assertNotNull(
-//                module2.locales.get().getModuleLocale(new Locale("en", "US")).revisions.get().getModuleRevision("1"));
-//        assertNotNull(
-//                module2.locales.get().getModuleLocale(new Locale("en", "US")).revisions.get().getModuleRevision("1"));
-//        assertNotNull(
-//                module2.locales.get().getModuleLocale(new Locale("es", "ES")).revisions.get().getModuleRevision("1"));
-//        assertNotNull(
-//                module2.locales.get().getModuleLocale(new Locale("es", "ES")).revisions.get().getModuleRevision("2"));
-//
-//        assertNull(
-//                module1.locales.get().getModuleLocale(Locale.SIMPLIFIED_CHINESE));
-//        assertNull(
-//                module1.locales.get().getModuleLocale(new Locale("es", "ES")).revisions.get().getModuleRevision("abc"));
-//    }
+    @Test
+    void createNewRevision() throws Exception {
+        // Given
+        slingContext.build()
+                .resource("/content/module1")
+                .commit();
+        slingContext.registerAdapter(Resource.class, Node.class, mock(Node.class));
+        Module module = new Module(slingContext.resourceResolver().getResource("/content/module1"));
+
+        // When
+        module.createModuleLocale(new Locale("es", "ES"))
+                .createNextRevision();
+        module.getResourceResolver().commit();
+
+        // Then
+        assertNotNull(slingContext.resourceResolver().getResource("/content/module1/es_ES/v0"));
+    }
+
+    @Test
+    void getRevisionByLocaleAndRevisionName() throws Exception {
+        // Given
+        slingContext.build()
+                // module 1, en_US
+                .resource("/content/module1/en_US/v0")
+                .resource("/content/module1/en_US/v1")
+                // module 1, es_ES
+                .resource("/content/module1/es_ES/v0")
+                .resource("/content/module1/es_ES/v1")
+                // module 2, en_US
+                .resource("/content/module2/en_US/v0")
+                .resource("/content/module2/en_US/v1")
+                // module 2, es_ES
+                .resource("/content/module2/es_ES/v0")
+                .resource("/content/module2/es_ES/v1")
+                .commit();
+        slingContext.registerAdapter(Resource.class, Node.class, mock(Node.class));
+
+        // When
+        Module module1 = new Module(slingContext.resourceResolver().getResource("/content/module1"));
+        Module module2 = new Module(slingContext.resourceResolver().getResource("/content/module2"));
+
+        // Then
+        assertNotNull(
+                module1.getModuleLocale(new Locale("en", "US")).getRevision("v0"));
+        assertNotNull(
+                module1.getModuleLocale(new Locale("en", "US")).getRevision("v1"));
+        assertNotNull(
+                module1.getModuleLocale(new Locale("es", "ES")).getRevision("v0"));
+        assertNotNull(
+                module1.getModuleLocale(new Locale("es", "ES")).getRevision("v1"));
+        assertNotNull(
+                module2.getModuleLocale(new Locale("en", "US")).getRevision("v0"));
+        assertNotNull(
+                module2.getModuleLocale(new Locale("en", "US")).getRevision("v1"));
+        assertNotNull(
+                module2.getModuleLocale(new Locale("es", "ES")).getRevision("v0"));
+        assertNotNull(
+                module2.getModuleLocale(new Locale("es", "ES")).getRevision("v1"));
+
+        assertNull(
+                module1.getModuleLocale(Locale.SIMPLIFIED_CHINESE));
+        assertNull(
+                module1.getModuleLocale(new Locale("es", "ES")).getRevision("abc"));
+    }
 
 }
