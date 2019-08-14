@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { 
     Breadcrumb, BreadcrumbItem, Level, LevelItem, List, ListItem,
     Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { Link } from "react-router-dom";
 
 export interface IProps {
     productName: string
+    // navigateBack: () => any
   }
   
   class ProductDetails extends Component<IProps> {
@@ -14,7 +16,7 @@ export interface IProps {
             <React.Fragment>
                 <div>
                     <Breadcrumb>
-                        <BreadcrumbItem to="/products">All Products</BreadcrumbItem>
+                        <BreadcrumbItem to='/'>All Products</BreadcrumbItem>
                         <BreadcrumbItem to="#" isActive={true}>
                             {this.props.productName}
                         </BreadcrumbItem>
