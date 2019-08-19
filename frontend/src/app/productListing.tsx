@@ -12,7 +12,6 @@ class ProductListing extends Component {
  
   public state = {
     isOpen: false, 
-    //isDeleted: false,
     loggedinStatus: false,
     initialLoad: true,
     isEmptyResults: false,
@@ -146,7 +145,6 @@ class ProductListing extends Component {
     }
 
     private getProductsUrl() {
-      //let backend = "/content/products.1.json"
       let backend ="/content/products.query.json?nodeType=pant:product&orderby=name"
       console.log(backend)
       return backend

@@ -80,7 +80,9 @@ class Product extends Component {
     
     // check for duplcated product name.
     this.productExist(this.state.productName);
-    console.log("Name " + productName);
+    if (this.state.isDup) {
+      this.setState({formInvalid: true});
+    }
   };
 
   private handleProductInput = productDescription => {
@@ -89,7 +91,9 @@ class Product extends Component {
 
     // check for duplcated product name.
     this.productExist(this.state.productName);
-    console.log("Name " + this.state.productName);
+    if (this.state.isDup) {
+      this.setState({formInvalid: true});
+    }
   };
 
   private saveProduct = (postBody) => {
