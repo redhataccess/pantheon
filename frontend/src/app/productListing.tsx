@@ -4,10 +4,12 @@ import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList
 import '@app/app.css';
 import { ProductDetails } from '@app/productDetails';
 import { Link } from "react-router-dom";
+import { RouteComponentProps } from 'react-router-dom';
 
 class ProductListing extends Component {
  
   public state = {
+    allProducts: [],
     isOpen: false, 
     isDeleted: false,
     loggedinStatus: false,
@@ -39,13 +41,13 @@ class ProductListing extends Component {
           }
         })
     }
-
+    console.log('props state: ',this.props['match']['isExact'])
+    // this.state.initialLoad = this.props['match']['isExact']
     return (
       <React.Fragment>
+        {console.log('initial load:',this.state.initialLoad, ' isProductDetails: ',this.state.isProductDetails)}
         {this.state.isProductDetails && (<ProductDetails productName={this.state.productName}/>)}
-        {console.log('initial Load: ',this.state.initialLoad)}
-        {console.log('isProducDetails: ', this.state.isProductDetails)}
-        {this.state.initialLoad && this.getProducts()} 
+        {this.state.initialLoad && this.getProducts(this.state.allProducts)} 
         {!this.state.isProductDetails && (
         <DataList aria-label="single action data list example ">
           {!this.state.isDeleted && (
@@ -56,31 +58,33 @@ class ProductListing extends Component {
                     <DataListCell key="primary content">
                       <span id="single-action-item1">Single actionable Primary content</span>
                     </DataListCell>,
-                    <DataListCell key="secondary content">Single actionable Secondary content</DataListCell>
+                    <DataListCell key="secondary content"  width={2}>Single actionable Secondary content</DataListCell>,
+                    <DataListCell key="Delete">
+                      <DataListAction
+                        aria-labelledby="single-action-item1 single-action-action1"
+                        id="single-action-action1"
+                        aria-label="Actions"
+                      >
+                        <Button
+                          onClick={() => {
+                            if (confirm('Are you sure?')) {
+                              this.setState({ isDeleted: true });
+                            }
+                          }}
+                          variant="primary"
+                          key="delete-action"
+                          >
+                          Delete
+                        </Button>
+                      </DataListAction>
+                    </DataListCell>
                   ]}
                 />
-                <DataListAction
-                  aria-labelledby="single-action-item1 single-action-action1"
-                  id="single-action-action1"
-                  aria-label="Actions"
-                >
-                  <Button
-                    onClick={() => {
-                      if (confirm('Are you sure?')) {
-                        this.setState({ isDeleted: true });
-                      }
-                    }}
-                    variant="primary"
-                    key="delete-action"
-                  >
-                    Delete
-                  </Button>
-                </DataListAction>
               </DataListItemRow>
             </DataListItem>
           )}
 
-          { !this.state.isEmptyResults && this.state.results.map(data => (
+          { !this.state.isEmptyResults && this.state.results.map(data => ( 
           <DataListItem aria-labelledby="multi-actions-item1">
             <DataListItemRow>
             <DataListItemCells key={data["jcr:uuid"]} 
@@ -88,35 +92,24 @@ class ProductListing extends Component {
                   <DataListCell key="primary content">
                     <span id="{data['name']}">{data["name"]}</span>
                   </DataListCell>,
-                  <DataListCell key="secondary content">{data["description"]}</DataListCell>
+                  <DataListCell key="secondary content"  width={2}>{data["description"]}</DataListCell>,
+                  <DataListCell key="Dropdown content">
+                    <DataListAction
+                      aria-labelledby="multi-actions-item1 {data['jcr:uuid']}"
+                      id="{data['jcr:uuid']}"
+                      aria-label="Actions"
+                    >
+                      <OptionsMenu
+                        isPlain={true}
+                        id={data['jcr:uuid']}
+                        menuItems={[
+                          <OptionsMenuItem onSelect={this.onSelect(event, data)} key="dropdown">Product Details</OptionsMenuItem>]}
+                        isOpen={data['isOpen']}
+                        toggle={<OptionsMenuToggle onToggle={this.onToggle(data['jcr:uuid'])} />} />
+                    </DataListAction>
+                  </DataListCell>
                 ]}
               />
-              <DataListAction
-                aria-labelledby="multi-actions-item1 {data['jcr:uuid']}"
-                id="{data['jcr:uuid']}"
-                aria-label="Actions"
-              >
-                {/* <Dropdown
-                  isPlain={true}
-                  position={DropdownPosition.right}
-                  isOpen={this.state.isOpen}
-                  onSelect={() => this.onSelect(event,data)}
-                  toggle={<KebabToggle onToggle={() => this.onToggle(this.state.isOpen,data)} />}
-                  dropdownItems={[
-                    <DropdownItem key="action" href="@app/search">Product Details</DropdownItem>,                                  
-                  ]
-                }
-                /> */}
-                  <OptionsMenu
-                    isPlain={true}
-                    id="options-menu-single-option-example"
-                    menuItems={[
-                      <OptionsMenuItem onSelect={()=>this.onSelect(event,data)}>Product Details</OptionsMenuItem>]
-                    }
-                    isOpen={this.state.isOpen}
-                    toggle={<OptionsMenuToggle onToggle={this.onToggle}/>} />
-
-              </DataListAction>
             </DataListItemRow>
           </DataListItem>))}
         </DataList>)}
@@ -124,11 +117,22 @@ class ProductListing extends Component {
     );
   }
 
-  private getProducts = () => {
+  private getProducts = (allProducts) => {
     this.setState({ initialLoad: false })
     fetch(this.getProductsUrl())
       .then(response => response.json())
-      .then(responseJSON => this.setState({ results: responseJSON.results }))
+      .then(responseJSON => {
+        let key; let singleProduct;
+        for(let i=0; i<Object.keys(responseJSON.results).length; i++){
+          key = Object.keys(responseJSON.results)[i];
+          singleProduct=responseJSON.results[key];
+          singleProduct= Object.assign({"isOpen":false},singleProduct)
+          console.log('singleProduct:',singleProduct);
+          allProducts.push(singleProduct)
+       }
+        console.log('allProducts:',allProducts)
+        this.setState({ results: allProducts })
+      })
       .then(() => {
         console.log("results => " + this.state.results)      
         console.log(this.state.loggedinStatus)
@@ -151,33 +155,33 @@ class ProductListing extends Component {
       return backend
     }
 
-    // private onToggle = (isOpen,data) => {
-    //   this.setState({ isOpen,
-    //     isProductDetails: !this.state.isProductDetails,
-    //     productName: data["name"]
-    //     },() => {console.log('isopen: ',this.state.isOpen)
-    //   console.log('toggled')});
-    // };
-  
-    // private onSelect = (event,data) => {
-    //   this.setState({
-    //     isOpen: !this.state.isOpen
-    //   },() => {console.log('isopen on select: ',this.state.isOpen)});
-    // };
-
-    private onToggle = () => {
-      this.setState({
-          isOpen: !this.state.isOpen
+    private onToggle = (id) => (event: any) => {
+      this.state.results.map(data => {
+        if(data['jcr:uuid']===id){
+            console.log('data uuid::',data['jcr:uuid']);
+            (data['isOpen'] as any) = !data['isOpen']
+            console.log('isOpen::',data['isOpen']);
+            this.setState({isProductDetails: false})
+        }
       });
      };
   
-    private onSelect = (event,data) => {
+    private onSelect = (event,data) => () => {
       this.setState({
         initialLoad: false,
         isProductDetails: !this.state.isProductDetails,
         productName: data["name"]
       });
     };
+
+    // private onRenderComplete = () => {
+    //   this.setState({
+    //     initialLoad: true,
+    //     isProductDetails: !this.state.isProductDetails
+    //   },()=>{
+    //     console.log('initialload:',this.state.initialLoad,'  pdetails:',this.state.isProductDetails)
+    //   })
+    // }
 
 }
 
