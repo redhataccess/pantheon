@@ -172,7 +172,10 @@ class Product extends Component {
       this.setState({ isMissingFields: false });
     }
 
-    if (this.state.isDup == true) {
+    // if (this.state.isDup == true) {
+    //   this.setState({ isDup: false });
+    // }
+    if (this.productExist(this.state.productName) == false) {
       this.setState({ isDup: false });
     }
   }

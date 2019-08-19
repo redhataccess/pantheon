@@ -3,15 +3,22 @@ import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList
 import '@app/app.css';
 import { Redirect } from 'react-router-dom'
 
+interface PantheonProduct {
+  name: string,
+  description: string,
+  "jcr:uuid": string
+}
 class ProductListing extends Component {
  
   public state = {
     isOpen: false, 
-    isDeleted: false,
+    //isDeleted: false,
     loggedinStatus: false,
     initialLoad: true,
     isEmptyResults: false,
-    results: [],
+    results: Array<PantheonProduct>(),
+    filteredResults: Array<PantheonProduct>(),
+    q: '',
     //@TODO. removed unused state variables
     login: false,
     productDescription: '',
@@ -29,11 +36,36 @@ class ProductListing extends Component {
     });
   };
 
-  //private onSelect = event => {
-  //  this.setState(prevState => ({
-  //    isOpen: !prevState.isOpen
-  //  }));
-  //};
+  onSelect2 = event => {
+    const id = event.currentTarget.id;
+    this.setState((prevState) => {
+      return { [id]: !prevState[id] };
+    });
+  };
+  
+  onChange(event) {
+    const q = event.target.value.toLowerCase();
+    this.setState({ q }, () => this.filterList());
+  }
+
+  filterList() {
+    let results = this.state.results;
+    let q = this.state.q;
+
+    results = results.filter((result) => {
+      return result.name.toLowerCase().indexOf(q) != -1; // returns true or false
+    });
+    this.setState({ filteredResults: results });
+  }
+
+  // filterList2(event) {
+  //   let value = event.target.value;
+  //   let results = this.state.results, result=[];
+  //   result = results.filter((r)=>{
+  //       return r.name.toLowerCase().search(value) != -1;
+  //   });
+  //   this.setState({result});
+  // }
   // render method transforms the react components into DOM nodes for the browser.
   public render() {
     const id = 'userID';
@@ -49,39 +81,13 @@ class ProductListing extends Component {
     return (
       <React.Fragment>
         {this.state.initialLoad && this.getProducts()}
-        <DataList aria-label="single action data list example ">
-          {!this.state.isDeleted && (
-            <DataListItem aria-labelledby="single-action-item1">
-              <DataListItemRow>
-                <DataListItemCells
-                  dataListCells={[
-                    <DataListCell key="primary content">
-                      <span id="single-action-item1">Single actionable Primary content</span>
-                    </DataListCell>,
-                    <DataListCell key="secondary content">Single actionable Secondary content</DataListCell>
-                  ]}
-                />
-                <DataListAction
-                  aria-labelledby="single-action-item1 single-action-action1"
-                  id="single-action-action1"
-                  aria-label="Actions"
-                >
-                  <Button
-                    onClick={() => {
-                      if (confirm('Are you sure?')) {
-                        this.setState({ isDeleted: true });
-                      }
-                    }}
-                    variant="primary"
-                    key="delete-action"
-                  >
-                    Delete
-                  </Button>
-                </DataListAction>
-              </DataListItemRow>
-            </DataListItem>
-          )}
-
+        <input
+          type="text"
+          placeholder="Search"
+          value={this.state.q}
+          onChange={this.onChange}
+        />
+        <DataList aria-label="single action data list">
           { !this.state.isEmptyResults && this.state.results.map(data => (
           <DataListItem aria-labelledby="multi-actions-item1">
             <DataListItemRow>
@@ -105,7 +111,7 @@ class ProductListing extends Component {
                   onSelect={this.onSelect}
                   toggle={<KebabToggle onToggle={this.onToggle} />}
                   dropdownItems={[
-                    <DropdownItem key="{data['jcr:uuid']}">Product Detail</DropdownItem>,
+                    <DropdownItem key={data["jcr:uuid"]}>Product Detail</DropdownItem>,
                                       
                   ]}
                 />
