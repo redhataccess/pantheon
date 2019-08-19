@@ -3,7 +3,6 @@ import {
     ActionGroup, Breadcrumb, BreadcrumbItem, Button, Card, CardBody,Form, FormGroup, Level, LevelItem, List, ListItem,
     Text, TextContent, TextVariants, TextInput } from '@patternfly/react-core';
 import { ProductListing } from '@app/productListing';
-import { Link } from 'react-router-dom';
 
 export interface IProps {
     productName: string
@@ -27,8 +26,8 @@ export interface IProps {
                 {console.log('pd:',this.state.fetchProductDetails)}
                 <div className="app-container">
                     <Breadcrumb>
-                        <BreadcrumbItem to='/products'>All Products</BreadcrumbItem>
-                        <BreadcrumbItem to="#" isActive={true}>Product Details</BreadcrumbItem>
+                        <BreadcrumbItem>All Products</BreadcrumbItem>
+                        <BreadcrumbItem>Product Details</BreadcrumbItem>
                     </Breadcrumb>
                 </div>
                 <div className="app-container">

@@ -41,11 +41,20 @@ class ProductListing extends Component {
           }
         })
     }
-    console.log('props state: ',this.props['match']['isExact'])
-    // this.state.initialLoad = this.props['match']['isExact']
+
+    //prop will be true if it comes through nav links
+    if(this.props['match']['isExact'] === true){
+      this.state.results.map(data => {
+          (data['isOpen'] as any) = false
+      });
+      this.setState({isProductDetails: false})
+    }
+
+    //setting prop to false once it comes through nav links
+    this.props['match']['isExact']=false;
+
     return (
       <React.Fragment>
-        {console.log('initial load:',this.state.initialLoad, ' isProductDetails: ',this.state.isProductDetails)}
         {this.state.isProductDetails && (<ProductDetails productName={this.state.productName}/>)}
         {this.state.initialLoad && this.getProducts(this.state.allProducts)} 
         {!this.state.isProductDetails && (
@@ -127,14 +136,11 @@ class ProductListing extends Component {
           key = Object.keys(responseJSON.results)[i];
           singleProduct=responseJSON.results[key];
           singleProduct= Object.assign({"isOpen":false},singleProduct)
-          console.log('singleProduct:',singleProduct);
           allProducts.push(singleProduct)
        }
-        console.log('allProducts:',allProducts)
         this.setState({ results: allProducts })
       })
       .then(() => {
-        console.log("results => " + this.state.results)      
         console.log(this.state.loggedinStatus)
         if (Object.keys(this.state.results).length === 0) {
           this.setState({
@@ -158,9 +164,8 @@ class ProductListing extends Component {
     private onToggle = (id) => (event: any) => {
       this.state.results.map(data => {
         if(data['jcr:uuid']===id){
-            console.log('data uuid::',data['jcr:uuid']);
+            console.log('data uuid: ',data['jcr:uuid']);
             (data['isOpen'] as any) = !data['isOpen']
-            console.log('isOpen::',data['isOpen']);
             this.setState({isProductDetails: false})
         }
       });
