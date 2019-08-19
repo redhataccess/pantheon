@@ -10,12 +10,15 @@ class Product extends Component {
     login: false,
     productDescription: '',
     productName: '',
-    redirect: false
+    redirect: false,
+    results: [],
+    isDup : false,
+    formInvalid: false
   };
   
   // render method transforms the react components into DOM nodes for the browser.
   public render() {
-    const { productName, productDescription, isMissingFields } = this.state;
+    const { productName, productDescription, isMissingFields, isDup } = this.state;
     return (
       <React.Fragment>
         {/* Bullseye makes sure everyhting is in the middle */}
@@ -32,7 +35,15 @@ class Product extends Component {
                   />
                 </div>
               )}
-
+              {isDup && (
+                <div className="notification-container">
+                  <Alert
+                    variant="warning"
+                    title="Duplicated Product name."
+                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                  />
+                </div>
+              )}
               <FormGroup
                 label="Product Name"
                 isRequired
@@ -40,16 +51,16 @@ class Product extends Component {
               >
                 <TextInput isRequired id="product-name" type="text" placeholder="Product Name" value={productName} onChange={this.handleNameInput} />
               </FormGroup>
-              
+              <br />
               <FormGroup
                 label="Product Description"
                 fieldId="product-description"
               >
                 <TextInput id="product-description" type="text" placeholder="Product Description" value={productDescription} onChange={this.handleProductInput} />
               </FormGroup>
-              
+              <br />
               <ActionGroup>
-              <Button aria-label="Creates a new Product Name with Description specified." onClick={this.saveProduct}>Save</Button>
+              <Button aria-label="Creates a new Product Name with Description specified." onClick={this.saveProduct} disabled={this.state.formInvalid}>Save</Button>
               <div>
                 {this.checkAuth()}
                 {this.loginRedirect()}
@@ -66,19 +77,31 @@ class Product extends Component {
   //methods that handle the state changes.
   private handleNameInput = productName => {
     this.setState({ productName });
-    console.log("Name " + productName)
-
+    
+    // check for duplcated product name.
+    this.productExist(this.state.productName);
+    console.log("Name " + productName);
   };
 
   private handleProductInput = productDescription => {
     this.setState({ productDescription });
     console.log("Desc " + productDescription)
+
+    // check for duplcated product name.
+    this.productExist(this.state.productName);
+    console.log("Name " + this.state.productName);
   };
 
   private saveProduct = (postBody) => {
     console.log("My data is: " + this.state.productName + " and my desc is " + this.state.productDescription)
     if (this.state.productName === "" ) {
       this.setState({ isMissingFields: true })
+      this.setState({ formInvalid: true })
+     
+    } else if (this.productExist(this.state.productName)) {
+      this.setState({ isDup: true })
+      this.setState({ formInvalid: true })
+    //  console.log("[saveProduct] productExist detected")
     } else {
       const hdrs = {
         'Accept': 'application/json',
@@ -119,7 +142,7 @@ class Product extends Component {
 
   private renderRedirect = () => {
     if (this.state.redirect) {
-      return <Redirect to='/' />
+      return <Redirect to='/products' />
     } else {
       return ""
     }
@@ -145,8 +168,44 @@ class Product extends Component {
   }
   
   private dismissNotification = () => {
-    this.setState({ isMissingFields: false });
-  };
+    if (this.state.isMissingFields == true) {
+      this.setState({ isMissingFields: false });
+    }
+
+    if (this.state.isDup == true) {
+      this.setState({ isDup: false });
+    }
+  }
+
+  private productExist = (productName) => {
+    this.setState({ initialLoad: false })
+    console.log("[productExist]productName: " + productName)
+    fetch(this.getProductsUrl(productName))
+      .then(response => response.json())
+      .then(responseJSON => this.setState({ results: responseJSON.results }))
+      .then(() => {
+        console.log("[productExist] results breakdown " + JSON.stringify(this.state.results))
+        //console.log("[productExist] isDup => " + this.state.isDup)
+        
+          if (JSON.stringify(this.state.results) === "[]"){
+          this.setState({
+            isDup : false
+          });
+        } else {
+          this.setState({
+            isDup : true
+          });
+          //console.log("[productExist] found match=> isDup: true" )
+        }
+      })
+      return this.state.isDup
+    }
+
+    private getProductsUrl = (productName) => {
+      let backend ='/content/products.query.json?nodeType=pant:product&where=[name]="' + productName + '"'
+      console.log(backend)
+      return backend
+    }
 
 }
 
