@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { 
     ActionGroup, Breadcrumb, BreadcrumbItem, Button, Card, CardBody,Form, FormGroup, Level, LevelItem, List, ListItem,
     Text, TextContent, TextVariants, TextInput } from '@patternfly/react-core';
+import { ProductListing } from '@app/productListing';
+import { Link } from 'react-router-dom';
 
 export interface IProps {
     productName: string
@@ -18,14 +20,14 @@ export interface IProps {
     public versionNames : string[] = [];
 
     public render() {
-
+        console.log('props state: ',this.props)
         return (  
             <React.Fragment>
                 {this.state.fetchProductDetails && this.fetchProductDetails(this.state.allVersionNames)}
                 {console.log('pd:',this.state.fetchProductDetails)}
                 <div className="app-container">
                     <Breadcrumb>
-                        <BreadcrumbItem to='/'>All Products</BreadcrumbItem>
+                        <BreadcrumbItem to='/products'>All Products</BreadcrumbItem>
                         <BreadcrumbItem to="#" isActive={true}>Product Details</BreadcrumbItem>
                     </Breadcrumb>
                 </div>

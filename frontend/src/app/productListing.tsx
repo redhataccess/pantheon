@@ -174,15 +174,6 @@ class ProductListing extends Component {
       });
     };
 
-    // private onRenderComplete = () => {
-    //   this.setState({
-    //     initialLoad: true,
-    //     isProductDetails: !this.state.isProductDetails
-    //   },()=>{
-    //     console.log('initialload:',this.state.initialLoad,'  pdetails:',this.state.isProductDetails)
-    //   })
-    // }
-
 }
 
 export { ProductListing }
