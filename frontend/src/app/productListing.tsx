@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction,
-  OptionsMenu, OptionsMenuItem, OptionsMenuToggle } from '@patternfly/react-core';
+import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction,Form, FormGroup,
+  OptionsMenu, OptionsMenuItem, OptionsMenuToggle, Text, TextContent, TextVariants, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 import { ProductDetails } from '@app/productDetails';
 import { Link } from "react-router-dom";
 import { RouteComponentProps } from 'react-router-dom';
+import { version } from 'react-dom';
 
 class ProductListing extends Component {
  
@@ -14,10 +15,9 @@ class ProductListing extends Component {
     isDeleted: false,
     loggedinStatus: false,
     initialLoad: true,
+    input: '',
     isEmptyResults: false,
     results: [],
-    filteredResults: [],
-    q: '',
     //@TODO. removed unused state variables
     login: false,
     productDescription: '',
@@ -27,36 +27,6 @@ class ProductListing extends Component {
     isProductDetails: false
   };
 
-  onSelect2 = event => {
-    const id = event.currentTarget.id;
-    this.setState((prevState) => {
-      return { [id]: !prevState[id] };
-    });
-  };
-  
-  // onChange(event) {
-  //   const q = event.target.value.toLowerCase();
-  //   this.setState({ q }, () => this.filterList());
-  // }
-
-  // filterList() {
-  //   let results = this.state.results;
-  //   let q = this.state.q;
-
-  //   results = results.filter((result) => {
-  //     return result.name.toLowerCase().indexOf(q) != -1; // returns true or false
-  //   });
-  //   this.setState({ filteredResults: results });
-  // }
-
-  // filterList2(event) {
-  //   let value = event.target.value;
-  //   let results = this.state.results, result=[];
-  //   result = results.filter((r)=>{
-  //       return r.name.toLowerCase().search(value) != -1;
-  //   });
-  //   this.setState({result});
-  // }
   // render method transforms the react components into DOM nodes for the browser.
   public render() {
     const id = 'userID';
@@ -86,7 +56,32 @@ class ProductListing extends Component {
         {this.state.isProductDetails && (<ProductDetails productName={this.state.productName}/>)}
         {this.state.initialLoad && this.getProducts(this.state.allProducts)} 
         {!this.state.isProductDetails && (
+        <div>  
+        <FormGroup
+          label="Search Products"
+          fieldId="search"
+        >
+          <div className="row-view">
+            <TextInput id="search" type="text" onChange={this.setInput} />
+          </div>
+        </FormGroup>
         <DataList aria-label="single action data list example ">
+          {!this.state.isDeleted && (
+            <DataListItem aria-labelledby="single-action-item1">
+              <DataListItemRow>
+                <DataListItemCells
+                  dataListCells={[
+                    <DataListCell key="primary content">
+                      <span className="sp-prop-nosort" id="product-name">Product Name</span>
+                    </DataListCell>,
+                    <DataListCell key="secondary content"  width={2}>
+                      <span className="sp-prop-nosort" id="product-description">Product Description</span>
+                      </DataListCell>
+                  ]}
+                />
+              </DataListItemRow>
+            </DataListItem>
+          )}
 
           { !this.state.isEmptyResults && this.state.results.map(data => (
           <DataListItem aria-labelledby="multi-actions-item1">
@@ -116,7 +111,8 @@ class ProductListing extends Component {
               />
             </DataListItemRow>
           </DataListItem>))}
-        </DataList>)}
+        </DataList>
+        </div>)}
       </React.Fragment>
     );
   }
@@ -174,6 +170,17 @@ class ProductListing extends Component {
       });
     };
 
+    private setInput = (event) => {
+      let versions = [];
+      let searchString = '';
+      this.state.allProducts.map(data => {
+            searchString = ''+data["name"]
+            if(searchString.includes(event)){
+              versions.push(data)
+            }
+      });
+      this.setState({results: versions})
+  };
 }
 
 export { ProductListing }
