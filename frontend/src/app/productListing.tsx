@@ -6,6 +6,7 @@ import { ProductDetails } from '@app/productDetails';
 import { Link } from "react-router-dom";
 import { RouteComponentProps } from 'react-router-dom';
 import { version } from 'react-dom';
+import { Redirect } from 'react-router-dom'
 
 class ProductListing extends Component {
  
@@ -62,7 +63,7 @@ class ProductListing extends Component {
           fieldId="search"
         >
           <div className="row-view">
-            <TextInput id="search" type="text" onChange={this.setInput} />
+            <TextInput id="search" type="text" onChange={this.setInput} placeholder="Type product name to search"/>
           </div>
         </FormGroup>
         <DataList aria-label="single action data list example ">
@@ -113,6 +114,10 @@ class ProductListing extends Component {
           </DataListItem>))}
         </DataList>
         </div>)}
+        <div>
+          {this.checkAuth()}
+          {this.loginRedirect()}
+        </div>
       </React.Fragment>
     );
   }
@@ -181,6 +186,25 @@ class ProductListing extends Component {
       });
       this.setState({results: versions})
   };
+
+  private loginRedirect = () => {
+    if (this.state.login) {
+      return <Redirect to='/login' />
+    } else {
+      return ""
+    }
+  }
+
+  private checkAuth = () => {
+    fetch("/system/sling/info.sessionInfo.json")
+      .then(response => response.json())
+      .then(responseJSON => {
+        const key = "userID"
+        if (responseJSON[key] === 'anonymous') {
+          this.setState({ login: true })
+        }
+      })
+  }
 }
 
 export { ProductListing }
