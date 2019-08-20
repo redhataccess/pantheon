@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction,
-  OptionsMenu, OptionsMenuItem, OptionsMenuToggle } from '@patternfly/react-core';
+import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction,Form, FormGroup,
+  OptionsMenu, OptionsMenuItem, OptionsMenuToggle, Text, TextContent, TextVariants, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 import { ProductDetails } from '@app/productDetails';
 import { Link } from "react-router-dom";
 import { RouteComponentProps } from 'react-router-dom';
+import { version } from 'react-dom';
 
 class ProductListing extends Component {
  
@@ -14,6 +15,7 @@ class ProductListing extends Component {
     isDeleted: false,
     loggedinStatus: false,
     initialLoad: true,
+    input: '',
     isEmptyResults: false,
     results: [],
     //@TODO. removed unused state variables
@@ -58,6 +60,15 @@ class ProductListing extends Component {
         {this.state.isProductDetails && (<ProductDetails productName={this.state.productName}/>)}
         {this.state.initialLoad && this.getProducts(this.state.allProducts)} 
         {!this.state.isProductDetails && (
+        <div>  
+        <FormGroup
+          label="Search Products"
+          fieldId="search"
+        >
+          <div className="row-view">
+            <TextInput id="search" type="text" onChange={this.setInput} />
+          </div>
+        </FormGroup>
         <DataList aria-label="single action data list example ">
           {!this.state.isDeleted && (
             <DataListItem aria-labelledby="single-action-item1">
@@ -65,28 +76,11 @@ class ProductListing extends Component {
                 <DataListItemCells
                   dataListCells={[
                     <DataListCell key="primary content">
-                      <span id="single-action-item1">Single actionable Primary content</span>
+                      <span className="sp-prop-nosort" id="product-name">Product Name</span>
                     </DataListCell>,
-                    <DataListCell key="secondary content"  width={2}>Single actionable Secondary content</DataListCell>,
-                    <DataListCell key="Delete">
-                      <DataListAction
-                        aria-labelledby="single-action-item1 single-action-action1"
-                        id="single-action-action1"
-                        aria-label="Actions"
-                      >
-                        <Button
-                          onClick={() => {
-                            if (confirm('Are you sure?')) {
-                              this.setState({ isDeleted: true });
-                            }
-                          }}
-                          variant="primary"
-                          key="delete-action"
-                          >
-                          Delete
-                        </Button>
-                      </DataListAction>
-                    </DataListCell>
+                    <DataListCell key="secondary content"  width={2}>
+                      <span className="sp-prop-nosort" id="product-description">Product Description</span>
+                      </DataListCell>
                   ]}
                 />
               </DataListItemRow>
@@ -121,7 +115,8 @@ class ProductListing extends Component {
               />
             </DataListItemRow>
           </DataListItem>))}
-        </DataList>)}
+        </DataList>
+        </div>)}
       </React.Fragment>
     );
   }
@@ -178,6 +173,19 @@ class ProductListing extends Component {
         productName: data["name"]
       });
     };
+
+    private setInput = (event) => {
+      let versions = [];
+      let searchString = '';
+      this.state.allProducts.map(data => {
+            searchString = ''+data["name"]
+            if(searchString.includes(event)){
+              versions.push(data)
+            }
+      });
+      this.setState({results: versions})
+  };
+
 
 }
 
