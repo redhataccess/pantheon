@@ -121,6 +121,8 @@ export interface IProps {
     private saveVersion = () => {
         const formData = new FormData();
         formData.append("name", this.state.newVersion)
+        formData.append("sling:resourceType", "pantheon/productVersion")
+        formData.append("jcr:primaryType", 'pant:productVersion')
         console.log('new version name: ',this.state.newVersion)
         let url_fragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
         fetch('/content/products/'+ url_fragment +'/versions/'+this.state.newVersion, {
