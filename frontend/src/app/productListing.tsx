@@ -22,6 +22,7 @@ class ProductListing extends Component {
     login: false,
     productDescription: '',
     productName: '',
+    productUrl: '',
     redirect: false,
     isProductDetails: false
   };
@@ -168,7 +169,8 @@ class ProductListing extends Component {
       this.setState({
         initialLoad: false,
         isProductDetails: !this.state.isProductDetails,
-        productName: data["name"]
+        productName: data["name"],
+        productUrl: data["url"]
       });
     };
 

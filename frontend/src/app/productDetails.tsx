@@ -5,7 +5,8 @@ import {
 import { ProductListing } from '@app/productListing';
 
 export interface IProps {
-    productName: string
+    productName: string,
+    //url: string
   }
   
   class ProductDetails extends Component<IProps> {
@@ -57,7 +58,7 @@ export interface IProps {
                                     label="New Version:"
                                     fieldId="new_version_name"
                                 >
-                                    <TextInput id="new_version_name_text" type="text" placeholder="New version name" onChange={this.handleTextInputChange} />
+                                    <TextInput id="new_version_name_text" type="text" placeholder="New version name" onChange={this.handleTextInputChange} value={this.state.newVersion}/>
                                 </FormGroup>
                                 <ActionGroup>
                                     <Button aria-label="Creates a new Version Name." onClick={this.saveVersion}>Save</Button>
@@ -70,17 +71,36 @@ export interface IProps {
     }
  
     private fetchProductDetails = (versionNames) => {
-        const path = '/content/products/'+this.props.productName+'/versions.2.json'
+        // setup url fragment
+        let url_fragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        const path = '/content/products/'+ url_fragment +'/versions.2.json'
         let key;
+        versionNames = []
         console.log('path:',path)
+        
         fetch(path)
-        .then(response => response.json())
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+                console.log("Path exists")
+            } else if(response.status == 404){
+                // create versions path
+                this.createVersionsPath;
+                return versionNames;
+            } else {
+                throw new Error(response.statusText);
+            }
+        }) 
         .then(responseJSON => {
             console.log('responseJson:',responseJSON)
-             for(let i=Object.keys(responseJSON).length-1; i>2;i--){
+            console.log('Object.keys: ', Object.keys(responseJSON))
+             for(let i=0; i < Object.keys(responseJSON).length;i++){    
                 key = Object.keys(responseJSON)[i];
                 console.log('key:',key)
-                versionNames.push(responseJSON[key]["name"]);
+               
+                if ((key !== 'jcr:primaryType')) {    
+                  versionNames.push(responseJSON[key]["name"]);
+                }
              }
              console.log('versionNames: ',versionNames)
              this.setState({
@@ -88,6 +108,10 @@ export interface IProps {
                 fetchProductDetails: false 
             })
         })
+        .catch((error) => {
+            console.log(error)
+          });
+          return versionNames;
     };
 
     private handleTextInputChange = newVersion => {
@@ -98,20 +122,40 @@ export interface IProps {
         const formData = new FormData();
         formData.append("name", this.state.newVersion)
         console.log('new version name: ',this.state.newVersion)
-        fetch('/content/'+this.props.productName+'/versions/'+this.state.newVersion, {
+        let url_fragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        fetch('/content/products/'+ url_fragment +'/versions/'+this.state.newVersion, {
             body: formData,
             method: 'post',
           }).then(response => {
-            if (response.status === 200) {
+            if (response.status === 200 || response.status === 201) {
               console.log(" Posted version " + response.status)
-              this.setState({ fetchProductDetails: true })
+              //this.setState({ fetchProductDetails: true, newVersion: '' },()=>{this.handleTextInputChange})
+              this.setState({ fetchProductDetails: true, newVersion: '' })
+              console.log("endpoint=> /content/"+url_fragment+"/versions/"+this.state.newVersion)
             } else{
                 console.log('Version adding failure')
             //   this.setState({ authMessage: "Unknown failure - HTTP " + response.status + ": " + response.statusText })
             }
           });
 
-    }; 
+    };
+
+    private createVersionsPath = () => {
+        const formData = new FormData();
+        let url_fragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        fetch('/content/'+ url_fragment +'/versions', {
+            body: formData,
+            method: 'post',
+          }).then(response => {
+              if (response.status === 200 || response.status === 201) {
+                console.log(" Created versions path " + response.status)
+          } else{
+              console.log(' Created versions path  failed!')
+    
+          }
+        });
+    }
+
 }
 
 export { ProductDetails }
