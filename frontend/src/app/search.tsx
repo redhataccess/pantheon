@@ -18,7 +18,6 @@ export default class Search extends Component {
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
     confirmDelete: false,
     countOfCheckedBoxes: 0,
-    results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
     deleteButtonVisible: false,
     deleteState: '',
     initialLoad: true,
@@ -32,6 +31,7 @@ export default class Search extends Component {
     pageLimit: 25,
     redirect: false,
     redirectLocation: '',
+    results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
     showDropdownOptions: true,
     sortKey: ''
   };
