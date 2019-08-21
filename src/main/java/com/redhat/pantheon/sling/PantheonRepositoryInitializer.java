@@ -59,8 +59,19 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
 
     private void setGitServiceURL(JackrabbitSession s) throws RepositoryException {
         if (System.getenv("GIT_SERVICE_URL") != null) {
-            assignPermissionToPrincipal(s,"pantheon","/conf/pantheon", null, Privilege.JCR_READ, Privilege.JCR_WRITE);
-            assignPermissionToPrincipal(s,"pantheon-users","/conf/pantheon", null, Privilege.JCR_READ);
+
+            AccessControlUtils.addAccessControlEntry(s,
+                    "/conf/pantheon",
+                    AccessControlUtils.getPrincipal(s, "pantheon"),
+                    privilegesFromNames(s, Privilege.JCR_READ, Privilege.JCR_WRITE),
+                    true);
+
+            AccessControlUtils.addAccessControlEntry(s,
+                    "/conf/pantheon",
+                    AccessControlUtils.getPrincipal(s, "pantheon-users"),
+                    privilegesFromNames(s, Privilege.JCR_READ),
+                    true);
+
             s.save();
             s.logout();
             ResourceResolver resourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
@@ -75,10 +86,10 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
                 resourceResolver.close();
             }
 
-            } else {
-                log.info("Environment Variable GIT_SERVICE_URL is not set.");
-            }
+        } else {
+            log.info("Environment Variable GIT_SERVICE_URL is not set.");
         }
+    }
 
     private void initializeRepositoryACLs(JackrabbitSession s) throws RepositoryException {
         try {
