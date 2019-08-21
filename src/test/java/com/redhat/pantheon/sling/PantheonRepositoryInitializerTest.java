@@ -7,11 +7,18 @@ import org.apache.sling.testing.mock.sling.MockJcrSlingRepository;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
+import org.apache.sling.testing.resourceresolver.MockResourceResolver;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.jcr.Session;
+import javax.jcr.security.Privilege;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
@@ -19,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PantheonRepositoryInitializerTest {
 
     private final SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
-    private final ResourceResolverFactory factory = new JcrResourceResolverFactoryImpl();
-    private final ServiceResourceResolverProvider provider = new ServiceResourceResolverProvider(factory);
+    @Mock
+    private ServiceResourceResolverProvider provider;
     private final SlingRepository jcr = new MockJcrSlingRepository();
 
 
@@ -28,13 +35,18 @@ public class PantheonRepositoryInitializerTest {
     @DisplayName("Test that we don't have a working session during build time.")
     public void testInitializer() throws Exception {
         //Given
+        Mockito.when(provider.getServiceResourceResolver()).thenReturn(slingContext.resourceResolver());
         PantheonRepositoryInitializer initializer = new PantheonRepositoryInitializer(provider);
+        slingContext.create().resource("/conf/pantheon");
 
         //When
+        initializer.processRepository(new MockJcrSlingRepository());
+
+
         //Then
-        assertThrows(NullPointerException.class, () -> {
-            initializer.processRepository(jcr);
-        });
+        slingContext.resourceResolver().adaptTo(Session.class).checkPermission("/conf/pantheon", Privilege.JCR_READ);
+
+
     }
 
 }
