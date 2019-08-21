@@ -13,7 +13,6 @@ class ProductListing extends Component {
   public state = {
     allProducts: [],
     isOpen: false,
-    isDeleted: false,
     loggedinStatus: false,
     initialLoad: true,
     input: '',
@@ -67,7 +66,7 @@ class ProductListing extends Component {
           </div>
         </FormGroup>
         <DataList aria-label="single action data list example ">
-          {!this.state.isDeleted && (
+          {!this.state.isEmptyResults && (
             <DataListItem aria-labelledby="single-action-item1">
               <DataListItemRow>
                 <DataListItemCells

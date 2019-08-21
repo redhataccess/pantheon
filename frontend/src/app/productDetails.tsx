@@ -5,8 +5,8 @@ import {
 import { ProductListing } from '@app/productListing';
 
 export interface IProps {
-    productName: string,
-    //url: string
+    productName: string
+    //productUrl: string
   }
   
   class ProductDetails extends Component<IProps> {
@@ -20,11 +20,10 @@ export interface IProps {
     public versionNames : string[] = [];
 
     public render() {
-        console.log('props state: ',this.props)
+        //console.log('props state: ',this.props)
         return (  
             <React.Fragment>
                 {this.state.fetchProductDetails && this.fetchProductDetails(this.state.allVersionNames)}
-                {console.log('pd:',this.state.fetchProductDetails)}
                 <div className="app-container">
                     <Breadcrumb>
                         <BreadcrumbItem>All Products</BreadcrumbItem>
@@ -76,13 +75,11 @@ export interface IProps {
         const path = '/content/products/'+ url_fragment +'/versions.2.json'
         let key;
         versionNames = []
-        console.log('path:',path)
         
         fetch(path)
         .then((response) => {
             if (response.ok) {
                 return response.json();
-                console.log("Path exists")
             } else if(response.status == 404){
                 // create versions path
                 this.createVersionsPath;
@@ -92,17 +89,14 @@ export interface IProps {
             }
         }) 
         .then(responseJSON => {
-            console.log('responseJson:',responseJSON)
-            console.log('Object.keys: ', Object.keys(responseJSON))
              for(let i=0; i < Object.keys(responseJSON).length;i++){    
                 key = Object.keys(responseJSON)[i];
-                console.log('key:',key)
                
                 if ((key !== 'jcr:primaryType')) {    
                   versionNames.push(responseJSON[key]["name"]);
                 }
              }
-             console.log('versionNames: ',versionNames)
+             //console.log('versionNames: ',versionNames)
              this.setState({
                 allVersionNames: versionNames,
                 fetchProductDetails: false 
@@ -116,27 +110,24 @@ export interface IProps {
 
     private handleTextInputChange = newVersion => {
         this.setState({ newVersion });
-      };
+    };
 
     private saveVersion = () => {
         const formData = new FormData();
         formData.append("name", this.state.newVersion)
         formData.append("sling:resourceType", "pantheon/productVersion")
         formData.append("jcr:primaryType", 'pant:productVersion')
-        console.log('new version name: ',this.state.newVersion)
+        
         let url_fragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
         fetch('/content/products/'+ url_fragment +'/versions/'+this.state.newVersion, {
             body: formData,
             method: 'post',
           }).then(response => {
             if (response.status === 200 || response.status === 201) {
-              console.log(" Posted version " + response.status)
-              //this.setState({ fetchProductDetails: true, newVersion: '' },()=>{this.handleTextInputChange})
               this.setState({ fetchProductDetails: true, newVersion: '' })
-              console.log("endpoint=> /content/"+url_fragment+"/versions/"+this.state.newVersion)
+              //console.log("endpoint=> /content/"+url_fragment+"/versions/"+this.state.newVersion)
             } else{
                 console.log('Version adding failure')
-            //   this.setState({ authMessage: "Unknown failure - HTTP " + response.status + ": " + response.statusText })
             }
           });
 
