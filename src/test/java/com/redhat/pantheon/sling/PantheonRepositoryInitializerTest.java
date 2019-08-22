@@ -32,7 +32,7 @@ public class PantheonRepositoryInitializerTest {
         slingContext.create().resource("/conf/pantheon");
 
         //When
-        //initializer.processRepository();
+        initializer.processRepository(jcr);
 
         //Then
         assertDoesNotThrow(() -> slingContext.resourceResolver().adaptTo(Session.class).checkPermission("/conf/pantheon", "set_property"));

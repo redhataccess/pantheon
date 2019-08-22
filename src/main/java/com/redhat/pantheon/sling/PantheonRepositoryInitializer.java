@@ -7,8 +7,6 @@ import org.apache.jackrabbit.api.security.JackrabbitAccessControlPolicy;
 import org.apache.jackrabbit.api.security.principal.PrincipalManager;
 import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
 import org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils;
-import org.apache.sling.api.resource.PersistenceException;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.jcr.api.SlingRepositoryInitializer;
 import org.osgi.service.component.annotations.Activate;
@@ -59,33 +57,11 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
 
     private void setGitServiceURL(JackrabbitSession s) throws RepositoryException {
         if (System.getenv("GIT_SERVICE_URL") != null) {
-
-            AccessControlUtils.addAccessControlEntry(s,
-                    "/conf/pantheon",
-                    AccessControlUtils.getPrincipal(s, "pantheon"),
-                    privilegesFromNames(s, Privilege.JCR_READ, Privilege.JCR_WRITE),
-                    true);
-
-            AccessControlUtils.addAccessControlEntry(s,
-                    "/conf/pantheon",
-                    AccessControlUtils.getPrincipal(s, "pantheon-users"),
-                    privilegesFromNames(s, Privilege.JCR_READ),
-                    true);
-
+            assignPermissionToPrincipal(s,"pantheon","/conf/pantheon", null, Privilege.JCR_READ, Privilege.JCR_WRITE);
+            assignPermissionToPrincipal(s,"pantheon-users","/conf/pantheon", null, Privilege.JCR_READ);
+            s.getNode("/conf/pantheon").setProperty("pant:GitServiceURL",System.getenv("GIT_SERVICE_URL"));
             s.save();
             s.logout();
-            ResourceResolver resourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
-            resourceResolver.getResource("/conf/pantheon")
-                        .adaptTo(Node.class)
-                        .setProperty("pant:GitServiceURL",System.getenv("GIT_SERVICE_URL"));
-            try {
-                resourceResolver.commit();
-            } catch(PersistenceException pe) {
-                log.error("Error while trying to set Property pant:GitServiceURL", pe);
-            } finally {
-                resourceResolver.close();
-            }
-
         } else {
             log.info("Environment Variable GIT_SERVICE_URL is not set.");
         }
