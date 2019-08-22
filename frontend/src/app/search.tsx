@@ -393,7 +393,7 @@ export default class Search extends Component {
     private setPreview = (path: string) => (event: any) =>  {
       console.log("what do I see when you click ? " + path)
       if (path !== "") {
-        return window.open("/" + path + ".preview");
+        return window.open("/" + path + ".preview?draft=true");
       } else {
         return ""
       }
