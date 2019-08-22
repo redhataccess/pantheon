@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Login tests should render Login component 1`] = `
+exports[`Product tests should render Product component 1`] = `
 <Fragment>
   <Bullseye
     className=""

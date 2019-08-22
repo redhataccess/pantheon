@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Login tests should render Login component 1`] = `
+exports[`ProductDetails tests should render ProductDetails component 1`] = `
 <Fragment>
   <div
     className="app-container"
@@ -44,7 +44,7 @@ exports[`Login tests should render Login component 1`] = `
             className=""
             component="h1"
           >
-            Success!
+            Red Hat Enterprise Linux
               
           </Text>
         </TextContent>
