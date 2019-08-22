@@ -51,8 +51,8 @@ class ModuleRevisionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/0/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/0/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/metadata"));
         assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/draft"));
         assertNull(slingContext.resourceResolver().getResource("/new/module/es_ES/released"));
 
@@ -67,15 +67,15 @@ class ModuleRevisionUploadTest {
         // Given
         slingContext.build()
                 // Released revision
-                .resource("/new/module/es_ES/v0",
+                .resource("/new/module/es_ES/1",
                         "jcr:primaryType", "pant:moduleRevision")
-                .resource("/new/module/es_ES/v0/metadata")
-                .resource("/new/module/es_ES/v0/content/asciidoc/jcr:content",
+                .resource("/new/module/es_ES/1/metadata")
+                .resource("/new/module/es_ES/1/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
                 .commit();
         // set the draft and released 'pointers'
         slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
-                .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/v0").getValueMap().get("jcr:uuid"));
+                .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/1").getValueMap().get("jcr:uuid"));
 
         lenient().when(asciidoctorPool.borrowObject()).thenReturn(mock(Asciidoctor.class, RETURNS_DEEP_STUBS));
         ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorPool, asciidoctorService);
@@ -90,10 +90,10 @@ class ModuleRevisionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/0/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/0/metadata"));
         assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/content"));
         assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/metadata"));
 
         Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
         assertEquals("Draft asciidoc content",
@@ -108,24 +108,24 @@ class ModuleRevisionUploadTest {
     void modifyDraftRevision() throws Exception {
         // Given
         slingContext.build()
-                .resource("/new/module/es_ES/0",
-                        "jcr:primaryType", "pant:moduleRevision") // released
                 .resource("/new/module/es_ES/1",
+                        "jcr:primaryType", "pant:moduleRevision") // released
+                .resource("/new/module/es_ES/2",
                         "jcr:primaryType", "pant:moduleRevision") // draft
                 // Draft revision
-                .resource("/new/module/es_ES/1/metadata")
-                .resource("/new/module/es_ES/1/content/asciidoc/jcr:content",
+                .resource("/new/module/es_ES/2/metadata")
+                .resource("/new/module/es_ES/2/content/asciidoc/jcr:content",
                         "jcr:data", "This is the draft adoc content")
                 // Released revision
-                .resource("/new/module/es_ES/0/metadata")
-                .resource("/new/module/es_ES/0/content/asciidoc/jcr:content",
+                .resource("/new/module/es_ES/1/metadata")
+                .resource("/new/module/es_ES/1/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
                 .commit();
         // set the draft and released 'pointers'
         slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
-                .put("draft", slingContext.resourceResolver().getResource("/new/module/es_ES/1").getValueMap().get("jcr:uuid"));
+                .put("draft", slingContext.resourceResolver().getResource("/new/module/es_ES/2").getValueMap().get("jcr:uuid"));
         slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
-                .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/0").getValueMap().get("jcr:uuid"));
+                .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/1").getValueMap().get("jcr:uuid"));
 
         lenient().when(asciidoctorPool.borrowObject()).thenReturn(mock(Asciidoctor.class, RETURNS_DEEP_STUBS));
         ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorPool, asciidoctorService);
@@ -140,10 +140,10 @@ class ModuleRevisionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/metadata"));
         assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/content"));
         assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/metadata"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/0/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/0/metadata"));
 
         Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
         assertEquals("Revised asciidoc content",

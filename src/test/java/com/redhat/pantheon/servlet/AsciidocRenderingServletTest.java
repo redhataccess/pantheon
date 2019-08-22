@@ -37,16 +37,16 @@ public class AsciidocRenderingServletTest {
     public void testGenerateHtmlFromAsciidoc() throws Exception {
         // Given
         slingContext.build()
-                .resource("/module/en_US/v0",
+                .resource("/module/en_US/1",
                         "jcr:primaryType", "pant:moduleRevision")
-                .resource("/module/en_US/v0/content/cachedHtml/jcr:content",
+                .resource("/module/en_US/1/content/cachedHtml/jcr:content",
                         "jcr:data", "A generated html string")
-                .resource("/module/en_US/v0/metadata")
+                .resource("/module/en_US/1/metadata")
                 .commit();
         setReferenceValue(
                 slingContext.resourceResolver().getResource("/module/en_US"),
                 "released",
-                slingContext.resourceResolver().getResource("/module/en_US/v0"));
+                slingContext.resourceResolver().getResource("/module/en_US/1"));
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
@@ -71,23 +71,62 @@ public class AsciidocRenderingServletTest {
 
     @Test
     @DisplayName("Generate html content from asciidoc specifying the rerender parameter")
-    public void testGenerateHtmlFromAsciidocWithRerender() throws Exception {
+    public void testGenerateHtmlFromReleasedAsciidocWithRerender() throws Exception {
 
         // Given
         slingContext.build()
-                .resource("/module/en_US/v0",
+                .resource("/module/en_US/1",
                         "jcr:primaryType", "pant:moduleRevision")
-                .resource("/module/en_US/v0/content/cachedHtml/jcr:content",
+                .resource("/module/en_US/1/content/cachedHtml/jcr:content",
                         "jcr:data", "A generated html string")
                 .commit();
         setReferenceValue(
                 slingContext.resourceResolver().getResource("/module/en_US"),
                 "released",
-                slingContext.resourceResolver().getResource("/module/en_US/v0"));
+                slingContext.resourceResolver().getResource("/module/en_US/1"));
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
         slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
+        lenient().when(
+                asciidoctorService.getModuleHtml(
+                        any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
+                .thenReturn("A generated html string");
+
+        // Test class
+        AsciidocRenderingServlet servlet = new AsciidocRenderingServlet(asciidoctorService);
+        servlet.init();
+
+        // When
+        servlet.doGet(slingContext.request(), slingContext.response());
+
+        // Then
+        assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
+        assertEquals("text/html", slingContext.response().getContentType());
+        verify(asciidoctorService).getModuleHtml(
+                any(ModuleRevision.class), any(Resource.class), anyMap(), eq(false));
+    }
+
+    @Test
+    @DisplayName("Generate html content from asciidoc specifying the rerender parameter")
+    public void testGenerateHtmlFromDraftAsciidocWithRerender() throws Exception {
+
+        // Given
+        slingContext.build()
+                .resource("/module/en_US/1",
+                        "jcr:primaryType", "pant:moduleRevision")
+                .resource("/module/en_US/1/content/cachedHtml/jcr:content",
+                        "jcr:data", "A generated html string")
+                .commit();
+        setReferenceValue(
+                slingContext.resourceResolver().getResource("/module/en_US"),
+                "draft",
+                slingContext.resourceResolver().getResource("/module/en_US/1"));
+        registerMockAdapter(Module.class, slingContext);
+        Resource resource = slingContext.resourceResolver().getResource("/module");
+        slingContext.request().setResource(resource);
+        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
+        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
@@ -109,23 +148,24 @@ public class AsciidocRenderingServletTest {
 
     @Test
     @DisplayName("Generate html content from asciidoc specifying context parameters")
-    public void testGenerateHtmlFromAsciidocWithContext() throws Exception {
+    public void testGenerateHtmlFromDraftAsciidocWithContext() throws Exception {
 
         // Given
         slingContext.build()
-                .resource("/module/en_US/v0",
+                .resource("/module/en_US/1",
                         "jcr:primaryType", "pant:moduleRevision")
-                .resource("/module/en_US/v0/content/cachedHtml/jcr:content",
+                .resource("/module/en_US/1/content/cachedHtml/jcr:content",
                         "jcr:data", "A generated html string")
                 .commit();
         setReferenceValue(
                 slingContext.resourceResolver().getResource("/module/en_US"),
-                "released",
-                slingContext.resourceResolver().getResource("/module/en_US/v0"));
+                "draft",
+                slingContext.resourceResolver().getResource("/module/en_US/1"));
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
         slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
+        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
         slingContext.request().getParameterMap().put("ctx_arg", new String[]{"value"});
         slingContext.request().getParameterMap().put("non_ctx_arg", new String[]{"unaccepted"});
         lenient().when(

@@ -108,7 +108,7 @@ public class AsciidoctorService {
      * @param request The http request provided by Sling
      * @return A Map object with all context parameters as keypairs, minus the "ctx_" prefix
      */
-    public Map<String, Object> buildContextFromRequest(SlingHttpServletRequest request) {
+    public static Map<String, Object> buildContextFromRequest(SlingHttpServletRequest request) {
         // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
         // parameters
         Map<String, Object> context = request.getRequestParameterList().stream().filter(
