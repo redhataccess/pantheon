@@ -44,9 +44,14 @@ public class AsciidoctorPool extends ObjectPool<Asciidoctor> {
      */
     public Asciidoctor borrowObject(Resource base) {
         Asciidoctor asciidoctor = super.borrowObject();
-        asciidoctor.javaExtensionRegistry().includeProcessor(
-                new SlingResourceIncludeProcessor(base));
-        return asciidoctor;
+        try {
+            asciidoctor.javaExtensionRegistry().includeProcessor(
+                    new SlingResourceIncludeProcessor(base));
+            return asciidoctor;
+        } catch (Exception e) {
+            super.returnObject(asciidoctor);
+            throw e;
+        }
     }
 
     @Override

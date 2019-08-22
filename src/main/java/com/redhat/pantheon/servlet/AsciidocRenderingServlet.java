@@ -87,16 +87,11 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         else {
             // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
             // parameters
-            Map<String, Object> context = request.getRequestParameterList().stream().filter(
-                    p -> p.getName().toLowerCase().startsWith("ctx_")
-            )
-            .collect(toMap(
-                    reqParam -> reqParam.getName().replaceFirst("ctx_", ""),
-                    reqParam -> reqParam.getString())
-            );
+            Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
 
+            // only allow forced rerendering if this is a draft revision. Released and historical revs are written in stone.
             String html = asciidoctorService.getModuleHtml(
-                    moduleRevision.get(), module, context, paramValueAsBoolean(request, PARAM_RERENDER));
+                    moduleRevision.get(), module, context, draft && paramValueAsBoolean(request, PARAM_RERENDER));
 
             response.setContentType("text/html");
             Writer w = response.getWriter();

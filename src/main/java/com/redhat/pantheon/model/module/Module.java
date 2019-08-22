@@ -139,7 +139,7 @@ public class Module extends SlingResource {
         }
 
         private String generateNextRevisionName() {
-            return "v" + stream(this.getChildren()).collect(counting());
+            return "" + (stream(this.getChildren()).collect(counting()) + 1);
         }
 
         public ModuleLocale(@Nonnull Resource resource) {

@@ -8,6 +8,7 @@ import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.ModuleRevision;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.asciidoctor.Asciidoctor;
@@ -23,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Business service class which provides Asciidoctor-related methods which work in conjunction with other
@@ -98,6 +101,24 @@ public class AsciidoctorService {
         }
 
         return html;
+    }
+
+    /**
+     * Builds a context Map that is initially populated from request parameters which are prefixed with "ctx_".
+     * @param request The http request provided by Sling
+     * @return A Map object with all context parameters as keypairs, minus the "ctx_" prefix
+     */
+    public Map<String, Object> buildContextFromRequest(SlingHttpServletRequest request) {
+        // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
+        // parameters
+        Map<String, Object> context = request.getRequestParameterList().stream().filter(
+                p -> p.getName().toLowerCase().startsWith("ctx_")
+        )
+                .collect(toMap(
+                        reqParam -> reqParam.getName().replaceFirst("ctx_", ""),
+                        reqParam -> reqParam.getString())
+                );
+        return context;
     }
 
     /**

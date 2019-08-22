@@ -35,7 +35,7 @@ class ModuleTest {
         module.getResourceResolver().commit();
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/content/module1/es_ES/v0"));
+        assertNotNull(slingContext.resourceResolver().getResource("/content/module1/es_ES/0"));
     }
 
     @Test
@@ -43,17 +43,17 @@ class ModuleTest {
         // Given
         slingContext.build()
                 // module 1, en_US
-                .resource("/content/module1/en_US/v0")
-                .resource("/content/module1/en_US/v1")
+                .resource("/content/module1/en_US/0")
+                .resource("/content/module1/en_US/1")
                 // module 1, es_ES
-                .resource("/content/module1/es_ES/v0")
-                .resource("/content/module1/es_ES/v1")
+                .resource("/content/module1/es_ES/0")
+                .resource("/content/module1/es_ES/1")
                 // module 2, en_US
-                .resource("/content/module2/en_US/v0")
-                .resource("/content/module2/en_US/v1")
+                .resource("/content/module2/en_US/0")
+                .resource("/content/module2/en_US/1")
                 // module 2, es_ES
-                .resource("/content/module2/es_ES/v0")
-                .resource("/content/module2/es_ES/v1")
+                .resource("/content/module2/es_ES/0")
+                .resource("/content/module2/es_ES/1")
                 .commit();
         slingContext.registerAdapter(Resource.class, Node.class, mock(Node.class));
 

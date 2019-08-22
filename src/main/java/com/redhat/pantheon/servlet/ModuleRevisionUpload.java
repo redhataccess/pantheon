@@ -1,6 +1,7 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorPool;
+import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.FileResource.JcrContent;
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.RepositoryException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.collect.Maps.newHashMap;
@@ -54,11 +56,15 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
 
     private static final Logger log = LoggerFactory.getLogger(ModuleRevisionUpload.class);
 
+    private AsciidoctorService asciidoctorService;
+
     private AsciidoctorPool asciidoctorPool;
 
     @Activate
-    public ModuleRevisionUpload(@Reference AsciidoctorPool asciidoctorPool) {
+    public ModuleRevisionUpload(@Reference AsciidoctorPool asciidoctorPool,
+                                @Reference AsciidoctorService asciidoctorService) {
         this.asciidoctorPool = asciidoctorPool;
+        this.asciidoctorService = asciidoctorService;
     }
 
     @Override
@@ -104,6 +110,12 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
                     .content.getOrCreate()
                     .asciidoc.getOrCreate()
                     .jcrContent.getOrCreate();
+            boolean generateHtml = false;
+            String jcrData = jcrContent.jcrData.get();
+
+            if ((jcrData != null && !jcrData.equals(asciidocContent)) || draftRevision.get().content.get().cachedHtml.get() == null) {
+                generateHtml = true;
+            }
             jcrContent.jcrData.set(asciidocContent);
             jcrContent.mimeType.set("text/x-asciidoc");
 
@@ -116,6 +128,14 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
 
             request.getResourceResolver().commit();
 
+            if (generateHtml) {
+                if (moduleResource == null) {
+                    moduleResource = module;
+                }
+                Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
+                // drop the html on the floor, this is just to cache the results
+                asciidoctorService.getModuleHtml(draftRevision.get(), moduleResource, context, true);
+            }
         } catch (Exception e) {
             throw new RepositoryException("Error uploading a module revision", e);
         }
