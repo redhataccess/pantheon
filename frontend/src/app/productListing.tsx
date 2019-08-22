@@ -18,7 +18,6 @@ class ProductListing extends Component {
     input: '',
     isEmptyResults: false,
     results: [],
-    //@TODO. removed unused state variables
     login: false,
     productDescription: '',
     productName: '',
@@ -62,7 +61,7 @@ class ProductListing extends Component {
           fieldId="search"
         >
           <div className="row-view">
-            <TextInput id="search" type="text" onChange={this.setInput} placeholder="Type product name to search"/>
+            <TextInput id="search" type="text" onChange={this.setInput} placeholder="Type product name to search" value={this.state.input} />
           </div>
         </FormGroup>
         <DataList aria-label="single action data list example ">
@@ -174,12 +173,13 @@ class ProductListing extends Component {
       });
     };
 
-    private setInput = (event) => {
+    private setInput = input => {
       let versions = [];
       let searchString = '';
+      this.setState({input: input})
       this.state.allProducts.map(data => {
             searchString = ''+data["name"]
-            if(searchString.includes(event)){
+            if(searchString.toLowerCase().includes(input.toLowerCase())){
               versions.push(data)
             }
       });
