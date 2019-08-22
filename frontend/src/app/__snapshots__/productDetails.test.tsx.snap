@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login tests should render Login component 1`] = `
+<Fragment>
+  <div
+    className="app-container"
+  >
+    <Breadcrumb
+      aria-label="Breadcrumb"
+      className=""
+    >
+      <BreadcrumbItem
+        className=""
+        component="a"
+        isActive={false}
+        target={null}
+        to={null}
+      >
+        All Products
+      </BreadcrumbItem>
+      <BreadcrumbItem
+        className=""
+        component="a"
+        isActive={false}
+        target={null}
+        to={null}
+      >
+        Product Details
+      </BreadcrumbItem>
+    </Breadcrumb>
+  </div>
+  <div
+    className="app-container"
+  >
+    <Level
+      className=""
+      gutter="md"
+    >
+      <LevelItem>
+        <TextContent
+          className=""
+        >
+          <Text
+            className=""
+            component="h1"
+          >
+            Success!
+              
+          </Text>
+        </TextContent>
+      </LevelItem>
+      <LevelItem />
+    </Level>
+  </div>
+  <div
+    className="app-container"
+  />
+  <div
+    className="app-container"
+  >
+    <Form
+      className=""
+      isHorizontal={false}
+    >
+      <div
+        className="app-container"
+      >
+        <FormGroup
+          className=""
+          fieldId="new_version_name"
+          isInline={false}
+          isRequired={false}
+          isValid={true}
+          label="New Version:"
+        >
+          <TextInput
+            aria-label={null}
+            className=""
+            id="new_version_name_text"
+            isDisabled={false}
+            isReadOnly={false}
+            isRequired={false}
+            isValid={true}
+            onChange={[Function]}
+            placeholder="New version name"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <ActionGroup
+          className=""
+        >
+          <Button
+            aria-label="Creates a new Version Name."
+            className=""
+            component="button"
+            isActive={false}
+            isBlock={false}
+            isDisabled={false}
+            isFocus={false}
+            isHover={false}
+            isInline={false}
+            onClick={[Function]}
+            type="button"
+            variant="primary"
+          >
+            Save
+          </Button>
+        </ActionGroup>
+      </div>
+    </Form>
+  </div>
+</Fragment>
+`;

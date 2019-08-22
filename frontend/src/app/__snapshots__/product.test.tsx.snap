@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login tests should render Login component 1`] = `
+<Fragment>
+  <Bullseye
+    className=""
+    component="div"
+  >
+    <Form
+      className=""
+      isHorizontal={false}
+    >
+      <div
+        className="app-container"
+      >
+        <div>
+          <FormGroup
+            className=""
+            fieldId="product-name"
+            isInline={false}
+            isRequired={true}
+            isValid={true}
+            label="Product Name"
+          >
+            <TextInput
+              aria-label={null}
+              className=""
+              id="product-name"
+              isDisabled={false}
+              isReadOnly={false}
+              isRequired={true}
+              isValid={true}
+              onChange={[Function]}
+              placeholder="Product Name"
+              type="text"
+              value=""
+            />
+          </FormGroup>
+          <br />
+          <FormGroup
+            className=""
+            fieldId="product-description"
+            isInline={false}
+            isRequired={false}
+            isValid={true}
+            label="Product Description"
+          >
+            <TextInput
+              aria-label={null}
+              className=""
+              id="product-description"
+              isDisabled={false}
+              isReadOnly={false}
+              isRequired={false}
+              isValid={true}
+              onChange={[Function]}
+              placeholder="Product Description"
+              type="text"
+              value=""
+            />
+          </FormGroup>
+          <br />
+          <ActionGroup
+            className=""
+          >
+            <Button
+              aria-label="Creates a new Product Name with Description specified."
+              className=""
+              component="button"
+              disabled={false}
+              isActive={false}
+              isBlock={false}
+              isDisabled={false}
+              isFocus={false}
+              isHover={false}
+              isInline={false}
+              onClick={[Function]}
+              type="button"
+              variant="primary"
+            >
+              Save
+            </Button>
+            <div />
+          </ActionGroup>
+        </div>
+      </div>
+    </Form>
+  </Bullseye>
+</Fragment>
+`;

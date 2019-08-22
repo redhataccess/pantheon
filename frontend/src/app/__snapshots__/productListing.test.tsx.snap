@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProductListing tests should render ProductListing component 1`] = `
+<Fragment>
+  <div>
+    <FormGroup
+      className=""
+      fieldId="search"
+      isInline={false}
+      isRequired={false}
+      isValid={true}
+      label="Search Products"
+    >
+      <div
+        className="row-view"
+      >
+        <TextInput
+          aria-label={null}
+          className=""
+          id="search"
+          isDisabled={false}
+          isReadOnly={false}
+          isRequired={false}
+          isValid={true}
+          onChange={[Function]}
+          placeholder="Type product name to search"
+          type="text"
+          value=""
+        />
+      </div>
+    </FormGroup>
+    <DataList
+      aria-label="single action data list example "
+      className=""
+    >
+      <DataListItem
+        aria-labelledby="single-action-item1"
+        className=""
+        isExpanded={false}
+      >
+        <DataListItemRow
+          className=""
+        >
+          <DataListItemCells
+            className=""
+            dataListCells={
+              Array [
+                <DataListCell
+                  alignRight={false}
+                  className=""
+                  isFilled={true}
+                  isIcon={false}
+                  width={1}
+                >
+                  <span
+                    className="sp-prop-nosort"
+                    id="product-name"
+                  >
+                    Product Name
+                  </span>
+                </DataListCell>,
+                <DataListCell
+                  alignRight={false}
+                  className=""
+                  isFilled={true}
+                  isIcon={false}
+                  width={2}
+                >
+                  <span
+                    className="sp-prop-nosort"
+                    id="product-description"
+                  >
+                    Product Description
+                  </span>
+                </DataListCell>,
+              ]
+            }
+          />
+        </DataListItemRow>
+      </DataListItem>
+    </DataList>
+  </div>
+  <div />
+</Fragment>
+`;

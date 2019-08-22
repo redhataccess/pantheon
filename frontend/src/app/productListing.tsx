@@ -3,9 +3,9 @@ import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList
   OptionsMenu, OptionsMenuItem, OptionsMenuToggle, Text, TextContent, TextVariants, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 import { ProductDetails } from '@app/productDetails';
-import { Link } from "react-router-dom";
-import { RouteComponentProps } from 'react-router-dom';
-import { version } from 'react-dom';
+//import { Link } from "react-router-dom";
+//import { RouteComponentProps } from 'react-router-dom';
+//import { version } from 'react-dom';
 import { Redirect } from 'react-router-dom'
 
 class ProductListing extends Component {
@@ -38,17 +38,21 @@ class ProductListing extends Component {
           }
         })
     }
-
-    //prop will be true if it comes through nav links
-    if(this.props['match']['isExact'] === true){
-      this.state.results.map(data => {
-          (data['isOpen'] as any) = false
-      });
-      this.setState({isProductDetails: false})
+   
+    if (this.props['match'] !== undefined) {
+      
+      //prop will be true if it comes through nav links
+       if(this.props['match']['isExact'] === true){
+         this.state.results.map(data => {
+             (data['isOpen'] as any) = false
+         });
+         this.setState({isProductDetails: false})
+       }
+  
+       //setting prop to false once it comes through nav links
+       this.props['match']['isExact']=false;
+  
     }
-
-    //setting prop to false once it comes through nav links
-    this.props['match']['isExact']=false;
 
     return (
       <React.Fragment>
