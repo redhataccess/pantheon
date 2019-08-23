@@ -28,11 +28,6 @@ class BuildInfo extends Component {
             fetch(backend)
                 .then(response => response.json())
                 .then(responseJSON => this.setState({ buildDate: "Built Date: " + responseJSON.buildDate, commitHash: responseJSON.commitHash }))
-                .then(() => {
-                    if (!(this.state.commitHash.includes("not set"))) {
-                        this.setState({ commitText: 'commit hash' })
-                    }
-                })
         }
     };
 
