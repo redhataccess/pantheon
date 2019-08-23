@@ -56,4 +56,21 @@ class AsciidoctorPoolTest {
         // Then
         verify(obtainedInstance, times(1)).unregisterAllExtensions();
     }
+
+    @Test
+    void objectReturnedOnException() {
+        // Given
+        Asciidoctor asciidoctor = mock(Asciidoctor.class);
+        when(asciidoctor.javaExtensionRegistry()).thenThrow(new NullPointerException());
+        lenient().when(lifecycle.createInstance()).thenReturn(asciidoctor);
+        AsciidoctorPool pool = new AsciidoctorPool(lifecycle);
+
+        // When
+        try {
+            pool.borrowObject(null); //throws NPE
+        } catch (NullPointerException e) {}
+
+        // Then
+        verify(asciidoctor, times(1)).unregisterAllExtensions();
+    }
 }

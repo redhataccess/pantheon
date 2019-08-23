@@ -49,7 +49,7 @@ public class AsciidoctorPool extends ObjectPool<Asciidoctor> {
                     new SlingResourceIncludeProcessor(base));
             return asciidoctor;
         } catch (Exception e) {
-            super.returnObject(asciidoctor);
+            returnObject(asciidoctor);
             throw e;
         }
     }
