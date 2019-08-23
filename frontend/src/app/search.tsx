@@ -196,8 +196,8 @@ export default class Search extends Component {
                 showDropdownOptions={!this.state.showDropdownOptions}
                 bottom={true}
               />
-            </div>
             <BuildInfo/>
+            </div>
             {/* Alert for delete confirmation */}
             <div className="alert">
               {this.state.confirmDelete===true && <Modal

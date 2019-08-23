@@ -9,7 +9,6 @@ exports[`BuildInfo tests should render NavLinks component 1`] = `
       onClick={[Function]}
       to=""
     />
-    <div />
   </div>
 </Fragment>
 `;

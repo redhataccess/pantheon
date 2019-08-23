@@ -15,9 +15,8 @@ class BuildInfo extends Component {
                 <div className="column-view">
                     <Link to=""
                         onClick={this.commitRedirect}>
-                        {this.state.commitText}
+                        {this.state.buildDate}
                     </Link>
-                    <div>{this.state.buildDate}</div>
                 </div>
             </React.Fragment>
         );
@@ -25,14 +24,16 @@ class BuildInfo extends Component {
 
     private getBuildInfo() {
         const backend = "/pantheon/builddate.json"
-        fetch(backend)
-            .then(response => response.json())
-            .then(responseJSON => this.setState({ buildDate: "Built Date: " + responseJSON.buildDate, commitHash: responseJSON.commitHash }))
-            .then(() => {
-                if (!(this.state.commitHash.includes("not set"))) {
-                    this.setState({ commitText: 'commit hash' })
-                }
-            })
+        if (this.state.buildDate === '') {
+            fetch(backend)
+                .then(response => response.json())
+                .then(responseJSON => this.setState({ buildDate: "Built Date: " + responseJSON.buildDate, commitHash: responseJSON.commitHash }))
+                .then(() => {
+                    if (!(this.state.commitHash.includes("not set"))) {
+                        this.setState({ commitText: 'commit hash' })
+                    }
+                })
+        }
     };
 
     private commitRedirect = () => {

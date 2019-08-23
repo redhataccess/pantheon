@@ -250,8 +250,8 @@ exports[`Search tests should render default Search component 1`] = `
           perPageLimit={25}
           showDropdownOptions={false}
         />
+        <BuildInfo />
       </div>
-      <BuildInfo />
       <div
         className="alert"
       />
