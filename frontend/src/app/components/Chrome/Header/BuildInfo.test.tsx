@@ -1,18 +1,19 @@
 import React from 'react';
-import { User }  from './User';
-import "isomorphic-fetch"
+import { BuildInfo }  from './BuildInfo';
 import { Link } from "react-router-dom";
 import { HashRouter as Router } from 'react-router-dom';
-import { shallow, mount } from 'enzyme';
+import "isomorphic-fetch"
 
-describe('User tests', () => {
-  test('should render User component', () => {
-    const view = shallow(<User />);
+import { mount, shallow } from 'enzyme';
+
+describe('BuildInfo tests', () => {
+  test('should render NavLinks component', () => {
+    const view = shallow(<BuildInfo />);
     expect(view).toMatchSnapshot();
   });
 
   it('should render a Link component', () => {
-    const wrapper = mount(<Router><User/></Router>);
+    const wrapper = mount(<Router><BuildInfo /></Router>);
     const navLinks = wrapper.find(Link);
     expect(navLinks.exists()).toBe(true)
   });

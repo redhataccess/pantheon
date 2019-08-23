@@ -251,6 +251,7 @@ exports[`Search tests should render default Search component 1`] = `
           showDropdownOptions={false}
         />
       </div>
+      <BuildInfo />
       <div
         className="alert"
       />

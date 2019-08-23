@@ -6,14 +6,16 @@ import org.apache.jackrabbit.api.security.JackrabbitAccessControlManager;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlPolicy;
 import org.apache.jackrabbit.api.security.principal.PrincipalManager;
 import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
-import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.jcr.api.SlingRepositoryInitializer;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -36,13 +38,36 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
 
     private static final Logger log = LoggerFactory.getLogger(PantheonRepositoryInitializer.class);
 
-    @Override
-    public void processRepository(SlingRepository slingRepository) throws Exception {
-        initializeRepositoryACLs(slingRepository);
+    private ServiceResourceResolverProvider serviceResourceResolverProvider;
+
+    @Activate
+    public PantheonRepositoryInitializer(@Reference ServiceResourceResolverProvider serviceResourceResolverProvider) {
+        this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
 
-    private void initializeRepositoryACLs(SlingRepository slingRepository) throws RepositoryException {
-        JackrabbitSession s = (JackrabbitSession) slingRepository.loginAdministrative(null);
+    @Override
+    public void processRepository(SlingRepository slingRepository) throws Exception {
+        initializeRepositoryACLs(getSession(slingRepository));
+        setGitServiceURL(getSession(slingRepository));
+    }
+
+    private JackrabbitSession getSession(SlingRepository slingRepository) throws RepositoryException {
+        return (JackrabbitSession) slingRepository.loginAdministrative(null);
+    }
+
+    private void setGitServiceURL(JackrabbitSession s) throws RepositoryException {
+        if (System.getenv("GIT_SERVICE_URL") != null) {
+            assignPermissionToPrincipal(s,"pantheon","/conf/pantheon", null, Privilege.JCR_READ, Privilege.JCR_WRITE);
+            assignPermissionToPrincipal(s,"pantheon-users","/conf/pantheon", null, Privilege.JCR_READ);
+            s.getNode("/conf/pantheon").setProperty("pant:GitServiceURL",System.getenv("GIT_SERVICE_URL"));
+            s.save();
+            s.logout();
+        } else {
+            log.info("Environment Variable GIT_SERVICE_URL is not set.");
+        }
+    }
+
+    private void initializeRepositoryACLs(JackrabbitSession s) throws RepositoryException {
         try {
             // Create and give the pantheon service user permissions to the whole /content path
             try {

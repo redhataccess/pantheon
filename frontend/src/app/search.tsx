@@ -6,6 +6,7 @@ import {
   Level, LevelItem
 } from '@patternfly/react-core';
 import '@app/app.css';
+import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination';
 
 export default class Search extends Component {
@@ -196,6 +197,7 @@ export default class Search extends Component {
                 bottom={true}
               />
             </div>
+            <BuildInfo/>
             {/* Alert for delete confirmation */}
             <div className="alert">
               {this.state.confirmDelete===true && <Modal
