@@ -15,9 +15,6 @@ import javax.jcr.Session;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import static org.mockito.Mockito.mock;
-
-
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 public class PantheonRepositoryInitializerTest {
 
@@ -31,16 +28,13 @@ public class PantheonRepositoryInitializerTest {
     @DisplayName("Test that we don't get a NPE when checking permissions.")
     public void testInitializer() throws Exception {
         //Given
-        PantheonRepositoryInitializer initializer = mock(PantheonRepositoryInitializer.class);
+        PantheonRepositoryInitializer initializer = new PantheonRepositoryInitializer(provider);
         slingContext.create().resource("/conf/pantheon");
-        //doNothing().when(initializer).processRepository(isA(SlingRepository.class));
 
         //When
-        initializer.processRepository(jcr);
 
         //Then
-       // assertThrows(NullPointerException.class, () -> initializer.processRepository(jcr));
-
+        assertThrows(NullPointerException.class, () -> initializer.processRepository(jcr));
         assertDoesNotThrow(() -> slingContext.resourceResolver().adaptTo(Session.class).checkPermission("/conf/pantheon", "set_property"));
     }
 
