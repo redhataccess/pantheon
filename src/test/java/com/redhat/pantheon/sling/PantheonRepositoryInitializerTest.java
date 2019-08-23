@@ -1,9 +1,6 @@
 package com.redhat.pantheon.sling;
 
-import org.apache.jackrabbit.oak.jcr.Jcr;
 import org.apache.sling.jcr.api.SlingRepository;
-import org.apache.sling.jcr.api.SlingRepositoryInitializer;
-import org.apache.sling.testing.mock.sling.MockJcrSlingRepository;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
@@ -11,16 +8,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.jcr.Repository;
 import javax.jcr.Session;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doNothing;
+
 import static org.mockito.Mockito.mock;
 
 
@@ -39,12 +33,14 @@ public class PantheonRepositoryInitializerTest {
         //Given
         PantheonRepositoryInitializer initializer = mock(PantheonRepositoryInitializer.class);
         slingContext.create().resource("/conf/pantheon");
-        doNothing().when(initializer).processRepository(isA(SlingRepository.class));
+        //doNothing().when(initializer).processRepository(isA(SlingRepository.class));
 
         //When
         initializer.processRepository(jcr);
 
         //Then
+       // assertThrows(NullPointerException.class, () -> initializer.processRepository(jcr));
+
         assertDoesNotThrow(() -> slingContext.resourceResolver().adaptTo(Session.class).checkPermission("/conf/pantheon", "set_property"));
     }
 
