@@ -56,7 +56,7 @@ abstract class EventJobConsumer<EXT extends EventProcessingExtension> implements
         }
 
         try {
-            getExtensions(EventProcessingExtension.class).forEach(service -> {
+            getExtensions().forEach(service -> {
                 try {
                     service.processEvent(firedEvent);
                     log.trace("Extension " + service.getClass().getName() + " finished successfully");
@@ -75,19 +75,17 @@ abstract class EventJobConsumer<EXT extends EventProcessingExtension> implements
     /**
      * Collects all the services registered as implementations of the given interface.
      *
-     * @param extInterface The extension interface
-     * @param <T>
-     * @return A set of extension services which implement the provided interface.
+     * @return A set of extension services which implement the extension interface for this consumer
      */
-    private static <T> Collection<T> getExtensions(Class<T> extInterface) throws InvalidSyntaxException {
-        List<T> extensions = newArrayList();
-        BundleContext bundleContext = FrameworkUtil.getBundle(extInterface).getBundleContext();
-        Collection<ServiceReference<T>> serviceReferences =
+    protected Collection<EXT> getExtensions() throws InvalidSyntaxException {
+        List<EXT> extensions = newArrayList();
+        BundleContext bundleContext = FrameworkUtil.getBundle(extensionClass).getBundleContext();
+        Collection<ServiceReference<EXT>> serviceReferences =
                 bundleContext
-                        .getServiceReferences(extInterface, null);
+                        .getServiceReferences(extensionClass, null);
 
-        for (ServiceReference<T> reference : serviceReferences) {
-            T service = bundleContext.getService(reference);
+        for (ServiceReference<EXT> reference : serviceReferences) {
+            EXT service = bundleContext.getService(reference);
             extensions.add(service);
         }
         return extensions;
