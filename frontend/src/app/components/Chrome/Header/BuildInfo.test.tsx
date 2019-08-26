@@ -12,10 +12,4 @@ describe('BuildInfo tests', () => {
     expect(view).toMatchSnapshot();
   });
 
-  it('should render a Link component', () => {
-    const wrapper = mount(<Router><BuildInfo /></Router>);
-    const navLinks = wrapper.find(Link);
-    expect(navLinks.exists()).toBe(true)
-  });
-
 });

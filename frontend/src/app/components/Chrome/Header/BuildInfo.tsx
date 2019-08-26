@@ -13,10 +13,11 @@ class BuildInfo extends Component {
         return (
             <React.Fragment>
                 <div className="column-view">
-                    <Link to=""
+                    {this.state.commitHash.includes("not set") && <Link to=""
                         onClick={this.commitRedirect}>
                         {this.state.buildDate}
-                    </Link>
+                    </Link>}
+                    {!this.state.commitHash.includes("not set") && this.state.buildDate}
                 </div>
             </React.Fragment>
         );
