@@ -3,7 +3,9 @@ package com.redhat.pantheon.asciidoctor;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
+import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.ModuleRevision;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -119,6 +122,28 @@ public class AsciidoctorService {
                         reqParam -> reqParam.getString())
                 );
         return context;
+    }
+
+    /**
+     * Extracts metadata from asciidoctor content and writes it to the metadata jcr node.
+     * @param content The source node that contains the asciidoc content
+     * @param metadata The destination node where the extracted metadata will be written
+     */
+    public void extractMetadata(FileResource.JcrContent content, Metadata metadata) {
+        log.trace("=== Start extracting metadata ");
+        long startTime = System.currentTimeMillis();
+        Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
+        try {
+            asciidoctor.javaExtensionRegistry().treeprocessor(
+                    new MetadataExtractorTreeProcessor(metadata));
+
+            asciidoctor.load(content.jcrData.get(), newHashMap());
+        }
+        finally {
+            asciidoctorPool.returnObject(asciidoctor);
+        }
+        long endTime = System.currentTimeMillis();
+        log.trace("=== End extracting metadata. Time lapsed: " + (endTime-startTime)/1000 + " secs");
     }
 
     /**

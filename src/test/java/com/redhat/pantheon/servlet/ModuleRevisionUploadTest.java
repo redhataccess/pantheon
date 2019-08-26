@@ -1,6 +1,5 @@
 package com.redhat.pantheon.servlet;
 
-import com.redhat.pantheon.asciidoctor.AsciidoctorPool;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleRevision;
@@ -12,7 +11,6 @@ import org.apache.sling.servlets.post.HtmlResponse;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
-import org.asciidoctor.Asciidoctor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -22,14 +20,14 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Answers.RETURNS_DEEP_STUBS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -39,20 +37,16 @@ class ModuleRevisionUploadTest {
     private SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
     @Mock
-    AsciidoctorPool asciidoctorPool;
-
-    @Mock
     AsciidoctorService asciidoctorService;
 
     @Test
     void createFirstRevision() throws Exception {
         // Given
-        lenient().when(asciidoctorPool.borrowObject()).thenReturn(mock(Asciidoctor.class, RETURNS_DEEP_STUBS));
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorPool, asciidoctorService);
+        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the adoc content");
@@ -91,12 +85,11 @@ class ModuleRevisionUploadTest {
         slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
                 .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/1").getValueMap().get("jcr:uuid"));
 
-        lenient().when(asciidoctorPool.borrowObject()).thenReturn(mock(Asciidoctor.class, RETURNS_DEEP_STUBS));
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorPool, asciidoctorService);
+        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "Draft asciidoc content");
@@ -147,12 +140,11 @@ class ModuleRevisionUploadTest {
         slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
                 .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/1").getValueMap().get("jcr:uuid"));
 
-        lenient().when(asciidoctorPool.borrowObject()).thenReturn(mock(Asciidoctor.class, RETURNS_DEEP_STUBS));
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorPool, asciidoctorService);
+        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "Revised asciidoc content");
@@ -205,12 +197,11 @@ class ModuleRevisionUploadTest {
         slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
                 .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/1").getValueMap().get("jcr:uuid"));
 
-        lenient().when(asciidoctorPool.borrowObject()).thenReturn(mock(Asciidoctor.class, RETURNS_DEEP_STUBS));
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorPool, asciidoctorService);
+        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the draft adoc content");

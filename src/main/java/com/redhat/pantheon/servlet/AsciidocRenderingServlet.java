@@ -54,6 +54,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
     static final String PARAM_RERENDER = "rerender";
     static final String PARAM_DRAFT = "draft";
+    static final String PARAM_LOCALE = "locale";
 
     private AsciidoctorService asciidoctorService;
 
@@ -66,7 +67,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws ServletException, IOException {
-        String locale = paramValue(request, "locale", DEFAULT_MODULE_LOCALE.toString());
+        String locale = paramValue(request, PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
         boolean draft = paramValueAsBoolean(request, PARAM_DRAFT);
 
         Module module = request.getResource().adaptTo(Module.class);
