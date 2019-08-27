@@ -101,4 +101,38 @@ class AsciidoctorServiceTest {
         // Then
         assertTrue(generatedHtml.contains("This is cached content"));
     }
+
+    @Test
+    public void testExtractMetadata() throws Exception {
+
+        // Given
+        slingContext.build()
+                .resource("/module/locales/en_US/released/metadata")
+                .resource("/module/locales/en_US/released/content/asciidoc/jcr:content",
+                        "jcr:data", "")
+                .resource("/module/locales/en_US/released/content/cachedHtml",
+                        "jcr:data", "This is cached content",
+                        "pant:hash", "01000000")
+                .commit();
+        Resource resource = slingContext.resourceResolver().getResource("/module");
+        ModuleRevision moduleRevision =
+                new ModuleRevision(slingContext.resourceResolver().getResource("/module/locales/en_US/released"));
+        // adapter (mock)
+        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Content.class, slingContext);
+
+        // When
+        lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
+        lenient().when(asciidoctorPool.borrowObject(resource))
+                .thenReturn(Asciidoctor.Factory.create());
+        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
+                .thenReturn(slingContext.resourceResolver());
+
+        AsciidoctorService asciidoctorService =
+                new AsciidoctorService(globalConfig, asciidoctorPool, serviceResourceResolverProvider);
+        String generatedHtml = asciidoctorService.getModuleHtml(moduleRevision, resource, newHashMap(), false);
+
+        // Then
+        assertTrue(generatedHtml.contains("This is cached content"));
+    }
 }

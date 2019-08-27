@@ -45,6 +45,10 @@ public class AsciidoctorPool extends ObjectPool<Asciidoctor> {
     public Asciidoctor borrowObject(Resource base) {
         Asciidoctor asciidoctor = super.borrowObject();
         try {
+            // TODO - Leave it up to the caller of this method to set up their own extensions.
+            // TODO - For now, this works because we're interested in processing Resource objects 100% of the time.
+            // TODO - However, that may not always be so. When that time comes, this method should not set up any
+            // TODO - extensions, and then this try/catch->returnObject construct can disappear as well.
             asciidoctor.javaExtensionRegistry().includeProcessor(
                     new SlingResourceIncludeProcessor(base));
             return asciidoctor;
