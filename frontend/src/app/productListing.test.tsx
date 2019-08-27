@@ -4,6 +4,7 @@ import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
 import { DataList, FormGroup, TextInput } from '@patternfly/react-core';
+import { render, fireEvent, findByTestId } from '@testing-library/react'
 
 describe('ProductListing tests', () => {
   test('should render ProductListing component', () => {
@@ -28,4 +29,10 @@ describe('ProductListing tests', () => {
      const textInput = wrapper.find(TextInput);
      expect(textInput.exists()).toBe(true)
    });
+
+   test('loads items eventually', async () => {
+    const { getByText } = render(<ProductListing />)
+  
+    expect(getByText('Search Products')).toBeTruthy()
+  })
 });

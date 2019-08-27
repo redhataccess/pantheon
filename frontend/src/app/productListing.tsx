@@ -114,6 +114,19 @@ class ProductListing extends Component {
               />
             </DataListItemRow>
           </DataListItem>))}
+          {this.state.isEmptyResults && (
+            <DataListItem aria-labelledby="single-action-item0" data-testid="emptyResults">
+              <DataListItemRow>
+                <DataListItemCells
+                  dataListCells={[
+                    <DataListCell key="primary content" width={2}>
+                      <span className="sp-prop-nosort" id="product-name">No products found</span>
+                    </DataListCell>
+                  ]}
+                />
+              </DataListItemRow>
+            </DataListItem>
+          )}
         </DataList>
         </div>)}
         <div>
