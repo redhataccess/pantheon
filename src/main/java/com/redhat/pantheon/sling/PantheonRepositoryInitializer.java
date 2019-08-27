@@ -48,22 +48,22 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
     @Override
     public void processRepository(SlingRepository slingRepository) throws Exception {
         initializeRepositoryACLs(getSession(slingRepository));
-        setGitServiceURL(getSession(slingRepository));
+        setServiceURL(getSession(slingRepository));
     }
 
     private JackrabbitSession getSession(SlingRepository slingRepository) throws RepositoryException {
         return (JackrabbitSession) slingRepository.loginAdministrative(null);
     }
 
-    private void setGitServiceURL(JackrabbitSession s) throws RepositoryException {
-        if (System.getenv("GIT_SERVICE_URL") != null) {
+    private void setServiceURL(JackrabbitSession s) throws RepositoryException {
+        if (System.getenv("SERVICE_URL") != null) {
             assignPermissionToPrincipal(s,"pantheon","/conf/pantheon", null, Privilege.JCR_READ, Privilege.JCR_WRITE);
             assignPermissionToPrincipal(s,"pantheon-users","/conf/pantheon", null, Privilege.JCR_READ);
-            s.getNode("/conf/pantheon").setProperty("pant:GitServiceURL",System.getenv("GIT_SERVICE_URL"));
+            s.getNode("/conf/pantheon").setProperty("pant:serviceURL",System.getenv("SERVICE_URL"));
             s.save();
             s.logout();
         } else {
-            log.info("Environment Variable GIT_SERVICE_URL is not set.");
+            log.info("Environment Variable SERVICE_URL is not set.");
         }
     }
 
