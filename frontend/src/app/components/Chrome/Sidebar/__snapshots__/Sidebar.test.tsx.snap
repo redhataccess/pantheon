@@ -9,7 +9,7 @@ exports[`Sidebar tests should render Sidebar component 1`] = `
       className="pf-c-page__sidebar"
     >
       <Nav
-        aria-label="Primary Nav Default Example"
+        aria-label="Primary Nav Default"
         className="pf-c-nav"
         id="page-layout-default-nav-primary-nav"
         onSelect={[Function]}
