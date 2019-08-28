@@ -94,14 +94,14 @@ class GitImport extends Component {
     if (this.state.repository === "") {
       this.setState({ isMissingFields: true })
     } else {
-      fetch('/conf/pantheon/pant:serviceURL')
+      fetch('/conf/pantheon/pant:syncServiceUrl')
         .then((resp => {
           if (!resp.ok) {
             this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, could not find the git2pantheon URL configuration." })
           } else {
             resp.text().then((text) => {
               this.setState({ git2pantheonURL: text })
-              console.log("The response text from pant:serviceURL is: " + text)
+              console.log("The response text from pant:syncServiceUrl is: " + text)
             })
               .then(() => {
                 if (this.state.git2pantheonURL === "") {
