@@ -25,7 +25,7 @@ export interface IProps {
             <React.Fragment>
                 <div>
                     <Breadcrumb>
-                        <BreadcrumbItem to="/">Modules</BreadcrumbItem>
+                        <BreadcrumbItem to="#">Modules</BreadcrumbItem>
                         <BreadcrumbItem to="#" isActive={true}>
                             {this.props.moduleName}
                         </BreadcrumbItem>
