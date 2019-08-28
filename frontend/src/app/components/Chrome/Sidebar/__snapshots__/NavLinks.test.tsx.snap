@@ -15,7 +15,6 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
       srText=""
       title="Modules"
     >
-<<<<<<< HEAD
       <NavItem
         className=""
         groupId="grp-1"
@@ -33,10 +32,5 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
       </NavItem>
     </NavExpandable>
   </NavList>
-=======
-      Modules
-    </Link>
-  </NavItem>
->>>>>>> module_display
 </Fragment>
 `;
