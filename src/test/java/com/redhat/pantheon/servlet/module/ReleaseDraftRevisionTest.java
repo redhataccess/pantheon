@@ -30,16 +30,16 @@ class ReleaseDraftRevisionTest {
     void doRun() throws Exception {
         // Given
         slingContext.create()
-                .resource("/module/en_US/v0",
+                .resource("/module/en_US/1",
                         "jcr:primaryType", "pant:moduleRevision");
         slingContext.create()
-                .resource("/module/en_US/v0/metadata",
+                .resource("/module/en_US/1/metadata",
                         "jcr:title", "A draft title");
         slingContext.create()
-                .resource("/module/en_US/v0/content/asciidoc/jcr:content",
+                .resource("/module/en_US/1/content/asciidoc/jcr:content",
                         "jcr:data", "The draft content");
         slingContext.resourceResolver().getResource("/module/en_US").adaptTo(ModifiableValueMap.class)
-                .put("draft", slingContext.resourceResolver().getResource("/module/en_US/v0").getValueMap().get("jcr:uuid"));
+                .put("draft", slingContext.resourceResolver().getResource("/module/en_US/1").getValueMap().get("jcr:uuid"));
         registerMockAdapter(Module.class, slingContext);
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();

@@ -24,6 +24,7 @@ CONFIG_FILE = 'pantheon2.yml'
 HEADERS = {'cache-control': 'no-cache',
            'Accept': 'application/json'}
 
+
 def _generate_data(jcr_primary_type, base_name, path_name, asccidoc_type):
     """
     Generate the data object for the API call.
@@ -41,11 +42,13 @@ def _generate_data(jcr_primary_type, base_name, path_name, asccidoc_type):
 
     return data
 
+
 def _info(message):
     """
     Print an info message on the console. Warning messages are cyan
     """
     print("\033[96m{}\033[00m" .format(message))
+
 
 def _warn(message):
     """
@@ -53,11 +56,13 @@ def _warn(message):
     """
     print("\033[93m{}\033[00m" .format(message))
 
+
 def _error(message):
     """
     Print an error message on the console. Warning messages are red
     """
     print("\033[91m{}\033[00m" .format(message))
+
 
 def _print_response(response_code, reason):
     """
@@ -69,6 +74,7 @@ def _print_response(response_code, reason):
         _error(str(response_code) + " " + reason)
     else:
         print(response_code, reason)
+
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, description='''\
 Red Hat bulk upload module for Pantheon 2. This tool will scan a directory recursively and upload relevant files.
@@ -135,6 +141,7 @@ except FileNotFoundError:
     logger.warning('Could not find a valid config file(' + CONFIG_FILE + ') in this directory; all files will be treated as resource uploads.')
 logger.debug('config: %s', config)
 
+
 def resolveOption(parserVal, configKey, default):
     if parserVal is not None:
         return parserVal
@@ -142,6 +149,7 @@ def resolveOption(parserVal, configKey, default):
         return config[configKey]
     else:
         return default
+
 
 def exists(path):
     """Makes a head request to the given path and returns a status_code"""
@@ -152,11 +160,13 @@ def exists(path):
     except Exception:
         return False
 
+
 def remove_trailing_slash(path):
     """Removes the trailing slash from path if exists and returns a string"""
     if path.endswith('/'):
         path = path[:-1]
     return path
+
 
 def find_files(patterns, directory):
     """
@@ -186,21 +196,22 @@ def find_files(patterns, directory):
 
     return files
 
-def process_file(path, type):
+
+def process_file(path, filetype):
     """
     Processes the matched files and upload to pantheon through sling api call
 
     Paramters:
     path (string): A file patch
-    type (string): A type of file(titles, modules or resources)
+    filetype (string): A type of file(titles, modules or resources)
 
     Returns:
     list: It returns a list with value of the API call status_code and reason
     """
     global processed_files
-    isTitle = True if type == 'titles' else False
-    isModule = True if type == 'modules' else False
-    isResource = True if type =='resources' else False
+    isTitle = True if filetype == 'titles' else False
+    isModule = True if filetype == 'modules' else False
+    isResource = True if filetype =='resources' else False
     content_root = 'sandbox' if args.sandbox else 'repositories'
     url = server + "/content/" + content_root + "/" + repository
 
@@ -273,7 +284,8 @@ def process_file(path, type):
             processed_files.append(path)
             logger.debug('')
 
-    return (r.status_code, r.reason)
+    return r.status_code, r.reason
+
 
 def get_unspecified_files(directory, processed_files, follow_links=True):
     """Collects files from the given directory that were not specified in patheon2.yml file and returns a list"""
@@ -288,6 +300,7 @@ def get_unspecified_files(directory, processed_files, follow_links=True):
                 unspecified_files.append(path)
 
     return unspecified_files
+
 
 server = resolveOption(args.server, 'server', DEFAULT_SERVER)
 repository = resolveOption(args.repository, 'repository', DEFAULT_REPOSITORY)
@@ -319,6 +332,13 @@ logger.debug('moduleGlobs: %s', moduleGlobs)
 logger.debug('resourceGlobs: %s', resourceGlobs)
 logger.debug('args.directory: %s', args.directory)
 
+resource_files = find_files(resourceGlobs, args.directory)
+if resource_files:
+    for f in resource_files:
+        print("resource files matched: ", f)
+        # Process files
+        (status_code, reason) = process_file(f, "resources")
+
 title_files = find_files(titleGlobs, args.directory)
 if title_files:
     for f in title_files:
@@ -334,13 +354,6 @@ if module_files:
         # Process files
         logger.debug('File path: %s', f)
         (status_code, reason) = process_file(f, "modules")
-
-resource_files = find_files(resourceGlobs, args.directory)
-if resource_files:
-    for f in resource_files:
-        print("resource files matched: ", f)
-        # Process files
-        (status_code, reason) = process_file(f, "resources")
 
 unspecified_files = get_unspecified_files(args.directory, processed_files, links)
 if len(unspecified_files) > 0:
