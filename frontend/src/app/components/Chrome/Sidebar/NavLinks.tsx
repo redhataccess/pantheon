@@ -21,31 +21,31 @@ class NavLinks extends Component {
         activeItem: 'grp-1_itm-1'
       };
     
-    onDropdownToggle = isDropdownOpen => {
+    private onDropdownToggle = isDropdownOpen => {
         this.setState({
           isDropdownOpen
         });
       };
     
-      onDropdownSelect = event => {
+    private onDropdownSelect = event => {
         this.setState({
           isDropdownOpen: !this.state.isDropdownOpen
         });
       };
     
-      onKebabDropdownToggle = isKebabDropdownOpen => {
+    private onKebabDropdownToggle = isKebabDropdownOpen => {
         this.setState({
           isKebabDropdownOpen
         });
       };
     
-      onKebabDropdownSelect = event => {
+    private onKebabDropdownSelect = event => {
         this.setState({
           isKebabDropdownOpen: !this.state.isKebabDropdownOpen
         });
       };
     
-      onNavSelect = result => {
+    private  onNavSelect = result => {
         this.setState({
           activeItem: result.itemId,
           activeGroup: result.groupId
