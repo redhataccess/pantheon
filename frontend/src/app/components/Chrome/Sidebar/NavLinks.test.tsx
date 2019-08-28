@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLinks }  from './NavLinks';
-import { NavItem } from '@patternfly/react-core';
+import { NavItem, NavExpandable } from '@patternfly/react-core';
 import { Link } from "react-router-dom";
 import { HashRouter as Router } from 'react-router-dom';
 import "isomorphic-fetch"
@@ -24,5 +24,9 @@ describe('NavLinks tests', () => {
     const navLinks = wrapper.find(Link);
     expect(navLinks.exists()).toBe(true)
   });
-
+  it('should render an Expandable component', () => {
+    const wrapper = mount(<Router><NavLinks/></Router>);
+    const expandable = wrapper.find(NavExpandable);
+    expect(expandable.exists()).toBe(true)
+  });
 });
