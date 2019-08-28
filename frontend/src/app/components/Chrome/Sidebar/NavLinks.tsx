@@ -9,6 +9,7 @@ class NavLinks extends Component {
         isAdmin: false,
         isLoggedIn: false,
         moduleText: '',
+<<<<<<< HEAD
         productText: '',
         productsText: '',
         searchText: 'Search',
@@ -49,6 +50,11 @@ class NavLinks extends Component {
         });
       };
     
+=======
+        searchText: 'Modules'
+    };
+
+>>>>>>> module_display
     public render() {
         const id = 'userID';
         if (!this.state.isLoggedIn) {
