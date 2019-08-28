@@ -1,18 +1,21 @@
 package com.redhat.pantheon.servlet;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.redhat.pantheon.asciidoctor.AsciidoctorPool;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.Module;
-import com.redhat.pantheon.model.ModuleRevision;
+import com.redhat.pantheon.model.api.FileResource.JcrContent;
+import com.redhat.pantheon.model.api.SlingResourceUtil;
+import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleRevision;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceUtil;
-import org.apache.sling.servlets.post.*;
+import org.apache.sling.servlets.post.AbstractPostOperation;
+import org.apache.sling.servlets.post.Modification;
+import org.apache.sling.servlets.post.PostOperation;
+import org.apache.sling.servlets.post.PostResponse;
 import org.asciidoctor.Asciidoctor;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
@@ -22,13 +25,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Locale;
+import java.util.Optional;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Streams.stream;
 
 /**
  * Post operation to add a new Module revision to the system.
@@ -68,59 +69,50 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
             String asciidocContent = ServletUtils.paramValue(request, "asciidoc");
             String path = request.getResource().getPath();
             String moduleName = ResourceUtil.getName(path);
-            String description = ServletUtils.paramValue(request, "jcr:description");
+            String description = ServletUtils.paramValue(request, "jcr:description", "");
 
             log.debug("Pushing new module revision at: " + path + " with locale: " + locale);
             log.trace("and content: " + asciidocContent);
 
             // Try to find the module
             Resource moduleResource = request.getResourceResolver().getResource(path);
+            Module module;
 
             if(moduleResource == null) {
-                Map<String, Object> props = Maps.newHashMap();
-                props.put("jcr:primaryType", "pant:module");
-                props.put("jcr:title", moduleName);
-                props.put("jcr:description", description);
-
-
-                moduleResource =
-                        ResourceUtil.getOrCreateResource(
+                module =
+                        SlingResourceUtil.createNewSlingResource(
                                 request.getResourceResolver(),
                                 path,
-                                props,
-                                null,
-                                false);
+                                Module.class);
+            } else {
+                module = moduleResource.adaptTo(Module.class);
             }
 
-            Module module = new Module(moduleResource);
-
-            // get the latest revision
-            Module.Revisions revisions = module.locales.getOrCreate()
-                    .getOrCreateModuleLocale(LocaleUtils.toLocale(locale))
-                    .revisions.getOrCreate();
-
-            // If the revision is empty, then create the new node
-            if(!revisions.hasChildren()) {
-                createNewRevision(revisions, "v1", moduleName, asciidocContent);
-                response.setStatus(HttpServletResponse.SC_CREATED, "New revision created");
+            Locale localeObj = LocaleUtils.toLocale(locale);
+            Optional<ModuleRevision> draftRevision = module.getDraftRevision(localeObj);
+            // if there is no draft content, create it
+            if( !draftRevision.isPresent() ) {
+                draftRevision = Optional.of(
+                        module.getOrCreateModuleLocale(localeObj)
+                        .createNextRevision());
+                module.getOrCreateModuleLocale(localeObj)
+                        .draft.set( draftRevision.get().uuid.get() );
             }
-            else {
-                // if the content matches the latest revision, don't do a thing
-                ModuleRevision latestVersion = revisions.getLatestRevision();
-                String storedAdocContet = latestVersion
-                        .asciidoc.get()
-                        .jcrContent.get()
-                        .jcrData.get();
-                if(latestVersion != null && storedAdocContet != null && storedAdocContet.equals(asciidocContent)) {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT, "Nothing has changed");
-                }
-                // create a new revision
-                else {
-                    String revisionName = "v" + (stream(revisions.getChildren()).collect(Collectors.counting()) + 1);
-                    createNewRevision(revisions, revisionName, moduleName, asciidocContent);
-                    response.setStatus(HttpServletResponse.SC_CREATED, "New revision created");
-                }
-            }
+
+            // modify only the draft content/metadata
+            JcrContent jcrContent = draftRevision.get()
+                    .content.getOrCreate()
+                    .asciidoc.getOrCreate()
+                    .jcrContent.getOrCreate();
+            jcrContent.jcrData.set(asciidocContent);
+            jcrContent.mimeType.set("text/x-asciidoc");
+
+            Metadata metadata = draftRevision.get()
+                    .metadata.getOrCreate();
+            metadata.title.set(moduleName);
+            metadata.description.set(description);
+
+            extractMetadata(jcrContent, metadata);
 
             request.getResourceResolver().commit();
 
@@ -129,33 +121,21 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
         }
     }
 
-    private ModuleRevision createNewRevision(Module.Revisions revisions, String name, String title, String asciidocContent) {
-        ModuleRevision newRevision = revisions.getOrCreateModuleRevision(name);
-        // TODO these should be extracted from the content
-        newRevision.title.set(title);
-        newRevision.description.set("");
-        FileResource asciidoc = newRevision.asciidoc.getOrCreate();
-        asciidoc.jcrContent.getOrCreate().jcrData.set(asciidocContent);
-        asciidoc.jcrContent.getOrCreate().mimeType.set("text/x-asciidoc");
-        extractMetadata(newRevision);
-        return newRevision;
-    }
-
-    private void extractMetadata(ModuleRevision moduleRevision) {
-        log.info("=== Start extracting metadata ");
+    private void extractMetadata(JcrContent content, Metadata metadata) {
+        log.trace("=== Start extracting metadata ");
         long startTime = System.currentTimeMillis();
         Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
         try {
             asciidoctor.javaExtensionRegistry().treeprocessor(
-                    new MetadataExtractorTreeProcessor(moduleRevision));
+                    new MetadataExtractorTreeProcessor(metadata));
 
-            asciidoctor.load(moduleRevision.asciidocContent.get(), newHashMap());
+            asciidoctor.load(content.jcrData.get(), newHashMap());
         }
         finally {
             asciidoctorPool.returnObject(asciidoctor);
         }
         long endTime = System.currentTimeMillis();
-        log.info("=== End extracting metadata. Time it took: " + (endTime-startTime)/1000 + " secs");
+        log.trace("=== End extracting metadata. Time lapsed: " + (endTime-startTime)/1000 + " secs");
     }
 
 }

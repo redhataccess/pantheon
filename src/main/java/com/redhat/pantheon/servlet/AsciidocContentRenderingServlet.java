@@ -1,6 +1,9 @@
 package com.redhat.pantheon.servlet;
 
-import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.module.Module;
+import org.apache.commons.lang3.LocaleUtils;
+import org.apache.http.entity.ContentType;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -14,10 +17,12 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Locale;
+import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
  * Renders the asciidoc content exactly as stored.
@@ -27,7 +32,7 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
         service = Servlet.class,
         property = {
                 "sling.servlet.resourceTypes=pantheon/module",
-                "sling.servlet.extensions=adoc",
+                "sling.servlet.extensions=raw",
                 Constants.SERVICE_DESCRIPTION+"=Renders asciidoc content in its raw original form",
                 Constants.SERVICE_VENDOR+"=Red Hat Content Tooling team"
         }
@@ -40,18 +45,28 @@ public class AsciidocContentRenderingServlet extends SlingSafeMethodsServlet {
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
         String locale = paramValue(request, "locale", DEFAULT_MODULE_LOCALE.toString());
-        String rev = paramValue(request, "rev");
+        // TODO right now, only allow draft and released content
+        boolean draft = paramValueAsBoolean(request, "draft");
 
         Resource resource = request.getResource();
         Module module = resource.adaptTo(Module.class);
 
         response.setContentType("html");
         Writer w = response.getWriter();
-        w.write(module
-                .locales.get()
-                .getModuleLocale(Locale.forLanguageTag(locale))
-                .revisions.get()
-                .getDefaultRevision()
-                .asciidocContent.get());
+
+        Optional<Content> content;
+        if (draft) {
+            content = module.getDraftContent(LocaleUtils.toLocale(locale));
+        } else {
+            content = module.getReleasedContent(LocaleUtils.toLocale(locale));
+        }
+
+        if(content.isPresent()) {
+            response.setContentType(ContentType.TEXT_PLAIN.toString());
+            w.write(content.get().asciidocContent.get());
+        } else {
+            response.sendError(SC_NOT_FOUND, "Requested content not found for locale " + locale.toString()
+                    + " and in state " + (draft ? "'draft'" : "released"));
+        }
     }
 }

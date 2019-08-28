@@ -1,16 +1,20 @@
 package com.redhat.pantheon.model.api;
 
-import org.apache.commons.lang3.tuple.Pair;
+import com.google.common.collect.ImmutableMap;
+import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
 
+import javax.annotation.Nonnull;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-import static com.google.common.collect.Maps.newHashMap;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
 /**
  * Utility functions to handle {@link SlingResource} objects.
@@ -20,14 +24,28 @@ public final class SlingResourceUtil {
     private SlingResourceUtil() {
     }
 
+    /**
+     * Creates a new {@link SlingResource} of a given type.
+     *
+     * @param parent    The parent resource (where the new resource will reside)
+     * @param childName The name of the child resource to create.
+     * @param modelType The specific class of {@link SlingResource} to return.
+     * @param <T>
+     * @return A newly created resource wrapped around the provided model type.
+     * @throws RuntimeException if the resource already exists.
+     */
     public static <T extends SlingResource> T
-    createNewSlingResource(Resource parent, String childName, Map<String, Object> initialProps, Class<T> modelType) {
+    createNewSlingResource(Resource parent, String childName, Class<T> modelType) {
         if (parent.getChild(childName) != null) {
             throw new RuntimeException("Tried to create a new resource in an existing path: " + parent.getPath() + "/"
                     + childName);
         }
 
         try {
+            // initial properties
+            Map<String, Object> initialProps = new ImmutableMap.Builder<String, Object>()
+                    .put(JCR_PRIMARYTYPE, getJcrPrimaryType(modelType))
+                    .build();
             // create the resource
             Resource childResource = parent.getResourceResolver().
                     create(parent, childName, initialProps);
@@ -43,16 +61,18 @@ public final class SlingResourceUtil {
     /**
      * Creates a new {@link SlingResource} of a given type.
      *
-     * @param parent    The parent resource (where the new resource will reside)
-     * @param childName The name of the child resource to create.
-     * @param modelType The specific class of {@link SlingResource} to return.
+     * @param resourceResolver The resource resolver used to create the child
+     * @param path The full absolute path where to create the resource
+     * @param modelType The specific type of {@link SlingResource} to return
      * @param <T>
-     * @return A newly created resource wrapped around the provided model type.
-     * @throws RuntimeException if the resource already exists.
+     * @return The newly created resource
+     * @throws RuntimeException if the resource already exists at the path
      */
-    public static <T extends SlingResource> T
-    createNewSlingResource(Resource parent, String childName, Class<T> modelType) {
-        return createNewSlingResource(parent, childName, newHashMap(), modelType );
+    public static <T extends SlingResource>
+    T createNewSlingResource(ResourceResolver resourceResolver, String path, Class<T> modelType) {
+        String parentPath = ResourceUtil.getParent(path);
+        String resourceName = ResourceUtil.getName(path);
+        return createNewSlingResource(resourceResolver.resolve(parentPath),  resourceName, modelType);
     }
 
     /**
@@ -84,7 +104,36 @@ public final class SlingResourceUtil {
         }
     }
 
-    public static final Pair<String, String> primaryType(String primaryType) {
-        return Pair.of("jcr:primaryType", primaryType);
+    /**
+     * Renames a resource. This method only changes the name of the resource within its parent, it does not change
+     * the parent itself.
+     * @param target The resource to rename
+     * @param newName The new name for the resource
+     * @throws PersistenceException If there is a problem renaming the resource (e.g. another resource with that
+     * name already exists)
+     */
+    public static void rename(final Resource target, final String newName) throws PersistenceException {
+        Session jcrSession = target.getResourceResolver().adaptTo(Session.class);
+        String currentPath = target.getPath();
+        String newPath = target.getParent().getPath() + "/" + newName;
+        try {
+            jcrSession.move(currentPath, newPath);
+        } catch (RepositoryException e) {
+            throw new PersistenceException(e.getClass().getName() + ": " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Returns the primary type for a given {@link SlingResource} class.
+     * @param resourceType The resource type
+     * @return A String containing the jcr:primaryType to use for the given resource type.
+     */
+    @Nonnull
+    private static final String getJcrPrimaryType(Class<? extends SlingResource> resourceType) {
+        JcrPrimaryType primaryType = resourceType.getAnnotation(JcrPrimaryType.class);
+        if(primaryType != null) {
+            return primaryType.value();
+        }
+        return SlingResource.DEFAULT_PRIMARY_TYPE;
     }
 }

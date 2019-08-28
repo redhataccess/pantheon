@@ -39,4 +39,21 @@ class AsciidoctorPoolTest {
         assertNotNull(obtainedInstance);
         verify(extensionReg, times(1)).includeProcessor(any(SlingResourceIncludeProcessor.class));
     }
+
+    @Test
+    void returnObject() {
+        // Given
+        Asciidoctor asciidoctor = mock(Asciidoctor.class);
+        JavaExtensionRegistry extensionReg = mock(JavaExtensionRegistry.class);
+        lenient().when(lifecycle.createInstance()).thenReturn(asciidoctor);
+        lenient().when(asciidoctor.javaExtensionRegistry()).thenReturn(extensionReg);
+        AsciidoctorPool pool = new AsciidoctorPool(lifecycle);
+
+        // When
+        Asciidoctor obtainedInstance = pool.borrowObject(resource);
+        pool.returnObject(obtainedInstance);
+
+        // Then
+        verify(obtainedInstance, times(1)).unregisterAllExtensions();
+    }
 }

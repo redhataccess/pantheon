@@ -1,8 +1,9 @@
 package com.redhat.pantheon.asciidoctor;
 
-import com.google.common.base.Function;
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.Module;
+import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleRevision;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
@@ -25,8 +27,6 @@ import static org.mockito.Mockito.lenient;
 class AsciidoctorServiceTest {
 
     final SlingContext slingContext = new SlingContext();
-
-    final Function<Resource, Module> mockSlingResourceAdapter = input -> new Module(input);
 
     @Mock
     GlobalConfig globalConfig;
@@ -40,17 +40,18 @@ class AsciidoctorServiceTest {
         // Given
         String asciidocContent = "== This is a title \n\n And this is some text";
         slingContext.build()
-                .resource("/module")
-                    .resource("locales")
-                        .resource("en_US")
-                            .resource("revisions")
-                                .resource("v1")
-                                    .resource("asciidoc/jcr:content",
-                                        "jcr:data", asciidocContent)
+                .resource("/module/locales/en_US/released/metadata")
+                .resource("/module/locales/en_US/released/content")
+                    .resource("asciidoc/jcr:content",
+                            "jcr:data", asciidocContent)
                 .commit();
-        Resource resource = slingContext.resourceResolver().getResource("/module");
+
+        Resource moduleResource = slingContext.resourceResolver().getResource("/module");
+        ModuleRevision moduleRevision =
+                new ModuleRevision(slingContext.resourceResolver().getResource("/module/locales/en_US/released"));
         // adapter (mock)
-        slingContext.registerAdapter(Resource.class, Module.class, mockSlingResourceAdapter);
+        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Content.class, slingContext);
         lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
         lenient().when(asciidoctorPool.borrowObject(any()))
                 .thenReturn(Asciidoctor.Factory.create());
@@ -60,7 +61,7 @@ class AsciidoctorServiceTest {
                 new AsciidoctorService(globalConfig, asciidoctorPool, serviceResourceResolverProvider);
 
         // When
-        String generatedHtml = asciidoctorService.getModuleHtml(resource.adaptTo(Module.class), null, null, newHashMap(), false);
+        String generatedHtml = asciidoctorService.getModuleHtml(moduleRevision, moduleResource, newHashMap(), false);
 
         // Then
         assertTrue(generatedHtml.contains("This is a title"));
@@ -72,20 +73,19 @@ class AsciidoctorServiceTest {
 
         // Given
         slingContext.build()
-                .resource("/module")
-                    .resource("locales")
-                        .resource("en_US")
-                            .resource("revisions")
-                                .resource("v1")
-                                    .resource("cachedContent",
-                                        "jcr:data", "This is cached content",
-                                        "pant:hash", "01000000").siblingsMode()
-                                    .resource("asciidoc/jcr:content",
-                                        "jcr:data", "")
+                .resource("/module/locales/en_US/released/metadata")
+                .resource("/module/locales/en_US/released/content/asciidoc/jcr:content",
+                                            "jcr:data", "")
+                .resource("/module/locales/en_US/released/content/cachedHtml",
+                                            "jcr:data", "This is cached content",
+                                            "pant:hash", "01000000")
                 .commit();
         Resource resource = slingContext.resourceResolver().getResource("/module");
+        ModuleRevision moduleRevision =
+                new ModuleRevision(slingContext.resourceResolver().getResource("/module/locales/en_US/released"));
         // adapter (mock)
-        slingContext.registerAdapter(Resource.class, Module.class, mockSlingResourceAdapter);
+        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Content.class, slingContext);
 
         // When
         lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
@@ -96,7 +96,7 @@ class AsciidoctorServiceTest {
 
         AsciidoctorService asciidoctorService =
                 new AsciidoctorService(globalConfig, asciidoctorPool, serviceResourceResolverProvider);
-        String generatedHtml = asciidoctorService.getModuleHtml(resource.adaptTo(Module.class), null, null, newHashMap(), false);
+        String generatedHtml = asciidoctorService.getModuleHtml(moduleRevision, resource, newHashMap(), false);
 
         // Then
         assertTrue(generatedHtml.contains("This is cached content"));

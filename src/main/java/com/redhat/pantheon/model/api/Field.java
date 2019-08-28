@@ -2,6 +2,7 @@ package com.redhat.pantheon.model.api;
 
 import org.apache.sling.api.resource.ModifiableValueMap;
 
+import javax.jcr.RepositoryException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -15,9 +16,9 @@ import java.util.function.Supplier;
  */
 public class Field<T> implements Supplier<T>, Consumer<T> {
 
-    private final String name;
-    private final Class<T> type;
-    private final SlingResource owner;
+    protected final String name;
+    protected final Class<T> type;
+    protected final SlingResource owner;
 
     Field(String name, Class<T> type, SlingResource owner) {
         this.name = name;
@@ -31,6 +32,19 @@ public class Field<T> implements Supplier<T>, Consumer<T> {
 
     public Class<T> getType() {
         return type;
+    }
+
+    /**
+     * Sets the default value for this field. The default value is only set if there is
+     * no value set on the field
+     * @param defVal The default value to use
+     * @return The field itself
+     */
+    public Field<T> defaultValue(final T defVal) {
+        if(this.get() == null) {
+            this.owner.setProperty(this.name, defVal);
+        }
+        return this;
     }
 
     /**
