@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction,Form, FormGroup,
-  OptionsMenu, OptionsMenuItem, OptionsMenuToggle, Text, TextContent, TextVariants, TextInput } from '@patternfly/react-core';
+import { DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction, FormGroup,
+  OptionsMenu, OptionsMenuItem, OptionsMenuToggle, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 import { ProductDetails } from '@app/productDetails';
 import { Redirect } from 'react-router-dom'
@@ -9,18 +9,18 @@ class ProductListing extends Component {
  
   public state = {
     allProducts: [],
-    isOpen: false,
-    loggedinStatus: false,
     initialLoad: true,
     input: '',
     isEmptyResults: false,
-    results: [],
+    isOpen: false,
+    isProductDetails: false,
+    loggedinStatus: false,
     login: false,
     productDescription: '',
     productName: '',
     productUrl: '',
     redirect: false,
-    isProductDetails: false
+    results: []
   };
 
   // render method transforms the react components into DOM nodes for the browser.
@@ -38,7 +38,7 @@ class ProductListing extends Component {
    
     if (this.props['match'] !== undefined) {
       
-      //prop will be true if it comes through nav links
+      // prop will be true if it comes through nav links
        if(this.props['match']['isExact'] === true){
          this.state.results.map(data => {
              (data['isOpen'] as any) = false
@@ -46,7 +46,7 @@ class ProductListing extends Component {
          this.setState({isProductDetails: false})
        }
   
-       //setting prop to false once it comes through nav links
+       // setting prop to false once it comes through nav links
        this.props['match']['isExact']=false;
   
     }
@@ -163,15 +163,13 @@ class ProductListing extends Component {
     }
 
     private getProductsUrl() {
-      let backend ="/content/products.query.json?nodeType=pant:product&orderby=name"
-      console.log(backend)
+      const backend ="/content/products.query.json?nodeType=pant:product&orderby=name"
       return backend
     }
 
     private onToggle = (id) => (event: any) => {
       this.state.results.map(data => {
         if(data['jcr:uuid']===id){
-            console.log('data uuid: ',data['jcr:uuid']);
             (data['isOpen'] as any) = !data['isOpen']
             this.setState({isProductDetails: false})
         }
@@ -188,9 +186,9 @@ class ProductListing extends Component {
     };
 
     private setInput = input => {
-      let versions = [];
+      const versions = [];
       let searchString = '';
-      this.setState({input: input})
+      this.setState({input})
       this.state.allProducts.map(data => {
             searchString = ''+data["name"]
             if(searchString.toLowerCase().includes(input.toLowerCase())){

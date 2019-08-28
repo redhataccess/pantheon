@@ -5,6 +5,10 @@ import "isomorphic-fetch"
 import { mount, shallow } from 'enzyme';
 import { Button, FormGroup, TextInput } from '@patternfly/react-core';
 
+const props = {
+  productName: "Red Hat Enterprise Linux"
+}
+
 describe('ProductDetails tests', () => {
   test('should render ProductDetails component', () => {
     const view = shallow(<ProductDetails productName="Red Hat Enterprise Linux"/>);
@@ -30,10 +34,8 @@ describe('ProductDetails tests', () => {
   });
 
   it('test props', () => {  
-    const props = {
-      productName: "Red Hat Enterprise Linux"
-    },
-    productDetails = mount(<ProductDetails {...props} />).text
-    expect(productDetails.length == 1)
+    
+    const productDetails = mount(<ProductDetails {...props} />).text
+    expect(productDetails.length === 1)
   });
 });

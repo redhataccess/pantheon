@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import { Bullseye, Button, Alert, AlertActionCloseButton, Form, FormGroup, TextInput,TextArea, ActionGroup } from '@patternfly/react-core';
+import { Bullseye, Button, Alert, AlertActionCloseButton, Form, FormGroup, TextInput, ActionGroup } from '@patternfly/react-core';
 import '@app/app.css';
 import { Redirect } from 'react-router-dom'
 
 class Product extends Component {
   public state = {
     failedPost: false,
+    formInvalid: false,
+    isDup : false,
     isMissingFields: false,
     login: false,
     productDescription: '',
     productName: '',
     redirect: false,
     results: [],
-    isDup : false,
-    formInvalid: false
   };
   
   // render method transforms the react components into DOM nodes for the browser.
@@ -74,7 +74,7 @@ class Product extends Component {
       </React.Fragment>
     );
   }
-  //methods that handle the state changes.
+  // methods that handle the state changes.
   private handleNameInput = productName => {
     this.setState({ productName });
     
@@ -113,7 +113,7 @@ class Product extends Component {
       }
       
       // setup url fragment
-      let url_fragment = this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+      const urlFragment = this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
       
       const formData = new FormData();
       formData.append("name", this.state.productName)
@@ -122,10 +122,10 @@ class Product extends Component {
       formData.append("jcr:primaryType", 'pant:product')
       // currently we don't translate products in Customer Portal.
       formData.append("locale", "en-US")
-      formData.append("url", url_fragment)
+      formData.append("url", urlFragment)
       // fetch makes the request to create a new product.
       // transfor productName to lower case and replace special chars with _.
-      fetch('/content/products/' + url_fragment, {
+      fetch('/content/products/' + urlFragment, {
         body: formData,
         headers: hdrs,
         method: 'post'
@@ -172,24 +172,23 @@ class Product extends Component {
   }
   
   private dismissNotification = () => {
-    if (this.state.isMissingFields == true) {
+    if (this.state.isMissingFields === true) {
       this.setState({ isMissingFields: false });
     }
 
-    if (this.productExist(this.state.productName) == false) {
+    if (this.productExist(this.state.productName) === false) {
       this.setState({ isDup: false });
     }
   }
 
   private productExist = (productName) => {
     this.setState({ initialLoad: false })
-    console.log("[productExist]productName: " + productName)
     fetch(this.getProductsUrl(productName))
       .then(response => response.json())
       .then(responseJSON => this.setState({ results: responseJSON.results }))
       .then(() => {
-        console.log("[productExist] results breakdown " + JSON.stringify(this.state.results))
-        //console.log("[productExist] isDup => " + this.state.isDup)
+        // console.log("[productExist] results breakdown " + JSON.stringify(this.state.results))
+        // console.log("[productExist] isDup => " + this.state.isDup)
         
           if (JSON.stringify(this.state.results) === "[]"){
           this.setState({
@@ -199,14 +198,14 @@ class Product extends Component {
           this.setState({
             isDup : true
           });
-          //console.log("[productExist] found match=> isDup: true" )
+          // console.log("[productExist] found match=> isDup: true" )
         }
       })
       return this.state.isDup
     }
 
     private getProductsUrl = (productName) => {
-      let backend ='/content/products.query.json?nodeType=pant:product&where=[name]="' + productName + '"'
+      const backend ='/content/products.query.json?nodeType=pant:product&where=[name]="' + productName + '"'
       console.log(backend)
       return backend
     }

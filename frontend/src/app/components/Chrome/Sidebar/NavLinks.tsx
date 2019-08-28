@@ -4,54 +4,23 @@ import { Link } from "react-router-dom";
 
 class NavLinks extends Component {
     public state = {
+        activeGroup: 'grp-1',
+        activeItem: 'grp-1_itm-1',
         adminPage: 'Admin Panel',
+        browserText: '',
+        consoleText: '',
         gitText: '',
         isAdmin: false,
+        isDropdownOpen: false,
+        isKebabDropdownOpen: false,
         isLoggedIn: false,
         moduleText: '',
         productText: '',
-        productsText: '',
-        browserText: '',
-        consoleText: '',
-        slingHomeText: '',
+        productsText: '',  
         searchText: 'Search',
-        isDropdownOpen: false,
-        isKebabDropdownOpen: false,
-        activeGroup: 'grp-1',
-        activeItem: 'grp-1_itm-1'
+        slingHomeText: ''
       };
-    
-    private onDropdownToggle = isDropdownOpen => {
-        this.setState({
-          isDropdownOpen
-        });
-      };
-    
-    private onDropdownSelect = event => {
-        this.setState({
-          isDropdownOpen: !this.state.isDropdownOpen
-        });
-      };
-    
-    private onKebabDropdownToggle = isKebabDropdownOpen => {
-        this.setState({
-          isKebabDropdownOpen
-        });
-      };
-    
-    private onKebabDropdownSelect = event => {
-        this.setState({
-          isKebabDropdownOpen: !this.state.isKebabDropdownOpen
-        });
-      };
-    
-    private  onNavSelect = result => {
-        this.setState({
-          activeItem: result.itemId,
-          activeGroup: result.groupId
-        });
-      };
-    
+
     public render() {
         const id = 'userID';
         if (!this.state.isLoggedIn) {
@@ -112,6 +81,37 @@ class NavLinks extends Component {
             </React.Fragment>
         );
     }
+  //   private onDropdownToggle = isDropdownOpen => {
+  //     this.setState({
+  //       isDropdownOpen
+  //     });
+  //   };
+  
+  // private onDropdownSelect = event => {
+  //     this.setState({
+  //       isDropdownOpen: !this.state.isDropdownOpen
+  //     });
+  //   };
+  
+  // private onKebabDropdownToggle = isKebabDropdownOpen => {
+  //     this.setState({
+  //       isKebabDropdownOpen
+  //     });
+  //   };
+  
+  // private onKebabDropdownSelect = event => {
+  //     this.setState({
+  //       isKebabDropdownOpen: !this.state.isKebabDropdownOpen
+  //     });
+  //   };
+  
+  // private onNavSelect = result => {
+  //     this.setState({
+  //       activeGroup: result.groupId,
+  //       activeItem: result.itemId
+  //     });
+  //   };
+
     private browserLink = () => (event: any) =>  {
       return window.open("/bin/browser.html");
     };

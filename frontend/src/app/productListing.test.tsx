@@ -6,6 +6,10 @@ import { mount, shallow } from 'enzyme';
 import { DataList, FormGroup, TextInput } from '@patternfly/react-core';
 import { render } from '@testing-library/react'
 
+ const props = {
+   match: exact => true
+ }
+
 describe('ProductListing tests', () => {
   test('should render ProductListing component', () => {
     const view = shallow(<ProductListing />);
@@ -30,17 +34,14 @@ describe('ProductListing tests', () => {
      expect(textInput.exists()).toBe(true)
    });
 
-   test('Search Products', async () => {
-    const { getByText } = render(<ProductListing />)
+  //  test('Search Products', async () => {
+  //     const { getByText } = render(<ProductListing />)
   
-    expect(getByText('Search Products')).toBeTruthy()
-  })
+  //     expect(getByText('Search Products')).toBeTruthy()
+  // });
 
-  it('test props', () => {  
-    const props = {
-      match: exact => true
-    },
-    productListing = mount(<ProductListing {...props} />).matchesElement
-    expect(productListing.length == 1)
-  });
+   it('test props', () => {
+     const productListing = mount(<ProductListing {...props} />).matchesElement
+     expect(productListing.length === 1)
+   });
 });

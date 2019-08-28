@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import { 
-    ActionGroup, Breadcrumb, BreadcrumbItem, Button, Card, CardBody,Form, FormGroup, Level, LevelItem, List, ListItem,
+    ActionGroup, Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Level, LevelItem, List, ListItem,
     Text, TextContent, TextVariants, TextInput } from '@patternfly/react-core';
-import { ProductListing } from '@app/productListing';
 
 export interface IProps {
     productName: string
-    //productUrl: string
   }
   
   class ProductDetails extends Component<IProps> {
@@ -20,7 +18,6 @@ export interface IProps {
     public versionNames : string[] = [];
 
     public render() {
-        //console.log('props state: ',this.props)
         return (  
             <React.Fragment>
                 {this.state.fetchProductDetails && this.fetchProductDetails(this.state.allVersionNames)}
@@ -49,7 +46,7 @@ export interface IProps {
                         )}
                     </List>
                 </div>)}
-                <div className="app-container"></div>
+                <div className="app-container" />
                 <div className="app-container">
                         <Form>
                             <div className="app-container">
@@ -71,8 +68,8 @@ export interface IProps {
  
     private fetchProductDetails = (versionNames) => {
         // setup url fragment
-        let url_fragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
-        const path = '/content/products/'+ url_fragment +'/versions.2.json'
+        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        const path = '/content/products/'+ urlFragment +'/versions.2.json'
         let key;
         versionNames = []
         
@@ -80,9 +77,9 @@ export interface IProps {
         .then((response) => {
             if (response.ok) {
                 return response.json();
-            } else if(response.status == 404){
+            } else if(response.status === 404){
                 // create versions path
-                this.createVersionsPath;
+                this.createVersionsPath();
                 return versionNames;
             } else {
                 throw new Error(response.statusText);
@@ -96,7 +93,6 @@ export interface IProps {
                   versionNames.push(responseJSON[key]["name"]);
                 }
              }
-             //console.log('versionNames: ',versionNames)
              this.setState({
                 allVersionNames: versionNames,
                 fetchProductDetails: false 
@@ -118,14 +114,13 @@ export interface IProps {
         formData.append("sling:resourceType", "pantheon/productVersion")
         formData.append("jcr:primaryType", 'pant:productVersion')
         
-        let url_fragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
-        fetch('/content/products/'+ url_fragment +'/versions/'+this.state.newVersion, {
+        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        fetch('/content/products/'+ urlFragment +'/versions/'+this.state.newVersion, {
             body: formData,
             method: 'post',
           }).then(response => {
             if (response.status === 200 || response.status === 201) {
               this.setState({ fetchProductDetails: true, newVersion: '' })
-              //console.log("endpoint=> /content/"+url_fragment+"/versions/"+this.state.newVersion)
             } else{
                 console.log('Version adding failure')
             }
@@ -135,8 +130,8 @@ export interface IProps {
 
     private createVersionsPath = () => {
         const formData = new FormData();
-        let url_fragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
-        fetch('/content/'+ url_fragment +'/versions', {
+        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        fetch('/content/'+ urlFragment +'/versions', {
             body: formData,
             method: 'post',
           }).then(response => {

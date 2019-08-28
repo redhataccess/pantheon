@@ -11,7 +11,7 @@ exports[`Brand tests should render Brand component 1`] = `
       <img
         alt="Pantheon"
         src="test-file-stub"
-        width="220"
+        width={220}
       />
     </div>
   </Link>
