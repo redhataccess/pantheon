@@ -2,7 +2,6 @@
 
 exports[`Sidebar tests should render Sidebar component 1`] = `
 <PageSidebar
-  className=""
   isNavOpen={true}
   nav={
     <aside
@@ -16,6 +15,8 @@ exports[`Sidebar tests should render Sidebar component 1`] = `
         onToggle={[Function]}
       >
         <NavList
+          ariaLeftScroll="Scroll left"
+          ariaRightScroll="Scroll right"
           className="pf-c-nav__list"
           variant="default"
         >

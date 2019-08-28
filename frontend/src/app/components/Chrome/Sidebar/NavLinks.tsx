@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { NavItem, NavExpandable, NavList, Nav, PageSidebar, Page } from '@patternfly/react-core';
+import { NavItem, NavExpandable, NavList } from '@patternfly/react-core';
 import { Link } from "react-router-dom";
 
 class NavLinks extends Component {

@@ -13,16 +13,16 @@ describe('NavLinks tests', () => {
     expect(view).toMatchSnapshot();
   });
 
-  // it('should render a NavList', () => {
-  //   const wrapper = mount(<Router><NavLinks/></Router>);
-  //   const navList = wrapper.find(NavItem);
-  //   expect(navList.exists()).toBe(true)
-  // });
+  it('should render a NavList', () => {
+    const wrapper = mount(<Router><NavLinks/></Router>);
+    const navList = wrapper.find(NavItem);
+    expect(navList.exists()).toBe(true)
+  });
 
-  // it('should render a Link component', () => {
-  //   const wrapper = mount(<Router><NavLinks/></Router>);
-  //   const navLinks = wrapper.find(Link);
-  //   expect(navLinks.exists()).toBe(true)
-  // });
+  it('should render a Link component', () => {
+    const wrapper = mount(<Router><NavLinks/></Router>);
+    const navLinks = wrapper.find(Link);
+    expect(navLinks.exists()).toBe(true)
+  });
 
 });

@@ -4,7 +4,6 @@ import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
 import { DataList, FormGroup, TextInput } from '@patternfly/react-core';
-import { render } from '@testing-library/react'
 
  const props = {
    match: exact => true
@@ -33,12 +32,6 @@ describe('ProductListing tests', () => {
      const textInput = wrapper.find(TextInput);
      expect(textInput.exists()).toBe(true)
    });
-
-  //  test('Search Products', async () => {
-  //     const { getByText } = render(<ProductListing />)
-  
-  //     expect(getByText('Search Products')).toBeTruthy()
-  // });
 
    it('test props', () => {
      const productListing = mount(<ProductListing {...props} />).matchesElement

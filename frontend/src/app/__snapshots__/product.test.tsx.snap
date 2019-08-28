@@ -2,24 +2,15 @@
 
 exports[`Product tests should render Product component 1`] = `
 <Fragment>
-  <Bullseye
-    className=""
-    component="div"
-  >
-    <Form
-      className=""
-      isHorizontal={false}
-    >
+  <Bullseye>
+    <Form>
       <div
         className="app-container"
       >
         <div>
           <FormGroup
-            className=""
             fieldId="product-name"
-            isInline={false}
             isRequired={true}
-            isValid={true}
             label="Product Name"
           >
             <TextInput
@@ -38,11 +29,7 @@ exports[`Product tests should render Product component 1`] = `
           </FormGroup>
           <br />
           <FormGroup
-            className=""
             fieldId="product-description"
-            isInline={false}
-            isRequired={false}
-            isValid={true}
             label="Product Description"
           >
             <TextInput
@@ -60,23 +47,11 @@ exports[`Product tests should render Product component 1`] = `
             />
           </FormGroup>
           <br />
-          <ActionGroup
-            className=""
-          >
+          <ActionGroup>
             <Button
               aria-label="Creates a new Product Name with Description specified."
-              className=""
-              component="button"
               disabled={false}
-              isActive={false}
-              isBlock={false}
-              isDisabled={false}
-              isFocus={false}
-              isHover={false}
-              isInline={false}
               onClick={[Function]}
-              type="button"
-              variant="primary"
             >
               Save
             </Button>

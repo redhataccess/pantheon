@@ -5,26 +5,11 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
   <div
     className="app-container"
   >
-    <Breadcrumb
-      aria-label="Breadcrumb"
-      className=""
-    >
-      <BreadcrumbItem
-        className=""
-        component="a"
-        isActive={false}
-        target={null}
-        to={null}
-      >
+    <Breadcrumb>
+      <BreadcrumbItem>
         All Products
       </BreadcrumbItem>
-      <BreadcrumbItem
-        className=""
-        component="a"
-        isActive={false}
-        target={null}
-        to={null}
-      >
+      <BreadcrumbItem>
         Product Details
       </BreadcrumbItem>
     </Breadcrumb>
@@ -33,15 +18,11 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
     className="app-container"
   >
     <Level
-      className=""
       gutter="md"
     >
       <LevelItem>
-        <TextContent
-          className=""
-        >
+        <TextContent>
           <Text
-            className=""
             component="h1"
           >
             Red Hat Enterprise Linux
@@ -58,19 +39,12 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
   <div
     className="app-container"
   >
-    <Form
-      className=""
-      isHorizontal={false}
-    >
+    <Form>
       <div
         className="app-container"
       >
         <FormGroup
-          className=""
           fieldId="new_version_name"
-          isInline={false}
-          isRequired={false}
-          isValid={true}
           label="New Version:"
         >
           <TextInput
@@ -87,22 +61,10 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
             value=""
           />
         </FormGroup>
-        <ActionGroup
-          className=""
-        >
+        <ActionGroup>
           <Button
             aria-label="Creates a new Version Name."
-            className=""
-            component="button"
-            isActive={false}
-            isBlock={false}
-            isDisabled={false}
-            isFocus={false}
-            isHover={false}
-            isInline={false}
             onClick={[Function]}
-            type="button"
-            variant="primary"
           >
             Save
           </Button>

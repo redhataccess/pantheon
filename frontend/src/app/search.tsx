@@ -82,13 +82,14 @@ export default class Search extends Component {
                 bottom={false}
               />
             </div>
-            <DataList aria-label="Simple data list example">
+            <DataList aria-label="Simple data list" >
               <DataListItem aria-labelledby="simple-item1">
                 <DataListItemRow id="data-rows-header" >
                   {this.state.loggedinStatus && !this.state.isEmptyResults &&
                     <DataListCheck aria-labelledby="width-ex1-check1"
                       className="checkbox"
-                      isChecked={this.state.check}
+                      isChecked={this.state.check} 
+                      checked={this.state.check}
                       aria-label="controlled checkbox example"
                       id="check"
                       onClick={this.handleSelectAll}
@@ -128,6 +129,7 @@ export default class Search extends Component {
                       <DataListCheck aria-labelledby="width-ex3-check1"
                         className="checkbox"
                         isChecked={data[this.state.checkedItemKey]}
+                        checked={data[this.state.checkedItemKey]}
                         aria-label="controlled checkbox example"
                         id={data["pant:transientPath"]}
                         name={data["pant:transientPath"]}
