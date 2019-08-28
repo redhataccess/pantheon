@@ -81,37 +81,7 @@ class NavLinks extends Component {
             </React.Fragment>
         );
     }
-  //   private onDropdownToggle = isDropdownOpen => {
-  //     this.setState({
-  //       isDropdownOpen
-  //     });
-  //   };
   
-  // private onDropdownSelect = event => {
-  //     this.setState({
-  //       isDropdownOpen: !this.state.isDropdownOpen
-  //     });
-  //   };
-  
-  // private onKebabDropdownToggle = isKebabDropdownOpen => {
-  //     this.setState({
-  //       isKebabDropdownOpen
-  //     });
-  //   };
-  
-  // private onKebabDropdownSelect = event => {
-  //     this.setState({
-  //       isKebabDropdownOpen: !this.state.isKebabDropdownOpen
-  //     });
-  //   };
-  
-  // private onNavSelect = result => {
-  //     this.setState({
-  //       activeGroup: result.groupId,
-  //       activeItem: result.itemId
-  //     });
-  //   };
-
     private browserLink = () => (event: any) =>  {
       return window.open("/bin/browser.html");
     };

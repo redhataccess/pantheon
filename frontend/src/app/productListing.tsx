@@ -26,6 +26,12 @@ class ProductListing extends Component {
   // render method transforms the react components into DOM nodes for the browser.
   public render() {
     const id = 'userID';
+    const descriptionKey = "description";
+    const nameKey = "name";
+    const propsKey = "match"
+    const propsKeyChild = "isExact"
+    const isOpenKey = "isOpen"
+
     if (!this.state.loggedinStatus && this.state.initialLoad===true) {
       fetch("/system/sling/info.sessionInfo.json")
         .then(response => response.json())
@@ -36,18 +42,18 @@ class ProductListing extends Component {
         })
     }
    
-    if (this.props['match'] !== undefined) {
+    if (this.props[propsKey] !== undefined) {
       
       // prop will be true if it comes through nav links
-       if(this.props['match']['isExact'] === true){
+       if(this.props[propsKey][propsKeyChild] === true){
          this.state.results.map(data => {
-             (data['isOpen'] as any) = false
+             (data[isOpenKey] as any) = false
          });
          this.setState({isProductDetails: false})
        }
   
        // setting prop to false once it comes through nav links
-       this.props['match']['isExact']=false;
+       this.props[propsKey][propsKeyChild]=false;
   
     }
 
@@ -89,9 +95,9 @@ class ProductListing extends Component {
             <DataListItemCells key={data["jcr:uuid"]} 
                 dataListCells={[
                   <DataListCell key="primary content">
-                    <span id="{data['name']}">{data["name"]}</span>
+                    <span id="{data['name']}">{data[nameKey]}</span>
                   </DataListCell>,
-                  <DataListCell key="secondary content"  width={2}>{data["description"]}</DataListCell>,
+                  <DataListCell key="secondary content"  width={2}>{data[descriptionKey]}</DataListCell>,
                   <DataListCell key="Dropdown content">
                     <DataListAction
                       aria-labelledby="multi-actions-item1 {data['jcr:uuid']}"
@@ -103,7 +109,7 @@ class ProductListing extends Component {
                         id={data['jcr:uuid']}
                         menuItems={[
                           <OptionsMenuItem onSelect={this.onSelect(event, data)} key="dropdown">Product Details</OptionsMenuItem>]}
-                        isOpen={data['isOpen']}
+                        isOpen={data[isOpenKey]}
                         toggle={<OptionsMenuToggle onToggle={this.onToggle(data['jcr:uuid'])} />} />
                     </DataListAction>
                   </DataListCell>
@@ -140,7 +146,7 @@ class ProductListing extends Component {
       .then(response => response.json())
       .then(responseJSON => {
         let key; let singleProduct;
-        for(let i=0; i<Object.keys(responseJSON.results).length; i++){
+        for( const i of Object.keys(responseJSON.results)){
           key = Object.keys(responseJSON.results)[i];
           singleProduct=responseJSON.results[key];
           singleProduct= Object.assign({"isOpen":false},singleProduct)
@@ -168,29 +174,33 @@ class ProductListing extends Component {
     }
 
     private onToggle = (id) => (event: any) => {
+      const isOpenKey = "isOpen"
       this.state.results.map(data => {
         if(data['jcr:uuid']===id){
-            (data['isOpen'] as any) = !data['isOpen']
+            (data[isOpenKey] as any) = !data[isOpenKey]
             this.setState({isProductDetails: false})
         }
       });
      };
   
     private onSelect = (event,data) => () => {
+      const nameKey = "name"
+      const urlKey = "url"
       this.setState({
         initialLoad: false,
         isProductDetails: !this.state.isProductDetails,
-        productName: data["name"],
-        productUrl: data["url"]
+        productName: data[nameKey],
+        productUrl: data[urlKey]
       });
     };
 
     private setInput = input => {
       const versions = [];
+      const nameKey = "name"
       let searchString = '';
       this.setState({input})
       this.state.allProducts.map(data => {
-            searchString = ''+data["name"]
+            searchString = ''+data[nameKey]
             if(searchString.toLowerCase().includes(input.toLowerCase())){
               versions.push(data)
             }
