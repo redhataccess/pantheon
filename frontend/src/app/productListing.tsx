@@ -3,9 +3,6 @@ import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList
   OptionsMenu, OptionsMenuItem, OptionsMenuToggle, Text, TextContent, TextVariants, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 import { ProductDetails } from '@app/productDetails';
-//import { Link } from "react-router-dom";
-//import { RouteComponentProps } from 'react-router-dom';
-//import { version } from 'react-dom';
 import { Redirect } from 'react-router-dom'
 
 class ProductListing extends Component {

@@ -29,4 +29,11 @@ describe('ProductDetails tests', () => {
     expect(button.exists()).toBe(true)
   });
 
+  it('test props', () => {  
+    const props = {
+      productName: "Red Hat Enterprise Linux"
+    },
+    productDetails = mount(<ProductDetails {...props} />).text
+    expect(productDetails.length == 1)
+  });
 });

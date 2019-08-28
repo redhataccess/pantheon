@@ -2,12 +2,13 @@ import React from 'react';
 import { NavLinks }  from './NavLinks';
 import "isomorphic-fetch"
 
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 import { withRouter } from 'react-router'
 import { Link, Route, Router, Switch } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { render, fireEvent } from '@testing-library/react'
+import { NavList } from '@patternfly/react-core';
 
 const Home = () => <div>You are on the Home page</div>
 const Search = () => <div>Search Query</div>
@@ -54,6 +55,12 @@ describe('NavLinks tests', () => {
     const view = shallow(<NavLinks />);
     expect(view).toMatchSnapshot();
   });
+
+  // it('should render a Data List', () => {
+  //   const wrapper = mount(<NavLinks />);
+  //   const navList = wrapper.find(NavList);
+  //   expect(navList.exists()).toBe(true)
+  // });
 
   test('full app rendering/navigating', () => {
     const { container, getByText, getByTestId } = renderWithRouter(<App />)
