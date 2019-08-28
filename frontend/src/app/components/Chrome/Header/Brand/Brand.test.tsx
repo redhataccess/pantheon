@@ -2,7 +2,7 @@ import React from 'react';
 import { Brand }  from './Brand';
 import "isomorphic-fetch"
 
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 
 describe('Brand tests', () => {
   test('should render Brand component', () => {

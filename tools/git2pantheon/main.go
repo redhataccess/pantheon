@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -64,6 +65,20 @@ func cloneBranch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getInfo(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		var response = os.Getenv("OPENSHIFT_BUILD_COMMIT")
+		if response == "" {
+			response = "not set"
+		}
+		fmt.Fprint(w, "OPENSHIFT_BUILD_COMMIT is : "+response)
+	} else {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+	}
+}
+
 func init() {
 	log.SetFlags(log.Lmicroseconds | log.Lshortfile)
 	flag.Parse()
@@ -72,6 +87,7 @@ func init() {
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/clone", cloneBranch)
+	mux.HandleFunc("/info", getInfo)
 
 	getUploader()
 

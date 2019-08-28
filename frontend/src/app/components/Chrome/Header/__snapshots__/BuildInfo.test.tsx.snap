@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BuildInfo tests should render NavLinks component 1`] = `
+<Fragment>
+  <div
+    className="column-view"
+  >
+    <Link
+      onClick={[Function]}
+      to=""
+    />
+  </div>
+</Fragment>
+`;
