@@ -24,6 +24,7 @@ describe('NavLinks tests', () => {
     const navLinks = wrapper.find(Link);
     expect(navLinks.exists()).toBe(true)
   });
+  
   it('should render an Expandable component', () => {
     const wrapper = mount(<Router><NavLinks/></Router>);
     const expandable = wrapper.find(NavExpandable);

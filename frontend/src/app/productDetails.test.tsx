@@ -3,7 +3,7 @@ import { ProductDetails }  from '@app/productDetails';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Breadcrumb, Button, FormGroup, Level, LevelItem, TextInput } from '@patternfly/react-core';
 
 const props = {
   productName: "Red Hat Enterprise Linux"
@@ -31,6 +31,24 @@ describe('ProductDetails tests', () => {
     const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux"/>);
     const button = wrapper.find(Button);
     expect(button.exists()).toBe(true)
+  });
+
+  it('should render a breadcrumb', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux"/>);
+    const breadCrumb = wrapper.find(Breadcrumb);
+    expect(breadCrumb.exists()).toBe(true)
+  });
+
+  it('should render a Level element', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux"/>);
+    const level = wrapper.find(Level);
+    expect(level.exists()).toBe(true)
+  });
+
+  it('should render a LevelItem', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux"/>);
+    const levelItem = wrapper.find(LevelItem);
+    expect(levelItem.exists()).toBe(true)
   });
 
   it('test props', () => {  
