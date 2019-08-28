@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Brand tests should render Brand component 1`] = `
+<Fragment>
+  <Link
+    to="/search"
+  >
+    Pantheon
+  </Link>
+</Fragment>
+`;

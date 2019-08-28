@@ -6,6 +6,7 @@ import {
   Level, LevelItem
 } from '@patternfly/react-core';
 import '@app/app.css';
+import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination';
 
 export default class Search extends Component {
@@ -18,7 +19,6 @@ export default class Search extends Component {
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
     confirmDelete: false,
     countOfCheckedBoxes: 0,
-    results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
     deleteButtonVisible: false,
     deleteState: '',
     initialLoad: true,
@@ -32,6 +32,7 @@ export default class Search extends Component {
     pageLimit: 25,
     redirect: false,
     redirectLocation: '',
+    results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
     showDropdownOptions: true,
     sortKey: ''
   };
@@ -195,6 +196,7 @@ export default class Search extends Component {
                 showDropdownOptions={!this.state.showDropdownOptions}
                 bottom={true}
               />
+            <BuildInfo/>
             </div>
             {/* Alert for delete confirmation */}
             <div className="alert">
