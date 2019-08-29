@@ -7,8 +7,8 @@ RUN dnf -v -y install maven java-1.8.0-openjdk-devel
 RUN mkdir -p /build && chmod -R 777 /build
 WORKDIR /build
 ADD ./containerInstall.sh ../mvnw ../mvnw.cmd ../pom.xml /build/
-ADD ../frontend /build/frontend
-ADD ../src /build/src
+COPY ../frontend /build/frontend
+COPY ../src /build/src
 
 RUN mvn clean package
 RUN mkdir -p /jar && chmod -R 777 /jar

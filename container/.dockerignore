@@ -1,3 +1,4 @@
 ../frontend/.git
 ../frontend/dist
 ../frontend/node_modules
+../src/main/resources/SLING-INF/content/static
