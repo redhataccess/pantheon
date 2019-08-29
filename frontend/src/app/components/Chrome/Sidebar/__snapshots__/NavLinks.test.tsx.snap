@@ -10,6 +10,7 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
   >
     <NavExpandable
       className=""
+      data-testid="navLink_modules"
       groupId="grp-1"
       id=""
       isActive={true}
@@ -23,6 +24,7 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         itemId="grp-1_itm-1"
       >
         <Link
+          data-testid="navLink_search"
           to="/search"
         >
           Search
