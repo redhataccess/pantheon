@@ -22,10 +22,14 @@ class Revisions extends Component<IProps> {
         isOpen: false,
         isRowExpanded: false,
         isRowToggle: false,
-        login: false
+        login: false,
     };
 
     public render() {
+        const draft= [{ "icon": BlankImage, "revision": 'draft', "publishedState": 'Draft', "updatedDate": 'dummy date', "firstButtonType": 'primary',"secondButtonType": 'secondary', "firstButtonText": 'Publish',"secondButtonText": 'Preview' }]
+        const release= [{ "icon": CheckImage, "revision": 'released', "publishedState": 'Released', "updatedDate": 'dummy date', "firstButtonType": 'secondary',"secondButtonType": 'primary', "firstButtonText": 'Unpublish',"secondButtonText": 'View' }]
+        const results= [draft,release]
+
         return (  
             <React.Fragment>
                 <Card>
@@ -59,39 +63,41 @@ class Revisions extends Component<IProps> {
                                         ]}
                                     />
                                 </DataListItemRow>
+                                {results.map(type=>(
+                                type.map(data => (
                                 <DataListContent
                                     aria-label="Primary Content Details"
-                                    id="ex-expand1"
+                                    id={data["revision"]}
                                     isHidden={!this.state.isHeadingToggle}
                                     noPadding={true}
                                 >                                   
-                                    {/* this is the data list for the inner row */}
+                                {/* this is the data list for the inner row */}
                                 <DataList aria-label="Simple data list example"> 
                                     <DataListItem aria-labelledby="simple-item1" isExpanded={this.state.isRowToggle}>
                                         <DataListItemRow>
                                             <DataListToggle
                                                 onClick={()=>this.onExpandableToggle()}
                                                 isExpanded={this.state.isRowToggle}
-                                                id="ex-toggle1"
-                                                aria-controls="ex-expand1"
+                                                id={data["revision"]}
+                                                aria-controls={data["revision"]}
                                             />
                                             <DataListItemCells
                                                 dataListCells={[
                                                     <DataListCell key="image">
-                                                        <span><img src={CheckImage} style={{height: "30px",width: "30px"}}/></span>
+                                                        <span><img src={data["icon"]} style={{height: "30px",width: "30px"}}/></span>
                                                     </DataListCell>,
-                                                    <DataListCell key="products">
-                                                        <span>Dummy Revision</span>
+                                                    <DataListCell key="revision">
+                                                        <span>{data["revision"]}</span>
                                                     </DataListCell>,
                                                     <DataListCell key="published">
-                                                        <span>Not Publish</span>
+                                                        <span>{data["publishedState"]}</span>
                                                     </DataListCell>,
                                                     <DataListCell key="updated">
-                                                        <span>Dummy Date</span>
+                                                        <span>{data["updatedDate"]}</span>
                                                     </DataListCell>,
                                                     <DataListCell key="module_type">
-                                                        <span><Button variant="primary">Publish</Button></span><span>{'  '}</span>
-                                                        <span><Button variant="secondary" onClick={this.previewDoc}>Preview</Button></span>{'  '}
+                                                        <span><Button variant="primary">{data["firstButtonText"]}</Button></span><span>{'  '}</span>
+                                                        <span><Button variant="secondary" onClick={this.previewDoc}>{data["secondButtonText"]}</Button></span>{'  '}
                                                         <span>
                                                             <Dropdown
                                                                 isPlain={true}
@@ -109,8 +115,8 @@ class Revisions extends Component<IProps> {
                                             />
                                         </DataListItemRow>
                                         <DataListContent
-                                            aria-label="Primary Content Details"
-                                            id="ex-expand1"
+                                            aria-label={data["revision"]}
+                                            id={data["revision"]}
                                             isHidden={!this.state.isRowToggle}
                                             noPadding={true}
                                         >
@@ -139,6 +145,8 @@ class Revisions extends Component<IProps> {
                                         </DataListItem>
                                     </DataList>        
                                 </DataListContent>
+                                ))
+                            ) )}
                             </DataListItem>
                         </DataList>
                     </div>
