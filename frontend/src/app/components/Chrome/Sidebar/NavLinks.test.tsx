@@ -5,8 +5,22 @@ import { HashRouter as Router } from 'react-router-dom';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import renderer from 'react-test-renderer';
 import { Link, MemoryRouter, Route, Switch } from 'react-router-dom';
+import { createMemoryHistory } from 'history'
+
+// beforeAll(() => {
+//   window.fetch = jest.fn();
+// });
+
+// let wrapper1;
+
+// beforeEach(() => {
+//   wrapper1 = shallow(<NavLinks />, { disableLifecycleMethods: true });
+// });
+
+// afterEach(() => {
+//   wrapper1.unmount();
+// });
 
 const Home = () => <div>Pantheon</div>;
 const MockComp = () => (
@@ -24,6 +38,8 @@ const MockComp = () => (
   </div>
 );
 const MockDenied = () => <div className="denied">Denied</div>;
+const onClickMode = jest.fn();
+const history = createMemoryHistory()
 
 describe('NavLinks tests', () => {
   test('should render NavLinks component', () => {
@@ -83,4 +99,57 @@ describe('NavLinks tests', () => {
     expect(wrapper.find('groupId').getElements()).toBeDefined();
   });
 
+  it('should contain 1 NavItem without authentication', () => {
+    const renderedComponent = shallow(<NavLinks />);
+
+    const items = renderedComponent.find(NavItem);
+    expect(items).toHaveLength(1);
+  });
+
+  // it('should handle click events', () => {
+  //   const wrapper = mount(<Router><NavLinks /></Router>);
+  //   const links = wrapper.find('a');
+
+  //   links.first().simulate('click', { a: 0 })
+  //   expect(wrapper.find('.pf-c-nav__link pf-m-current')).toBeCalledTimes(1);
+  // });
+
+  // it('fetches data from server when server returns a successful response', done => { // 1
+    // const mockSuccessResponse = {"userID":"demo"};
+    // // const mockSuccessResponse = {};
+    // const mockJsonPromise = Promise.resolve(mockSuccessResponse); // 2
+    // const mockFetchPromise = Promise.resolve({ // 3
+    //   json: () => mockJsonPromise,
+    // });
+    // // jest.spyOn(window, 'fetch').mockImplementation(() => Promise.resolve(Response)); // 4
+    // jest.spyOn(window, 'fetch').mockImplementation(() => Promise.resolve({ok: true, UserID: 'demo'})); // 4
+    // // window.fetch = jest.fn().mockImplementation(() => Promise.resolve({ok: true, Id: '123'}));
+    
+
+    // const wrapper = shallow(<NavLinks />); // 5
+                          
+    // // expect(global.fetch).toHaveBeenCalledTimes(1);
+    // expect(window.fetch).toHaveBeenCalledTimes(1);
+    // expect(window.fetch).toHaveBeenCalledWith('/system/sling/info.sessionInfo.json');
+    
+    // process.nextTick(() => { // 6
+    //   expect(wrapper.state()).toEqual({
+    //     // ... assert the set state
+    //     isLoggedIn: true
+    //   });
+
+    //   window.fetch.mockClear(); // 7
+      
+    //   //delete global.fetch;
+    //   done(); // 8
+    // });
+   // });
+
+   it('should be possible to toggle a LinkItem', () => {
+    const wrapper = mount(<Router><NavLinks /></Router>)
+    const expandables = wrapper.find('.pf-c-nav__link')
+    
+    expect(expandables).toHaveLength(3)
+    wrapper.unmount();
+  });
 });
