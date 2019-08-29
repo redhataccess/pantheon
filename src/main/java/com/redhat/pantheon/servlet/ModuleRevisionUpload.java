@@ -7,6 +7,7 @@ import com.redhat.pantheon.model.api.SlingResourceUtil;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleType;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -23,10 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Post operation to add a new Module revision to the system.
@@ -114,6 +112,8 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
                     .metadata.getOrCreate();
             metadata.title.set(moduleName);
             metadata.description.set(description);
+            metadata.dateModified.set(Calendar.getInstance());
+            metadata.moduleType.set( determineModuleType(module) );
 
             asciidoctorService.extractMetadata(jcrContent, metadata);
 
@@ -126,6 +126,28 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
             }
         } catch (Exception e) {
             throw new RepositoryException("Error uploading a module revision", e);
+        }
+    }
+
+    /**
+     * Determines the module type from the uploaded module revision
+     * @param module The uploaded module
+     * @return A module type for the module revision, or null if one cannot be determined.
+     */
+    private static ModuleType determineModuleType(Module module) {
+        String fileName = module.getName();
+
+        if( fileName.startsWith("proc_") ) {
+            return ModuleType.PROCEDURE;
+        }
+        else if( fileName.startsWith("con_") ) {
+            return ModuleType.CONCEPT;
+        }
+        else if( fileName.startsWith("ref_") ) {
+            return ModuleType.REFERENCE;
+        }
+        else {
+            return null;
         }
     }
 }
