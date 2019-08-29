@@ -29,7 +29,6 @@ class NavLinks extends Component {
         .then(responseJSON => {
           if (responseJSON[id] !== 'anonymous') {
 
-            console.log('response[id] in navlinks: ' + responseJSON[id])
             this.setState({ moduleText: 'New Module' })
             this.setState({ productText: 'New Product' })
             this.setState({ productsText: 'All Products' })
