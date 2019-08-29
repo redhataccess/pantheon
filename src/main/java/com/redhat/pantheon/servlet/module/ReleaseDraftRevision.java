@@ -17,6 +17,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -55,6 +56,10 @@ public class ReleaseDraftRevision extends AbstractPostOperation {
             ModuleLocale moduleLocale = module.getModuleLocale(locale);
             moduleLocale.released.set( moduleLocale.draft.get() );
             moduleLocale.draft.set( null );
+            // set the published date on the draft revision
+            draftRevision.get()
+                    .metadata.getOrCreate()
+                    .datePublished.set(Calendar.getInstance());
             changes.add(Modification.onModified(module.getPath()));
 
             // call the extension point
