@@ -74,4 +74,12 @@ describe('ProductDetails tests', () => {
     const productDetails = mount(<ProductDetails {...props} />).text
     expect(productDetails.length === 1)
   });
+
+  it('test click event', () => {
+    const mockCallBack = jest.fn();
+  
+    const button = shallow((<Button onClick={mockCallBack}>Submit</Button>));
+    button.find('button').simulate('click');
+    expect(mockCallBack.mock.calls.length).toEqual(1);
+  });
 });
