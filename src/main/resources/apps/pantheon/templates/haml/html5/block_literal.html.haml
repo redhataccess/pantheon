@@ -1,0 +1,5 @@
+%div{:id=>@id, :class=>['literalblock', role]}
+  - if title?
+    %strong.heading=title
+  .content
+    %pre{:class=>(!(@document.attr? :prewrap) || (option? :nowrap) ? 'nowrap' : nil)}=content
