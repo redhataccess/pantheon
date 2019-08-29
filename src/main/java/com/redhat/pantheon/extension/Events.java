@@ -1,6 +1,6 @@
 package com.redhat.pantheon.extension;
 
-import com.redhat.pantheon.extension.events.ModuleRevisionPublished;
+import com.redhat.pantheon.extension.events.ModuleRevisionPublishedEvent;
 import com.redhat.pantheon.model.module.ModuleRevision;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
@@ -39,7 +39,7 @@ public class Events {
      * @param moduleRevision The module revision which has just been published.
      */
     public void fireModuleRevisionPublishedEvent(ModuleRevision moduleRevision) {
-        ModuleRevisionPublished event = new ModuleRevisionPublished(moduleRevision.getPath());
+        ModuleRevisionPublishedEvent event = new ModuleRevisionPublishedEvent(moduleRevision.getPath());
         Map<String, Object> props = newHashMap();
         props.put(Event.class.getName(), event);
         Job job = jobManager.createJob(MODULE_POST_PUBLISH_EVENT)

@@ -44,6 +44,7 @@ class EventJobConsumerTest {
         EventProcessingExtension extension1 = mock(EventProcessingExtension.class);
         EventProcessingExtension extension2 = mock(EventProcessingExtension.class);
         lenient().when(job.getProperty(Event.class.getName(), Event.class)).thenReturn(event);
+        lenient().doThrow(new Exception()).when(extension1).processEvent(eq(event));
         lenient().doThrow(new Exception()).when(extension2).processEvent(eq(event));
         TestEventJobConsumer jobConsumer = new TestEventJobConsumer(extension1, extension2);
 

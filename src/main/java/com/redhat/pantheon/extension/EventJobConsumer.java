@@ -51,7 +51,7 @@ abstract class EventJobConsumer<EXT extends EventProcessingExtension> implements
         final Event firedEvent = job.getProperty(Event.class.getName(), Event.class);
 
         if (firedEvent == null) {
-            log.error(this.getClass().getName() + " fired an even job with no event");
+            log.error(this.getClass().getName() + " fired an event job with no event");
             return JobResult.CANCEL;
         }
 
