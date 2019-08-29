@@ -2,3 +2,4 @@
 ../frontend/dist
 ../frontend/node_modules
 ../src/main/resources/SLING-INF/content/static
+../src/main/resources/apps/pantheon/templates/haml
