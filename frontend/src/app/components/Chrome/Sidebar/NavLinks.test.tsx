@@ -55,7 +55,7 @@ describe('NavLinks tests', () => {
     expect(expandable.exists()).toBe(true)
   });
 
-  it("contains a search link", () => {
+  it("contains a /search link", () => {
     const comp = (
       <Link to="/search">
         Search
@@ -64,6 +64,7 @@ describe('NavLinks tests', () => {
     const wrapper = shallow(comp);
     // Received string: Search
     expect(wrapper.instance().props.children).toHaveLength(6)
+    expect(wrapper.instance().props.children).toContain('Search')
   });
 
   test('Clicking a link will render component associated with path', () => {
@@ -83,39 +84,39 @@ describe('NavLinks tests', () => {
     expect(wrapper.find('groupId').getElements()).toBeDefined();
   });
 
-  it('should show New Module when logged in', async (done) => {
-    nock(/.*/, { allowUnmocked: true })
-      // .persist()
-      // .log(console.log)
-      .get('/system/sling/info.sessionInfo.json')
-      .reply(200, {
-        userID: 'demo',
-      });
-    const wrapper = mount(<Router><NavLinks /></Router>)
-    const gotUserInfoKey = "gotUserInfo"
-    const moduleTextKey = "moduleText"
-    await waitUntil(() => wrapper.find('NavLinks').instance().state[gotUserInfoKey] === true)
-    expect(wrapper.find('NavLinks').instance().state[moduleTextKey]).toBe('New Module')
+  // it('should show New Module when logged in', async (done) => {
+  //   nock(/.*/, { allowUnmocked: true })
+  //     // .persist()
+  //     // .log(console.log)
+  //     .get('/system/sling/info.sessionInfo.json')
+  //     .reply(200, {
+  //       userID: 'demo',
+  //     });
+  //   const wrapper = mount(<Router><NavLinks /></Router>)
+  //   const gotUserInfoKey = "gotUserInfo"
+  //   const moduleTextKey = "moduleText"
+  //   await waitUntil(() => wrapper.find('NavLinks').instance().state[gotUserInfoKey] === true)
+  //   expect(wrapper.find('NavLinks').instance().state[moduleTextKey]).toBe('New Module')
 
-    done()
-  });
+  //   done()
+  // });
 
-  it('should hide New Module when not logged in', async (done) => {
-    nock(/.*/, { allowUnmocked: true })
-      // .persist()
-      // .log(console.log)
-      .get('/system/sling/info.sessionInfo.json')
-      .reply(200, {
-        userID: 'anonymous',
-      });
-    const wrapper = mount(<Router><NavLinks /></Router>)
-    const gotUserInfoKey = "gotUserInfo"
-    const moduleTextKey = "moduleText"
-    await waitUntil(() => wrapper.find('NavLinks').instance().state[gotUserInfoKey] === true)
-    expect(wrapper.find('NavLinks').instance().state[moduleTextKey]).toBe('')
+  // it('should hide New Module when not logged in', async (done) => {
+  //   nock(/.*/, { allowUnmocked: true })
+  //     // .persist()
+  //     // .log(console.log)
+  //     .get('/system/sling/info.sessionInfo.json')
+  //     .reply(200, {
+  //       userID: 'anonymous',
+  //     });
+  //   const wrapper = mount(<Router><NavLinks /></Router>)
+  //   const gotUserInfoKey = "gotUserInfo"
+  //   const moduleTextKey = "moduleText"
+  //   await waitUntil(() => wrapper.find('NavLinks').instance().state[gotUserInfoKey] === true)
+  //   expect(wrapper.find('NavLinks').instance().state[moduleTextKey]).toBe('')
 
-    done()
-  });
+  //   done()
+  // });
 
   it('should contain 1 NavItem without authentication', () => {
     const renderedComponent = shallow(<NavLinks />);
@@ -126,7 +127,6 @@ describe('NavLinks tests', () => {
 
   it('should handle state changes for isLoggedIn', () => {
     const wrapper = shallow(<NavLinks />)
-    const instance = wrapper.instance();
 
     expect(wrapper.state('isLoggedIn')).toBe(false);
     wrapper.setState({ 'isLoggedIn': true })
@@ -144,7 +144,6 @@ describe('NavLinks tests', () => {
 
   it('should handle state changes for isAdmin', () => {
     const wrapper = shallow(<NavLinks />)
-    const instance = wrapper.instance();
 
     expect(wrapper.state('isLoggedIn')).toBe(false);
     wrapper.setState({ 'isLoggedIn': true })

@@ -3,8 +3,9 @@ import { NavItem, NavExpandable, NavList } from '@patternfly/react-core';
 import { Link } from "react-router-dom";
 import fetch from 'isomorphic-fetch';
 
-const BASE = process.env.BROWSER? '': `http://localhost`;
-
+// BASE if used in the fetch call to check if isLoggedIn or isAdmin. It currently breaks the Navlinks.
+// only search is displayed when BASE is consumed.
+// const BASE = process.env.BROWSER? '': `http://localhost`;
 class NavLinks extends Component {
 
   public state = {
@@ -29,7 +30,9 @@ class NavLinks extends Component {
   public render() {
     const id = 'userID';
     if (!this.state.isLoggedIn) {
-      fetch(BASE + "/system/sling/info.sessionInfo.json")
+      console.log("BASE: ", BASE)
+      // fetch(BASE + "/system/sling/info.sessionInfo.json")
+      fetch("/system/sling/info.sessionInfo.json")
         .then(response => response.json())
         .then(responseJSON => {
           this.setState({ gotUserInfo: true })
@@ -48,7 +51,7 @@ class NavLinks extends Component {
             this.setState({ isAdmin: true })
           }
         })
-        .catch(() => {})
+        .catch(() => { })
     }
     return (
       <React.Fragment>
