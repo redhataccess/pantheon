@@ -54,7 +54,7 @@ describe('NavLinks tests', () => {
     expect(expandable.exists()).toBe(true)
   });
 
-  it("contains correct passed prop", () => {
+  it("contains a search link", () => {
     const comp = (
       <Link to="/search">
         Search
@@ -65,7 +65,7 @@ describe('NavLinks tests', () => {
     expect(wrapper.instance().props.children).toHaveLength(6)
   });
 
-  test('Clicking link will render component associated with path', () => {
+  test('Clicking a link will render component associated with path', () => {
     const wrapper = mount(
       <MemoryRouter>
         <div>
@@ -90,13 +90,19 @@ describe('NavLinks tests', () => {
   });
 
 
-  it('should be possible to toggle a LinkItem', () => {
-    const wrapper = mount(<Router><NavLinks /></Router>)
-    const expandables = wrapper.find('.pf-c-nav__link')
-
-    expect(expandables).toHaveLength(3)
-    wrapper.unmount();
-  });
+  // it('should be possible to toggle a LinkItem', () => {
+  //   const wrapper = mount(<Router><NavLinks /></Router>)
+  //   const expandables = wrapper.find('.pf-c-nav__link')
+  //   expect(expandables).toHaveLength(3)
+  //   // The first expandable is isExpanded by default.
+  //   expect(expandables.at(0).find('[aria-expanded="true"]')).toBeTruthy()
+  //   // tslint:disable-next-line: no-unused-expression
+  //   expandables.at(0).props().onChange
+  //   expect(expandables.at(0)).toBeCalled()
+    
+  //   expect(expandables.at(0).find("isExpanded")).toBeFalsy()
+  //   // wrapper.unmount();
+  // });
 
   it('should handle state changes for isLoggedIn', () => {
     const wrapper = shallow(<NavLinks />)
