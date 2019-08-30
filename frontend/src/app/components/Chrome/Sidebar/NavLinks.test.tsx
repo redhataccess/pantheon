@@ -2,7 +2,8 @@ import React from 'react';
 import { NavLinks } from './NavLinks';
 import { NavList, NavItem, NavExpandable } from '@patternfly/react-core';
 import { HashRouter as Router } from 'react-router-dom';
-import "isomorphic-fetch"
+import nock from 'nock'
+import waitUntil from 'async-wait-until'
 
 import { mount, shallow } from 'enzyme';
 import renderer from 'react-test-renderer';
@@ -25,7 +26,35 @@ const MockComp = () => (
 );
 const MockDenied = () => <div className="denied">Denied</div>;
 
+// export function fetch(input, init) {
+//   console.log("Fake fetch called!");
+//   return Promise.resolve({
+//     json: () => Promise.resolve({ 'userID': 'demo' })
+//   })
+// }
+
+// const mockResponse = (status, statusText, response) => {
+//   return new Response(response, {
+//     status: status,
+//     statusText: statusText,
+//     headers: {
+//       'Content-type': 'application/json'
+//     }
+//   });
+// };
+
+
 describe('NavLinks tests', () => {
+  beforeAll(() => {
+    nock(/.*/)
+      .persist()
+      // .log(console.log)
+      .get('/system/sling/info.sessionInfo.json')
+      .reply(200, {
+           userID: 'demo',
+      });
+  });
+
   test('should render NavLinks component', () => {
     const view = shallow(<NavLinks />);
     expect(view).toMatchSnapshot();
@@ -81,6 +110,29 @@ describe('NavLinks tests', () => {
     wrapper.find('a').simulate('click', { button: 0 });
     expect(wrapper.find('.test')).toBeTruthy();
     expect(wrapper.find('groupId').getElements()).toBeDefined();
+  });
+
+  it('should show New Module when logged in', async (done) => {
+    const wrapper = mount(<Router><NavLinks /></Router>)
+    await waitUntil(() => wrapper.find('NavLinks').instance().state['gotUserInfo'] === true)
+    expect(wrapper.find('NavLinks').instance().state['moduleText']).toBe('New Module')
+
+    done()
+  });
+
+  it('should hide New Module when not logged in', async (done) => {
+    nock.cleanAll()
+    nock(/.*/)
+      .persist()
+      .get('/system/sling/info.sessionInfo.json')
+      .reply(200, {
+           userID: 'anonymous',
+      });
+    const wrapper = mount(<Router><NavLinks /></Router>)
+    await waitUntil(() => wrapper.find('NavLinks').instance().state['gotUserInfo'] === true)
+    expect(wrapper.find('NavLinks').instance().state['moduleText']).toBe('')
+
+    done()
   });
 
 });

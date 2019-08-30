@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { NavItem, NavExpandable, NavList } from '@patternfly/react-core';
 import { Link } from "react-router-dom";
+import fetch from 'isomorphic-fetch';
+
+const BASE = process.env.BROWSER? '': `http://localhost`;
 
 class NavLinks extends Component {
+
   public state = {
     activeGroup: 'grp-1',
     activeItem: 'grp-1_itm-1',
@@ -10,6 +14,7 @@ class NavLinks extends Component {
     browserText: '',
     consoleText: '',
     gitText: '',
+    gotUserInfo: false,
     isAdmin: false,
     isDropdownOpen: false,
     isKebabDropdownOpen: false,
@@ -19,14 +24,15 @@ class NavLinks extends Component {
     productsText: '',
     searchText: 'Search',
     slingHomeText: ''
-  };
+  }
 
   public render() {
     const id = 'userID';
     if (!this.state.isLoggedIn) {
-      fetch("/system/sling/info.sessionInfo.json")
+      fetch(BASE + "/system/sling/info.sessionInfo.json")
         .then(response => response.json())
         .then(responseJSON => {
+          this.setState({ gotUserInfo: true })
           if (responseJSON[id] !== 'anonymous') {
 
             this.setState({ moduleText: 'New Module' })
