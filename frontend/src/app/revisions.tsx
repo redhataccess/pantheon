@@ -20,15 +20,16 @@ class Revisions extends Component<IProps> {
         isDropDownOpen: false,
         isHeadingToggle: false,
         isOpen: false,
-        isRowExpanded: false,
         isRowToggle: false,
         login: false,
     };
 
+
+    public draft= [{ "icon": BlankImage, "revision": 'draft', "publishedState": 'Draft', "updatedDate": 'dummy date', "firstButtonType": 'primary',"secondButtonType": 'secondary', "firstButtonText": 'Publish',"secondButtonText": 'Preview',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
+    public release= [{ "icon": CheckImage, "revision": 'released', "publishedState": 'Released', "updatedDate": 'dummy date', "firstButtonType": 'secondary',"secondButtonType": 'primary', "firstButtonText": 'Unpublish',"secondButtonText": 'View',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
+
     public render() {
-        const draft= [{ "icon": BlankImage, "revision": 'draft', "publishedState": 'Draft', "updatedDate": 'dummy date', "firstButtonType": 'primary',"secondButtonType": 'secondary', "firstButtonText": 'Publish',"secondButtonText": 'Preview' }]
-        const release= [{ "icon": CheckImage, "revision": 'released', "publishedState": 'Released', "updatedDate": 'dummy date', "firstButtonType": 'secondary',"secondButtonType": 'primary', "firstButtonText": 'Unpublish',"secondButtonText": 'View' }]
-        const results= [draft,release]
+    const results= [this.draft,this.release]
 
         return (  
             <React.Fragment>
@@ -45,8 +46,8 @@ class Revisions extends Component<IProps> {
                                     />
                                     <DataListItemCells
                                         dataListCells={[
-                                            <DataListCell key="empty">
-                                                <span><img src={BlankImage} style={{height: "30px",width: "30px"}}/></span>
+                                            <DataListCell key="empty" width={1}>
+                                                <img src={BlankImage} style={{height: "30px",width: "30px"}}/>
                                             </DataListCell>,
                                             <DataListCell key="revision">
                                                 <span className="sp-prop-nosort" id="span-source-type">Revision</span>
@@ -66,24 +67,25 @@ class Revisions extends Component<IProps> {
                                 {results.map(type=>(
                                 type.map(data => (
                                 <DataListContent
-                                    aria-label="Primary Content Details"
+                                    aria-label="Secondary Content Details"
                                     id={data["revision"]}
                                     isHidden={!this.state.isHeadingToggle}
                                     noPadding={true}
                                 >                                   
                                 {/* this is the data list for the inner row */}
-                                <DataList aria-label="Simple data list example"> 
-                                    <DataListItem aria-labelledby="simple-item1" isExpanded={this.state.isRowToggle}>
+                                <DataList aria-label="Simple data list example">
+                                    {console.log('details:',data["revision"],':',data["isDropdownOpen"])} 
+                                    <DataListItem aria-labelledby="simple-item1" isExpanded={data["isDropdownOpen"]}>
                                         <DataListItemRow>
                                             <DataListToggle
-                                                onClick={()=>this.onExpandableToggle()}
-                                                isExpanded={this.state.isRowToggle}
+                                                onClick={()=>this.onExpandableToggle(data)}
+                                                isExpanded={data["isDropdownOpen"]}
                                                 id={data["revision"]}
                                                 aria-controls={data["revision"]}
                                             />
                                             <DataListItemCells
                                                 dataListCells={[
-                                                    <DataListCell key="image">
+                                                    <DataListCell key="image" width={1}>
                                                         <span><img src={data["icon"]} style={{height: "30px",width: "30px"}}/></span>
                                                     </DataListCell>,
                                                     <DataListCell key="revision">
@@ -102,9 +104,9 @@ class Revisions extends Component<IProps> {
                                                             <Dropdown
                                                                 isPlain={true}
                                                                 position={DropdownPosition.right}
-                                                                isOpen={this.state.isArchiveDropDownOpen}
+                                                                isOpen={data["isArchiveDropDownOpen"]}
                                                                 onSelect={this.onArchiveSelect}
-                                                                toggle={<KebabToggle onToggle={this.onArchiveToggle} />}
+                                                                toggle={<KebabToggle onToggle={()=>this.onArchiveToggle(data)} />}
                                                                 dropdownItems={[
                                                                     <DropdownItem key="archive">Archive</DropdownItem>,
                                                                 ]}
@@ -117,7 +119,7 @@ class Revisions extends Component<IProps> {
                                         <DataListContent
                                             aria-label={data["revision"]}
                                             id={data["revision"]}
-                                            isHidden={!this.state.isRowToggle}
+                                            isHidden={!data["isDropdownOpen"]}
                                             noPadding={true}
                                         >
                                             {/* this is the content for the inner data list content */}
@@ -162,15 +164,20 @@ class Revisions extends Component<IProps> {
         });
       };
 
-      private onArchiveToggle = () => {
+      private onArchiveToggle = (data) => {
+        data["isArchiveDropDownOpen"] = !data["isArchiveDropDownOpen"];
         this.setState({ 
-            isArchiveDropDownOpen: !this.state.isArchiveDropDownOpen
+            isArchiveDropDownOpen: this.state.isArchiveDropDownOpen
         });
       };
 
-      private onExpandableToggle = () => {
+      private onExpandableToggle = (data) => {
+        console.log("complete data: ",data)
+        data["isDropdownOpen"] = !data["isDropdownOpen"];
+        console.log('data id:',data["revision"],' data open status: ', data["isDropdownOpen"])
         this.setState({
-            isRowToggle: !this.state.isRowToggle
+            isRowToggle: this.state.isRowToggle
+        },()=>{
         });
       }
 
