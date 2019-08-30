@@ -5,6 +5,8 @@ import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.StructuralNode;
 import org.asciidoctor.extension.Treeprocessor;
 
+import java.util.Optional;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
@@ -64,19 +66,19 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
      * @param document
      */
     private void extractAbstract(Document document) {
-        // Abstract is the first paragraph
-        if(document.getBlocks().size() > 0) {
-            StructuralNode firstBlock = document.getBlocks().get(0);
-            if(firstBlock.getContent() != null) {
-                String abstractContent = firstBlock.getContent().toString();
-                if (!isNullOrEmpty(abstractContent)) {
-                    metadata.mAbstract.set(abstractContent);
-                    return;
-                }
-            }
-        }
+        Optional<String> abstractContent = document.getBlocks().stream()
+                // find the first content block
+                .findFirst()
+                // make sure it has some content
+                .filter(contentBlock -> !isNullOrEmpty(contentBlock.getContent().toString()))
+                // get the content itself
+                .map(contentBlock -> contentBlock.getContent().toString());
+        abstractContent.ifPresent(content -> metadata.mAbstract.set(content));
+
         // If no abstract is detected, reset it
-        metadata.mAbstract.set(null);
+        if(!abstractContent.isPresent()) {
+            metadata.mAbstract.set(null);
+        }
     }
 
     /**
@@ -86,13 +88,15 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
      */
     private void extractHeadline(Document document) {
         // Get the first section (that's where a subtitle will be)
-        for (StructuralNode block : document.getBlocks()) {
-            if (block.getContext().equals("section") && block.getLevel() == 1) {
-                metadata.headline.set(block.getTitle());
-                return;
-            }
-        }
+        Optional<StructuralNode> headlineBlock = document.getBlocks().stream()
+                // find section blocks with level == 1
+                .filter(block -> block.getContext().equals("section") && block.getLevel() == 1)
+                .findFirst();
+        headlineBlock.ifPresent(headline -> metadata.headline.set(headline.getTitle()));
+
         // if no headline is detected, reset it
-        metadata.headline.set(null);
+        if(!headlineBlock.isPresent()) {
+            metadata.headline.set(null);
+        }
     }
 }
