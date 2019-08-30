@@ -89,11 +89,13 @@ describe('NavLinks tests', () => {
       // .log(console.log)
       .get('/system/sling/info.sessionInfo.json')
       .reply(200, {
-           userID: 'demo',
+        userID: 'demo',
       });
     const wrapper = mount(<Router><NavLinks /></Router>)
-    await waitUntil(() => wrapper.find('NavLinks').instance().state['gotUserInfo'] === true)
-    expect(wrapper.find('NavLinks').instance().state['moduleText']).toBe('New Module')
+    const gotUserInfoKey = "gotUserInfo"
+    const moduleTextKey = "moduleText"
+    await waitUntil(() => wrapper.find('NavLinks').instance().state[gotUserInfoKey] === true)
+    expect(wrapper.find('NavLinks').instance().state[moduleTextKey]).toBe('New Module')
 
     done()
   });
@@ -104,11 +106,13 @@ describe('NavLinks tests', () => {
       // .log(console.log)
       .get('/system/sling/info.sessionInfo.json')
       .reply(200, {
-           userID: 'anonymous',
+        userID: 'anonymous',
       });
     const wrapper = mount(<Router><NavLinks /></Router>)
-    await waitUntil(() => wrapper.find('NavLinks').instance().state['gotUserInfo'] === true)
-    expect(wrapper.find('NavLinks').instance().state['moduleText']).toBe('')
+    const gotUserInfoKey = "gotUserInfo"
+    const moduleTextKey = "moduleText"
+    await waitUntil(() => wrapper.find('NavLinks').instance().state[gotUserInfoKey] === true)
+    expect(wrapper.find('NavLinks').instance().state[moduleTextKey]).toBe('')
 
     done()
   });
@@ -119,21 +123,6 @@ describe('NavLinks tests', () => {
     const items = renderedComponent.find(NavItem);
     expect(items).toHaveLength(1);
   });
-
-
-  // it('should be possible to toggle a LinkItem', () => {
-  //   const wrapper = mount(<Router><NavLinks /></Router>)
-  //   const expandables = wrapper.find('.pf-c-nav__link')
-  //   expect(expandables).toHaveLength(3)
-  //   // The first expandable is isExpanded by default.
-  //   expect(expandables.at(0).find('[aria-expanded="true"]')).toBeTruthy()
-  //   // tslint:disable-next-line: no-unused-expression
-  //   expandables.at(0).props().onChange
-  //   expect(expandables.at(0)).toBeCalled()
-    
-  //   expect(expandables.at(0).find("isExpanded")).toBeFalsy()
-  //   // wrapper.unmount();
-  // });
 
   it('should handle state changes for isLoggedIn', () => {
     const wrapper = shallow(<NavLinks />)
@@ -151,6 +140,17 @@ describe('NavLinks tests', () => {
     const navGroup2 = wrapper.find('[groupId="grp-2"]');
     expect(navGroup2.length).toBe(3)
 
+  });
+
+  it('should handle state changes for isAdmin', () => {
+    const wrapper = shallow(<NavLinks />)
+    const instance = wrapper.instance();
+
+    expect(wrapper.state('isLoggedIn')).toBe(false);
+    wrapper.setState({ 'isLoggedIn': true })
+    expect(wrapper.state('isLoggedIn')).toBe(true);
+
+    expect(wrapper.state('isAdmin')).toBe(false)
     wrapper.setState({ 'isAdmin': true })
     const navGroup3 = wrapper.find('[groupId="grp-3"]');
     expect(navGroup3.length).toBe(4)
