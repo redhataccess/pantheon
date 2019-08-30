@@ -68,8 +68,6 @@ export default class Search extends Component {
               </div>
             </FormGroup>
             <div className="notification-container">
-              { console.log("this.state.results: ") }
-            { console.log(this.state.results) }
               <Pagination
                 handleMoveLeft={this.updatePageCounter("L")}
                 handleMoveRight={this.updatePageCounter("R")}
@@ -451,8 +449,6 @@ export default class Search extends Component {
           this.setState({
             data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
             isEmptyResults: true
-          }, () =>{
-            console.log('transient path:'+this.state.results[0])
           })
         } else {
           this.setState({ isEmptyResults: false })

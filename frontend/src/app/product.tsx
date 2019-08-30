@@ -97,7 +97,6 @@ class Product extends Component {
   };
 
   private saveProduct = (postBody) => {
-    // console.log("My data is: " + this.state.productName + " and my desc is " + this.state.productDescription)
     if (this.state.productName === "") {
       this.setState({ isMissingFields: true })
       this.setState({ formInvalid: true })
@@ -105,7 +104,6 @@ class Product extends Component {
     } else if (this.productExist(this.state.productName)) {
       this.setState({ isDup: true })
       this.setState({ formInvalid: true })
-      //  console.log("[saveProduct] productExist detected")
     } else {
       const hdrs = {
         'Accept': 'application/json',
@@ -131,10 +129,9 @@ class Product extends Component {
         method: 'post'
       }).then(response => {
         if (response.status === 201 || response.status === 200) {
-          // console.log(" Works " + response.status)
           this.setState({ redirect: true })
         } else if (response.status === 500) {
-          console.log(" Needs login " + response.status)
+          // console.log(" Needs login " + response.status)
           this.setState({ login: true })
         } else {
           console.log(" Failed " + response.status)
@@ -188,7 +185,6 @@ class Product extends Component {
       .then(responseJSON => this.setState({ results: responseJSON.results }))
       .then(() => {
         // console.log("[productExist] results breakdown " + JSON.stringify(this.state.results))
-        // console.log("[productExist] isDup => " + this.state.isDup)
 
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
@@ -198,7 +194,6 @@ class Product extends Component {
           this.setState({
             isDup: true
           });
-          // console.log("[productExist] found match=> isDup: true" )
         }
       })
     return this.state.isDup
