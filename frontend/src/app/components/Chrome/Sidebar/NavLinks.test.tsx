@@ -6,22 +6,7 @@ import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
 import { Link, MemoryRouter, Route, Switch } from 'react-router-dom';
-import { createMemoryHistory } from 'history'
 import renderer from 'react-test-renderer';
-
-// beforeAll(() => {
-//   window.fetch = jest.fn();
-// });
-
-// let wrapper1;
-
-// beforeEach(() => {
-//   wrapper1 = shallow(<NavLinks />, { disableLifecycleMethods: true });
-// });
-
-// afterEach(() => {
-//   wrapper1.unmount();
-// });
 
 const Home = () => <div>Pantheon</div>;
 const MockComp = () => (
@@ -38,9 +23,6 @@ const MockComp = () => (
     </NavList>
   </div>
 );
-// const MockDenied = () => <div className="denied">Denied</div>;
-const onClickMode = jest.fn();
-const history = createMemoryHistory()
 
 describe('NavLinks tests', () => {
   test('should render NavLinks component', () => {
@@ -107,67 +89,35 @@ describe('NavLinks tests', () => {
     expect(items).toHaveLength(1);
   });
 
-  // it('should handle click events', () => {
-  //   const wrapper = mount(<Router><NavLinks /></Router>);
-  //   const links = wrapper.find('a');
 
-  //   links.first().simulate('click', { a: 0 })
-  //   expect(wrapper.find('.pf-c-nav__link pf-m-current')).toBeCalledTimes(1);
-  // });
-
-  // it('fetches data from server when server returns a successful response', done => { // 1
-    // const mockSuccessResponse = {"userID":"demo"};
-    // // const mockSuccessResponse = {};
-    // const mockJsonPromise = Promise.resolve(mockSuccessResponse); // 2
-    // const mockFetchPromise = Promise.resolve({ // 3
-    //   json: () => mockJsonPromise,
-    // });
-    // // jest.spyOn(window, 'fetch').mockImplementation(() => Promise.resolve(Response)); // 4
-    // jest.spyOn(window, 'fetch').mockImplementation(() => Promise.resolve({ok: true, UserID: 'demo'})); // 4
-    // // window.fetch = jest.fn().mockImplementation(() => Promise.resolve({ok: true, Id: '123'}));
-    
-
-    // const wrapper = shallow(<NavLinks />); // 5
-                          
-    // // expect(global.fetch).toHaveBeenCalledTimes(1);
-    // expect(window.fetch).toHaveBeenCalledTimes(1);
-    // expect(window.fetch).toHaveBeenCalledWith('/system/sling/info.sessionInfo.json');
-    
-    // process.nextTick(() => { // 6
-    //   expect(wrapper.state()).toEqual({
-    //     // ... assert the set state
-    //     isLoggedIn: true
-    //   });
-
-    //   window.fetch.mockClear(); // 7
-      
-    //   //delete global.fetch;
-    //   done(); // 8
-    // });
-   // });
-
-   it('should be possible to toggle a LinkItem', () => {
+  it('should be possible to toggle a LinkItem', () => {
     const wrapper = mount(<Router><NavLinks /></Router>)
     const expandables = wrapper.find('.pf-c-nav__link')
-    
+
     expect(expandables).toHaveLength(3)
     wrapper.unmount();
   });
 
-  // test('it calls start Web Console on click', () => {
-  //   const mockConsoleLink = jest.fn();
-  //   const wrapper = shallow(<NavItem onClick={mockConsoleLink}/>);
-  //   wrapper.find('.pf-c-nav__link').at(7).simulate('click');
-  //   expect(mockConsoleLink).toHaveBeenCalled();
-  // });
+  it('should handle state changes for isLoggedIn', () => {
+    const wrapper = shallow(<NavLinks />)
+    const instance = wrapper.instance();
 
-  
-  // it('should handle state changes', () => {
-  //   const wrapper = mount(<Router><NavLinks /></Router>)
-  //   expect(wrapper.state('isLoggedIn')).toEqual(false);
-  //   //wrapper.simulate('click');
-  //   //expect(wrapper.state().clicked).toEqual(true);
-  // });
+    expect(wrapper.state('isLoggedIn')).toBe(false);
+    wrapper.setState({ 'isLoggedIn': true })
+    expect(wrapper.state('isLoggedIn')).toBe(true);
+
+    wrapper.setState({ 'moduleText': 'New Module' });
+    wrapper.setState({ 'gitText': 'Git Import' });
+    const navGroup1 = wrapper.find('[groupId="grp-1"]');
+    expect(navGroup1.length).toBe(4)
+
+    const navGroup2 = wrapper.find('[groupId="grp-2"]');
+    expect(navGroup2.length).toBe(3)
+
+    wrapper.setState({ 'isAdmin': true })
+    const navGroup3 = wrapper.find('[groupId="grp-3"]');
+    expect(navGroup3.length).toBe(4)
+  });
 
   it('test browserLink function', () => {
     const wrapper = renderer.create(<Router><NavLinks /></Router>);
