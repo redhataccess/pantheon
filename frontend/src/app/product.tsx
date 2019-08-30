@@ -7,7 +7,7 @@ class Product extends Component {
   public state = {
     failedPost: false,
     formInvalid: false,
-    isDup : false,
+    isDup: false,
     isMissingFields: false,
     login: false,
     productDescription: '',
@@ -15,7 +15,7 @@ class Product extends Component {
     redirect: false,
     results: [],
   };
-  
+
   // render method transforms the react components into DOM nodes for the browser.
   public render() {
     const { productName, productDescription, isMissingFields, isDup } = this.state;
@@ -24,51 +24,51 @@ class Product extends Component {
         {/* Bullseye makes sure everyhting is in the middle */}
         <Bullseye>
           <Form>
-          <div className="app-container">
-            <div>
-              {isMissingFields && (
-                <div className="notification-container">
-                  <Alert
-                    variant="warning"
-                    title="A Product name is required."
-                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                  />
-                </div>
-              )}
-              {isDup && (
-                <div className="notification-container">
-                  <Alert
-                    variant="warning"
-                    title="Duplicated Product name."
-                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                  />
-                </div>
-              )}
-              <FormGroup
-                label="Product Name"
-                isRequired={true}
-                fieldId="product-name"
-              >
-                <TextInput isRequired={true} id="product-name" type="text" placeholder="Product Name" value={productName} onChange={this.handleNameInput} />
-              </FormGroup>
-              <br />
-              <FormGroup
-                label="Product Description"
-                fieldId="product-description"
-              >
-                <TextInput id="product-description" type="text" placeholder="Product Description" value={productDescription} onChange={this.handleProductInput} />
-              </FormGroup>
-              <br />
-              <ActionGroup>
-              <Button aria-label="Creates a new Product Name with Description specified." onClick={this.saveProduct} disabled={this.state.formInvalid}>Save</Button>
+            <div className="app-container">
               <div>
-                {this.checkAuth()}
-                {this.loginRedirect()}
-                {this.renderRedirect()}
+                {isMissingFields && (
+                  <div className="notification-container">
+                    <Alert
+                      variant="warning"
+                      title="A Product name is required."
+                      action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                    />
+                  </div>
+                )}
+                {isDup && (
+                  <div className="notification-container">
+                    <Alert
+                      variant="warning"
+                      title="Duplicated Product name."
+                      action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                    />
+                  </div>
+                )}
+                <FormGroup
+                  label="Product Name"
+                  isRequired={true}
+                  fieldId="product-name"
+                >
+                  <TextInput isRequired={true} id="product-name" type="text" placeholder="Product Name" value={productName} onChange={this.handleNameInput} />
+                </FormGroup>
+                <br />
+                <FormGroup
+                  label="Product Description"
+                  fieldId="product-description"
+                >
+                  <TextInput id="product-description" type="text" placeholder="Product Description" value={productDescription} onChange={this.handleProductInput} />
+                </FormGroup>
+                <br />
+                <ActionGroup>
+                  <Button aria-label="Creates a new Product Name with Description specified." onClick={this.saveProduct} disabled={this.state.formInvalid}>Save</Button>
+                  <div>
+                    {this.checkAuth()}
+                    {this.loginRedirect()}
+                    {this.renderRedirect()}
+                  </div>
+                </ActionGroup>
               </div>
-              </ActionGroup>
             </div>
-          </div>
           </Form>
         </Bullseye>
       </React.Fragment>
@@ -77,11 +77,11 @@ class Product extends Component {
   // methods that handle the state changes.
   private handleNameInput = productName => {
     this.setState({ productName });
-    
+
     // check for duplcated product name.
     this.productExist(this.state.productName);
     if (this.state.isDup) {
-      this.setState({formInvalid: true});
+      this.setState({ formInvalid: true });
     }
   };
 
@@ -92,29 +92,29 @@ class Product extends Component {
     // check for duplcated product name.
     this.productExist(this.state.productName);
     if (this.state.isDup) {
-      this.setState({formInvalid: true});
+      this.setState({ formInvalid: true });
     }
   };
 
   private saveProduct = (postBody) => {
     // console.log("My data is: " + this.state.productName + " and my desc is " + this.state.productDescription)
-    if (this.state.productName === "" ) {
+    if (this.state.productName === "") {
       this.setState({ isMissingFields: true })
       this.setState({ formInvalid: true })
-     
+
     } else if (this.productExist(this.state.productName)) {
       this.setState({ isDup: true })
       this.setState({ formInvalid: true })
-    //  console.log("[saveProduct] productExist detected")
+      //  console.log("[saveProduct] productExist detected")
     } else {
       const hdrs = {
         'Accept': 'application/json',
         'cache-control': 'no-cache'
       }
-      
+
       // setup url fragment
       const urlFragment = this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
-      
+
       const formData = new FormData();
       formData.append("name", this.state.productName)
       formData.append("description", this.state.productDescription)
@@ -170,7 +170,7 @@ class Product extends Component {
         }
       })
   }
-  
+
   private dismissNotification = () => {
     if (this.state.isMissingFields === true) {
       this.setState({ isMissingFields: false });
@@ -189,26 +189,25 @@ class Product extends Component {
       .then(() => {
         // console.log("[productExist] results breakdown " + JSON.stringify(this.state.results))
         // console.log("[productExist] isDup => " + this.state.isDup)
-        
-          if (JSON.stringify(this.state.results) === "[]"){
+
+        if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
-            isDup : false
+            isDup: false
           });
         } else {
           this.setState({
-            isDup : true
+            isDup: true
           });
           // console.log("[productExist] found match=> isDup: true" )
         }
       })
-      return this.state.isDup
-    }
+    return this.state.isDup
+  }
 
-    private getProductsUrl = (productName) => {
-      const backend ='/content/products.query.json?nodeType=pant:product&where=[name]="' + productName + '"'
-      // console.log(backend)
-      return backend
-    }
+  private getProductsUrl = (productName) => {
+    const backend = '/content/products.query.json?nodeType=pant:product&where=[name]="' + productName + '"'
+    return backend
+  }
 
 }
 
