@@ -46,10 +46,10 @@ class Product extends Component {
               )}
               <FormGroup
                 label="Product Name"
-                isRequired
+                isRequired={true}
                 fieldId="product-name"
               >
-                <TextInput isRequired id="product-name" type="text" placeholder="Product Name" value={productName} onChange={this.handleNameInput} />
+                <TextInput isRequired={true} id="product-name" type="text" placeholder="Product Name" value={productName} onChange={this.handleNameInput} />
               </FormGroup>
               <br />
               <FormGroup
@@ -87,7 +87,7 @@ class Product extends Component {
 
   private handleProductInput = productDescription => {
     this.setState({ productDescription });
-    console.log("Desc " + productDescription)
+    // console.log("Desc " + productDescription)
 
     // check for duplcated product name.
     this.productExist(this.state.productName);
@@ -97,7 +97,7 @@ class Product extends Component {
   };
 
   private saveProduct = (postBody) => {
-    console.log("My data is: " + this.state.productName + " and my desc is " + this.state.productDescription)
+    // console.log("My data is: " + this.state.productName + " and my desc is " + this.state.productDescription)
     if (this.state.productName === "" ) {
       this.setState({ isMissingFields: true })
       this.setState({ formInvalid: true })
@@ -131,7 +131,7 @@ class Product extends Component {
         method: 'post'
       }).then(response => {
         if (response.status === 201 || response.status === 200) {
-          console.log(" Works " + response.status)
+          // console.log(" Works " + response.status)
           this.setState({ redirect: true })
         } else if (response.status === 500) {
           console.log(" Needs login " + response.status)
@@ -206,7 +206,7 @@ class Product extends Component {
 
     private getProductsUrl = (productName) => {
       const backend ='/content/products.query.json?nodeType=pant:product&where=[name]="' + productName + '"'
-      console.log(backend)
+      // console.log(backend)
       return backend
     }
 

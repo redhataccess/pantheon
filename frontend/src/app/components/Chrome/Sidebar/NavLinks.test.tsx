@@ -7,6 +7,7 @@ import "isomorphic-fetch"
 import { mount, shallow } from 'enzyme';
 import { Link, MemoryRouter, Route, Switch } from 'react-router-dom';
 import { createMemoryHistory } from 'history'
+import renderer from 'react-test-renderer';
 
 // beforeAll(() => {
 //   window.fetch = jest.fn();
@@ -37,7 +38,7 @@ const MockComp = () => (
     </NavList>
   </div>
 );
-const MockDenied = () => <div className="denied">Denied</div>;
+// const MockDenied = () => <div className="denied">Denied</div>;
 const onClickMode = jest.fn();
 const history = createMemoryHistory()
 
@@ -152,4 +153,38 @@ describe('NavLinks tests', () => {
     expect(expandables).toHaveLength(3)
     wrapper.unmount();
   });
+
+  // test('it calls start Web Console on click', () => {
+  //   const mockConsoleLink = jest.fn();
+  //   const wrapper = shallow(<NavItem onClick={mockConsoleLink}/>);
+  //   wrapper.find('.pf-c-nav__link').at(7).simulate('click');
+  //   expect(mockConsoleLink).toHaveBeenCalled();
+  // });
+
+  
+  // it('should handle state changes', () => {
+  //   const wrapper = mount(<Router><NavLinks /></Router>)
+  //   expect(wrapper.state('isLoggedIn')).toEqual(false);
+  //   //wrapper.simulate('click');
+  //   //expect(wrapper.state().clicked).toEqual(true);
+  // });
+
+  it('test browserLink function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.browserLink).toMatchSnapshot();
+  });
+
+  it('test welcomeLink function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.welcomeLink).toMatchSnapshot();
+  });
+
+  it('test webConsole function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.consoleLink).toMatchSnapshot();
+  });
+
 });
