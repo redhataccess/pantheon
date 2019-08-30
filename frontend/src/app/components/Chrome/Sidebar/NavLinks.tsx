@@ -30,7 +30,7 @@ class NavLinks extends Component {
   public render() {
     const id = 'userID';
     if (!this.state.isLoggedIn) {
-      console.log("BASE: ", BASE)
+      // console.log("BASE: ", BASE)
       // fetch(BASE + "/system/sling/info.sessionInfo.json")
       fetch("/system/sling/info.sessionInfo.json")
         .then(response => response.json())
