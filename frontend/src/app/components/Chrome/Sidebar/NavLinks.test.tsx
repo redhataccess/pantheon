@@ -2,7 +2,8 @@ import React from 'react';
 import { NavLinks } from './NavLinks';
 import { NavList, NavItem, NavExpandable } from '@patternfly/react-core';
 import { HashRouter as Router } from 'react-router-dom';
-import "isomorphic-fetch"
+import nock from 'nock'
+import waitUntil from 'async-wait-until'
 
 import { mount, shallow } from 'enzyme';
 import { Link, MemoryRouter, Route, Switch } from 'react-router-dom';
@@ -80,6 +81,36 @@ describe('NavLinks tests', () => {
     wrapper.find('a').simulate('click', { button: 0 });
     expect(wrapper.find('.test')).toBeTruthy();
     expect(wrapper.find('groupId').getElements()).toBeDefined();
+  });
+
+  it('should show New Module when logged in', async (done) => {
+    nock(/.*/, { allowUnmocked: true })
+      // .persist()
+      // .log(console.log)
+      .get('/system/sling/info.sessionInfo.json')
+      .reply(200, {
+           userID: 'demo',
+      });
+    const wrapper = mount(<Router><NavLinks /></Router>)
+    await waitUntil(() => wrapper.find('NavLinks').instance().state['gotUserInfo'] === true)
+    expect(wrapper.find('NavLinks').instance().state['moduleText']).toBe('New Module')
+
+    done()
+  });
+
+  it('should hide New Module when not logged in', async (done) => {
+    nock(/.*/, { allowUnmocked: true })
+      // .persist()
+      // .log(console.log)
+      .get('/system/sling/info.sessionInfo.json')
+      .reply(200, {
+           userID: 'anonymous',
+      });
+    const wrapper = mount(<Router><NavLinks /></Router>)
+    await waitUntil(() => wrapper.find('NavLinks').instance().state['gotUserInfo'] === true)
+    expect(wrapper.find('NavLinks').instance().state['moduleText']).toBe('')
+
+    done()
   });
 
   it('should contain 1 NavItem without authentication', () => {
