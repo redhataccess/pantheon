@@ -1,0 +1,6 @@
+- if title?
+  %div{:id=>@id, :class=>['paragraph', role]}>
+    %strong.heading=title
+    %p<=content
+- else
+  %p<=content

@@ -1,0 +1,18 @@
+%div{:id=>@id, :class=>['quoteblock', role]}
+  - if title?
+    %strong.heading=title
+  %blockquote
+    .content=content
+    - if (attr? :attribution) or (attr? :citetitle)
+      %footer.attribution
+        - if (attr? :attribution) || (attr? :citetitle)
+          - if attr? :attribution
+            &#8212;
+          %cite
+            - if (attr? :attribution) && (attr? :citetitle)
+              %span.attribution=attr :attribution
+              %span.comma><= ", "
+            -elsif (attr? :attribution)
+              %span.attribution=attr :attribution
+            - if attr? :citetitle
+              %span.citetitle=attr :citetitle
