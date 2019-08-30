@@ -1,0 +1,5 @@
+%aside{:id=>@id, :class=>['sidebarblock', role]}
+  - if title?
+    %strong.heading=title
+  .content
+    =content
