@@ -6,8 +6,8 @@ import nock from 'nock'
 import waitUntil from 'async-wait-until'
 
 import { mount, shallow } from 'enzyme';
-import renderer from 'react-test-renderer';
 import { Link, MemoryRouter, Route, Switch } from 'react-router-dom';
+import renderer from 'react-test-renderer';
 
 const Home = () => <div>Pantheon</div>;
 const MockComp = () => (
@@ -24,7 +24,6 @@ const MockComp = () => (
     </NavList>
   </div>
 );
-const MockDenied = () => <div className="denied">Denied</div>;
 
 // export function fetch(input, init) {
 //   console.log("Fake fetch called!");
@@ -133,6 +132,61 @@ describe('NavLinks tests', () => {
     expect(wrapper.find('NavLinks').instance().state['moduleText']).toBe('')
 
     done()
+  });
+
+  it('should contain 1 NavItem without authentication', () => {
+    const renderedComponent = shallow(<NavLinks />);
+
+    const items = renderedComponent.find(NavItem);
+    expect(items).toHaveLength(1);
+  });
+
+
+  it('should be possible to toggle a LinkItem', () => {
+    const wrapper = mount(<Router><NavLinks /></Router>)
+    const expandables = wrapper.find('.pf-c-nav__link')
+
+    expect(expandables).toHaveLength(3)
+    wrapper.unmount();
+  });
+
+  it('should handle state changes for isLoggedIn', () => {
+    const wrapper = shallow(<NavLinks />)
+    const instance = wrapper.instance();
+
+    expect(wrapper.state('isLoggedIn')).toBe(false);
+    wrapper.setState({ 'isLoggedIn': true })
+    expect(wrapper.state('isLoggedIn')).toBe(true);
+
+    wrapper.setState({ 'moduleText': 'New Module' });
+    wrapper.setState({ 'gitText': 'Git Import' });
+    const navGroup1 = wrapper.find('[groupId="grp-1"]');
+    expect(navGroup1.length).toBe(4)
+
+    const navGroup2 = wrapper.find('[groupId="grp-2"]');
+    expect(navGroup2.length).toBe(3)
+
+    wrapper.setState({ 'isAdmin': true })
+    const navGroup3 = wrapper.find('[groupId="grp-3"]');
+    expect(navGroup3.length).toBe(4)
+  });
+
+  it('test browserLink function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.browserLink).toMatchSnapshot();
+  });
+
+  it('test welcomeLink function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.welcomeLink).toMatchSnapshot();
+  });
+
+  it('test webConsole function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.consoleLink).toMatchSnapshot();
   });
 
 });

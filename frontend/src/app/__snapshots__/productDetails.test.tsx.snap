@@ -74,3 +74,11 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
   </div>
 </Fragment>
 `;
+
+exports[`ProductDetails tests test createVersionsPath function 1`] = `[Function]`;
+
+exports[`ProductDetails tests test fetchProductDetails function 1`] = `Array []`;
+
+exports[`ProductDetails tests test handleTextInputChange function 1`] = `undefined`;
+
+exports[`ProductDetails tests test saveVersion function 1`] = `[Function]`;

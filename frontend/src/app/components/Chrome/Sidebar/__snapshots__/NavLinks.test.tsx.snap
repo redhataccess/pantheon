@@ -34,3 +34,9 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
   </NavList>
 </Fragment>
 `;
+
+exports[`NavLinks tests test browserLink function 1`] = `undefined`;
+
+exports[`NavLinks tests test webConsole function 1`] = `undefined`;
+
+exports[`NavLinks tests test welcomeLink function 1`] = `undefined`;

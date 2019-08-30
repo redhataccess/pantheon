@@ -63,3 +63,19 @@ exports[`Product tests should render Product component 1`] = `
   </Bullseye>
 </Fragment>
 `;
+
+exports[`Product tests test checkAuth function 1`] = `[Function]`;
+
+exports[`Product tests test dismissNotification function 1`] = `[Function]`;
+
+exports[`Product tests test getProductsUrl function 1`] = `"/content/products.query.json?nodeType=pant:product&where=[name]=\\"Red Hat Enterprise Linux\\""`;
+
+exports[`Product tests test handleNameInput function 1`] = `undefined`;
+
+exports[`Product tests test handleProductInput function 1`] = `undefined`;
+
+exports[`Product tests test loginRedirect function 1`] = `[Function]`;
+
+exports[`Product tests test productExist function 1`] = `false`;
+
+exports[`Product tests test renderRedirect function 1`] = `[Function]`;

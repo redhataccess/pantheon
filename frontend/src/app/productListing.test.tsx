@@ -4,6 +4,7 @@ import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
 import { DataList, DataListItem, DataListItemCells, DataListItemRow, FormGroup, TextInput } from '@patternfly/react-core';
+import renderer from 'react-test-renderer';
 
  const props = {
    match: exact => true
@@ -55,4 +56,35 @@ describe('ProductListing tests', () => {
      const productListing = mount(<ProductListing {...props} />).matchesElement
      expect(productListing.length === 1)
    });
+
+   
+   it('test getProducts function', () => {
+    const wrapper = renderer.create(<ProductListing />);
+    const inst = wrapper.getInstance();
+    expect(inst.getProducts([{"product1": "product1 name"}])).toMatchSnapshot();
+  });
+
+   it('test getProductsUrl function', () => {
+    const wrapper = renderer.create(<ProductListing />);
+    const inst = wrapper.getInstance();
+    expect(inst.getProductsUrl("/content/products.query.json?nodeType=pant:product&orderby=name")).toMatchSnapshot();
+  });
+   
+   it('test setInput function', () => {
+    const wrapper = renderer.create(<ProductListing />);
+    const inst = wrapper.getInstance();
+    expect(inst.setInput("test input")).toMatchSnapshot();
+  });
+
+   it('test loginRedirect function', () => {
+    const wrapper = renderer.create(<ProductListing />);
+    const inst = wrapper.getInstance();
+    expect(inst.loginRedirect).toMatchSnapshot();
+  });
+ 
+  it('test checkAuth function', () => {
+    const wrapper = renderer.create(<ProductListing />);
+    const inst = wrapper.getInstance();
+    expect(inst.checkAuth).toMatchSnapshot();
+  });
 });
