@@ -25,35 +25,7 @@ const MockComp = () => (
   </div>
 );
 
-// export function fetch(input, init) {
-//   console.log("Fake fetch called!");
-//   return Promise.resolve({
-//     json: () => Promise.resolve({ 'userID': 'demo' })
-//   })
-// }
-
-// const mockResponse = (status, statusText, response) => {
-//   return new Response(response, {
-//     status: status,
-//     statusText: statusText,
-//     headers: {
-//       'Content-type': 'application/json'
-//     }
-//   });
-// };
-
-
 describe('NavLinks tests', () => {
-  beforeAll(() => {
-    nock(/.*/)
-      .persist()
-      // .log(console.log)
-      .get('/system/sling/info.sessionInfo.json')
-      .reply(200, {
-           userID: 'demo',
-      });
-  });
-
   test('should render NavLinks component', () => {
     const view = shallow(<NavLinks />);
     expect(view).toMatchSnapshot();
@@ -112,6 +84,13 @@ describe('NavLinks tests', () => {
   });
 
   it('should show New Module when logged in', async (done) => {
+    nock(/.*/, { allowUnmocked: true })
+      // .persist()
+      // .log(console.log)
+      .get('/system/sling/info.sessionInfo.json')
+      .reply(200, {
+           userID: 'demo',
+      });
     const wrapper = mount(<Router><NavLinks /></Router>)
     await waitUntil(() => wrapper.find('NavLinks').instance().state['gotUserInfo'] === true)
     expect(wrapper.find('NavLinks').instance().state['moduleText']).toBe('New Module')
@@ -120,9 +99,9 @@ describe('NavLinks tests', () => {
   });
 
   it('should hide New Module when not logged in', async (done) => {
-    nock.cleanAll()
-    nock(/.*/)
-      .persist()
+    nock(/.*/, { allowUnmocked: true })
+      // .persist()
+      // .log(console.log)
       .get('/system/sling/info.sessionInfo.json')
       .reply(200, {
            userID: 'anonymous',

@@ -48,6 +48,7 @@ class NavLinks extends Component {
             this.setState({ isAdmin: true })
           }
         })
+        .catch(() => {})
     }
     return (
       <React.Fragment>
