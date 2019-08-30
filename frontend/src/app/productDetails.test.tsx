@@ -4,6 +4,7 @@ import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
 import { Breadcrumb, Button, Form, FormGroup, Level, LevelItem, TextContent, TextInput, Text } from '@patternfly/react-core';
+import renderer from 'react-test-renderer';
 
 const props = {
   productName: "Red Hat Enterprise Linux"
@@ -82,4 +83,29 @@ describe('ProductDetails tests', () => {
     button.find('button').simulate('click');
     expect(mockCallBack.mock.calls.length).toEqual(1);
   });
+
+  it('test fetchProductDetails function', () => {
+    const wrapper = renderer.create(<ProductDetails {...props} />);
+    const inst = wrapper.getInstance();
+    expect(inst.fetchProductDetails([])).toMatchSnapshot();
+  });
+  
+  it('test handleTextInputChange function', () => {
+    const wrapper = renderer.create(<ProductDetails {...props} />);
+    const inst = wrapper.getInstance();
+    expect(inst.handleTextInputChange("1.1")).toMatchSnapshot();
+  });
+  
+  it('test saveVersion function', () => {
+    const wrapper = renderer.create(<ProductDetails {...props} />);
+    const inst = wrapper.getInstance();
+    expect(inst.saveVersion).toMatchSnapshot();
+  });
+
+  it('test createVersionsPath function', () => {
+    const wrapper = renderer.create(<ProductDetails {...props} />);
+    const inst = wrapper.getInstance();
+    expect(inst.createVersionsPath).toMatchSnapshot();
+  });
+
 });
