@@ -2,8 +2,6 @@ import React from 'react';
 import { NavLinks } from './NavLinks';
 import { NavList, NavItem, NavExpandable } from '@patternfly/react-core';
 import { HashRouter as Router } from 'react-router-dom';
-// import nock from 'nock'
-// import waitUntil from 'async-wait-until'
 
 import { mount, shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
@@ -39,42 +37,6 @@ describe('NavLinks tests', () => {
     const expandable = wrapper.find(NavExpandable);
     expect(expandable.exists()).toBe(true)
   });
-
-  // it('should show New Module when logged in', async (done) => {
-  //   jest.setTimeout(10000);
-  //   nock(/.*/, { allowUnmocked: true })
-  //     // .persist()
-  //     .log(console.log)
-  //     .get('/system/sling/info.sessionInfo.json')
-  //     .reply(200, {
-  //       userID: 'demo',
-  //     });
-  //   const wrapper = mount(<Router><NavLinks /></Router>)
-  //   const gotUserInfoKey = "gotUserInfo"
-  //   const moduleTextKey = "moduleText"
-  //   await waitUntil(() => wrapper.find('NavLinks').instance().state[gotUserInfoKey] === true)
-  //   expect(wrapper.find('NavLinks').instance().state[moduleTextKey]).toBe('New Module')
-
-  //   done()
-  // });
-
-  // it('should hide New Module when not logged in', async (done) => {
-  //   jest.setTimeout(10000);
-  //   nock(/.*/, { allowUnmocked: true })
-  //     // .persist()
-  //     .log(console.log)
-  //     .get('/system/sling/info.sessionInfo.json')
-  //     .reply(200, {
-  //       userID: 'anonymous',
-  //     });
-  //   const wrapper = mount(<Router><NavLinks /></Router>)
-  //   const gotUserInfoKey = "gotUserInfo"
-  //   const moduleTextKey = "moduleText"
-  //   await waitUntil(() => wrapper.find('NavLinks').instance().state[gotUserInfoKey] === true)
-  //   expect(wrapper.find('NavLinks').instance().state[moduleTextKey]).toBe('')
-
-  //   done()
-  // });
 
   it('should contain 1 NavItem without authentication', () => {
     const wrapper = shallow(<NavLinks />);
@@ -207,5 +169,31 @@ describe('NavLinks tests', () => {
     wrapper.setState({ 'isAdmin': true })
     wrapper.find(NavItem).at(5).simulate('click');
     sinon.assert.calledOnce(spy);
+  });
+
+  it('test fetch api call', async () => {
+    const testUser = {
+      "userID": "demo"
+    }
+    window.fetch = jest.fn().mockImplementation(async () => {
+      return new Promise((resolve, reject) => {
+        resolve({
+          ok: true,
+          status: 200,
+          json: () => new Promise((resolve, reject) => {
+            resolve({
+              "getUserInfo": true,
+              "isAdmin": false,
+              "isLoggedIn": true,
+            });
+          })
+        });
+      });
+      const wrapper = await shallow(<NavLinks />)
+      await wrapper.update()
+      expect(wrapper.state('getUserInfo')).toBe(true)
+      expect(wrapper.state('isLoggedIn')).toBe(true)
+      expect(wrapper.state('isAdmin')).toBe(false)
+    })
   });
 });
