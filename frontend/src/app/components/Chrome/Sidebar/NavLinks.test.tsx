@@ -2,22 +2,14 @@ import React from 'react';
 import { NavLinks } from './NavLinks';
 import { NavList, NavItem, NavExpandable } from '@patternfly/react-core';
 import { HashRouter as Router } from 'react-router-dom';
-import nock from 'nock'
-import waitUntil from 'async-wait-until'
+// import nock from 'nock'
+// import waitUntil from 'async-wait-until'
 
 import { mount, shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
 import renderer from 'react-test-renderer';
 import sinon from "sinon";
 
-function mockFetch(data) {
-  return jest.fn().mockImplementation(() =>
-    Promise.resolve({
-      ok: true,
-      json: () => data
-    })
-  );
-}
 describe('NavLinks tests', () => {
   test('should render NavLinks component', () => {
     const view = shallow(<NavLinks />);
@@ -183,7 +175,6 @@ describe('NavLinks tests', () => {
     render();
     expect(render).toHaveBeenCalled();
   });
-
 
   test('consoleLink() click event', () => {
     const wrapper = shallow(<NavLinks />);
