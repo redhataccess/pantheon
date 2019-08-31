@@ -28,30 +28,10 @@ class NavLinks extends Component {
   }
 
   public render() {
-    const id = 'userID';
     if (!this.state.isLoggedIn) {
       // console.log("BASE: ", BASE)
       // fetch(BASE + "/system/sling/info.sessionInfo.json")
-      fetch("/system/sling/info.sessionInfo.json")
-        .then(response => response.json())
-        .then(responseJSON => {
-          this.setState({ gotUserInfo: true })
-          if (responseJSON[id] !== 'anonymous') {
-
-            this.setState({ moduleText: 'New Module' })
-            this.setState({ productText: 'New Product' })
-            this.setState({ productsText: 'All Products' })
-            this.setState({ gitText: 'Git Import' })
-            this.setState({ browserText: 'Content Browser' })
-            this.setState({ slingHomeText: 'Sling Welcome' })
-            this.setState({ consoleText: 'Web Console' })
-            this.setState({ isLoggedIn: true })
-          }
-          if (responseJSON[id] === 'admin') {
-            this.setState({ isAdmin: true })
-          }
-        })
-        .catch(() => { })
+      this.checkAuth();
     }
     return (
       <React.Fragment>
@@ -90,6 +70,30 @@ class NavLinks extends Component {
       </React.Fragment>
     );
   }
+
+  private checkAuth = () => {
+    const id = 'userID';
+    fetch("/system/sling/info.sessionInfo.json")
+        .then(response => response.json())
+        .then(responseJSON => {
+          this.setState({ gotUserInfo: true })
+          if (responseJSON[id] !== 'anonymous') {
+
+            this.setState({ moduleText: 'New Module' })
+            this.setState({ productText: 'New Product' })
+            this.setState({ productsText: 'All Products' })
+            this.setState({ gitText: 'Git Import' })
+            this.setState({ browserText: 'Content Browser' })
+            this.setState({ slingHomeText: 'Sling Welcome' })
+            this.setState({ consoleText: 'Web Console' })
+            this.setState({ isLoggedIn: true })
+          }
+          if (responseJSON[id] === 'admin') {
+            this.setState({ isAdmin: true })
+          }
+        })
+        .catch(() => { })
+  };
 
   private browserLink = () => (event: any) => {
     return window.open("/bin/browser.html");

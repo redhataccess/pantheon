@@ -6,24 +6,8 @@ import nock from 'nock'
 import waitUntil from 'async-wait-until'
 
 import { mount, shallow } from 'enzyme';
-import { Link, MemoryRouter, Route, Switch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import renderer from 'react-test-renderer';
-
-const Home = () => <div>Pantheon</div>;
-const MockComp = () => (
-  <div className="test">
-    <NavList>
-      <NavExpandable title="Modules" isExpanded={true}>
-        <NavItem groupId="grp-1" itemId="grp-1_itm-1" isActive={true}>
-          <Link to='/search' data-testid="navLink_search">Search</Link>
-        </NavItem>
-        <NavItem groupId="grp-1" itemId="grp-1_itm-2" isActive={false}>
-          <Link to='/module' data-testid="navLink_module_protected">New Module</Link>
-        </NavItem>
-      </NavExpandable>
-    </NavList>
-  </div>
-);
 
 describe('NavLinks tests', () => {
   test('should render NavLinks component', () => {
@@ -55,39 +39,11 @@ describe('NavLinks tests', () => {
     expect(expandable.exists()).toBe(true)
   });
 
-  it("contains a /search link", () => {
-    const comp = (
-      <Link to="/search">
-        Search
-        </Link>
-    );
-    const wrapper = shallow(comp);
-    // Received string: Search
-    expect(wrapper.instance().props.children).toHaveLength(6)
-    expect(wrapper.instance().props.children).toContain('Search')
-  });
-
-  test('Clicking a link will render component associated with path', () => {
-    const wrapper = mount(
-      <MemoryRouter>
-        <div>
-          <Link to="/pantheon" />
-          <Switch>
-            <Route path="/search" component={MockComp} />
-            <Route path="/" component={Home} />
-          </Switch>
-        </div>
-      </MemoryRouter>
-    );
-    wrapper.find('a').simulate('click', { button: 0 });
-    expect(wrapper.find('.test')).toBeTruthy();
-    expect(wrapper.find('groupId').getElements()).toBeDefined();
-  });
-
   // it('should show New Module when logged in', async (done) => {
+  //   jest.setTimeout(10000);
   //   nock(/.*/, { allowUnmocked: true })
   //     // .persist()
-  //     // .log(console.log)
+  //     .log(console.log)
   //     .get('/system/sling/info.sessionInfo.json')
   //     .reply(200, {
   //       userID: 'demo',
@@ -102,9 +58,10 @@ describe('NavLinks tests', () => {
   // });
 
   // it('should hide New Module when not logged in', async (done) => {
+  //   jest.setTimeout(10000);
   //   nock(/.*/, { allowUnmocked: true })
   //     // .persist()
-  //     // .log(console.log)
+  //     .log(console.log)
   //     .get('/system/sling/info.sessionInfo.json')
   //     .reply(200, {
   //       userID: 'anonymous',
@@ -119,9 +76,9 @@ describe('NavLinks tests', () => {
   // });
 
   it('should contain 1 NavItem without authentication', () => {
-    const renderedComponent = shallow(<NavLinks />);
+    const wrapper = shallow(<NavLinks />);
 
-    const items = renderedComponent.find(NavItem);
+    const items = wrapper.find(NavItem);
     expect(items).toHaveLength(1);
   });
 
@@ -139,7 +96,6 @@ describe('NavLinks tests', () => {
 
     const navGroup2 = wrapper.find('[groupId="grp-2"]');
     expect(navGroup2.length).toBe(3)
-
   });
 
   it('should handle state changes for isAdmin', () => {
@@ -151,6 +107,7 @@ describe('NavLinks tests', () => {
 
     expect(wrapper.state('isAdmin')).toBe(false)
     wrapper.setState({ 'isAdmin': true })
+    expect(wrapper.state('isAdmin')).toBe(true)
     const navGroup3 = wrapper.find('[groupId="grp-3"]');
     expect(navGroup3.length).toBe(4)
   });
@@ -173,4 +130,42 @@ describe('NavLinks tests', () => {
     expect(inst.consoleLink).toMatchSnapshot();
   });
 
+  it('test render function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.render).toMatchSnapshot();
+  });
+
+  it('test checkAuth function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.checkAuth).toMatchSnapshot();
+  });
+
+  it('should run browserLink code', () => {
+    jest.mock('./NavLinks', () => {
+      // Require the original module to not be mocked...
+      const originalModule = jest.requireActual('./NavLinks');
+
+      return {
+        __esModule: true, // Use it when dealing with esModules
+        ...originalModule,
+        browserLink: jest.fn().mockReturnValue('window.open("/bin/browser.html")'),
+        checkAuth: jest.fn().mockReturnValue(true),
+        consoleLink: jest.fn().mockReturnValue('window.open("/system/console/bundles.html")'),
+        welcomeLink: jest.fn().mockReturnValue('window.open("/starter/index.html")'),
+      };
+    });
+
+    const checkAuth = require('./NavLinks').checkAuth;
+    const browserLink = require('./NavLinks').browserLink;
+    expect(checkAuth()).toBe(true);
+    expect(browserLink()).toBe('window.open("/bin/browser.html")')
+  });
+
+  it('calls render function', () => {
+    const render = jest.fn();
+    render();
+    expect(render).toHaveBeenCalled();
+  });
 });
