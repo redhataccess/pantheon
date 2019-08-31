@@ -8,7 +8,16 @@ import waitUntil from 'async-wait-until'
 import { mount, shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
 import renderer from 'react-test-renderer';
+import sinon from "sinon";
 
+function mockFetch(data) {
+  return jest.fn().mockImplementation(() =>
+    Promise.resolve({
+      ok: true,
+      json: () => data
+    })
+  );
+}
 describe('NavLinks tests', () => {
   test('should render NavLinks component', () => {
     const view = shallow(<NavLinks />);
@@ -175,4 +184,37 @@ describe('NavLinks tests', () => {
     expect(render).toHaveBeenCalled();
   });
 
+
+  test('consoleLink() click event', () => {
+    const wrapper = shallow(<NavLinks />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'consoleLink');
+
+    wrapper.setState({ 'isLoggedIn': true })
+    wrapper.setState({ 'isAdmin': true })
+    wrapper.find(NavItem).at(7).simulate('click');
+    sinon.assert.calledOnce(spy);
+  });
+
+  test('browserLink() click event', () => {
+    const wrapper = shallow(<NavLinks />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'browserLink');
+
+    wrapper.setState({ 'isLoggedIn': true })
+    wrapper.setState({ 'isAdmin': true })
+    wrapper.find(NavItem).at(6).simulate('click');
+    sinon.assert.calledOnce(spy);
+  });
+
+  test('welcomeLink() click event', () => {
+    const wrapper = shallow(<NavLinks />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'welcomeLink');
+
+    wrapper.setState({ 'isLoggedIn': true })
+    wrapper.setState({ 'isAdmin': true })
+    wrapper.find(NavItem).at(5).simulate('click');
+    sinon.assert.calledOnce(spy);
+  });
 });

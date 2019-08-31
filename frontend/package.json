@@ -69,6 +69,7 @@
   "dependencies": {
     "@patternfly/react-core": "^3.16.10",
     "@patternfly/react-icons": "^3.9.1",
-    "@testing-library/react": "^9.1.3"
+    "@testing-library/react": "^9.1.3",
+    "sinon": "^7.4.1"
   }
 }
