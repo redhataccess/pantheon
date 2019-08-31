@@ -142,7 +142,7 @@ describe('NavLinks tests', () => {
     expect(inst.checkAuth).toMatchSnapshot();
   });
 
-  it('should run browserLink code', () => {
+  it('test Admin Panel links', () => {
     jest.mock('./NavLinks', () => {
       // Require the original module to not be mocked...
       const originalModule = jest.requireActual('./NavLinks');
@@ -159,8 +159,14 @@ describe('NavLinks tests', () => {
 
     const checkAuth = require('./NavLinks').checkAuth;
     const browserLink = require('./NavLinks').browserLink;
+    const consoleLink = require('./NavLinks').consoleLink;
+    const welcomeLink = require('./NavLinks').welcomeLink;
+
     expect(checkAuth()).toBe(true);
     expect(browserLink()).toBe('window.open("/bin/browser.html")')
+    expect(consoleLink()).toBe('window.open("/system/console/bundles.html")')
+    expect(welcomeLink()).toBe('window.open("/starter/index.html")')
+    jest.resetAllMocks()
   });
 
   it('calls render function', () => {
@@ -168,4 +174,5 @@ describe('NavLinks tests', () => {
     render();
     expect(render).toHaveBeenCalled();
   });
+
 });
