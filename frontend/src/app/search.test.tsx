@@ -74,4 +74,64 @@ describe('Search tests', () => {
     const inst = wrapper.getInstance();
     expect(inst.cancelDeleteOperation).toMatchSnapshot();
   });
+
+  it('test sortByUploadTime function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.sortByUploadTime).toMatchSnapshot();
+  });
+
+  it('test sortByDescription function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.sortByDescription).toMatchSnapshot();
+  });
+
+  it('test sortByName function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.sortByName).toMatchSnapshot();
+  });
+
+  it('test dismissNotification function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.dismissNotification).toMatchSnapshot();
+  });
+
+  it('test doSearch function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.doSearch).toMatchSnapshot();
+  });
+
+  it('test newSearch function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.newSearch).toMatchSnapshot();
+  });
+
+  it('test delete function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.delete).toMatchSnapshot();
+  });
+
+  it('test handleDeleteCheckboxChange function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.handleDeleteCheckboxChange).toMatchSnapshot();
+  });
+
+  it('test handleSelectAll function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.handleSelectAll).toMatchSnapshot();
+  });
+
+  it('test setInput function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.setInput).toMatchSnapshot();
+  });
 });

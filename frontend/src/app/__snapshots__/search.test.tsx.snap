@@ -190,6 +190,26 @@ exports[`Search tests test cancelDeleteOperation function 1`] = `undefined`;
 
 exports[`Search tests test confirmDeleteOperation function 1`] = `undefined`;
 
+exports[`Search tests test delete function 1`] = `undefined`;
+
+exports[`Search tests test dismissNotification function 1`] = `undefined`;
+
+exports[`Search tests test doSearch function 1`] = `undefined`;
+
 exports[`Search tests test getRows function 1`] = `undefined`;
 
+exports[`Search tests test handleDeleteCheckboxChange function 1`] = `undefined`;
+
+exports[`Search tests test handleSelectAll function 1`] = `undefined`;
+
 exports[`Search tests test hideAlertOne function 1`] = `undefined`;
+
+exports[`Search tests test newSearch function 1`] = `undefined`;
+
+exports[`Search tests test setInput function 1`] = `undefined`;
+
+exports[`Search tests test sortByDescription function 1`] = `undefined`;
+
+exports[`Search tests test sortByName function 1`] = `undefined`;
+
+exports[`Search tests test sortByUploadTime function 1`] = `undefined`;
