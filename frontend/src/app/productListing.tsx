@@ -16,9 +16,7 @@ class ProductListing extends Component {
     isProductDetails: false,
     loggedinStatus: false,
     login: false,
-    productDescription: '',
     productName: '',
-    productUrl: '',
     redirect: false,
     results: []
   };
@@ -190,7 +188,6 @@ class ProductListing extends Component {
         initialLoad: false,
         isProductDetails: !this.state.isProductDetails,
         productName: data[nameKey],
-        productUrl: data[urlKey]
       });
     };
 

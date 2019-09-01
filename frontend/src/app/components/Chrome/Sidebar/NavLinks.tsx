@@ -70,17 +70,17 @@ class NavLinks extends Component {
 
   private checkAuth = () => {
     const id = 'userID';
-    // console.log("BASE: ", BASE)
-    // fetch(BASE + "/system/sling/info.sessionInfo.json")
     fetch("/system/sling/info.sessionInfo.json")
       .then(response => response.json())
       .then(responseJSON => {
         this.setState({ gotUserInfo: true })
-        if (responseJSON[id] !== 'anonymous') {
-          this.setState({ isLoggedIn: true })
-        }
-        if (responseJSON[id] === 'admin') {
-          this.setState({ isAdmin: true })
+        if (responseJSON[id]) {
+          if (responseJSON[id] !== 'anonymous') {
+            this.setState({ isLoggedIn: true })
+          }
+          if (responseJSON[id] === 'admin') {
+            this.setState({ isAdmin: true })
+          }
         }
       })
       .catch(() => { })

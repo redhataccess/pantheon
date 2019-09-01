@@ -87,4 +87,13 @@ describe('ProductListing tests', () => {
     const inst = wrapper.getInstance();
     expect(inst.checkAuth).toMatchSnapshot();
   });
+
+  it('should handle state changes for login', () => {
+    const wrapper = shallow(<ProductListing />)
+
+    expect(wrapper.state('login')).toBe(false)
+    wrapper.setState({ 'login': true })
+    expect(wrapper.state('login')).toBe(true)
+  });
+
 });

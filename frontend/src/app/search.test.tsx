@@ -6,6 +6,7 @@ import { HashRouter as Router } from 'react-router-dom';
 import { mount, shallow } from 'enzyme';
 import { DataList, Button, TextInput } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
+import sinon from "sinon";
 
 describe('Search tests', () => {
   test('should render default Search component', () => {
@@ -133,5 +134,15 @@ describe('Search tests', () => {
     const wrapper = renderer.create(<Router><Search /></Router>);
     const inst = wrapper.getInstance();
     expect(inst.setInput).toMatchSnapshot();
+  });
+
+  test('newSearch() click event', () => {
+    const wrapper = shallow(<Search />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'newSearch');
+
+    wrapper.setState({ "iput": "test" })
+    wrapper.find(Button).simulate('click');
+    sinon.assert.called(spy);
   });
 });

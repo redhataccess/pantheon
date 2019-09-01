@@ -5,6 +5,7 @@ import "isomorphic-fetch"
 import { mount, shallow } from 'enzyme';
 import { Breadcrumb, Button, Form, FormGroup, Level, LevelItem, TextContent, TextInput, Text } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
+import sinon from 'sinon'
 
 const props = {
   productName: "Red Hat Enterprise Linux"
@@ -108,4 +109,13 @@ describe('ProductDetails tests', () => {
     expect(inst.createVersionsPath).toMatchSnapshot();
   });
 
+  test('newSearch() click event', () => {
+    const wrapper = shallow(<ProductDetails {...props} />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'saveVersion');
+
+    wrapper.setState({ "newVersion": "1.1" })
+    wrapper.find(Button).simulate('click');
+    sinon.assert.called(spy);
+  });
 });

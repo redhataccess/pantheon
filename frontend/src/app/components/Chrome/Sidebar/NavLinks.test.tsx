@@ -7,6 +7,7 @@ import { mount, shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
 import renderer from 'react-test-renderer';
 import sinon from "sinon";
+import { resolve } from 'dns';
 
 describe('NavLinks tests', () => {
   test('should render NavLinks component', () => {
@@ -172,9 +173,6 @@ describe('NavLinks tests', () => {
   });
 
   it('test fetch api call', async () => {
-    const testUser = {
-      "userID": "demo"
-    }
     window.fetch = jest.fn().mockImplementation(async () => {
       return new Promise((resolve, reject) => {
         resolve({
