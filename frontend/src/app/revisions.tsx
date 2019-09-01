@@ -14,7 +14,12 @@ import BlankImage from '@app/images/blank.jpg';
   }
 
 class Revisions extends Component<IProps> {
+
+    public draft= [{ "icon": BlankImage, "revision": "", "publishedState": 'Draft', "updatedDate": 'dummy date', "firstButtonType": 'primary',"secondButtonType": 'secondary', "firstButtonText": 'Publish',"secondButtonText": 'Preview',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
+    public release= [{ "icon": CheckImage, "revision": "", "publishedState": 'Released', "updatedDate": 'dummy date', "firstButtonType": 'secondary',"secondButtonType": 'primary', "firstButtonText": 'Unpublish',"secondButtonText": 'View',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
+
     public state = {
+        initialLoad: true,
         isArchiveDropDownOpen: false,
         isArchiveSelect: false,
         isDropDownOpen: false,
@@ -22,17 +27,13 @@ class Revisions extends Component<IProps> {
         isOpen: false,
         isRowToggle: false,
         login: false,
+        results: [this.draft,this.release]
     };
 
-
-    public draft= [{ "icon": BlankImage, "revision": 'draft', "publishedState": 'Draft', "updatedDate": 'dummy date', "firstButtonType": 'primary',"secondButtonType": 'secondary', "firstButtonText": 'Publish',"secondButtonText": 'Preview',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
-    public release= [{ "icon": CheckImage, "revision": 'released', "publishedState": 'Released', "updatedDate": 'dummy date', "firstButtonType": 'secondary',"secondButtonType": 'primary', "firstButtonText": 'Unpublish',"secondButtonText": 'View',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
-
     public render() {
-    const results= [this.draft,this.release]
-
         return (  
             <React.Fragment>
+                {this.state.initialLoad && this.fetchRevisions()}
                 <Card>
                     <div>
                         <DataList aria-label="Simple data list example">
@@ -64,7 +65,7 @@ class Revisions extends Component<IProps> {
                                         ]}
                                     />
                                 </DataListItemRow>
-                                {results.map(type=>(
+                                {this.state.results.map(type=>(
                                 type.map(data => (
                                 <DataListContent
                                     aria-label="Secondary Content Details"
@@ -73,8 +74,8 @@ class Revisions extends Component<IProps> {
                                     noPadding={true}
                                 >                                   
                                 {/* this is the data list for the inner row */}
+                                { data["revision"]!=="" && (
                                 <DataList aria-label="Simple data list example">
-                                    {console.log('details:',data["revision"],':',data["isDropdownOpen"])} 
                                     <DataListItem aria-labelledby="simple-item1" isExpanded={data["isDropdownOpen"]}>
                                         <DataListItemRow>
                                             <DataListToggle
@@ -145,7 +146,7 @@ class Revisions extends Component<IProps> {
                                             </Grid>
                                         </DataListContent>
                                         </DataListItem>
-                                    </DataList>        
+                                </DataList> )}       
                                 </DataListContent>
                                 ))
                             ) )}
@@ -156,6 +157,47 @@ class Revisions extends Component<IProps> {
             </React.Fragment>
 
         );
+    }
+
+    private fetchRevisions = () => {
+            fetch("/modules/nana.2.json?")
+            .then(response => response.json())
+            .then(responseJSON => {
+                this.setState(updateState => {    
+                let releasedTag = responseJSON["en_US"]["released"];
+                let draftTag = responseJSON["en_US"]["draft"];
+        
+                console.log("uuid v0: ",responseJSON["en_US"]["v0"]["jcr:uuid"])
+                if(responseJSON["en_US"]["v0"]["jcr:uuid"]===draftTag){
+                    this.draft[0]["revision"] = "Version 0";
+                }
+                    
+                if(responseJSON["en_US"]["v0"]["jcr:uuid"]===releasedTag){
+                    this.release[0]["revision"] = "Version 0";
+                }
+                    
+                let objectKeys = Object.keys(responseJSON["en_US"]);
+    
+                for(var key in objectKeys){
+                    if(objectKeys[key]==="jcr:primaryType"){
+                        break;
+                    }
+                    else{
+                        if(responseJSON["en_US"][objectKeys[key]]["jcr:uuid"]===draftTag){
+                            this.draft[0]["revision"] = "Version "+objectKeys[key];
+                        }
+                        if(responseJSON["en_US"][objectKeys[key]]["jcr:uuid"]===releasedTag){
+                            this.release[0]["revision"] = "Version "+objectKeys[key];
+                        }                            
+                    }
+                        
+                }
+                return {
+                    initialLoad: false,
+                    results: [this.draft,this.release] 
+                }        
+            })
+        })    
     }
 
     private onArchiveSelect = event => {
@@ -172,12 +214,11 @@ class Revisions extends Component<IProps> {
       };
 
       private onExpandableToggle = (data) => {
-        console.log("complete data: ",data)
+        // console.log("complete data: ",data)
         data["isDropdownOpen"] = !data["isDropdownOpen"];
-        console.log('data id:',data["revision"],' data open status: ', data["isDropdownOpen"])
+        // console.log('data id:',data["revision"],' data open status: ', data["isDropdownOpen"])
         this.setState({
             isRowToggle: this.state.isRowToggle
-        },()=>{
         });
       }
 
