@@ -1,0 +1,7 @@
+#rhdocs-preamble.preamble
+  %section.sectionbody
+    =content
+  - if (attr? :toc) && (attr? 'toc-placement', 'preamble')
+    %nav#rhdocs-toc{:class=>(attr 'toc-class', 'toc')}
+      %h2#rhdocs-toctitle=(attr 'toc-title')
+      =converter.convert @document, 'outline'

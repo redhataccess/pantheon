@@ -5,12 +5,8 @@ exports[`Search tests should render default Search component 1`] = `
   <div>
     <div>
       <FormGroup
-        className=""
         fieldId="search"
         helperText="Search is case sensitive. An empty search will show all modules."
-        isInline={false}
-        isRequired={false}
-        isValid={true}
         label="Search Query"
       >
         <div
@@ -30,18 +26,7 @@ exports[`Search tests should render default Search component 1`] = `
             value=""
           />
           <Button
-            aria-label={null}
-            className=""
-            component="button"
-            isActive={false}
-            isBlock={false}
-            isDisabled={false}
-            isFocus={false}
-            isHover={false}
-            isInline={false}
             onClick={[Function]}
-            type="button"
-            variant="primary"
           >
             Search
           </Button>
@@ -63,27 +48,18 @@ exports[`Search tests should render default Search component 1`] = `
         />
       </div>
       <DataList
-        aria-label="Simple data list example"
-        className=""
+        aria-label="Simple data list"
       >
         <DataListItem
           aria-labelledby="simple-item1"
-          className=""
-          isExpanded={false}
         >
           <DataListItemRow
-            className=""
             id="data-rows-header"
           >
             <DataListItemCells
-              className=""
               dataListCells={
                 Array [
                   <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
                     width={2}
                   >
                     <button
@@ -96,10 +72,6 @@ exports[`Search tests should render default Search component 1`] = `
                     </button>
                   </DataListCell>,
                   <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
                     width={2}
                   >
                     <button
@@ -111,13 +83,7 @@ exports[`Search tests should render default Search component 1`] = `
                       Description
                     </button>
                   </DataListCell>,
-                  <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
-                    width={1}
-                  >
+                  <DataListCell>
                     <span
                       className="sp-prop-nosort"
                       id="span-source-type"
@@ -125,13 +91,7 @@ exports[`Search tests should render default Search component 1`] = `
                       Source Type
                     </span>
                   </DataListCell>,
-                  <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
-                    width={1}
-                  >
+                  <DataListCell>
                     <span
                       className="sp-prop-nosort"
                       id="span-source-name"
@@ -139,13 +99,7 @@ exports[`Search tests should render default Search component 1`] = `
                       Source Name
                     </span>
                   </DataListCell>,
-                  <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
-                    width={1}
-                  >
+                  <DataListCell>
                     <button
                       aria-label="sort column by upload time"
                       className="sp-prop"
@@ -160,22 +114,15 @@ exports[`Search tests should render default Search component 1`] = `
             />
           </DataListItemRow>
           <DataListItemRow
-            className=""
             id="data-rows"
           />
           <DataListItemRow
-            className=""
             id="data-rows"
           >
             <DataListItemCells
-              className=""
               dataListCells={
                 Array [
                   <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
                     width={2}
                   >
                     <span>
@@ -183,43 +130,21 @@ exports[`Search tests should render default Search component 1`] = `
                     </span>
                   </DataListCell>,
                   <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
                     width={2}
                   >
                     <span>
                       No items found to be displayed
                     </span>
                   </DataListCell>,
-                  <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
-                    width={1}
-                  >
+                  <DataListCell>
                     <span />
                   </DataListCell>,
-                  <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
-                    width={1}
-                  >
+                  <DataListCell>
                     <span>
                       
                     </span>
                   </DataListCell>,
-                  <DataListCell
-                    alignRight={false}
-                    className=""
-                    isFilled={true}
-                    isIcon={false}
-                    width={1}
-                  >
+                  <DataListCell>
                     <span>
                       
                     </span>
@@ -231,7 +156,6 @@ exports[`Search tests should render default Search component 1`] = `
             />
           </DataListItemRow>
           <DataListItemRow
-            className=""
             id="data-rows"
           />
         </DataListItem>
@@ -250,6 +174,7 @@ exports[`Search tests should render default Search component 1`] = `
           perPageLimit={25}
           showDropdownOptions={false}
         />
+        <BuildInfo />
       </div>
       <div
         className="alert"
@@ -258,3 +183,33 @@ exports[`Search tests should render default Search component 1`] = `
   </div>
 </Fragment>
 `;
+
+exports[`Search tests test buildSearchUrl function 1`] = `undefined`;
+
+exports[`Search tests test cancelDeleteOperation function 1`] = `undefined`;
+
+exports[`Search tests test confirmDeleteOperation function 1`] = `undefined`;
+
+exports[`Search tests test delete function 1`] = `undefined`;
+
+exports[`Search tests test dismissNotification function 1`] = `undefined`;
+
+exports[`Search tests test doSearch function 1`] = `undefined`;
+
+exports[`Search tests test getRows function 1`] = `undefined`;
+
+exports[`Search tests test handleDeleteCheckboxChange function 1`] = `undefined`;
+
+exports[`Search tests test handleSelectAll function 1`] = `undefined`;
+
+exports[`Search tests test hideAlertOne function 1`] = `undefined`;
+
+exports[`Search tests test newSearch function 1`] = `undefined`;
+
+exports[`Search tests test setInput function 1`] = `undefined`;
+
+exports[`Search tests test sortByDescription function 1`] = `undefined`;
+
+exports[`Search tests test sortByName function 1`] = `undefined`;
+
+exports[`Search tests test sortByUploadTime function 1`] = `undefined`;

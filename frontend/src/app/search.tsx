@@ -6,6 +6,7 @@ import {
   Level, LevelItem
 } from '@patternfly/react-core';
 import '@app/app.css';
+import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination';
 import { ModuleDisplay } from '@app/moduleDisplay';
 
@@ -19,7 +20,10 @@ export default class Search extends Component {
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
     confirmDelete: false,
     countOfCheckedBoxes: 0,
+<<<<<<< HEAD
     results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "description":"","sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
+=======
+>>>>>>> master
     deleteButtonVisible: false,
     deleteState: '',
     initialLoad: true,
@@ -34,6 +38,7 @@ export default class Search extends Component {
     pageLimit: 25,
     redirect: false,
     redirectLocation: '',
+    results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
     showDropdownOptions: true,
     sortKey: '',
     searchOption: 'module',
@@ -83,8 +88,6 @@ export default class Search extends Component {
               </div>
             </FormGroup>
             <div className="notification-container">
-              { console.log("this.state.results: ") }
-            { console.log(this.state.results) }
               <Pagination
                 handleMoveLeft={this.updatePageCounter("L")}
                 handleMoveRight={this.updatePageCounter("R")}
@@ -97,13 +100,14 @@ export default class Search extends Component {
                 bottom={false}
               />
             </div>
-            <DataList aria-label="Simple data list example">
+            <DataList aria-label="Simple data list" >
               <DataListItem aria-labelledby="simple-item1">
                 <DataListItemRow id="data-rows-header" >
                   {this.state.loggedinStatus && !this.state.isEmptyResults &&
                     <DataListCheck aria-labelledby="width-ex1-check1"
                       className="checkbox"
-                      isChecked={this.state.check}
+                      isChecked={this.state.check} 
+                      checked={this.state.check}
                       aria-label="controlled checkbox example"
                       id="check"
                       onClick={this.handleSelectAll}
@@ -168,6 +172,7 @@ export default class Search extends Component {
                       <DataListCheck aria-labelledby="width-ex3-check1"
                         className="checkbox"
                         isChecked={data[this.state.checkedItemKey]}
+                        checked={data[this.state.checkedItemKey]}
                         aria-label="controlled checkbox example"
                         id={data["pant:transientPath"]}
                         name={data["pant:transientPath"]}
@@ -269,6 +274,7 @@ export default class Search extends Component {
                 showDropdownOptions={!this.state.showDropdownOptions}
                 bottom={true}
               />
+            <BuildInfo/>
             </div>
             {/* Alert for delete confirmation */}
             <div className="alert">
@@ -321,14 +327,14 @@ export default class Search extends Component {
   private setInput = (event) => this.setState({ input: event });
 
   private handleSelectAll = (event) => {
-    console.log('handleSelectAll')
+    // console.log('handleSelectAll')
     this.setState({check: !this.state.check}, () => {
       this.setState(prevState => {
         this.state.allPaths=[]
         this.transientPaths=[]
         const selectAllcheck = this.state.results.map(dataitem => {
               dataitem[this.state.checkedItemKey] = this.state.check
-              console.log(dataitem["pant:transientPath"]+":"+dataitem[this.state.checkedItemKey])
+              // console.log(dataitem["pant:transientPath"]+":"+dataitem[this.state.checkedItemKey])
               if(this.state.check){
                 this.state.allPaths.push(dataitem["pant:transientPath"])
               }
@@ -337,19 +343,19 @@ export default class Search extends Component {
         this.transientPaths=this.state.allPaths
         if(this.state.check === true){
           this.setState({countOfCheckedBoxes: this.state.results.length}, () => {
-            console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
+            // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
                 if(this.state.countOfCheckedBoxes > 0){
                   this.setState({deleteButtonVisible: true})
                 }else{
                   this.setState({deleteButtonVisible: false})
                 }
-                console.log('transientPaths:'+this.transientPaths)
+                // console.log('transientPaths:'+this.transientPaths)
               })
         }else{
           this.setState({countOfCheckedBoxes: 0}, () => {
-            console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
+            // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
             this.transientPaths = []
-            console.log('transientPaths:'+this.transientPaths)
+            // console.log('transientPaths:'+this.transientPaths)
             this.setState({deleteButtonVisible: false})
           })
         }
@@ -368,7 +374,7 @@ export default class Search extends Component {
           data[this.state.checkedItemKey] = !data[this.state.checkedItemKey]
           if(data[this.state.checkedItemKey] === true){
             this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes+1}, () => {
-              console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
+              // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
               if(this.state.countOfCheckedBoxes > 0){
                 this.setState({deleteButtonVisible: true})
               }else{
@@ -376,11 +382,11 @@ export default class Search extends Component {
               }
             })
             this.transientPaths.push(data["pant:transientPath"]);
-            console.log('transientPaths:'+this.transientPaths)
-            console.log('all Paths:'+this.state.allPaths)
+            // console.log('transientPaths:'+this.transientPaths)
+            // console.log('all Paths:'+this.state.allPaths)
           }else{
             this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes-1}, () => {
-              console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
+              // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
               if(this.state.countOfCheckedBoxes > 0){
                 this.setState({deleteButtonVisible: true})
               }else{
@@ -388,8 +394,8 @@ export default class Search extends Component {
               }
             })
             this.transientPaths.splice(this.transientPaths.indexOf(id),1)
-            console.log('transientPaths:'+this.transientPaths)
-            console.log('all Paths:'+this.state.allPaths)
+            // console.log('transientPaths:'+this.transientPaths)
+            // console.log('all Paths:'+this.state.allPaths)
           }
         }
         return data
@@ -401,8 +407,8 @@ export default class Search extends Component {
   };
 
   private delete = (keydata) => (event: any) =>  {
-    console.log(keydata)
-    console.log('in the delete function')
+    // console.log(keydata)
+    // console.log('in the delete function')
       const formData = new FormData();
       formData.append(':operation', 'delete')
       for (const item of keydata){
@@ -415,15 +421,15 @@ export default class Search extends Component {
         if (response.status === 200) {
           this.setState({ deleteState: 'positive'},() =>
           this.transientPaths=[])
-          console.log('deleteState:'+this.state.deleteState)
+          // console.log('deleteState:'+this.state.deleteState)
         } else if (response.status === 403) {
           this.setState({ deleteState: 'negative'},() =>
           this.transientPaths=[])
-          console.log('deleteState:'+this.state.deleteState)
+          // console.log('deleteState:'+this.state.deleteState)
         } else {
           this.setState({ deleteState: 'unknown'},() =>
           this.transientPaths=[])
-          console.log('deleteState:'+this.state.deleteState)
+          // console.log('deleteState:'+this.state.deleteState)
         }
       });
   }
@@ -465,6 +471,7 @@ export default class Search extends Component {
       })
     }
 
+<<<<<<< HEAD
     private setPreview = (data) => (event: any) =>  {
       // console.log("what do I see when you click ? " + path)
       if (data !== []) {
@@ -474,6 +481,12 @@ export default class Search extends Component {
            moduleType: data["pant:transientSource"],
            moduleUpdatedDate: this.formatDate(new Date(data["jcr:created"]))           
           })
+=======
+    private setPreview = (path: string) => (event: any) =>  {
+      // console.log("what do I see when you click ? " + path)
+      if (path !== "") {
+        return window.open("/" + path + ".preview?draft=true");
+>>>>>>> master
       } else {
         this.setState({moduleDisplay: false, initialLoad: true})
       }
@@ -519,7 +532,7 @@ export default class Search extends Component {
   }
 
   private sort(key: string) {
-    console.log("My Sort Key is: " + key)
+    // console.log("My Sort Key is: " + key)
     // Switch the direction each time some clicks.
     this.setState({ isSortedUp: !this.state.isSortedUp, sortKey: key }, () => {
       this.getSortedRows()
@@ -535,8 +548,6 @@ export default class Search extends Component {
           this.setState({
             data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
             isEmptyResults: true
-          }, () =>{
-            console.log('transient path:'+this.state.results[0])
           })
         } else {
           this.setState({ isEmptyResults: false })
@@ -557,8 +568,8 @@ export default class Search extends Component {
     }
     backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
     backend += "&offset=" + ((this.state.page - 1)*this.state.pageLimit) + "&limit=" + this.state.pageLimit
-    console.log('itemsPerPaeProp: '+this.state.pageLimit)
-    console.log(backend)
+    // console.log('itemsPerPaeProp: '+this.state.pageLimit)
+    // console.log(backend)
     return backend
   }
 
@@ -591,7 +602,7 @@ export default class Search extends Component {
 
   private changePerPageLimit = (pageLimitValue) => {
     this.setState({pageLimit: pageLimitValue, initialLoad: true,page: 1},()=>{
-      console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
+      // console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
       return (this.state.pageLimit+" items per page")
     })
   }

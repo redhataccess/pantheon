@@ -1,8 +1,13 @@
 import React from 'react';
-import { NavLinks }  from './NavLinks';
-import "isomorphic-fetch"
+import { NavLinks } from './NavLinks';
+import { NavList, NavItem, NavExpandable } from '@patternfly/react-core';
+import { HashRouter as Router } from 'react-router-dom';
 
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
+import { Link } from 'react-router-dom';
+import renderer from 'react-test-renderer';
+import sinon from "sinon";
+import { resolve } from 'dns';
 
 describe('NavLinks tests', () => {
   test('should render NavLinks component', () => {
@@ -10,4 +15,183 @@ describe('NavLinks tests', () => {
     expect(view).toMatchSnapshot();
   });
 
+  it('should render a NavList', () => {
+    const wrapper = mount(<Router><NavLinks /></Router>);
+    const navList = wrapper.find(NavList);
+    expect(navList.exists()).toBe(true)
+  });
+
+  it('should render a NavItem', () => {
+    const wrapper = mount(<Router><NavLinks /></Router>);
+    const navItem = wrapper.find(NavItem);
+    expect(navItem.exists()).toBe(true)
+  });
+
+  it('should render a Link component', () => {
+    const wrapper = mount(<Router><NavLinks /></Router>);
+    const navLinks = wrapper.find(Link);
+    expect(navLinks.exists()).toBe(true)
+  });
+
+  it('should render an Expandable component', () => {
+    const wrapper = mount(<Router><NavLinks /></Router>);
+    const expandable = wrapper.find(NavExpandable);
+    expect(expandable.exists()).toBe(true)
+  });
+
+  it('should contain 1 NavItem without authentication', () => {
+    const wrapper = shallow(<NavLinks />);
+
+    const items = wrapper.find(NavItem);
+    expect(items).toHaveLength(1);
+  });
+
+  it('should handle state changes for isLoggedIn', () => {
+    const wrapper = shallow(<NavLinks />)
+
+    expect(wrapper.state('isLoggedIn')).toBe(false);
+    wrapper.setState({ 'isLoggedIn': true })
+    expect(wrapper.state('isLoggedIn')).toBe(true);
+
+    wrapper.setState({ 'moduleText': 'New Module' });
+    wrapper.setState({ 'gitText': 'Git Import' });
+    const navGroup1 = wrapper.find('[groupId="grp-1"]');
+    expect(navGroup1.length).toBe(4)
+
+    const navGroup2 = wrapper.find('[groupId="grp-2"]');
+    expect(navGroup2.length).toBe(3)
+  });
+
+  it('should handle state changes for isAdmin', () => {
+    const wrapper = shallow(<NavLinks />)
+
+    expect(wrapper.state('isLoggedIn')).toBe(false);
+    wrapper.setState({ 'isLoggedIn': true })
+    expect(wrapper.state('isLoggedIn')).toBe(true);
+
+    expect(wrapper.state('isAdmin')).toBe(false)
+    wrapper.setState({ 'isAdmin': true })
+    expect(wrapper.state('isAdmin')).toBe(true)
+    const navGroup3 = wrapper.find('[groupId="grp-3"]');
+    expect(navGroup3.length).toBe(4)
+  });
+
+  it('test browserLink function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.browserLink).toMatchSnapshot();
+  });
+
+  it('test welcomeLink function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.welcomeLink).toMatchSnapshot();
+  });
+
+  it('test webConsole function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.consoleLink).toMatchSnapshot();
+  });
+
+  it('test render function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.render).toMatchSnapshot();
+  });
+
+  it('test checkAuth function', () => {
+    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.checkAuth).toMatchSnapshot();
+  });
+
+  it('test Admin Panel links', () => {
+    jest.mock('./NavLinks', () => {
+      // Require the original module to not be mocked...
+      const originalModule = jest.requireActual('./NavLinks');
+
+      return {
+        __esModule: true, // Use it when dealing with esModules
+        ...originalModule,
+        browserLink: jest.fn().mockReturnValue('window.open("/bin/browser.html")'),
+        checkAuth: jest.fn().mockReturnValue(true),
+        consoleLink: jest.fn().mockReturnValue('window.open("/system/console/bundles.html")'),
+        welcomeLink: jest.fn().mockReturnValue('window.open("/starter/index.html")'),
+      };
+    });
+
+    const checkAuth = require('./NavLinks').checkAuth;
+    const browserLink = require('./NavLinks').browserLink;
+    const consoleLink = require('./NavLinks').consoleLink;
+    const welcomeLink = require('./NavLinks').welcomeLink;
+
+    expect(checkAuth()).toBe(true);
+    expect(browserLink()).toBe('window.open("/bin/browser.html")')
+    expect(consoleLink()).toBe('window.open("/system/console/bundles.html")')
+    expect(welcomeLink()).toBe('window.open("/starter/index.html")')
+    jest.resetAllMocks()
+  });
+
+  it('calls render function', () => {
+    const render = jest.fn();
+    render();
+    expect(render).toHaveBeenCalled();
+  });
+
+  test('consoleLink() click event', () => {
+    const wrapper = shallow(<NavLinks />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'consoleLink');
+
+    wrapper.setState({ 'isLoggedIn': true })
+    wrapper.setState({ 'isAdmin': true })
+    wrapper.find(NavItem).at(7).simulate('click');
+    sinon.assert.calledOnce(spy);
+  });
+
+  test('browserLink() click event', () => {
+    const wrapper = shallow(<NavLinks />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'browserLink');
+
+    wrapper.setState({ 'isLoggedIn': true })
+    wrapper.setState({ 'isAdmin': true })
+    wrapper.find(NavItem).at(6).simulate('click');
+    sinon.assert.calledOnce(spy);
+  });
+
+  test('welcomeLink() click event', () => {
+    const wrapper = shallow(<NavLinks />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'welcomeLink');
+
+    wrapper.setState({ 'isLoggedIn': true })
+    wrapper.setState({ 'isAdmin': true })
+    wrapper.find(NavItem).at(5).simulate('click');
+    sinon.assert.calledOnce(spy);
+  });
+
+  it('test fetch api call', async () => {
+    window.fetch = jest.fn().mockImplementation(async () => {
+      return new Promise((resolve, reject) => {
+        resolve({
+          ok: true,
+          status: 200,
+          json: () => new Promise((resolve, reject) => {
+            resolve({
+              "getUserInfo": true,
+              "isAdmin": false,
+              "isLoggedIn": true,
+            });
+          })
+        });
+      });
+      const wrapper = await shallow(<NavLinks />)
+      await wrapper.update()
+      expect(wrapper.state('getUserInfo')).toBe(true)
+      expect(wrapper.state('isLoggedIn')).toBe(true)
+      expect(wrapper.state('isAdmin')).toBe(false)
+    })
+  });
 });
