@@ -77,20 +77,20 @@ export interface IProps {
                                 />
                             </DataListItemRow>
 
-                            <DataListItemRow id="data-rows">
+                            <DataListItemRow>
                                 <DataListItemCells
                                     dataListCells={[
                                         <DataListCell width={2} key="products">
-                                            Dummy Product Name
+                                            <span>Dummy Product Name</span>
                                         </DataListCell>,
                                         <DataListCell key="published">
-                                            Dummy Publish
+                                            <span>Dummy Publish</span>
                                         </DataListCell>,
                                         <DataListCell key="updated">
-                                            {this.props.updated}
+                                            <span>{this.props.updated}</span>
                                         </DataListCell>,
                                         <DataListCell key="module_type">
-                                            {this.props.moduleType}
+                                            <span>{this.props.moduleType}</span>
                                         </DataListCell>,
                                     ]}
                                 />

@@ -16,7 +16,7 @@ import BlankImage from '@app/images/blank.jpg';
 class Revisions extends Component<IProps> {
 
     public draft= [{ "icon": BlankImage, "revision": "", "publishedState": 'Draft', "updatedDate": 'dummy date', "firstButtonType": 'primary',"secondButtonType": 'secondary', "firstButtonText": 'Publish',"secondButtonText": 'Preview',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
-    public release= [{ "icon": CheckImage, "revision": "", "publishedState": 'Released', "updatedDate": 'dummy date', "firstButtonType": 'secondary',"secondButtonType": 'primary', "firstButtonText": 'Unpublish',"secondButtonText": 'View',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
+    public release= [{ "icon": CheckImage, "revision": "Version 1", "publishedState": 'Released', "updatedDate": 'dummy date', "firstButtonType": 'secondary',"secondButtonType": 'primary', "firstButtonText": 'Unpublish',"secondButtonText": 'View',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
 
     public state = {
         initialLoad: true,
@@ -31,7 +31,7 @@ class Revisions extends Component<IProps> {
     };
 
     public render() {
-        return (  
+        return (
             <React.Fragment>
                 {this.state.initialLoad && this.fetchRevisions()}
                 <Card>
@@ -40,16 +40,13 @@ class Revisions extends Component<IProps> {
                             <DataListItem aria-labelledby="simple-item1" isExpanded={this.state.isHeadingToggle}>
                                 <DataListItemRow id="data-rows-header" >
                                     <DataListToggle
-                                        onClick={()=>this.onHeadingToggle()}
-                                        isExpanded={this.state.isHeadingToggle}
-                                        id="ex-toggle1"
-                                        aria-controls="ex-expand1"
+                                        onClick={() => this.onHeadingToggle()}
+                                        isExpanded={true}
+                                        id="width-ex3-toggle1"
+                                        aria-controls="width-ex3-expand1"
                                     />
                                     <DataListItemCells
                                         dataListCells={[
-                                            <DataListCell key="empty" width={1}>
-                                                <img src={BlankImage} style={{height: "30px",width: "30px"}}/>
-                                            </DataListCell>,
                                             <DataListCell key="revision">
                                                 <span className="sp-prop-nosort" id="span-source-type">Revision</span>
                                             </DataListCell>,
@@ -61,96 +58,97 @@ class Revisions extends Component<IProps> {
                                             </DataListCell>,
                                             <DataListCell key="module_type">
                                                 <span className="sp-prop-nosort" id="span-source-name" />
+                                            </DataListCell>,
+                                            <DataListCell key="module_type">
+                                                <span className="sp-prop-nosort" id="span-source-name" />
                                             </DataListCell>
                                         ]}
                                     />
                                 </DataListItemRow>
-                                {this.state.results.map(type=>(
-                                type.map(data => (
-                                <DataListContent
-                                    aria-label="Secondary Content Details"
-                                    id={data["revision"]}
-                                    isHidden={!this.state.isHeadingToggle}
-                                    noPadding={true}
-                                >                                   
-                                {/* this is the data list for the inner row */}
-                                { data["revision"]!=="" && (
-                                <DataList aria-label="Simple data list example">
-                                    <DataListItem aria-labelledby="simple-item1" isExpanded={data["isDropdownOpen"]}>
-                                        <DataListItemRow>
-                                            <DataListToggle
-                                                onClick={()=>this.onExpandableToggle(data)}
-                                                isExpanded={data["isDropdownOpen"]}
-                                                id={data["revision"]}
-                                                aria-controls={data["revision"]}
-                                            />
-                                            <DataListItemCells
-                                                dataListCells={[
-                                                    <DataListCell key="image" width={1}>
-                                                        <span><img src={data["icon"]} style={{height: "30px",width: "30px"}}/></span>
-                                                    </DataListCell>,
-                                                    <DataListCell key="revision">
-                                                        <span>{data["revision"]}</span>
-                                                    </DataListCell>,
-                                                    <DataListCell key="published">
-                                                        <span>{data["publishedState"]}</span>
-                                                    </DataListCell>,
-                                                    <DataListCell key="updated">
-                                                        <span>{data["updatedDate"]}</span>
-                                                    </DataListCell>,
-                                                    <DataListCell key="module_type">
-                                                        <span><Button variant="primary">{data["firstButtonText"]}</Button></span><span>{'  '}</span>
-                                                        <span><Button variant="secondary" onClick={this.previewDoc}>{data["secondButtonText"]}</Button></span>{'  '}
-                                                        <span>
-                                                            <Dropdown
-                                                                isPlain={true}
-                                                                position={DropdownPosition.right}
-                                                                isOpen={data["isArchiveDropDownOpen"]}
-                                                                onSelect={this.onArchiveSelect}
-                                                                toggle={<KebabToggle onToggle={()=>this.onArchiveToggle(data)} />}
-                                                                dropdownItems={[
-                                                                    <DropdownItem key="archive">Archive</DropdownItem>,
-                                                                ]}
-                                                            />
-                                                        </span>
-                                                    </DataListCell>
-                                                ]}
-                                            />
-                                        </DataListItemRow>
-                                        <DataListContent
-                                            aria-label={data["revision"]}
-                                            id={data["revision"]}
-                                            isHidden={!data["isDropdownOpen"]}
-                                            noPadding={true}
-                                        >
-                                            {/* this is the content for the inner data list content */}
-                                            <Grid>
-                                                <GridItem span={1} />
-                                                <GridItem span={10}>
-                                                    <Level gutter="md">
-                                                        <LevelItem>
-                                                            <span className="sp-prop-nosort" id="span-source-type">File name:</span>{'  '}
-                                                            <span>Dummy FileName</span>
-                                                        </LevelItem>
-                                                        <LevelItem>
-                                                            <span className="sp-prop-nosort" id="span-source-type">Module title:</span>{'  '}
-                                                            <span>Dummy Module Title</span>
-                                                        </LevelItem>
-                                                        <LevelItem>
-                                                            <span className="sp-prop-nosort" id="span-source-type">Context package:</span>{'  '}
-                                                            <span>Dummy Context Package</span>
-                                                        </LevelItem>
-                                                    </Level>
-                                                </GridItem>
-                                                <GridItem span={1} />
-                                            </Grid>
-                                        </DataListContent>
-                                        </DataListItem>
-                                </DataList> )}       
-                                </DataListContent>
-                                ))
-                            ) )}
                             </DataListItem>
+                            <DataListContent
+                                aria-label="Secondary Content Details"
+                                id={"Content"}
+                                isHidden={!this.state.isHeadingToggle}
+                                noPadding={true}
+                            >
+                                {/* this is the data list for the inner row */}
+                                {this.state.results.map(type => (
+                                    type.map(data => (
+                                        data["revision"] !== "" && (
+                                            <DataList aria-label="Simple data list example2">
+                                                {console.log("isExpanded: ", data["isDropdownOpen"])}
+                                                <DataListItem aria-labelledby="simple-item2" isExpanded={data["isDropdownOpen"]}>
+                                                    <DataListItemRow>
+                                                        <DataListToggle
+                                                            onClick={() => this.onExpandableToggle(data)}
+                                                            isExpanded={data["isDropdownOpen"]}
+                                                            id={data["revision"]}
+                                                            aria-controls={data["revision"]}
+                                                        />
+                                                        <DataListItemCells
+                                                            dataListCells={[
+                                                                <DataListCell key="revision">
+                                                                    {data["revision"]}
+                                                                </DataListCell>,
+                                                                <DataListCell key="published">
+                                                                    {data["publishedState"]}
+                                                                </DataListCell>,
+                                                                <DataListCell key="updated">
+                                                                    {data["updatedDate"]}
+                                                                </DataListCell>,
+                                                                <DataListCell key="module_type">
+                                                                    <Button variant="primary">{data["firstButtonText"]}</Button>{'  '}
+                                                                    <Button variant="secondary" onClick={this.previewDoc}>{data["secondButtonText"]}</Button>{'  '}
+                                                                </DataListCell>,
+                                                                <DataListCell key="image" width={1}>
+                                                                    <Dropdown
+                                                                        isPlain={true}
+                                                                        position={DropdownPosition.right}
+                                                                        isOpen={data["isArchiveDropDownOpen"]}
+                                                                        onSelect={this.onArchiveSelect}
+                                                                        toggle={<KebabToggle onToggle={() => this.onArchiveToggle(data)} />}
+                                                                        dropdownItems={[
+                                                                            <DropdownItem key="archive">Archive</DropdownItem>,
+                                                                        ]}
+                                                                    />
+                                                                </DataListCell>
+                                                            ]}
+                                                        />
+                                                    </DataListItemRow>
+                                                    <DataListContent
+                                                        aria-label={data["revision"]}
+                                                        id={data["revision"]}
+                                                        isHidden={!data["isDropdownOpen"]}
+                                                        noPadding={true}
+                                                    >
+                                                        {/* this is the content for the inner data list content */}
+                                                        <Grid>
+                                                            <GridItem span={1} />
+                                                            <GridItem span={10}>
+                                                                <Level gutter="md">
+                                                                    <LevelItem>
+                                                                        <span className="sp-prop-nosort" id="span-source-type">File name:</span>{'  '}
+                                                                        <span>Dummy FileName</span>
+                                                                    </LevelItem>
+                                                                    <LevelItem>
+                                                                        <span className="sp-prop-nosort" id="span-source-type">Module title:</span>{'  '}
+                                                                        <span>Dummy Module Title</span>
+                                                                    </LevelItem>
+                                                                    <LevelItem>
+                                                                        <span className="sp-prop-nosort" id="span-source-type">Context package:</span>{'  '}
+                                                                        <span>Dummy Context Package</span>
+                                                                    </LevelItem>
+                                                                </Level>
+                                                            </GridItem>
+                                                            <GridItem span={1} />
+                                                        </Grid>
+                                                    </DataListContent>
+                                                </DataListItem>
+                                            </DataList>)
+                                    ))
+                                ))}
+                            </DataListContent>
                         </DataList>
                     </div>
                 </Card>
