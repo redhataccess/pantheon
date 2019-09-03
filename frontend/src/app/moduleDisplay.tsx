@@ -103,6 +103,7 @@ export interface IProps {
                     <Card>
                         <Revisions 
                             modulePath={this.props.modulePath}
+                            revisionModulePath={this.props.moduleName}
                         />
                     </Card>
                 </div>

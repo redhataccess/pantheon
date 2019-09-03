@@ -11,12 +11,13 @@ import BlankImage from '@app/images/blank.jpg';
 
   export interface IProps {
     modulePath: string
+    revisionModulePath: string
   }
 
 class Revisions extends Component<IProps> {
 
     public draft= [{ "icon": BlankImage, "revision": "", "publishedState": 'Draft', "updatedDate": 'dummy date', "firstButtonType": 'primary',"secondButtonType": 'secondary', "firstButtonText": 'Publish',"secondButtonText": 'Preview',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
-    public release= [{ "icon": CheckImage, "revision": "Version 1", "publishedState": 'Released', "updatedDate": 'dummy date', "firstButtonType": 'secondary',"secondButtonType": 'primary', "firstButtonText": 'Unpublish',"secondButtonText": 'View',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
+    public release= [{ "icon": CheckImage, "revision": "", "publishedState": 'Released', "updatedDate": 'dummy date', "firstButtonType": 'secondary',"secondButtonType": 'primary', "firstButtonText": 'Unpublish',"secondButtonText": 'View',"isDropdownOpen": false,"isArchiveDropDownOpen": false}]
 
     public state = {
         initialLoad: true,
@@ -99,7 +100,7 @@ class Revisions extends Component<IProps> {
                                                                 </DataListCell>,
                                                                 <DataListCell key="module_type">
                                                                     <Button variant="primary">{data["firstButtonText"]}</Button>{'  '}
-                                                                    <Button variant="secondary" onClick={this.previewDoc}>{data["secondButtonText"]}</Button>{'  '}
+                                                                    <Button variant="secondary" onClick={()=>this.previewDoc(data["secondButtonText"])}>{data["secondButtonText"]}</Button>{'  '}
                                                                 </DataListCell>,
                                                                 <DataListCell key="image" width={1}>
                                                                     <Dropdown
@@ -158,7 +159,8 @@ class Revisions extends Component<IProps> {
     }
 
     private fetchRevisions = () => {
-            fetch("/modules/nana.2.json?")
+            console.log('module Path: ', this.props.modulePath);
+            fetch("/content/"+this.props.modulePath+".2.json?")
             .then(response => response.json())
             .then(responseJSON => {
                 this.setState(updateState => {    
@@ -226,9 +228,15 @@ class Revisions extends Component<IProps> {
         });
       }
 
-      private previewDoc = () => {
-          console.log("Preview path: ", "/", this.props.modulePath, ".preview")
-          return window.open("/" + this.props.modulePath + ".preview");
+      private previewDoc = (buttonText) => {
+        let docPath="";          
+        if(buttonText=="Preview"){
+            docPath = "/content/"+this.props.modulePath+".preview?draft=true";
+        }else{
+            docPath = "/content/"+this.props.modulePath+".preview?released=true";
+        }
+          console.log("Preview path: ", docPath)
+          return window.open(docPath);
       }
 }
 
