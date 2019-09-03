@@ -3,20 +3,14 @@
 exports[`NavLinks tests should render NavLinks component 1`] = `
 <Fragment>
   <NavList
-<<<<<<< HEAD
-=======
     ariaLeftScroll="Scroll left"
     ariaRightScroll="Scroll right"
->>>>>>> master
     className=""
     variant="default"
   >
     <NavExpandable
       className=""
-<<<<<<< HEAD
-=======
       data-testid="navLink_modules"
->>>>>>> master
       groupId="grp-1"
       id=""
       isActive={true}
@@ -25,24 +19,12 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
       title="Modules"
     >
       <NavItem
-<<<<<<< HEAD
-        className=""
-        groupId="grp-1"
-        isActive={true}
-        itemId="grp-1_itm-1"
-        onClick={null}
-        preventDefault={false}
-        to=""
-      >
-        <Link
-=======
         groupId="grp-1"
         isActive={true}
         itemId="grp-1_itm-1"
       >
         <Link
           data-testid="navLink_search"
->>>>>>> master
           to="/search"
         >
           Search

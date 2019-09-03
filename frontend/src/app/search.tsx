@@ -20,10 +20,7 @@ export default class Search extends Component {
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
     confirmDelete: false,
     countOfCheckedBoxes: 0,
-<<<<<<< HEAD
     results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "description":"","sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
-=======
->>>>>>> master
     deleteButtonVisible: false,
     deleteState: '',
     initialLoad: true,
@@ -38,7 +35,6 @@ export default class Search extends Component {
     pageLimit: 25,
     redirect: false,
     redirectLocation: '',
-    results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
     showDropdownOptions: true,
     sortKey: '',
     searchOption: 'module',
@@ -199,13 +195,14 @@ export default class Search extends Component {
                     />
                   </DataListItemRow>
                 ))}
-                {this.state.searchOption == 'product' && 
+                {this.state.searchOption === 'product' && 
                 this.state.results.map(data => (
                   <DataListItemRow id="data-rows">
                     {this.state.loggedinStatus && !this.state.isEmptyResults &&
                       <DataListCheck aria-labelledby="width-ex3-check1"
                         className="checkbox"
                         isChecked={data[this.state.checkedItemKey]}
+                        checked={data[this.state.checkedItemKey]}
                         aria-label="controlled checkbox example"
                         id={data["pant:transientPath"]}
                         name={data["pant:transientPath"]}
@@ -471,7 +468,6 @@ export default class Search extends Component {
       })
     }
 
-<<<<<<< HEAD
     private setPreview = (data) => (event: any) =>  {
       // console.log("what do I see when you click ? " + path)
       if (data !== []) {
@@ -481,12 +477,6 @@ export default class Search extends Component {
            moduleType: data["pant:transientSource"],
            moduleUpdatedDate: this.formatDate(new Date(data["jcr:created"]))           
           })
-=======
-    private setPreview = (path: string) => (event: any) =>  {
-      // console.log("what do I see when you click ? " + path)
-      if (path !== "") {
-        return window.open("/" + path + ".preview?draft=true");
->>>>>>> master
       } else {
         this.setState({moduleDisplay: false, initialLoad: true})
       }

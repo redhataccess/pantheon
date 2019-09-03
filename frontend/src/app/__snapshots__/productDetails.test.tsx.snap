@@ -1,84 +1,75 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ProductDetails tests should render ProductDetails component 1`] = `
+exports[`ProductListing tests should render ProductListing component 1`] = `
 <Fragment>
-  <div
-    className="app-container"
-  >
-    <Breadcrumb>
-      <BreadcrumbItem>
-        All Products
-      </BreadcrumbItem>
-      <BreadcrumbItem>
-        Product Details
-      </BreadcrumbItem>
-    </Breadcrumb>
-  </div>
-  <div
-    className="app-container"
-  >
-    <Level
-      gutter="md"
+  <div>
+    <FormGroup
+      fieldId="search"
+      label="Search Products"
     >
-      <LevelItem>
-        <TextContent>
-          <Text
-            component="h1"
-          >
-            Red Hat Enterprise Linux
-              
-          </Text>
-        </TextContent>
-      </LevelItem>
-      <LevelItem />
-    </Level>
-  </div>
-  <div
-    className="app-container"
-  />
-  <div
-    className="app-container"
-  >
-    <Form>
       <div
-        className="app-container"
+        className="row-view"
       >
-        <FormGroup
-          fieldId="new_version_name"
-          label="New Version:"
-        >
-          <TextInput
-            aria-label={null}
-            className=""
-            id="new_version_name_text"
-            isDisabled={false}
-            isReadOnly={false}
-            isRequired={false}
-            isValid={true}
-            onChange={[Function]}
-            placeholder="New version name"
-            type="text"
-            value=""
-          />
-        </FormGroup>
-        <ActionGroup>
-          <Button
-            aria-label="Creates a new Version Name."
-            onClick={[Function]}
-          >
-            Save
-          </Button>
-        </ActionGroup>
+        <TextInput
+          aria-label={null}
+          className=""
+          id="search"
+          isDisabled={false}
+          isReadOnly={false}
+          isRequired={false}
+          isValid={true}
+          onChange={[Function]}
+          placeholder="Type product name to search"
+          type="text"
+          value=""
+        />
       </div>
-    </Form>
+    </FormGroup>
+    <DataList
+      aria-label="single action data list example "
+    >
+      <DataListItem
+        aria-labelledby="single-action-item1"
+      >
+        <DataListItemRow>
+          <DataListItemCells
+            dataListCells={
+              Array [
+                <DataListCell>
+                  <span
+                    className="sp-prop-nosort"
+                    id="product-name"
+                  >
+                    Product Name
+                  </span>
+                </DataListCell>,
+                <DataListCell
+                  width={2}
+                >
+                  <span
+                    className="sp-prop-nosort"
+                    id="product-description"
+                  >
+                    Product Description
+                  </span>
+                </DataListCell>,
+              ]
+            }
+          />
+        </DataListItemRow>
+      </DataListItem>
+    </DataList>
   </div>
+  <div />
 </Fragment>
 `;
 
-exports[`ProductDetails tests test createVersionsPath function 1`] = `[Function]`;
+exports[`ProductListing tests test checkAuth function 1`] = `[Function]`;
 
-exports[`ProductDetails tests test fetchProductDetails function 1`] = `Array []`;
+exports[`ProductListing tests test getProducts function 1`] = `undefined`;
 
-exports[`ProductDetails tests test handleTextInputChange function 1`] = `undefined`;
+exports[`ProductListing tests test getProductsUrl function 1`] = `"/content/products.query.json?nodeType=pant:product&orderby=name"`;
 
-exports[`ProductDetails tests test saveVersion function 1`] = `[Function]`;
+exports[`ProductListing tests test loginRedirect function 1`] = `[Function]`;
+
+exports[`ProductListing tests test setInput function 1`] = `undefined`;

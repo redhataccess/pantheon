@@ -1,51 +1,13 @@
 import React, { Component } from 'react';
-<<<<<<< HEAD
-import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction } from '@patternfly/react-core';
-import '@app/app.css';
-=======
 import { DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction, FormGroup,
   OptionsMenu, OptionsMenuItem, OptionsMenuToggle, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 import { ProductDetails } from '@app/productDetails';
->>>>>>> master
 import { Redirect } from 'react-router-dom'
 
 class ProductListing extends Component {
  
   public state = {
-<<<<<<< HEAD
-    isOpen: false, 
-    isDeleted: false,
-    loggedinStatus: false,
-    initialLoad: true,
-    isEmptyResults: false,
-    results: [],
-    //@TODO. removed unused state variables
-    login: false,
-    productDescription: '',
-    productName: '',
-    redirect: false
-  };
-
-  private onToggle = isOpen => {
-    this.setState({ isOpen });
-  };
-
-  private onSelect = event => {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-  };
-
-  //private onSelect = event => {
-  //  this.setState(prevState => ({
-  //    isOpen: !prevState.isOpen
-  //  }));
-  //};
-  // render method transforms the react components into DOM nodes for the browser.
-  public render() {
-    const id = 'userID';
-=======
     allProducts: [],
     initialLoad: true,
     input: '',
@@ -68,7 +30,6 @@ class ProductListing extends Component {
     const propsKeyChild = "isExact"
     const isOpenKey = "isOpen"
 
->>>>>>> master
     if (!this.state.loggedinStatus && this.state.initialLoad===true) {
       fetch("/system/sling/info.sessionInfo.json")
         .then(response => response.json())
@@ -78,13 +39,6 @@ class ProductListing extends Component {
           }
         })
     }
-<<<<<<< HEAD
-    return (
-      <React.Fragment>
-        {this.state.initialLoad && this.getProducts()}
-        <DataList aria-label="single action data list example ">
-          {!this.state.isDeleted && (
-=======
    
     if (this.props[propsKey] !== undefined) {
       
@@ -117,36 +71,11 @@ class ProductListing extends Component {
         </FormGroup>
         <DataList aria-label="single action data list example ">
           {!this.state.isEmptyResults && (
->>>>>>> master
             <DataListItem aria-labelledby="single-action-item1">
               <DataListItemRow>
                 <DataListItemCells
                   dataListCells={[
                     <DataListCell key="primary content">
-<<<<<<< HEAD
-                      <span id="single-action-item1">Single actionable Primary content</span>
-                    </DataListCell>,
-                    <DataListCell key="secondary content">Single actionable Secondary content</DataListCell>
-                  ]}
-                />
-                <DataListAction
-                  aria-labelledby="single-action-item1 single-action-action1"
-                  id="single-action-action1"
-                  aria-label="Actions"
-                >
-                  <Button
-                    onClick={() => {
-                      if (confirm('Are you sure?')) {
-                        this.setState({ isDeleted: true });
-                      }
-                    }}
-                    variant="primary"
-                    key="delete-action"
-                  >
-                    Delete
-                  </Button>
-                </DataListAction>
-=======
                       <span className="sp-prop-nosort" id="product-name">Product Name</span>
                     </DataListCell>,
                     <DataListCell key="secondary content"  width={2}>
@@ -154,7 +83,6 @@ class ProductListing extends Component {
                       </DataListCell>
                   ]}
                 />
->>>>>>> master
               </DataListItemRow>
             </DataListItem>
           )}
@@ -165,34 +93,6 @@ class ProductListing extends Component {
             <DataListItemCells key={data["jcr:uuid"]} 
                 dataListCells={[
                   <DataListCell key="primary content">
-<<<<<<< HEAD
-                    <span id="{data['name']}">{data["name"]}</span>
-                  </DataListCell>,
-                  <DataListCell key="secondary content">{data["description"]}</DataListCell>
-                ]}
-              />
-              <DataListAction
-                aria-labelledby="multi-actions-item1 {data['jcr:uuid']}"
-                id="{data['jcr:uuid']}"
-                aria-label="Actions"
-              >
-                <Dropdown
-                  isPlain
-                  position={DropdownPosition.right}
-                  isOpen={this.state.isOpen}
-                  onSelect={this.onSelect}
-                  toggle={<KebabToggle onToggle={this.onToggle} />}
-                  dropdownItems={[
-                    <DropdownItem key="{data['jcr:uuid']}">Product Detail</DropdownItem>,
-                                      
-                  ]}
-                />
-              </DataListAction>
-            </DataListItemRow>
-          </DataListItem>))}
-        </DataList>
-
-=======
                     <span id="{data['name']}">{data[nameKey]}</span>
                   </DataListCell>,
                   <DataListCell key="secondary content"  width={2}>{data[descriptionKey]}</DataListCell>,
@@ -234,20 +134,10 @@ class ProductListing extends Component {
           {this.checkAuth()}
           {this.loginRedirect()}
         </div>
->>>>>>> master
       </React.Fragment>
     );
   }
 
-<<<<<<< HEAD
-  private getProducts = () => {
-    this.setState({ initialLoad: false })
-    fetch(this.getProductsUrl())
-      .then(response => response.json())
-      .then(responseJSON => this.setState({ results: responseJSON.results }))
-      .then(() => {
-        console.log("results => " + this.state.results)      
-=======
   private getProducts = (allProducts) => {
     this.setState({ initialLoad: false })
     fetch(this.getProductsUrl())
@@ -263,38 +153,20 @@ class ProductListing extends Component {
         this.setState({ results: allProducts })
       })
       .then(() => {
->>>>>>> master
         console.log(this.state.loggedinStatus)
         if (Object.keys(this.state.results).length === 0) {
           this.setState({
             isEmptyResults : true
-<<<<<<< HEAD
-          });
-        } else {
-          this.setState({
-            isEmptyResults : false
-          });
-        }
-        console.log(this.state.isEmptyResults)
-=======
           },()=>{console.log(this.state.isEmptyResults,this.state.initialLoad)});
         } else {
           this.setState({
             isEmptyResults : false
           },()=>{console.log(this.state.isEmptyResults,this.state.initialLoad)});
         }
->>>>>>> master
       })
     }
 
     private getProductsUrl() {
-<<<<<<< HEAD
-      //let backend = "/content/products.1.json"
-      let backend ="/content/products.query.json?nodeType=pant:product&orderby=name"
-      console.log(backend)
-      return backend
-    }
-=======
       const backend ="/content/products.query.json?nodeType=pant:product&orderby=name"
       return backend
     }
@@ -351,7 +223,6 @@ class ProductListing extends Component {
         }
       })
   }
->>>>>>> master
 }
 
 export { ProductListing }
