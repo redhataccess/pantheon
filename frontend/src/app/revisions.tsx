@@ -170,10 +170,12 @@ class Revisions extends Component<IProps> {
                 console.log("uuid v0: ",responseJSON["en_US"]["v0"]["jcr:uuid"])
                 if(responseJSON["en_US"]["v0"]["jcr:uuid"]===draftTag){
                     this.draft[0]["revision"] = "Version 0";
+                    this.draft[0]["updatedDate"] = responseJSON["en_US"]["v0"]["jcr:lastModified"];
                 }
                     
                 if(responseJSON["en_US"]["v0"]["jcr:uuid"]===releasedTag){
                     this.release[0]["revision"] = "Version 0";
+                    this.draft[0]["updatedDate"] = responseJSON["en_US"]["v0"]["jcr:lastModified"];
                 }
                     
                 let objectKeys = Object.keys(responseJSON["en_US"]);
