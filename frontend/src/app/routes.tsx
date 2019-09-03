@@ -1,10 +1,11 @@
 import React from 'react';
-import { Route, RouteComponentProps, Switch, Redirect } from 'react-router-dom';
+import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import Search from '@app/search';
 import { Module } from '@app/module';
+import { Product } from '@app/product';
+import { ProductListing } from '@app/productListing';
 import { Login } from '@app/login';
 import { GitImport } from './gitImport';
-import { Admin } from '@app/admin';
 
 export interface IAppRoute {
   label: string;
@@ -30,6 +31,20 @@ const routes: IAppRoute[] = [
     path: '/module'
   },
   {
+    component: Product,
+    exact: true,
+    icon: null,
+    label: '',
+    path: '/product'
+  },
+  {
+    component: ProductListing,
+    exact: true,
+    icon: null,
+    label: '',
+    path: '/products'
+  },
+  {
     component: GitImport,
     exact: true,
     icon: null,
@@ -43,13 +58,6 @@ const routes: IAppRoute[] = [
     label: '', // Empty because we are using the Brand component to render the text.
     path: '/login'
   },
-  {
-    component: Admin,
-    exact: true,
-    icon: null,
-    label: '', // Using the Admin component to render the text.
-    path: '/admin'
-  }
 ];
 
 const Routes = () => (

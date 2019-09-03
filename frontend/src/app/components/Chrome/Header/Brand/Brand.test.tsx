@@ -9,5 +9,4 @@ describe('Brand tests', () => {
     const view = shallow(<Brand />);
     expect(view).toMatchSnapshot();
   });
-  
 });
