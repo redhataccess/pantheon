@@ -56,8 +56,8 @@ public class ReleaseDraftRevision extends AbstractPostOperation {
             ModuleLocale moduleLocale = module.getModuleLocale(locale);
             moduleLocale.released.set( moduleLocale.draft.get() );
             moduleLocale.draft.set( null );
-            // set the published date on the draft revision
-            draftRevision.get()
+            // set the published date on the released revision
+            revisionToRelease.get()
                     .metadata.getOrCreate()
                     .datePublished.set(Calendar.getInstance());
             changes.add(Modification.onModified(module.getPath()));
