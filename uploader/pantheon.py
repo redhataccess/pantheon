@@ -15,7 +15,10 @@ import glob
 from pathlib import PurePath
 
 DEFAULT_SERVER = 'http://localhost:8080'
-DEFAULT_REPOSITORY = getpass.getuser()
+if "PANTHEON_SERVER" in os.environ:
+    DEFAULT_REPOSITORY = 'gitImport'
+else:
+    DEFAULT_REPOSITORY = getpass.getuser()
 DEFAULT_USER = 'demo'
 DEFAULT_PASSWORD = base64.b64decode(b'ZGVtbw==').decode()
 DEFAULT_LINKS = False
@@ -302,7 +305,11 @@ def get_unspecified_files(directory, processed_files, follow_links=True):
     return unspecified_files
 
 
-server = resolveOption(args.server, 'server', DEFAULT_SERVER)
+if "PANTHEON_SERVER" in os.environ:
+    server = os.environ["PANTHEON_SERVER"]
+else:
+    server = resolveOption(args.server, 'server', DEFAULT_SERVER)
+
 repository = resolveOption(args.repository, 'repository', DEFAULT_REPOSITORY)
 links = resolveOption(args.links, 'followlinks', DEFAULT_LINKS)
 mode = 'sandbox' if args.sandbox else 'repository'
