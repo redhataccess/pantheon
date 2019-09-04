@@ -3,6 +3,7 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleType;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.NonExistingResource;
@@ -51,18 +52,23 @@ class ModuleRevisionUploadTest {
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the adoc content");
         slingContext.request().setParameterMap(params);
-        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/new/module"));
+        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/new/proc_module"));
 
         // when
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/metadata"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/draft"));
-        assertNull(slingContext.resourceResolver().getResource("/new/module/es_ES/released"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/1/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/1/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/draft"));
+        assertNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/released"));
 
-        Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
+        Module module = new Module(slingContext.resourceResolver().getResource("/new/proc_module"));
+        assertEquals(ModuleType.PROCEDURE,
+                module.getModuleLocale(LocaleUtils.toLocale("es_ES"))
+                        .getRevision("1")
+                        .metadata.get()
+                        .moduleType.get());
         assertEquals("This is the adoc content",
                 module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
         );

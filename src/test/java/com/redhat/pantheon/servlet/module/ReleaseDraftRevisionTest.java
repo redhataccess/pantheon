@@ -56,6 +56,7 @@ class ReleaseDraftRevisionTest {
         assertEquals("/module", changes.get(0).getSource());
         assertEquals(HttpServletResponse.SC_OK, postResponse.getStatusCode());
         assertNotNull(slingContext.resourceResolver().getResource("/module/en_US/released"));
+        assertNotNull(slingContext.resourceResolver().getResource("/module/en_US/1/metadata/pant:datePublished"));
     }
 
     @Test

@@ -28,7 +28,8 @@ class SlingResourceTest {
                         "jcr:date", Calendar.getInstance(),
                         "jcr:number", "10",
                         "jcr:boolean", false,
-                        "jcr:stringArray", stringArrayValue)
+                        "jcr:stringArray", stringArrayValue,
+                        "jcr:multiValue", MultiValue.VALUE_1)
                 .commit();
 
         TestResource model = new TestResource(slingContext.resourceResolver().getResource("/content/module1"));
@@ -39,6 +40,7 @@ class SlingResourceTest {
         assertEquals(false, model.BOOLEAN.get());
         assertNotNull(model.DATE.get());
         assertEquals(stringArrayValue, model.STRINGARRAY.get());
+        assertEquals(MultiValue.VALUE_1, model.ENUM.get());
     }
 
     @Test
@@ -365,6 +367,7 @@ class SlingResourceTest {
         public final Field<Boolean> BOOLEAN = field("jcr:boolean", Boolean.class);
         public final Field<String[]> STRINGARRAY = field("jcr:stringArray", String[].class);
         public final Field<String> STRING_WITH_DEFAULT = stringField("stringWithDefault").defaultValue("default");
+        public final Field<MultiValue> ENUM = enumField("jcr:multiValue", MultiValue.class);
 
         public final Field<String> GRANDCHILD_NAME = stringField("child/grandchild/jcr:name");
 
@@ -392,5 +395,10 @@ class SlingResourceTest {
         public Grandchild(Resource resource) {
             super(resource);
         }
+    }
+
+    public static enum MultiValue {
+        VALUE_1,
+        VALUE_2
     }
 }
