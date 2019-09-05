@@ -3,6 +3,7 @@ package com.redhat.pantheon.asciidoctor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.util.pool.PooledObjectLifecycle;
 import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.jruby.internal.JRubyAsciidoctor;
 
 /**
  * Implementation of the pool lifecycle for {@link Asciidoctor} objects. These objects
@@ -20,7 +21,7 @@ class AsciidoctorLifecycle implements PooledObjectLifecycle<Asciidoctor> {
 
     @Override
     public Asciidoctor createInstance() {
-        return Asciidoctor.Factory.create(globalConfig.getGemPaths());
+        return JRubyAsciidoctor.Factory.create(globalConfig.getGemPaths());
     }
 
     @Override
