@@ -20,7 +20,12 @@ export interface IProps {
   
   class ModuleDisplay extends Component<IProps> {
 
-    public render() {
+    public state = {
+        draftUpdateDate: '',
+        releaseUpdateDate: '',
+    };
+
+    public render() {        
         return (  
             <React.Fragment>
                 <div>
@@ -68,7 +73,7 @@ export interface IProps {
                                             <span className="sp-prop-nosort" id="span-source-type">Published</span>
                                         </DataListCell>,
                                         <DataListCell key="updated">
-                                            <span className="sp-prop-nosort" id="span-source-type">Updated</span>
+                                            <span className="sp-prop-nosort" id="span-source-type">Draft Uploaded</span>
                                         </DataListCell>,
                                         <DataListCell key="module_type">
                                             <span className="sp-prop-nosort" id="span-source-name">Module Type</span>
@@ -84,10 +89,10 @@ export interface IProps {
                                             <span>Dummy Product Name</span>
                                         </DataListCell>,
                                         <DataListCell key="published">
-                                            <span>Dummy Publish</span>
+                                            <span>{this.state.releaseUpdateDate.substring(4,15)}</span>
                                         </DataListCell>,
                                         <DataListCell key="updated">
-                                            <span>{this.props.updated}</span>
+                                            <span>{this.state.draftUpdateDate.substring(4,15)}</span>
                                         </DataListCell>,
                                         <DataListCell key="module_type">
                                             <span>{this.props.moduleType}</span>
@@ -104,13 +109,33 @@ export interface IProps {
                         <Revisions 
                             modulePath={this.props.modulePath}
                             revisionModulePath={this.props.moduleName}
+                            draftUpdateDate={this.updateDate}
+                            releaseUpdateDate={this.updateDate}
                         />
                     </Card>
-                </div>
+                </div> 
             </React.Fragment>
 
         );
     }
+
+    private updateDate = (date,type) => {
+        if(type==="draft"){
+            this.setState({
+                draftUpdateDate: date
+            },() => {
+                console.log('changed draft date: ', this.state.draftUpdateDate)
+            });    
+        }
+        else{
+            this.setState({
+                releaseUpdateDate: date
+            },() => {
+                console.log('changed release date: ', this.state.releaseUpdateDate)
+            });
+        }
+      };
+
     
 }
 
