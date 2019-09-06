@@ -8,6 +8,7 @@ import {
 import '@app/app.css';
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination';
+import { ModuleDisplay } from '@app/moduleDisplay';
 
 export default class Search extends Component {
   public state = {
@@ -28,6 +29,10 @@ export default class Search extends Component {
     isSortedUp: true,
     loggedinStatus: false,
     moduleDisplay: false,
+    moduleName: '',
+    modulePath: '',
+    moduleType: '',
+    moduleUpdatedDate: '',
     nextPageRowCount: 1,
     page: 1,
     pageLimit: 25,
@@ -55,7 +60,16 @@ export default class Search extends Component {
     }
     return (
       <React.Fragment>
+        {console.log("module display: ", this.state.moduleDisplay)}
+        {console.log("initial load: ", this.state.initialLoad)}
+        {this.state.moduleDisplay && <ModuleDisplay
+          moduleName={this.state.moduleName}
+          modulePath={this.state.modulePath}
+          moduleType={this.state.moduleType}
+          updated={this.state.moduleUpdatedDate}
+        />}
         {this.state.initialLoad && this.doSearch()}
+        {!this.state.moduleDisplay &&
         <div>
           <div>
           <FormGroup
@@ -242,6 +256,7 @@ export default class Search extends Component {
             </div>
           </div>
         </div>
+      }
       </React.Fragment>
     );
   }
@@ -397,7 +412,8 @@ export default class Search extends Component {
       // console.log("what do I see when you click ? " + path)
       if (data !== []) {
             this.setState({
-              initialLoad: !this.state.initialLoad, moduleDisplay: !this.state.moduleDisplay,
+              initialLoad: !this.state.initialLoad, 
+              moduleDisplay: !this.state.moduleDisplay,
               moduleName: data["jcr:title"],
               modulePath: data["pant:transientPath"],
               moduleType: data["pant:transientSource"],
