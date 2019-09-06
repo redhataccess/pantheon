@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProductListing tests should render ProductListing component 1`] = `
+<Fragment>
+  <div>
+    <FormGroup
+      fieldId="search"
+      label="Search Products"
+    >
+      <div
+        className="row-view"
+      >
+        <TextInput
+          aria-label={null}
+          className=""
+          id="search"
+          isDisabled={false}
+          isReadOnly={false}
+          isRequired={false}
+          isValid={true}
+          onChange={[Function]}
+          placeholder="Type product name to search"
+          type="text"
+          value=""
+        />
+      </div>
+    </FormGroup>
+    <DataList
+      aria-label="single action data list example "
+    >
+      <DataListItem
+        aria-labelledby="single-action-item1"
+      >
+        <DataListItemRow>
+          <DataListItemCells
+            dataListCells={
+              Array [
+                <DataListCell>
+                  <span
+                    className="sp-prop-nosort"
+                    id="product-name"
+                  >
+                    Product Name
+                  </span>
+                </DataListCell>,
+                <DataListCell
+                  width={2}
+                >
+                  <span
+                    className="sp-prop-nosort"
+                    id="product-description"
+                  >
+                    Product Description
+                  </span>
+                </DataListCell>,
+              ]
+            }
+          />
+        </DataListItemRow>
+      </DataListItem>
+    </DataList>
+  </div>
+  <div />
+</Fragment>
+`;
+
+exports[`ProductListing tests test checkAuth function 1`] = `[Function]`;
+
+exports[`ProductListing tests test getProducts function 1`] = `undefined`;
+
+exports[`ProductListing tests test getProductsUrl function 1`] = `"/content/products.query.json?nodeType=pant:product&orderby=name"`;
+
+exports[`ProductListing tests test loginRedirect function 1`] = `[Function]`;
+
+exports[`ProductListing tests test setInput function 1`] = `undefined`;

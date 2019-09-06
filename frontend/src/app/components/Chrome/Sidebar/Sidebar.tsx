@@ -9,7 +9,7 @@ export interface ISideBarProps {
 export const Sidebar: React.FunctionComponent<ISideBarProps> = ({isNavOpen}) => {
   const nav = () => (
     <aside className="pf-c-page__sidebar">
-      <Nav className="pf-c-nav" id="page-layout-default-nav-primary-nav" aria-label="Primary Nav Default Example">
+      <Nav className="pf-c-nav" id="page-layout-default-nav-primary-nav" aria-label="Primary Nav Default">
         <NavList className="pf-c-nav__list">
           <NavLinks />
         </NavList>

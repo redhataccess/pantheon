@@ -3,7 +3,6 @@
 exports[`Tests for Pagination should render Pagination component 1`] = `
 <Fragment>
   <Level
-    className=""
     gutter="md"
   >
     <LevelItem />

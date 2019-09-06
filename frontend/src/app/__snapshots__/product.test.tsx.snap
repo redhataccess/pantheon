@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Product tests should render Product component 1`] = `
+<Fragment>
+  <Bullseye>
+    <Form>
+      <div
+        className="app-container"
+      >
+        <div>
+          <FormGroup
+            fieldId="product-name"
+            isRequired={true}
+            label="Product Name"
+          >
+            <TextInput
+              aria-label={null}
+              className=""
+              id="product-name"
+              isDisabled={false}
+              isReadOnly={false}
+              isRequired={true}
+              isValid={true}
+              onChange={[Function]}
+              placeholder="Product Name"
+              type="text"
+              value=""
+            />
+          </FormGroup>
+          <br />
+          <FormGroup
+            fieldId="product-description"
+            label="Product Description"
+          >
+            <TextInput
+              aria-label={null}
+              className=""
+              id="product-description"
+              isDisabled={false}
+              isReadOnly={false}
+              isRequired={false}
+              isValid={true}
+              onChange={[Function]}
+              placeholder="Product Description"
+              type="text"
+              value=""
+            />
+          </FormGroup>
+          <br />
+          <ActionGroup>
+            <Button
+              aria-label="Creates a new Product Name with Description specified."
+              disabled={false}
+              onClick={[Function]}
+            >
+              Save
+            </Button>
+            <div />
+          </ActionGroup>
+        </div>
+      </div>
+    </Form>
+  </Bullseye>
+</Fragment>
+`;
+
+exports[`Product tests test checkAuth function 1`] = `[Function]`;
+
+exports[`Product tests test dismissNotification function 1`] = `[Function]`;
+
+exports[`Product tests test getProductsUrl function 1`] = `"/content/products.query.json?nodeType=pant:product&where=[name]=\\"Red Hat Enterprise Linux\\""`;
+
+exports[`Product tests test handleNameInput function 1`] = `undefined`;
+
+exports[`Product tests test handleProductInput function 1`] = `undefined`;
+
+exports[`Product tests test loginRedirect function 1`] = `[Function]`;
+
+exports[`Product tests test productExist function 1`] = `false`;
+
+exports[`Product tests test renderRedirect function 1`] = `[Function]`;

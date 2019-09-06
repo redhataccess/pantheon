@@ -23,18 +23,20 @@ import static java.util.stream.Collectors.counting;
  * A module's structure in the JCR tree is as follows:
  * .../modulename
  *                       /en-US
- *                             /v4
+ *                             /4
  *                                   /content
  *                                           /asciidoc
  *                                           /cachedHtml
  *                                   /metadata
- *                             /v3
+ *                             /3
  *                                   /content
  *                                   /metadata
- *                             /v2 (older - just for historical purposes)
- *                                 /content
- *                             /v1
- *                                 /content
+ *                             /2 (older - just for historical purposes)
+ *                                   /content
+ *                                   /metadata
+ *                             /1
+ *                                   /content
+ *                                   /metadata
  */
 @JcrPrimaryType("pant:module")
 public class Module extends SlingResource {
@@ -139,7 +141,7 @@ public class Module extends SlingResource {
         }
 
         private String generateNextRevisionName() {
-            return "v" + stream(this.getChildren()).collect(counting());
+            return "" + (stream(this.getChildren()).collect(counting()) + 1);
         }
 
         public ModuleLocale(@Nonnull Resource resource) {

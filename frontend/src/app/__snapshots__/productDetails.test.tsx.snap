@@ -1,0 +1,84 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProductDetails tests should render ProductDetails component 1`] = `
+<Fragment>
+  <div
+    className="app-container"
+  >
+    <Breadcrumb>
+      <BreadcrumbItem>
+        All Products
+      </BreadcrumbItem>
+      <BreadcrumbItem>
+        Product Details
+      </BreadcrumbItem>
+    </Breadcrumb>
+  </div>
+  <div
+    className="app-container"
+  >
+    <Level
+      gutter="md"
+    >
+      <LevelItem>
+        <TextContent>
+          <Text
+            component="h1"
+          >
+            Red Hat Enterprise Linux
+              
+          </Text>
+        </TextContent>
+      </LevelItem>
+      <LevelItem />
+    </Level>
+  </div>
+  <div
+    className="app-container"
+  />
+  <div
+    className="app-container"
+  >
+    <Form>
+      <div
+        className="app-container"
+      >
+        <FormGroup
+          fieldId="new_version_name"
+          label="New Version:"
+        >
+          <TextInput
+            aria-label={null}
+            className=""
+            id="new_version_name_text"
+            isDisabled={false}
+            isReadOnly={false}
+            isRequired={false}
+            isValid={true}
+            onChange={[Function]}
+            placeholder="New version name"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <ActionGroup>
+          <Button
+            aria-label="Creates a new Version Name."
+            onClick={[Function]}
+          >
+            Save
+          </Button>
+        </ActionGroup>
+      </div>
+    </Form>
+  </div>
+</Fragment>
+`;
+
+exports[`ProductDetails tests test createVersionsPath function 1`] = `[Function]`;
+
+exports[`ProductDetails tests test fetchProductDetails function 1`] = `Array []`;
+
+exports[`ProductDetails tests test handleTextInputChange function 1`] = `undefined`;
+
+exports[`ProductDetails tests test saveVersion function 1`] = `[Function]`;

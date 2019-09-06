@@ -53,6 +53,8 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     private final Logger log = LoggerFactory.getLogger(AsciidocRenderingServlet.class);
 
     static final String PARAM_RERENDER = "rerender";
+    static final String PARAM_DRAFT = "draft";
+    static final String PARAM_LOCALE = "locale";
 
     private AsciidoctorService asciidoctorService;
 
@@ -65,8 +67,8 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws ServletException, IOException {
-        String locale = paramValue(request, "locale", DEFAULT_MODULE_LOCALE.toString());
-        boolean draft = paramValueAsBoolean(request, "draft");
+        String locale = paramValue(request, PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
+        boolean draft = paramValueAsBoolean(request, PARAM_DRAFT);
 
         Module module = request.getResource().adaptTo(Module.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
@@ -87,16 +89,11 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         else {
             // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
             // parameters
-            Map<String, Object> context = request.getRequestParameterList().stream().filter(
-                    p -> p.getName().toLowerCase().startsWith("ctx_")
-            )
-            .collect(toMap(
-                    reqParam -> reqParam.getName().replaceFirst("ctx_", ""),
-                    reqParam -> reqParam.getString())
-            );
+            Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
 
+            // only allow forced rerendering if this is a draft revision. Released and historical revs are written in stone.
             String html = asciidoctorService.getModuleHtml(
-                    moduleRevision.get(), module, context, paramValueAsBoolean(request, PARAM_RERENDER));
+                    moduleRevision.get(), module, context, draft && paramValueAsBoolean(request, PARAM_RERENDER));
 
             response.setContentType("text/html");
             Writer w = response.getWriter();

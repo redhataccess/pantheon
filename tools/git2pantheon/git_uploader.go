@@ -32,17 +32,19 @@ func gitClone(repository string, branch string, directory string) {
 }
 
 func getUploader() {
-	const uploader_url = "https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/pantheon.py"
-	args := []string{"-o", "./pantheon.py", uploader_url}
-	cmd := exec.Command("curl", args...)
-	out, err := cmd.Output()
-	if err != nil {
-		//Uploader call still on the same gorutine.
-		log.Print(err)
+	if _, err := os.Stat("./pantheon.py"); os.IsNotExist(err) {
+		const uploader_url = "https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/pantheon.py"
+		args := []string{"-o", "./pantheon.py", uploader_url}
+		cmd := exec.Command("curl", args...)
+		out, err := cmd.Output()
+		if err != nil {
+			//Uploader call still on the same gorutine.
+			log.Print(err)
+		}
+		log.Print("Successfully downloaded the uploader." + string(out))
 	}
-	log.Print("Successfully downloaded the uploader." + string(out))
 	log.Print("Setting uploader executable permissions.")
-	err = os.Chmod("./pantheon.py", 0755)
+	os.Chmod("./pantheon.py", 0755)
 }
 
 func push2Pantheon(directory string) {

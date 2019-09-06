@@ -3,11 +3,14 @@
 exports[`NavLinks tests should render NavLinks component 1`] = `
 <Fragment>
   <NavList
+    ariaLeftScroll="Scroll left"
+    ariaRightScroll="Scroll right"
     className=""
     variant="default"
   >
     <NavExpandable
       className=""
+      data-testid="navLink_modules"
       groupId="grp-1"
       id=""
       isActive={true}
@@ -15,17 +18,13 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
       srText=""
       title="Modules"
     >
-<<<<<<< HEAD
       <NavItem
-        className=""
         groupId="grp-1"
         isActive={true}
         itemId="grp-1_itm-1"
-        onClick={null}
-        preventDefault={false}
-        to=""
       >
         <Link
+          data-testid="navLink_search"
           to="/search"
         >
           Search
@@ -33,10 +32,15 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
       </NavItem>
     </NavExpandable>
   </NavList>
-=======
-      Modules
-    </Link>
-  </NavItem>
->>>>>>> module_display
 </Fragment>
 `;
+
+exports[`NavLinks tests test browserLink function 1`] = `undefined`;
+
+exports[`NavLinks tests test checkAuth function 1`] = `undefined`;
+
+exports[`NavLinks tests test render function 1`] = `[Function]`;
+
+exports[`NavLinks tests test webConsole function 1`] = `undefined`;
+
+exports[`NavLinks tests test welcomeLink function 1`] = `undefined`;
