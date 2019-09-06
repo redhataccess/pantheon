@@ -1,42 +1,35 @@
 import React, { Component } from 'react';
-import { Button, Dropdown, DropdownItem, DropdownPosition, KebabToggle, DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction } from '@patternfly/react-core';
+import { DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction, FormGroup,
+  OptionsMenu, OptionsMenuItem, OptionsMenuToggle, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
+import { ProductDetails } from '@app/productDetails';
 import { Redirect } from 'react-router-dom'
 
 class ProductListing extends Component {
  
   public state = {
-    isOpen: false, 
-    isDeleted: false,
-    loggedinStatus: false,
+    allProducts: [],
     initialLoad: true,
+    input: '',
     isEmptyResults: false,
-    results: [],
-    //@TODO. removed unused state variables
+    isOpen: false,
+    isProductDetails: false,
+    loggedinStatus: false,
     login: false,
-    productDescription: '',
     productName: '',
-    redirect: false
+    redirect: false,
+    results: []
   };
 
-  private onToggle = isOpen => {
-    this.setState({ isOpen });
-  };
-
-  private onSelect = event => {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-  };
-
-  //private onSelect = event => {
-  //  this.setState(prevState => ({
-  //    isOpen: !prevState.isOpen
-  //  }));
-  //};
   // render method transforms the react components into DOM nodes for the browser.
   public render() {
     const id = 'userID';
+    const descriptionKey = "description";
+    const nameKey = "name";
+    const propsKey = "match"
+    const propsKeyChild = "isExact"
+    const isOpenKey = "isOpen"
+
     if (!this.state.loggedinStatus && this.state.initialLoad===true) {
       fetch("/system/sling/info.sessionInfo.json")
         .then(response => response.json())
@@ -46,38 +39,50 @@ class ProductListing extends Component {
           }
         })
     }
+   
+    if (this.props[propsKey] !== undefined) {
+      
+      // prop will be true if it comes through nav links
+       if(this.props[propsKey][propsKeyChild] === true){
+         this.state.results.map(data => {
+             (data[isOpenKey] as any) = false
+         });
+         this.setState({isProductDetails: false})
+       }
+  
+       // setting prop to false once it comes through nav links
+       this.props[propsKey][propsKeyChild]=false;
+  
+    }
+
     return (
       <React.Fragment>
-        {this.state.initialLoad && this.getProducts()}
+        {this.state.isProductDetails && (<ProductDetails productName={this.state.productName}/>)}
+        {this.state.initialLoad && this.getProducts(this.state.allProducts)} 
+        {!this.state.isProductDetails && (
+        <div>  
+        <FormGroup
+          label="Search Products"
+          fieldId="search"
+        >
+          <div className="row-view">
+            <TextInput id="search" type="text" onChange={this.setInput} placeholder="Type product name to search" value={this.state.input} />
+          </div>
+        </FormGroup>
         <DataList aria-label="single action data list example ">
-          {!this.state.isDeleted && (
+          {!this.state.isEmptyResults && (
             <DataListItem aria-labelledby="single-action-item1">
               <DataListItemRow>
                 <DataListItemCells
                   dataListCells={[
                     <DataListCell key="primary content">
-                      <span id="single-action-item1">Single actionable Primary content</span>
+                      <span className="sp-prop-nosort" id="product-name">Product Name</span>
                     </DataListCell>,
-                    <DataListCell key="secondary content">Single actionable Secondary content</DataListCell>
+                    <DataListCell key="secondary content"  width={2}>
+                      <span className="sp-prop-nosort" id="product-description">Product Description</span>
+                      </DataListCell>
                   ]}
                 />
-                <DataListAction
-                  aria-labelledby="single-action-item1 single-action-action1"
-                  id="single-action-action1"
-                  aria-label="Actions"
-                >
-                  <Button
-                    onClick={() => {
-                      if (confirm('Are you sure?')) {
-                        this.setState({ isDeleted: true });
-                      }
-                    }}
-                    variant="primary"
-                    key="delete-action"
-                  >
-                    Delete
-                  </Button>
-                </DataListAction>
               </DataListItemRow>
             </DataListItem>
           )}
@@ -88,63 +93,136 @@ class ProductListing extends Component {
             <DataListItemCells key={data["jcr:uuid"]} 
                 dataListCells={[
                   <DataListCell key="primary content">
-                    <span id="{data['name']}">{data["name"]}</span>
+                    <span id="{data['name']}">{data[nameKey]}</span>
                   </DataListCell>,
-                  <DataListCell key="secondary content">{data["description"]}</DataListCell>
+                  <DataListCell key="secondary content"  width={2}>{data[descriptionKey]}</DataListCell>,
+                  <DataListCell key="Dropdown content">
+                    <DataListAction
+                      aria-labelledby="multi-actions-item1 {data['jcr:uuid']}"
+                      id="{data['jcr:uuid']}"
+                      aria-label="Actions"
+                    >
+                      <OptionsMenu
+                        isPlain={true}
+                        id={data['jcr:uuid']}
+                        menuItems={[
+                          <OptionsMenuItem onSelect={this.onSelect(event, data)} key="dropdown">Product Details</OptionsMenuItem>]}
+                        isOpen={data[isOpenKey]}
+                        toggle={<OptionsMenuToggle onToggle={this.onToggle(data['jcr:uuid'])} />} />
+                    </DataListAction>
+                  </DataListCell>
                 ]}
               />
-              <DataListAction
-                aria-labelledby="multi-actions-item1 {data['jcr:uuid']}"
-                id="{data['jcr:uuid']}"
-                aria-label="Actions"
-              >
-                <Dropdown
-                  isPlain
-                  position={DropdownPosition.right}
-                  isOpen={this.state.isOpen}
-                  onSelect={this.onSelect}
-                  toggle={<KebabToggle onToggle={this.onToggle} />}
-                  dropdownItems={[
-                    <DropdownItem key="{data['jcr:uuid']}">Product Detail</DropdownItem>,
-                                      
-                  ]}
-                />
-              </DataListAction>
             </DataListItemRow>
           </DataListItem>))}
+          {this.state.isEmptyResults && (
+            <DataListItem aria-labelledby="single-action-item0" data-testid="emptyResults">
+              <DataListItemRow>
+                <DataListItemCells
+                  dataListCells={[
+                    <DataListCell key="primary content" width={2}>
+                      <span className="sp-prop-nosort" id="product-name">No products found</span>
+                    </DataListCell>
+                  ]}
+                />
+              </DataListItemRow>
+            </DataListItem>
+          )}
         </DataList>
-
+        </div>)}
+        <div>
+          {this.checkAuth()}
+          {this.loginRedirect()}
+        </div>
       </React.Fragment>
     );
   }
 
-  private getProducts = () => {
+  private getProducts = (allProducts) => {
     this.setState({ initialLoad: false })
     fetch(this.getProductsUrl())
       .then(response => response.json())
-      .then(responseJSON => this.setState({ results: responseJSON.results }))
+      .then(responseJSON => {
+        let key; let singleProduct;
+        for( const i of Object.keys(responseJSON.results)){
+          key = Object.keys(responseJSON.results)[i];
+          singleProduct=responseJSON.results[key];
+          singleProduct= Object.assign({"isOpen":false},singleProduct)
+          allProducts.push(singleProduct)
+       }
+        this.setState({ results: allProducts })
+      })
       .then(() => {
-        console.log("results => " + this.state.results)      
         console.log(this.state.loggedinStatus)
         if (Object.keys(this.state.results).length === 0) {
           this.setState({
             isEmptyResults : true
-          });
+          },()=>{console.log(this.state.isEmptyResults,this.state.initialLoad)});
         } else {
           this.setState({
             isEmptyResults : false
-          });
+          },()=>{console.log(this.state.isEmptyResults,this.state.initialLoad)});
         }
-        console.log(this.state.isEmptyResults)
       })
     }
 
     private getProductsUrl() {
-      //let backend = "/content/products.1.json"
-      let backend ="/content/products.query.json?nodeType=pant:product&orderby=name"
-      console.log(backend)
+      const backend ="/content/products.query.json?nodeType=pant:product&orderby=name"
       return backend
     }
+
+    private onToggle = (id) => (event: any) => {
+      const isOpenKey = "isOpen"
+      this.state.results.map(data => {
+        if(data['jcr:uuid']===id){
+            (data[isOpenKey] as any) = !data[isOpenKey]
+            this.setState({isProductDetails: false})
+        }
+      });
+     };
+  
+    private onSelect = (event,data) => () => {
+      const nameKey = "name"
+      const urlKey = "url"
+      this.setState({
+        initialLoad: false,
+        isProductDetails: !this.state.isProductDetails,
+        productName: data[nameKey],
+      });
+    };
+
+    private setInput = input => {
+      const versions = [];
+      const nameKey = "name"
+      let searchString = '';
+      this.setState({input})
+      this.state.allProducts.map(data => {
+            searchString = ''+data[nameKey]
+            if(searchString.toLowerCase().includes(input.toLowerCase())){
+              versions.push(data)
+            }
+      });
+      this.setState({results: versions})
+  };
+
+  private loginRedirect = () => {
+    if (this.state.login) {
+      return <Redirect to='/login' />
+    } else {
+      return ""
+    }
+  }
+
+  private checkAuth = () => {
+    fetch("/system/sling/info.sessionInfo.json")
+      .then(response => response.json())
+      .then(responseJSON => {
+        const key = "userID"
+        if (responseJSON[key] === 'anonymous') {
+          this.setState({ login: true })
+        }
+      })
+  }
 }
 
 export { ProductListing }

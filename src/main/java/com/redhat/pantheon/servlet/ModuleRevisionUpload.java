@@ -1,13 +1,13 @@
 package com.redhat.pantheon.servlet;
 
-import com.redhat.pantheon.asciidoctor.AsciidoctorPool;
-import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
+import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.FileResource.JcrContent;
 import com.redhat.pantheon.model.api.SlingResourceUtil;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleType;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -16,7 +16,6 @@ import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
-import org.asciidoctor.Asciidoctor;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -25,11 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
-
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Post operation to add a new Module revision to the system.
@@ -54,11 +53,11 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
 
     private static final Logger log = LoggerFactory.getLogger(ModuleRevisionUpload.class);
 
-    private AsciidoctorPool asciidoctorPool;
+    private AsciidoctorService asciidoctorService;
 
     @Activate
-    public ModuleRevisionUpload(@Reference AsciidoctorPool asciidoctorPool) {
-        this.asciidoctorPool = asciidoctorPool;
+    public ModuleRevisionUpload(@Reference AsciidoctorService asciidoctorService) {
+        this.asciidoctorService = asciidoctorService;
     }
 
     @Override
@@ -104,6 +103,12 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
                     .content.getOrCreate()
                     .asciidoc.getOrCreate()
                     .jcrContent.getOrCreate();
+            boolean generateHtml = false;
+            String jcrData = jcrContent.jcrData.get();
+
+            if ((jcrData != null && !jcrData.equals(asciidocContent)) || !draftRevision.map(i -> i.content.get()).map(i -> i.cachedHtml.get()).isPresent()) {
+                generateHtml = true;
+            }
             jcrContent.jcrData.set(asciidocContent);
             jcrContent.mimeType.set("text/x-asciidoc");
 
@@ -111,31 +116,42 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
                     .metadata.getOrCreate();
             metadata.title.set(moduleName);
             metadata.description.set(description);
+            metadata.dateModified.set(Calendar.getInstance());
+            metadata.moduleType.set( determineModuleType(module) );
 
-            extractMetadata(jcrContent, metadata);
+            asciidoctorService.extractMetadata(jcrContent, metadata);
 
             request.getResourceResolver().commit();
 
+            if (generateHtml) {
+                Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
+                // drop the html on the floor, this is just to cache the results
+                asciidoctorService.getModuleHtml(draftRevision.get(), module, context, true);
+            }
         } catch (Exception e) {
             throw new RepositoryException("Error uploading a module revision", e);
         }
     }
 
-    private void extractMetadata(JcrContent content, Metadata metadata) {
-        log.trace("=== Start extracting metadata ");
-        long startTime = System.currentTimeMillis();
-        Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
-        try {
-            asciidoctor.javaExtensionRegistry().treeprocessor(
-                    new MetadataExtractorTreeProcessor(metadata));
+    /**
+     * Determines the module type from the uploaded module revision
+     * @param module The uploaded module
+     * @return A module type for the module revision, or null if one cannot be determined.
+     */
+    private static ModuleType determineModuleType(Module module) {
+        String fileName = module.getName();
 
-            asciidoctor.load(content.jcrData.get(), newHashMap());
+        if( fileName.startsWith("proc_") ) {
+            return ModuleType.PROCEDURE;
         }
-        finally {
-            asciidoctorPool.returnObject(asciidoctor);
+        else if( fileName.startsWith("con_") ) {
+            return ModuleType.CONCEPT;
         }
-        long endTime = System.currentTimeMillis();
-        log.trace("=== End extracting metadata. Time lapsed: " + (endTime-startTime)/1000 + " secs");
+        else if( fileName.startsWith("ref_") ) {
+            return ModuleType.REFERENCE;
+        }
+        else {
+            return null;
+        }
     }
-
 }

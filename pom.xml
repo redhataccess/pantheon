@@ -69,6 +69,7 @@
                         <Sling-Initial-Content><![CDATA[
                             SLING-INF/root;overwrite:=false;overwriteProperties:=true;uninstall:=false;path:=/,
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
+                            SLING-INF/conf/pantheon;overwrite:=false;uninstall:=false;path:=/conf/pantheon,
                             SLING-INF/content;overwrite:=false;uninstall:=false;path:=/content,
                             SLING-INF/users;overwrite:=false;uninstall:=false,
                             SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index,
@@ -369,6 +370,12 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.models.impl</artifactId>
             <version>1.4.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.event</artifactId>
+            <version>4.2.12</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

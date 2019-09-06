@@ -2,20 +2,13 @@
 
 exports[`Login tests should render Login component 1`] = `
 <Fragment>
-  <Bullseye
-    className=""
-    component="div"
-  >
+  <Bullseye>
     <div
       className="app-container"
     >
       <div>
         <FormGroup
-          className=""
           fieldId="repository-url"
-          isInline={false}
-          isRequired={false}
-          isValid={true}
           label="Repository URL"
         >
           <TextInput
@@ -34,11 +27,7 @@ exports[`Login tests should render Login component 1`] = `
         </FormGroup>
         <br />
         <FormGroup
-          className=""
           fieldId="branch-name"
-          isInline={false}
-          isRequired={false}
-          isValid={true}
           label="Branch"
         >
           <TextInput
@@ -58,17 +47,7 @@ exports[`Login tests should render Login component 1`] = `
         <br />
         <Button
           aria-label="Submit the repository and branch information to the git integration service."
-          className=""
-          component="button"
-          isActive={false}
-          isBlock={false}
-          isDisabled={false}
-          isFocus={false}
-          isHover={false}
-          isInline={false}
           onClick={[Function]}
-          type="button"
-          variant="primary"
         >
           Submit
         </Button>

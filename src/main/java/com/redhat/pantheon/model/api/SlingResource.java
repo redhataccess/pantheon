@@ -155,6 +155,17 @@ public class SlingResource implements Resource {
         return new Field<>(name, Calendar.class, this);
     }
 
+    /**
+     * Creates new Enumeration-typed field definition for this resource.
+     * @param name Field name
+     * @param enumType The type of enumeration the new field will contain
+     * @param <T>
+     * @return A new Enumeration-typed field definition for this SlingResource.
+     */
+    protected <T extends Enum> Field<T> enumField(String name, Class<T> enumType) {
+        return new EnumField<>(name, enumType, this);
+    }
+
     protected <T extends SlingResource> ReferenceField<T> referenceField(String name, Class<T> refType) {
         return new ReferenceField<>(name, refType, this);
     }

@@ -2,20 +2,13 @@
 
 exports[`Login tests should render Login component 1`] = `
 <Fragment>
-  <Bullseye
-    className=""
-    component="div"
-  >
+  <Bullseye>
     <div
       className="app-container"
     >
       <div>
         <FormGroup
-          className=""
           fieldId="module-name"
-          isInline={false}
-          isRequired={false}
-          isValid={true}
           label="Module Name"
         >
           <TextInput
@@ -34,11 +27,7 @@ exports[`Login tests should render Login component 1`] = `
         </FormGroup>
         <br />
         <FormGroup
-          className=""
           fieldId="module-description"
-          isInline={false}
-          isRequired={false}
-          isValid={true}
           label="Module Description"
         >
           <TextInput
@@ -57,11 +46,7 @@ exports[`Login tests should render Login component 1`] = `
         </FormGroup>
         <br />
         <FormGroup
-          className=""
           fieldId="input-file"
-          isInline={false}
-          isRequired={false}
-          isValid={true}
           label="Upload .adoc file: "
         >
           <input
@@ -75,17 +60,7 @@ exports[`Login tests should render Login component 1`] = `
         <br />
         <Button
           aria-label="Uploads the .adoc file with the Name and Description specified."
-          className=""
-          component="button"
-          isActive={false}
-          isBlock={false}
-          isDisabled={false}
-          isFocus={false}
-          isHover={false}
-          isInline={false}
           onClick={[Function]}
-          type="button"
-          variant="primary"
         >
           Save
         </Button>

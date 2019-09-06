@@ -1,0 +1,20 @@
+%div{:id=>@id, :class=>['colist', @style, role]}
+  - if title?
+    %strong.heading=title
+  - if @document.attr? :icons
+    - font_icons = @document.attr? :icons, 'font'
+    %ol
+      - items.each_with_index do |item, i|
+        - num = i + 1
+        %li
+          %span.colist-num<
+            - if font_icons
+              %i.conum=num
+            - else
+              %img{:src=>icon_uri("callouts/#{num}"), :alt=>num}
+          =item.text
+  - else
+    %ol
+      - items.each do |item|
+        %li
+          %p=item.text

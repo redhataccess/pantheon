@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`User tests should render User component 1`] = `
+<Fragment>
+  <Link
+    onClick={[Function]}
+    to="/login"
+  >
+    Log In
+  </Link>
+</Fragment>
+`;

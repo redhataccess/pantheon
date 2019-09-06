@@ -37,6 +37,13 @@ body {
   flex-direction:row;
 }
 
+.column-view {
+  float:right;
+  display:flex; 
+  flex-direction:column;
+  font-size: small;
+}
+
 .pf-c-page {
   width: 100%;
   height: 100vh;
