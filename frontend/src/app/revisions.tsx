@@ -167,7 +167,7 @@ class Revisions extends Component<IProps> {
                 let releasedTag = responseJSON["en_US"]["released"];
                 let draftTag = responseJSON["en_US"]["draft"];
         
-                console.log("uuid v0: ",responseJSON["en_US"]["v0"]["jcr:uuid"])
+               // console.log("uuid v0: ",responseJSON["en_US"]["v0"]["jcr:uuid"])
                 if(responseJSON["en_US"]["v0"]["jcr:uuid"]===draftTag){
                     this.draft[0]["revision"] = "Version 0";
                     this.draft[0]["updatedDate"] = responseJSON["en_US"]["v0"]["jcr:lastModified"];
