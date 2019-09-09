@@ -66,8 +66,9 @@ class ModuleDisplay extends Component<IProps> {
         console.log("verOptions ", verOptions)
         const usecaseOptions = [
             { value: 'Select Use Case', label: 'Select Use Case', disabled: true },
-            { value: 'Documentation', label: 'Documentation', disabled: false },
-            { value: 'User Guide', label: 'User Guide', disabled: false },
+            { value: 'Concept', label: 'Concept', disabled: false },
+            { value: 'Procedure', label: 'Procedure', disabled: false },
+            { value: 'Reference', label: 'Reference', disabled: false }
         ];
 
         if (!this.state.loggedinStatus && this.state.initialLoad === true) {
@@ -390,6 +391,7 @@ class ModuleDisplay extends Component<IProps> {
     private getProductUrl = (productUrl) => {
         const backend = '/content/products.query.json?nodeType=pant:product&where=[url]="' + productUrl + '"'
         return backend
+
     }
 }
 
