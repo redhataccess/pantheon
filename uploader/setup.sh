@@ -15,22 +15,28 @@ echo "Downloading the uploader script to $UPLOADER_HOME"
 curl -o ${UPLOADER_HOME}/pantheon.py https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/pantheon.py
 
 # Ensure file is executable
-echo "Ensure uploader script is executble"
+echo "Ensure uploader script is executable"
 chmod +x ${UPLOADER_HOME}/pantheon.py 
+
+#Creating ~/bin directory if not exists
+if [ ! -d ~/bin ]; then
+  echo "Creating ~/bin directory"
+  mkdir -p ~/bin
+fi
 
 # Create a symlink to ~/bin/pantheon if not exists
 if [ ! -h "$PANTHEON_BIN" ]; then
-  echo "Create a symlink to $PANTHEON_BIN"
+  echo "Creating a symlink to $PANTHEON_BIN"
   ln -s ${UPLOADER_HOME}/pantheon.py $PANTHEON_BIN
 fi
 
 # Show full path for pantheon command
 echo
 echo "UPLOADER_HOME: $UPLOADER_HOME"
-echo "pantheon command path: "
+echo "Pantheon command path: "
 which pantheon
 
 if [[ $(which pantheon) = $PANTHEON_BIN ]]; then
-  echo "set up completed!"
+  echo "Set up completed!"
 fi  
 echo

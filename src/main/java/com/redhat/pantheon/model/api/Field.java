@@ -2,6 +2,7 @@ package com.redhat.pantheon.model.api;
 
 import org.apache.sling.api.resource.ModifiableValueMap;
 
+import javax.annotation.Nullable;
 import javax.jcr.RepositoryException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -56,11 +57,18 @@ public class Field<T> implements Supplier<T>, Consumer<T> {
     }
 
     /**
-     * Sets the value on the jcr field of the underlying resource
+     * Sets the value on the jcr field of the underlying resource.
+     * Setting a field to null effectively removes the field from the resource.
      * @param value
      */
-    public void set(T value) {
-        owner.adaptTo(ModifiableValueMap.class).put(name, value);
+    public void set(@Nullable T value) {
+        ModifiableValueMap mvm = owner.adaptTo(ModifiableValueMap.class);
+        if(value == null) {
+            mvm.remove(name);
+        }
+        else {
+            mvm.put(name, value);
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.redhat.pantheon.servlet.module;
 
+import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.util.TestUtils;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.servlets.post.HtmlResponse;
 import org.apache.sling.servlets.post.Modification;
@@ -9,7 +9,6 @@ import org.apache.sling.servlets.post.ModificationType;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +19,7 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith({SlingContextExtension.class})
 class ReleaseDraftRevisionTest {
@@ -41,10 +41,11 @@ class ReleaseDraftRevisionTest {
         slingContext.resourceResolver().getResource("/module/en_US").adaptTo(ModifiableValueMap.class)
                 .put("draft", slingContext.resourceResolver().getResource("/module/en_US/1").getValueMap().get("jcr:uuid"));
         registerMockAdapter(Module.class, slingContext);
+        Events events = mock(Events.class);
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
-        ReleaseDraftRevision operation = new ReleaseDraftRevision();
+        ReleaseDraftRevision operation = new ReleaseDraftRevision(events);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);
@@ -55,6 +56,7 @@ class ReleaseDraftRevisionTest {
         assertEquals("/module", changes.get(0).getSource());
         assertEquals(HttpServletResponse.SC_OK, postResponse.getStatusCode());
         assertNotNull(slingContext.resourceResolver().getResource("/module/en_US/released"));
+        assertNotNull(slingContext.resourceResolver().getResource("/module/en_US/1/metadata/pant:datePublished"));
     }
 
     @Test
@@ -69,7 +71,7 @@ class ReleaseDraftRevisionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
-        ReleaseDraftRevision operation = new ReleaseDraftRevision();
+        ReleaseDraftRevision operation = new ReleaseDraftRevision(null);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);

@@ -2,6 +2,7 @@ package com.redhat.pantheon.model.module;
 
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.SlingResource;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
 
 import java.util.Calendar;
@@ -17,11 +18,19 @@ public class Metadata extends SlingResource {
 
     public final Field<String> mAbstract = stringField("pant:abstract");
 
+    public final Field<String> headline = stringField("pant:headline");
+
     public final Field<String> description = stringField("jcr:description");
 
     public final Field<Calendar> created = dateField("jcr:created");
 
     public final Field<String> createdBy = stringField("jcr:createdBy");
+
+    public final Field<ModuleType> moduleType = enumField("pant:moduleType", ModuleType.class);
+
+    public final Field<Calendar> datePublished = dateField("pant:datePublished");
+
+    public final Field<Calendar> dateModified = dateField(JcrConstants.JCR_LASTMODIFIED);
 
     public final Field<String> primaryType = stringField("jcr:primaryType");
 
