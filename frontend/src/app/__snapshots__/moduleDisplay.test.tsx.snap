@@ -1,0 +1,347 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
+<Fragment>
+  <div>
+    <Breadcrumb>
+      <BreadcrumbItem
+        to="#"
+      >
+        Modules
+      </BreadcrumbItem>
+      <BreadcrumbItem
+        isActive={true}
+        to="#"
+      >
+        Red Hat Enterprise Linux
+      </BreadcrumbItem>
+    </Breadcrumb>
+  </div>
+  <div>
+    <Level
+      gutter="md"
+    >
+      <LevelItem>
+        <TextContent>
+          <Text
+            component="h1"
+          >
+            Red Hat Enterprise Linux
+              
+            <Tooltip
+              appendTo={[Function]}
+              aria="describedby"
+              boundary="window"
+              className=""
+              content={
+                <div>
+                  Title updated in latest revision
+                </div>
+              }
+              distance={15}
+              enableFlip={true}
+              entryDelay={500}
+              exitDelay={500}
+              flipBehavior={
+                Array [
+                  "top",
+                  "right",
+                  "bottom",
+                  "left",
+                  "top",
+                  "right",
+                  "bottom",
+                ]
+              }
+              isAppLauncher={false}
+              maxWidth="18.75rem"
+              position="right"
+              trigger="mouseenter focus"
+              zIndex={9999}
+            >
+              <span>
+                <HelpIcon
+                  color="currentColor"
+                  noVerticalAlign={false}
+                  size="sm"
+                  title={null}
+                />
+              </span>
+            </Tooltip>
+          </Text>
+        </TextContent>
+      </LevelItem>
+      <LevelItem />
+      <LevelItem>
+        <Button
+          onClick={[Function]}
+          variant="secondary"
+        >
+          Edit metadata
+        </Button>
+      </LevelItem>
+    </Level>
+  </div>
+  <div>
+    <a
+      href="http://access.redhat.com"
+    >
+      View on Customer Portal
+    </a>
+  </div>
+  <div>
+    <DataList
+      aria-label="single action data list example "
+    >
+      <DataListItem
+        aria-labelledby="simple-item1"
+      >
+        <DataListItemRow
+          id="data-rows-header"
+        >
+          <DataListItemCells
+            dataListCells={
+              Array [
+                <DataListCell
+                  width={2}
+                >
+                  <span
+                    className="sp-prop-nosort"
+                    id="span-source-type"
+                  >
+                    Products
+                  </span>
+                </DataListCell>,
+                <DataListCell>
+                  <span
+                    className="sp-prop-nosort"
+                    id="span-source-type"
+                  >
+                    Published
+                  </span>
+                </DataListCell>,
+                <DataListCell>
+                  <span
+                    className="sp-prop-nosort"
+                    id="span-source-type"
+                  >
+                    Updated
+                  </span>
+                </DataListCell>,
+                <DataListCell>
+                  <span
+                    className="sp-prop-nosort"
+                    id="span-source-name"
+                  >
+                    Module Type
+                  </span>
+                </DataListCell>,
+              ]
+            }
+          />
+        </DataListItemRow>
+        <DataListItemRow>
+          <DataListItemCells
+            dataListCells={
+              Array [
+                <DataListCell
+                  width={2}
+                >
+                  <span>
+                    Dummy Product Name
+                  </span>
+                </DataListCell>,
+                <DataListCell>
+                  <span>
+                    Dummy Publish
+                  </span>
+                </DataListCell>,
+                <DataListCell>
+                  <span>
+                    Tue Aug 27 2019 11:28:26 GMT-0400
+                  </span>
+                </DataListCell>,
+                <DataListCell>
+                  <span>
+                    REFERENCE
+                  </span>
+                </DataListCell>,
+              ]
+            }
+          />
+        </DataListItemRow>
+        ))}
+      </DataListItem>
+    </DataList>
+  </div>
+  <div>
+    <Card>
+      <Revisions
+        modulePath="module/red_hat_enterprise_linux"
+        revisionModulePath="Red Hat Enterprise Linux"
+      />
+    </Card>
+  </div>
+  <Modal
+    actions={
+      Array [
+        <Button
+          onClick={[Function]}
+          variant="primary"
+        >
+          Save
+        </Button>,
+        <Button
+          onClick={[Function]}
+          variant="secondary"
+        >
+          Cancel
+        </Button>,
+      ]
+    }
+    ariaDescribedById="edit-metadata"
+    className=""
+    header={
+      <React.Fragment>
+        <Title
+          headingLevel="h1"
+          size="2xl"
+        >
+          Edit Metadata
+        </Title>
+        <br />
+        <p
+          className="pf-u-pl-sm"
+        >
+          All fields are required.
+        </p>
+      </React.Fragment>
+    }
+    hideTitle={false}
+    isLarge={false}
+    isOpen={false}
+    isSmall={false}
+    onClose={[Function]}
+    showClose={true}
+    title="Edit metadata"
+    width="60%"
+  >
+    <Form
+      isHorizontal={true}
+    >
+      <FormGroup
+        fieldId="product-name"
+        isRequired={true}
+        label="Product Name"
+      >
+        <InputGroup>
+          <FormSelect
+            aria-label="FormSelect Product"
+            className=""
+            isDisabled={false}
+            isValid={true}
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            value=""
+          >
+            <FormSelectOption
+              isDisabled={false}
+              key="0"
+              label="Select a Product"
+              value="Select a Product"
+            />
+          </FormSelect>
+          <FormSelect
+            aria-label="FormSelect Version"
+            className=""
+            isDisabled={false}
+            isValid={true}
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            value=""
+          >
+            <FormSelectOption
+              isDisabled={false}
+              key="Select a Version"
+              label="Select a Version"
+              value="Select a Version"
+            />
+          </FormSelect>
+        </InputGroup>
+      </FormGroup>
+      <FormGroup
+        fieldId="document-usecase"
+        isRequired={true}
+        label="Document use case"
+      >
+        <FormSelect
+          aria-label="FormSelect Product"
+          className=""
+          isDisabled={false}
+          isValid={true}
+          onBlur={[Function]}
+          onChange={[Function]}
+          onFocus={[Function]}
+          value=""
+        >
+          <FormSelectOption
+            isDisabled={false}
+            key="0"
+            label="Select Use Case"
+            value="Select Use Case"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="1"
+            label="Concept"
+            value="CONCEPT"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="2"
+            label="Procedure"
+            value="PROCEDURE"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="3"
+            label="Reference"
+            value="REFERENCE"
+          />
+        </FormSelect>
+      </FormGroup>
+      <FormGroup
+        fieldId="url-fragment"
+        isRequired={true}
+        label="Vanity URL fragment"
+      >
+        <InputGroup>
+          <InputGroupText
+            aria-label="/"
+            id="slash"
+          >
+            <span>
+              /
+            </span>
+          </InputGroupText>
+          <TextInput
+            aria-label={null}
+            className=""
+            id="url-fragment"
+            isDisabled={false}
+            isReadOnly={false}
+            isRequired={true}
+            isValid={true}
+            onChange={[Function]}
+            placeholder="Enter URL"
+            type="text"
+            value=""
+          />
+        </InputGroup>
+      </FormGroup>
+    </Form>
+  </Modal>
+</Fragment>
+`;

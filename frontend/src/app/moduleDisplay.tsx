@@ -23,23 +23,26 @@ class ModuleDisplay extends Component<IProps> {
         initialLoad: true,
         isDup: false,
         isEmptyResults: false,
+        isMissingFields: false,
         isModalOpen: false,
         isProductDropdownOpen: false,
         isUsecaseDropdownOpen: false,
         isVersionDropdownOpen: false,
         loggedinStatus: false,
+        productOptions: [
+            { value: 'Select a Product', label: 'Select a Product', disabled: false },
+        ],
         productUrl: '',
         productValue: '',
         results: [],
         usecaseValue: '',
-        versionValue: '',
-        productOptions: [
-            { value: 'Select a Product', label: 'Select a Product', disabled: false },
-        ],
         versionOptions: [
             { value: 'Select a Version', label: 'Select a Version', disabled: false },
 
         ],
+        versionValue: '',
+
+
     };
 
     public render() {
@@ -63,12 +66,12 @@ class ModuleDisplay extends Component<IProps> {
             verOptions = this.state.allProducts[productValue]
         }
 
-        console.log("verOptions ", verOptions)
+        // console.log("verOptions ", verOptions)
         const usecaseOptions = [
-            { value: 'Select Use Case', label: 'Select Use Case', disabled: true },
-            { value: 'Concept', label: 'Concept', disabled: false },
-            { value: 'Procedure', label: 'Procedure', disabled: false },
-            { value: 'Reference', label: 'Reference', disabled: false }
+            { value: 'Select Use Case', label: 'Select Use Case', disabled: false },
+            { value: 'CONCEPT', label: 'Concept', disabled: false },
+            { value: 'PROCEDURE', label: 'Procedure', disabled: false },
+            { value: 'REFERENCE', label: 'Reference', disabled: false }
         ];
 
         if (!this.state.loggedinStatus && this.state.initialLoad === true) {
@@ -82,7 +85,7 @@ class ModuleDisplay extends Component<IProps> {
                     }
                 })
         }
-        console.log("[inside React.Fragment] allProducts ", this.state.allProducts)
+
         return (
             <React.Fragment>
                 {this.state.initialLoad && this.fetchProductVersionDetails()}
@@ -240,6 +243,43 @@ class ModuleDisplay extends Component<IProps> {
         this.setState({
             isModalOpen: !this.state.isModalOpen
         });
+        // save form data
+        if (this.state.productUrl === "") {
+            this.setState({ isMissingFields: true })
+            this.setState({ formInvalid: true })
+
+        } else if (this.productUrlExist(this.state.productUrl)) {
+            this.setState({ isDup: true })
+            this.setState({ formInvalid: true })
+        } else {
+            const hdrs = {
+                'Accept': 'application/json',
+                'cache-control': 'no-cache'
+            }
+
+            const formData = new FormData();
+            formData.append("productName", this.state.productValue)
+            formData.append("versionName", this.state.versionValue)
+            formData.append("moduleType", this.state.usecaseValue)
+
+            formData.append("urlFragment", "/" + this.state.productUrl)
+
+            fetch('/content/' + this.props.modulePath + '/metadata', {
+                body: formData,
+                headers: hdrs,
+                method: 'post'
+            }).then(response => {
+                if (response.status === 201 || response.status === 200) {
+                    this.setState({ redirect: true })
+                } else if (response.status === 500) {
+                    // console.log(" Needs login " + response.status)
+                    this.setState({ login: true })
+                } else {
+                    console.log(" Failed " + response.status)
+                    this.setState({ failedPost: true })
+                }
+            });
+        }
     }
 
     private onChangeProduct = (productValue, event) => {
@@ -270,7 +310,7 @@ class ModuleDisplay extends Component<IProps> {
             .then(response => response.json())
             .then(responseJSON => this.setState({ results: responseJSON.results }))
             .then(() => {
-                console.log("[productUrlExist] results breakdown " + JSON.stringify(this.state.results))
+                // console.log("[productUrlExist] results breakdown " + JSON.stringify(this.state.results))
 
                 if (JSON.stringify(this.state.results) === "[]") {
                     this.setState({
@@ -285,13 +325,13 @@ class ModuleDisplay extends Component<IProps> {
         return this.state.isDup
     }
 
-    
+
     private fetchProductVersionDetails = () => {
         this.setState({ initialLoad: false })
         const path = '/content/products.3.json'
         let key
-        let products = new Array()
-    
+        const products = new Array()
+
         fetch(path)
             .then((response) => {
                 if (response.ok) {
@@ -305,35 +345,36 @@ class ModuleDisplay extends Component<IProps> {
                 }
             })
             .then(responseJSON => {
-                // console.log("[responseJSON]responseJSON ", responseJSON)
+                // tslint:disable-next-line: prefer-for-of
                 for (let i = 0; i < Object.keys(responseJSON).length; i++) {
                     key = Object.keys(responseJSON)[i];
-                    // console.log("[responseJSON] key ", key)
                     const nameKey = "name"
                     const versionKey = "versions"
                     if ((key !== 'jcr:primaryType')) {
                         if (responseJSON[key][nameKey] !== undefined) {
                             const pName = responseJSON[key][nameKey]
-                            // console.log("[responseJSON] pName ", pName)
                             const versionObj = responseJSON[key][versionKey]
-                            //  console.log("[responseJSON] versoinObj ", versionObj)
+
                             if (versionObj) {
-                                let vKey; let versions = new Array();
-                                for (let item in Object.keys(versionObj)) {
+                                let vKey;
+                                const versions = new Array();
+                                // tslint:disable-next-line: no-shadowed-variable
+                                const nameKey = "name";
+                                for (const item in Object.keys(versionObj)) {
                                     if (Object.keys(versionObj)[item] !== undefined) {
                                         vKey = Object.keys(versionObj)[item]
 
                                         if (vKey !== 'jcr:primaryType') {
-                                            if (versionObj[vKey]['name']) {
-                                                // console.log("[responseJSON] version name ", versionObj[vKey]['name'])
-                                                versions.push({ id: vKey, value: versionObj[vKey]['name'] })
+                                            if (versionObj[vKey][nameKey]) {
+
+                                                versions.push({ id: vKey, value: versionObj[vKey][nameKey] })
                                             }
                                         }
                                     }
                                 }
 
                                 products[pName] = versions
-                                console.log("[responseJSON] versions ", versions)
+
                             }
                         }
                     }
@@ -343,22 +384,23 @@ class ModuleDisplay extends Component<IProps> {
                 })
 
                 if (products) {
-                    let productItems = [{ value: 'Select a Product', label: 'Select a Product', disabled: false }]
+                    const productItems = [{ value: 'Select a Product', label: 'Select a Product', disabled: false }]
+                    // tslint:disable-next-line: forin
                     for (const item in products) {
-                        console.log("[render] item ", item)
+                        // console.log("[render] item ", item)
                         productItems.push({ value: item, label: item, disabled: false })
                     }
                     if (productItems.length > 1) {
                         this.setState({ productOptions: productItems })
                     }
                     // generate options for versions.
-                    console.log("[generate versionOptions] productValue ", this.state.productValue)
-                    console.log("[generate versionOptions] versionArray ", products[this.state.productValue])
+                    // console.log("[generate versionOptions] productValue ", this.state.productValue)
+
                     if (products[this.state.productValue]) {
                         const versions = products[this.state.productValue];
-                        console.log("[generate versionOptions] versions ", versions)
+                        // console.log("[generate versionOptions] versions ", versions)
                         if (versions) {
-                            let versionItems = [{ value: 'Select a Version', label: 'Select a Version', disabled: false }]
+                            const versionItems = [{ value: 'Select a Version', label: 'Select a Version', disabled: false }]
                             for (const item in versions) {
                                 if (item !== undefined) {
                                     versionItems.push({ value: item, label: item, disabled: false })
@@ -378,15 +420,11 @@ class ModuleDisplay extends Component<IProps> {
             .catch((error) => {
                 console.log(error)
             });
-        console.log("products: ", products)
-        console.log("productOptions ", this.state.productOptions)
-        console.log("versionOptions ", this.state.versionOptions)
+        // console.log("products: ", products)
+        // console.log("productOptions ", this.state.productOptions)
+        // console.log("versionOptions ", this.state.versionOptions)
         return products;
     };
-    private getProductsUrl() {
-        const backend = "/content/products.query.json?nodeType=pant:product&orderby=name"
-        return backend
-    }
 
     private getProductUrl = (productUrl) => {
         const backend = '/content/products.query.json?nodeType=pant:product&where=[url]="' + productUrl + '"'

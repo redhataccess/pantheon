@@ -1,99 +1,121 @@
 import React from 'react';
-import { ProductListing }  from '@app/productListing';
+import { ProductDetails } from '@app/productDetails';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import { DataList, DataListItem, DataListItemCells, DataListItemRow, FormGroup, TextInput } from '@patternfly/react-core';
+import { Breadcrumb, Button, Form, FormGroup, Level, LevelItem, TextContent, TextInput, Text } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
+import sinon from 'sinon'
 
- const props = {
-   match: exact => true
- }
+const props = {
+  productName: "Red Hat Enterprise Linux"
+}
 
-describe('ProductListing tests', () => {
-  test('should render ProductListing component', () => {
-    const view = shallow(<ProductListing />);
+describe('ProductDetails tests', () => {
+  test('should render ProductDetails component', () => {
+    const view = shallow(<ProductDetails productName="Red Hat Enterprise Linux" />);
     expect(view).toMatchSnapshot();
   });
 
-   it('should render a Data List', () => {
-     const wrapper = mount(<ProductListing />);
-     const dataList = wrapper.find(DataList);
-     expect(dataList.exists()).toBe(true)
-   });
-
-   it('should render a DataListItem', () => {
-    const wrapper = mount(<ProductListing />);
-    const dataListItem = wrapper.find(DataListItem);
-    expect(dataListItem.exists()).toBe(true)
+  it('should render a form', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux" />);
+    const form = wrapper.find(Form);
+    expect(form.exists()).toBe(true)
   });
 
-  it('should render a DataListItemCells Element', () => {
-    const wrapper = mount(<ProductListing />);
-    const dataListItemCells = wrapper.find(DataListItemCells);
-    expect(dataListItemCells.exists()).toBe(true)
+  it('should render a form group', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux" />);
+    const formGroup = wrapper.find(FormGroup);
+    expect(formGroup.exists()).toBe(true)
   });
 
-  it('should render a DataListItemRow element', () => {
-    const wrapper = mount(<ProductListing />);
-    const dataListItemRow = wrapper.find(DataListItemRow);
-    expect(dataListItemRow.exists()).toBe(true)
+  it('should render a text input', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux" />);
+    const textInput = wrapper.find(TextInput);
+    expect(textInput.exists()).toBe(true)
   });
 
-   it('should render a form group', () => {
-     const wrapper = mount(<ProductListing />);
-     const formGroup = wrapper.find(FormGroup);
-     expect(formGroup.exists()).toBe(true)
-   });
+  it('should render a Button', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux" />);
+    const button = wrapper.find(Button);
+    expect(button.exists()).toBe(true)
+  });
 
-   it('should render a text input', () => {
-     const wrapper = mount(<ProductListing />);
-     const textInput = wrapper.find(TextInput);
-     expect(textInput.exists()).toBe(true)
-   });
+  it('should render a breadcrumb', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux" />);
+    const breadCrumb = wrapper.find(Breadcrumb);
+    expect(breadCrumb.exists()).toBe(true)
+  });
 
-   it('test props', () => {
-     const productListing = mount(<ProductListing {...props} />).matchesElement
-     expect(productListing.length === 1)
-   });
+  it('should render a Level element', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux" />);
+    const level = wrapper.find(Level);
+    expect(level.exists()).toBe(true)
+  });
 
-   
-   it('test getProducts function', () => {
-    const wrapper = renderer.create(<ProductListing />);
+  it('should render a LevelItem', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux" />);
+    const levelItem = wrapper.find(LevelItem);
+    expect(levelItem.exists()).toBe(true)
+  });
+
+  it('should render a TextContent element', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux" />);
+    const textContent = wrapper.find(TextContent);
+    expect(textContent.exists()).toBe(true)
+  });
+
+  it('should render a Text element', () => {
+    const wrapper = mount(<ProductDetails productName="Red Hat Enterprise Linux" />);
+    const text = wrapper.find(Text);
+    expect(text.exists()).toBe(true)
+  });
+
+  it('test props', () => {
+
+    const productDetails = mount(<ProductDetails {...props} />).text
+    expect(productDetails.length === 1)
+  });
+
+  it('test click event', () => {
+    const mockCallBack = jest.fn();
+
+    const button = shallow((<Button onClick={mockCallBack}>Submit</Button>));
+    button.find('button').simulate('click');
+    expect(mockCallBack.mock.calls.length).toEqual(1);
+  });
+
+  it('test fetchProductDetails function', () => {
+    const wrapper = renderer.create(<ProductDetails {...props} />);
     const inst = wrapper.getInstance();
-    expect(inst.getProducts([{"product1": "product1 name"}])).toMatchSnapshot();
+    expect(inst.fetchProductDetails([])).toMatchSnapshot();
   });
 
-   it('test getProductsUrl function', () => {
-    const wrapper = renderer.create(<ProductListing />);
+  it('test handleTextInputChange function', () => {
+    const wrapper = renderer.create(<ProductDetails {...props} />);
     const inst = wrapper.getInstance();
-    expect(inst.getProductsUrl("/content/products.query.json?nodeType=pant:product&orderby=name")).toMatchSnapshot();
+    expect(inst.handleTextInputChange("1.1")).toMatchSnapshot();
   });
-   
-   it('test setInput function', () => {
-    const wrapper = renderer.create(<ProductListing />);
+
+  it('test saveVersion function', () => {
+    const wrapper = renderer.create(<ProductDetails {...props} />);
     const inst = wrapper.getInstance();
-    expect(inst.setInput("test input")).toMatchSnapshot();
+    expect(inst.saveVersion).toMatchSnapshot();
   });
 
-   it('test loginRedirect function', () => {
-    const wrapper = renderer.create(<ProductListing />);
+  it('test createVersionsPath function', () => {
+    const wrapper = renderer.create(<ProductDetails {...props} />);
     const inst = wrapper.getInstance();
-    expect(inst.loginRedirect).toMatchSnapshot();
-  });
- 
-  it('test checkAuth function', () => {
-    const wrapper = renderer.create(<ProductListing />);
-    const inst = wrapper.getInstance();
-    expect(inst.checkAuth).toMatchSnapshot();
+    expect(inst.createVersionsPath).toMatchSnapshot();
   });
 
-  it('should handle state changes for login', () => {
-    const wrapper = shallow(<ProductListing />)
+  test('newSearch() click event', () => {
+    const wrapper = shallow(<ProductDetails {...props} />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'saveVersion');
 
-    expect(wrapper.state('login')).toBe(false)
-    wrapper.setState({ 'login': true })
-    expect(wrapper.state('login')).toBe(true)
+    wrapper.setState({ "newVersion": "1.1" })
+    wrapper.find(Button).simulate('click');
+    sinon.assert.called(spy);
   });
-
 });
