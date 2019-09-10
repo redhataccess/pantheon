@@ -12,14 +12,14 @@ import BlankImage from '@app/images/blank.jpg';
   export interface IProps {
     modulePath: string
     revisionModulePath: string
-    draftUpdateDate: (draftUpdateDate,draft) => any
-    releaseUpdateDate: (releaseUpdateDate,release) => any
+    draftUpdateDate: (draftUpdateDate,draft,draftPath) => any
+    releaseUpdateDate: (releaseUpdateDate,release,releasePath) => any
   }
 
 class Revisions extends Component<IProps> {
 
-    public draft= [{ "icon": BlankImage, "revision": "", "publishedState": 'Not published', "updatedDate": '        --', "firstButtonType": 'primary',"secondButtonType": 'secondary', "firstButtonText": 'Publish',"secondButtonText": 'Preview',"isDropdownOpen": false,"isArchiveDropDownOpen": false,"metaData":''}]
-    public release= [{ "icon": CheckImage, "revision": "", "publishedState": 'Released', "updatedDate": '        --', "firstButtonType": 'secondary',"secondButtonType": 'primary', "firstButtonText": 'Unpublish',"secondButtonText": 'View',"isDropdownOpen": false,"isArchiveDropDownOpen": false,"metaData":''}]
+    public draft= [{ "icon": BlankImage,"path": "", "revision": "", "publishedState": 'Not published', "updatedDate": '        --', "firstButtonType": 'primary',"secondButtonType": 'secondary', "firstButtonText": 'Publish',"secondButtonText": 'Preview',"isDropdownOpen": false,"isArchiveDropDownOpen": false,"metaData":''}]
+    public release= [{ "icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": '        --', "firstButtonType": 'secondary',"secondButtonType": 'primary', "firstButtonText": 'Unpublish',"secondButtonText": 'View',"isDropdownOpen": false,"isArchiveDropDownOpen": false,"metaData":''}]
 
     public state = {
         initialLoad: true,
@@ -190,21 +190,7 @@ class Revisions extends Component<IProps> {
                 
                 let releasedTag = responseJSON["en_US"]["released"];
                 let draftTag = responseJSON["en_US"]["draft"];
-        
-                console.log("uuid v0: ",responseJSON["en_US"]["v0"]["jcr:uuid"])
-                if(responseJSON["en_US"]["v0"]["jcr:uuid"]===draftTag){
-                    this.draft[0]["revision"] = "Version 0";
-                    this.draft[0]["updatedDate"] = responseJSON["en_US"]["v0"]["jcr:lastModified"];
-                    this.draft[0]["metaData"] = responseJSON["en_US"]["v0"]["metadata"];                    
-                }
-                    
-                if(responseJSON["en_US"]["v0"]["jcr:uuid"]===releasedTag){
-                    this.release[0]["revision"] = "Version 0";
-                    this.release[0]["updatedDate"] = responseJSON["en_US"]["v0"]["jcr:lastModified"];
-                    this.release[0]["metaData"] = responseJSON["en_US"]["v0"]["metadata"];
-                    this.release[0]["publishedState"] = responseJSON["en_US"]["jcr:created"].substring(4,15);                   
-                }
-                    
+                            
                 let objectKeys = Object.keys(responseJSON["en_US"]);
     
                 for(var key in objectKeys){
@@ -214,9 +200,19 @@ class Revisions extends Component<IProps> {
                     else{
                         if(responseJSON["en_US"][objectKeys[key]]["jcr:uuid"]===draftTag){
                             this.draft[0]["revision"] = "Version "+objectKeys[key];
+                            this.draft[0]["updatedDate"] = responseJSON["en_US"][objectKeys[key]]["jcr:lastModified"];
+                            this.draft[0]["metaData"] = responseJSON["en_US"][objectKeys[key]]["metadata"];  
+                            this.draft[0]["path"] =  "/content/"+this.props.modulePath+"/en_US/"+objectKeys[key];
+                            console.log("1:",this.draft[0]["path"]);  
+                            this.props.draftUpdateDate(this.draft[0]["updatedDate"],"draft",this.draft[0]["path"]);                       
                         }
                         if(responseJSON["en_US"][objectKeys[key]]["jcr:uuid"]===releasedTag){
                             this.release[0]["revision"] = "Version "+objectKeys[key];
+                            this.release[0]["updatedDate"] = responseJSON["en_US"][objectKeys[key]]["jcr:lastModified"];
+                            this.release[0]["metaData"] = responseJSON["en_US"][objectKeys[key]]["metadata"];  
+                            this.release[0]["path"] =  "/content/"+this.props.modulePath+"/en_US/"+objectKeys[key];
+                            console.log("2:",this.release[0]["path"]);  
+                            this.props.releaseUpdateDate(this.release[0]["updatedDate"],"release",this.release[0]["path"])         
                         }                            
                     }
                         
@@ -225,9 +221,6 @@ class Revisions extends Component<IProps> {
                     initialLoad: false,
                     results: [this.draft,this.release]                
                 }        
-            },() => {
-                this.props.draftUpdateDate(this.draft[0]["updatedDate"],"draft")
-                this.props.releaseUpdateDate(this.release[0]["updatedDate"],"release")
             })
         })    
     }

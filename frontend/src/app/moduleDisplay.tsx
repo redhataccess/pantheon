@@ -21,8 +21,10 @@ export interface IProps {
   class ModuleDisplay extends Component<IProps> {
 
     public state = {
+        draftPath: '',
         draftUpdateDate: '',
-        releaseUpdateDate: '',
+        releasePath: '',
+        releaseUpdateDate: ''
     };
 
     public render() {        
@@ -119,19 +121,21 @@ export interface IProps {
         );
     }
 
-    private updateDate = (date,type) => {
+    private updateDate = (date,type,path) => {
         if(type==="draft"){
             this.setState({
-                draftUpdateDate: date
+                draftUpdateDate: date,
+                draftPath: path
             },() => {
-                console.log('changed draft date: ', this.state.draftUpdateDate)
+                console.log('changed draft date: ', this.state.draftUpdateDate, "version path: ",this.state.draftPath)
             });    
         }
         else{
             this.setState({
-                releaseUpdateDate: date
+                releaseUpdateDate: date,
+                releasePath: path
             },() => {
-                console.log('changed release date: ', this.state.releaseUpdateDate)
+                console.log('changed release date: ', this.state.releaseUpdateDate, "version path: ",this.state.releasePath)
             });
         }
       };
