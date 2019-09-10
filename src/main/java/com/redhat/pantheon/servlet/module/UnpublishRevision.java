@@ -62,17 +62,13 @@ public class UnpublishRevision extends AbstractPostOperation {
         } else {
             // Released revision is emptied out
             Module.ModuleLocale moduleLocale = module.getModuleLocale(locale);
+            String unpublishedRevId = moduleLocale.released.get();
             moduleLocale.released.set( null );
 
-            // if there is no draft version, set the latest one as draft
-            if( !module.getDraftRevision(locale).isPresent() ) {
-                Optional<Resource> latestRev = stream(moduleLocale.getChildren())
-                        .reduce(toLastElement());
-                latestRev.ifPresent(resource -> {
-                    moduleLocale.draft.set(
-                            resource.adaptTo(ModuleRevision.class)
-                                    .uuid.get());
-                });
+            // if there is no draft version, set the recently unpublished one as draft
+            // it is guaranteed to be the latest one
+            if (!module.getDraftRevision(locale).isPresent()) {
+                moduleLocale.draft.set(unpublishedRevId);
             }
 
             changes.add(Modification.onModified(module.getPath()));
