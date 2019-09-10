@@ -69,6 +69,8 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
         Optional<String> abstractContent = document.getBlocks().stream()
                 // find the first content block
                 .findFirst()
+                // only the first paragraph is allowed, all other blocks are ignored
+                .filter(block -> block.getContext().equals("paragraph"))
                 // make sure it has some content
                 .filter(contentBlock -> !isNullOrEmpty(contentBlock.getContent().toString()))
                 // get the content itself
