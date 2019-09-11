@@ -36,7 +36,7 @@ import static com.redhat.pantheon.servlet.ServletUtils.*;
                 Constants.SERVICE_DESCRIPTION + "=Servlet which allows querying of any object via their UUID",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
-@SlingServletPaths(value = "/pantheon/internal/object.json")
+@SlingServletPaths(value = "/pantheon/internal/node.json")
 public class GetObjectByUUID extends SlingSafeMethodsServlet {
 
     final String UUID_PARAM = "uuid";
