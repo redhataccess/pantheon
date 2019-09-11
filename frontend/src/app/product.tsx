@@ -123,7 +123,7 @@ class Product extends Component {
       formData.append("url", urlFragment)
       // fetch makes the request to create a new product.
       // transfor productName to lower case and replace special chars with _.
-      fetch('/content/products/' + urlFragment, {
+      fetch(encodeURI('/content/products/' + urlFragment), {
         body: formData,
         headers: hdrs,
         method: 'post'
