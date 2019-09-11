@@ -32,19 +32,21 @@ class ModuleDisplay extends Component<IProps> {
         loggedinStatus: false,
         login: false,
         moduleUrl: '',
+
         productOptions: [
             { value: 'Select a Product', label: 'Select a Product', disabled: false },
         ],
         productValue: '',
         redirect: false,
         results: [],
+        successAlertVisble: false,
         usecaseOptions: [
             { value: 'Select Use Case', label: 'Select Use Case', disabled: false }
         ],
         usecaseValue: '',
-        usecases: ['Administer','Deploy','Develop','Install','Migrate','Monitor','Network',
-        'Plan','Provision','Release','Troubleshoot','Optimize'],
-        
+        usecases: ['Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network',
+            'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize'],
+
         versionOptions: [
             { value: 'Select a Version', label: 'Select a Version', disabled: false },
         ],
@@ -52,7 +54,7 @@ class ModuleDisplay extends Component<IProps> {
     };
 
     public render() {
-        const { isModalOpen, isDup, isMissingFields, productOptions, moduleUrl, productValue, usecaseValue, usecaseOptions, usecases, versionOptions, versionValue } = this.state;
+        const { isModalOpen, isDup, isMissingFields, productOptions, moduleUrl, successAlertVisble, productValue, usecaseValue, usecaseOptions, usecases, versionOptions, versionValue } = this.state;
         const id = 'userID';
 
         const header = (
@@ -76,7 +78,7 @@ class ModuleDisplay extends Component<IProps> {
         usecases.map((item) => (
             ucOptions.push({ value: item, label: item, disabled: false })
         ))
-        
+
         if (!this.state.loggedinStatus && this.state.initialLoad === true) {
             fetch("/system/sling/info.sessionInfo.json")
                 .then(response => response.json())
@@ -91,6 +93,14 @@ class ModuleDisplay extends Component<IProps> {
 
         return (
             <React.Fragment>
+                {successAlertVisble && <Alert
+                    variant="success"
+                    title="Edit Metadata"
+                    action={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
+                >
+                    Update Successful!
+          </Alert>
+                }
                 {this.state.initialLoad && this.fetchProductVersionDetails()}
                 <div>
                     <Breadcrumb>
@@ -184,7 +194,7 @@ class ModuleDisplay extends Component<IProps> {
                     ariaDescribedById="edit-metadata"
                     onClose={this.handleModalToggle}
                     actions={[
-                        <Button key="confirm" variant="primary" onClick={this.saveMetadata}>
+                        <Button form="edit_metadata" key="confirm" variant="primary" onClick={this.saveMetadata}>
                             Save
           </Button>,
                         <Button key="cancel" variant="secondary" onClick={this.handleModalToggle}>
@@ -193,32 +203,32 @@ class ModuleDisplay extends Component<IProps> {
                     ]}
                 >
                     <div>
-                    {/* {this.checkAuth()} */}
-                    {this.loginRedirect()}
-                    {this.renderRedirect()}
-                  </div>
-                  <div className="app-container">
-              
-                {isMissingFields && (
-                  <div className="notification-container">
-                    <Alert
-                      variant="warning"
-                      title="all fields are required."
-                      action={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                    />
-                  </div>
-                )}
-                {isDup && (
-                  <div className="notification-container">
-                    <Alert
-                      variant="warning"
-                      title="Duplicated url fragment."
-                      action={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                    />
-                  </div>
-                )}
-                 </div> 
-                    <Form isHorizontal={true}>
+                        {/* {this.checkAuth()} */}
+                        {this.loginRedirect()}
+                        {this.renderRedirect()}
+                    </div>
+                    <div className="app-container">
+
+                        {isMissingFields && (
+                            <div className="notification-container">
+                                <Alert
+                                    variant="warning"
+                                    title="all fields are required."
+                                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                />
+                            </div>
+                        )}
+                        {isDup && (
+                            <div className="notification-container">
+                                <Alert
+                                    variant="warning"
+                                    title="Duplicated url fragment."
+                                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <Form isHorizontal={true} id="edit_metadata">
                         <FormGroup
                             label="Product Name"
                             isRequired={true}
@@ -230,9 +240,9 @@ class ModuleDisplay extends Component<IProps> {
                                         <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
-                                <FormSelect value={versionValue} onChange={this.onChangeVersion} aria-label="FormSelect Version">
+                                <FormSelect value={versionValue} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
                                     {verOptions.map((option) => (
-                                        
+
                                         <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
@@ -243,7 +253,7 @@ class ModuleDisplay extends Component<IProps> {
                             isRequired={true}
                             fieldId="document-usecase"
                         >
-                            <FormSelect value={usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Product">
+                            <FormSelect value={usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
                                 {ucOptions.map((option, index) => (
                                     <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
                                 ))}
@@ -261,6 +271,9 @@ class ModuleDisplay extends Component<IProps> {
                                 <TextInput isRequired={true} id="url-fragment" type="text" placeholder="Enter URL" value={moduleUrl} onChange={this.handleURLInput} />
                             </InputGroup>
                         </FormGroup>
+                        <div>
+                            <input name="productVersion@TypeHint" type="hidden" value="Reference" />
+                        </div>
                     </Form>
                 </Modal>
             </React.Fragment>
@@ -274,10 +287,10 @@ class ModuleDisplay extends Component<IProps> {
         });
     }
 
-    private saveMetadata = () => {
+    private saveMetadata = (event) => {
         // save form data
-        if (this.state.productValue === "" || this.state.versionValue === "" || 
-        this.state.usecaseValue === "" || this.state.moduleUrl === "") {
+        if (this.state.productValue === "" || this.state.versionValue === "" ||
+            this.state.usecaseValue === "" || this.state.moduleUrl === "") {
             this.setState({ isMissingFields: true })
             this.setState({ formInvalid: true })
 
@@ -290,21 +303,23 @@ class ModuleDisplay extends Component<IProps> {
                 'cache-control': 'no-cache'
             }
 
-            const formData = new FormData();
-            formData.append("productName", this.state.productValue)
-            formData.append("versionName", this.state.versionValue)
-            // formData.append("productVersion", this.state.versionValue)
-            formData.append("documentUsecase", this.state.usecaseValue)
+            // console.log("event.target ", event.target.form)
+            const formData = new FormData(event.target.form);
 
+            formData.append("productVersion", this.state.versionValue)
+            formData.append("documentUsecase", this.state.usecaseValue)
             formData.append("urlFragment", "/" + this.state.moduleUrl)
-            console.log("formData ", formData)
+
             fetch('/content/' + this.props.modulePath + '/metadata', {
                 body: formData,
                 headers: hdrs,
                 method: 'post'
             }).then(response => {
                 if (response.status === 201 || response.status === 200) {
-                    this.setState({ redirect: true })
+                    console.log("successful edit ", response.status)
+                    // this.setState({ redirect: true, successAlertVisble: true })
+                    this.handleModalToggle()
+                    this.setState({ successAlertVisble: true })
                 } else if (response.status === 500) {
                     // console.log(" Needs login " + response.status)
                     this.setState({ login: true })
@@ -445,40 +460,44 @@ class ModuleDisplay extends Component<IProps> {
 
     private renderRedirect = () => {
         if (this.state.redirect) {
-          return <Redirect to='/search' />
+            return <Redirect to='/search' />
         } else {
-          return ""
+            return ""
         }
     }
 
     private loginRedirect = () => {
         if (this.state.login) {
-          return <Redirect to='/login' />
+            return <Redirect to='/login' />
         } else {
-          return ""
+            return ""
         }
-      }
-    
-      private checkAuth = () => {
-        fetch("/system/sling/info.sessionInfo.json")
-          .then(response => response.json())
-          .then(responseJSON => {
-            const key = "userID"
-            if (responseJSON[key] === 'anonymous') {
-              this.setState({ login: true })
-            }
-          })
-      }
+    }
 
-      private dismissNotification = () => {
+    private checkAuth = () => {
+        fetch("/system/sling/info.sessionInfo.json")
+            .then(response => response.json())
+            .then(responseJSON => {
+                const key = "userID"
+                if (responseJSON[key] === 'anonymous') {
+                    this.setState({ login: true })
+                }
+            })
+    }
+
+    private dismissNotification = () => {
         if (this.state.isMissingFields === true) {
-          this.setState({ isMissingFields: false });
+            this.setState({ isMissingFields: false });
         }
-    
+
         if (this.moduleUrlExist(this.state.moduleUrl) === false) {
-          this.setState({ isDup: false });
+            this.setState({ isDup: false });
         }
-      }
+    }
+
+    private hideSuccessAlert = () => {
+        this.setState({ successAlertVisble: false })
+    }
 }
 
 export { ModuleDisplay }

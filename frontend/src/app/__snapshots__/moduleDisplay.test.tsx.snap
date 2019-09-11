@@ -186,6 +186,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
     actions={
       Array [
         <Button
+          form="edit_metadata"
           onClick={[Function]}
           variant="primary"
         >
@@ -231,6 +232,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
       className="app-container"
     />
     <Form
+      id="edit_metadata"
       isHorizontal={true}
     >
       <FormGroup
@@ -259,6 +261,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
           <FormSelect
             aria-label="FormSelect Version"
             className=""
+            id="productVersion"
             isDisabled={false}
             isValid={true}
             onBlur={[Function]}
@@ -281,7 +284,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
         label="Document use case"
       >
         <FormSelect
-          aria-label="FormSelect Product"
+          aria-label="FormSelect Usecase"
           className=""
           isDisabled={false}
           isValid={true}
@@ -399,6 +402,13 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
           />
         </InputGroup>
       </FormGroup>
+      <div>
+        <input
+          name="productVersion@TypeHint"
+          type="hidden"
+          value="Reference"
+        />
+      </div>
     </Form>
   </Modal>
 </Fragment>
