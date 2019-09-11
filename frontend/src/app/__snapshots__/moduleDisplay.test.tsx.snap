@@ -226,6 +226,10 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
     title="Edit metadata"
     width="60%"
   >
+    <div />
+    <div
+      className="app-container"
+    />
     <Form
       isHorizontal={true}
     >
@@ -295,20 +299,74 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
           <FormSelectOption
             isDisabled={false}
             key="1"
-            label="Concept"
-            value="CONCEPT"
+            label="Administer"
+            value="Administer"
           />
           <FormSelectOption
             isDisabled={false}
             key="2"
-            label="Procedure"
-            value="PROCEDURE"
+            label="Deploy"
+            value="Deploy"
           />
           <FormSelectOption
             isDisabled={false}
             key="3"
-            label="Reference"
-            value="REFERENCE"
+            label="Develop"
+            value="Develop"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="4"
+            label="Install"
+            value="Install"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="5"
+            label="Migrate"
+            value="Migrate"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="6"
+            label="Monitor"
+            value="Monitor"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="7"
+            label="Network"
+            value="Network"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="8"
+            label="Plan"
+            value="Plan"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="9"
+            label="Provision"
+            value="Provision"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="10"
+            label="Release"
+            value="Release"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="11"
+            label="Troubleshoot"
+            value="Troubleshoot"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="12"
+            label="Optimize"
+            value="Optimize"
           />
         </FormSelect>
       </FormGroup>

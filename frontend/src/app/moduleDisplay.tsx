@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    Breadcrumb, BreadcrumbItem, BreadcrumbHeading, BaseSizes, Button, DataList, DataListItem, DataListItemRow, DataListItemCells,
+    Alert, AlertActionCloseButton, Breadcrumb, BreadcrumbItem, BreadcrumbHeading, BaseSizes, Button, DataList, DataListItem, DataListItemRow, DataListItemCells,
     DataListCell, Card, Text, TextContent, TextVariants, Grid, GridItem, Dropdown, DropdownToggle, DropdownItem, DropdownSeparator, Form,
     FormGroup, FormSelect, FormSelectOption, FormSelectOptionGroup, InputGroup, InputGroupText, Level, LevelItem, Modal, Title, TitleLevel, TextInput, Tooltip
 } from '@patternfly/react-core';
@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { Revisions } from '@app/revisions';
 import { HelpIcon, ThIcon, CaretDownIcon } from '@patternfly/react-icons';
 import { isTemplateElement } from '@babel/types';
+import { Redirect } from 'react-router-dom'
 
 export interface IProps {
     moduleName: string
@@ -29,24 +30,29 @@ class ModuleDisplay extends Component<IProps> {
         isUsecaseDropdownOpen: false,
         isVersionDropdownOpen: false,
         loggedinStatus: false,
+        login: false,
+        moduleUrl: '',
         productOptions: [
             { value: 'Select a Product', label: 'Select a Product', disabled: false },
         ],
-        productUrl: '',
         productValue: '',
+        redirect: false,
         results: [],
+        usecaseOptions: [
+            { value: 'Select Use Case', label: 'Select Use Case', disabled: false }
+        ],
         usecaseValue: '',
+        usecases: ['Administer','Deploy','Develop','Install','Migrate','Monitor','Network',
+        'Plan','Provision','Release','Troubleshoot','Optimize'],
+        
         versionOptions: [
             { value: 'Select a Version', label: 'Select a Version', disabled: false },
-
         ],
         versionValue: '',
-
-
     };
 
     public render() {
-        const { isModalOpen, productOptions, productUrl, productValue, usecaseValue, versionOptions, versionValue } = this.state;
+        const { isModalOpen, isDup, isMissingFields, productOptions, moduleUrl, productValue, usecaseValue, usecaseOptions, usecases, versionOptions, versionValue } = this.state;
         const id = 'userID';
 
         const header = (
@@ -66,14 +72,11 @@ class ModuleDisplay extends Component<IProps> {
             verOptions = this.state.allProducts[productValue]
         }
 
-        // console.log("verOptions ", verOptions)
-        const usecaseOptions = [
-            { value: 'Select Use Case', label: 'Select Use Case', disabled: false },
-            { value: 'CONCEPT', label: 'Concept', disabled: false },
-            { value: 'PROCEDURE', label: 'Procedure', disabled: false },
-            { value: 'REFERENCE', label: 'Reference', disabled: false }
-        ];
-
+        const ucOptions = usecaseOptions
+        usecases.map((item) => (
+            ucOptions.push({ value: item, label: item, disabled: false })
+        ))
+        
         if (!this.state.loggedinStatus && this.state.initialLoad === true) {
             fetch("/system/sling/info.sessionInfo.json")
                 .then(response => response.json())
@@ -89,7 +92,6 @@ class ModuleDisplay extends Component<IProps> {
         return (
             <React.Fragment>
                 {this.state.initialLoad && this.fetchProductVersionDetails()}
-
                 <div>
                     <Breadcrumb>
                         <BreadcrumbItem to="#">Modules</BreadcrumbItem>
@@ -182,7 +184,7 @@ class ModuleDisplay extends Component<IProps> {
                     ariaDescribedById="edit-metadata"
                     onClose={this.handleModalToggle}
                     actions={[
-                        <Button key="confirm" variant="primary" onClick={this.handleModalToggle}>
+                        <Button key="confirm" variant="primary" onClick={this.saveMetadata}>
                             Save
           </Button>,
                         <Button key="cancel" variant="secondary" onClick={this.handleModalToggle}>
@@ -190,6 +192,32 @@ class ModuleDisplay extends Component<IProps> {
             </Button>
                     ]}
                 >
+                    <div>
+                    {/* {this.checkAuth()} */}
+                    {this.loginRedirect()}
+                    {this.renderRedirect()}
+                  </div>
+                  <div className="app-container">
+              
+                {isMissingFields && (
+                  <div className="notification-container">
+                    <Alert
+                      variant="warning"
+                      title="all fields are required."
+                      action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                    />
+                  </div>
+                )}
+                {isDup && (
+                  <div className="notification-container">
+                    <Alert
+                      variant="warning"
+                      title="Duplicated url fragment."
+                      action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                    />
+                  </div>
+                )}
+                 </div> 
                     <Form isHorizontal={true}>
                         <FormGroup
                             label="Product Name"
@@ -204,7 +232,8 @@ class ModuleDisplay extends Component<IProps> {
                                 </FormSelect>
                                 <FormSelect value={versionValue} onChange={this.onChangeVersion} aria-label="FormSelect Version">
                                     {verOptions.map((option) => (
-                                        <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.value} />
+                                        
+                                        <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
                             </InputGroup>
@@ -215,7 +244,7 @@ class ModuleDisplay extends Component<IProps> {
                             fieldId="document-usecase"
                         >
                             <FormSelect value={usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Product">
-                                {usecaseOptions.map((option, index) => (
+                                {ucOptions.map((option, index) => (
                                     <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
                                 ))}
                             </FormSelect>
@@ -229,7 +258,7 @@ class ModuleDisplay extends Component<IProps> {
                                 <InputGroupText id="slash" aria-label="/">
                                     <span>/</span>
                                 </InputGroupText>
-                                <TextInput isRequired={true} id="url-fragment" type="text" placeholder="Enter URL" value={productUrl} onChange={this.handleURLInput} />
+                                <TextInput isRequired={true} id="url-fragment" type="text" placeholder="Enter URL" value={moduleUrl} onChange={this.handleURLInput} />
                             </InputGroup>
                         </FormGroup>
                     </Form>
@@ -243,12 +272,16 @@ class ModuleDisplay extends Component<IProps> {
         this.setState({
             isModalOpen: !this.state.isModalOpen
         });
+    }
+
+    private saveMetadata = () => {
         // save form data
-        if (this.state.productUrl === "") {
+        if (this.state.productValue === "" || this.state.versionValue === "" || 
+        this.state.usecaseValue === "" || this.state.moduleUrl === "") {
             this.setState({ isMissingFields: true })
             this.setState({ formInvalid: true })
 
-        } else if (this.productUrlExist(this.state.productUrl)) {
+        } else if (this.moduleUrlExist(this.state.moduleUrl)) {
             this.setState({ isDup: true })
             this.setState({ formInvalid: true })
         } else {
@@ -260,10 +293,11 @@ class ModuleDisplay extends Component<IProps> {
             const formData = new FormData();
             formData.append("productName", this.state.productValue)
             formData.append("versionName", this.state.versionValue)
-            formData.append("moduleType", this.state.usecaseValue)
+            // formData.append("productVersion", this.state.versionValue)
+            formData.append("documentUsecase", this.state.usecaseValue)
 
-            formData.append("urlFragment", "/" + this.state.productUrl)
-
+            formData.append("urlFragment", "/" + this.state.moduleUrl)
+            console.log("formData ", formData)
             fetch('/content/' + this.props.modulePath + '/metadata', {
                 body: formData,
                 headers: hdrs,
@@ -281,7 +315,6 @@ class ModuleDisplay extends Component<IProps> {
             });
         }
     }
-
     private onChangeProduct = (productValue, event) => {
         this.setState({ productValue });
     }
@@ -294,23 +327,23 @@ class ModuleDisplay extends Component<IProps> {
         this.setState({ usecaseValue });
     }
 
-    private handleURLInput = productUrl => {
-        this.setState({ productUrl });
+    private handleURLInput = moduleUrl => {
+        this.setState({ moduleUrl });
 
         // check for duplcated product URL.
-        this.productUrlExist(this.state.productUrl);
+        this.moduleUrlExist(this.state.moduleUrl);
         if (this.state.isDup) {
             this.setState({ formInvalid: true });
         }
     }
 
-    private productUrlExist = (productUrl) => {
+    private moduleUrlExist = (moduleUrl) => {
         this.setState({ initialLoad: false })
-        fetch(this.getProductUrl(productUrl))
+        fetch(this.getModuleUrl(moduleUrl))
             .then(response => response.json())
             .then(responseJSON => this.setState({ results: responseJSON.results }))
             .then(() => {
-                // console.log("[productUrlExist] results breakdown " + JSON.stringify(this.state.results))
+                // console.log("[moduleUrlExist] results breakdown " + JSON.stringify(this.state.results))
 
                 if (JSON.stringify(this.state.results) === "[]") {
                     this.setState({
@@ -324,7 +357,6 @@ class ModuleDisplay extends Component<IProps> {
             })
         return this.state.isDup
     }
-
 
     private fetchProductVersionDetails = () => {
         this.setState({ initialLoad: false })
@@ -360,6 +392,7 @@ class ModuleDisplay extends Component<IProps> {
                                 const versions = new Array();
                                 // tslint:disable-next-line: no-shadowed-variable
                                 const nameKey = "name";
+                                const uuidKey = "jcr:uuid";
                                 for (const item in Object.keys(versionObj)) {
                                     if (Object.keys(versionObj)[item] !== undefined) {
                                         vKey = Object.keys(versionObj)[item]
@@ -367,7 +400,7 @@ class ModuleDisplay extends Component<IProps> {
                                         if (vKey !== 'jcr:primaryType') {
                                             if (versionObj[vKey][nameKey]) {
 
-                                                versions.push({ id: vKey, value: versionObj[vKey][nameKey] })
+                                                versions.push({ value: versionObj[vKey][uuidKey], label: versionObj[vKey][nameKey] })
                                             }
                                         }
                                     }
@@ -393,28 +426,6 @@ class ModuleDisplay extends Component<IProps> {
                     if (productItems.length > 1) {
                         this.setState({ productOptions: productItems })
                     }
-                    // generate options for versions.
-                    // console.log("[generate versionOptions] productValue ", this.state.productValue)
-
-                    if (products[this.state.productValue]) {
-                        const versions = products[this.state.productValue];
-                        // console.log("[generate versionOptions] versions ", versions)
-                        if (versions) {
-                            const versionItems = [{ value: 'Select a Version', label: 'Select a Version', disabled: false }]
-                            for (const item in versions) {
-                                if (item !== undefined) {
-                                    versionItems.push({ value: item, label: item, disabled: false })
-                                }
-
-                            }
-
-                            if (versionItems.length > 1) {
-                                this.setState({ versionOptions: versionItems })
-                            }
-                        }
-
-                    }
-
                 }
             })
             .catch((error) => {
@@ -426,11 +437,48 @@ class ModuleDisplay extends Component<IProps> {
         return products;
     };
 
-    private getProductUrl = (productUrl) => {
-        const backend = '/content/products.query.json?nodeType=pant:product&where=[url]="' + productUrl + '"'
+    private getModuleUrl = (moduleUrl) => {
+        const backend = '/content/modules.query.json?nodeType=pant:module&where=[urlFragment]="' + moduleUrl + '"'
         return backend
 
     }
+
+    private renderRedirect = () => {
+        if (this.state.redirect) {
+          return <Redirect to='/search' />
+        } else {
+          return ""
+        }
+    }
+
+    private loginRedirect = () => {
+        if (this.state.login) {
+          return <Redirect to='/login' />
+        } else {
+          return ""
+        }
+      }
+    
+      private checkAuth = () => {
+        fetch("/system/sling/info.sessionInfo.json")
+          .then(response => response.json())
+          .then(responseJSON => {
+            const key = "userID"
+            if (responseJSON[key] === 'anonymous') {
+              this.setState({ login: true })
+            }
+          })
+      }
+
+      private dismissNotification = () => {
+        if (this.state.isMissingFields === true) {
+          this.setState({ isMissingFields: false });
+        }
+    
+        if (this.moduleUrlExist(this.state.moduleUrl) === false) {
+          this.setState({ isDup: false });
+        }
+      }
 }
 
 export { ModuleDisplay }
