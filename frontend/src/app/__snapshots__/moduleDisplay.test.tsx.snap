@@ -125,7 +125,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                     className="sp-prop-nosort"
                     id="span-source-type"
                   >
-                    Updated
+                    Draft Uploaded
                   </span>
                 </DataListCell>,
                 <DataListCell>
@@ -153,12 +153,12 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                 </DataListCell>,
                 <DataListCell>
                   <span>
-                    Dummy Publish
+                    
                   </span>
                 </DataListCell>,
                 <DataListCell>
                   <span>
-                    Tue Aug 27 2019 11:28:26 GMT-0400
+                    
                   </span>
                 </DataListCell>,
                 <DataListCell>
@@ -177,7 +177,9 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
   <div>
     <Card>
       <Revisions
+        draftUpdateDate={[Function]}
         modulePath="module/red_hat_enterprise_linux"
+        releaseUpdateDate={[Function]}
         revisionModulePath="Red Hat Enterprise Linux"
       />
     </Card>

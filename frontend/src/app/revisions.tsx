@@ -112,7 +112,8 @@ class Revisions extends Component<IProps> {
                                                                         onSelect={this.onArchiveSelect}
                                                                         toggle={<KebabToggle onToggle={() => this.onArchiveToggle(data)} />}
                                                                         dropdownItems={[
-                                                                            <DropdownItem key="archive">Archive</DropdownItem>,
+                                                                            <DropdownItem key="archive" disabled={true}>Archive</DropdownItem>,
+                                                                            <DropdownItem key="metadata">Edit metadata</DropdownItem>,
                                                                         ]}
                                                                     />
                                                                 </DataListCell>
@@ -254,8 +255,18 @@ class Revisions extends Component<IProps> {
         this.setState({
             isArchiveDropDownOpen: !this.state.isArchiveDropDownOpen
         });
+
+        // onSelect(text) => {
+
+        // }
       };
 
+      private onMetadataSelect = event => {
+        //
+        this.setState({
+            isArchiveDropDownOpen: !this.state.isArchiveDropDownOpen
+        });
+      };
       private onArchiveToggle = (data) => {
         data["isArchiveDropDownOpen"] = !data["isArchiveDropDownOpen"];
         this.setState({ 

@@ -20,10 +20,7 @@ export default class Search extends Component {
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
     confirmDelete: false,
     countOfCheckedBoxes: 0,
-<<<<<<< HEAD
     results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "description":"","sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
-=======
->>>>>>> 22c971dfd3e071ee3fcc6a7610d0832b298bd58f
     deleteButtonVisible: false,
     deleteState: '',
     initialLoad: true,
