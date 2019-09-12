@@ -159,13 +159,10 @@ class Product extends Component {
 
   private productExist = () => {
     let exists = false
-    const backend = '/content/products.query.json?nodeType=pant:product&where=[name]="' + this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_") + '"'
+    const backend = '/content/products/' + this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_") + '.json'
     return fetch(backend)
-      .then(response => response.json())
-      .then(responseJSON => this.setState({ results: responseJSON.results }))
-      .then(() => {
-        // console.log("[productExist] results breakdown " + JSON.stringify(this.state.results))
-        if (JSON.stringify(this.state.results) !== "[]") {
+      .then(response => {
+        if (response.status === 200) {
           exists = true
           this.setState({ isDup: true })
         }

@@ -27,21 +27,19 @@ class NavLinks extends Component {
     const productsText = 'Product Listing'
     const searchText = 'Search'
     const slingHomeText = 'Sling Welcome'
+    const id = 'userID';
     if (!this.state.isLoggedIn) {
-      const id = 'userID';
-      if (!this.state.isLoggedIn) {
-        fetch("/system/sling/info.sessionInfo.json")
-          .then(response => response.json())
-          .then(responseJSON => {
-            if (responseJSON[id] !== 'anonymous') {
-              this.setState({ moduleText: 'New Module' })
-              this.setState({ isLoggedIn: true })
-            }
-            if (responseJSON[id] === 'admin') {
-              this.setState({ isAdmin: true })
-            }
-          })
-      }
+      fetch("/system/sling/info.sessionInfo.json")
+        .then(response => response.json())
+        .then(responseJSON => {
+          if (responseJSON[id] !== 'anonymous') {
+            this.setState({ moduleText: 'New Module' })
+            this.setState({ isLoggedIn: true })
+          }
+          if (responseJSON[id] === 'admin') {
+            this.setState({ isAdmin: true })
+          }
+        })
     }
     return (
       <React.Fragment>
