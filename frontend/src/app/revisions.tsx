@@ -229,21 +229,22 @@ class Revisions extends Component<IProps> {
         const formData = new FormData();
         if(buttonText==="Publish"){
             formData.append(":operation", "pant:release");
-            console.log('module path:',this.props.modulePath)
+            console.log('Published file path:',this.props.modulePath)
             this.draft[0]["revision"] = "";
         }else{
-            formData.append(":operation", "pant:draft");
-            console.log('module path:',this.props.modulePath)
+            formData.append(":operation", "pant:unpublish");
+            console.log('Unpublished file path:',this.props.modulePath);
+            this.release[0]["revision"] = "";
         }
         fetch("/content/"+this.props.modulePath, {
             body: formData,
             method: 'post'
           }).then(response => {
             if (response.status === 201 || response.status === 200) {
-              console.log("Publish Works: " + response.status)
+              console.log(buttonText+" works: " + response.status)
               this.setState({ initialLoad: true })
             }else {
-              console.log("Publish Failed " + response.status)
+              console.log(buttonText+" failed " + response.status)
               this.setState({ initialLoad: true })
             }
           });
