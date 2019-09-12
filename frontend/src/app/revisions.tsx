@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Button } from '@patternfly/react-core';
 import {
-    Card,DataList, DataListItem, DataListItemRow, DataListItemCells, DataListCell,
+    Alert, AlertActionCloseButton, BaseSizes, Card,DataList, DataListItem, DataListItemRow, DataListItemCells, DataListCell,
     DataListToggle, DataListContent, DataListAction,Dropdown, DropdownToggle, 
-    DropdownItem, DropdownSeparator, DropdownPosition, DropdownDirection,Grid, 
-    GridItem, KebabToggle, Level, LevelItem
-  } from '@patternfly/react-core';
+    DropdownItem, DropdownSeparator, DropdownPosition, DropdownDirection, Form,
+    FormGroup, FormSelect, FormSelectOption, InputGroup, KebabToggle, Modal, InputGroupText, Title, TitleLevel, TextInput  } from '@patternfly/react-core';
 import CheckImage from '@app/images/check_image.jpg';
 import BlankImage from '@app/images/blank.jpg';
+import { Redirect } from 'react-router-dom'
 
   export interface IProps {
     modulePath: string
@@ -30,13 +30,92 @@ class Revisions extends Component<IProps> {
         isOpen: false,
         isRowToggle: false,
         login: false,
-        results: [this.draft,this.release]
+        results: [this.draft,this.release],
+
+        productsInitalLoad: true,
+        allProducts: '',
+        formInvalid: false,
+        
+        isDup: false,
+        isEmptyResults: false,
+        isMissingFields: false,
+        isModalOpen: false,
+        isProductDropdownOpen: false,
+        isUsecaseDropdownOpen: false,
+        isVersionDropdownOpen: false,
+        loggedinStatus: false,
+        metadataPath: '',
+        moduleUrl: '',
+        productOptions: [
+            { value: 'Select a Product', label: 'Select a Product', disabled: false },
+        ],
+        productValue: '',
+        redirect: false,
+        
+        successAlertVisble: false,
+        usecaseOptions: [
+            { value: 'Select Use Case', label: 'Select Use Case', disabled: false }
+        ],
+        usecaseValue: '',
+        usecases: ['Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network',
+            'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize'],
+
+        versionOptions: [
+            { value: 'Select a Version', label: 'Select a Version', disabled: false },
+        ],
+        versionValue: '',
     };
 
-    public render() {   
+    public render() {
+        const { isModalOpen, isDup, isMissingFields, productOptions, moduleUrl, successAlertVisble, productValue, usecaseValue, usecaseOptions, usecases, versionOptions, versionValue } = this.state;
+        const id = 'userID';
+
+        const header = (
+            <React.Fragment>
+                <Title headingLevel={TitleLevel.h1} size={BaseSizes["2xl"]}>
+                    Edit Metadata
+              </Title>
+                <br />
+                <p className="pf-u-pl-sm">
+                    All fields are required.
+              </p>
+            </React.Fragment>
+        );
+
+        let verOptions = versionOptions
+        if (this.state.allProducts[productValue]) {
+            verOptions = this.state.allProducts[productValue]
+        }
+
+        const ucOptions = usecaseOptions
+        usecases.map((item) => (
+            ucOptions.push({ value: item, label: item, disabled: false })
+        ))
+
+        if (!this.state.loggedinStatus && this.state.initialLoad === true) {
+            fetch("/system/sling/info.sessionInfo.json")
+                .then(response => response.json())
+                .then(responseJSON => {
+                    if (responseJSON[id]) {
+                        if (responseJSON[id] !== 'anonymous') {
+                            this.setState({ loggedinStatus: true })
+                        }
+                    }
+                })
+        }  
         return (
             <React.Fragment>
-                {this.state.initialLoad && this.fetchRevisions()}
+                {successAlertVisble && <Alert
+                    variant="success"
+                    title="Edit Metadata"
+                    action={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
+                >
+                    Update Successful!
+          </Alert>
+                }
+                
+                {this.state.initialLoad && this.fetchRevisions() && this.fetchProductVersionDetails()}
+                {this.state.productsInitalLoad && this.fetchProductVersionDetails()}
                 <Card>
                     <div>
                         <DataList aria-label="Simple data list example">
@@ -112,8 +191,8 @@ class Revisions extends Component<IProps> {
                                                                         onSelect={this.onArchiveSelect}
                                                                         toggle={<KebabToggle onToggle={() => this.onArchiveToggle(data)} />}
                                                                         dropdownItems={[
-                                                                            <DropdownItem key="archive" disabled={true}>Archive</DropdownItem>,
-                                                                            <DropdownItem key="metadata">Edit metadata</DropdownItem>,
+                                                                            <DropdownItem key="archive" isDisabled={true}>Archive</DropdownItem>,
+                                                                            <DropdownItem id={data["path"]} key={data["path"]} component="button" onClick={this.handleModalToggle}>Edit metadata</DropdownItem>,
                                                                         ]}
                                                                     />
                                                                 </DataListCell>
@@ -177,6 +256,96 @@ class Revisions extends Component<IProps> {
                         </DataList>
                     </div>
                 </Card>
+                <Modal
+                    width={'60%'}
+                    title="Edit metadata"
+                    isOpen={isModalOpen}
+                    header={header}
+                    ariaDescribedById="edit-metadata"
+                    onClose={this.handleModalClose}
+                    actions={[
+                        <Button form="edit_metadata" key="confirm" variant="primary" onClick={this.saveMetadata}>
+                            Save
+          </Button>,
+                        <Button key="cancel" variant="secondary" onClick={this.handleModalToggle}>
+                            Cancel
+            </Button>
+                    ]}
+                >
+                    <div>
+                        {/* {this.checkAuth()} */}
+                        {this.loginRedirect()}
+                        {this.renderRedirect()}
+                    </div>
+                    <div className="app-container">
+
+                        {isMissingFields && (
+                            <div className="notification-container">
+                                <Alert
+                                    variant="warning"
+                                    title="all fields are required."
+                                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                />
+                            </div>
+                        )}
+                        {isDup && (
+                            <div className="notification-container">
+                                <Alert
+                                    variant="warning"
+                                    title="Duplicated url fragment."
+                                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <Form isHorizontal={true} id="edit_metadata">
+                        <FormGroup
+                            label="Product Name"
+                            isRequired={true}
+                            fieldId="product-name"
+                        >
+                            <InputGroup>
+                                <FormSelect value={productValue} onChange={this.onChangeProduct} aria-label="FormSelect Product">
+                                    {productOptions.map((option, index) => (
+                                        <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
+                                    ))}
+                                </FormSelect>
+                                <FormSelect value={versionValue} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
+                                    {verOptions.map((option) => (
+
+                                        <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} required={false}/>
+                                    ))}
+                                </FormSelect>
+                            </InputGroup>
+                        </FormGroup>
+                        <FormGroup
+                            label="Document use case"
+                            isRequired={true}
+                            fieldId="document-usecase"
+                        >
+                            <FormSelect value={usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
+                                {ucOptions.map((option, index) => (
+                                    <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
+                                ))}
+                            </FormSelect>
+                        </FormGroup>
+                        <FormGroup
+                            label="Vanity URL fragment"
+                            isRequired={true}
+                            fieldId="url-fragment"
+                        >
+                            <InputGroup>
+                                <InputGroupText id="slash" aria-label="/">
+                                    <span>/</span>
+                                </InputGroupText>
+                                <TextInput isRequired={true} id="url-fragment" type="text" placeholder="Enter URL" value={moduleUrl} onChange={this.handleURLInput} />
+                            </InputGroup>
+                        </FormGroup>
+                        <div>
+                            <input name="productVersion@TypeHint" type="hidden" value="Reference" />
+                        </div>
+                    </Form>
+                </Modal>
             </React.Fragment>
 
         );
@@ -204,7 +373,7 @@ class Revisions extends Component<IProps> {
                             this.draft[0]["updatedDate"] = responseJSON["en_US"][objectKeys[key]]["jcr:lastModified"];
                             this.draft[0]["metaData"] = responseJSON["en_US"][objectKeys[key]]["metadata"];  
                             this.draft[0]["path"] =  "/content/"+this.props.modulePath+"/en_US/"+objectKeys[key];
-                            console.log("1:",this.draft[0]["path"]);  
+                            console.log("1:",this.draft[0]["path"]);
                             this.props.draftUpdateDate(this.draft[0]["updatedDate"],"draft",this.draft[0]["path"]);                       
                         }
                         if(responseJSON["en_US"][objectKeys[key]]["jcr:uuid"]===releasedTag){
@@ -255,18 +424,8 @@ class Revisions extends Component<IProps> {
         this.setState({
             isArchiveDropDownOpen: !this.state.isArchiveDropDownOpen
         });
-
-        // onSelect(text) => {
-
-        // }
       };
 
-      private onMetadataSelect = event => {
-        //
-        this.setState({
-            isArchiveDropDownOpen: !this.state.isArchiveDropDownOpen
-        });
-      };
       private onArchiveToggle = (data) => {
         data["isArchiveDropDownOpen"] = !data["isArchiveDropDownOpen"];
         this.setState({ 
@@ -297,6 +456,219 @@ class Revisions extends Component<IProps> {
           console.log("Preview path: ", docPath)
           return window.open(docPath);
       }
+
+      private handleModalToggle = (event) => {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        });
+
+        // process path
+        console.log("event target ", event.target.id)
+        this.setState({ metadataPath: event.target.id})
+    }
+
+    private handleModalClose = () => {
+        this.setState({
+            isModalOpen: false
+        })
+    }
+
+    private saveMetadata = (event) => {
+        // save form data
+        if (this.state.productValue === "" || this.state.versionValue === "" ||
+            this.state.usecaseValue === "" || this.state.moduleUrl === "") {
+            this.setState({ isMissingFields: true })
+            this.setState({ formInvalid: true })
+
+        } else if (this.moduleUrlExist(this.state.moduleUrl)) {
+            this.setState({ isDup: true })
+            this.setState({ formInvalid: true })
+        } else {
+            const hdrs = {
+                'Accept': 'application/json',
+                'cache-control': 'no-cache'
+            }
+
+            const formData = new FormData(event.target.form);
+
+            formData.append("productVersion", this.state.versionValue)
+            formData.append("documentUsecase", this.state.usecaseValue)
+            formData.append("urlFragment", "/" + this.state.moduleUrl)
+
+            fetch( this.state.metadataPath + '/metadata', {
+                body: formData,
+                headers: hdrs,
+                method: 'post'
+            }).then(response => {
+                if (response.status === 201 || response.status === 200) {
+                    console.log("successful edit ", response.status)
+                    // this.setState({ redirect: true, successAlertVisble: true })
+                    this.handleModalClose()
+                    this.setState({ successAlertVisble: true })
+                } else if (response.status === 500) {
+                    // console.log(" Needs login " + response.status)
+                    this.setState({ login: true })
+                } else {
+                    console.log(" Failed " + response.status)
+                    this.setState({ failedPost: true })
+                }
+            });
+        }
+    }
+    private onChangeProduct = (productValue, event) => {
+        this.setState({ productValue });
+    }
+
+    private onChangeVersion = (versionValue, event) => {
+        this.setState({ versionValue });
+    }
+
+    private onChangeUsecase = (usecaseValue, event) => {
+        this.setState({ usecaseValue });
+    }
+
+    private handleURLInput = moduleUrl => {
+        this.setState({ moduleUrl });
+
+        // check for duplcated product URL.
+        this.moduleUrlExist(this.state.moduleUrl);
+        if (this.state.isDup) {
+            this.setState({ formInvalid: true });
+        }
+    }
+
+    private moduleUrlExist = (moduleUrl) => {
+        this.setState({ initialLoad: false })
+        fetch(this.getModuleUrl(moduleUrl))
+            .then(response => response.json())
+            .then(responseJSON => this.setState({ results: responseJSON.results }))
+            .then(() => {
+                // console.log("[moduleUrlExist] results breakdown " + JSON.stringify(this.state.results))
+
+                if (JSON.stringify(this.state.results) === "[]") {
+                    this.setState({
+                        isDup: false
+                    });
+                } else {
+                    this.setState({
+                        isDup: true
+                    });
+                }
+            })
+        return this.state.isDup
+    }
+
+    private fetchProductVersionDetails = () => {
+        this.setState({ productsInitalLoad: false })
+        const path = '/content/products.3.json'
+        let key
+        const products = new Array()
+
+        fetch(path)
+            .then((response) => {
+                if (response.ok) {
+                    // console.log("[responseJSON] response.ok ", response.json())
+                    return response.json();
+                } else if (response.status === 404) {
+                    console.log("Something unexpected happen!")
+                    return products
+                } else {
+                    throw new Error(response.statusText);
+                }
+            })
+            .then(responseJSON => {
+                // tslint:disable-next-line: prefer-for-of
+                for (let i = 0; i < Object.keys(responseJSON).length; i++) {
+                    key = Object.keys(responseJSON)[i];
+                    const nameKey = "name"
+                    const versionKey = "versions"
+                    if ((key !== 'jcr:primaryType')) {
+                        if (responseJSON[key][nameKey] !== undefined) {
+                            const pName = responseJSON[key][nameKey]
+                            const versionObj = responseJSON[key][versionKey]
+
+                            if (versionObj) {
+                                let vKey;
+                                const versions = new Array();
+                                // tslint:disable-next-line: no-shadowed-variable
+                                const nameKey = "name";
+                                const uuidKey = "jcr:uuid";
+                                for (const item in Object.keys(versionObj)) {
+                                    if (Object.keys(versionObj)[item] !== undefined) {
+                                        vKey = Object.keys(versionObj)[item]
+
+                                        if (vKey !== 'jcr:primaryType') {
+                                            if (versionObj[vKey][nameKey]) {
+
+                                                versions.push({ value: versionObj[vKey][uuidKey], label: versionObj[vKey][nameKey] })
+                                            }
+                                        }
+                                    }
+                                }
+
+                                products[pName] = versions
+
+                            }
+                        }
+                    }
+                }
+                this.setState({
+                    allProducts: products
+                })
+
+                if (products) {
+                    const productItems = [{ value: 'Select a Product', label: 'Select a Product', disabled: false }]
+                    // tslint:disable-next-line: forin
+                    for (const item in products) {
+                        // console.log("[render] item ", item)
+                        productItems.push({ value: item, label: item, disabled: false })
+                    }
+                    if (productItems.length > 1) {
+                        this.setState({ productOptions: productItems })
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            });
+        return products;
+    };
+
+    private getModuleUrl = (moduleUrl) => {
+        const backend = '/content/modules.query.json?nodeType=pant:module&where=[urlFragment]="' + moduleUrl + '"'
+        return backend
+
+    }
+
+    private renderRedirect = () => {
+        if (this.state.redirect) {
+            return <Redirect to='/search' />
+        } else {
+            return ""
+        }
+    }
+
+    private loginRedirect = () => {
+        if (this.state.login) {
+            return <Redirect to='/login' />
+        } else {
+            return ""
+        }
+    }
+
+    private dismissNotification = () => {
+        if (this.state.isMissingFields === true) {
+            this.setState({ isMissingFields: false });
+        }
+
+        if (this.moduleUrlExist(this.state.moduleUrl) === false) {
+            this.setState({ isDup: false });
+        }
+    }
+
+    private hideSuccessAlert = () => {
+        this.setState({ successAlertVisble: false })
+    }
 }
 
 export { Revisions }
