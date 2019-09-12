@@ -20,7 +20,10 @@ export default class Search extends Component {
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
     confirmDelete: false,
     countOfCheckedBoxes: 0,
+<<<<<<< HEAD
     results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "description":"","sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
+=======
+>>>>>>> 22c971dfd3e071ee3fcc6a7610d0832b298bd58f
     deleteButtonVisible: false,
     deleteState: '',
     initialLoad: true,
@@ -30,24 +33,23 @@ export default class Search extends Component {
     isSortedUp: true,
     loggedinStatus: false,
     moduleDisplay: false,
+    moduleName: '',
+    modulePath: '',
+    moduleType: '',
+    moduleUpdatedDate: '',
     nextPageRowCount: 1,
     page: 1,
     pageLimit: 25,
     redirect: false,
     redirectLocation: '',
     showDropdownOptions: true,
-    sortKey: '',
-    searchOption: 'module',
-    moduleName: '',
-    moduleType: '',
-    moduleUpdatedDate: '',
-    modulePath: ''
+    sortKey: ''
   };
 
   public transientPaths : string[] = [];
 
   public render() {
-    const { columns, isEmptyResults, input, isSortedUp,sortKey,searchOption} = this.state;
+    const { columns, isEmptyResults, input, isSortedUp,sortKey} = this.state;
 
     const id = 'userID';
     if (!this.state.loggedinStatus && this.state.initialLoad===true) {
@@ -61,8 +63,8 @@ export default class Search extends Component {
     }
     return (
       <React.Fragment>
-        {console.log("module display: ",this.state.moduleDisplay)}
-        {console.log("initial load: ",this.state.initialLoad)}
+        {console.log("module display: ", this.state.moduleDisplay)}
+        {console.log("initial load: ", this.state.initialLoad)}
         {this.state.moduleDisplay && <ModuleDisplay
           moduleName={this.state.moduleName}
           modulePath={this.state.modulePath}
@@ -70,7 +72,7 @@ export default class Search extends Component {
           updated={this.state.moduleUpdatedDate}
         />}
         {this.state.initialLoad && this.doSearch()}
-        {!this.state.moduleDisplay && 
+        {!this.state.moduleDisplay &&
         <div>
           <div>
           <FormGroup
@@ -109,9 +111,7 @@ export default class Search extends Component {
                       onClick={this.handleSelectAll}
                       isDisabled={false}
                     />}
-                   {this.state.searchOption == 'module' && 
                   <DataListItemCells
-  
                         dataListCells={[
                           <DataListCell width={2} key="title">
                             <button onClick={this.sortByName} className="sp-prop" id="span-name" aria-label="sort column by name">Name</button>
@@ -129,30 +129,8 @@ export default class Search extends Component {
                             <button onClick={this.sortByUploadTime} className="sp-prop" id="span-name" aria-label="sort column by upload time">Upload Time</button>
                           </DataListCell>,
                         ]}
-                  />}
-                  {this.state.searchOption == 'product' && 
-                  <DataListItemCells
-  
-                        dataListCells={[
-                          <DataListCell width={2} key="name">
-                            <button onClick={this.sortByProductName} className="sp-prop" id="span-name" aria-label="sort column by name">Name</button>
-                          </DataListCell>,
-                          <DataListCell width={2} key="description">
-                            <button onClick={this.sortByProductDescription} className="sp-prop" id="span-name" aria-label="sort column by description">Description</button>
-                          </DataListCell>,
-                          <DataListCell key="uuid">
-                            <span className="sp-prop-nosort" id="span-source-type">UUID</span>
-                          </DataListCell>,
-                          <DataListCell key="source name">
-                            <span className="sp-prop-nosort" id="span-source-name">Created By</span>
-                          </DataListCell>,
-                          <DataListCell key="upload time">
-                            <button onClick={this.sortByUploadTime} className="sp-prop" id="span-name" aria-label="sort column by upload time">Upload Time</button>
-                          </DataListCell>,
-                        ]}
-                  />}
-                </DataListItemRow> 
-
+                  />
+                </DataListItemRow>
                 {/* Delete button at the top */}
                 <DataListItemRow id="data-rows" key={this.state.results["pant:transientPath"]}>
                   {
@@ -161,8 +139,7 @@ export default class Search extends Component {
                       : null
                   }
                 </DataListItemRow>
-                {this.state.searchOption == 'module' && 
-                this.state.results.map(data => (
+                {this.state.results.map(data => (
                   <DataListItemRow id="data-rows">
                     {this.state.loggedinStatus && !this.state.isEmptyResults &&
                       <DataListCheck aria-labelledby="width-ex3-check1"
@@ -195,41 +172,6 @@ export default class Search extends Component {
                     />
                   </DataListItemRow>
                 ))}
-                {this.state.searchOption === 'product' && 
-                this.state.results.map(data => (
-                  <DataListItemRow id="data-rows">
-                    {this.state.loggedinStatus && !this.state.isEmptyResults &&
-                      <DataListCheck aria-labelledby="width-ex3-check1"
-                        className="checkbox"
-                        isChecked={data[this.state.checkedItemKey]}
-                        checked={data[this.state.checkedItemKey]}
-                        aria-label="controlled checkbox example"
-                        id={data["pant:transientPath"]}
-                        name={data["pant:transientPath"]}
-                        onClick={this.handleDeleteCheckboxChange(data["pant:transientPath"])}
-                      />}
-                    <DataListItemCells key={data["pant:transientPath"]} onClick={this.setPreview(data["pant:transientPath"])}
-                          dataListCells={[
-                                <DataListCell key="div-name" width={2}>
-                                  <span>{data["name"]}</span>
-                                </DataListCell>,
-                                <DataListCell  key="div-description" width={2}>
-                                  <span>{data["description"]===""?"No items found to be displayed":data["description"]}</span>
-                                </DataListCell>,
-                                <DataListCell key="div-uuid">
-                                  <span>{data["jcr:uuid"]}</span>
-                                </DataListCell>,
-                                <DataListCell key="div-createdBy">
-                                  <span>{data["jcr:createdBy"]}</span>
-                                </DataListCell>,
-                                <DataListCell key="div-created">
-                                <span >{this.formatDate(new Date(data["jcr:created"]))}</span>
-                                </DataListCell>
-                          ]}
-                    />
-                  </DataListItemRow>
-                ))}
-
                 {/* Delete button at the bottom */}
                 <DataListItemRow id="data-rows" key={this.state.results["pant:transientPath"]}>
                     {
@@ -237,6 +179,7 @@ export default class Search extends Component {
                         <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
                       :null
                     }
+
                 </DataListItemRow>
                 {isEmptyResults && (
                       <Level gutter="md">
@@ -316,7 +259,7 @@ export default class Search extends Component {
             </div>
           </div>
         </div>
-        }
+      }
       </React.Fragment>
     );
   }
@@ -509,14 +452,6 @@ export default class Search extends Component {
     this.sort("jcr:description")
   }
 
-  private sortByProductName = () => {
-    this.sort("name")
-  }
-
-  private sortByProductDescription = () => {
-    this.sort("description")
-  }
-
   private sortByUploadTime = () => {
     this.sort("jcr:created")
   }
@@ -548,13 +483,7 @@ export default class Search extends Component {
   private buildSearchUrl() {
     let backend = "/modules.json?search="
     if (this.state.input != null) {
-      this.handleSearchOption(this.state.input)
-
-      if (this.state.input.trim().toLowerCase().startsWith("product:")) {
-        backend = "/products.query.json?nodeType=pant:product&orderby=name&where=[name] like \"%" + this.state.input.substring(8, this.state.input.length) + "%\""
-      } else {
-        backend += this.state.input
-      }  
+      backend += this.state.input
     }
     backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
     backend += "&offset=" + ((this.state.page - 1)*this.state.pageLimit) + "&limit=" + this.state.pageLimit
@@ -595,15 +524,6 @@ export default class Search extends Component {
       // console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
       return (this.state.pageLimit+" items per page")
     })
-  }
-
-  private handleSearchOption = (input) => {
-    if(input.startsWith('product:')) {
-      this.setState({searchOption: 'product'})
-    } else {
-      this.setState({searchOption: 'module'})
-    }
-    console.log("searchOption: " + this.state.searchOption)
   }
 
 }

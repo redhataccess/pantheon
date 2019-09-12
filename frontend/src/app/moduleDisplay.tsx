@@ -51,6 +51,10 @@ class ModuleDisplay extends Component<IProps> {
             { value: 'Select a Version', label: 'Select a Version', disabled: false },
         ],
         versionValue: '',
+        draftPath: '',
+        draftUpdateDate: '',
+        releasePath: '',
+        releaseUpdateDate: ''
     };
 
     public render() {
@@ -147,7 +151,7 @@ class ModuleDisplay extends Component<IProps> {
                                             <span className="sp-prop-nosort" id="span-source-type">Published</span>
                                         </DataListCell>,
                                         <DataListCell key="updated">
-                                            <span className="sp-prop-nosort" id="span-source-type">Updated</span>
+                                            <span className="sp-prop-nosort" id="span-source-type">Draft Uploaded</span>
                                         </DataListCell>,
                                         <DataListCell key="module_type">
                                             <span className="sp-prop-nosort" id="span-source-name">Module Type</span>
@@ -163,10 +167,10 @@ class ModuleDisplay extends Component<IProps> {
                                             <span>Dummy Product Name</span>
                                         </DataListCell>,
                                         <DataListCell key="published">
-                                            <span>Dummy Publish</span>
+                                            <span>{this.state.releaseUpdateDate.substring(4,15)}</span>
                                         </DataListCell>,
                                         <DataListCell key="updated">
-                                            <span>{this.props.updated}</span>
+                                            <span>{this.state.draftUpdateDate.substring(4,15)}</span>
                                         </DataListCell>,
                                         <DataListCell key="module_type">
                                             <span>{this.props.moduleType}</span>
@@ -183,6 +187,8 @@ class ModuleDisplay extends Component<IProps> {
                         <Revisions
                             modulePath={this.props.modulePath}
                             revisionModulePath={this.props.moduleName}
+                            draftUpdateDate={this.updateDate}
+                            releaseUpdateDate={this.updateDate}
                         />
                     </Card>
                 </div>
@@ -498,6 +504,24 @@ class ModuleDisplay extends Component<IProps> {
     private hideSuccessAlert = () => {
         this.setState({ successAlertVisble: false })
     }
+    private updateDate = (date,type,path) => {
+        if(type==="draft"){
+            this.setState({
+                draftUpdateDate: date,
+                draftPath: path
+            },() => {
+                console.log('changed draft date: ', this.state.draftUpdateDate, "version path: ",this.state.draftPath)
+            });    
+        }
+        else{
+            this.setState({
+                releaseUpdateDate: date,
+                releasePath: path
+            },() => {
+                console.log('changed release date: ', this.state.releaseUpdateDate, "version path: ",this.state.releasePath)
+            });
+        }
+      };
 }
 
 export { ModuleDisplay }

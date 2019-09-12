@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Revisions tests should render Revisions component 1`] = `
+<Fragment>
+  <Card>
+    <div>
+      <DataList
+        aria-label="Simple data list example"
+      >
+        <DataListItem
+          aria-labelledby="simple-item1"
+          isExpanded={false}
+        >
+          <DataListItemRow
+            id="data-rows-header"
+          >
+            <DataListToggle
+              aria-controls="width-ex3-expand1"
+              id="width-ex3-toggle1"
+              isExpanded={true}
+              onClick={[Function]}
+            />
+            <DataListItemCells
+              dataListCells={
+                Array [
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-type"
+                    >
+                      Revision
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-type"
+                    >
+                      Published
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-type"
+                    >
+                      Draft Uploaded
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-name"
+                    />
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-name"
+                    />
+                  </DataListCell>,
+                ]
+              }
+            />
+          </DataListItemRow>
+        </DataListItem>
+        <DataListContent
+          aria-label="Secondary Content Details"
+          id="Content"
+          isHidden={true}
+          noPadding={true}
+        />
+      </DataList>
+    </div>
+  </Card>
+</Fragment>
+`;
