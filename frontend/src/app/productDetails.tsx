@@ -87,7 +87,7 @@ class ProductDetails extends Component<IProps> {
                 }
             })
             .then(responseJSON => {
-                for (let i = 0; i < Object.keys(responseJSON).length; i++) {
+                for(let i=0; i < Object.keys(responseJSON).length;i++){    
                     key = Object.keys(responseJSON)[i];
                     const keyName = "name"
                     if ((key !== 'jcr:primaryType')) {
@@ -117,8 +117,9 @@ class ProductDetails extends Component<IProps> {
         formData.append("sling:resourceType", "pantheon/productVersion")
         formData.append("jcr:primaryType", 'pant:productVersion')
 
-        const urlFragment = '/content/products/' + this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_") + '/versions/' + this.state.newVersion
-        fetch(encodeURI(urlFragment.replace(/\./g, '_')), {
+        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        const encodedVersion = this.state.newVersion.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        fetch(encodeURI('/content/products/' + urlFragment + '/versions/' + encodedVersion), {
             body: formData,
             method: 'post',
         }).then(response => {
@@ -133,8 +134,8 @@ class ProductDetails extends Component<IProps> {
 
     private createVersionsPath = () => {
         const formData = new FormData();
-        const urlFragment = '/content/products/' + this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_") + '/versions'
-        fetch(encodeURI(urlFragment), {
+        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        fetch(encodeURI('/content/products/' + urlFragment + '/versions'), {
             body: formData,
             method: 'post',
         }).then(response => {
