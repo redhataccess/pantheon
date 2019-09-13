@@ -45,7 +45,9 @@ class Revisions extends Component<IProps> {
         isVersionDropdownOpen: false,
         loggedinStatus: false,
         metadataPath: '',
+        metadataResults: [],
         moduleUrl: '',
+        moduleUrlresults:[],
         productOptions: [
             { value: 'Select a Product', label: 'Select a Product', disabled: false },
         ],
@@ -64,6 +66,7 @@ class Revisions extends Component<IProps> {
             { value: 'Select a Version', label: 'Select a Version', disabled: false },
         ],
         versionValue: '',
+        metadataInitalLoad: true,
     };
 
     public render() {
@@ -102,7 +105,7 @@ class Revisions extends Component<IProps> {
                         }
                     }
                 })
-        }  
+        }
         return (
             <React.Fragment>
                 {successAlertVisble && <Alert
@@ -114,8 +117,9 @@ class Revisions extends Component<IProps> {
           </Alert>
                 }
                 
-                {this.state.initialLoad && this.fetchRevisions() && this.fetchProductVersionDetails()}
+                {this.state.initialLoad && this.fetchRevisions()}
                 {this.state.productsInitalLoad && this.fetchProductVersionDetails()}
+                {this.state.metadataInitalLoad && this.getMetadata(this.state.metadataPath)}
                 <Card>
                     <div>
                         <DataList aria-label="Simple data list example">
@@ -463,7 +467,6 @@ class Revisions extends Component<IProps> {
         });
 
         // process path
-        console.log("event target ", event.target.id)
         this.setState({ metadataPath: event.target.id})
     }
 
@@ -541,11 +544,11 @@ class Revisions extends Component<IProps> {
         this.setState({ initialLoad: false })
         fetch(this.getModuleUrl(moduleUrl))
             .then(response => response.json())
-            .then(responseJSON => this.setState({ results: responseJSON.results }))
+            .then(responseJSON => this.setState({ moduleUrlresults: responseJSON.results }))
             .then(() => {
                 // console.log("[moduleUrlExist] results breakdown " + JSON.stringify(this.state.results))
 
-                if (JSON.stringify(this.state.results) === "[]") {
+                if (JSON.stringify(this.state.moduleUrlresults) === "[]") {
                     this.setState({
                         isDup: false
                     });
@@ -668,6 +671,33 @@ class Revisions extends Component<IProps> {
 
     private hideSuccessAlert = () => {
         this.setState({ successAlertVisble: false })
+    }
+
+    private getMetadata = (revisionPath) => {
+        this.setState({ metadataInitalLoad: false })
+        if (revisionPath) {
+            fetch(revisionPath + "/metadata.json")
+            .then(response => response.json())
+            .then(responseJSON => this.setState({ metadataResults: responseJSON }))
+            .then(() => {
+
+                if (JSON.stringify(this.state.metadataResults) ! === "[]") {
+                    // Process results
+                    // console.log("[getMetadata] responseJSON ", this.state.metadataResults)
+                    // console.log("[getMetadata] urlFragment ", this.state.metadataResults["urlFragment"])
+                    // Remove leading slash.
+                    if (this.state.metadataResults["urlFragment"]) {
+                        let url = this.state.metadataResults["urlFragment"]
+                        if (url.indexOf('/') === 0) {
+                            url = url.replace('/', '');
+
+                        }
+                        this.setState({ moduleUrl: url })
+                    }
+                    this.setState({ usecaseValue: this.state.metadataResults["documentUsecase"]})
+                }
+            })
+        }
     }
 }
 
