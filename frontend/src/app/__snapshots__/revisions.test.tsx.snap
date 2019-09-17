@@ -9,7 +9,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
       >
         <DataListItem
           aria-labelledby="simple-item1"
-          isExpanded={true}
+          isExpanded={false}
         >
           <DataListItemRow
             id="data-rows-header"
@@ -67,12 +67,242 @@ exports[`Revisions tests should render Revisions component 1`] = `
         <DataListContent
           aria-label="Secondary Content Details"
           id="Content"
-          isHidden={false}
+          isHidden={true}
           noPadding={true}
         />
       </DataList>
     </div>
   </Card>
+  <Modal
+    actions={
+      Array [
+        <Button
+          form="edit_metadata"
+          onClick={[Function]}
+          variant="primary"
+        >
+          Save
+        </Button>,
+        <Button
+          onClick={[Function]}
+          variant="secondary"
+        >
+          Cancel
+        </Button>,
+      ]
+    }
+    ariaDescribedById="edit-metadata"
+    className=""
+    header={
+      <React.Fragment>
+        <Title
+          headingLevel="h1"
+          size="2xl"
+        >
+          Edit Metadata
+        </Title>
+        <br />
+        <p
+          className="pf-u-pl-sm"
+        >
+          All fields are required.
+        </p>
+      </React.Fragment>
+    }
+    hideTitle={false}
+    isLarge={false}
+    isOpen={false}
+    isSmall={false}
+    onClose={[Function]}
+    showClose={true}
+    title="Edit metadata"
+    width="60%"
+  >
+    <div />
+    <div
+      className="app-container"
+    />
+    <Form
+      id="edit_metadata"
+      isHorizontal={true}
+    >
+      <FormGroup
+        fieldId="product-name"
+        isRequired={true}
+        label="Product Name"
+      >
+        <InputGroup>
+          <FormSelect
+            aria-label="FormSelect Product"
+            className=""
+            isDisabled={false}
+            isValid={true}
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            value=""
+          >
+            <FormSelectOption
+              isDisabled={false}
+              key="0"
+              label="Select a Product"
+              value="Select a Product"
+            />
+          </FormSelect>
+          <FormSelect
+            aria-label="FormSelect Version"
+            className=""
+            id="productVersion"
+            isDisabled={false}
+            isValid={true}
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            value=""
+          >
+            <FormSelectOption
+              isDisabled={false}
+              key="Select a Version"
+              label="Select a Version"
+              required={false}
+              value="Select a Version"
+            />
+          </FormSelect>
+        </InputGroup>
+      </FormGroup>
+      <FormGroup
+        fieldId="document-usecase"
+        isRequired={true}
+        label="Document use case"
+      >
+        <FormSelect
+          aria-label="FormSelect Usecase"
+          className=""
+          isDisabled={false}
+          isValid={true}
+          onBlur={[Function]}
+          onChange={[Function]}
+          onFocus={[Function]}
+          value=""
+        >
+          <FormSelectOption
+            isDisabled={false}
+            key="0"
+            label="Select Use Case"
+            value="Select Use Case"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="1"
+            label="Administer"
+            value="Administer"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="2"
+            label="Deploy"
+            value="Deploy"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="3"
+            label="Develop"
+            value="Develop"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="4"
+            label="Install"
+            value="Install"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="5"
+            label="Migrate"
+            value="Migrate"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="6"
+            label="Monitor"
+            value="Monitor"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="7"
+            label="Network"
+            value="Network"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="8"
+            label="Plan"
+            value="Plan"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="9"
+            label="Provision"
+            value="Provision"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="10"
+            label="Release"
+            value="Release"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="11"
+            label="Troubleshoot"
+            value="Troubleshoot"
+          />
+          <FormSelectOption
+            isDisabled={false}
+            key="12"
+            label="Optimize"
+            value="Optimize"
+          />
+        </FormSelect>
+      </FormGroup>
+      <FormGroup
+        fieldId="url-fragment"
+        isRequired={true}
+        label="Vanity URL fragment"
+      >
+        <InputGroup>
+          <InputGroupText
+            aria-label="/"
+            id="slash"
+          >
+            <span>
+              /
+            </span>
+          </InputGroupText>
+          <TextInput
+            aria-label={null}
+            className=""
+            id="url-fragment"
+            isDisabled={false}
+            isReadOnly={false}
+            isRequired={true}
+            isValid={true}
+            onChange={[Function]}
+            placeholder="Enter URL"
+            type="text"
+            value=""
+          />
+        </InputGroup>
+      </FormGroup>
+      <div>
+        <input
+          name="productVersion@TypeHint"
+          type="hidden"
+          value="Reference"
+        />
+      </div>
+    </Form>
+  </Modal>
 </Fragment>
 `;
 
