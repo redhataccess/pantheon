@@ -406,11 +406,11 @@ class Revisions extends Component<IProps> {
         const formData = new FormData();
         if (buttonText === "Publish") {
             formData.append(":operation", "pant:release");
-            console.log('Published file path:', this.props.modulePath)
+            // console.log('Published file path:', this.props.modulePath)
             this.draft[0]["revision"] = "";
         } else {
             formData.append(":operation", "pant:unpublish");
-            console.log('Unpublished file path:', this.props.modulePath);
+            // console.log('Unpublished file path:', this.props.modulePath);
             this.release[0]["revision"] = "";
         }
         fetch("/content/" + this.props.modulePath, {
@@ -418,10 +418,10 @@ class Revisions extends Component<IProps> {
             method: 'post'
         }).then(response => {
             if (response.status === 201 || response.status === 200) {
-                console.log(buttonText + " works: " + response.status)
+                // console.log(buttonText + " works: " + response.status)
                 this.setState({ initialLoad: true })
             } else {
-                console.log(buttonText + " failed " + response.status)
+                // console.log(buttonText + " failed " + response.status)
                 this.setState({ initialLoad: true })
             }
         });
@@ -461,7 +461,7 @@ class Revisions extends Component<IProps> {
         } else {
             docPath = "/content/" + this.props.modulePath + ".preview";
         }
-        console.log("Preview path: ", docPath)
+        // console.log("Preview path: ", docPath)
         return window.open(docPath);
     }
 
@@ -508,7 +508,7 @@ class Revisions extends Component<IProps> {
                 method: 'post'
             }).then(response => {
                 if (response.status === 201 || response.status === 200) {
-                    console.log("successful edit ", response.status)
+                    // console.log("successful edit ", response.status)
                     // this.setState({ redirect: true, successAlertVisble: true })
                     this.handleModalClose()
                     this.setState({ successAlertVisble: true })
@@ -516,7 +516,7 @@ class Revisions extends Component<IProps> {
                     // console.log(" Needs login " + response.status)
                     this.setState({ login: true })
                 } else {
-                    console.log(" Failed " + response.status)
+                    // console.log(" Failed " + response.status)
                     this.setState({ failedPost: true })
                 }
             });
@@ -577,7 +577,7 @@ class Revisions extends Component<IProps> {
                     // console.log("[responseJSON] response.ok ", response.json())
                     return response.json();
                 } else if (response.status === 404) {
-                    console.log("Something unexpected happen!")
+                    // console.log("Something unexpected happen!")
                     return products
                 } else {
                     throw new Error(response.statusText);
