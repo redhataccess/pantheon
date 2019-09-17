@@ -10,15 +10,8 @@ import {
   } from '@patternfly/react-core';
 import { Revisions } from '@app/revisions';
 import { HelpIcon } from '@patternfly/react-icons';
-
-export interface IProps {
-    moduleName: string
-    modulePath: string
-    moduleType: string
-    updated: string    
-  }
   
-  class ModuleDisplay extends Component<IProps> {
+  class ModuleDisplay extends Component {
 
     public state = {
         draftPath: '',
@@ -122,7 +115,7 @@ export interface IProps {
                 draftUpdateDate: date,
                 draftPath: path
             },() => {
-                console.log('changed draft date: ', this.state.draftUpdateDate, "version path: ",this.state.draftPath)
+                // console.log('changed draft date: ', this.state.draftUpdateDate, "version path: ",this.state.draftPath)
             });    
         }
         else{
@@ -130,7 +123,7 @@ export interface IProps {
                 releaseUpdateDate: date,
                 releasePath: path
             },() => {
-                console.log('changed release date: ', this.state.releaseUpdateDate, "version path: ",this.state.releasePath)
+                // console.log('changed release date: ', this.state.releaseUpdateDate, "version path: ",this.state.releasePath)
             });
         }
       };
@@ -138,34 +131,20 @@ export interface IProps {
       private fetchModuleDetails = (data) => {
         this.setState({ initialLoad: false,  modulePath: data["location"]["pathname"]}
         ,() => {
-            console.log("module Path: ",this.state.modulePath);
+            // console.log("data: ",data);
+            // console.log("module Path: ",this.state.modulePath);
         })  
 
         fetch(data["location"]["pathname"]+'.4.json')
         .then(response => response.json())
-        // .then(responseJSON => this.setState({results: responseJSON}))
         .then(responseJSON => {
-            console.log('fetch results:',responseJSON["en_US"])
+            // console.log('fetch results:',responseJSON["en_US"])
             this.setState({
                 moduleTitle: responseJSON["en_US"]["1"]["metadata"]["jcr:title"],
                 resourceType: responseJSON["sling:resourceType"],
             })
 
         })
-            // if (JSON.stringify(this.state.results) === "[]") {
-            //     this.setState({
-            //       check: false,
-            //       deleteButtonVisible: false,
-            //       isEmptyResults: true
-            //     })
-            //   } else {
-            //     this.setState({
-            //       check: false,
-            //       countOfCheckedBoxes: 0,
-            //       deleteButtonVisible: false,
-            //       isEmptyResults: false
-            //      })
-            //   }
         }
     
 }

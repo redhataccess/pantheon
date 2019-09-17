@@ -2,7 +2,6 @@
 
 exports[`Search tests should render default Search component 1`] = `
 <Fragment>
-  <Component />
   <div>
     <div>
       <FormGroup
@@ -155,7 +154,6 @@ exports[`Search tests should render default Search component 1`] = `
                 ]
               }
               key=""
-              onClick={[Function]}
             />
           </DataListItemRow>
           <DataListItemRow

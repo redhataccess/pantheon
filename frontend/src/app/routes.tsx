@@ -75,14 +75,6 @@ const Routes = () => (
       <Route path={path} exact={exact} component={component} key={idx} />
     ))}
     <Route component={Search} />
-    {/* <Route path="/moduleDisplay" exact={true} component={ModuleDisplay} /> */}
-    {/* <Route path="/moduleDisplay/:username" component={(props) => <ModuleDisplay
-                    moduleName={props.match.params.username}
-                    modulePath={props.match.params.username}
-                    moduleType={props.match.params.username}
-                    updated={props.match.params.username}    
-    />}/> */}
-
   </Switch>
 );
 

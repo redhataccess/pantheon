@@ -58,4 +58,29 @@ describe('Revisions tests', () => {
         const dataListItemRow = wrapper.find(DataListItemRow);
         expect(dataListItemRow.exists()).toBe(true)
     });
+
+    it('test fetchRevisions function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.fetchRevisions()).toMatchSnapshot();
+    });
+
+    it('test changePublishState function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.changePublishState("Publish")).toMatchSnapshot();
+    });
+
+    it('test onArchiveSelect function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.onArchiveSelect()).toMatchSnapshot();
+    });
+
+    it('test onHeadingToggle function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.onHeadingToggle()).toMatchSnapshot();
+    });
+
 });
