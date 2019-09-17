@@ -9,6 +9,9 @@ import '@app/app.css';
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination';
 import { ModuleDisplay } from '@app/moduleDisplay';
+// import { Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import { Routes } from '@app/routes';
 
 export default class Search extends Component {
   public state = {
@@ -62,12 +65,18 @@ export default class Search extends Component {
       <React.Fragment>
         {console.log("module display: ", this.state.moduleDisplay)}
         {console.log("initial load: ", this.state.initialLoad)}
-        {this.state.moduleDisplay && <ModuleDisplay
-          moduleName={this.state.moduleName}
-          modulePath={this.state.modulePath}
-          moduleType={this.state.moduleType}
-          updated={this.state.moduleUpdatedDate}
-        />}
+        {true  
+        // <Route path="/moduleDisplay" render={()=> {
+        //     return (<ModuleDisplay
+        //       moduleName={this.state.moduleName}
+        //       modulePath={this.state.modulePath}
+        //       moduleType={this.state.moduleType}
+        //       updated={this.state.moduleUpdatedDate}
+        // />);
+        //   }                                        
+        // }/>
+
+        }
         {this.state.initialLoad && this.doSearch()}
         {!this.state.moduleDisplay &&
         <div>
@@ -148,10 +157,12 @@ export default class Search extends Component {
                         name={data["pant:transientPath"]}
                         onClick={this.handleDeleteCheckboxChange(data["pant:transientPath"])}
                       />}
+                      
                     <DataListItemCells key={data["pant:transientPath"]} onClick={this.setPreview(data)}
                           dataListCells={[
                                 <DataListCell key="div-title" width={2}>
-                                  <span>{data["jcr:title"]}</span>
+                                  {/* <button onClick={this.setPreview(data)}>{data["jcr:title"]}</button> */}
+                                    <Link to={data['pant:transientPath']}>{data["jcr:title"]}</Link>
                                 </DataListCell>,
                                 <DataListCell  key="div-description" width={2}>
                                   <span>{data["jcr:description"]===""?"No items found to be displayed":data["jcr:description"]}</span>
@@ -411,14 +422,24 @@ export default class Search extends Component {
     private setPreview = (data) => (event: any) => {
       // console.log("what do I see when you click ? " + path)
       if (data !== []) {
-            this.setState({
-              initialLoad: !this.state.initialLoad, 
-              moduleDisplay: !this.state.moduleDisplay,
-              moduleName: data["jcr:title"],
-              modulePath: data["pant:transientPath"],
-              moduleType: data["pant:transientSource"],
-              moduleUpdatedDate: this.formatDate(new Date(data["jcr:created"]))
-            })
+            // <Route path="/moduleDisplay" render={()=> {
+            //   return (<ModuleDisplay
+            //     moduleName={data["jcr:title"]}
+            //     modulePath={data["pant:transientPath"]}
+            //     moduleType={data["pant:transientSource"]}
+            //     updated={this.formatDate(new Date(data["jcr:created"]))}
+            //   />);
+            //   }                                        
+            // }/>
+            // this.setState({
+            //   initialLoad: !this.state.initialLoad, 
+            //   moduleDisplay: !this.state.moduleDisplay,
+            //   moduleName: data["jcr:title"],
+            //   modulePath: data["pant:transientPath"],
+            //   moduleType: data["pant:transientSource"],
+            //   moduleUpdatedDate: this.formatDate(new Date(data["jcr:created"]))
+            // })
+            
           } else {
             this.setState({ moduleDisplay: false, initialLoad: true })
           }

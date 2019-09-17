@@ -6,6 +6,8 @@ import { Product } from '@app/product';
 import { ProductListing } from '@app/productListing';
 import { Login } from '@app/login';
 import { GitImport } from './gitImport';
+import { ModuleDisplay } from '@app/moduleDisplay'; 
+import { URLSearchParams } from 'url';
 
 export interface IAppRoute {
   label: string;
@@ -58,6 +60,13 @@ const routes: IAppRoute[] = [
     label: '', // Empty because we are using the Brand component to render the text.
     path: '/login'
   },
+  {
+    component: ModuleDisplay,
+    exact: false,
+    icon: null,
+    label: '', // Empty because we are using the Brand component to render the text.
+    path: '/:data'
+  }
 ];
 
 const Routes = () => (
@@ -66,6 +75,14 @@ const Routes = () => (
       <Route path={path} exact={exact} component={component} key={idx} />
     ))}
     <Route component={Search} />
+    {/* <Route path="/moduleDisplay" exact={true} component={ModuleDisplay} /> */}
+    {/* <Route path="/moduleDisplay/:username" component={(props) => <ModuleDisplay
+                    moduleName={props.match.params.username}
+                    modulePath={props.match.params.username}
+                    moduleType={props.match.params.username}
+                    updated={props.match.params.username}    
+    />}/> */}
+
   </Switch>
 );
 

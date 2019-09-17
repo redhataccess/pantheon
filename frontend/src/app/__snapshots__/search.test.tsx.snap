@@ -2,6 +2,7 @@
 
 exports[`Search tests should render default Search component 1`] = `
 <Fragment>
+  <Component />
   <div>
     <div>
       <FormGroup
@@ -125,9 +126,11 @@ exports[`Search tests should render default Search component 1`] = `
                   <DataListCell
                     width={2}
                   >
-                    <span>
+                    <Link
+                      to=""
+                    >
                       
-                    </span>
+                    </Link>
                   </DataListCell>,
                   <DataListCell
                     width={2}
