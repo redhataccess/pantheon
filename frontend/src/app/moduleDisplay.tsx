@@ -40,9 +40,9 @@ import { HelpIcon } from '@patternfly/react-icons';
                                     </TextContent>
                             </LevelItem>
                             <LevelItem />
-                            <LevelItem>
+                            {/* <LevelItem>
                                 <Button variant="secondary">Edit metadata</Button>
-                            </LevelItem>
+                            </LevelItem> */}
                         </Level>                
                     </div>
                     <div>

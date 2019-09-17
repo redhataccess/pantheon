@@ -220,7 +220,7 @@ class Revisions extends Component<IProps> {
                                                                     <span className="sp-prop-nosort" id="span-source-type">File Name</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="published" width={4}>
-                                                                    {"/" + this.props.modulePath}
+                                                                    {this.props.modulePath}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={2}>
                                                                     <span className="sp-prop-nosort" id="span-source-type">Upload Time</span>
