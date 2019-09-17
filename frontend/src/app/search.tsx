@@ -399,31 +399,12 @@ export default class Search extends Component {
       })
     }
 
-    // private setPreview = (data) => (event: any) => {
-    //   // console.log("what do I see when you click ? " + path)
-    //   if (data !== []) {
-    //         // <Route path="/moduleDisplay" render={()=> {
-    //         //   return (<ModuleDisplay
-    //         //     moduleName={data["jcr:title"]}
-    //         //     modulePath={data["pant:transientPath"]}
-    //         //     moduleType={data["pant:transientSource"]}
-    //         //     updated={this.formatDate(new Date(data["jcr:created"]))}
-    //         //   />);
-    //         //   }                                        
-    //         // }/>
-    //         // this.setState({
-    //         //   initialLoad: !this.state.initialLoad, 
-    //         //   moduleDisplay: !this.state.moduleDisplay,
-    //         //   moduleName: data["jcr:title"],
-    //         //   modulePath: data["pant:transientPath"],
-    //         //   moduleType: data["pant:transientSource"],
-    //         //   moduleUpdatedDate: this.formatDate(new Date(data["jcr:created"]))
-    //         // })
-            
-    //       } else {
-    //         this.setState({ moduleDisplay: false, initialLoad: true })
-    //       }
-    //       };  
+    private setPreview = (data) => (event: any) => {
+      if (data !== []) {            
+          } else {
+            this.setState({ moduleDisplay: false, initialLoad: true })
+          }
+          };  
 
   private formatDate(date: Date) {
     // 2019/05/07 14:21:36
