@@ -8,6 +8,7 @@ import {
 import '@app/app.css';
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 
 export default class Search extends Component {
   public state = {
@@ -27,6 +28,10 @@ export default class Search extends Component {
     isModalOpen: false,
     isSortedUp: true,
     loggedinStatus: false,
+    moduleName: '',
+    modulePath: '',
+    moduleType: '',
+    moduleUpdatedDate: '',
     nextPageRowCount: 1,
     page: 1,
     pageLimit: 25,
@@ -54,6 +59,7 @@ export default class Search extends Component {
     }
     return (
       <React.Fragment>
+        {console.log("initial load: ", this.state.initialLoad)}
         {this.state.initialLoad && this.doSearch()}
         <div>
           <div>
@@ -133,10 +139,11 @@ export default class Search extends Component {
                         name={data["pant:transientPath"]}
                         onClick={this.handleDeleteCheckboxChange(data["pant:transientPath"])}
                       />}
-                    <DataListItemCells key={data["pant:transientPath"]} onClick={this.setPreview(data["pant:transientPath"])}
+                      
+                    <DataListItemCells key={data["pant:transientPath"]}
                           dataListCells={[
                                 <DataListCell key="div-title" width={2}>
-                                  <span>{data["jcr:title"]}</span>
+                                    <Link to={data['pant:transientPath']}>{data["jcr:title"]}</Link>
                                 </DataListCell>,
                                 <DataListCell  key="div-description" width={2}>
                                   <span>{data["jcr:description"]===""?"No items found to be displayed":data["jcr:description"]}</span>
@@ -391,15 +398,6 @@ export default class Search extends Component {
         }
       })
     }
-
-    private setPreview = (path: string) => (event: any) =>  {
-      // console.log("what do I see when you click ? " + path)
-      if (path !== "") {
-        return window.open("/" + path + ".preview?draft=true");
-      } else {
-        return ""
-      }
-    };
 
   private formatDate(date: Date) {
     // 2019/05/07 14:21:36

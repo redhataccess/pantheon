@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `<Fragment />`;
