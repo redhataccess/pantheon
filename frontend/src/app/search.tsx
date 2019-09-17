@@ -399,13 +399,6 @@ export default class Search extends Component {
       })
     }
 
-    private setPreview = (data) => (event: any) => {
-      if (data !== []) {            
-          } else {
-            this.setState({ moduleDisplay: false, initialLoad: true })
-          }
-          };  
-
   private formatDate(date: Date) {
     // 2019/05/07 14:21:36
     let dateStr = date.getFullYear().toString() + "/" +
