@@ -41,7 +41,7 @@ export default class Search extends Component {
     pageLimit: 25,
     redirect: false,
     redirectLocation: '',
-    results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
+    results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
     showDropdownOptions: true,
     sortKey: ''
   };
@@ -174,7 +174,7 @@ export default class Search extends Component {
                                   <span>{data["pant:transientSourceName"]}</span>
                                 </DataListCell>,
                                 <DataListCell key="div-created">
-                                <span >{this.formatDate(new Date(data["jcr:created"]))}</span>
+                                <span >{this.formatDate(new Date(data["pant:dateUploaded"]))}</span>
                                 </DataListCell>
                           ]}
                     />
@@ -473,7 +473,7 @@ export default class Search extends Component {
   }
 
   private sortByUploadTime = () => {
-    this.sort("jcr:created")
+    this.sort("pant:dateUploaded")
   }
 
   private sort(key: string) {
@@ -491,7 +491,7 @@ export default class Search extends Component {
       .then(() => {
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
-            data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
+            data: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
             isEmptyResults: true
           })
         } else {
