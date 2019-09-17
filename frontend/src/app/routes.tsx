@@ -6,6 +6,8 @@ import { Product } from '@app/product';
 import { ProductListing } from '@app/productListing';
 import { Login } from '@app/login';
 import { GitImport } from './gitImport';
+import { ModuleDisplay } from '@app/moduleDisplay'; 
+import { URLSearchParams } from 'url';
 
 export interface IAppRoute {
   label: string;
@@ -58,6 +60,13 @@ const routes: IAppRoute[] = [
     label: '', // Empty because we are using the Brand component to render the text.
     path: '/login'
   },
+  {
+    component: ModuleDisplay,
+    exact: false,
+    icon: null,
+    label: '', // Empty because we are using the Brand component to render the text.
+    path: '/:data'
+  }
 ];
 
 const Routes = () => (

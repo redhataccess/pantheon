@@ -8,7 +8,7 @@ import {
 import '@app/app.css';
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination';
-import { ModuleDisplay } from '@app/moduleDisplay';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 
 export default class Search extends Component {
   public state = {
@@ -20,7 +20,6 @@ export default class Search extends Component {
     columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
     confirmDelete: false,
     countOfCheckedBoxes: 0,
-    results: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "description":"","sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
     deleteButtonVisible: false,
     deleteState: '',
     initialLoad: true,
@@ -29,7 +28,6 @@ export default class Search extends Component {
     isModalOpen: false,
     isSortedUp: true,
     loggedinStatus: false,
-    moduleDisplay: false,
     moduleName: '',
     modulePath: '',
     moduleType: '',
@@ -39,6 +37,7 @@ export default class Search extends Component {
     pageLimit: 25,
     redirect: false,
     redirectLocation: '',
+    results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
     showDropdownOptions: true,
     sortKey: ''
   };
@@ -60,16 +59,8 @@ export default class Search extends Component {
     }
     return (
       <React.Fragment>
-        {console.log("module display: ", this.state.moduleDisplay)}
         {console.log("initial load: ", this.state.initialLoad)}
-        {this.state.moduleDisplay && <ModuleDisplay
-          moduleName={this.state.moduleName}
-          modulePath={this.state.modulePath}
-          moduleType={this.state.moduleType}
-          updated={this.state.moduleUpdatedDate}
-        />}
         {this.state.initialLoad && this.doSearch()}
-        {!this.state.moduleDisplay &&
         <div>
           <div>
           <FormGroup
@@ -148,10 +139,11 @@ export default class Search extends Component {
                         name={data["pant:transientPath"]}
                         onClick={this.handleDeleteCheckboxChange(data["pant:transientPath"])}
                       />}
-                    <DataListItemCells key={data["pant:transientPath"]} onClick={this.setPreview(data)}
+                      
+                    <DataListItemCells key={data["pant:transientPath"]}
                           dataListCells={[
                                 <DataListCell key="div-title" width={2}>
-                                  <span>{data["jcr:title"]}</span>
+                                    <Link to={data['pant:transientPath']}>{data["jcr:title"]}</Link>
                                 </DataListCell>,
                                 <DataListCell  key="div-description" width={2}>
                                   <span>{data["jcr:description"]===""?"No items found to be displayed":data["jcr:description"]}</span>
@@ -163,7 +155,7 @@ export default class Search extends Component {
                                   <span>{data["pant:transientSourceName"]}</span>
                                 </DataListCell>,
                                 <DataListCell key="div-created">
-                                <span >{this.formatDate(new Date(data["jcr:created"]))}</span>
+                                <span >{this.formatDate(new Date(data["pant:dateUploaded"]))}</span>
                                 </DataListCell>
                           ]}
                     />
@@ -256,7 +248,6 @@ export default class Search extends Component {
             </div>
           </div>
         </div>
-      }
       </React.Fragment>
     );
   }
@@ -408,20 +399,6 @@ export default class Search extends Component {
       })
     }
 
-    private setPreview = (data) => (event: any) =>  {
-      // console.log("what do I see when you click ? " + path)
-      if (data !== []) {
-        this.setState({initialLoad: !this.state.initialLoad, moduleDisplay: !this.state.moduleDisplay,
-           moduleName: data["jcr:title"],
-           modulePath: data["pant:transientPath"],
-           moduleType: data["pant:transientSource"],
-           moduleUpdatedDate: this.formatDate(new Date(data["jcr:created"]))           
-          })
-      } else {
-        this.setState({moduleDisplay: false, initialLoad: true})
-      }
-    };
-
   private formatDate(date: Date) {
     // 2019/05/07 14:21:36
     let dateStr = date.getFullYear().toString() + "/" +
@@ -450,7 +427,7 @@ export default class Search extends Component {
   }
 
   private sortByUploadTime = () => {
-    this.sort("jcr:created")
+    this.sort("pant:dateUploaded")
   }
 
   private sort(key: string) {
@@ -468,7 +445,7 @@ export default class Search extends Component {
       .then(() => {
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
-            data: [{ "pant:transientPath": '', "jcr:created": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
+            data: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
             isEmptyResults: true
           })
         } else {

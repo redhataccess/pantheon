@@ -14,7 +14,6 @@ const props = {
     modulePath: "/modules/test",
     releaseUpdateDate: anymatch,
     revisionModulePath: "/modules/test"
-
 }
 
 describe('Revisions tests', () => {

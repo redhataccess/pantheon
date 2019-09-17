@@ -121,12 +121,10 @@ describe('NavLinks tests', () => {
       };
     });
 
-    const checkAuth = require('./NavLinks').checkAuth;
     const browserLink = require('./NavLinks').browserLink;
     const consoleLink = require('./NavLinks').consoleLink;
     const welcomeLink = require('./NavLinks').welcomeLink;
 
-    expect(checkAuth()).toBe(true);
     expect(browserLink()).toBe('window.open("/bin/browser.html")')
     expect(consoleLink()).toBe('window.open("/system/console/bundles.html")')
     expect(welcomeLink()).toBe('window.open("/starter/index.html")')
@@ -137,39 +135,6 @@ describe('NavLinks tests', () => {
     const render = jest.fn();
     render();
     expect(render).toHaveBeenCalled();
-  });
-
-  test('consoleLink() click event', () => {
-    const wrapper = shallow(<NavLinks />);
-    const instance = wrapper.instance();
-    const spy = sinon.spy(instance, 'consoleLink');
-
-    wrapper.setState({ 'isLoggedIn': true })
-    wrapper.setState({ 'isAdmin': true })
-    wrapper.find(NavItem).at(7).simulate('click');
-    sinon.assert.calledOnce(spy);
-  });
-
-  test('browserLink() click event', () => {
-    const wrapper = shallow(<NavLinks />);
-    const instance = wrapper.instance();
-    const spy = sinon.spy(instance, 'browserLink');
-
-    wrapper.setState({ 'isLoggedIn': true })
-    wrapper.setState({ 'isAdmin': true })
-    wrapper.find(NavItem).at(6).simulate('click');
-    sinon.assert.calledOnce(spy);
-  });
-
-  test('welcomeLink() click event', () => {
-    const wrapper = shallow(<NavLinks />);
-    const instance = wrapper.instance();
-    const spy = sinon.spy(instance, 'welcomeLink');
-
-    wrapper.setState({ 'isLoggedIn': true })
-    wrapper.setState({ 'isAdmin': true })
-    wrapper.find(NavItem).at(5).simulate('click');
-    sinon.assert.calledOnce(spy);
   });
 
   it('test fetch api call', async () => {

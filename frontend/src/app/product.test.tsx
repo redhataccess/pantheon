@@ -75,12 +75,6 @@ describe('Product tests', () => {
     expect(inst.productExist("Red Hat Enterprise Linux")).toMatchSnapshot();
   });
 
-  it('test getProductsUrl function', () => {
-    const wrapper = renderer.create(<Product />);
-    const inst = wrapper.getInstance();
-    expect(inst.getProductsUrl("Red Hat Enterprise Linux")).toMatchSnapshot();
-  });
-  
   it('test handleNameInput function', () => {
     const wrapper = renderer.create(<Product />);
     const inst = wrapper.getInstance();

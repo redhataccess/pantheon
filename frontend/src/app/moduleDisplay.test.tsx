@@ -8,22 +8,13 @@ import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 
 const props = {
-    moduleName: "Red Hat Enterprise Linux",
-    modulePath: "module/red_hat_enterprise_linux",
-    moduleType: "REFERENCE",
-    updated: "Tue Aug 27 2019 11:28:26 GMT-0400"
+    location: {pathname: "module/test"}
 }
 
 describe('ModuleDisplay tests', () => {
     test('should render ModuleDisplay component', () => {
         const view = shallow(<ModuleDisplay {...props} />);
         expect(view).toMatchSnapshot();
-    });
-
-    it('should render a Breadcrumb', () => {
-        const wrapper = mount(<ModuleDisplay {...props} />);
-        const breadcrum = wrapper.find(Breadcrumb);
-        expect(breadcrum.exists()).toBe(true)
     });
 
     it('should render a Button', () => {

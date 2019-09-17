@@ -5,6 +5,8 @@ import "isomorphic-fetch"
 import { mount, shallow } from 'enzyme';
 import { Bullseye, TextInput, FormGroup, Button } from '@patternfly/react-core';
 
+import sinon from "sinon";
+
 describe('Login tests', () => {
   test('should render Login component', () => {
     const view = shallow(<Module />);
@@ -43,4 +45,15 @@ describe('Login tests', () => {
     button.find('button').simulate('click');
     expect(mockCallBack.mock.calls.length).toEqual(1);
   });
+
+  test('saveModule() click event', () => {
+    const wrapper = shallow(<Module />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'saveModule');
+
+    wrapper.setState({buildDate: '',commitHash: '', commitText: ''})
+    wrapper.find(Button).at(0).simulate('click');
+    sinon.assert.calledOnce(spy);
+  });
+
 });

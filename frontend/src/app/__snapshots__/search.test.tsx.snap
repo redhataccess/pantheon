@@ -125,9 +125,11 @@ exports[`Search tests should render default Search component 1`] = `
                   <DataListCell
                     width={2}
                   >
-                    <span>
+                    <Link
+                      to=""
+                    >
                       
-                    </span>
+                    </Link>
                   </DataListCell>,
                   <DataListCell
                     width={2}
@@ -152,7 +154,6 @@ exports[`Search tests should render default Search component 1`] = `
                 ]
               }
               key=""
-              onClick={[Function]}
             />
           </DataListItemRow>
           <DataListItemRow
