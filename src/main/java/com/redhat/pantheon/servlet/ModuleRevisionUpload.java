@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -72,6 +73,7 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
 
             log.debug("Pushing new module revision at: " + path + " with locale: " + locale);
             log.trace("and content: " + asciidocContent);
+            int responseCode = HttpServletResponse.SC_OK;
 
             // Try to find the module
             Resource moduleResource = request.getResourceResolver().getResource(path);
@@ -83,6 +85,7 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
                                 request.getResourceResolver(),
                                 path,
                                 Module.class);
+                responseCode = HttpServletResponse.SC_CREATED;
             } else {
                 module = moduleResource.adaptTo(Module.class);
             }
@@ -116,7 +119,9 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
                     .metadata.getOrCreate();
             metadata.title.set(moduleName);
             metadata.description.set(description);
-            metadata.dateModified.set(Calendar.getInstance());
+            Calendar now = Calendar.getInstance();
+            metadata.dateModified.set(now);
+            metadata.dateUploaded.set(now);
             metadata.moduleType.set( determineModuleType(module) );
 
             asciidoctorService.extractMetadata(jcrContent, metadata);
@@ -128,6 +133,8 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
                 // drop the html on the floor, this is just to cache the results
                 asciidoctorService.getModuleHtml(draftRevision.get(), module, context, true);
             }
+
+            response.setStatus(responseCode, "");
         } catch (Exception e) {
             throw new RepositoryException("Error uploading a module revision", e);
         }

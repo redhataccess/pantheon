@@ -30,6 +30,8 @@ public class Metadata extends SlingResource {
 
     public final Field<Calendar> datePublished = dateField("pant:datePublished");
 
+    public final Field<Calendar> dateUploaded = dateField("pant:dateUploaded");
+
     public final Field<Calendar> dateModified = dateField(JcrConstants.JCR_LASTMODIFIED);
 
     public final Field<String> primaryType = stringField("jcr:primaryType");
