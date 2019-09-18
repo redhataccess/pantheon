@@ -27,7 +27,7 @@ class Revisions extends Component<IProps> {
         isArchiveDropDownOpen: false,
         isArchiveSelect: false,
         isDropDownOpen: false,
-        isHeadingToggle: false,
+        isHeadingToggle: true,
         isOpen: false,
         isRowToggle: false,
         login: false,
@@ -117,7 +117,6 @@ class Revisions extends Component<IProps> {
                     Update Successful!
           </Alert>
                 }
-
                 {this.state.initialLoad && this.fetchRevisions()}
                 {this.state.productsInitalLoad && this.fetchProductVersionDetails()}
                 {this.state.metadataInitalLoad && this.getMetadata(this.state.metadataPath)}
@@ -678,17 +677,15 @@ class Revisions extends Component<IProps> {
     }
 
     private getMetadata = (revisionPath) => {
-        this.setState({ metadataInitalLoad: false })
+        
         if (revisionPath) {
+            this.setState({ metadataInitalLoad: false })
             fetch(revisionPath + "/metadata.json")
                 .then(response => response.json())
                 .then(responseJSON => this.setState({ metadataResults: responseJSON }))
                 .then(() => {
-
-                    if (JSON.stringify(this.state.metadataResults)! === "[]") {
+                    if (JSON.stringify(this.state.metadataResults) !== "[]") {
                         // Process results
-                        // console.log("[getMetadata] responseJSON ", this.state.metadataResults)
-                        // console.log("[getMetadata] urlFragment ", this.state.metadataResults["urlFragment"])
                         // Remove leading slash.
                         if (this.state.metadataResults["urlFragment"]) {
                             let url = this.state.metadataResults["urlFragment"]

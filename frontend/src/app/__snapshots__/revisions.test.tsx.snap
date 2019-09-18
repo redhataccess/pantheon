@@ -9,7 +9,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
       >
         <DataListItem
           aria-labelledby="simple-item1"
-          isExpanded={false}
+          isExpanded={true}
         >
           <DataListItemRow
             id="data-rows-header"
@@ -67,7 +67,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
         <DataListContent
           aria-label="Secondary Content Details"
           id="Content"
-          isHidden={true}
+          isHidden={false}
           noPadding={true}
         />
       </DataList>

@@ -3,7 +3,7 @@ import { Revisions } from '@app/revisions';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput } from '@patternfly/react-core';
+import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 
@@ -13,7 +13,7 @@ const props = {
     draftUpdateDate: anymatch,
     modulePath: "/modules/test",
     releaseUpdateDate: anymatch,
-    revisionModulePath: "/modules/test"
+    revisionModulePath: "/modules/test/en_US/1"
 }
 
 describe('Revisions tests', () => {
@@ -148,4 +148,24 @@ describe('Revisions tests', () => {
         expect(instance.state['usecases'][0]).toEqual('Administer')
     });
 
+    test('Revision Button click', () => {
+        const wrapper = shallow(<Revisions {...props} />);
+        const instance = wrapper.instance();
+        const spy = sinon.spy(instance, 'onHeadingToggle');
+    
+        wrapper.find(DataListToggle).simulate('click');
+        sinon.assert.called(spy);
+      });
+
+    //   test('Publish Button click event', () => {
+    //     const wrapper = shallow(<Revisions {...props} />);
+    //     const instance = wrapper.instance();
+    //     const toggle = sinon.spy(instance, 'onHeadingToggle');
+    //     wrapper.find(DataListToggle).simulate('click');
+    //     const spy = sinon.spy(instance, 'changePublishState');
+    
+    //     console.log("[revisions test] instance ", instance)
+    //     wrapper.find({variant: "primary"}).simulate('click');
+    //     sinon.assert.called(spy);
+    //   });
 });
