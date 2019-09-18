@@ -16,7 +16,6 @@ import { HelpIcon } from '@patternfly/react-icons';
     public state = {
         draftPath: '',
         draftUpdateDate: '',
-        initialLoad: true,
         modulePath: '',
         moduleTitle: "",
         releasePath: '',
@@ -25,12 +24,14 @@ import { HelpIcon } from '@patternfly/react-icons';
         results: {}
     };
 
+    public componentDidMount() {
+        this.fetchModuleDetails(this.props)
+    }
+
     public render() {                
         // console.log('Props: ',this.props);
         return (  
             <React.Fragment>
-                {this.state.initialLoad && this.fetchModuleDetails(this.props)}
-                {!this.state.initialLoad && 
                 <div>
                     <div>
                         <Level gutter="md">
@@ -91,16 +92,16 @@ import { HelpIcon } from '@patternfly/react-icons';
                     </div>
                     <div>
                         <Card>
+                            {this.state.modulePath !== '' &&
                             <Revisions 
                                 modulePath={this.state.modulePath}
                                 revisionModulePath={this.state.moduleTitle}
                                 draftUpdateDate={this.updateDate}
                                 releaseUpdateDate={this.updateDate}
-                            />
+                            />}
                         </Card>
                     </div> 
                 </div>
-                }
             </React.Fragment>
 
         );
@@ -126,7 +127,7 @@ import { HelpIcon } from '@patternfly/react-icons';
       };
 
       private fetchModuleDetails = (data) => {
-        this.setState({ initialLoad: false,  modulePath: data["location"]["pathname"]}
+        this.setState({ modulePath: data["location"]["pathname"]}
         ,() => {
             // console.log("data: ",data);
             // console.log("module Path: ",this.state.modulePath);
