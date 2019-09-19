@@ -5,7 +5,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
   <Card>
     <div>
       <DataList
-        aria-label="Simple data list example"
+        aria-label="Simple data list"
       >
         <DataListItem
           aria-labelledby="simple-item1"

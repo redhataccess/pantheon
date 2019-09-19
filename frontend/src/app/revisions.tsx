@@ -15,6 +15,8 @@ export interface IProps {
     revisionModulePath: string
     draftUpdateDate: (draftUpdateDate, draft, draftPath) => any
     releaseUpdateDate: (releaseUpdateDate, release, releasePath) => any
+    onGetProduct:(productValue) => any
+    onGetVersion:(versionValue) => any
 }
 
 class Revisions extends Component<IProps> {
@@ -53,6 +55,7 @@ class Revisions extends Component<IProps> {
             { value: 'Select a Product', label: 'Select a Product', disabled: false },
         ],
         productValue: '',
+        productVersion: '',
         redirect: false,
 
         successAlertVisble: false,
@@ -85,7 +88,6 @@ class Revisions extends Component<IProps> {
               </p>
             </React.Fragment>
         );
-
         let verOptions = versionOptions
         if (this.state.allProducts[productValue]) {
             verOptions = this.state.allProducts[productValue]
@@ -122,7 +124,7 @@ class Revisions extends Component<IProps> {
                 {this.state.metadataInitalLoad && this.getMetadata(this.state.metadataPath)}
                 <Card>
                     <div>
-                        <DataList aria-label="Simple data list example">
+                        <DataList aria-label="Simple data list">
                             <DataListItem aria-labelledby="simple-item1" isExpanded={this.state.isHeadingToggle}>
                                 <DataListItemRow id="data-rows-header" >
                                     <DataListToggle
@@ -162,7 +164,7 @@ class Revisions extends Component<IProps> {
                                 {this.state.results.map(type => (
                                     type.map(data => (
                                         data["revision"] !== "" && (
-                                            <DataList aria-label="Simple data list example2">
+                                            <DataList aria-label="Simple data list2">
                                                 <DataListItem aria-labelledby="simple-item2" isExpanded={data["isDropdownOpen"]}>
                                                     <DataListItemRow>
                                                         <DataListToggle
@@ -246,7 +248,7 @@ class Revisions extends Component<IProps> {
                                                                     <span className="sp-prop-nosort" id="span-source-type">Context Package</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
-                                                                    Dumy Context Package
+                                                                    N/A
                                                                 </DataListCell>,
                                                             ]}
                                                         />
@@ -521,12 +523,18 @@ class Revisions extends Component<IProps> {
             });
         }
     }
-    private onChangeProduct = (productValue, event) => {
-        this.setState({ productValue });
+    private onChangeProduct = (productValue) => {
+        this.setState({ productValue }, ()=>{
+            this.props.onGetProduct(productValue)
+        });
     }
 
     private onChangeVersion = (versionValue, event) => {
-        this.setState({ versionValue });
+        console.log("[onChangeVersion] versionValue: ", versionValue)
+        console.log("[onChangeVersion] event: ", event)
+        this.setState({ versionValue }, ()=>{
+            this.props.onGetVersion(versionValue)
+        });
     }
 
     private onChangeUsecase = (usecaseValue, event) => {
