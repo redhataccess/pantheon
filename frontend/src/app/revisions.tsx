@@ -692,7 +692,8 @@ class Revisions extends Component<IProps> {
 
     private getMetadata = (revisionPath) => {
 
-        if (revisionPath) {
+        if (revisionPath.trim() !== "") {
+            console.log("[getMetadata] revisionPath: ", revisionPath)
             this.setState({ metadataInitalLoad: false })
             fetch(revisionPath + "/metadata.json")
                 .then(response => response.json())

@@ -118,7 +118,7 @@ class ModuleDisplay extends Component {
                 draftUpdateDate: date,
                 draftPath: path
             }, () => {
-                // console.log('changed draft date: ', this.state.draftUpdateDate, "version path: ",this.state.draftPath)
+                //  console.log('changed draft date: ', this.state.draftUpdateDate, "version path: ",this.state.draftPath)
             });
         }
         else {

@@ -8,7 +8,7 @@ import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 
 const props = {
-    location: {pathname: "module/test"}
+    location: { pathname: "module/test" }
 }
 
 describe('ModuleDisplay tests', () => {
@@ -52,4 +52,22 @@ describe('ModuleDisplay tests', () => {
         const dataListItemRow = wrapper.find(DataListItemRow);
         expect(dataListItemRow.exists()).toBe(true)
     });
- });
+
+    it('test fetchModuleDetails function', () => {
+        const wrapper = renderer.create(<ModuleDisplay {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.fetchModuleDetails(props)).toMatchSnapshot();
+    });
+
+    it('test getProduct function', () => {
+        const wrapper = renderer.create(<ModuleDisplay {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.getProduct()).toMatchSnapshot();
+    });
+
+    it('test getVersion function', () => {
+        const wrapper = renderer.create(<ModuleDisplay {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.getVersion()).toMatchSnapshot();
+    });
+});

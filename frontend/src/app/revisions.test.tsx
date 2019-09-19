@@ -3,7 +3,7 @@ import { Revisions } from '@app/revisions';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput } from '@patternfly/react-core';
+import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Dropdown, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 
@@ -131,6 +131,66 @@ describe('Revisions tests', () => {
         expect(inst.onHeadingToggle()).toMatchSnapshot();
     });
 
+    it('test previewDoc function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.previewDoc()).toMatchSnapshot();
+    });
+
+    it('test saveMetadata function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.saveMetadata()).toMatchSnapshot();
+    });
+
+    it('test onChangeProduct function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.onChangeProduct()).toMatchSnapshot();
+    });
+
+    it('test onChangeUsecase function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.onChangeUsecase()).toMatchSnapshot();
+    });
+    
+    it('test handleURLInput function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.handleURLInput()).toMatchSnapshot();
+    });
+
+    it('test moduleUrlExist function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.moduleUrlExist()).toMatchSnapshot();
+    });
+
+    it('test getModuleUrl function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.getModuleUrl()).toMatchSnapshot();
+    });
+
+    it('test renderRedirect function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.renderRedirect()).toMatchSnapshot();
+    });
+
+    it('test loginRedirect function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.loginRedirect()).toMatchSnapshot();
+    });
+
+    it('test dismissNotification function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.dismissNotification()).toMatchSnapshot();
+    });
+
     it('test getMetadata function', () => {
         const wrapper = shallow(<Revisions {...props} />);
         const instance = wrapper.instance();
@@ -167,8 +227,32 @@ describe('Revisions tests', () => {
     //     wrapper.find(DataListToggle).simulate('click');
     //     const spy = sinon.spy(instance, 'changePublishState');
     
-    //     console.log("[revisions test] instance ", instance)
-    //     wrapper.find({variant: "primary"}).simulate('click');
-    //     sinon.assert.called(spy);
+    //     // console.log("[revisions test] instance ", instance)
+    //     console.log("[revisions test] buttons ", wrapper.find(Button))
+    //     // wrapper.find({variant: "primary"}).simulate('click', { preventDefault() {} });
+    //     // sinon.assert.called(spy);
     //   });
+
+    //   it('test handleModalToggle function', () => {
+    //     const wrapper = shallow(<Revisions {...props} />);
+    //     const instance = wrapper.instance();
+    //     wrapper.setState({ 'isArchiveDropDownOpen': true })
+    //     const spy = sinon.spy(instance, 'handleModalToggle');
+        
+    //     wrapper.find(Dropdown).simulate("click", { preventDefault() {} });
+    //     sinon.assert.called(spy);
+    // });
+
+    // it('test handleModalClose function', () => {
+    //     const wrapper = renderer.create(<Revisions {...props} />);
+    //     const inst = wrapper.getInstance();
+    //     expect(inst.handleModalClose()).toMatchSnapshot();
+    // });
+
+    // it('test onChangeVersion function', (event) => {
+    //     const wrapper = renderer.create(<Revisions {...props} />);
+    //     const inst = wrapper.getInstance();
+    //     expect(inst.onChangeVersion(event)).toMatchSnapshot();
+    // });
+
  });

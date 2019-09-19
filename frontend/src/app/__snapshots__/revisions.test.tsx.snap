@@ -308,8 +308,28 @@ exports[`Revisions tests should render Revisions component 1`] = `
 
 exports[`Revisions tests test changePublishState function 1`] = `undefined`;
 
+exports[`Revisions tests test dismissNotification function 1`] = `undefined`;
+
 exports[`Revisions tests test fetchRevisions function 1`] = `undefined`;
+
+exports[`Revisions tests test getModuleUrl function 1`] = `"/content/modules.query.json?nodeType=pant:module&where=[urlFragment]=\\"undefined\\""`;
+
+exports[`Revisions tests test handleURLInput function 1`] = `undefined`;
+
+exports[`Revisions tests test loginRedirect function 1`] = `""`;
+
+exports[`Revisions tests test moduleUrlExist function 1`] = `false`;
 
 exports[`Revisions tests test onArchiveSelect function 1`] = `undefined`;
 
+exports[`Revisions tests test onChangeProduct function 1`] = `undefined`;
+
+exports[`Revisions tests test onChangeUsecase function 1`] = `undefined`;
+
 exports[`Revisions tests test onHeadingToggle function 1`] = `undefined`;
+
+exports[`Revisions tests test previewDoc function 1`] = `undefined`;
+
+exports[`Revisions tests test renderRedirect function 1`] = `""`;
+
+exports[`Revisions tests test saveMetadata function 1`] = `undefined`;
