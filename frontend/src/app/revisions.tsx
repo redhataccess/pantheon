@@ -15,8 +15,8 @@ export interface IProps {
     revisionModulePath: string
     draftUpdateDate: (draftUpdateDate, draft, draftPath) => any
     releaseUpdateDate: (releaseUpdateDate, release, releasePath) => any
-    onGetProduct:(productValue) => any
-    onGetVersion:(versionValue) => any
+    onGetProduct: (productValue) => any
+    onGetVersion: (versionValue) => any
 }
 
 class Revisions extends Component<IProps> {
@@ -69,12 +69,13 @@ class Revisions extends Component<IProps> {
         versionOptions: [
             { value: 'Select a Version', label: 'Select a Version', disabled: false },
         ],
+        versionUUID: '',
         versionValue: '',
         metadataInitalLoad: true,
     };
 
     public render() {
-        const { isModalOpen, isDup, isMissingFields, productOptions, moduleUrl, successAlertVisble, productValue, usecaseValue, usecaseOptions, usecases, versionOptions, versionValue } = this.state;
+        const { isModalOpen, isDup, isMissingFields, productOptions, moduleUrl, successAlertVisble, productValue, usecaseValue, usecaseOptions, usecases, versionOptions, versionUUID } = this.state;
         const id = 'userID';
 
         const header = (
@@ -109,6 +110,7 @@ class Revisions extends Component<IProps> {
                     }
                 })
         }
+
         return (
             <React.Fragment>
                 {successAlertVisble && <Alert
@@ -316,7 +318,7 @@ class Revisions extends Component<IProps> {
                                         <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
-                                <FormSelect value={versionValue} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
+                                <FormSelect value={versionUUID} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
                                     {verOptions.map((option) => (
 
                                         <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} required={false} />
@@ -483,7 +485,7 @@ class Revisions extends Component<IProps> {
 
     private saveMetadata = (event) => {
         // save form data
-        if (this.state.productValue === "" || this.state.versionValue === "" ||
+        if (this.state.productValue === "" || this.state.versionUUID === "" ||
             this.state.usecaseValue === "" || this.state.moduleUrl === "") {
             this.setState({ isMissingFields: true })
             this.setState({ formInvalid: true })
@@ -499,7 +501,7 @@ class Revisions extends Component<IProps> {
 
             const formData = new FormData(event.target.form);
 
-            formData.append("productVersion", this.state.versionValue)
+            formData.append("productVersion", this.state.versionUUID)
             formData.append("documentUsecase", this.state.usecaseValue)
             formData.append("urlFragment", "/" + this.state.moduleUrl)
 
@@ -524,17 +526,20 @@ class Revisions extends Component<IProps> {
         }
     }
     private onChangeProduct = (productValue) => {
-        this.setState({ productValue }, ()=>{
+        this.setState({ productValue }, () => {
             this.props.onGetProduct(productValue)
         });
     }
+    private onChangeVersion = () => {
 
-    private onChangeVersion = (versionValue, event) => {
-        console.log("[onChangeVersion] versionValue: ", versionValue)
-        console.log("[onChangeVersion] event: ", event)
-        this.setState({ versionValue }, ()=>{
-            this.props.onGetVersion(versionValue)
-        });
+        // console.log("[onChangeVersion] event: ", event)
+        if (event !== undefined) {
+            if (event.target !== null) {
+                this.setState({ versionUUID: event.target["selectedOptions"][0].value, versionValue: event.target["selectedOptions"][0].label }, () => {
+                    this.props.onGetVersion(this.state.versionValue)
+                });
+            }
+        }
     }
 
     private onChangeUsecase = (usecaseValue, event) => {
@@ -639,6 +644,7 @@ class Revisions extends Component<IProps> {
                     }
                     if (productItems.length > 1) {
                         this.setState({ productOptions: productItems })
+                        // console.log("[fetchProductVersionDetails] productOptions: ", this.state.productOptions)
                     }
                 }
             })
@@ -685,7 +691,7 @@ class Revisions extends Component<IProps> {
     }
 
     private getMetadata = (revisionPath) => {
-        
+
         if (revisionPath) {
             this.setState({ metadataInitalLoad: false })
             fetch(revisionPath + "/metadata.json")
@@ -707,6 +713,9 @@ class Revisions extends Component<IProps> {
                     }
                 })
         }
+
+        // this.setState({ productValue: this.state.productValue })
+        // this.setState({ versionValue: this.state.versionValue })
     }
 }
 

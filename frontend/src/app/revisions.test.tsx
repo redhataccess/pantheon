@@ -12,8 +12,11 @@ const anymatch = require('anymatch');
 const props = {
     draftUpdateDate: anymatch,
     modulePath: "/modules/test",
+    onGetProduct:(productValue) => anymatch,
+    onGetVersion:(versionValue) => anymatch,
     releaseUpdateDate: anymatch,
     revisionModulePath: "/modules/test/en_US/1"
+    
 }
 
 describe('Revisions tests', () => {
@@ -168,4 +171,4 @@ describe('Revisions tests', () => {
     //     wrapper.find({variant: "primary"}).simulate('click');
     //     sinon.assert.called(spy);
     //   });
-});
+ });

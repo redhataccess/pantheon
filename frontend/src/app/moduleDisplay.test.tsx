@@ -52,4 +52,4 @@ describe('ModuleDisplay tests', () => {
         const dataListItemRow = wrapper.find(DataListItemRow);
         expect(dataListItemRow.exists()).toBe(true)
     });
-});
+ });

@@ -75,7 +75,7 @@ class ModuleDisplay extends Component {
                                         <DataListItemCells
                                             dataListCells={[
                                                 <DataListCell width={2} key="products">
-                                                    <span>Dummy Product Name</span>
+                                                    <span>{this.state.productValue + ' ' + this.state.versionValue}</span>
                                                 </DataListCell>,
                                                 <DataListCell key="published">
                                                     <span>{this.state.releaseUpdateDate.substring(4, 15)}</span>
@@ -150,28 +150,14 @@ class ModuleDisplay extends Component {
             })
     }
 
-    // private getProductVersionUUID = (revisionPath) => {
-
-    //     if (revisionPath) {
-    //         const key = "productVersion"
-    //         this.setState({ productInitalLoad: false })
-    //         fetch(revisionPath + "/metadata.json")
-    //             .then(response => response.json())
-    //             .then(responseJSON => this.setState({ productVersionValue: responseJSON[key] }))
-    //             .then(() => {
-                    
-    //             })
-    //     }
-    // }
     private getProduct = (product) => {
-        console.log("[getProduct] ", product)
-        this.setState({productValue: product})
+        // console.log("[getProduct] ", product)
+        this.setState({ productValue: product })
     }
 
     private getVersion = (version) => {
-        console.log("[getVersion] ", version)
-        this.setState({versionValue: version})
-        
+        // console.log("[getVersion] ", version)
+        this.setState({ versionValue: version })
     }
 
 }
