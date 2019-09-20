@@ -2,7 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -73,16 +73,16 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         Module module = request.getResource().adaptTo(Module.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
 
-        Optional<ModuleRevision> moduleRevision;
+        Optional<ModuleVersion> moduleVersion;
 
         if(draft) {
-            moduleRevision = module.getDraftRevision(localeObj);
+            moduleVersion = module.getDraftVersion(localeObj);
         } else {
-            moduleRevision = module.getReleasedRevision(localeObj);
+            moduleVersion = module.getReleasedVersion(localeObj);
         }
 
 
-        if(!moduleRevision.isPresent()) {
+        if(!moduleVersion.isPresent()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, (draft ? "Draft " : "Released ")
                     + "content version not found for module at " + request.getResource().getPath());
         }
@@ -91,9 +91,9 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             // parameters
             Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
 
-            // only allow forced rerendering if this is a draft revision. Released and historical revs are written in stone.
+            // only allow forced rerendering if this is a draft version. Released and historical revs are written in stone.
             String html = asciidoctorService.getModuleHtml(
-                    moduleRevision.get(), module, context, draft && paramValueAsBoolean(request, PARAM_RERENDER));
+                    moduleVersion.get(), module, context, draft && paramValueAsBoolean(request, PARAM_RERENDER));
 
             response.setContentType("text/html");
             Writer w = response.getWriter();

@@ -1,6 +1,6 @@
 package com.redhat.pantheon.extension;
 
-import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.event.jobs.JobBuilder;
 import org.apache.sling.event.jobs.JobManager;
 import org.junit.jupiter.api.Test;
@@ -19,10 +19,10 @@ class EventsTest {
     JobManager jobManager;
 
     @Mock
-    ModuleRevision moduleRevision;
+    ModuleVersion moduleVersion;
 
     @Test
-    void fireModuleRevisionPublishedEvent() {
+    void fireModuleVersionPublishedEvent() {
         // Given
         Events events = new Events(jobManager);
         JobBuilder jobBuilder = mock(JobBuilder.class, RETURNS_MOCKS);
@@ -30,7 +30,7 @@ class EventsTest {
         lenient().when(jobBuilder.properties(anyMap())).thenReturn(jobBuilder);
 
         // When
-        events.fireModuleRevisionPublishedEvent(moduleRevision);
+        events.fireModuleVersionPublishedEvent(moduleVersion);
 
         // Then
         verify(jobBuilder, times(1)).properties(anyMap());

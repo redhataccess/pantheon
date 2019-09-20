@@ -2,7 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleType;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.resource.ModifiableValueMap;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
-class ModuleRevisionUploadTest {
+class ModuleVersionUploadTest {
 
     private SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
@@ -41,13 +41,13 @@ class ModuleRevisionUploadTest {
     AsciidoctorService asciidoctorService;
 
     @Test
-    void createFirstRevision() throws Exception {
+    void createFirstVersion() throws Exception {
         // Given
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
+                        any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorService);
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the adoc content");
@@ -66,23 +66,23 @@ class ModuleRevisionUploadTest {
         Module module = new Module(slingContext.resourceResolver().getResource("/new/proc_module"));
         assertEquals(ModuleType.PROCEDURE,
                 module.getModuleLocale(LocaleUtils.toLocale("es_ES"))
-                        .getRevision("1")
+                        .getVersion("1")
                         .metadata.get()
                         .moduleType.get());
         assertEquals("This is the adoc content",
                 module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
         );
         verify(asciidoctorService).getModuleHtml(
-                any(ModuleRevision.class), any(Resource.class), anyMap(), eq(true));
+                any(ModuleVersion.class), any(Resource.class), anyMap(), eq(true));
     }
 
     @Test
-    void createDraftRevisionOnTopOfReleased() throws Exception {
+    void createDraftVersionOnTopOfReleased() throws Exception {
         // Given
         slingContext.build()
-                // Released revision
+                // Released version
                 .resource("/new/module/es_ES/1",
-                        "jcr:primaryType", "pant:moduleRevision")
+                        "jcr:primaryType", "pant:moduleVersion")
                 .resource("/new/module/es_ES/1/metadata")
                 .resource("/new/module/es_ES/1/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
@@ -93,9 +93,9 @@ class ModuleRevisionUploadTest {
 
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
+                        any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorService);
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "Draft asciidoc content");
@@ -120,22 +120,22 @@ class ModuleRevisionUploadTest {
                 module.getReleasedContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
         );
         verify(asciidoctorService).getModuleHtml(
-                any(ModuleRevision.class), any(Resource.class), anyMap(), eq(true));
+                any(ModuleVersion.class), any(Resource.class), anyMap(), eq(true));
     }
 
     @Test
-    void modifyDraftRevision() throws Exception {
+    void modifyDraftVersion() throws Exception {
         // Given
         slingContext.build()
                 .resource("/new/module/es_ES/1",
-                        "jcr:primaryType", "pant:moduleRevision") // released
+                        "jcr:primaryType", "pant:moduleVersion") // released
                 .resource("/new/module/es_ES/2",
-                        "jcr:primaryType", "pant:moduleRevision") // draft
-                // Draft revision
+                        "jcr:primaryType", "pant:moduleVersion") // draft
+                // Draft version
                 .resource("/new/module/es_ES/2/metadata")
                 .resource("/new/module/es_ES/2/content/asciidoc/jcr:content",
                         "jcr:data", "This is the draft adoc content")
-                // Released revision
+                // Released version
                 .resource("/new/module/es_ES/1/metadata")
                 .resource("/new/module/es_ES/1/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
@@ -148,9 +148,9 @@ class ModuleRevisionUploadTest {
 
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
+                        any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorService);
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "Revised asciidoc content");
@@ -175,24 +175,24 @@ class ModuleRevisionUploadTest {
                 module.getReleasedContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
         );
         verify(asciidoctorService).getModuleHtml(
-                any(ModuleRevision.class), any(Resource.class), anyMap(), eq(true));
+                any(ModuleVersion.class), any(Resource.class), anyMap(), eq(true));
     }
 
     @Test
-    void uploadIdenticalDraftRevision() throws Exception {
+    void uploadIdenticalDraftVersion() throws Exception {
         // Given
         slingContext.build()
                 .resource("/new/module/es_ES/1",
-                        "jcr:primaryType", "pant:moduleRevision") // released
+                        "jcr:primaryType", "pant:moduleVersion") // released
                 .resource("/new/module/es_ES/2",
-                        "jcr:primaryType", "pant:moduleRevision") // draft
-                // Draft revision
+                        "jcr:primaryType", "pant:moduleVersion") // draft
+                // Draft version
                 .resource("/new/module/es_ES/2/metadata")
                 .resource("/new/module/es_ES/2/content/asciidoc/jcr:content",
                         "jcr:data", "This is the draft adoc content")
                 .resource("/new/module/es_ES/2/content/cachedHtml",
                         "jcr:data", "This is the draft html content")
-                // Released revision
+                // Released version
                 .resource("/new/module/es_ES/1/metadata")
                 .resource("/new/module/es_ES/1/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
@@ -205,9 +205,9 @@ class ModuleRevisionUploadTest {
 
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
+                        any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleRevisionUpload upload = new ModuleRevisionUpload(asciidoctorService);
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the draft adoc content");
@@ -235,6 +235,6 @@ class ModuleRevisionUploadTest {
                 module.getReleasedContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
         );
         verify(asciidoctorService, never()).getModuleHtml(
-                any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean());
+                any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean());
     }
 }

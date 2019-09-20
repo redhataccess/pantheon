@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith({SlingContextExtension.class})
-class ReleaseDraftRevisionTest {
+class ReleaseDraftVersionTest {
 
     SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
@@ -31,7 +31,7 @@ class ReleaseDraftRevisionTest {
         // Given
         slingContext.create()
                 .resource("/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleRevision");
+                        "jcr:primaryType", "pant:moduleVersion");
         slingContext.create()
                 .resource("/module/en_US/1/metadata",
                         "jcr:title", "A draft title");
@@ -45,7 +45,7 @@ class ReleaseDraftRevisionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
-        ReleaseDraftRevision operation = new ReleaseDraftRevision(events);
+        ReleaseDraftVersion operation = new ReleaseDraftVersion(events);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);
@@ -60,8 +60,8 @@ class ReleaseDraftRevisionTest {
     }
 
     @Test
-    @DisplayName("doRun for module with no draft revision")
-    void doRunNoDraftRevision() throws Exception {
+    @DisplayName("doRun for module with no draft version")
+    void doRunNoDraftVersion() throws Exception {
         // Given
         slingContext.build()
                 .resource("/module/locales/en_US/released/metadata")
@@ -71,7 +71,7 @@ class ReleaseDraftRevisionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
-        ReleaseDraftRevision operation = new ReleaseDraftRevision(null);
+        ReleaseDraftVersion operation = new ReleaseDraftVersion(null);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);

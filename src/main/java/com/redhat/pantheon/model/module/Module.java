@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.counting;
 
 /**
  * The definition of a Module resource in the system.
- * Module's contains different revisions for different languages.
+ * Module's contains different versions for different languages.
  * <br/><br/>
  *
  * A module's structure in the JCR tree is as follows:
@@ -57,7 +57,7 @@ public class Module extends SlingResource {
         return child(locale.toString(), ModuleLocale.class).create();
     }
 
-    public Optional<ModuleRevision> getDraftRevision(@Nonnull final Locale locale) {
+    public Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale) {
         ModuleLocale moduleLocale = getModuleLocale(locale);
         if(moduleLocale != null) {
             try {
@@ -69,7 +69,7 @@ public class Module extends SlingResource {
         return empty();
     }
 
-    public Optional<ModuleRevision> getReleasedRevision(@Nonnull final Locale locale) {
+    public Optional<ModuleVersion> getReleasedVersion(@Nonnull final Locale locale) {
         ModuleLocale moduleLocale = getModuleLocale(locale);
         if(moduleLocale != null) {
             try {
@@ -86,8 +86,8 @@ public class Module extends SlingResource {
      * @return The released content for a given locale
      */
     public Optional<Content> getReleasedContent(final Locale locale) {
-        return getReleasedRevision(locale)
-                .map(moduleRevision -> moduleRevision.content.get());
+        return getReleasedVersion(locale)
+                .map(moduleVersion -> moduleVersion.content.get());
     }
 
     /**
@@ -95,8 +95,8 @@ public class Module extends SlingResource {
      * @return The draft content for a given locale
      */
     public Optional<Content> getDraftContent(final Locale locale) {
-        return getDraftRevision(locale)
-                .map(moduleRevision -> moduleRevision.content.get());
+        return getDraftVersion(locale)
+                .map(moduleVersion -> moduleVersion.content.get());
     }
 
     /**
@@ -104,8 +104,8 @@ public class Module extends SlingResource {
      * @return The released metadata for a given locale
      */
     public Optional<Metadata> getReleasedMetadata(final Locale locale) {
-        return getReleasedRevision(locale)
-                .map(moduleRevision -> moduleRevision.metadata.get());
+        return getReleasedVersion(locale)
+                .map(moduleVersion -> moduleVersion.metadata.get());
     }
 
     /**
@@ -113,34 +113,34 @@ public class Module extends SlingResource {
      * @return The draft metadata for a given locale
      */
     public Optional<Metadata> getDraftMetadata(final Locale locale) {
-        return getDraftRevision(locale)
-                .map(moduleRevision -> moduleRevision.metadata.get());
+        return getDraftVersion(locale)
+                .map(moduleVersion -> moduleVersion.metadata.get());
     }
 
     /**
-     * A specific module locale node which houses all the revisions for a specific language in the module.
+     * A specific module locale node which houses all the versions for a specific language in the module.
      */
     @JcrPrimaryType("sling:OrderedFolder")
     public static class ModuleLocale extends SlingResource {
 
-        public final ReferenceField<ModuleRevision> released = referenceField("released", ModuleRevision.class);
+        public final ReferenceField<ModuleVersion> released = referenceField("released", ModuleVersion.class);
 
-        public final ReferenceField<ModuleRevision> draft = referenceField("draft", ModuleRevision.class);
+        public final ReferenceField<ModuleVersion> draft = referenceField("draft", ModuleVersion.class);
 
-        public ModuleRevision getRevision(String name) {
-            return child(name, ModuleRevision.class).get();
+        public ModuleVersion getVersion(String name) {
+            return child(name, ModuleVersion.class).get();
         }
 
-        public ModuleRevision getOrCreateRevision(String name) {
-            return child(name, ModuleRevision.class).getOrCreate();
+        public ModuleVersion getOrCreateVersion(String name) {
+            return child(name, ModuleVersion.class).getOrCreate();
         }
 
-        public ModuleRevision createNextRevision() {
-            // Generate a new revision name
-            return child(generateNextRevisionName(), ModuleRevision.class).create();
+        public ModuleVersion createNextVersion() {
+            // Generate a new version name
+            return child(generateNextVersionName(), ModuleVersion.class).create();
         }
 
-        private String generateNextRevisionName() {
+        private String generateNextVersionName() {
             return "" + (stream(this.getChildren()).collect(counting()) + 1);
         }
 

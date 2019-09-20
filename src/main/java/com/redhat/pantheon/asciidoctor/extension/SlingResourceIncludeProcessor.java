@@ -62,7 +62,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                             .asciidocContent.get();
             } else {
                 // It's a plain file
-                // TODO Resources (assets) will be revisioned too, and module revisions will have a record of their
+                // TODO Resources (assets) will be versioned too, and module versions will have a record of their
                 // TODO specific asset version, so this extension will need to fetch the correct one
                 FileResource file = sIncludeResource.adaptTo(FileResource.class);
                 content = file.jcrContent.get()

@@ -52,12 +52,12 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         // is not returning any results
         StringBuilder queryBuilder = new StringBuilder()
                 .append("select m.* from [nt:base] as m ")
-                    .append("INNER JOIN [pant:moduleRevision] as rev ON ISDESCENDANTNODE(rev, m) ")
+                    .append("INNER JOIN [pant:moduleVersion] as rev ON ISDESCENDANTNODE(rev, m) ")
                 .append("where (isdescendantnode(m, '/content/repositories') ")
                     .append("or isdescendantnode(m, '/content/modules') ")
                     .append("or isdescendantnode(m, '/content/sandbox')) ")
                 .append("AND m.[jcr:primaryType] = 'pant:module' ")
-                // look in ALL revisions (all locales)
+                // look in ALL versions (all locales)
                 .append("AND (rev.[metadata/jcr:title] like '%" + searchParam + "%' ")
                     .append("OR rev.[metadata/jcr:description] like " + "'%" + searchParam + "%') ");
 

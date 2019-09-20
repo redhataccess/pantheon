@@ -8,7 +8,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
-import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -76,7 +76,7 @@ public class AsciidoctorService {
 
     /**
      * Returns a module's html representation.
-     * @param moduleRevision The module revision to generate content for
+     * @param moduleVersion The module version to generate content for
      * @param base The resource base (probably at the module level) to find included artifacts
      * @param context any necessary context (attributes and their values) necessary to generate the html
      * @param forceRegen when true, the html content is always re-generated; the cached content is ignored
@@ -84,13 +84,13 @@ public class AsciidoctorService {
      *                   the context into account
      * @return The module's html representation based on its current asciidoc content
      */
-    public String getModuleHtml(@Nonnull ModuleRevision moduleRevision,
+    public String getModuleHtml(@Nonnull ModuleVersion moduleVersion,
                                 @Nonnull Resource base,
                                 Map<String, Object> context,
                                 boolean forceRegen) {
 
-        Content content = moduleRevision.content.get();
-        Metadata metadata = moduleRevision.metadata.get();
+        Content content = moduleVersion.content.get();
+        Metadata metadata = moduleVersion.metadata.get();
         String html;
         // If regeneration is forced, the content doesn't exist yet, or it needs generation because the original
         // asciidoc has changed,

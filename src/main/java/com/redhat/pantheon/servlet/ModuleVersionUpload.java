@@ -6,7 +6,7 @@ import com.redhat.pantheon.model.api.FileResource.JcrContent;
 import com.redhat.pantheon.model.api.SlingResourceUtil;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleType;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -32,14 +32,14 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Post operation to add a new Module revision to the system.
+ * Post operation to add a new Module version to the system.
  * Only thre parameters are expected in the post request:
  * 1. locale - Optional; indicates the locale that the module content is in
- * 2. :operation - This value must be 'pant:newModuleRevision'
- * 3. asciidoc - The file upload (multipart) containing the asciidoc content file for the new module revision.
+ * 2. :operation - This value must be 'pant:newModuleVersion'
+ * 3. asciidoc - The file upload (multipart) containing the asciidoc content file for the new module version.
  *
  * The url to POST a request to the server is the path of the new or existing module to host the content.
- * If there is no content for said url, the module is created and a single revision along with it.
+ * If there is no content for said url, the module is created and a single version along with it.
  *
  * @author Carlos Munoz
  */
@@ -48,16 +48,16 @@ import java.util.Optional;
         property = {
                 Constants.SERVICE_DESCRIPTION + "=Servlet POST operation which accepts module uploads and versions them appropriately",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
-                PostOperation.PROP_OPERATION_NAME + "=pant:newModuleRevision"
+                PostOperation.PROP_OPERATION_NAME + "=pant:newModuleVersion"
         })
-public class ModuleRevisionUpload extends AbstractPostOperation {
+public class ModuleVersionUpload extends AbstractPostOperation {
 
-    private static final Logger log = LoggerFactory.getLogger(ModuleRevisionUpload.class);
+    private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
 
     private AsciidoctorService asciidoctorService;
 
     @Activate
-    public ModuleRevisionUpload(@Reference AsciidoctorService asciidoctorService) {
+    public ModuleVersionUpload(@Reference AsciidoctorService asciidoctorService) {
         this.asciidoctorService = asciidoctorService;
     }
 
@@ -71,7 +71,7 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
             String moduleName = ResourceUtil.getName(path);
             String description = ServletUtils.paramValue(request, "jcr:description", "");
 
-            log.debug("Pushing new module revision at: " + path + " with locale: " + locale);
+            log.debug("Pushing new module version at: " + path + " with locale: " + locale);
             log.trace("and content: " + asciidocContent);
             int responseCode = HttpServletResponse.SC_OK;
 
@@ -91,31 +91,31 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
             }
 
             Locale localeObj = LocaleUtils.toLocale(locale);
-            Optional<ModuleRevision> draftRevision = module.getDraftRevision(localeObj);
+            Optional<ModuleVersion> draftVersion = module.getDraftVersion(localeObj);
             // if there is no draft content, create it
-            if( !draftRevision.isPresent() ) {
-                draftRevision = Optional.of(
+            if( !draftVersion.isPresent() ) {
+                draftVersion = Optional.of(
                         module.getOrCreateModuleLocale(localeObj)
-                        .createNextRevision());
+                        .createNextVersion());
                 module.getOrCreateModuleLocale(localeObj)
-                        .draft.set( draftRevision.get().uuid.get() );
+                        .draft.set( draftVersion.get().uuid.get() );
             }
 
             // modify only the draft content/metadata
-            JcrContent jcrContent = draftRevision.get()
+            JcrContent jcrContent = draftVersion.get()
                     .content.getOrCreate()
                     .asciidoc.getOrCreate()
                     .jcrContent.getOrCreate();
             boolean generateHtml = false;
             String jcrData = jcrContent.jcrData.get();
 
-            if ((jcrData != null && !jcrData.equals(asciidocContent)) || !draftRevision.map(i -> i.content.get()).map(i -> i.cachedHtml.get()).isPresent()) {
+            if ((jcrData != null && !jcrData.equals(asciidocContent)) || !draftVersion.map(i -> i.content.get()).map(i -> i.cachedHtml.get()).isPresent()) {
                 generateHtml = true;
             }
             jcrContent.jcrData.set(asciidocContent);
             jcrContent.mimeType.set("text/x-asciidoc");
 
-            Metadata metadata = draftRevision.get()
+            Metadata metadata = draftVersion.get()
                     .metadata.getOrCreate();
             metadata.title.set(moduleName);
             metadata.description.set(description);
@@ -131,19 +131,19 @@ public class ModuleRevisionUpload extends AbstractPostOperation {
             if (generateHtml) {
                 Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
                 // drop the html on the floor, this is just to cache the results
-                asciidoctorService.getModuleHtml(draftRevision.get(), module, context, true);
+                asciidoctorService.getModuleHtml(draftVersion.get(), module, context, true);
             }
 
             response.setStatus(responseCode, "");
         } catch (Exception e) {
-            throw new RepositoryException("Error uploading a module revision", e);
+            throw new RepositoryException("Error uploading a module version", e);
         }
     }
 
     /**
-     * Determines the module type from the uploaded module revision
+     * Determines the module type from the uploaded module version
      * @param module The uploaded module
-     * @return A module type for the module revision, or null if one cannot be determined.
+     * @return A module type for the module version, or null if one cannot be determined.
      */
     private static ModuleType determineModuleType(Module module) {
         String fileName = module.getName();

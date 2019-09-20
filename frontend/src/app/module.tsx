@@ -104,7 +104,7 @@ class Module extends Component {
       formData.append("asciidoc@TypeHint", 'nt:file')
       formData.append("asciidoc/jcr:content/jcr:mimeType", "text/x-asciidoc")
       formData.append("asciidoc", blob)
-      formData.append(":operation", "pant:newModuleRevision")
+      formData.append(":operation", "pant:newModuleVersion")
 
       fetch('/content/modules/' + this.state.moduleName, {
         body: formData,
