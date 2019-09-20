@@ -2,16 +2,22 @@ import React, { Component } from 'react';
 import { Bullseye, Button, Alert, AlertActionCloseButton, FormGroup, TextInput } from '@patternfly/react-core';
 import '@app/app.css';
 
-class Login extends Component {
-  public state = {
-    authMessage: '',
-    currentLogin: 'anonymous',
-    password: '',
-    username: ''
-  };
+class Login extends Component<any, any, any> {
+  constructor(props) {
+    super(props)
+    this.state = {
+      authMessage: '',
+      currentLogin: 'anonymous',
+      password: '',
+      username: ''
+    };
+  }
+
+  public componentDidMount() {
+    this.checkAuth()
+  }
 
   public render() {
-    const { username, password } = this.state;
     return (
       <React.Fragment>
         <Bullseye>
@@ -22,18 +28,17 @@ class Login extends Component {
                 label="Username:"
                 fieldId="username"
               >
-                <TextInput id="username" type="text" placeholder="Username" value={username} onChange={this.onUsernameChange} onKeyPress={this.onLoginKeyPress} />
+                <TextInput id="username" type="text" placeholder="Username" value={this.state.username} onChange={this.onUsernameChange} onKeyPress={this.onLoginKeyPress} />
               </FormGroup>
               <br />
               <FormGroup
                 label="Password:"
                 fieldId="password"
               >
-                <TextInput id="password" type="password" placeholder="Password" value={password} onChange={this.onPasswordChange} onKeyPress={this.onLoginKeyPress} />
+                <TextInput id="password" type="password" placeholder="Password" value={this.state.password} onChange={this.onPasswordChange} onKeyPress={this.onLoginKeyPress} />
               </FormGroup>
               <br />
               <div>
-                {this.checkAuth()}
                 <Button onClick={this.login}>Log In</Button>
               </div>
             </div>
