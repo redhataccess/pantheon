@@ -57,22 +57,22 @@ class ModuleDisplay extends Component<any, any, any> {
                             <a href='http://access.redhat.com'>View on Customer Portal</a>
                         </div>
                         <div>
-                            <DataList aria-label="single action data list example ">
+                            <DataList aria-label="single action data list">
                                 <DataListItem aria-labelledby="simple-item1">
                                     <DataListItemRow id="data-rows-header" >
                                         <DataListItemCells
                                             dataListCells={[
                                                 <DataListCell width={2} key="products">
-                                                    <span className="sp-prop-nosort" id="span-source-type">Products</span>
+                                                    <span className="sp-prop-nosort" id="span-source-type-products">Products</span>
                                                 </DataListCell>,
                                                 <DataListCell key="published">
-                                                    <span className="sp-prop-nosort" id="span-source-type">Published</span>
+                                                    <span className="sp-prop-nosort" id="span-source-type-published">Published</span>
                                                 </DataListCell>,
                                                 <DataListCell key="updated">
-                                                    <span className="sp-prop-nosort" id="span-source-type">Draft Uploaded</span>
+                                                    <span className="sp-prop-nosort" id="span-source-type-draft-uploaded">Draft Uploaded</span>
                                                 </DataListCell>,
                                                 <DataListCell key="module_type">
-                                                    <span className="sp-prop-nosort" id="span-source-name">Module Type</span>
+                                                    <span className="sp-prop-nosort" id="span-source-name-module-type">Module Type</span>
                                                 </DataListCell>
                                             ]}
                                         />

@@ -3,7 +3,7 @@ import { Revisions } from '@app/revisions';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Dropdown, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput } from '@patternfly/react-core';
+import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Dropdown, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput, DropdownItem, Title, Alert, AlertActionCloseButton, DataListContent } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 
@@ -12,8 +12,8 @@ const anymatch = require('anymatch');
 const props = {
     draftUpdateDate: anymatch,
     modulePath: "/modules/test",
-    onGetProduct:(productValue) => anymatch,
-    onGetVersion:(versionValue) => anymatch,
+    onGetProduct: (productValue) => anymatch,
+    onGetVersion: (versionValue) => anymatch,
     releaseUpdateDate: anymatch,
     revisionModulePath: "/modules/test/en_US/1",
 }
@@ -60,6 +60,35 @@ describe('Revisions tests', () => {
         expect(dataListItemRow.exists()).toBe(true)
     });
 
+    it('should render a DataListToggle', () => {
+        const wrapper = mount(<Revisions {...props} />);
+        const dataListToggle = wrapper.find(DataListToggle);
+        expect(dataListToggle.exists()).toBe(true)
+    });
+
+    it('should render a DataListContent', () => {
+        const wrapper = mount(<Revisions {...props} />);
+        const dataListContent = wrapper.find(DataListContent);
+        expect(dataListContent.exists()).toBe(true)
+    });
+
+    // it('should render a Dropdown', () => {
+    //     const wrapper = mount(<Revisions {...props} />);
+    //     wrapper.setState({'login' : true})
+    //     wrapper.setState({'isHeadingToggle': true})
+    //     wrapper.setState({'isArchiveDropDownOpen': true}) 
+    //     const dropdown = wrapper.find(Dropdown);
+    //     expect(dropdown.exists()).toBe(true)
+    // });
+
+    // it('should render a DropdownItem', () => {
+    //     const wrapper = mount(<Revisions {...props} />);
+    //     wrapper.setState({'login' : true})
+    //     wrapper.setState({'isHeadingToggle': true})
+    //     wrapper.setState({'isArchiveDropDownOpen': true}) 
+    //     const dropdownItem = wrapper.find(DropdownItem);
+    //     expect(dropdownItem.exists()).toBe(true)
+    // });
     it('should render a Modal', () => {
         const wrapper = mount(<Revisions {...props} />);
         const modal = wrapper.find(Modal);
@@ -104,6 +133,14 @@ describe('Revisions tests', () => {
         wrapper.setState({ 'isModalOpen': true })
         const inputGroup = wrapper.find(InputGroup);
         expect(inputGroup.exists()).toBe(true)
+    });
+
+    it('should render a success Alert', () => {
+        const wrapper = shallow(<Revisions {...props} />);
+        wrapper.setState({ 'login': true })
+        wrapper.setState({ 'successAlertVisble': true })
+        const alert = wrapper.find(Alert);
+        expect(alert.exists()).toBe(true)
     });
 
     it('test fetchRevisions function', () => {
@@ -153,7 +190,7 @@ describe('Revisions tests', () => {
         const inst = wrapper.getInstance();
         expect(inst.onChangeUsecase()).toMatchSnapshot();
     });
-    
+
     it('test handleURLInput function', () => {
         const wrapper = renderer.create(<Revisions {...props} />);
         const inst = wrapper.getInstance();
@@ -214,45 +251,62 @@ describe('Revisions tests', () => {
         const wrapper = shallow(<Revisions {...props} />);
         const instance = wrapper.instance();
         const spy = sinon.spy(instance, 'onHeadingToggle');
-    
+
         wrapper.find(DataListToggle).simulate('click');
         sinon.assert.called(spy);
-      });
+    });
 
-    //   test('Publish Button click event', () => {
-    //     const wrapper = shallow(<Revisions {...props} />);
-    //     const instance = wrapper.instance();
-    //     const toggle = sinon.spy(instance, 'onHeadingToggle');
-    //     wrapper.find(DataListToggle).simulate('click');
-    //     const spy = sinon.spy(instance, 'changePublishState');
-    
-    //     // console.log("[revisions test] instance ", instance)
-    //     console.log("[revisions test] buttons ", wrapper.find(Button))
-    //     // wrapper.find({variant: "primary"}).simulate('click', { preventDefault() {} });
-    //     // sinon.assert.called(spy);
-    //   });
+    it('should handle state changes for login', () => {
+        const wrapper = shallow(<Revisions {...props} />)
 
-    //   it('test handleModalToggle function', () => {
-    //     const wrapper = shallow(<Revisions {...props} />);
-    //     const instance = wrapper.instance();
-    
-    //     wrapper.setState({ 'isArchiveDropDownOpen': true })
-    //     const spy = sinon.spy(instance, 'handleModalToggle');
-        
-    //     wrapper.find(Dropdown).simulate("click", { preventDefault() {} });
-    //     sinon.assert.called(spy);
-    // });
+        expect(wrapper.state('login')).toBe(false)
+        wrapper.setState({ 'login': true })
+        expect(wrapper.state('login')).toBe(true)
+    });
 
-    // it('test handleModalClose function', () => {
-    //     const wrapper = renderer.create(<Revisions {...props} />);
-    //     const inst = wrapper.getInstance();
-    //     expect(inst.handleModalClose()).toMatchSnapshot();
-    // });
+    it('should handle state changes for initialLoad', () => {
+        const wrapper = shallow(<Revisions {...props} />)
 
-    // it('test onChangeVersion function', (event) => {
-    //     const wrapper = renderer.create(<Revisions {...props} />);
-    //     const inst = wrapper.getInstance();
-    //     expect(inst.onChangeVersion(event)).toMatchSnapshot();
-    // });
+        expect(wrapper.state('initialLoad')).toBe(true)
+        wrapper.setState({ 'initialLoad': false })
+        expect(wrapper.state('initialLoad')).toBe(false)
+    });
 
- });
+    it('should handle state changes for isHeadingToggle', () => {
+        const wrapper = shallow(<Revisions {...props} />)
+
+        expect(wrapper.state('isHeadingToggle')).toBe(true)
+        wrapper.setState({ 'isHeadingToggle': false })
+        expect(wrapper.state('isHeadingToggle')).toBe(false)
+    });
+
+    // Value testing with Enzyme.
+    it('renders Revision heading', () => {
+        const wrapper = mount(<Revisions {...props} />);
+        const sourceTypeText = wrapper.find('#span-source-type-revision').text();
+
+        // ensure it matches what is expected
+        expect(sourceTypeText).toEqual("Revision");
+    });
+
+    it('renders Published heading', () => {
+        const wrapper = mount(<Revisions {...props} />);
+        const sourceTypeText = wrapper.find('#span-source-type-revision-published').text();
+
+        // ensure it matches what is expected
+        expect(sourceTypeText).toEqual("Published");
+    });
+
+    it('renders Draft Uploaded heading', () => {
+        const wrapper = mount(<Revisions {...props} />);
+        const sourceTypeText = wrapper.find('#span-source-type-revision-draft-uploaded').text();
+
+        // ensure it matches what is expected
+        expect(sourceTypeText).toEqual("Draft Uploaded");
+    });
+
+    it('has a props', () => {
+        const revisions = mount(<Revisions {...props} />).matchesElement
+        expect(revisions.length === 1)
+    });
+});

@@ -145,18 +145,18 @@ class Revisions extends Component<IProps, any> {
                                     <DataListItemCells
                                         dataListCells={[
                                             <DataListCell key="revision">
-                                                <span className="sp-prop-nosort" id="span-source-type">Revision</span>
+                                                <span className="sp-prop-nosort" id="span-source-type-revision">Revision</span>
                                             </DataListCell>,
                                             <DataListCell key="published">
-                                                <span className="sp-prop-nosort" id="span-source-type">Published</span>
+                                                <span className="sp-prop-nosort" id="span-source-type-revision-published">Published</span>
                                             </DataListCell>,
                                             <DataListCell key="updated">
-                                                <span className="sp-prop-nosort" id="span-source-type">Draft Uploaded</span>
+                                                <span className="sp-prop-nosort" id="span-source-type-revision-draft-uploaded">Draft Uploaded</span>
                                             </DataListCell>,
-                                            <DataListCell key="module_type">
-                                                <span className="sp-prop-nosort" id="span-source-name" />
+                                            <DataListCell key="publish_buttons">
+                                                <span className="sp-prop-nosort" id="span-source-name-revision-publish-buttons" />
                                             </DataListCell>,
-                                            <DataListCell key="module_type">
+                                            <DataListCell key="module_view_button">
                                                 <span className="sp-prop-nosort" id="span-source-name" />
                                             </DataListCell>
                                         ]}
@@ -194,7 +194,7 @@ class Revisions extends Component<IProps, any> {
                                                                 <DataListCell key="updated">
                                                                     {data["updateDate"] !== undefined && data["updatedDate"].substring(4, 15)}
                                                                 </DataListCell>,
-                                                                <DataListCell key="module_type">
+                                                                <DataListCell key="publish_buttons">
                                                                     <Button variant="primary" onClick={() => this.changePublishState(data["firstButtonText"])}>{data["firstButtonText"]}</Button>{'  '}
                                                                     <Button variant="secondary" onClick={() => this.previewDoc(data["secondButtonText"])}>{data["secondButtonText"]}</Button>{'  '}
                                                                 </DataListCell>,
@@ -227,13 +227,13 @@ class Revisions extends Component<IProps, any> {
                                                                     <span>{' '}</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="File name" width={2}>
-                                                                    <span className="sp-prop-nosort" id="span-source-type">File Name</span>
+                                                                    <span className="sp-prop-nosort" id="span-source-type-filename">File Name</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="published" width={4}>
                                                                     {this.props.modulePath}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={2}>
-                                                                    <span className="sp-prop-nosort" id="span-source-type">Upload Time</span>
+                                                                    <span className="sp-prop-nosort" id="span-source-type-upload-time">Upload Time</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
                                                                     {data["updatedDate"]}
@@ -248,13 +248,13 @@ class Revisions extends Component<IProps, any> {
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={2}>
                                                                     <span>{'  '}</span>
-                                                                    <span className="sp-prop-nosort" id="span-source-type">Module Title</span>
+                                                                    <span className="sp-prop-nosort" id="span-source-type-module-title">Module Title</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
                                                                     {data["metaData"]["jcr:title"]}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={2}>
-                                                                    <span className="sp-prop-nosort" id="span-source-type">Context Package</span>
+                                                                    <span className="sp-prop-nosort" id="span-source-type-context-package">Context Package</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
                                                                     N/A
