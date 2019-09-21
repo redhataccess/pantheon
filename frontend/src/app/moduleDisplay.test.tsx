@@ -70,4 +70,16 @@ describe('ModuleDisplay tests', () => {
         const inst = wrapper.getInstance();
         expect(inst.getVersion()).toMatchSnapshot();
     });
+
+    it('test getVersionUUID function', () => {
+        const wrapper = renderer.create(<ModuleDisplay {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.getVersionUUID("/modules/test")).toMatchSnapshot();
+    });
+
+    it('test getProductInitialLoad function', () => {
+        const wrapper = renderer.create(<ModuleDisplay {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.getProductInitialLoad()).toMatchSnapshot();
+    });
 });

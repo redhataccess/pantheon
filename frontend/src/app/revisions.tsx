@@ -19,63 +19,71 @@ export interface IProps {
     onGetVersion: (versionValue) => any
 }
 
-class Revisions extends Component<IProps> {
+class Revisions extends Component<IProps, any> {
 
     public draft = [{ "icon": BlankImage, "path": "", "revision": "", "publishedState": 'Not published', "updatedDate": '        --', "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
     public release = [{ "icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": '        --', "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
 
-    public state = {
-        initialLoad: true,
-        isArchiveDropDownOpen: false,
-        isArchiveSelect: false,
-        isDropDownOpen: false,
-        isHeadingToggle: true,
-        isOpen: false,
-        isRowToggle: false,
-        login: false,
-        results: [this.draft, this.release],
+    constructor(props) {
+        super(props)
+        this.state = {
+            initialLoad: true,
+            isArchiveDropDownOpen: false,
+            isArchiveSelect: false,
+            isDropDownOpen: false,
+            isHeadingToggle: true,
+            isOpen: false,
+            isRowToggle: false,
+            login: false,
+            results: [this.draft, this.release],
 
-        productsInitalLoad: true,
-        allProducts: '',
-        formInvalid: false,
+            allProducts: [],
+            formInvalid: false,
 
-        isDup: false,
-        isEmptyResults: false,
-        isMissingFields: false,
-        isModalOpen: false,
-        isProductDropdownOpen: false,
-        isUsecaseDropdownOpen: false,
-        isVersionDropdownOpen: false,
-        loggedinStatus: false,
-        metadataPath: '',
-        metadataResults: [],
-        moduleUrl: '',
-        moduleUrlresults: [],
-        productOptions: [
-            { value: 'Select a Product', label: 'Select a Product', disabled: false },
-        ],
-        productValue: '',
-        productVersion: '',
-        redirect: false,
+            isDup: false,
+            isEmptyResults: false,
+            isMissingFields: false,
+            isModalOpen: false,
+            isProductDropdownOpen: false,
+            isUsecaseDropdownOpen: false,
+            isVersionDropdownOpen: false,
+            loggedinStatus: false,
+            metadataInitialLoad: true,
+            metadataPath: '',
+            metadataResults: [],
+            moduleUrl: '',
+            moduleUrlresults: [],
+            productOptions: [
+                { value: 'Select a Product', label: 'Select a Product', disabled: false },
+            ],
+            productValue: '',
+            productVersion: '',
+            redirect: false,
 
-        successAlertVisble: false,
-        usecaseOptions: [
-            { value: 'Select Use Case', label: 'Select Use Case', disabled: false }
-        ],
-        usecaseValue: '',
-        usecases: ['Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network',
-            'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize'],
+            successAlertVisble: false,
+            usecaseOptions: [
+                { value: 'Select Use Case', label: 'Select Use Case', disabled: false }
+            ],
+            usecaseValue: '',
+            usecases: ['Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network',
+                'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize'],
 
-        versionOptions: [
-            { value: 'Select a Version', label: 'Select a Version', disabled: false },
-        ],
-        versionUUID: '',
-        versionValue: '',
-        metadataInitalLoad: true,
-    };
+            versionOptions: [
+                { value: 'Select a Version', label: 'Select a Version', disabled: false },
+            ],
+            versionUUID: "",
+            versionValue: '',
+        };
+
+    }
+
+    public componentDidMount() {
+        // this.fetchRevisions()
+        this.fetchProductVersionDetails()
+    }
 
     public render() {
-        const { isModalOpen, isDup, isMissingFields, productOptions, moduleUrl, successAlertVisble, productValue, usecaseValue, usecaseOptions, usecases, versionOptions, versionUUID } = this.state;
+
         const id = 'userID';
 
         const header = (
@@ -89,13 +97,13 @@ class Revisions extends Component<IProps> {
               </p>
             </React.Fragment>
         );
-        let verOptions = versionOptions
-        if (this.state.allProducts[productValue]) {
-            verOptions = this.state.allProducts[productValue]
+        let verOptions = this.state.versionOptions
+        if (this.state.allProducts[this.state.productValue]) {
+            verOptions = this.state.allProducts[this.state.productValue]
         }
 
-        const ucOptions = usecaseOptions
-        usecases.map((item) => (
+        const ucOptions = this.state.usecaseOptions
+        this.state.usecases.map((item) => (
             ucOptions.push({ value: item, label: item, disabled: false })
         ))
 
@@ -113,7 +121,7 @@ class Revisions extends Component<IProps> {
 
         return (
             <React.Fragment>
-                {successAlertVisble && <Alert
+                {this.state.successAlertVisble && <Alert
                     variant="success"
                     title="Edit Metadata"
                     action={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
@@ -122,8 +130,7 @@ class Revisions extends Component<IProps> {
           </Alert>
                 }
                 {this.state.initialLoad && this.fetchRevisions()}
-                {this.state.productsInitalLoad && this.fetchProductVersionDetails()}
-                {this.state.metadataInitalLoad && this.getMetadata(this.state.metadataPath)}
+                {this.state.metadataInitialLoad && this.getMetadata(this.state.metadataPath)}
                 <Card>
                     <div>
                         <DataList aria-label="Simple data list">
@@ -185,7 +192,7 @@ class Revisions extends Component<IProps> {
                                                                     {data["publishedState"]}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated">
-                                                                    {data["updatedDate"].substring(4, 15)}
+                                                                    {data["updateDate"] !== undefined && data["updatedDate"].substring(4, 15)}
                                                                 </DataListCell>,
                                                                 <DataListCell key="module_type">
                                                                     <Button variant="primary" onClick={() => this.changePublishState(data["firstButtonText"])}>{data["firstButtonText"]}</Button>{'  '}
@@ -267,7 +274,7 @@ class Revisions extends Component<IProps> {
                 <Modal
                     width={'60%'}
                     title="Edit metadata"
-                    isOpen={isModalOpen}
+                    isOpen={this.state.isModalOpen}
                     header={header}
                     ariaDescribedById="edit-metadata"
                     onClose={this.handleModalClose}
@@ -287,7 +294,7 @@ class Revisions extends Component<IProps> {
                     </div>
                     <div className="app-container">
 
-                        {isMissingFields && (
+                        {this.state.isMissingFields && (
                             <div className="notification-container">
                                 <Alert
                                     variant="warning"
@@ -296,7 +303,7 @@ class Revisions extends Component<IProps> {
                                 />
                             </div>
                         )}
-                        {isDup && (
+                        {this.state.isDup && (
                             <div className="notification-container">
                                 <Alert
                                     variant="warning"
@@ -313,12 +320,12 @@ class Revisions extends Component<IProps> {
                             fieldId="product-name"
                         >
                             <InputGroup>
-                                <FormSelect value={productValue} onChange={this.onChangeProduct} aria-label="FormSelect Product">
-                                    {productOptions.map((option, index) => (
+                                <FormSelect value={this.state.productValue} onChange={this.onChangeProduct} aria-label="FormSelect Product">
+                                    {this.state.productOptions.map((option, index) => (
                                         <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
-                                <FormSelect value={versionUUID} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
+                                <FormSelect value={this.state.versionUUID} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
                                     {verOptions.map((option) => (
 
                                         <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} required={false} />
@@ -331,7 +338,7 @@ class Revisions extends Component<IProps> {
                             isRequired={true}
                             fieldId="document-usecase"
                         >
-                            <FormSelect value={usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
+                            <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
                                 {ucOptions.map((option, index) => (
                                     <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
                                 ))}
@@ -346,7 +353,7 @@ class Revisions extends Component<IProps> {
                                 <InputGroupText id="slash" aria-label="/">
                                     <span>/</span>
                                 </InputGroupText>
-                                <TextInput isRequired={true} id="url-fragment" type="text" placeholder="Enter URL" value={moduleUrl} onChange={this.handleURLInput} />
+                                <TextInput isRequired={true} id="url-fragment" type="text" placeholder="Enter URL" value={this.state.moduleUrl} onChange={this.handleURLInput} />
                             </InputGroup>
                         </FormGroup>
                         <div>
@@ -360,7 +367,7 @@ class Revisions extends Component<IProps> {
     }
 
     private fetchRevisions = () => {
-        let fetchpath = "/content" + this.props.modulePath + ".3.json?";
+        const fetchpath = "/content" + this.props.modulePath + ".3.json?";
         // TODO : harray.3.json - to process the children
         fetch(fetchpath)
             .then(response => response.json())
@@ -382,7 +389,7 @@ class Revisions extends Component<IProps> {
                                 this.draft[0]["revision"] = "Version " + objectKeys[key];
                                 this.draft[0]["updatedDate"] = responseJSON["en_US"][objectKeys[key]]["jcr:lastModified"];
                                 this.draft[0]["metaData"] = responseJSON["en_US"][objectKeys[key]]["metadata"];
-                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + objectKeys[key];
+                                this.draft[0]["path"] = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
                                 // console.log("1:",this.draft[0]["path"]);  
                                 this.props.draftUpdateDate(this.draft[0]["updatedDate"], "draft", this.draft[0]["path"]);
                             }
@@ -390,7 +397,7 @@ class Revisions extends Component<IProps> {
                                 this.release[0]["revision"] = "Version " + objectKeys[key];
                                 this.release[0]["updatedDate"] = responseJSON["en_US"][objectKeys[key]]["jcr:lastModified"];
                                 this.release[0]["metaData"] = responseJSON["en_US"][objectKeys[key]]["metadata"];
-                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + objectKeys[key];
+                                this.release[0]["path"] = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
                                 // console.log("2:",this.release[0]["path"]);  
                                 this.props.releaseUpdateDate(this.release[0]["updatedDate"], "release", this.release[0]["path"])
                             }
@@ -399,7 +406,8 @@ class Revisions extends Component<IProps> {
                     }
                     return {
                         initialLoad: false,
-                        results: [this.draft, this.release]
+                        results: [this.draft, this.release],
+                        metadatPath: this.draft ? this.draft[0]["path"] : this.release[0]["path"]
                     }
                 })
             })
@@ -416,7 +424,7 @@ class Revisions extends Component<IProps> {
             // console.log('Unpublished file path:', this.props.modulePath);
             this.release[0]["revision"] = "";
         }
-        fetch("/content/" + this.props.modulePath, {
+        fetch("/content" + this.props.modulePath, {
             body: formData,
             method: 'post'
         }).then(response => {
@@ -460,9 +468,9 @@ class Revisions extends Component<IProps> {
     private previewDoc = (buttonText) => {
         let docPath = "";
         if (buttonText == "Preview") {
-            docPath = "/content/" + this.props.modulePath + ".preview?draft=true";
+            docPath = "/content" + this.props.modulePath + ".preview?draft=true";
         } else {
-            docPath = "/content/" + this.props.modulePath + ".preview";
+            docPath = "/content" + this.props.modulePath + ".preview";
         }
         // console.log("Preview path: ", docPath)
         return window.open(docPath);
@@ -504,7 +512,7 @@ class Revisions extends Component<IProps> {
             formData.append("productVersion", this.state.versionUUID)
             formData.append("documentUsecase", this.state.usecaseValue)
             formData.append("urlFragment", "/" + this.state.moduleUrl)
-
+            // console.log("[metadataPath] ", this.state.metadataPath)
             fetch(this.state.metadataPath + '/metadata', {
                 body: formData,
                 headers: hdrs,
@@ -578,7 +586,7 @@ class Revisions extends Component<IProps> {
     }
 
     private fetchProductVersionDetails = () => {
-        this.setState({ productsInitalLoad: false })
+
         const path = '/content/products.3.json'
         let key
         const products = new Array()
@@ -693,8 +701,8 @@ class Revisions extends Component<IProps> {
     private getMetadata = (revisionPath) => {
 
         if (revisionPath.trim() !== "") {
-            console.log("[getMetadata] revisionPath: ", revisionPath)
-            this.setState({ metadataInitalLoad: false })
+            // console.log("[getMetadata] revisionPath: ", revisionPath)
+            this.setState({ metadataInitialLoad: false })
             fetch(revisionPath + "/metadata.json")
                 .then(response => response.json())
                 .then(responseJSON => this.setState({ metadataResults: responseJSON }))
@@ -702,6 +710,7 @@ class Revisions extends Component<IProps> {
                     if (JSON.stringify(this.state.metadataResults) !== "[]") {
                         // Process results
                         // Remove leading slash.
+                        // console.log("[metadataResults] ", this.state.metadataResults)
                         if (this.state.metadataResults["urlFragment"]) {
                             let url = this.state.metadataResults["urlFragment"]
                             if (url.indexOf('/') === 0) {
@@ -710,13 +719,42 @@ class Revisions extends Component<IProps> {
                             }
                             this.setState({ moduleUrl: url })
                         }
-                        this.setState({ usecaseValue: this.state.metadataResults["documentUsecase"] })
+                        this.setState({
+                            usecaseValue: this.state.metadataResults["documentUsecase"],
+                            versionUUID: this.state.metadataResults["productVersion"]
+                        }, () => {
+                            // console.log("versionUUID", this.state.versionUUID)
+                            // Process versionValue and productValue here.
+                            if (this.state.versionUUID !== undefined && this.state.versionUUID.trim() !== "") {
+
+                                if (Object.keys(this.state.allProducts).length > 0) {
+                                    // tslint:disable-next-line: forin
+                                    for (let item in this.state.allProducts) {
+                                        // tslint:disable-next-line: prefer-for-of
+                                        for (let j = 0; j < this.state.allProducts[item].length; j++) {
+                                            // console.log("[productValue] pName ", item)
+                                            // console.log("[productValue] vLabel ", this.state.allProducts[item][j].label)
+                                            if (this.state.allProducts[item][j].value === this.state.versionUUID) {
+
+                                                this.setState({
+                                                    productValue: item,
+                                                    versionValue: this.state.allProducts[item][j].label
+                                                })
+
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        })
+
                     }
                 })
         }
 
-        // this.setState({ productValue: this.state.productValue })
-        // this.setState({ versionValue: this.state.versionValue })
+
     }
 }
 

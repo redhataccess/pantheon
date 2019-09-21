@@ -11,23 +11,30 @@ import {
 import { Revisions } from '@app/revisions';
 import { HelpIcon } from '@patternfly/react-icons';
 
-class ModuleDisplay extends Component {
+class ModuleDisplay extends Component<any, any, any> {
 
-    public state = {
-        draftPath: '',
-        draftUpdateDate: '',
-        initialLoad: true,
-        modulePath: '',
-        moduleTitle: "",
-        productInitialLoad: true,
-        productResults: [],
-        productValue: "",
-        versionValue: "",
-        releasePath: '',
-        releaseUpdateDate: '',
-        resourceType: '',
-        results: {}
-    };
+    constructor(props) {
+        super(props)
+        this.state = {
+            draftPath: '',
+            draftUpdateDate: '',
+            initialLoad: true,
+            modulePath: '',
+            moduleTitle: "",
+            productValue: "",
+            releasePath: '',
+            releaseUpdateDate: '',
+            resourceType: '',
+            results: {},
+            versionUUID: "",
+            versionValue: ""
+        };
+    }
+
+    public componentDidMount() {
+
+        this.getVersionUUID(this.props["location"]["pathname"])
+    }
 
     public render() {
         // console.log('Props: ',this.props);
@@ -132,11 +139,11 @@ class ModuleDisplay extends Component {
     };
 
     private fetchModuleDetails = (data) => {
-        this.setState({ initialLoad: false, modulePath: data["location"]["pathname"] }
-            , () => {
-                // console.log("data: ",data);
-                // console.log("module Path: ",this.state.modulePath);
-            })
+        this.setState({ initialLoad: false,  modulePath: data["location"]["pathname"]}
+        ,() => {
+            // console.log("data: ",data);
+            // console.log("module Path: ",this.state.modulePath);
+        })
 
         fetch(data["location"]["pathname"] + '.4.json')
             .then(response => response.json())
@@ -160,6 +167,75 @@ class ModuleDisplay extends Component {
         this.setState({ versionValue: version })
     }
 
+    private getVersionUUID = (path) => {
+        // console.log("[getVersionUUID] path", path)
+        path = "/content" + path + "/en_US/1/metadata.json"
+        fetch(path)
+            .then(response => response.json())
+            .then((responseJSON) => {
+                // console.log("[responseJSON]", responseJSON)
+                if (responseJSON["productVersion"] !== undefined) {
+                    // console.log("[allproducts inside fetch call] ", this.state.allProducts)
+
+                    // const versionUUID = responseJSON["productVersion"]
+                    this.setState({ versionUUID: responseJSON["productVersion"] }, () => {
+                        this.getProductInitialLoad()
+                    })
+                }
+            })
+
+    }
+
+    private getProductInitialLoad = () => {
+        const path = '/content/products.3.json'
+        let key
+        fetch(path)
+            .then(response => response.json())
+            .then(responseJSON => {
+                // console.log('fetch results:',responseJSON)
+                // tslint:disable-next-line: prefer-for-of
+                for (let i = 0; i < Object.keys(responseJSON).length; i++) {
+                    key = Object.keys(responseJSON)[i];
+                    const nameKey = "name"
+                    const versionKey = "versions"
+                    if ((key !== 'jcr:primaryType')) {
+                        if (responseJSON[key][nameKey] !== undefined) {
+                            const pName = responseJSON[key][nameKey]
+                            const versionObj = responseJSON[key][versionKey]
+                            if (versionObj) {
+                                // console.log("[getProductFromUUID] versionObj ", versionObj)
+                                let vKey;
+                                const versions = new Array();
+                                // tslint:disable-next-line: no-shadowed-variable
+                                const nameKey = "name";
+                                const uuidKey = "jcr:uuid";
+                                for (const item in Object.keys(versionObj)) {
+                                    if (Object.keys(versionObj)[item] !== undefined) {
+                                        vKey = Object.keys(versionObj)[item]
+                                        if (vKey !== 'jcr:primaryType') {
+                                            if (versionObj[vKey][nameKey]) {
+                                                if (versionObj[vKey][uuidKey] === this.state.versionUUID) {
+                                                    // process productValue and versionValue on initial load
+                                                    this.setState({ productValue: pName, versionValue: versionObj[vKey][nameKey] }, () => {
+                                                        // console.log("[getProductFromUUID] item/productvalue", pName)
+                                                        // console.log("[getProductFromUUID] versionValue", versionObj[vKey][nameKey])
+                                                    })
+                                                    break;
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+
+            })
+    }
 }
 
 export { ModuleDisplay }

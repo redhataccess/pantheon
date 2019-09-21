@@ -15,8 +15,7 @@ const props = {
     onGetProduct:(productValue) => anymatch,
     onGetVersion:(versionValue) => anymatch,
     releaseUpdateDate: anymatch,
-    revisionModulePath: "/modules/test/en_US/1"
-    
+    revisionModulePath: "/modules/test/en_US/1",
 }
 
 describe('Revisions tests', () => {
@@ -236,6 +235,7 @@ describe('Revisions tests', () => {
     //   it('test handleModalToggle function', () => {
     //     const wrapper = shallow(<Revisions {...props} />);
     //     const instance = wrapper.instance();
+    
     //     wrapper.setState({ 'isArchiveDropDownOpen': true })
     //     const spy = sinon.spy(instance, 'handleModalToggle');
         
