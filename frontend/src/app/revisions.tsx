@@ -19,8 +19,8 @@ export interface IProps {
 
 class Revisions extends Component<IProps> {
 
-    public draft = [{ "icon": BlankImage, "path": "", "revision": "", "publishedState": 'Not published', "updatedDate": '        --', "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
-    public release = [{ "icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": '        --', "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
+    public draft = [{ "icon": BlankImage, "path": "", "revision": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
+    public release = [{ "icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
 
     public state = {
         initialLoad: true,
@@ -181,8 +181,8 @@ class Revisions extends Component<IProps> {
                                                                 <DataListCell key="published">
                                                                     {data["publishedState"]}
                                                                 </DataListCell>,
-                                                                <DataListCell key="updated">
-                                                                    {data["updatedDate"].substring(4, 15)}
+                                                                <DataListCell key="updated">            
+                                                                    {data["updatedDate"].trim()!=="" && data["updatedDate"].length>=15 ? data["updatedDate"].substring(4,15) : "-"}
                                                                 </DataListCell>,
                                                                 <DataListCell key="module_type">
                                                                     <Button variant="primary" onClick={() => this.changePublishState(data["firstButtonText"])}>{data["firstButtonText"]}</Button>{'  '}
