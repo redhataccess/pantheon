@@ -3,7 +3,7 @@ import { ModuleDisplay } from '@app/moduleDisplay';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import { Breadcrumb, Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListCell, TextContent, Level, LevelItem } from '@patternfly/react-core';
+import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListCell, TextContent, Level, LevelItem } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 import { Revisions } from './revisions';
@@ -84,6 +84,12 @@ describe('ModuleDisplay tests', () => {
         const wrapper = mount(<ModuleDisplay {...props} />);
         const revisions = wrapper.find(Revisions);
         expect(revisions.exists()).toBe(true)
+    });
+
+    it('should render a h1 component', () => {
+        const wrapper = mount(<ModuleDisplay {...props} />);
+        const h1 = wrapper.find('[component="h1"]');
+        expect(h1.exists()).toBe(true)
     });
 
     it('test fetchModuleDetails function', () => {
@@ -173,15 +179,47 @@ describe('ModuleDisplay tests', () => {
     it('should check if draftUpdateDate exists', () => {
         const wrapper = shallow(<ModuleDisplay {...props} />);
         wrapper.setState({ 'login': true })
-        const len = wrapper.setState({ "draftUpdateDate": "abcd" });
+        wrapper.setState({ "draftUpdateDate": "abcd" });
         expect(wrapper.state('draftUpdateDate')).toBeDefined();
     });
 
     it('should check if releaseUpdateDate exists', () => {
         const wrapper = shallow(<ModuleDisplay {...props} />);
         wrapper.setState({ 'login': true })
-        const len = wrapper.setState({ "releaseUpdateDate": "abcd" });
+        wrapper.setState({ "releaseUpdateDate": "abcd" });
         expect(wrapper.state('releaseUpdateDate')).toBeDefined();
     });
 
+    it('should have a moduleTitle', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        wrapper.setState({ 'login': true })
+        wrapper.setState({ "moduleTitle": "test title" });
+        console.log("[moduleDisplay Test] ", wrapper.debug())
+
+        const sourceText = wrapper.find('[component="h1"]').first().html();
+        // ensure it matches what is expected
+        expect(wrapper.state('moduleTitle')).toBeDefined();
+        expect(sourceText).toContain("test title");
+    });
+
+    it('should have a versionUUID', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        wrapper.setState({ 'login': true })
+        wrapper.setState({ "versionUUID": "122234-1234-1234T" });
+        expect(wrapper.state('versionUUID')).toBeDefined();
+    });
+
+    it('should have a productValue', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        wrapper.setState({ 'login': true })
+        const len = wrapper.setState({ "productValue": "Red Hat Enterprise Linux" });
+        expect(wrapper.state('productValue')).toBeDefined();
+    });
+
+    it('should have a versionValue', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        wrapper.setState({ 'login': true })
+        const len = wrapper.setState({ "versionValue": "8.x" });
+        expect(wrapper.state('versionValue')).toBeDefined();
+    });
 });

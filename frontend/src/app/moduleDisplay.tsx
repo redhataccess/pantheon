@@ -130,34 +130,28 @@ class ModuleDisplay extends Component<any, any, any> {
         if (type === "draft") {
             this.setState({
                 draftUpdateDate: date,
+                // tslint:disable-next-line: object-literal-sort-keys
                 draftPath: path
-            }, () => {
-                //  console.log('changed draft date: ', this.state.draftUpdateDate, "version path: ",this.state.draftPath)
             });
         }
         else {
             this.setState({
                 releaseUpdateDate: date,
+                // tslint:disable-next-line: object-literal-sort-keys
                 releasePath: path
-            }, () => {
-                // console.log('changed release date: ', this.state.releaseUpdateDate, "version path: ",this.state.releasePath)
             });
         }
     };
 
     private fetchModuleDetails = (data) => {
-        this.setState({ initialLoad: false, modulePath: data["location"]["pathname"] }
-            , () => {
-                // console.log("data: ",data);
-                // console.log("module Path: ",this.state.modulePath);
-            })
+        this.setState({ initialLoad: false, modulePath: data.location.pathname })
 
-        fetch(data["location"]["pathname"] + '.4.json')
+        fetch(data.location.pathname + '.4.json')
             .then(response => response.json())
             .then(responseJSON => {
                 // console.log('fetch results:',responseJSON["en_US"])
                 this.setState({
-                    moduleTitle: responseJSON["en_US"]["1"]["metadata"]["jcr:title"],
+                    moduleTitle: responseJSON.en_US["1"].metadata["jcr:title"],
                     resourceType: responseJSON["sling:resourceType"],
                 })
 
@@ -181,11 +175,11 @@ class ModuleDisplay extends Component<any, any, any> {
             .then(response => response.json())
             .then((responseJSON) => {
                 // console.log("[responseJSON]", responseJSON)
-                if (responseJSON["productVersion"] !== undefined) {
+                if (responseJSON.productVersion !== undefined) {
                     // console.log("[allproducts inside fetch call] ", this.state.allProducts)
 
                     // const versionUUID = responseJSON["productVersion"]
-                    this.setState({ versionUUID: responseJSON["productVersion"] }, () => {
+                    this.setState({ versionUUID: responseJSON.productVersion }, () => {
                         this.getProductInitialLoad()
                     })
                 }
@@ -203,27 +197,24 @@ class ModuleDisplay extends Component<any, any, any> {
                 // tslint:disable-next-line: prefer-for-of
                 for (let i = 0; i < Object.keys(responseJSON).length; i++) {
                     key = Object.keys(responseJSON)[i];
-                    const nameKey = "name"
                     const versionKey = "versions"
                     if ((key !== 'jcr:primaryType')) {
-                        if (responseJSON[key][nameKey] !== undefined) {
-                            const pName = responseJSON[key][nameKey]
+                        if (responseJSON[key].name !== undefined) {
+                            const pName = responseJSON[key].name
                             const versionObj = responseJSON[key][versionKey]
                             if (versionObj) {
                                 // console.log("[getProductFromUUID] versionObj ", versionObj)
                                 let vKey;
                                 const versions = new Array();
                                 // tslint:disable-next-line: no-shadowed-variable
-                                const nameKey = "name";
-                                const uuidKey = "jcr:uuid";
                                 for (const item in Object.keys(versionObj)) {
                                     if (Object.keys(versionObj)[item] !== undefined) {
                                         vKey = Object.keys(versionObj)[item]
                                         if (vKey !== 'jcr:primaryType') {
-                                            if (versionObj[vKey][nameKey]) {
-                                                if (versionObj[vKey][uuidKey] === this.state.versionUUID) {
+                                            if (versionObj[vKey].name) {
+                                                if (versionObj[vKey]["jcr:uuid"] === this.state.versionUUID) {
                                                     // process productValue and versionValue on initial load
-                                                    this.setState({ productValue: pName, versionValue: versionObj[vKey][nameKey] }, () => {
+                                                    this.setState({ productValue: pName, versionValue: versionObj[vKey].name }, () => {
                                                         // console.log("[getProductFromUUID] item/productvalue", pName)
                                                         // console.log("[getProductFromUUID] versionValue", versionObj[vKey][nameKey])
                                                     })
