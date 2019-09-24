@@ -1,15 +1,10 @@
 import React, { Component } from 'react';
-import { Button } from '@patternfly/react-core';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbHeading } from '@patternfly/react-core';
-import { Link } from "react-router-dom";
 import { Level, LevelItem } from '@patternfly/react-core';
-import { Tooltip } from '@patternfly/react-core';
 import {
     DataList, DataListItem, DataListItemRow, DataListItemCells,
-    DataListCell, Card, Text, TextContent, TextVariants, Grid, GridItem
+    DataListCell, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core';
 import { Revisions } from '@app/revisions';
-import { HelpIcon } from '@patternfly/react-icons';
 
 class ModuleDisplay extends Component<any, any, any> {
 
@@ -33,7 +28,7 @@ class ModuleDisplay extends Component<any, any, any> {
 
     public componentDidMount() {
 
-        this.getVersionUUID(this.props["location"]["pathname"])
+        this.getVersionUUID(this.props.location.pathname)
     }
 
     public render() {
