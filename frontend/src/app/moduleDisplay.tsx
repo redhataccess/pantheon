@@ -37,7 +37,7 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     public render() {
-        // console.log('Props: ',this.props);
+        console.log('Props: ',this.props);
         return (
             <React.Fragment>
                 {this.state.initialLoad && this.fetchModuleDetails(this.props)}

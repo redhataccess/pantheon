@@ -170,6 +170,7 @@ class Revisions extends Component<IProps, any> {
                                 noPadding={true}
                             >
                                 {/* this is the data list for the inner row */}
+                                {console.log("[results]", this.state.results)}
                                 {this.state.results.map(type => (
                                     type.map(data => (
                                         data["revision"] !== "" && (
