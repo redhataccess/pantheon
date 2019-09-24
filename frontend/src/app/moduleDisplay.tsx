@@ -37,7 +37,7 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     public render() {
-        console.log('Props: ',this.props);
+        // console.log('Props: ', this.props);
         return (
             <React.Fragment>
                 {this.state.initialLoad && this.fetchModuleDetails(this.props)}
@@ -77,7 +77,6 @@ class ModuleDisplay extends Component<any, any, any> {
                                             ]}
                                         />
                                     </DataListItemRow>
-
                                     <DataListItemRow>
                                         <DataListItemCells
                                             dataListCells={[
@@ -85,10 +84,18 @@ class ModuleDisplay extends Component<any, any, any> {
                                                     <span>{this.state.productValue + ' ' + this.state.versionValue}</span>
                                                 </DataListCell>,
                                                 <DataListCell key="published">
-                                                    <span>{this.state.releaseUpdateDate.substring(4, 15)}</span>
+                                                    <span>
+                                                        {this.state.releaseUpdateDate.trim() !== ""
+                                                            && this.state.releaseUpdateDate.length >= 15 ?
+                                                            this.state.releaseUpdateDate.substring(4, 15) : "-"}
+                                                    </span>
                                                 </DataListCell>,
                                                 <DataListCell key="updated">
-                                                    <span>{this.state.draftUpdateDate.substring(4, 15)}</span>
+                                                    <span>
+                                                        {this.state.draftUpdateDate.trim() !== ""
+                                                            && this.state.draftUpdateDate.length >= 15 ?
+                                                            this.state.draftUpdateDate.substring(4, 15) : "-"}
+                                                    </span>
                                                 </DataListCell>,
                                                 <DataListCell key="module_type">
                                                     <span>{this.state.resourceType}</span>
@@ -97,7 +104,7 @@ class ModuleDisplay extends Component<any, any, any> {
                                         />
                                     </DataListItemRow>
                                     ))}
-                        </DataListItem>
+                                </DataListItem>
                             </DataList>
                         </div>
                         <div>
@@ -139,11 +146,11 @@ class ModuleDisplay extends Component<any, any, any> {
     };
 
     private fetchModuleDetails = (data) => {
-        this.setState({ initialLoad: false,  modulePath: data["location"]["pathname"]}
-        ,() => {
-            // console.log("data: ",data);
-            // console.log("module Path: ",this.state.modulePath);
-        })
+        this.setState({ initialLoad: false, modulePath: data["location"]["pathname"] }
+            , () => {
+                // console.log("data: ",data);
+                // console.log("module Path: ",this.state.modulePath);
+            })
 
         fetch(data["location"]["pathname"] + '.4.json')
             .then(response => response.json())

@@ -21,8 +21,8 @@ export interface IProps {
 
 class Revisions extends Component<IProps, any> {
 
-    public draft = [{ "icon": BlankImage, "path": "", "revision": "", "publishedState": 'Not published', "updatedDate": '        --', "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
-    public release = [{ "icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": '        --', "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
+    public draft = [{ "icon": BlankImage, "path": "", "revision": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
+    public release = [{ "icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
 
     constructor(props) {
         super(props)
@@ -170,7 +170,7 @@ class Revisions extends Component<IProps, any> {
                                 noPadding={true}
                             >
                                 {/* this is the data list for the inner row */}
-                                {console.log("[results]", this.state.results)}
+                                {/* {console.log("[results]", this.state.results)} */}
                                 {this.state.results.map(type => (
                                     type.map(data => (
                                         data["revision"] !== "" && (
@@ -192,8 +192,8 @@ class Revisions extends Component<IProps, any> {
                                                                 <DataListCell key="published">
                                                                     {data["publishedState"]}
                                                                 </DataListCell>,
-                                                                <DataListCell key="updated">
-                                                                    {data["updateDate"] !== undefined && data["updatedDate"].substring(4, 15)}
+                                                                <DataListCell key="updated">            
+                                                                    {data["updatedDate"].trim()!=="" && data["updatedDate"].length>=15 ? data["updatedDate"].substring(4,15) : "-"}
                                                                 </DataListCell>,
                                                                 <DataListCell key="publish_buttons">
                                                                     <Button variant="primary" onClick={() => this.changePublishState(data["firstButtonText"])}>{data["firstButtonText"]}</Button>{'  '}

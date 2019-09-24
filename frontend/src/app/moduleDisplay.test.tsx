@@ -169,4 +169,19 @@ describe('ModuleDisplay tests', () => {
         // ensure it matches what is expected
         expect(sourceTypeText).toEqual("View on Customer Portal");
     });
+
+    it('should check if draftUpdateDate exists', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        wrapper.setState({ 'login': true })
+        const len = wrapper.setState({ "draftUpdateDate": "abcd" });
+        expect(wrapper.state('draftUpdateDate')).toBeDefined();
+    });
+
+    it('should check if releaseUpdateDate exists', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        wrapper.setState({ 'login': true })
+        const len = wrapper.setState({ "releaseUpdateDate": "abcd" });
+        expect(wrapper.state('releaseUpdateDate')).toBeDefined();
+    });
+
 });
