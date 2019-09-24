@@ -74,10 +74,18 @@ import { HelpIcon } from '@patternfly/react-icons';
                                                 <span>Dummy Product Name</span>
                                             </DataListCell>,
                                             <DataListCell key="published">
-                                                <span>{this.state.releaseUpdateDate.substring(4,15)}</span>
+                                                <span>
+                                                    {this.state.releaseUpdateDate.trim()!=="" 
+                                                     && this.state.releaseUpdateDate.length>=15 ?
+                                                     this.state.releaseUpdateDate.substring(4,15):"-"}
+                                                </span>
                                             </DataListCell>,
                                             <DataListCell key="updated">
-                                                <span>{this.state.draftUpdateDate.substring(4,15)}</span>
+                                                <span>
+                                                    {this.state.draftUpdateDate.trim()!=="" 
+                                                     && this.state.draftUpdateDate.length>=15 ?
+                                                     this.state.draftUpdateDate.substring(4,15):"-"}
+                                                </span>                                                
                                             </DataListCell>,
                                             <DataListCell key="module_type">
                                                 <span>{this.state.resourceType}</span>
