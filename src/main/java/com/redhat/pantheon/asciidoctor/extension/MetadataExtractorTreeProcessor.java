@@ -44,7 +44,6 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
     @Override
     public Document process(Document document) {
         extractDocTitle(document);
-        extractAbstract(document);
         extractHeadline(document);
         return document;
     }
@@ -57,29 +56,6 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
         String docTitle = document.getDoctitle();
         if(!isNullOrEmpty(docTitle)) {
             metadata.title.set(docTitle);
-        }
-    }
-
-    /**
-     * Extracts the document's abstract from an asciidoc document.
-     * The abstract is assumed to be the first paragraph of text in the document.
-     * @param document
-     */
-    private void extractAbstract(Document document) {
-        Optional<String> abstractContent = document.getBlocks().stream()
-                // find the first content block
-                .findFirst()
-                // only the first paragraph is allowed, all other blocks are ignored
-                .filter(block -> block.getContext().equals("paragraph"))
-                // make sure it has some content
-                .filter(contentBlock -> !isNullOrEmpty(contentBlock.getContent().toString()))
-                // get the content itself
-                .map(contentBlock -> contentBlock.getContent().toString());
-        abstractContent.ifPresent(content -> metadata.mAbstract.set(content));
-
-        // If no abstract is detected, reset it
-        if(!abstractContent.isPresent()) {
-            metadata.mAbstract.set(null);
         }
     }
 
