@@ -40,7 +40,6 @@ class Revisions extends Component<IProps, any> {
             allProducts: [],
             formInvalid: false,
 
-            // isDup: false,
             isEmptyResults: false,
             isMissingFields: false,
             isModalOpen: false,
@@ -52,7 +51,6 @@ class Revisions extends Component<IProps, any> {
             metadataPath: '',
             metadataResults: [],
             moduleUrl: '',
-            // moduleUrlresults: [],
             productOptions: [
                 { value: 'Select a Product', label: 'Select a Product', disabled: false },
             ],
@@ -78,7 +76,6 @@ class Revisions extends Component<IProps, any> {
     }
 
     public componentDidMount() {
-        // this.fetchRevisions()
         this.fetchProductVersionDetails()
     }
 
@@ -306,15 +303,6 @@ class Revisions extends Component<IProps, any> {
                                 />
                             </div>
                         )}
-                        {/* {this.state.isDup && (
-                            <div className="notification-container">
-                                <Alert
-                                    variant="warning"
-                                    title="Duplicated url fragment."
-                                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                                />
-                            </div>
-                        )} */}
                     </div>
                     <Form isHorizontal={true} id="edit_metadata">
                         <FormGroup
@@ -504,12 +492,7 @@ class Revisions extends Component<IProps, any> {
             this.setState({ isMissingFields: true })
             this.setState({ formInvalid: true })
 
-        }
-        // else if (this.moduleUrlExist(this.state.moduleUrl)) {
-        //     this.setState({ isDup: true })
-        //     this.setState({ formInvalid: true })
-        // } 
-        else {
+        } else {
             const hdrs = {
                 'Accept': 'application/json',
                 'cache-control': 'no-cache'
@@ -565,34 +548,7 @@ class Revisions extends Component<IProps, any> {
 
     private handleURLInput = moduleUrl => {
         this.setState({ moduleUrl });
-
-        // check for duplcated product URL.
-        // this.moduleUrlExist(this.state.moduleUrl);
-        // if (this.state.isDup) {
-        //     this.setState({ formInvalid: true });
-        // }
     }
-
-    // private moduleUrlExist = (moduleUrl) => {
-    //     this.setState({ initialLoad: false })
-    //     fetch(this.getModuleUrl(moduleUrl))
-    //         .then(response => response.json())
-    //         .then(responseJSON => this.setState({ moduleUrlresults: responseJSON.results }))
-    //         .then(() => {
-    //             // console.log("[moduleUrlExist] results breakdown " + JSON.stringify(this.state.results))
-
-    //             if (JSON.stringify(this.state.moduleUrlresults) === "[]") {
-    //                 this.setState({
-    //                     isDup: false
-    //                 });
-    //             } else {
-    //                 this.setState({
-    //                     isDup: true
-    //                 });
-    //             }
-    //         })
-    //     return this.state.isDup
-    // }
 
     private fetchProductVersionDetails = () => {
 
@@ -697,10 +653,6 @@ class Revisions extends Component<IProps, any> {
         if (this.state.isMissingFields === true) {
             this.setState({ isMissingFields: false });
         }
-
-        // if (this.moduleUrlExist(this.state.moduleUrl) === false) {
-        //     this.setState({ isDup: false });
-        // }
     }
 
     private hideSuccessAlert = () => {

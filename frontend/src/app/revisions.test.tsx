@@ -72,23 +72,6 @@ describe('Revisions tests', () => {
         expect(dataListContent.exists()).toBe(true)
     });
 
-    // it('should render a Dropdown', () => {
-    //     const wrapper = mount(<Revisions {...props} />);
-    //     wrapper.setState({'login' : true})
-    //     wrapper.setState({'isHeadingToggle': true})
-    //     wrapper.setState({'isArchiveDropDownOpen': true}) 
-    //     const dropdown = wrapper.find(Dropdown);
-    //     expect(dropdown.exists()).toBe(true)
-    // });
-
-    // it('should render a DropdownItem', () => {
-    //     const wrapper = mount(<Revisions {...props} />);
-    //     wrapper.setState({'login' : true})
-    //     wrapper.setState({'isHeadingToggle': true})
-    //     wrapper.setState({'isArchiveDropDownOpen': true}) 
-    //     const dropdownItem = wrapper.find(DropdownItem);
-    //     expect(dropdownItem.exists()).toBe(true)
-    // });
     it('should render a Modal', () => {
         const wrapper = mount(<Revisions {...props} />);
         const modal = wrapper.find(Modal);
@@ -196,12 +179,6 @@ describe('Revisions tests', () => {
         const inst = wrapper.getInstance();
         expect(inst.handleURLInput()).toMatchSnapshot();
     });
-
-    // it('test moduleUrlExist function', () => {
-    //     const wrapper = renderer.create(<Revisions {...props} />);
-    //     const inst = wrapper.getInstance();
-    //     expect(inst.moduleUrlExist()).toMatchSnapshot();
-    // });
 
     it('test getModuleUrl function', () => {
         const wrapper = renderer.create(<Revisions {...props} />);
