@@ -318,8 +318,6 @@ exports[`Revisions tests test handleURLInput function 1`] = `undefined`;
 
 exports[`Revisions tests test loginRedirect function 1`] = `""`;
 
-exports[`Revisions tests test moduleUrlExist function 1`] = `false`;
-
 exports[`Revisions tests test onArchiveSelect function 1`] = `undefined`;
 
 exports[`Revisions tests test onChangeProduct function 1`] = `undefined`;

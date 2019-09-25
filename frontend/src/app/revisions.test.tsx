@@ -197,11 +197,11 @@ describe('Revisions tests', () => {
         expect(inst.handleURLInput()).toMatchSnapshot();
     });
 
-    it('test moduleUrlExist function', () => {
-        const wrapper = renderer.create(<Revisions {...props} />);
-        const inst = wrapper.getInstance();
-        expect(inst.moduleUrlExist()).toMatchSnapshot();
-    });
+    // it('test moduleUrlExist function', () => {
+    //     const wrapper = renderer.create(<Revisions {...props} />);
+    //     const inst = wrapper.getInstance();
+    //     expect(inst.moduleUrlExist()).toMatchSnapshot();
+    // });
 
     it('test getModuleUrl function', () => {
         const wrapper = renderer.create(<Revisions {...props} />);
