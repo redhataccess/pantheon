@@ -5,11 +5,11 @@ exports[`Revisions tests should render Revisions component 1`] = `
   <Card>
     <div>
       <DataList
-        aria-label="Simple data list example"
+        aria-label="Simple data list"
       >
         <DataListItem
           aria-labelledby="simple-item1"
-          isExpanded={false}
+          isExpanded={true}
         >
           <DataListItemRow
             id="data-rows-header"
@@ -26,7 +26,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
                   <DataListCell>
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-type"
+                      id="span-source-type-revision"
                     >
                       Revision
                     </span>
@@ -34,7 +34,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
                   <DataListCell>
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-type"
+                      id="span-source-type-revision-published"
                     >
                       Published
                     </span>
@@ -42,7 +42,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
                   <DataListCell>
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-type"
+                      id="span-source-type-revision-draft-uploaded"
                     >
                       Draft Uploaded
                     </span>
@@ -50,7 +50,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
                   <DataListCell>
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-name"
+                      id="span-source-name-revision-publish-buttons"
                     />
                   </DataListCell>,
                   <DataListCell>
@@ -67,7 +67,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
         <DataListContent
           aria-label="Secondary Content Details"
           id="Content"
-          isHidden={true}
+          isHidden={false}
           noPadding={true}
         />
       </DataList>
@@ -308,8 +308,26 @@ exports[`Revisions tests should render Revisions component 1`] = `
 
 exports[`Revisions tests test changePublishState function 1`] = `undefined`;
 
+exports[`Revisions tests test dismissNotification function 1`] = `undefined`;
+
 exports[`Revisions tests test fetchRevisions function 1`] = `undefined`;
+
+exports[`Revisions tests test getModuleUrl function 1`] = `"/content/modules.query.json?nodeType=pant:module&where=[urlFragment]=\\"undefined\\""`;
+
+exports[`Revisions tests test handleURLInput function 1`] = `undefined`;
+
+exports[`Revisions tests test loginRedirect function 1`] = `""`;
 
 exports[`Revisions tests test onArchiveSelect function 1`] = `undefined`;
 
+exports[`Revisions tests test onChangeProduct function 1`] = `undefined`;
+
+exports[`Revisions tests test onChangeUsecase function 1`] = `undefined`;
+
 exports[`Revisions tests test onHeadingToggle function 1`] = `undefined`;
+
+exports[`Revisions tests test previewDoc function 1`] = `undefined`;
+
+exports[`Revisions tests test renderRedirect function 1`] = `""`;
+
+exports[`Revisions tests test saveMetadata function 1`] = `undefined`;

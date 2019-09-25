@@ -15,63 +15,75 @@ export interface IProps {
     revisionModulePath: string
     draftUpdateDate: (draftUpdateDate, draft, draftPath) => any
     releaseUpdateDate: (releaseUpdateDate, release, releasePath) => any
+    onGetProduct: (productValue) => any
+    onGetVersion: (versionValue) => any
 }
 
-class Revisions extends Component<IProps> {
+class Revisions extends Component<IProps, any> {
 
-    public draft = [{ "icon": BlankImage, "path": "", "revision": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
-    public release = [{ "icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metaData": '' }]
+    public draft = [{ "icon": BlankImage, "path": "", "revision": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
+    public release = [{ "icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
 
-    public state = {
-        initialLoad: true,
-        isArchiveDropDownOpen: false,
-        isArchiveSelect: false,
-        isDropDownOpen: false,
-        isHeadingToggle: false,
-        isOpen: false,
-        isRowToggle: false,
-        login: false,
-        results: [this.draft, this.release],
+    constructor(props) {
+        super(props)
+        this.state = {
+            initialLoad: true,
+            isArchiveDropDownOpen: false,
+            isArchiveSelect: false,
+            isDropDownOpen: false,
+            isHeadingToggle: true,
+            isOpen: false,
+            isRowToggle: false,
+            login: false,
+            results: [this.draft, this.release],
 
-        productsInitalLoad: true,
-        allProducts: '',
-        formInvalid: false,
+            allProducts: [],
+            formInvalid: false,
 
-        isDup: false,
-        isEmptyResults: false,
-        isMissingFields: false,
-        isModalOpen: false,
-        isProductDropdownOpen: false,
-        isUsecaseDropdownOpen: false,
-        isVersionDropdownOpen: false,
-        loggedinStatus: false,
-        metadataPath: '',
-        metadataResults: [],
-        moduleUrl: '',
-        moduleUrlresults: [],
-        productOptions: [
-            { value: 'Select a Product', label: 'Select a Product', disabled: false },
-        ],
-        productValue: '',
-        redirect: false,
+            // isDup: false,
+            isEmptyResults: false,
+            isMissingFields: false,
+            isModalOpen: false,
+            isProductDropdownOpen: false,
+            isUsecaseDropdownOpen: false,
+            isVersionDropdownOpen: false,
+            loggedinStatus: false,
+            metadataInitialLoad: true,
+            metadataPath: '',
+            metadataResults: [],
+            moduleUrl: '',
+            // moduleUrlresults: [],
+            productOptions: [
+                { value: 'Select a Product', label: 'Select a Product', disabled: false },
+            ],
+            productValue: '',
+            productVersion: '',
+            redirect: false,
 
-        successAlertVisble: false,
-        usecaseOptions: [
-            { value: 'Select Use Case', label: 'Select Use Case', disabled: false }
-        ],
-        usecaseValue: '',
-        usecases: ['Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network',
-            'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize'],
+            successAlertVisble: false,
+            usecaseOptions: [
+                { value: 'Select Use Case', label: 'Select Use Case', disabled: false }
+            ],
+            usecaseValue: '',
+            usecases: ['Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network',
+                'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize'],
 
-        versionOptions: [
-            { value: 'Select a Version', label: 'Select a Version', disabled: false },
-        ],
-        versionValue: '',
-        metadataInitalLoad: true,
-    };
+            versionOptions: [
+                { value: 'Select a Version', label: 'Select a Version', disabled: false },
+            ],
+            versionUUID: "",
+            versionValue: '',
+        };
+
+    }
+
+    public componentDidMount() {
+        // this.fetchRevisions()
+        this.fetchProductVersionDetails()
+    }
 
     public render() {
-        const { isModalOpen, isDup, isMissingFields, productOptions, moduleUrl, successAlertVisble, productValue, usecaseValue, usecaseOptions, usecases, versionOptions, versionValue } = this.state;
+
         const id = 'userID';
 
         const header = (
@@ -85,14 +97,13 @@ class Revisions extends Component<IProps> {
               </p>
             </React.Fragment>
         );
-
-        let verOptions = versionOptions
-        if (this.state.allProducts[productValue]) {
-            verOptions = this.state.allProducts[productValue]
+        let verOptions = this.state.versionOptions
+        if (this.state.allProducts[this.state.productValue]) {
+            verOptions = this.state.allProducts[this.state.productValue]
         }
 
-        const ucOptions = usecaseOptions
-        usecases.map((item) => (
+        const ucOptions = this.state.usecaseOptions
+        this.state.usecases.map((item) => (
             ucOptions.push({ value: item, label: item, disabled: false })
         ))
 
@@ -107,9 +118,10 @@ class Revisions extends Component<IProps> {
                     }
                 })
         }
+
         return (
             <React.Fragment>
-                {successAlertVisble && <Alert
+                {this.state.successAlertVisble && <Alert
                     variant="success"
                     title="Edit Metadata"
                     action={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
@@ -117,16 +129,15 @@ class Revisions extends Component<IProps> {
                     Update Successful!
           </Alert>
                 }
-
                 {this.state.initialLoad && this.fetchRevisions()}
-                {this.state.productsInitalLoad && this.fetchProductVersionDetails()}
-                {this.state.metadataInitalLoad && this.getMetadata(this.state.metadataPath)}
+                {this.state.metadataInitialLoad && this.getMetadata(this.state.metadataPath)}
                 <Card>
                     <div>
-                        <DataList aria-label="Simple data list example">
+                        <DataList aria-label="Simple data list">
                             <DataListItem aria-labelledby="simple-item1" isExpanded={this.state.isHeadingToggle}>
                                 <DataListItemRow id="data-rows-header" >
                                     <DataListToggle
+                                        // tslint:disable-next-line: jsx-no-lambda
                                         onClick={() => this.onHeadingToggle()}
                                         isExpanded={true}
                                         id="width-ex3-toggle1"
@@ -135,18 +146,18 @@ class Revisions extends Component<IProps> {
                                     <DataListItemCells
                                         dataListCells={[
                                             <DataListCell key="revision">
-                                                <span className="sp-prop-nosort" id="span-source-type">Revision</span>
+                                                <span className="sp-prop-nosort" id="span-source-type-revision">Revision</span>
                                             </DataListCell>,
                                             <DataListCell key="published">
-                                                <span className="sp-prop-nosort" id="span-source-type">Published</span>
+                                                <span className="sp-prop-nosort" id="span-source-type-revision-published">Published</span>
                                             </DataListCell>,
                                             <DataListCell key="updated">
-                                                <span className="sp-prop-nosort" id="span-source-type">Draft Uploaded</span>
+                                                <span className="sp-prop-nosort" id="span-source-type-revision-draft-uploaded">Draft Uploaded</span>
                                             </DataListCell>,
-                                            <DataListCell key="module_type">
-                                                <span className="sp-prop-nosort" id="span-source-name" />
+                                            <DataListCell key="publish_buttons">
+                                                <span className="sp-prop-nosort" id="span-source-name-revision-publish-buttons" />
                                             </DataListCell>,
-                                            <DataListCell key="module_type">
+                                            <DataListCell key="module_view_button">
                                                 <span className="sp-prop-nosort" id="span-source-name" />
                                             </DataListCell>
                                         ]}
@@ -160,44 +171,47 @@ class Revisions extends Component<IProps> {
                                 noPadding={true}
                             >
                                 {/* this is the data list for the inner row */}
+                                {console.log("[results]", this.state.results)}
                                 {this.state.results.map(type => (
                                     type.map(data => (
-                                        data["revision"] !== "" && (
-                                            <DataList aria-label="Simple data list example2">
-                                                <DataListItem aria-labelledby="simple-item2" isExpanded={data["isDropdownOpen"]}>
+                                        data.revision !== "" && (
+                                            <DataList aria-label="Simple data list2">
+                                                <DataListItem aria-labelledby="simple-item2" isExpanded={data.isDropdownOpen}>
                                                     <DataListItemRow>
                                                         <DataListToggle
+                                                            // tslint:disable-next-line: jsx-no-lambda
                                                             onClick={() => this.onExpandableToggle(data)}
-                                                            isExpanded={data["isDropdownOpen"]}
-                                                            id={data["revision"]}
-                                                            aria-controls={data["revision"]}
+                                                            isExpanded={data.isDropdownOpen}
+                                                            id={data.revision}
+                                                            aria-controls={data.revision}
                                                         />
                                                         <DataListItemCells
                                                             dataListCells={[
                                                                 <DataListCell key="revision">
                                                                     {/* <img src={CheckImage} width="20px" height="20px"/>                                                         */}
-                                                                    {data["revision"]}
+                                                                    {data.revision}
                                                                 </DataListCell>,
                                                                 <DataListCell key="published">
-                                                                    {data["publishedState"]}
+                                                                    {data.publishedState}
                                                                 </DataListCell>,
-                                                                <DataListCell key="updated">            
-                                                                    {data["updatedDate"].trim()!=="" && data["updatedDate"].length>=15 ? data["updatedDate"].substring(4,15) : "-"}
+                                                                <DataListCell key="updated">
+                                                                    {data.updatedDate.trim() !== "" && data.updatedDate.length >= 15 ? data.updatedDate.substring(4, 15) : "-"}
                                                                 </DataListCell>,
-                                                                <DataListCell key="module_type">
-                                                                    <Button variant="primary" onClick={() => this.changePublishState(data["firstButtonText"])}>{data["firstButtonText"]}</Button>{'  '}
-                                                                    <Button variant="secondary" onClick={() => this.previewDoc(data["secondButtonText"])}>{data["secondButtonText"]}</Button>{'  '}
+                                                                <DataListCell key="publish_buttons">
+                                                                    <Button variant="primary" onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>{'  '}
+                                                                    <Button variant="secondary" onClick={() => this.previewDoc(data.secondButtonText)}>{data.secondButtonText}</Button>{'  '}
                                                                 </DataListCell>,
                                                                 <DataListCell key="image" width={1}>
                                                                     <Dropdown
                                                                         isPlain={true}
                                                                         position={DropdownPosition.right}
-                                                                        isOpen={data["isArchiveDropDownOpen"]}
+                                                                        isOpen={data.isArchiveDropDownOpen}
                                                                         onSelect={this.onArchiveSelect}
+                                                                        // tslint:disable-next-line: jsx-no-lambda
                                                                         toggle={<KebabToggle onToggle={() => this.onArchiveToggle(data)} />}
                                                                         dropdownItems={[
                                                                             <DropdownItem key="archive" isDisabled={true}>Archive</DropdownItem>,
-                                                                            <DropdownItem id={data["path"]} key={data["path"]} component="button" onClick={this.handleModalToggle}>Edit metadata</DropdownItem>,
+                                                                            <DropdownItem id={data.path} key={data.path} component="button" onClick={this.handleModalToggle}>Edit metadata</DropdownItem>,
                                                                         ]}
                                                                     />
                                                                 </DataListCell>
@@ -205,9 +219,9 @@ class Revisions extends Component<IProps> {
                                                         />
                                                     </DataListItemRow>
                                                     <DataListContent
-                                                        aria-label={data["revision"]}
-                                                        id={data["revision"]}
-                                                        isHidden={!data["isDropdownOpen"]}
+                                                        aria-label={data.revision}
+                                                        id={data.revision}
+                                                        isHidden={!data.isDropdownOpen}
                                                         noPadding={true}
                                                     >
                                                         {/* this is the content for the inner data list content */}
@@ -217,16 +231,16 @@ class Revisions extends Component<IProps> {
                                                                     <span>{' '}</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="File name" width={2}>
-                                                                    <span className="sp-prop-nosort" id="span-source-type">File Name</span>
+                                                                    <span className="sp-prop-nosort" id="span-source-type-filename">File Name</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="published" width={4}>
                                                                     {this.props.modulePath}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={2}>
-                                                                    <span className="sp-prop-nosort" id="span-source-type">Upload Time</span>
+                                                                    <span className="sp-prop-nosort" id="span-source-type-upload-time">Upload Time</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
-                                                                    {data["updatedDate"]}
+                                                                    {data.updatedDate}
                                                                 </DataListCell>,
                                                             ]}
                                                         />
@@ -238,16 +252,16 @@ class Revisions extends Component<IProps> {
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={2}>
                                                                     <span>{'  '}</span>
-                                                                    <span className="sp-prop-nosort" id="span-source-type">Module Title</span>
+                                                                    <span className="sp-prop-nosort" id="span-source-type-module-title">Module Title</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
-                                                                    {data["metaData"]["jcr:title"]}
+                                                                    {(data.metadata !== undefined && "jcr:title" in data.metadata) ? data.metadata["jcr:title"] : ''}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={2}>
-                                                                    <span className="sp-prop-nosort" id="span-source-type">Context Package</span>
+                                                                    <span className="sp-prop-nosort" id="span-source-type-context-package">Context Package</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
-                                                                    Dumy Context Package
+                                                                    N/A
                                                                 </DataListCell>,
                                                             ]}
                                                         />
@@ -264,7 +278,7 @@ class Revisions extends Component<IProps> {
                 <Modal
                     width={'60%'}
                     title="Edit metadata"
-                    isOpen={isModalOpen}
+                    isOpen={this.state.isModalOpen}
                     header={header}
                     ariaDescribedById="edit-metadata"
                     onClose={this.handleModalClose}
@@ -278,13 +292,12 @@ class Revisions extends Component<IProps> {
                     ]}
                 >
                     <div>
-                        {/* {this.checkAuth()} */}
                         {this.loginRedirect()}
                         {this.renderRedirect()}
                     </div>
                     <div className="app-container">
 
-                        {isMissingFields && (
+                        {this.state.isMissingFields && (
                             <div className="notification-container">
                                 <Alert
                                     variant="warning"
@@ -293,7 +306,7 @@ class Revisions extends Component<IProps> {
                                 />
                             </div>
                         )}
-                        {isDup && (
+                        {/* {this.state.isDup && (
                             <div className="notification-container">
                                 <Alert
                                     variant="warning"
@@ -301,7 +314,7 @@ class Revisions extends Component<IProps> {
                                     action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                 />
                             </div>
-                        )}
+                        )} */}
                     </div>
                     <Form isHorizontal={true} id="edit_metadata">
                         <FormGroup
@@ -310,12 +323,12 @@ class Revisions extends Component<IProps> {
                             fieldId="product-name"
                         >
                             <InputGroup>
-                                <FormSelect value={productValue} onChange={this.onChangeProduct} aria-label="FormSelect Product">
-                                    {productOptions.map((option, index) => (
+                                <FormSelect value={this.state.productValue} onChange={this.onChangeProduct} aria-label="FormSelect Product">
+                                    {this.state.productOptions.map((option, index) => (
                                         <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
-                                <FormSelect value={versionValue} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
+                                <FormSelect value={this.state.versionUUID} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
                                     {verOptions.map((option) => (
 
                                         <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} required={false} />
@@ -328,7 +341,7 @@ class Revisions extends Component<IProps> {
                             isRequired={true}
                             fieldId="document-usecase"
                         >
-                            <FormSelect value={usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
+                            <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
                                 {ucOptions.map((option, index) => (
                                     <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
                                 ))}
@@ -343,7 +356,7 @@ class Revisions extends Component<IProps> {
                                 <InputGroupText id="slash" aria-label="/">
                                     <span>/</span>
                                 </InputGroupText>
-                                <TextInput isRequired={true} id="url-fragment" type="text" placeholder="Enter URL" value={moduleUrl} onChange={this.handleURLInput} />
+                                <TextInput isRequired={true} id="url-fragment" type="text" placeholder="Enter URL" value={this.state.moduleUrl} onChange={this.handleURLInput} />
                             </InputGroup>
                         </FormGroup>
                         <div>
@@ -357,46 +370,50 @@ class Revisions extends Component<IProps> {
     }
 
     private fetchRevisions = () => {
-        let fetchpath = "/content" + this.props.modulePath + ".3.json?";
+        const fetchpath = "/content" + this.props.modulePath + ".3.json?";
         // TODO : harray.3.json - to process the children
         fetch(fetchpath)
             .then(response => response.json())
             .then(responseJSON => {
                 this.setState(updateState => {
                     // console.log("response json:",responseJSON);
-                    let releasedTag = responseJSON["en_US"]["released"];
-                    let draftTag = responseJSON["en_US"]["draft"];
+                    const releasedTag = responseJSON.en_US.released;
+                    const draftTag = responseJSON.en_US.draft;
 
 
-                    let objectKeys = Object.keys(responseJSON["en_US"]);
+                    const objectKeys = Object.keys(responseJSON.en_US);
 
-                    for (var key in objectKeys) {
+                    for (const key in objectKeys) {
                         if (objectKeys[key] === "jcr:primaryType") {
                             break;
                         }
                         else {
-                            if (responseJSON["en_US"][objectKeys[key]]["jcr:uuid"] === draftTag) {
-                                this.draft[0]["revision"] = "Version " + objectKeys[key];
-                                this.draft[0]["updatedDate"] = responseJSON["en_US"][objectKeys[key]]["jcr:lastModified"];
-                                this.draft[0]["metaData"] = responseJSON["en_US"][objectKeys[key]]["metadata"];
-                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + objectKeys[key];
+                            if ("jcr:uuid" in responseJSON.en_US[objectKeys[key]]
+                                && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === draftTag) {
+                                this.draft[0].revision = "Version " + objectKeys[key];
+                                this.draft[0].updatedDate = "jcr:lastModified" in responseJSON.en_US[objectKeys[key]] ? responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] : '';
+                                this.draft[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
+                                this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
                                 // console.log("1:",this.draft[0]["path"]);  
-                                this.props.draftUpdateDate(this.draft[0]["updatedDate"], "draft", this.draft[0]["path"]);
+                                this.props.draftUpdateDate(this.draft[0].updatedDate, "draft", this.draft[0].path);
                             }
-                            if (responseJSON["en_US"][objectKeys[key]]["jcr:uuid"] === releasedTag) {
-                                this.release[0]["revision"] = "Version " + objectKeys[key];
-                                this.release[0]["updatedDate"] = responseJSON["en_US"][objectKeys[key]]["jcr:lastModified"];
-                                this.release[0]["metaData"] = responseJSON["en_US"][objectKeys[key]]["metadata"];
-                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + objectKeys[key];
+                            if ("jcr:uuid" in responseJSON.en_US[objectKeys[key]]
+                                && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === releasedTag) {
+                                this.release[0].revision = "Version " + objectKeys[key];
+                                this.release[0].updatedDate = "jcr:lastModified" in responseJSON.en_US[objectKeys[key]] ? responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] : '';
+                                this.release[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
+                                this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
                                 // console.log("2:",this.release[0]["path"]);  
-                                this.props.releaseUpdateDate(this.release[0]["updatedDate"], "release", this.release[0]["path"])
+                                this.props.releaseUpdateDate(this.release[0].updatedDate, "release", this.release[0].path)
                             }
                         }
 
                     }
                     return {
                         initialLoad: false,
-                        results: [this.draft, this.release]
+                        results: [this.draft, this.release],
+                        // tslint:disable-next-line: object-literal-sort-keys
+                        metadatPath: this.draft ? this.draft[0].path : this.release[0].path
                     }
                 })
             })
@@ -407,13 +424,13 @@ class Revisions extends Component<IProps> {
         if (buttonText === "Publish") {
             formData.append(":operation", "pant:release");
             // console.log('Published file path:', this.props.modulePath)
-            this.draft[0]["revision"] = "";
+            this.draft[0].revision = "";
         } else {
             formData.append(":operation", "pant:unpublish");
             // console.log('Unpublished file path:', this.props.modulePath);
-            this.release[0]["revision"] = "";
+            this.release[0].revision = "";
         }
-        fetch("/content/" + this.props.modulePath, {
+        fetch("/content" + this.props.modulePath, {
             body: formData,
             method: 'post'
         }).then(response => {
@@ -435,14 +452,14 @@ class Revisions extends Component<IProps> {
     };
 
     private onArchiveToggle = (data) => {
-        data["isArchiveDropDownOpen"] = !data["isArchiveDropDownOpen"];
+        data.isArchiveDropDownOpen = !data.isArchiveDropDownOpen;
         this.setState({
             isArchiveDropDownOpen: this.state.isArchiveDropDownOpen
         });
     };
 
     private onExpandableToggle = (data) => {
-        data["isDropdownOpen"] = !data["isDropdownOpen"];
+        data.isDropdownOpen = !data.isDropdownOpen;
         this.setState({
             isRowToggle: this.state.isRowToggle
         });
@@ -456,10 +473,10 @@ class Revisions extends Component<IProps> {
 
     private previewDoc = (buttonText) => {
         let docPath = "";
-        if (buttonText == "Preview") {
-            docPath = "/content/" + this.props.modulePath + ".preview?draft=true";
+        if (buttonText === "Preview") {
+            docPath = "/content" + this.props.modulePath + ".preview?draft=true";
         } else {
-            docPath = "/content/" + this.props.modulePath + ".preview";
+            docPath = "/content" + this.props.modulePath + ".preview";
         }
         // console.log("Preview path: ", docPath)
         return window.open(docPath);
@@ -482,15 +499,17 @@ class Revisions extends Component<IProps> {
 
     private saveMetadata = (event) => {
         // save form data
-        if (this.state.productValue === "" || this.state.versionValue === "" ||
+        if (this.state.productValue === "" || this.state.versionUUID === "" ||
             this.state.usecaseValue === "" || this.state.moduleUrl === "") {
             this.setState({ isMissingFields: true })
             this.setState({ formInvalid: true })
 
-        } else if (this.moduleUrlExist(this.state.moduleUrl)) {
-            this.setState({ isDup: true })
-            this.setState({ formInvalid: true })
-        } else {
+        }
+        // else if (this.moduleUrlExist(this.state.moduleUrl)) {
+        //     this.setState({ isDup: true })
+        //     this.setState({ formInvalid: true })
+        // } 
+        else {
             const hdrs = {
                 'Accept': 'application/json',
                 'cache-control': 'no-cache'
@@ -498,10 +517,10 @@ class Revisions extends Component<IProps> {
 
             const formData = new FormData(event.target.form);
 
-            formData.append("productVersion", this.state.versionValue)
+            formData.append("productVersion", this.state.versionUUID)
             formData.append("documentUsecase", this.state.usecaseValue)
             formData.append("urlFragment", "/" + this.state.moduleUrl)
-
+            // console.log("[metadataPath] ", this.state.metadataPath)
             fetch(this.state.metadataPath + '/metadata', {
                 body: formData,
                 headers: hdrs,
@@ -522,12 +541,22 @@ class Revisions extends Component<IProps> {
             });
         }
     }
-    private onChangeProduct = (productValue, event) => {
-        this.setState({ productValue });
+    private onChangeProduct = (productValue) => {
+        this.setState({ productValue }, () => {
+            this.props.onGetProduct(productValue)
+        });
     }
+    private onChangeVersion = () => {
 
-    private onChangeVersion = (versionValue, event) => {
-        this.setState({ versionValue });
+        // console.log("[onChangeVersion] event: ", event)
+        if (event !== undefined) {
+            if (event.target !== null) {
+                // tslint:disable-next-line: no-string-literal
+                this.setState({ versionUUID: event.target["selectedOptions"][0].value, versionValue: event.target["selectedOptions"][0].label }, () => {
+                    this.props.onGetVersion(this.state.versionValue)
+                });
+            }
+        }
     }
 
     private onChangeUsecase = (usecaseValue, event) => {
@@ -538,35 +567,35 @@ class Revisions extends Component<IProps> {
         this.setState({ moduleUrl });
 
         // check for duplcated product URL.
-        this.moduleUrlExist(this.state.moduleUrl);
-        if (this.state.isDup) {
-            this.setState({ formInvalid: true });
-        }
+        // this.moduleUrlExist(this.state.moduleUrl);
+        // if (this.state.isDup) {
+        //     this.setState({ formInvalid: true });
+        // }
     }
 
-    private moduleUrlExist = (moduleUrl) => {
-        this.setState({ initialLoad: false })
-        fetch(this.getModuleUrl(moduleUrl))
-            .then(response => response.json())
-            .then(responseJSON => this.setState({ moduleUrlresults: responseJSON.results }))
-            .then(() => {
-                // console.log("[moduleUrlExist] results breakdown " + JSON.stringify(this.state.results))
+    // private moduleUrlExist = (moduleUrl) => {
+    //     this.setState({ initialLoad: false })
+    //     fetch(this.getModuleUrl(moduleUrl))
+    //         .then(response => response.json())
+    //         .then(responseJSON => this.setState({ moduleUrlresults: responseJSON.results }))
+    //         .then(() => {
+    //             // console.log("[moduleUrlExist] results breakdown " + JSON.stringify(this.state.results))
 
-                if (JSON.stringify(this.state.moduleUrlresults) === "[]") {
-                    this.setState({
-                        isDup: false
-                    });
-                } else {
-                    this.setState({
-                        isDup: true
-                    });
-                }
-            })
-        return this.state.isDup
-    }
+    //             if (JSON.stringify(this.state.moduleUrlresults) === "[]") {
+    //                 this.setState({
+    //                     isDup: false
+    //                 });
+    //             } else {
+    //                 this.setState({
+    //                     isDup: true
+    //                 });
+    //             }
+    //         })
+    //     return this.state.isDup
+    // }
 
     private fetchProductVersionDetails = () => {
-        this.setState({ productsInitalLoad: false })
+
         const path = '/content/products.3.json'
         let key
         const products = new Array()
@@ -632,6 +661,7 @@ class Revisions extends Component<IProps> {
                     }
                     if (productItems.length > 1) {
                         this.setState({ productOptions: productItems })
+                        // console.log("[fetchProductVersionDetails] productOptions: ", this.state.productOptions)
                     }
                 }
             })
@@ -668,9 +698,9 @@ class Revisions extends Component<IProps> {
             this.setState({ isMissingFields: false });
         }
 
-        if (this.moduleUrlExist(this.state.moduleUrl) === false) {
-            this.setState({ isDup: false });
-        }
+        // if (this.moduleUrlExist(this.state.moduleUrl) === false) {
+        //     this.setState({ isDup: false });
+        // }
     }
 
     private hideSuccessAlert = () => {
@@ -678,30 +708,62 @@ class Revisions extends Component<IProps> {
     }
 
     private getMetadata = (revisionPath) => {
-        this.setState({ metadataInitalLoad: false })
-        if (revisionPath) {
+
+        if (revisionPath.trim() !== "") {
+            // console.log("[getMetadata] revisionPath: ", revisionPath)
+            this.setState({ metadataInitialLoad: false })
             fetch(revisionPath + "/metadata.json")
                 .then(response => response.json())
                 .then(responseJSON => this.setState({ metadataResults: responseJSON }))
                 .then(() => {
-
-                    if (JSON.stringify(this.state.metadataResults)! === "[]") {
+                    if (JSON.stringify(this.state.metadataResults) !== "[]") {
                         // Process results
-                        // console.log("[getMetadata] responseJSON ", this.state.metadataResults)
-                        // console.log("[getMetadata] urlFragment ", this.state.metadataResults["urlFragment"])
                         // Remove leading slash.
-                        if (this.state.metadataResults["urlFragment"]) {
-                            let url = this.state.metadataResults["urlFragment"]
+                        // console.log("[metadataResults] ", this.state.metadataResults)
+                        if (this.state.metadataResults.urlFragment) {
+                            let url = this.state.metadataResults.urlFragment
                             if (url.indexOf('/') === 0) {
                                 url = url.replace('/', '');
 
                             }
                             this.setState({ moduleUrl: url })
                         }
-                        this.setState({ usecaseValue: this.state.metadataResults["documentUsecase"] })
+                        this.setState({
+                            usecaseValue: this.state.metadataResults.documentUsecase,
+                            versionUUID: this.state.metadataResults.productVersion
+                        }, () => {
+                            // console.log("versionUUID", this.state.versionUUID)
+                            // Process versionValue and productValue here.
+                            if (this.state.versionUUID !== undefined && this.state.versionUUID.trim() !== "") {
+
+                                if (Object.keys(this.state.allProducts).length > 0) {
+                                    // tslint:disable-next-line: forin
+                                    for (let item in this.state.allProducts) {
+                                        // tslint:disable-next-line: prefer-for-of
+                                        for (let j = 0; j < this.state.allProducts[item].length; j++) {
+                                            // console.log("[productValue] pName ", item)
+                                            // console.log("[productValue] vLabel ", this.state.allProducts[item][j].label)
+                                            if (this.state.allProducts[item][j].value === this.state.versionUUID) {
+
+                                                this.setState({
+                                                    productValue: item,
+                                                    versionValue: this.state.allProducts[item][j].label
+                                                })
+
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        })
+
                     }
                 })
         }
+
+
     }
 }
 
