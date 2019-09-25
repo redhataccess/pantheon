@@ -143,7 +143,10 @@ export default class Search extends Component {
                     <DataListItemCells key={data["pant:transientPath"]}
                           dataListCells={[
                                 <DataListCell key="div-title" width={2}>
-                                    <Link to={data['pant:transientPath']}>{data["jcr:title"]}</Link>
+                                  {this.state.loggedinStatus &&
+                                  <Link to={data['pant:transientPath']}>{data["jcr:title"]}</Link> }
+                                  {!this.state.loggedinStatus &&
+                                  <a href={"/" + data['pant:transientPath'] +".preview"} target="_blank">{data["jcr:title"]}</a> }
                                 </DataListCell>,
                                 <DataListCell  key="div-description" width={2}>
                                   <span>{data["jcr:description"]===""?"No items found to be displayed":data["jcr:description"]}</span>
