@@ -79,13 +79,16 @@ class MetadataExtractorTreeProcessorTest {
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
-        final String adocContent = "= A title for content" +
+        final String adocContent = "include::shared/attributes.adoc[]\n" +
                 "\n" +
+                "= Test Asciidoc Book\n" +
+                "Red Hat Documentation team <author@email.com>\n" +
                 "\n" +
-                "== Headline" +
+                "[[support]]\n" +
+                "== Headline\n" +
                 "\n" +
-                "\n" +
-                "This is the first section.";
+                "[[support-ticket]]\n" +
+                "=== Logging a support request";
 
         // When
         asciidoctor.load(adocContent, new HashMap<>());
