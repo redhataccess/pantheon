@@ -255,7 +255,7 @@ class Revisions extends Component<IProps, any> {
                                                                     <span className="sp-prop-nosort" id="span-source-type-module-title">Module Title</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
-                                                                    {(data.metadata !== undefined && "jcr:title" in data.metadata) ? data.metadata["jcr:title"] : ''}
+                                                                    {(data.metadata !== undefined && data.metadata["jcr:title"] !== undefined) ? data.metadata["jcr:title"] : ''}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={2}>
                                                                     <span className="sp-prop-nosort" id="span-source-type-context-package">Context Package</span>
@@ -388,19 +388,19 @@ class Revisions extends Component<IProps, any> {
                             break;
                         }
                         else {
-                            if ("jcr:uuid" in responseJSON.en_US[objectKeys[key]]
+                            if (responseJSON.en_US[objectKeys[key]]["jcr:uuid"] !== undefined
                                 && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === draftTag) {
                                 this.draft[0].revision = "Version " + objectKeys[key];
-                                this.draft[0].updatedDate = "jcr:lastModified" in responseJSON.en_US[objectKeys[key]] ? responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] : '';
+                                this.draft[0].updatedDate = responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] !== undefined ? responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] : '';
                                 this.draft[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
                                 this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
                                 // console.log("1:",this.draft[0]["path"]);  
                                 this.props.draftUpdateDate(this.draft[0].updatedDate, "draft", this.draft[0].path);
                             }
-                            if ("jcr:uuid" in responseJSON.en_US[objectKeys[key]]
+                            if (responseJSON.en_US[objectKeys[key]]["jcr:uuid"] !== undefined
                                 && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === releasedTag) {
                                 this.release[0].revision = "Version " + objectKeys[key];
-                                this.release[0].updatedDate = "jcr:lastModified" in responseJSON.en_US[objectKeys[key]] ? responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] : '';
+                                this.release[0].updatedDate = responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] !== undefined ? responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] : '';
                                 this.release[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
                                 this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
                                 // console.log("2:",this.release[0]["path"]);  
@@ -738,7 +738,7 @@ class Revisions extends Component<IProps, any> {
 
                                 if (Object.keys(this.state.allProducts).length > 0) {
                                     // tslint:disable-next-line: forin
-                                    for (let item in this.state.allProducts) {
+                                    for (const item in this.state.allProducts) {
                                         // tslint:disable-next-line: prefer-for-of
                                         for (let j = 0; j < this.state.allProducts[item].length; j++) {
                                             // console.log("[productValue] pName ", item)
