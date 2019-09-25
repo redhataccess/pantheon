@@ -1,13 +1,19 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
+import com.google.common.collect.Streams;
 import com.redhat.pantheon.model.module.Metadata;
+import org.asciidoctor.ast.Block;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.StructuralNode;
 import org.asciidoctor.extension.Treeprocessor;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.collect.Streams.concat;
+import static com.google.common.collect.Streams.stream;
+import static java.util.Optional.of;
 
 /**
  * A tree processor that extracts metadata from the asciidoc AST and inserts it
@@ -66,7 +72,7 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
      */
     private void extractHeadline(Document document) {
         // Get the first section (that's where a subtitle will be)
-        Optional<StructuralNode> headlineBlock = document.getBlocks().stream()
+        Optional<StructuralNode> headlineBlock = nodeFlatMap(document)
                 // find section blocks with level == 1
                 .filter(block -> block.getContext().equals("section") && block.getLevel() == 1)
                 .findFirst();
@@ -76,5 +82,16 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
         if(!headlineBlock.isPresent()) {
             metadata.headline.set(null);
         }
+    }
+
+    /**
+     * Converts a document into a flat representation of the nodes making it up.
+     * This method should only be called once per document processing, as it can be rather expensive.
+     * @param document The document which nodes' are being flat mapped
+     * @return A stream of nodes making up the given document, in order of appearance
+     */
+    private static Stream<StructuralNode> nodeFlatMap(Document document) {
+        return document.getBlocks().stream()
+                .flatMap(node -> concat(  stream(of(node)), node.getBlocks().stream()));
     }
 }
