@@ -1,3 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `<Fragment />`;
+
+exports[`ModuleDisplay tests test fetchModuleDetails function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getProduct function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getProductInitialLoad function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getVersion function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getVersionUUID function 1`] = `undefined`;

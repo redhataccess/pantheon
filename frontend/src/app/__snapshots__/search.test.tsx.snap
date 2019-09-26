@@ -125,11 +125,12 @@ exports[`Search tests should render default Search component 1`] = `
                   <DataListCell
                     width={2}
                   >
-                    <Link
-                      to=""
+                    <a
+                      href="/.preview"
+                      target="_blank"
                     >
                       
-                    </Link>
+                    </a>
                   </DataListCell>,
                   <DataListCell
                     width={2}
