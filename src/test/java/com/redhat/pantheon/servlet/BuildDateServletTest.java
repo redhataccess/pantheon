@@ -16,10 +16,10 @@ public class BuildDateServletTest {
     public void testBuilddate() throws Exception {
         //Given
         BuildDateServlet buildDate = new BuildDateServlet();
-        
+
         //When
         String date = buildDate.getDate();
-        
+
         //Then
         assertEquals(true,date.contains(""));
     }
@@ -34,6 +34,6 @@ public class BuildDateServletTest {
         String hash = buildDate.getCommitHash();
 
         //Then
-        assertEquals(true, hash.contains("OPENSHIFT_BUILD_COMMIT is not set"));
+        assertEquals(true, hash.contains("COMMIT_HASH is not set"));
     }
 }
