@@ -10,57 +10,62 @@ import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 
-export default class Search extends Component {
-  public state = {
-    alertOneVisible: true ,
-    allPaths: [''],
-    check: false,
-    checkNextPageRow: "",
-    checkedItemKey: "checkedItem",
-    columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
-    confirmDelete: false,
-    countOfCheckedBoxes: 0,
-    deleteButtonVisible: false,
-    deleteState: '',
-    initialLoad: true,
-    input: '',
-    isEmptyResults: false,
-    isModalOpen: false,
-    isSortedUp: true,
-    loggedinStatus: false,
-    moduleName: '',
-    modulePath: '',
-    moduleType: '',
-    moduleUpdatedDate: '',
-    nextPageRowCount: 1,
-    page: 1,
-    pageLimit: 25,
-    redirect: false,
-    redirectLocation: '',
-    results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" ,"checkedItem":false}],
-    showDropdownOptions: true,
-    sortKey: ''
-  };
+export default class Search extends Component<any, any> {
+  public transientPaths: string[] = [];
+  constructor(props) {
+    super(props)
+    this.state = {
+      alertOneVisible: true,
+      check: false,
+      checkNextPageRow: "",
+      checkedItemKey: "checkedItem",
+      columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
+      confirmDelete: false,
+      countOfCheckedBoxes: 0,
+      deleteButtonVisible: false,
+      deleteState: '',
+      initialLoad: true,
+      input: '',
+      isEmptyResults: false,
+      isModalOpen: false,
+      isSortedUp: true,
+      loggedinStatus: false,
+      moduleName: '',
+      modulePath: '',
+      moduleType: '',
+      moduleUpdatedDate: '',
+      nextPageRowCount: 1,
+      page: 1,
+      pageLimit: 25,
+      redirect: false,
+      redirectLocation: '',
+      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false }],
+      showDropdownOptions: true,
+      sortKey: ''
+    };
+  }
 
-  public transientPaths : string[] = [];
+  public componentDidMount() {
+    this.doSearch()
+
+    const id = 'userID';
+
+    fetch("/system/sling/info.sessionInfo.json")
+      .then(response => response.json())
+      .then(responseJSON => {
+        if (responseJSON[id] !== 'anonymous') {
+          this.setState({ loggedinStatus: true })
+        }
+      })
+  }
+
 
   public render() {
     const { columns, isEmptyResults, input, isSortedUp,sortKey} = this.state;
 
-    const id = 'userID';
-    if (!this.state.loggedinStatus && this.state.initialLoad===true) {
-      fetch("/system/sling/info.sessionInfo.json")
-        .then(response => response.json())
-        .then(responseJSON => {
-          if (responseJSON[id] !== 'anonymous') {
-            this.setState({ loggedinStatus: true })
-          }
-        })
-    }
     return (
       <React.Fragment>
-        {console.log("initial load: ", this.state.initialLoad)}
-        {this.state.initialLoad && this.doSearch()}
+        {/* {console.log("initial load: ", this.state.initialLoad)} */}
         <div>
           <div>
           <FormGroup
@@ -258,17 +263,15 @@ export default class Search extends Component {
     // console.log('handleSelectAll')
     this.setState({check: !this.state.check}, () => {
       this.setState(prevState => {
-        this.state.allPaths=[]
         this.transientPaths=[]
         const selectAllcheck = this.state.results.map(dataitem => {
               dataitem[this.state.checkedItemKey] = this.state.check
               // console.log(dataitem["pant:transientPath"]+":"+dataitem[this.state.checkedItemKey])
               if(this.state.check){
-                this.state.allPaths.push(dataitem["pant:transientPath"])
+                this.transientPaths.push(dataitem["pant:transientPath"])
               }
           return dataitem
         })
-        this.transientPaths=this.state.allPaths
         if(this.state.check === true){
           this.setState({countOfCheckedBoxes: this.state.results.length}, () => {
             // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
@@ -377,11 +380,11 @@ export default class Search extends Component {
   }
 
   private doSearch = () => {
-    this.setState({ initialLoad: false })
     fetch(this.buildSearchUrl())
       .then(response => response.json())
       .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
       .then(() => {
+        this.setState({ initialLoad: false })
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
             check: false,
