@@ -77,11 +77,20 @@ class Revisions extends Component<IProps, any> {
 
     public componentDidMount() {
         this.fetchProductVersionDetails()
+        if (!this.state.loggedinStatus && this.state.initialLoad === true) {
+            fetch("/system/sling/info.sessionInfo.json")
+                .then(response => response.json())
+                .then(responseJSON => {
+                    if (responseJSON.userID) {
+                        if (responseJSON.userID !== 'anonymous') {
+                            this.setState({ loggedinStatus: true })
+                        }
+                    }
+                })
+        }
     }
 
     public render() {
-
-        const id = 'userID';
 
         const header = (
             <React.Fragment>
@@ -103,18 +112,6 @@ class Revisions extends Component<IProps, any> {
         this.state.usecases.map((item) => (
             ucOptions.push({ value: item, label: item, disabled: false })
         ))
-
-        if (!this.state.loggedinStatus && this.state.initialLoad === true) {
-            fetch("/system/sling/info.sessionInfo.json")
-                .then(response => response.json())
-                .then(responseJSON => {
-                    if (responseJSON[id]) {
-                        if (responseJSON[id] !== 'anonymous') {
-                            this.setState({ loggedinStatus: true })
-                        }
-                    }
-                })
-        }
 
         return (
             <React.Fragment>

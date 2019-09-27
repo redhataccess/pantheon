@@ -8,15 +8,16 @@ export interface IProps {
     productName: string
 }
 
-class ProductDetails extends Component<IProps> {
-
-    public state = {
-        allVersionNames: [],
-        fetchProductDetails: true,
-        newVersion: ''
-    };
-
+class ProductDetails extends Component<IProps, any> {
     public versionNames: string[] = [];
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            allVersionNames: [],
+            newVersion: ''
+        };
+    }
 
     public render() {
         return (
@@ -87,18 +88,17 @@ class ProductDetails extends Component<IProps> {
                 }
             })
             .then(responseJSON => {
-                for(let i=0; i < Object.keys(responseJSON).length;i++){    
+                // tslint:disable-next-line: prefer-for-of
+                for (let i = 0; i < Object.keys(responseJSON).length; i++) {
                     key = Object.keys(responseJSON)[i];
-                    const keyName = "name"
                     if ((key !== 'jcr:primaryType')) {
-                        if (responseJSON[key][keyName] !== undefined) {
-                            versionNames.push(responseJSON[key][keyName]);
+                        if (responseJSON[key].name !== undefined) {
+                            versionNames.push(responseJSON[key].name);
                         }
                     }
                 }
                 this.setState({
-                    allVersionNames: versionNames,
-                    fetchProductDetails: false
+                    allVersionNames: versionNames
                 })
             })
             .catch((error) => {

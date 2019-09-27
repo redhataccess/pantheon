@@ -13,7 +13,7 @@ import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 export default class Search extends Component<any, any> {
   public transientPaths: string[] = [];
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       alertOneVisible: true,
       check: false,
@@ -46,29 +46,28 @@ export default class Search extends Component<any, any> {
   }
 
   public componentDidMount() {
-    this.doSearch()
-
-    const id = 'userID';
-
     fetch("/system/sling/info.sessionInfo.json")
       .then(response => response.json())
       .then(responseJSON => {
-        if (responseJSON[id] !== 'anonymous') {
+        if (responseJSON.userID !== 'anonymous') {
           this.setState({ loggedinStatus: true })
         }
       })
+
+    this.doSearch()
   }
 
 
   public render() {
-    const { columns, isEmptyResults, input, isSortedUp,sortKey} = this.state;
+    const { isEmptyResults } = this.state;
 
     return (
       <React.Fragment>
         {/* {console.log("initial load: ", this.state.initialLoad)} */}
+        {this.state.initialLoad && this.doSearch()}
         <div>
           <div>
-          <FormGroup
+            <FormGroup
               label="Search Query"
               fieldId="search"
               helperText="Search is case sensitive. An empty search will show all modules."
@@ -97,7 +96,7 @@ export default class Search extends Component<any, any> {
                   {this.state.loggedinStatus && !this.state.isEmptyResults &&
                     <DataListCheck aria-labelledby="width-ex1-check1"
                       className="checkbox"
-                      isChecked={this.state.check} 
+                      isChecked={this.state.check}
                       checked={this.state.check}
                       aria-label="controlled checkbox example"
                       id="check"
@@ -105,23 +104,23 @@ export default class Search extends Component<any, any> {
                       isDisabled={false}
                     />}
                   <DataListItemCells
-                        dataListCells={[
-                          <DataListCell width={2} key="title">
-                            <button onClick={this.sortByName} className="sp-prop" id="span-name" aria-label="sort column by name">Name</button>
-                          </DataListCell>,
-                          <DataListCell width={2} key="description">
-                            <button onClick={this.sortByDescription} className="sp-prop" id="span-name" aria-label="sort column by description">Description</button>
-                          </DataListCell>,
-                          <DataListCell key="resource source">
-                            <span className="sp-prop-nosort" id="span-source-type">Source Type</span>
-                          </DataListCell>,
-                          <DataListCell key="source name">
-                            <span className="sp-prop-nosort" id="span-source-name">Source Name</span>
-                          </DataListCell>,
-                          <DataListCell key="upload time">
-                            <button onClick={this.sortByUploadTime} className="sp-prop" id="span-name" aria-label="sort column by upload time">Upload Time</button>
-                          </DataListCell>,
-                        ]}
+                    dataListCells={[
+                      <DataListCell width={2} key="title">
+                        <button onClick={this.sortByName} className="sp-prop" id="span-name" aria-label="sort column by name">Name</button>
+                      </DataListCell>,
+                      <DataListCell width={2} key="description">
+                        <button onClick={this.sortByDescription} className="sp-prop" id="span-name" aria-label="sort column by description">Description</button>
+                      </DataListCell>,
+                      <DataListCell key="resource source">
+                        <span className="sp-prop-nosort" id="span-source-type">Source Type</span>
+                      </DataListCell>,
+                      <DataListCell key="source name">
+                        <span className="sp-prop-nosort" id="span-source-name">Source Name</span>
+                      </DataListCell>,
+                      <DataListCell key="upload time">
+                        <button onClick={this.sortByUploadTime} className="sp-prop" id="span-name" aria-label="sort column by upload time">Upload Time</button>
+                      </DataListCell>,
+                    ]}
                   />
                 </DataListItemRow>
                 {/* Delete button at the top */}
@@ -144,47 +143,47 @@ export default class Search extends Component<any, any> {
                         name={data["pant:transientPath"]}
                         onClick={this.handleDeleteCheckboxChange(data["pant:transientPath"])}
                       />}
-                      
+
                     <DataListItemCells key={data["pant:transientPath"]}
-                          dataListCells={[
-                                <DataListCell key="div-title" width={2}>
-                                  {this.state.loggedinStatus &&
-                                  <Link to={data['pant:transientPath']}>{data["jcr:title"]}</Link> }
-                                  {!this.state.loggedinStatus &&
-                                  <a href={"/" + data['pant:transientPath'] +".preview"} target="_blank">{data["jcr:title"]}</a> }
-                                </DataListCell>,
-                                <DataListCell  key="div-description" width={2}>
-                                  <span>{data["jcr:description"]===""?"No items found to be displayed":data["jcr:description"]}</span>
-                                </DataListCell>,
-                                <DataListCell key="div-transient-source">
-                                  <span>{data["pant:transientSource"]}</span>
-                                </DataListCell>,
-                                <DataListCell key="div-transient-source-name">
-                                  <span>{data["pant:transientSourceName"]}</span>
-                                </DataListCell>,
-                                <DataListCell key="div-created">
-                                <span >{this.formatDate(new Date(data["pant:dateUploaded"]))}</span>
-                                </DataListCell>
-                          ]}
+                      dataListCells={[
+                        <DataListCell key="div-title" width={2}>
+                          {this.state.loggedinStatus &&
+                            <Link to={data['pant:transientPath']}>{data["jcr:title"]}</Link>}
+                          {!this.state.loggedinStatus &&
+                            <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
+                        </DataListCell>,
+                        <DataListCell key="div-description" width={2}>
+                          <span>{data["jcr:description"] === "" ? "No items found to be displayed" : data["jcr:description"]}</span>
+                        </DataListCell>,
+                        <DataListCell key="div-transient-source">
+                          <span>{data["pant:transientSource"]}</span>
+                        </DataListCell>,
+                        <DataListCell key="div-transient-source-name">
+                          <span>{data["pant:transientSourceName"]}</span>
+                        </DataListCell>,
+                        <DataListCell key="div-created">
+                          <span >{this.formatDate(new Date(data["pant:dateUploaded"]))}</span>
+                        </DataListCell>
+                      ]}
                     />
                   </DataListItemRow>
                 ))}
                 {/* Delete button at the bottom */}
                 <DataListItemRow id="data-rows" key={this.state.results["pant:transientPath"]}>
-                    {
-                      this.state.deleteButtonVisible?
-                        <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
-                      :null
-                    }
+                  {
+                    this.state.deleteButtonVisible ?
+                      <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
+                      : null
+                  }
 
                 </DataListItemRow>
                 {isEmptyResults && (
-                      <Level gutter="md">
-                        <LevelItem />
-                        <LevelItem>
-                          <div className="notification-container">
-                      <br />
-                      <br />
+                  <Level gutter="md">
+                    <LevelItem />
+                    <LevelItem>
+                      <div className="notification-container">
+                        <br />
+                        <br />
                         <Alert
                           variant="warning"
                           title={"No modules found with your search of: " + this.state.input}
@@ -193,10 +192,10 @@ export default class Search extends Component<any, any> {
                         <br />
                         <br />
                       </div></LevelItem>
-                        <LevelItem />
-                      </Level>
+                    <LevelItem />
+                  </Level>
 
-                    )}
+                )}
               </DataListItem>
             </DataList>
             <div className="notification-container">
@@ -211,47 +210,47 @@ export default class Search extends Component<any, any> {
                 showDropdownOptions={!this.state.showDropdownOptions}
                 bottom={true}
               />
-            <BuildInfo/>
+              <BuildInfo />
             </div>
             {/* Alert for delete confirmation */}
             <div className="alert">
-              {this.state.confirmDelete===true && <Modal
-                    isSmall={true}
-                    title="Confirmation"
-                    isOpen={!this.state.isModalOpen}
-                    onClose={this.hideAlertOne}
-                    actions={[<Button key="yes" variant="primary" onClick={this.delete(this.transientPaths)}>Yes</Button>,
-                              <Button key="no" variant="secondary" onClick={this.cancelDeleteOperation}>No</Button>]}
-                    >
-                      Are you sure you want to delete the selected items?
+              {this.state.confirmDelete === true && <Modal
+                isSmall={true}
+                title="Confirmation"
+                isOpen={!this.state.isModalOpen}
+                onClose={this.hideAlertOne}
+                actions={[<Button key="yes" variant="primary" onClick={this.delete(this.transientPaths)}>Yes</Button>,
+                <Button key="no" variant="secondary" onClick={this.cancelDeleteOperation}>No</Button>]}
+              >
+                Are you sure you want to delete the selected items?
                 </Modal>}
-                {/* Alerts after confirmation on delete */}
-              {this.state.deleteState==='positive' && <Modal
-                    isSmall={true}
-                    title="Success"
-                    isOpen={!this.state.isModalOpen}
-                    onClose={this.hideAlertOne}
-                    actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
-                    >
-                      Selected items were deleted.
+              {/* Alerts after confirmation on delete */}
+              {this.state.deleteState === 'positive' && <Modal
+                isSmall={true}
+                title="Success"
+                isOpen={!this.state.isModalOpen}
+                onClose={this.hideAlertOne}
+                actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
+              >
+                Selected items were deleted.
                 </Modal>}
-                {this.state.deleteState==='negative' && <Modal
-                    isSmall={true}
-                    title="Failure"
-                    isOpen={!this.state.isModalOpen}
-                    onClose={this.hideAlertOne}
-                    actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
-                    >
-                      Selected items were not found.
+              {this.state.deleteState === 'negative' && <Modal
+                isSmall={true}
+                title="Failure"
+                isOpen={!this.state.isModalOpen}
+                onClose={this.hideAlertOne}
+                actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
+              >
+                Selected items were not found.
                 </Modal>}
-                {this.state.deleteState==='unknown' && <Modal
-                    isSmall={true}
-                    title="Error"
-                    isOpen={!this.state.isModalOpen}
-                    onClose={this.hideAlertOne}
-                    actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
-                    >
-                      An unknown error occured, please check if you are logged in.
+              {this.state.deleteState === 'unknown' && <Modal
+                isSmall={true}
+                title="Error"
+                isOpen={!this.state.isModalOpen}
+                onClose={this.hideAlertOne}
+                actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
+              >
+                An unknown error occured, please check if you are logged in.
                 </Modal>}
             </div>
           </div>
@@ -264,36 +263,36 @@ export default class Search extends Component<any, any> {
 
   private handleSelectAll = (event) => {
     // console.log('handleSelectAll')
-    this.setState({check: !this.state.check}, () => {
+    this.setState({ check: !this.state.check }, () => {
       this.setState(prevState => {
-        this.transientPaths=[]
+        this.transientPaths = []
         const selectAllcheck = this.state.results.map(dataitem => {
-              dataitem[this.state.checkedItemKey] = this.state.check
-              // console.log(dataitem["pant:transientPath"]+":"+dataitem[this.state.checkedItemKey])
-              if(this.state.check){
-                this.transientPaths.push(dataitem["pant:transientPath"])
-              }
+          dataitem[this.state.checkedItemKey] = this.state.check
+          // console.log(dataitem["pant:transientPath"]+":"+dataitem[this.state.checkedItemKey])
+          if (this.state.check) {
+            this.transientPaths.push(dataitem["pant:transientPath"])
+          }
           return dataitem
         })
-        if(this.state.check === true){
-          this.setState({countOfCheckedBoxes: this.state.results.length}, () => {
+        if (this.state.check === true) {
+          this.setState({ countOfCheckedBoxes: this.state.results.length }, () => {
             // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
-                if(this.state.countOfCheckedBoxes > 0){
-                  this.setState({deleteButtonVisible: true})
-                }else{
-                  this.setState({deleteButtonVisible: false})
-                }
-                // console.log('transientPaths:'+this.transientPaths)
-              })
-        }else{
-          this.setState({countOfCheckedBoxes: 0}, () => {
+            if (this.state.countOfCheckedBoxes > 0) {
+              this.setState({ deleteButtonVisible: true })
+            } else {
+              this.setState({ deleteButtonVisible: false })
+            }
+            // console.log('transientPaths:'+this.transientPaths)
+          })
+        } else {
+          this.setState({ countOfCheckedBoxes: 0 }, () => {
             // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
             this.transientPaths = []
             // console.log('transientPaths:'+this.transientPaths)
-            this.setState({deleteButtonVisible: false})
+            this.setState({ deleteButtonVisible: false })
           })
         }
-        return{
+        return {
           data: selectAllcheck
         }
       })
@@ -304,86 +303,87 @@ export default class Search extends Component<any, any> {
   private handleDeleteCheckboxChange = (id) => (event: any) => {
     this.setState(prevState => {
       const updatedData = this.state.results.map(data => {
-        if(data["pant:transientPath"] === id){
+        if (data["pant:transientPath"] === id) {
           data[this.state.checkedItemKey] = !data[this.state.checkedItemKey]
-          if(data[this.state.checkedItemKey] === true){
-            this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes+1}, () => {
+          if (data[this.state.checkedItemKey] === true) {
+            this.setState({ countOfCheckedBoxes: this.state.countOfCheckedBoxes + 1 }, () => {
               // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
-              if(this.state.countOfCheckedBoxes > 0){
-                this.setState({deleteButtonVisible: true})
-              }else{
-                this.setState({deleteButtonVisible: false})
+              if (this.state.countOfCheckedBoxes > 0) {
+                this.setState({ deleteButtonVisible: true })
+              } else {
+                this.setState({ deleteButtonVisible: false })
               }
             })
             this.transientPaths.push(data["pant:transientPath"]);
             // console.log('transientPaths:'+this.transientPaths)
             // console.log('all Paths:'+this.state.allPaths)
-          }else{
-            this.setState({countOfCheckedBoxes: this.state.countOfCheckedBoxes-1}, () => {
+          } else {
+            this.setState({ countOfCheckedBoxes: this.state.countOfCheckedBoxes - 1 }, () => {
               // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
-              if(this.state.countOfCheckedBoxes > 0){
-                this.setState({deleteButtonVisible: true})
-              }else{
-                this.setState({deleteButtonVisible: false})
+              if (this.state.countOfCheckedBoxes > 0) {
+                this.setState({ deleteButtonVisible: true })
+              } else {
+                this.setState({ deleteButtonVisible: false })
               }
             })
-            this.transientPaths.splice(this.transientPaths.indexOf(id),1)
+            this.transientPaths.splice(this.transientPaths.indexOf(id), 1)
             // console.log('transientPaths:'+this.transientPaths)
             // console.log('all Paths:'+this.state.allPaths)
           }
         }
         return data
       })
-      return{
+      return {
         data: updatedData
       }
     })
   };
 
-  private delete = (keydata) => (event: any) =>  {
+  private delete = (keydata) => (event: any) => {
     // console.log(keydata)
     // console.log('in the delete function')
-      const formData = new FormData();
-      formData.append(':operation', 'delete')
-      for (const item of keydata){
-        formData.append(':applyTo', '/content/'+item)
+    const formData = new FormData();
+    formData.append(':operation', 'delete')
+    for (const item of keydata) {
+      formData.append(':applyTo', '/content/' + item)
+    }
+    fetch('/content/' + keydata[0], {
+      body: formData,
+      method: 'post'
+    }).then(response => {
+      if (response.status === 200) {
+        this.setState({ deleteState: 'positive' }, () =>
+          this.transientPaths = [])
+        // console.log('deleteState:'+this.state.deleteState)
+      } else if (response.status === 403) {
+        this.setState({ deleteState: 'negative' }, () =>
+          this.transientPaths = [])
+        // console.log('deleteState:'+this.state.deleteState)
+      } else {
+        this.setState({ deleteState: 'unknown' }, () =>
+          this.transientPaths = [])
+        // console.log('deleteState:'+this.state.deleteState)
       }
-      fetch('/content/'+keydata[0], {
-        body: formData,
-        method: 'post'
-      }).then(response => {
-        if (response.status === 200) {
-          this.setState({ deleteState: 'positive'},() =>
-          this.transientPaths=[])
-          // console.log('deleteState:'+this.state.deleteState)
-        } else if (response.status === 403) {
-          this.setState({ deleteState: 'negative'},() =>
-          this.transientPaths=[])
-          // console.log('deleteState:'+this.state.deleteState)
-        } else {
-          this.setState({ deleteState: 'unknown'},() =>
-          this.transientPaths=[])
-          // console.log('deleteState:'+this.state.deleteState)
-        }
-      });
+    });
   }
 
   private getRows = (event) => {
     if (event.key === 'Enter') {
-      this.setState({page: 1, initialLoad: true},()=>{
+      this.setState({ page: 1, initialLoad: true }, () => {
         this.doSearch()
       })
     }
   };
 
   private newSearch = () => {
-    this.setState({page: 1, initialLoad: true},()=>{
+    this.setState({ page: 1, initialLoad: true }, () => {
       this.doSearch()
     })
   }
 
+  // Handle gateway timeout on slow connections.
   private doSearch = () => {
-    fetch(this.buildSearchUrl())
+    this.fetchTimeout(1000, fetch(this.buildSearchUrl())
       .then(response => response.json())
       .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
       .then(() => {
@@ -400,15 +400,20 @@ export default class Search extends Component<any, any> {
             countOfCheckedBoxes: 0,
             deleteButtonVisible: false,
             isEmptyResults: false
-           })
+          })
         }
       })
-    }
+      .catch(error => {
+        // might be a timeout error
+        console.log("[doSearch] error ", error)
+      }));
+  }
+
 
   private formatDate(date: Date) {
     // 2019/05/07 14:21:36
     let dateStr = date.getFullYear().toString() + "/" +
-      (date.getMonth()+1).toString() + "/" +
+      (date.getMonth() + 1).toString() + "/" +
       date.getDate().toString() + " " +
       date.getHours().toString() + ":" +
       date.getMinutes().toString() + ":" +
@@ -447,7 +452,7 @@ export default class Search extends Component<any, any> {
   private getSortedRows() {
     fetch(this.buildSearchUrl())
       .then(response => response.json())
-      .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0  }))
+      .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
       .then(() => {
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
@@ -466,7 +471,7 @@ export default class Search extends Component<any, any> {
       backend += this.state.input
     }
     backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
-    backend += "&offset=" + ((this.state.page - 1)*this.state.pageLimit) + "&limit=" + this.state.pageLimit
+    backend += "&offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
     // console.log('itemsPerPaeProp: '+this.state.pageLimit)
     // console.log(backend)
     return backend
@@ -481,29 +486,37 @@ export default class Search extends Component<any, any> {
     });
   });
 
-  private confirmDeleteOperation = () => this.setState({confirmDelete: !this.state.confirmDelete},() =>{
-      console.log('confirmDelete:'+this.state.confirmDelete)
-    });
-
-  private cancelDeleteOperation = () => this.setState({confirmDelete: !this.state.confirmDelete},() =>{
-    console.log('confirmDelete cancelled:'+this.state.confirmDelete)
+  private confirmDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete }, () => {
+    console.log('confirmDelete:' + this.state.confirmDelete)
   });
 
-  private updatePageCounter = (direction: string) => () =>  {
-    if(direction==="L" && this.state.page>1){
-      this.setState({page: this.state.page - 1, initialLoad: true})
-    }else if(direction==="R"){
-      this.setState({page: this.state.page + 1, initialLoad: true})
-    }else if(direction==="F"){
-      this.setState({page: 1, initialLoad: true})
+  private cancelDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete }, () => {
+    console.log('confirmDelete cancelled:' + this.state.confirmDelete)
+  });
+
+  private updatePageCounter = (direction: string) => () => {
+    if (direction === "L" && this.state.page > 1) {
+      this.setState({ page: this.state.page - 1, initialLoad: true })
+    } else if (direction === "R") {
+      this.setState({ page: this.state.page + 1, initialLoad: true })
+    } else if (direction === "F") {
+      this.setState({ page: 1, initialLoad: true })
     }
   }
 
   private changePerPageLimit = (pageLimitValue) => {
-    this.setState({pageLimit: pageLimitValue, initialLoad: true,page: 1},()=>{
+    this.setState({ pageLimit: pageLimitValue, initialLoad: true, page: 1 }, () => {
       // console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
-      return (this.state.pageLimit+" items per page")
+      return (this.state.pageLimit + " items per page")
     })
   }
 
+  private fetchTimeout(ms, promise) {
+    return new Promise(() => (resolve, reject) => {
+      setTimeout(() => {
+        reject(new Error("timeout"))
+      }, ms)
+      promise.then(resolve, reject)
+    })
+  }
 }

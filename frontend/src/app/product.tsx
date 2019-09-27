@@ -3,18 +3,25 @@ import { Bullseye, Button, Alert, AlertActionCloseButton, Form, FormGroup, TextI
 import '@app/app.css';
 import { Redirect } from 'react-router-dom'
 
-class Product extends Component {
-  public state = {
-    failedPost: false,
-    isDup: false,
-    isMissingFields: false,
-    login: false,
-    productDescription: '',
-    productName: '',
-    redirect: false,
-    results: [],
-  };
+class Product extends Component<any, any> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      failedPost: false,
+      isDup: false,
+      isMissingFields: false,
+      login: false,
+      productDescription: '',
+      productName: '',
+      redirect: false,
+      results: [],
+    };
 
+  }
+
+  public componentDidMount() {
+    this.checkAuth()
+  }
   // render method transforms the react components into DOM nodes for the browser.
   public render() {
     const { productName, productDescription, isMissingFields, isDup } = this.state;
@@ -61,7 +68,6 @@ class Product extends Component {
                 <ActionGroup>
                   <Button aria-label="Creates a new Product Name with Description specified." onClick={this.saveProduct}>Save</Button>
                   <div>
-                    {this.checkAuth()}
                     {this.loginRedirect()}
                     {this.renderRedirect()}
                   </div>
@@ -146,8 +152,7 @@ class Product extends Component {
     fetch("/system/sling/info.sessionInfo.json")
       .then(response => response.json())
       .then(responseJSON => {
-        const key = "userID"
-        if (responseJSON[key] === 'anonymous') {
+        if (responseJSON.userID === 'anonymous') {
           this.setState({ login: true })
         }
       })

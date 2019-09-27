@@ -194,7 +194,6 @@ describe('ModuleDisplay tests', () => {
         const wrapper = shallow(<ModuleDisplay {...props} />);
         wrapper.setState({ 'login': true })
         wrapper.setState({ "moduleTitle": "test title" });
-        console.log("[moduleDisplay Test] ", wrapper.debug())
 
         const sourceText = wrapper.find('[component="h1"]').first().html();
         // ensure it matches what is expected

@@ -7,6 +7,7 @@ import { mount, shallow } from 'enzyme';
 import { DataList, Button, TextInput } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
 import sinon from "sinon";
+import anymatch from 'anymatch';
 
 describe('Search tests', () => {
   test('should render default Search component', () => {
@@ -144,5 +145,11 @@ describe('Search tests', () => {
     wrapper.setState({ "iput": "test" })
     wrapper.find(Button).simulate('click');
     sinon.assert.called(spy);
+  });
+
+  it('test fetchTimeout function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.fetchTimeout).toMatchSnapshot();
   });
 });

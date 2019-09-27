@@ -6,18 +6,37 @@ import fetch from 'isomorphic-fetch';
 // BASE is used in the fetch call to check if isLoggedIn or isAdmin. It currently breaks the Navlinks.
 // only search is displayed when BASE is consumed.
 // const BASE = process.env.BROWSER? '': `http://localhost`;
-class NavLinks extends Component {
+class NavLinks extends Component<any, any> {
 
-  public state = {
-    activeGroup: 'grp-1',
-    activeItem: 'grp-1_itm-1',
-    gotUserInfo: false,
-    isAdmin: false,
-    isDropdownOpen: false,
-    isKebabDropdownOpen: false,
-    isLoggedIn: false,
+  constructor(props) {
+    super(props)
+    this.state = {
+      activeGroup: '',
+      activeItem: '',
+      gotUserInfo: false,
+      isAdmin: false,
+      isDropdownOpen: false,
+      isKebabDropdownOpen: false,
+      isLoggedIn: false,
+    }
   }
 
+  public componentDidMount() {
+    if (!this.state.isLoggedIn) {
+      fetch("/system/sling/info.sessionInfo.json")
+        .then(response => response.json())
+        .then(responseJSON => {
+          if (responseJSON.userID !== 'anonymous') {
+            this.setState({ moduleText: 'New Module' })
+            this.setState({ isLoggedIn: true })
+          }
+          if (responseJSON.userID === 'admin') {
+            this.setState({ isAdmin: true })
+          }
+        })
+    }
+    this.setState({ activeGroup: 'grp-1', activeItem: 'grp-1_itm-1' });
+  }
   public render() {
     const browserText = 'Content Browser'
     const consoleText = 'Web Console'
@@ -27,20 +46,7 @@ class NavLinks extends Component {
     const productsText = 'Product Listing'
     const searchText = 'Search'
     const slingHomeText = 'Sling Welcome'
-    const id = 'userID';
-    if (!this.state.isLoggedIn) {
-      fetch("/system/sling/info.sessionInfo.json")
-        .then(response => response.json())
-        .then(responseJSON => {
-          if (responseJSON[id] !== 'anonymous') {
-            this.setState({ moduleText: 'New Module' })
-            this.setState({ isLoggedIn: true })
-          }
-          if (responseJSON[id] === 'admin') {
-            this.setState({ isAdmin: true })
-          }
-        })
-    }
+
     return (
       <React.Fragment>
         <NavList>

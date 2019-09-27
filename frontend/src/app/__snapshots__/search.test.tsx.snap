@@ -198,6 +198,8 @@ exports[`Search tests test dismissNotification function 1`] = `undefined`;
 
 exports[`Search tests test doSearch function 1`] = `undefined`;
 
+exports[`Search tests test fetchTimeout function 1`] = `undefined`;
+
 exports[`Search tests test getRows function 1`] = `undefined`;
 
 exports[`Search tests test handleDeleteCheckboxChange function 1`] = `undefined`;
