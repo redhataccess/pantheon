@@ -64,7 +64,6 @@ class ProductListing extends Component<any, any, any> {
     return (
       <React.Fragment>
         {this.state.isProductDetails && (<ProductDetails productName={this.state.productName} />)}
-        {/* {this.state.initialLoad && this.getProducts(this.state.allProducts)} */}
         {!this.state.isProductDetails && (
           <div>
             <FormGroup
