@@ -10,11 +10,10 @@ import sinon from 'sinon'
 const anymatch = require('anymatch');
 
 const props = {
-    draftUpdateDate: anymatch,
+    updateDate: anymatch,
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
-    releaseUpdateDate: anymatch,
     revisionModulePath: "/modules/test/en_US/1",
 }
 

@@ -13,20 +13,21 @@ import { Redirect } from 'react-router-dom'
 export interface IProps {
     modulePath: string
     revisionModulePath: string
-    draftUpdateDate: (draftUpdateDate, draft, draftPath) => any
-    releaseUpdateDate: (releaseUpdateDate, release, releasePath) => any
+    updateDate: (draftUpdateDate,releaseUpdateDate) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
 
 class Revisions extends Component<IProps, any> {
 
-    public draft = [{ "icon": BlankImage, "path": "", "revision": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
-    public release = [{ "icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
+    public draft = [{ "type":"draft","icon": BlankImage, "path": "", "revision": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
+    public release = [{ "type":"release","icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '',"draftUploadDate": "" }]
 
     constructor(props) {
         super(props)
         this.state = {
+            changePublishState: false,
+            draftUploadTime: '',
             initialLoad: true,
             isArchiveDropDownOpen: false,
             isArchiveSelect: false,
@@ -189,10 +190,12 @@ class Revisions extends Component<IProps, any> {
                                                                     {data.revision}
                                                                 </DataListCell>,
                                                                 <DataListCell key="published">
-                                                                    {data.publishedState}
+                                                                    {data.publishedState==="Not published" && data.publishedState}
+                                                                    {data.publishedState==="Released" && data.updatedDate}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated">
-                                                                    {data.updatedDate.trim() !== "" && data.updatedDate.length >= 15 ? data.updatedDate.substring(4, 15) : "-"}
+                                                                    {data["type"]==="draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
+                                                                    {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
                                                                 </DataListCell>,
                                                                 <DataListCell key="publish_buttons">
                                                                     <Button variant="primary" onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>{'  '}
@@ -237,7 +240,8 @@ class Revisions extends Component<IProps, any> {
                                                                     <span className="sp-prop-nosort" id="span-source-type-upload-time">Upload Time</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
-                                                                    {data.updatedDate}
+                                                                    {data["type"]==="draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
+                                                                    {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
                                                                 </DataListCell>,
                                                             ]}
                                                         />
@@ -368,7 +372,6 @@ class Revisions extends Component<IProps, any> {
                     const releasedTag = responseJSON.en_US.released;
                     const draftTag = responseJSON.en_US.draft;
 
-
                     const objectKeys = Object.keys(responseJSON.en_US);
 
                     for (const key in objectKeys) {
@@ -379,22 +382,24 @@ class Revisions extends Component<IProps, any> {
                             if (responseJSON.en_US[objectKeys[key]]["jcr:uuid"] !== undefined
                                 && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === draftTag) {
                                 this.draft[0].revision = "Version " + objectKeys[key];
-                                this.draft[0].updatedDate = responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] !== undefined ? responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] : '';
+                                this.draft[0].updatedDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] : '';
                                 this.draft[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
                                 this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
-                                // console.log("1:",this.draft[0]["path"]);  
-                                this.props.draftUpdateDate(this.draft[0].updatedDate, "draft", this.draft[0].path);
-                            }
+                            }                            
                             if (responseJSON.en_US[objectKeys[key]]["jcr:uuid"] !== undefined
                                 && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === releasedTag) {
                                 this.release[0].revision = "Version " + objectKeys[key];
-                                this.release[0].updatedDate = responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] !== undefined ? responseJSON.en_US[objectKeys[key]]["jcr:lastModified"] : '';
+                                this.release[0].updatedDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:datePublished"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:datePublished"] : '';
+                                this.release[0].draftUploadDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] : '';
                                 this.release[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
                                 this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
-                                // console.log("2:",this.release[0]["path"]);  
-                                this.props.releaseUpdateDate(this.release[0].updatedDate, "release", this.release[0].path)
                             }
+                            if(releasedTag===undefined){
+                                this.release[0].updatedDate = "-";
+                            }
+                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate);
                         }
+                        
 
                     }
                     return {
@@ -424,10 +429,10 @@ class Revisions extends Component<IProps, any> {
         }).then(response => {
             if (response.status === 201 || response.status === 200) {
                 // console.log(buttonText + " works: " + response.status)
-                this.setState({ initialLoad: true })
+                this.setState({ initialLoad: true, changePublishState: true })
             } else {
-                // console.log(buttonText + " failed " + response.status)
-                this.setState({ initialLoad: true })
+                console.log(buttonText + " failed " + response.status)
+                this.setState({ initialLoad: true, changePublishState: true })
             }
         });
 

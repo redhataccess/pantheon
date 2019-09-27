@@ -82,14 +82,14 @@ class ModuleDisplay extends Component<any, any, any> {
                                                     <span>
                                                         {this.state.releaseUpdateDate.trim() !== ""
                                                             && this.state.releaseUpdateDate.length >= 15 ?
-                                                            this.state.releaseUpdateDate.substring(4, 15) : "-"}
+                                                            this.state.releaseUpdateDate : "-"}
                                                     </span>
                                                 </DataListCell>,
                                                 <DataListCell key="updated">
                                                     <span>
                                                         {this.state.draftUpdateDate.trim() !== ""
                                                             && this.state.draftUpdateDate.length >= 15 ?
-                                                            this.state.draftUpdateDate.substring(4, 15) : "-"}
+                                                            this.state.draftUpdateDate : "-"}
                                                     </span>
                                                 </DataListCell>,
                                                 <DataListCell key="module_type">
@@ -107,8 +107,7 @@ class ModuleDisplay extends Component<any, any, any> {
                                 <Revisions
                                     modulePath={this.state.modulePath}
                                     revisionModulePath={this.state.moduleTitle}
-                                    draftUpdateDate={this.updateDate}
-                                    releaseUpdateDate={this.updateDate}
+                                    updateDate={this.updateDate}
                                     onGetProduct={this.getProduct}
                                     onGetVersion={this.getVersion}
                                 />
@@ -121,23 +120,14 @@ class ModuleDisplay extends Component<any, any, any> {
         );
     }
 
-    private updateDate = (date, type, path) => {
-        if (type === "draft") {
+    private updateDate = (draftDate,releaseDate) => {
             this.setState({
-                draftUpdateDate: date,
+                draftUpdateDate: draftDate,
                 // tslint:disable-next-line: object-literal-sort-keys
-                draftPath: path
+                releaseUpdateDate: releaseDate
             });
-        }
-        else {
-            this.setState({
-                releaseUpdateDate: date,
-                // tslint:disable-next-line: object-literal-sort-keys
-                releasePath: path
-            });
-        }
-    };
-
+    }
+    
     private fetchModuleDetails = (data) => {
         this.setState({ initialLoad: false, modulePath: data.location.pathname })
 
