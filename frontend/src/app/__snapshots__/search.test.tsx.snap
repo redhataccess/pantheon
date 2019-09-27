@@ -136,7 +136,7 @@ exports[`Search tests should render default Search component 1`] = `
                     width={2}
                   >
                     <span>
-                      No items found to be displayed
+                      
                     </span>
                   </DataListCell>,
                   <DataListCell>

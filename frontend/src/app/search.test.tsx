@@ -7,7 +7,6 @@ import { mount, shallow } from 'enzyme';
 import { DataList, Button, TextInput } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
 import sinon from "sinon";
-import anymatch from 'anymatch';
 
 describe('Search tests', () => {
   test('should render default Search component', () => {

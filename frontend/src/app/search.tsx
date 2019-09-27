@@ -153,7 +153,7 @@ export default class Search extends Component<any, any> {
                             <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
                         </DataListCell>,
                         <DataListCell key="div-description" width={2}>
-                          <span>{data["jcr:description"] === "" ? "No items found to be displayed" : data["jcr:description"]}</span>
+                          <span>{data["jcr:description"]}</span>
                         </DataListCell>,
                         <DataListCell key="div-transient-source">
                           <span>{data["pant:transientSource"]}</span>
