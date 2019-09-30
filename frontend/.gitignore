@@ -6,3 +6,5 @@ coverage
 .editorconfig
 .prettierignore
 .prettierrc
+RH-IT-Root-CA.crt
+.yarnrc
