@@ -3,16 +3,23 @@ import { Bullseye, Button, Alert, AlertActionCloseButton, FormGroup, TextInput }
 import '@app/app.css';
 import { Redirect } from 'react-router-dom'
 
-class Module extends Component {
-  public state = {
-    failedPost: false,
-    isMissingFields: false,
-    login: false,
-    moduleDescription: '',
-    moduleFile: File,
-    moduleName: '',
-    redirect: false
-  };
+class Module extends Component<any, any> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      failedPost: false,
+      isMissingFields: false,
+      login: false,
+      moduleDescription: '',
+      moduleFile: File,
+      moduleName: '',
+      redirect: false
+    };
+  }
+
+  public componentDidMount() {
+    this.checkAuth();
+  }
 
   public render() {
     const { moduleName, moduleDescription, isMissingFields } = this.state;
@@ -54,7 +61,6 @@ class Module extends Component {
               <br />
               <Button aria-label="Uploads the .adoc file with the Name and Description specified." onClick={this.saveModule}>Save</Button>
               <div>
-                {this.checkAuth()}
                 {this.loginRedirect()}
                 {this.renderRedirect()}
               </div>
@@ -67,13 +73,13 @@ class Module extends Component {
 
   private handleNameInput = moduleName => {
     this.setState({ moduleName });
-    console.log("Name " + moduleName)
+    // console.log("Name " + moduleName)
 
   };
 
   private handleModuleInput = moduleDescription => {
     this.setState({ moduleDescription });
-    console.log("Desc " + moduleDescription)
+    // console.log("Desc " + moduleDescription)
   };
 
   private handleFileChange = (event) => {
@@ -82,11 +88,11 @@ class Module extends Component {
 
   private setFile = selectorFiles => {
     this.setState({ moduleFile: selectorFiles })
-    console.log(selectorFiles);
+    // console.log(selectorFiles);
   }
 
   private saveModule = (postBody) => {
-    console.log("My data is: " + this.state.moduleName + " and my desc is " + this.state.moduleDescription + " and my files are " + this.state.moduleFile)
+    // console.log("My data is: " + this.state.moduleName + " and my desc is " + this.state.moduleDescription + " and my files are " + this.state.moduleFile)
     if (this.state.moduleName === "" || this.state.moduleFile[0] === undefined) {
       this.setState({ isMissingFields: true })
     } else {
@@ -94,7 +100,7 @@ class Module extends Component {
         'Accept': 'application/json',
         'cache-control': 'no-cache'
       }
-      console.log("The file is: " + this.state.moduleFile)
+      // console.log("The file is: " + this.state.moduleFile)
       const blob = new Blob([this.state.moduleFile[0]])
       const formData = new FormData();
       formData.append("jcr:title", this.state.moduleName)
@@ -151,7 +157,7 @@ class Module extends Component {
         }
       })
   }
-  
+
   private dismissNotification = () => {
     this.setState({ isMissingFields: false });
   };
