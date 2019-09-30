@@ -122,14 +122,6 @@ describe('ModuleDisplay tests', () => {
         expect(inst.getProductInitialLoad()).toMatchSnapshot();
     });
 
-    it('should handle state changes for initialLoad', () => {
-        const wrapper = shallow(<ModuleDisplay {...props} />)
-
-        expect(wrapper.state('initialLoad')).toBe(true)
-        wrapper.setState({ 'initialLoad': false })
-        expect(wrapper.state('initialLoad')).toBe(false)
-    });
-
     it('has a props', () => {
         const moduleDisplay = mount(<ModuleDisplay {...props} />).matchesElement
         expect(moduleDisplay.length === 1)
