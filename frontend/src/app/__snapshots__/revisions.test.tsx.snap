@@ -146,7 +146,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
               isDisabled={false}
               key="0"
               label="Select a Product"
-              value="Select a Product"
+              value=""
             />
           </FormSelect>
           <FormSelect
@@ -158,14 +158,14 @@ exports[`Revisions tests should render Revisions component 1`] = `
             onBlur={[Function]}
             onChange={[Function]}
             onFocus={[Function]}
+            required={true}
             value=""
           >
             <FormSelectOption
               isDisabled={false}
-              key="Select a Version"
+              key=""
               label="Select a Version"
-              required={false}
-              value="Select a Version"
+              value=""
             />
           </FormSelect>
         </InputGroup>
@@ -189,7 +189,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
             isDisabled={false}
             key="0"
             label="Select Use Case"
-            value="Select Use Case"
+            value=""
           />
           <FormSelectOption
             isDisabled={false}
