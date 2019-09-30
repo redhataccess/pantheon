@@ -22,7 +22,7 @@ class User extends Component {
 
         return (
             <React.Fragment>
-                <Link to={this.state.isLoggedIn ? '/logout' : '/login'}
+                <Link to={this.state.isLoggedIn ? '' : '/login'}
                     onClick={this.conditionalRedirect}>
                     {this.state.linkText}
                 </Link>
