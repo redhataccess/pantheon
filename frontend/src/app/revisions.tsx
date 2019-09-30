@@ -357,41 +357,43 @@ class Revisions extends Component<IProps, any> {
     }
 
     private fetchRevisions = () => {
-        let fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
-        fetch(fetchpath)
-            .then(response => response.json())
-            .then(responseJSON => {
-                this.setState(updateState => {
-                    const releasedTag = responseJSON["released"];
-                    const draftTag = responseJSON["draft"];
-                    const versionCount = responseJSON["__children__"].length
+        if (this.props.modulePath !== '') {
+            const fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
+            fetch(fetchpath)
+                .then(response => response.json())
+                .then(responseJSON => {
+                    this.setState(updateState => {
+                        const releasedTag = responseJSON["released"];
+                        const draftTag = responseJSON["draft"];
+                        const versionCount = responseJSON["__children__"].length
 
-                    for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
-                        const moduleVersion = responseJSON["__children__"][i]
-                        if (moduleVersion["jcr:uuid"] === draftTag) {
-                            this.draft[0]["revision"] = "Version " + moduleVersion["__name__"];
-                            this.draft[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
-                            this.draft[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                            this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
-                            this.props.draftUpdateDate(this.draft[0]["updatedDate"], "draft", this.draft[0]["path"]);
-                        }
-                        if (moduleVersion["jcr:uuid"] === releasedTag) {
-                            this.release[0]["revision"] = "Version " + moduleVersion["__name__"];
-                            this.release[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
-                            this.release[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                            this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
-                            this.props.releaseUpdateDate(this.release[0]["updatedDate"], "release", this.release[0]["path"])
-                        }
+                        for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
+                            const moduleVersion = responseJSON["__children__"][i]
+                            if (moduleVersion["jcr:uuid"] === draftTag) {
+                                this.draft[0]["revision"] = "Version " + moduleVersion["__name__"];
+                                this.draft[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
+                                this.draft[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
+                                this.props.draftUpdateDate(this.draft[0]["updatedDate"], "draft", this.draft[0]["path"]);
+                            }
+                            if (moduleVersion["jcr:uuid"] === releasedTag) {
+                                this.release[0]["revision"] = "Version " + moduleVersion["__name__"];
+                                this.release[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
+                                this.release[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
+                                this.props.releaseUpdateDate(this.release[0]["updatedDate"], "release", this.release[0]["path"])
+                            }
 
-                    }
-                    return {
-                        initialLoad: false,
-                        results: [this.draft, this.release],
-                        // tslint:disable-next-line: object-literal-sort-keys
-                        metadatPath: this.draft ? this.draft[0].path : this.release[0].path
-                    }
+                        }
+                        return {
+                            initialLoad: false,
+                            results: [this.draft, this.release],
+                            // tslint:disable-next-line: object-literal-sort-keys
+                            metadatPath: this.draft ? this.draft[0].path : this.release[0].path
+                        }
+                    })
                 })
-            })
+        }
     }
 
     private getHarrayChildNamed = (object, name) => {
@@ -484,9 +486,9 @@ class Revisions extends Component<IProps, any> {
     private saveMetadata = (event) => {
         // save form data
         if (this.state.productValue === undefined || this.state.productValue === 'Select a Product' || this.state.productValue === ''
-        || this.state.versionUUID === undefined || this.state.versionUUID === 'Select a Version' || this.state.versionUUID === ''
-        || this.state.usecaseValue === undefined || this.state.usecaseValue === 'Select Use Case' || this.state.usecaseValue === ''
-        || this.state.moduleUrl.trim() === "" || this.state.versionSelected === '') {
+            || this.state.versionUUID === undefined || this.state.versionUUID === 'Select a Version' || this.state.versionUUID === ''
+            || this.state.usecaseValue === undefined || this.state.usecaseValue === 'Select Use Case' || this.state.usecaseValue === ''
+            || this.state.moduleUrl.trim() === "" || this.state.versionSelected === '') {
             this.setState({ isMissingFields: true })
             this.setState({ formInvalid: true })
 
