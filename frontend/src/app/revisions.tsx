@@ -296,7 +296,7 @@ class Revisions extends Component<IProps, any> {
                             <div className="notification-container">
                                 <Alert
                                     variant="warning"
-                                    title="All fields are required."
+                                    title={this.state.versionSelected === '' ? "Please select a version." : "All fields are required."}
                                     action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                 />
                                 <br />
