@@ -125,17 +125,18 @@ exports[`Search tests should render default Search component 1`] = `
                   <DataListCell
                     width={2}
                   >
-                    <Link
-                      to=""
+                    <a
+                      href="/.preview"
+                      target="_blank"
                     >
                       
-                    </Link>
+                    </a>
                   </DataListCell>,
                   <DataListCell
                     width={2}
                   >
                     <span>
-                      No items found to be displayed
+                      
                     </span>
                   </DataListCell>,
                   <DataListCell>
@@ -196,6 +197,8 @@ exports[`Search tests test delete function 1`] = `undefined`;
 exports[`Search tests test dismissNotification function 1`] = `undefined`;
 
 exports[`Search tests test doSearch function 1`] = `undefined`;
+
+exports[`Search tests test fetchTimeout function 1`] = `undefined`;
 
 exports[`Search tests test getRows function 1`] = `undefined`;
 

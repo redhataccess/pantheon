@@ -1,28 +1,33 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 
-class User extends Component {
-    public state = {
-        isLoggedIn: false,
-        linkText: 'Log In'
-    };
+class User extends Component<any, any> {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoggedIn: false,
+            linkText: 'Log In'
+        };
+    }
 
-    public render() {
-        const id = 'userID';
+    public componentDidMount() {
+
         if (!this.state.isLoggedIn) {
             fetch("/system/sling/info.sessionInfo.json")
                 .then(response => response.json())
                 .then(responseJSON => {
-                    if (responseJSON[id] !== 'anonymous') {
-                        this.setState({ linkText: 'Log Out [' + responseJSON[id] + ']' })
+                    if (responseJSON.userID !== 'anonymous') {
+                        this.setState({ linkText: 'Log Out [' + responseJSON.userID + ']' })
                         this.setState({ isLoggedIn: true })
                     }
                 })
         }
+    }
 
+    public render() {
         return (
             <React.Fragment>
-                <Link to={this.state.isLoggedIn ? '/logout' : '/login'}
+                <Link to={this.state.isLoggedIn ? '' : '/login'}
                     onClick={this.conditionalRedirect}>
                     {this.state.linkText}
                 </Link>

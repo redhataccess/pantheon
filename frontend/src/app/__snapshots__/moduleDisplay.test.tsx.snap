@@ -26,7 +26,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
     </div>
     <div>
       <DataList
-        aria-label="single action data list example "
+        aria-label="single action data list"
       >
         <DataListItem
           aria-labelledby="simple-item1"
@@ -42,7 +42,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                   >
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-type"
+                      id="span-source-type-products"
                     >
                       Products
                     </span>
@@ -50,7 +50,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                   <DataListCell>
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-type"
+                      id="span-source-type-published"
                     >
                       Published
                     </span>
@@ -58,7 +58,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                   <DataListCell>
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-type"
+                      id="span-source-type-draft-uploaded"
                     >
                       Draft Uploaded
                     </span>
@@ -66,7 +66,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                   <DataListCell>
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-name"
+                      id="span-source-name-module-type"
                     >
                       Module Type
                     </span>
@@ -83,17 +83,17 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                     width={2}
                   >
                     <span>
-                      Dummy Product Name
+                       
                     </span>
                   </DataListCell>,
                   <DataListCell>
                     <span>
-                      
+                      -
                     </span>
                   </DataListCell>,
                   <DataListCell>
                     <span>
-                      
+                      -
                     </span>
                   </DataListCell>,
                   <DataListCell>
@@ -114,11 +114,24 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
         <Revisions
           draftUpdateDate={[Function]}
           modulePath="module/test"
+          onGetProduct={[Function]}
+          onGetVersion={[Function]}
           releaseUpdateDate={[Function]}
           revisionModulePath=""
         />
       </Card>
     </div>
   </div>
+  }
 </Fragment>
 `;
+
+exports[`ModuleDisplay tests test fetchModuleDetails function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getProduct function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getProductInitialLoad function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getVersion function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getVersionUUID function 1`] = `undefined`;
