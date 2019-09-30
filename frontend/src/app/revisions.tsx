@@ -299,7 +299,7 @@ class Revisions extends Component<IProps, any> {
                                     title="All fields are required."
                                     action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                 />
-                                <br />>
+                                <br />
                             </div>
                         )}
                     </div>
