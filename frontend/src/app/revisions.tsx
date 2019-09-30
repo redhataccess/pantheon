@@ -357,6 +357,7 @@ class Revisions extends Component<IProps, any> {
     }
 
     private fetchRevisions = () => {
+        // TODO: need a better fix for the 404 error.
         if (this.props.modulePath !== '') {
             const fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
             fetch(fetchpath)
