@@ -105,7 +105,6 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
               }
             />
           </DataListItemRow>
-          ))
         </DataListItem>
       </DataList>
     </div>
