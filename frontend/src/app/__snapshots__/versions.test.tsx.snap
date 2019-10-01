@@ -76,21 +76,22 @@ exports[`Versions tests should render Versions component 1`] = `
   <Modal
     actions={
       Array [
-        <Button
+        <Unknown
           form="edit_metadata"
           onClick={[Function]}
           variant="primary"
         >
           Save
-        </Button>,
-        <Button
+        </Unknown>,
+        <Unknown
           onClick={[Function]}
           variant="secondary"
         >
           Cancel
-        </Button>,
+        </Unknown>,
       ]
     }
+    appendTo={<body />}
     ariaDescribedById="edit-metadata"
     className=""
     header={
@@ -110,6 +111,7 @@ exports[`Versions tests should render Versions component 1`] = `
       </React.Fragment>
     }
     hideTitle={false}
+    isFooterLeftAligned={false}
     isLarge={false}
     isOpen={false}
     isSmall={false}
@@ -135,6 +137,7 @@ exports[`Versions tests should render Versions component 1`] = `
             aria-label="FormSelect Product"
             className=""
             isDisabled={false}
+            isRequired={false}
             isValid={true}
             onBlur={[Function]}
             onChange={[Function]}
@@ -153,6 +156,7 @@ exports[`Versions tests should render Versions component 1`] = `
             className=""
             id="productVersion"
             isDisabled={false}
+            isRequired={false}
             isValid={true}
             onBlur={[Function]}
             onChange={[Function]}
@@ -178,6 +182,7 @@ exports[`Versions tests should render Versions component 1`] = `
           aria-label="FormSelect Usecase"
           className=""
           isDisabled={false}
+          isRequired={false}
           isValid={true}
           onBlur={[Function]}
           onChange={[Function]}
