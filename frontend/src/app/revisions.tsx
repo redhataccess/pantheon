@@ -52,7 +52,7 @@ class Revisions extends Component<IProps, any> {
             metadataResults: [],
             moduleUrl: '',
             productOptions: [
-                { value: 'Select a Product', label: 'Select a Product', disabled: false },
+                { value: '', label: 'Select a Product', disabled: false },
             ],
             productValue: '',
             productVersion: '',
@@ -60,15 +60,16 @@ class Revisions extends Component<IProps, any> {
 
             successAlertVisble: false,
             usecaseOptions: [
-                { value: 'Select Use Case', label: 'Select Use Case', disabled: false }
+                { value: '', label: 'Select Use Case', disabled: false }
             ],
             usecaseValue: '',
             usecases: ['Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network',
                 'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize'],
 
             versionOptions: [
-                { value: 'Select a Version', label: 'Select a Version', disabled: false },
+                { value: '', label: 'Select a Version', disabled: false },
             ],
+            versionSelected: '',
             versionUUID: "",
             versionValue: '',
         };
@@ -295,9 +296,10 @@ class Revisions extends Component<IProps, any> {
                             <div className="notification-container">
                                 <Alert
                                     variant="warning"
-                                    title="all fields are required."
+                                    title={this.state.versionSelected === '' ? "Please select a version." : "All fields are required."}
                                     action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                 />
+                                <br />
                             </div>
                         )}
                     </div>
@@ -355,41 +357,44 @@ class Revisions extends Component<IProps, any> {
     }
 
     private fetchRevisions = () => {
-        let fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
-        fetch(fetchpath)
-            .then(response => response.json())
-            .then(responseJSON => {
-                this.setState(updateState => {
-                    const releasedTag = responseJSON["released"];
-                    const draftTag = responseJSON["draft"];
-                    const versionCount = responseJSON["__children__"].length
+        // TODO: need a better fix for the 404 error.
+        if (this.props.modulePath !== '') {
+            const fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
+            fetch(fetchpath)
+                .then(response => response.json())
+                .then(responseJSON => {
+                    this.setState(updateState => {
+                        const releasedTag = responseJSON["released"];
+                        const draftTag = responseJSON["draft"];
+                        const versionCount = responseJSON["__children__"].length
 
-                    for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
-                        const moduleVersion = responseJSON["__children__"][i]
-                        if (moduleVersion["jcr:uuid"] === draftTag) {
-                            this.draft[0]["revision"] = "Version " + moduleVersion["__name__"];
-                            this.draft[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
-                            this.draft[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                            this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
-                            this.props.draftUpdateDate(this.draft[0]["updatedDate"], "draft", this.draft[0]["path"]);
-                        }
-                        if (moduleVersion["jcr:uuid"] === releasedTag) {
-                            this.release[0]["revision"] = "Version " + moduleVersion["__name__"];
-                            this.release[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
-                            this.release[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                            this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
-                            this.props.releaseUpdateDate(this.release[0]["updatedDate"], "release", this.release[0]["path"])
-                        }
+                        for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
+                            const moduleVersion = responseJSON["__children__"][i]
+                            if (moduleVersion["jcr:uuid"] === draftTag) {
+                                this.draft[0]["revision"] = "Version " + moduleVersion["__name__"];
+                                this.draft[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
+                                this.draft[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
+                                this.props.draftUpdateDate(this.draft[0]["updatedDate"], "draft", this.draft[0]["path"]);
+                            }
+                            if (moduleVersion["jcr:uuid"] === releasedTag) {
+                                this.release[0]["revision"] = "Version " + moduleVersion["__name__"];
+                                this.release[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
+                                this.release[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
+                                this.props.releaseUpdateDate(this.release[0]["updatedDate"], "release", this.release[0]["path"])
+                            }
 
-                    }
-                    return {
-                        initialLoad: false,
-                        results: [this.draft, this.release],
-                        // tslint:disable-next-line: object-literal-sort-keys
-                        metadatPath: this.draft ? this.draft[0].path : this.release[0].path
-                    }
+                        }
+                        return {
+                            initialLoad: false,
+                            results: [this.draft, this.release],
+                            // tslint:disable-next-line: object-literal-sort-keys
+                            metadatPath: this.draft ? this.draft[0].path : this.release[0].path
+                        }
+                    })
                 })
-            })
+        }
     }
 
     private getHarrayChildNamed = (object, name) => {
@@ -481,8 +486,10 @@ class Revisions extends Component<IProps, any> {
 
     private saveMetadata = (event) => {
         // save form data
-        if (this.state.productValue === "" || this.state.versionUUID === "" ||
-            this.state.usecaseValue === "" || this.state.moduleUrl === "") {
+        if (this.state.productValue === undefined || this.state.productValue === 'Select a Product' || this.state.productValue === ''
+            || this.state.versionUUID === undefined || this.state.versionUUID === 'Select a Version' || this.state.versionUUID === ''
+            || this.state.usecaseValue === undefined || this.state.usecaseValue === 'Select Use Case' || this.state.usecaseValue === ''
+            || this.state.moduleUrl.trim() === "" || this.state.versionSelected === '') {
             this.setState({ isMissingFields: true })
             this.setState({ formInvalid: true })
 
@@ -508,6 +515,7 @@ class Revisions extends Component<IProps, any> {
                     // this.setState({ redirect: true, successAlertVisble: true })
                     this.handleModalClose()
                     this.setState({ successAlertVisble: true })
+                    this.setState({ versionSelected: '' })
                 } else if (response.status === 500) {
                     // console.log(" Needs login " + response.status)
                     this.setState({ login: true })
@@ -519,9 +527,7 @@ class Revisions extends Component<IProps, any> {
         }
     }
     private onChangeProduct = (productValue) => {
-        this.setState({ productValue }, () => {
-            this.props.onGetProduct(productValue)
-        });
+        this.setState({ productValue });
     }
     private onChangeVersion = () => {
 
@@ -529,9 +535,18 @@ class Revisions extends Component<IProps, any> {
         if (event !== undefined) {
             if (event.target !== null) {
                 // tslint:disable-next-line: no-string-literal
-                this.setState({ versionUUID: event.target["selectedOptions"][0].value, versionValue: event.target["selectedOptions"][0].label }, () => {
-                    this.props.onGetVersion(this.state.versionValue)
-                });
+                if (this.state.versionUUID !== event.target["selectedOptions"][0].value) {
+                    // tslint:disable-next-line: no-string-literal
+                    this.setState({
+                        versionUUID: event.target["selectedOptions"][0].value,
+                        versionValue: event.target["selectedOptions"][0].label,
+                        // tslint:disable-next-line: object-literal-sort-keys
+                        versionSelected: event.target["selectedOptions"][0].label
+                    }, () => {
+                        this.props.onGetProduct(this.state.productValue)
+                        this.props.onGetVersion(this.state.versionValue)
+                    });
+                }
             }
         }
     }
