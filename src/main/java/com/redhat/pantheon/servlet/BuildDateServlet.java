@@ -45,16 +45,16 @@ public class BuildDateServlet extends SlingSafeMethodsServlet {
         }
     }
 
-    protected String getDate(){ 
+    protected String getDate(){
         return PlatformData.getJarBuildDate();
     }
 
     protected String getCommitHash(){
         String commitHash;
-        if (System.getenv("OPENSHIFT_BUILD_COMMIT") != null){
-            commitHash = System.getenv("OPENSHIFT_BUILD_COMMIT");
+        if (System.getenv("COMMIT_HASH") != null){
+            commitHash = System.getenv("COMMIT_HASH");
         } else {
-            commitHash = "OPENSHIFT_BUILD_COMMIT is not set, this might not be an OpenShift environment.";
+            commitHash = "COMMIT_HASH is not set, this might not be an OpenShift environment.";
         }
         return commitHash;
     }

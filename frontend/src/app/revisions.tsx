@@ -78,11 +78,20 @@ class Revisions extends Component<IProps, any> {
 
     public componentDidMount() {
         this.fetchProductVersionDetails()
+        if (!this.state.loggedinStatus && this.state.initialLoad === true) {
+            fetch("/system/sling/info.sessionInfo.json")
+                .then(response => response.json())
+                .then(responseJSON => {
+                    if (responseJSON.userID) {
+                        if (responseJSON.userID !== 'anonymous') {
+                            this.setState({ loggedinStatus: true })
+                        }
+                    }
+                })
+        }
     }
 
     public render() {
-
-        const id = 'userID';
 
         const header = (
             <React.Fragment>
@@ -104,18 +113,6 @@ class Revisions extends Component<IProps, any> {
         this.state.usecases.map((item) => (
             ucOptions.push({ value: item, label: item, disabled: false })
         ))
-
-        if (!this.state.loggedinStatus && this.state.initialLoad === true) {
-            fetch("/system/sling/info.sessionInfo.json")
-                .then(response => response.json())
-                .then(responseJSON => {
-                    if (responseJSON[id]) {
-                        if (responseJSON[id] !== 'anonymous') {
-                            this.setState({ loggedinStatus: true })
-                        }
-                    }
-                })
-        }
 
         return (
             <React.Fragment>
@@ -362,8 +359,7 @@ class Revisions extends Component<IProps, any> {
     }
 
     private fetchRevisions = () => {
-        const fetchpath = "/content" + this.props.modulePath + ".3.json?";
-        // TODO : harray.3.json - to process the children
+        let fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
         fetch(fetchpath)
             .then(response => response.json())
             .then(responseJSON => {
@@ -398,7 +394,7 @@ class Revisions extends Component<IProps, any> {
                                 this.release[0].updatedDate = "-";
                             }
                             this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate);
-                        }
+                            }
                         
 
                     }
@@ -410,6 +406,15 @@ class Revisions extends Component<IProps, any> {
                     }
                 })
             })
+    }
+
+    private getHarrayChildNamed = (object, name) => {
+        for (const child in object["__children__"]) {
+            if (child["__name__"] === name) {
+                return child
+            }
+        }
+        return ''
     }
 
     private changePublishState = (buttonText) => {

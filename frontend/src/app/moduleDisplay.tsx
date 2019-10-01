@@ -13,7 +13,6 @@ class ModuleDisplay extends Component<any, any, any> {
         this.state = {
             draftPath: '',
             draftUpdateDate: '',
-            initialLoad: true,
             modulePath: '',
             moduleTitle: "",
             productValue: "",
@@ -27,7 +26,7 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     public componentDidMount() {
-
+        this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
     }
 
@@ -35,8 +34,6 @@ class ModuleDisplay extends Component<any, any, any> {
         // console.log('Props: ', this.props);
         return (
             <React.Fragment>
-                {this.state.initialLoad && this.fetchModuleDetails(this.props)}
-                {!this.state.initialLoad &&
                     <div>
                         <div>
                             <Level gutter="md">
@@ -114,6 +111,7 @@ class ModuleDisplay extends Component<any, any, any> {
                             </Card>
                         </div>
                     </div>
+
                 }
             </React.Fragment>
 
@@ -129,7 +127,7 @@ class ModuleDisplay extends Component<any, any, any> {
     }
     
     private fetchModuleDetails = (data) => {
-        this.setState({ initialLoad: false, modulePath: data.location.pathname })
+        this.setState({ modulePath: data.location.pathname })
 
         fetch(data.location.pathname + '.4.json')
             .then(response => response.json())
@@ -139,7 +137,6 @@ class ModuleDisplay extends Component<any, any, any> {
                     moduleTitle: responseJSON.en_US["1"].metadata["jcr:title"],
                     resourceType: responseJSON["sling:resourceType"],
                 })
-
             })
     }
 
