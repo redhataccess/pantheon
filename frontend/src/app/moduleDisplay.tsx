@@ -112,10 +112,7 @@ class ModuleDisplay extends Component<any, any, any> {
                             </Card>
                         </div>
                     </div>
-
-                }
             </React.Fragment>
-
         );
     }
 

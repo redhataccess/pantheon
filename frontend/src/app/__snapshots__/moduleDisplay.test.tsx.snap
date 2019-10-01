@@ -122,7 +122,6 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
       </Card>
     </div>
   </div>
-  }
 </Fragment>
 `;
 
