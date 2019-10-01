@@ -95,7 +95,7 @@ class ModuleDisplay extends Component<any, any, any> {
                                             ]}
                                         />
                                     </DataListItemRow>
-                                    ))}
+                                    ))
                                 </DataListItem>
                             </DataList>
                         </div>
