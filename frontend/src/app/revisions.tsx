@@ -53,7 +53,7 @@ class Revisions extends Component<IProps, any> {
             metadataResults: [],
             moduleUrl: '',
             productOptions: [
-                { value: 'Select a Product', label: 'Select a Product', disabled: false },
+                { value: '', label: 'Select a Product', disabled: false },
             ],
             productValue: '',
             productVersion: '',
@@ -61,15 +61,16 @@ class Revisions extends Component<IProps, any> {
 
             successAlertVisble: false,
             usecaseOptions: [
-                { value: 'Select Use Case', label: 'Select Use Case', disabled: false }
+                { value: '', label: 'Select Use Case', disabled: false }
             ],
             usecaseValue: '',
             usecases: ['Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network',
                 'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize'],
 
             versionOptions: [
-                { value: 'Select a Version', label: 'Select a Version', disabled: false },
+                { value: '', label: 'Select a Version', disabled: false },
             ],
+            versionSelected: '',
             versionUUID: "",
             versionValue: '',
         };
@@ -299,9 +300,10 @@ class Revisions extends Component<IProps, any> {
                             <div className="notification-container">
                                 <Alert
                                     variant="warning"
-                                    title="all fields are required."
+                                    title={this.state.versionSelected === '' ? "Please select a version." : "All fields are required."}
                                     action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                 />
+                                <br />
                             </div>
                         )}
                     </div>
@@ -359,58 +361,106 @@ class Revisions extends Component<IProps, any> {
     }
 
     private fetchRevisions = () => {
-        let fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
-        fetch(fetchpath)
-            .then(response => response.json())
-            .then(responseJSON => {
-                this.setState(updateState => {
-                    // console.log("response json:",responseJSON);
-                    const releasedTag = responseJSON.en_US.released;
-                    const draftTag = responseJSON.en_US.draft;
+        // let fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
+        // fetch(fetchpath)
+        //     .then(response => response.json())
+        //     .then(responseJSON => {
+        //         this.setState(updateState => {
+        //             // console.log("response json:",responseJSON);
+        //             const releasedTag = responseJSON.en_US.released;
+        //             const draftTag = responseJSON.en_US.draft;
 
-                    const objectKeys = Object.keys(responseJSON.en_US);
+        //             const objectKeys = Object.keys(responseJSON.en_US);
 
-                    for (const key in objectKeys) {
-                        if (objectKeys[key] === "jcr:primaryType") {
-                            break;
-                        }
-                        else {
-                            if (responseJSON.en_US[objectKeys[key]]["jcr:uuid"] !== undefined
-                                && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === draftTag) {
-                                this.draft[0].revision = "Version " + objectKeys[key];
-                                this.draft[0].updatedDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] : '';
-                                this.draft[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
-                                this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
-                            }                            
-                            if (responseJSON.en_US[objectKeys[key]]["jcr:uuid"] !== undefined
-                                && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === releasedTag) {
-                                this.release[0].revision = "Version " + objectKeys[key];
-                                this.release[0].updatedDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:datePublished"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:datePublished"] : '';
-                                this.release[0].draftUploadDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] : '';
-                                this.release[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
-                                this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
+        //             for (const key in objectKeys) {
+        //                 if (objectKeys[key] === "jcr:primaryType") {
+        //                     break;
+        //                 }
+        //                 else {
+        //                     if (responseJSON.en_US[objectKeys[key]]["jcr:uuid"] !== undefined
+        //                         && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === draftTag) {
+        //                         this.draft[0].revision = "Version " + objectKeys[key];
+                                // this.draft[0].updatedDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] : '';
+        //                         this.draft[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
+        //                         this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
+        //                     }                            
+        //                     if (responseJSON.en_US[objectKeys[key]]["jcr:uuid"] !== undefined
+        //                         && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === releasedTag) {
+        //                         this.release[0].revision = "Version " + objectKeys[key];
+                                // this.release[0].updatedDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:datePublished"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:datePublished"] : '';
+                                // this.release[0].draftUploadDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] : '';
+        //                         this.release[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
+        //                         this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
+        //                     }
+                            // if(releasedTag===undefined){
+                            //     this.release[0].updatedDate = "-";
+                            // }
+                            // this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate);
+                            // }
+                        
+
+        //             }
+        //             return {
+        //                 initialLoad: false,
+        //                 results: [this.draft, this.release],
+        //                 // tslint:disable-next-line: object-literal-sort-keys
+        //                 metadatPath: this.draft ? this.draft[0].path : this.release[0].path
+        //             }
+
+        // TODO: need a better fix for the 404 error.
+        if (this.props.modulePath !== '') {
+            const fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
+            fetch(fetchpath)
+                .then(response => response.json())
+                .then(responseJSON => {
+                    this.setState(updateState => {
+                        const releasedTag = responseJSON["released"];
+                        const draftTag = responseJSON["draft"];
+                        const versionCount = responseJSON["__children__"].length
+                        // console.log("en_US: ",responseJSON["en_US"]);
+
+                        for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
+                            const moduleVersion = responseJSON["__children__"][i]
+                            console.log("mv children: ", moduleVersion["__children__"]);
+                            if (moduleVersion["jcr:uuid"] === draftTag) {
+                                this.draft[0]["revision"] = "Version " + moduleVersion["__name__"];
+                                this.draft[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.draft[0]["updatedDate"] = this.draft[0]["metaData"]["pant:dateUploaded"] !== undefined ? this.draft[0]["metaData"]["pant:dateUploaded"] : '';
+                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
+                                console.log("metadata: ",this.draft[0]["metaData"])
+                                console.log("draft update date: ",this.draft[0]["updatedDate"])
+                            }
+                            if (moduleVersion["jcr:uuid"] === releasedTag) {
+                                this.release[0]["revision"] = "Version " + moduleVersion["__name__"];
+                                this.release[0]["updatedDate"] = responseJSON["en_US"][i]["metadata"]["pant:datePublished"] !== undefined ? responseJSON.en_US[i]["metadata"]["pant:datePublished"] : '';
+                                this.release[0]["draftUploadDate"] = responseJSON.en_US[i]["metadata"]["pant:dateUploaded"] !== undefined ? responseJSON.en_US[i]["metadata"]["pant:dateUploaded"] : '';
+                                this.release[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
+                                console.log("release update date: ",this.release[0]["updatedDate"])
+                                console.log("release draftupload date: ",this.release[0]["draftUploadDate"])
                             }
                             if(releasedTag===undefined){
                                 this.release[0].updatedDate = "-";
                             }
                             this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate);
-                            }
-                        
 
-                    }
-                    return {
-                        initialLoad: false,
-                        results: [this.draft, this.release],
-                        // tslint:disable-next-line: object-literal-sort-keys
-                        metadatPath: this.draft ? this.draft[0].path : this.release[0].path
-                    }
+                        }
+                        return {
+                            initialLoad: false,
+                            results: [this.draft, this.release],
+                            // tslint:disable-next-line: object-literal-sort-keys
+                            metadatPath: this.draft ? this.draft[0].path : this.release[0].path
+                        }
+                    })
                 })
-            })
+        }
     }
 
     private getHarrayChildNamed = (object, name) => {
         for (const child in object["__children__"]) {
+            console.log("child:",child)
             if (child["__name__"] === name) {
+                console.log("child name:",name);
                 return child
             }
         }
@@ -497,8 +547,10 @@ class Revisions extends Component<IProps, any> {
 
     private saveMetadata = (event) => {
         // save form data
-        if (this.state.productValue === "" || this.state.versionUUID === "" ||
-            this.state.usecaseValue === "" || this.state.moduleUrl === "") {
+        if (this.state.productValue === undefined || this.state.productValue === 'Select a Product' || this.state.productValue === ''
+            || this.state.versionUUID === undefined || this.state.versionUUID === 'Select a Version' || this.state.versionUUID === ''
+            || this.state.usecaseValue === undefined || this.state.usecaseValue === 'Select Use Case' || this.state.usecaseValue === ''
+            || this.state.moduleUrl.trim() === "" || this.state.versionSelected === '') {
             this.setState({ isMissingFields: true })
             this.setState({ formInvalid: true })
 
@@ -524,6 +576,7 @@ class Revisions extends Component<IProps, any> {
                     // this.setState({ redirect: true, successAlertVisble: true })
                     this.handleModalClose()
                     this.setState({ successAlertVisble: true })
+                    this.setState({ versionSelected: '' })
                 } else if (response.status === 500) {
                     // console.log(" Needs login " + response.status)
                     this.setState({ login: true })
@@ -535,9 +588,7 @@ class Revisions extends Component<IProps, any> {
         }
     }
     private onChangeProduct = (productValue) => {
-        this.setState({ productValue }, () => {
-            this.props.onGetProduct(productValue)
-        });
+        this.setState({ productValue });
     }
     private onChangeVersion = () => {
 
@@ -545,9 +596,18 @@ class Revisions extends Component<IProps, any> {
         if (event !== undefined) {
             if (event.target !== null) {
                 // tslint:disable-next-line: no-string-literal
-                this.setState({ versionUUID: event.target["selectedOptions"][0].value, versionValue: event.target["selectedOptions"][0].label }, () => {
-                    this.props.onGetVersion(this.state.versionValue)
-                });
+                if (this.state.versionUUID !== event.target["selectedOptions"][0].value) {
+                    // tslint:disable-next-line: no-string-literal
+                    this.setState({
+                        versionUUID: event.target["selectedOptions"][0].value,
+                        versionValue: event.target["selectedOptions"][0].label,
+                        // tslint:disable-next-line: object-literal-sort-keys
+                        versionSelected: event.target["selectedOptions"][0].label
+                    }, () => {
+                        this.props.onGetProduct(this.state.productValue)
+                        this.props.onGetVersion(this.state.versionValue)
+                    });
+                }
             }
         }
     }

@@ -105,24 +105,21 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
               }
             />
           </DataListItemRow>
-          ))}
         </DataListItem>
       </DataList>
     </div>
     <div>
       <Card>
         <Revisions
-          draftUpdateDate={[Function]}
           modulePath="module/test"
           onGetProduct={[Function]}
           onGetVersion={[Function]}
-          releaseUpdateDate={[Function]}
           revisionModulePath=""
+          updateDate={[Function]}
         />
       </Card>
     </div>
   </div>
-  }
 </Fragment>
 `;
 
