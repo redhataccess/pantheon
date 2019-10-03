@@ -19,6 +19,11 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.redhat.pantheon.servlet.ServletUtils.*;
@@ -39,41 +44,121 @@ import static com.redhat.pantheon.servlet.ServletUtils.*;
 @SlingServletPaths(value = "/pantheon/internal/node.json")
 public class GetObjectByUUID extends SlingSafeMethodsServlet {
 
-    final String UUID_PARAM = "uuid";
-    final String DEPTH_PARAM = "depth";
+    final String PARAM_UUID = "uuid";
+    final String PARAM_DEPTH = "depth";
+    final String PARAM_DEREFERENCE = "dereference";
+
+    private SlingHttpServletRequest request;
 
     @Override
     protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response)
             throws ServletException, IOException {
-        String uuid = paramValue(request, UUID_PARAM);
-        Long depth = paramValueAsLong(request, DEPTH_PARAM, 0L);
+        this.request = request;
+
+        String uuid = paramValue(request, PARAM_UUID);
+        Long depth = paramValueAsLong(request, PARAM_DEPTH, 0L);
+        String dereference = paramValue(request, PARAM_DEREFERENCE);
 
         if(isNullOrEmpty(uuid)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter '" + UUID_PARAM + "' must be provided");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter '" + PARAM_UUID + "' must be provided");
             return;
-        } else if (depth < 0) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter '" + DEPTH_PARAM + "' must be >= 0");
+        }
+        if (depth < 0) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter '" + PARAM_DEPTH + "' must be >= 0");
             return;
+        }
+        Map<String, Set<String>> dereferenceMap = new HashMap<>();
+        if (!isNullOrEmpty(dereference)) {
+            try {
+                dereferenceMap.putAll(buildDereferenceMap(dereference));
+            } catch (Exception e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter '" + PARAM_DEREFERENCE + "' must follow the pattern resourceTypeA:propertyA,resourceTypeB:propertyB,etc...");
+            }
         }
 
         try {
-            Node foundNode = request.getResourceResolver()
-                    .adaptTo(Session.class)
-                    .getNodeByIdentifier(uuid);
-
-            // turn the node back into a resource
-            Resource foundResource = request.getResourceResolver()
-                    .getResource(foundNode.getPath());
-            RequestDispatcherOptions options = new RequestDispatcherOptions();
-            options.setAddSelectors("." + depth);
-            RequestDispatcher requestDispatcher =
-                    request.getRequestDispatcher(foundResource.getPath() + ".json", options);
-            requestDispatcher.include(request, response);
+            Resource foundResource = getResourceByUuid(uuid);
+            Map<String, Object> payload = resourceToMapRecursive(foundResource, depth, dereferenceMap);
+            writeAsJson(response, payload);
         } catch (ItemNotFoundException infex) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         } catch (RepositoryException e) {
             throw new ServletException(e);
         }
+    }
+
+    /**
+     * Accepts incoming URL parameter "dereference" as a String and builds a Map of properties to dereference, based
+     * off of the sling resource type that the property is found on. For example:
+     * Input: "pantheon/moduleLocale:draft,pantheon/moduleLocale:released,pantheon/moduleVersion:product"
+     * Output:
+     *  {
+     *      "pantheon/moduleLocale": ["draft","released"],
+     *      "pantheon/moduleVersion": ["product"]
+     *  }
+     * @param dereference The incoming dereference specification
+     * @return A Map of Sets containing the sling resource type as the Key, and the Set of properties to dereference
+     *  for that resource type as the Value.
+     */
+    private Map<String, Set<String>> buildDereferenceMap(String dereference) {
+        Map<String, Set<String>> map = new HashMap<>();
+        for (String token : dereference.split(",")) {
+            String[] pair = token.split(":", 2);
+            Set<String> props = map.get(pair[0]);
+            if (props == null) {
+                props = new HashSet<>();
+                map.put(pair[0], props);
+            }
+            props.add(pair[1]);
+        }
+        return map;
+    }
+
+    private Resource getResourceByUuid(String uuid) throws RepositoryException {
+        Node foundNode = request.getResourceResolver()
+                .adaptTo(Session.class)
+                .getNodeByIdentifier(uuid);
+
+        // turn the node back into a resource
+        Resource foundResource = request.getResourceResolver()
+                .getResource(foundNode.getPath());
+
+        return foundResource;
+    }
+
+    private Map<String, Object> resourceToMapRecursive(Resource resource, Long depth, Map<String, Set<String>> dereferenceMap) throws RepositoryException {
+        Map<String, Object> ret = new HashMap<>();
+        ret.putAll(resource.getValueMap());
+
+        if (depth > 0) {
+            for (Resource child : resource.getChildren()) {
+                ret.put(child.getName(), resourceToMapRecursive(child, depth - 1, dereferenceMap));
+            }
+
+            String type = resource.getResourceType();
+            Set<String> referenceFields = dereferenceMap.get(type);
+            if (referenceFields != null) {
+                for (Map.Entry<String, Object> entry : resource.getValueMap().entrySet()) {
+                    if (referenceFields.contains(entry.getKey())) {
+                        Resource child = getResourceByUuid((String) entry.getValue());
+                        ret.put(entry.getKey(), resourceToMapRecursive(child, depth - 1, dereferenceMap));
+                    }
+                }
+            }
+        }
+
+        /**
+         * The reasoning behind this .remove() line is that I was running into an issue where the value of the jcr:data
+         * field was binary. This interefered with something - can't quite remember what - but either the JSON converter
+         * couldn't handle it, or the browser couldn't display it. We can remove this line if necessary in the future,
+         * but be aware of the ramifications.
+         *
+         * We may have the same issue with other fields if they turn out to be binary, although I don't expect that we
+         * will run into that scenario.
+         */
+        ret.remove("jcr:data");
+        
+        return ret;
     }
 }
