@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import Search from '@app/search';
 import { Module } from '@app/module';
@@ -6,8 +6,8 @@ import { Product } from '@app/product';
 import { ProductListing } from '@app/productListing';
 import { Login } from '@app/login';
 import { GitImport } from './gitImport';
-import { ModuleDisplay } from '@app/moduleDisplay'; 
-import { URLSearchParams } from 'url';
+import { ModuleDisplay } from '@app/moduleDisplay';
+import { IAppState } from './app';
 
 export interface IAppRoute {
   label: string;
@@ -69,13 +69,19 @@ const routes: IAppRoute[] = [
   }
 ];
 
-const Routes = () => (
-  <Switch>
-    {routes.map(({path, exact, component}, idx) => (
-      <Route path={path} exact={exact} component={component} key={idx} />
-    ))}
-    <Route component={Search} />
-  </Switch>
-);
+class Routes extends Component<IAppState> {
 
-export { Routes, routes }; 
+  public render() {
+    return (
+
+      <Switch>
+        {routes.map(({path, exact, component}, idx) => (
+          <Route path={path} exact={exact} component={component} key={idx} />
+        ))}
+        <Route component={Search} />
+      </Switch>
+    )
+  }
+}
+
+export { Routes }; 
