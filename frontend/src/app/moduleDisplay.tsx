@@ -5,6 +5,7 @@ import {
     DataListCell, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core';
 import { Revisions } from '@app/revisions';
+import { Link } from "react-router-dom";
 
 class ModuleDisplay extends Component<any, any, any> {
 
@@ -18,6 +19,7 @@ class ModuleDisplay extends Component<any, any, any> {
             productValue: "",
             releasePath: '',
             releaseUpdateDate: '',
+            releaseVersion: '',
             resourceType: '',
             results: {},
             versionUUID: "",
@@ -79,7 +81,9 @@ class ModuleDisplay extends Component<any, any, any> {
                                                     <span>
                                                         {this.state.releaseUpdateDate.trim() !== ""
                                                             && this.state.releaseUpdateDate.length >= 15 ?
-                                                            this.state.releaseUpdateDate : "-"}
+                                                            this.state.releaseUpdateDate : "-"} <br/>
+                                                        {this.state.releaseUpdateDate.trim() !== "" &&                                                                                                             
+                                                        <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a>}    
                                                     </span>
                                                 </DataListCell>,
                                                 <DataListCell key="updated">
@@ -114,16 +118,20 @@ class ModuleDisplay extends Component<any, any, any> {
         );
     }
 
-    private updateDate = (draftDate,releaseDate) => {
+    private updateDate = (draftDate,releaseDate,releaseVersion) => {
             this.setState({
                 draftUpdateDate: draftDate,
                 // tslint:disable-next-line: object-literal-sort-keys
-                releaseUpdateDate: releaseDate
+                releaseUpdateDate: releaseDate,
+                releaseVersion: releaseVersion                
             });
     }
     
     private fetchModuleDetails = (data) => {
-        this.setState({ modulePath: data.location.pathname })
+        this.setState({
+            modulePath: data.location.pathname, 
+            releasePath: "/content" + data.location.pathname + ".preview"
+        })
 
         fetch(data.location.pathname + '.4.json')
             .then(response => response.json())

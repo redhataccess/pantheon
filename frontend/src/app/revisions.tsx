@@ -13,7 +13,7 @@ import { Redirect } from 'react-router-dom'
 export interface IProps {
     modulePath: string
     revisionModulePath: string
-    updateDate: (draftUpdateDate,releaseUpdateDate) => any
+    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
@@ -361,51 +361,6 @@ class Revisions extends Component<IProps, any> {
     }
 
     private fetchRevisions = () => {
-        // let fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
-        // fetch(fetchpath)
-        //     .then(response => response.json())
-        //     .then(responseJSON => {
-        //         this.setState(updateState => {
-        //             // console.log("response json:",responseJSON);
-        //             const releasedTag = responseJSON.en_US.released;
-        //             const draftTag = responseJSON.en_US.draft;
-
-        //             const objectKeys = Object.keys(responseJSON.en_US);
-
-        //             for (const key in objectKeys) {
-        //                 if (objectKeys[key] === "jcr:primaryType") {
-        //                     break;
-        //                 }
-        //                 else {
-        //                     if (responseJSON.en_US[objectKeys[key]]["jcr:uuid"] !== undefined
-        //                         && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === draftTag) {
-        //                         this.draft[0].revision = "Version " + objectKeys[key];
-                                // this.draft[0].updatedDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] : '';
-        //                         this.draft[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
-        //                         this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
-        //                     }                            
-        //                     if (responseJSON.en_US[objectKeys[key]]["jcr:uuid"] !== undefined
-        //                         && responseJSON.en_US[objectKeys[key]]["jcr:uuid"] === releasedTag) {
-        //                         this.release[0].revision = "Version " + objectKeys[key];
-                                // this.release[0].updatedDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:datePublished"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:datePublished"] : '';
-                                // this.release[0].draftUploadDate = responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] !== undefined ? responseJSON.en_US[objectKeys[key]]["metadata"]["pant:dateUploaded"] : '';
-        //                         this.release[0].metadata = responseJSON.en_US[objectKeys[key]].metadata;
-        //                         this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + objectKeys[key];
-        //                     }
-                            // if(releasedTag===undefined){
-                            //     this.release[0].updatedDate = "-";
-                            // }
-                            // this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate);
-                            // }
-                        
-
-        //             }
-        //             return {
-        //                 initialLoad: false,
-        //                 results: [this.draft, this.release],
-        //                 // tslint:disable-next-line: object-literal-sort-keys
-        //                 metadatPath: this.draft ? this.draft[0].path : this.release[0].path
-        //             }
 
         // TODO: need a better fix for the 404 error.
         if (this.props.modulePath !== '') {
@@ -417,32 +372,26 @@ class Revisions extends Component<IProps, any> {
                         const releasedTag = responseJSON["released"];
                         const draftTag = responseJSON["draft"];
                         const versionCount = responseJSON["__children__"].length
-                        // console.log("en_US: ",responseJSON["en_US"]);
 
                         for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
                             const moduleVersion = responseJSON["__children__"][i]
-                            console.log("mv children: ", moduleVersion["__children__"]);
                             if (moduleVersion["jcr:uuid"] === draftTag) {
                                 this.draft[0]["revision"] = "Version " + moduleVersion["__name__"];
                                 this.draft[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
                                 this.draft[0]["updatedDate"] = this.draft[0]["metaData"]["pant:dateUploaded"] !== undefined ? this.draft[0]["metaData"]["pant:dateUploaded"] : '';
                                 this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
-                                console.log("metadata: ",this.draft[0]["metaData"])
-                                console.log("draft update date: ",this.draft[0]["updatedDate"])
                             }
                             if (moduleVersion["jcr:uuid"] === releasedTag) {
                                 this.release[0]["revision"] = "Version " + moduleVersion["__name__"];
-                                this.release[0]["updatedDate"] = responseJSON["en_US"][i]["metadata"]["pant:datePublished"] !== undefined ? responseJSON.en_US[i]["metadata"]["pant:datePublished"] : '';
-                                this.release[0]["draftUploadDate"] = responseJSON.en_US[i]["metadata"]["pant:dateUploaded"] !== undefined ? responseJSON.en_US[i]["metadata"]["pant:dateUploaded"] : '';
                                 this.release[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.release[0]["updatedDate"] = this.release[0]["metaData"]["pant:datePublished"] !== undefined ? this.release[0]["metaData"]["pant:datePublished"] : '';
+                                this.release[0]["draftUploadDate"] = this.release[0]["metaData"]["pant:dateUploaded"] !== undefined ? this.release[0]["metaData"]["pant:dateUploaded"] : '';
                                 this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
-                                console.log("release update date: ",this.release[0]["updatedDate"])
-                                console.log("release draftupload date: ",this.release[0]["draftUploadDate"])
                             }
                             if(releasedTag===undefined){
                                 this.release[0].updatedDate = "-";
                             }
-                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate);
+                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate,this.release[0]["revision"]);
 
                         }
                         return {
@@ -458,10 +407,8 @@ class Revisions extends Component<IProps, any> {
 
     private getHarrayChildNamed = (object, name) => {
         for (const child in object["__children__"]) {
-            console.log("child:",child)
-            if (child["__name__"] === name) {
-                console.log("child name:",name);
-                return child
+            if (object["__children__"][child]["__name__"] === name) {
+                return object["__children__"][child]
             }
         }
         return ''
