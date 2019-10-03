@@ -148,7 +148,17 @@ public class GetObjectByUUID extends SlingSafeMethodsServlet {
             }
         }
 
+        /**
+         * The reasoning behind this .remove() line is that I was running into an issue where the value of the jcr:data
+         * field was binary. This interefered with something - can't quite remember what - but either the JSON converter
+         * couldn't handle it, or the browser couldn't display it. We can remove this line if necessary in the future,
+         * but be aware of the ramifications.
+         *
+         * We may have the same issue with other fields if they turn out to be binary, although I don't expect that we
+         * will run into that scenario.
+         */
         ret.remove("jcr:data");
+        
         return ret;
     }
 }
