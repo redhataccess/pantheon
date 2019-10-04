@@ -10,7 +10,7 @@ import sinon from 'sinon'
 const anymatch = require('anymatch');
 
 const props = {
-    updateDate: anymatch,
+    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion) => anymatch,
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
@@ -262,6 +262,30 @@ describe('Revisions tests', () => {
         expect(wrapper.state('initialLoad')).toBe(true)
         wrapper.setState({ 'initialLoad': false })
         expect(wrapper.state('initialLoad')).toBe(false)
+    });
+
+    it('should handle state changes for versionSelected', () => {
+        const wrapper = shallow(<Revisions {...props} />)
+
+        expect(wrapper.state('versionSelected')).toBe('')
+        wrapper.setState({ 'versionSelected': "Please select a version" })
+        expect(wrapper.state('versionSelected')).toBe("Please select a version")
+    });
+
+    it('should handle state changes for versionUUID', () => {
+        const wrapper = shallow(<Revisions {...props} />)
+
+        expect(wrapper.state('versionUUID')).toBe("")
+        wrapper.setState({ 'versionUUID': "Select a Version" })
+        expect(wrapper.state('versionUUID')).toBe("Select a Version")
+    });
+
+    it('should handle state changes for versionValue', () => {
+        const wrapper = shallow(<Revisions {...props} />)
+
+        expect(wrapper.state('versionValue')).toBe('')
+        wrapper.setState({ 'versionValue': "version value" })
+        expect(wrapper.state('versionValue')).toBe("version value")
     });
 
     it('should handle state changes for isHeadingToggle', () => {

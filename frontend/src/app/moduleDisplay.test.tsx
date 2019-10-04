@@ -182,6 +182,13 @@ describe('ModuleDisplay tests', () => {
         expect(wrapper.state('releaseUpdateDate')).toBeDefined();
     });
 
+    it('should check if moduleType exists', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        wrapper.setState({ 'moduleType': '' })
+        wrapper.setState({ "moduleType": "module" });
+        expect(wrapper.state('moduleType')).toBeDefined();
+    });
+
     it('should have a moduleTitle', () => {
         const wrapper = shallow(<ModuleDisplay {...props} />);
         wrapper.setState({ 'login': true })
