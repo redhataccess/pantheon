@@ -20,7 +20,7 @@ class ModuleDisplay extends Component<any, any, any> {
             releasePath: '',
             releaseUpdateDate: '',
             releaseVersion: '',
-            resourceType: '',
+            moduleType: '',
             results: {},
             versionUUID: "",
             versionValue: ""
@@ -94,7 +94,7 @@ class ModuleDisplay extends Component<any, any, any> {
                                                     </span>
                                                 </DataListCell>,
                                                 <DataListCell key="module_type">
-                                                    <span>{this.state.resourceType}</span>
+                                                    <span>{this.state.moduleType !== undefined ? this.state.moduleType : "-"}</span>
                                                 </DataListCell>,
                                             ]}
                                         />
@@ -139,7 +139,7 @@ class ModuleDisplay extends Component<any, any, any> {
                 // console.log('fetch results:',responseJSON["en_US"])
                 this.setState({
                     moduleTitle: responseJSON.en_US["1"].metadata["jcr:title"],
-                    resourceType: responseJSON["sling:resourceType"],
+                    moduleType: responseJSON.en_US["1"].metadata["pant:moduleType"],
                 })
             })
     }

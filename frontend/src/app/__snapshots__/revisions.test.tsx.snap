@@ -312,6 +312,8 @@ exports[`Revisions tests test dismissNotification function 1`] = `undefined`;
 
 exports[`Revisions tests test fetchRevisions function 1`] = `undefined`;
 
+exports[`Revisions tests test getHarrayChildNamed function 1`] = `""`;
+
 exports[`Revisions tests test getModuleUrl function 1`] = `"/content/modules.query.json?nodeType=pant:module&where=[urlFragment]=\\"undefined\\""`;
 
 exports[`Revisions tests test handleURLInput function 1`] = `undefined`;

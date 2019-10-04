@@ -27,7 +27,6 @@ class Revisions extends Component<IProps, any> {
         super(props)
         this.state = {
             changePublishState: false,
-            draftUploadTime: '',
             initialLoad: true,
             isArchiveDropDownOpen: false,
             isArchiveSelect: false,
@@ -254,7 +253,7 @@ class Revisions extends Component<IProps, any> {
                                                                     <span className="sp-prop-nosort" id="span-source-type-module-title">Module Title</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
-                                                                    {(data.metadata !== undefined && data.metadata["jcr:title"] !== undefined) ? data.metadata["jcr:title"] : ''}
+                                                                    {(data["metadata"]["jcr:title"] !== undefined) ? data["metadata"]["jcr:title"] : '-'}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={2}>
                                                                     <span className="sp-prop-nosort" id="span-source-type-context-package">Context Package</span>
@@ -377,16 +376,16 @@ class Revisions extends Component<IProps, any> {
                             const moduleVersion = responseJSON["__children__"][i]
                             if (moduleVersion["jcr:uuid"] === draftTag) {
                                 this.draft[0]["revision"] = "Version " + moduleVersion["__name__"];
-                                this.draft[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                                this.draft[0]["updatedDate"] = this.draft[0]["metaData"]["pant:dateUploaded"] !== undefined ? this.draft[0]["metaData"]["pant:dateUploaded"] : '';
-                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
+                                this.draft[0]["metadata"] = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.draft[0]["updatedDate"] = this.draft[0]["metadata"]["pant:dateUploaded"] !== undefined ? this.draft[0]["metadata"]["pant:dateUploaded"] : '';
+                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];                                
                             }
                             if (moduleVersion["jcr:uuid"] === releasedTag) {
                                 this.release[0]["revision"] = "Version " + moduleVersion["__name__"];
-                                this.release[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                                this.release[0]["updatedDate"] = this.release[0]["metaData"]["pant:datePublished"] !== undefined ? this.release[0]["metaData"]["pant:datePublished"] : '';
-                                this.release[0]["draftUploadDate"] = this.release[0]["metaData"]["pant:dateUploaded"] !== undefined ? this.release[0]["metaData"]["pant:dateUploaded"] : '';
-                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
+                                this.release[0]["metadata"] = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.release[0]["updatedDate"] = this.release[0]["metadata"]["pant:datePublished"] !== undefined ? this.release[0]["metadata"]["pant:datePublished"] : '';
+                                this.release[0]["draftUploadDate"] = this.release[0]["metadata"]["pant:dateUploaded"] !== undefined ? this.release[0]["metadata"]["pant:dateUploaded"] : '';
+                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];                                
                             }
                             if(releasedTag===undefined){
                                 this.release[0].updatedDate = "-";

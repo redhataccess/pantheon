@@ -223,6 +223,13 @@ describe('Revisions tests', () => {
         expect(instance.state['usecases'][0]).toEqual('Administer')
     });
 
+    it('test getHarrayChildNamed function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.getHarrayChildNamed("__children__")).toMatchSnapshot();
+    });
+
+
     test('Revision Button click', () => {
         const wrapper = shallow(<Revisions {...props} />);
         const instance = wrapper.instance();
@@ -231,6 +238,15 @@ describe('Revisions tests', () => {
         wrapper.find(DataListToggle).simulate('click');
         sinon.assert.called(spy);
     });
+
+    it('should handle state changes for changePublishState', () => {
+        const wrapper = shallow(<Revisions {...props} />)
+
+        expect(wrapper.state('changePublishState')).toBe(false)
+        wrapper.setState({ 'changePublishState': true })
+        expect(wrapper.state('changePublishState')).toBe(true)
+    });
+
 
     it('should handle state changes for login', () => {
         const wrapper = shallow(<Revisions {...props} />)
