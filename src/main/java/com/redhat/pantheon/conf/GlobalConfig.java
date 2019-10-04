@@ -37,6 +37,8 @@ public class GlobalConfig {
 
     public static final Locale DEFAULT_MODULE_LOCALE = Locale.US;
 
+    public static final String CONTENT_TYPE = "documentation";
+
     private final LoadableValue<List<String>> GEM_PATHS = new LoadableValue<>(this::loadGemPaths);
 
     private final LoadableValue<Optional<File>> TEMPLATE_DIRECTORY =

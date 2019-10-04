@@ -3,6 +3,7 @@ package com.redhat.pantheon.asciidoctor;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
+import com.redhat.pantheon.asciidoctor.extension.ContentAbstractBlockProcessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.FileResource;
@@ -136,6 +137,8 @@ public class AsciidoctorService {
         try {
             asciidoctor.javaExtensionRegistry().treeprocessor(
                     new MetadataExtractorTreeProcessor(metadata));
+            asciidoctor.javaExtensionRegistry().block(
+                    new ContentAbstractBlockProcessor(metadata));
 
             asciidoctor.load(content.jcrData.get(), newHashMap());
         }

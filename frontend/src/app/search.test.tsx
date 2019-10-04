@@ -145,4 +145,10 @@ describe('Search tests', () => {
     wrapper.find(Button).simulate('click');
     sinon.assert.called(spy);
   });
+
+  it('test fetchTimeout function', () => {
+    const wrapper = renderer.create(<Router><Search /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.fetchTimeout).toMatchSnapshot();
+  });
 });
