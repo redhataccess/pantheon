@@ -83,6 +83,7 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
             assignPermissionToPrincipal(s, "pantheon", "/content", "*", Privilege.JCR_ALL);
             assignPermissionToPrincipal(s,"pantheon-users","/content/repositories", null, Privilege.JCR_WRITE, Privilege.JCR_NODE_TYPE_MANAGEMENT);
             assignPermissionToPrincipal(s,"pantheon-users","/content/modules", null, Privilege.JCR_WRITE, Privilege.JCR_NODE_TYPE_MANAGEMENT);
+            assignPermissionToPrincipal(s,"pantheon-users","/content/products", null, Privilege.JCR_WRITE, Privilege.JCR_NODE_TYPE_MANAGEMENT);
             // this is another way to do the above
             AccessControlUtils.addAccessControlEntry(s,
                     "/content/sandbox",

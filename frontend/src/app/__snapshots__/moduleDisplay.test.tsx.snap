@@ -1,0 +1,135 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
+<Fragment>
+  <div>
+    <div>
+      <Level
+        gutter="md"
+      >
+        <LevelItem>
+          <TextContent>
+            <Text
+              component="h1"
+            />
+          </TextContent>
+        </LevelItem>
+        <LevelItem />
+      </Level>
+    </div>
+    <div>
+      <a
+        href="http://access.redhat.com"
+      >
+        View on Customer Portal
+      </a>
+    </div>
+    <div>
+      <DataList
+        aria-label="single action data list"
+      >
+        <DataListItem
+          aria-labelledby="simple-item1"
+        >
+          <DataListItemRow
+            id="data-rows-header"
+          >
+            <DataListItemCells
+              dataListCells={
+                Array [
+                  <DataListCell
+                    width={2}
+                  >
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-type-products"
+                    >
+                      Products
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-type-published"
+                    >
+                      Published
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-type-draft-uploaded"
+                    >
+                      Draft Uploaded
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-name-module-type"
+                    >
+                      Module Type
+                    </span>
+                  </DataListCell>,
+                ]
+              }
+            />
+          </DataListItemRow>
+          <DataListItemRow>
+            <DataListItemCells
+              dataListCells={
+                Array [
+                  <DataListCell
+                    width={2}
+                  >
+                    <span>
+                       
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span>
+                      -
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span>
+                      -
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span>
+                      
+                    </span>
+                  </DataListCell>,
+                ]
+              }
+            />
+          </DataListItemRow>
+        </DataListItem>
+      </DataList>
+    </div>
+    <div>
+      <Card>
+        <Revisions
+          draftUpdateDate={[Function]}
+          modulePath="module/test"
+          onGetProduct={[Function]}
+          onGetVersion={[Function]}
+          releaseUpdateDate={[Function]}
+          revisionModulePath=""
+        />
+      </Card>
+    </div>
+  </div>
+</Fragment>
+`;
+
+exports[`ModuleDisplay tests test fetchModuleDetails function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getProduct function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getProductInitialLoad function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getVersion function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test getVersionUUID function 1`] = `undefined`;

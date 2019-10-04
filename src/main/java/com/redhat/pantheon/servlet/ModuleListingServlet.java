@@ -42,24 +42,27 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String limit = paramValue(request, "limit");
 
         if(!newArrayList("jcr:title", "jcr:description").contains(keyParam)) {
-            keyParam = "jcr:created";
+            keyParam = "pant:dateUploaded";
         }
         if(!"desc".equals(directionParam)) {
             directionParam = "asc";
         }
 
+        // FIXME Searching by resourceType because in some cases, searching directly on the primaryType
+        // is not returning any results
         StringBuilder queryBuilder = new StringBuilder()
-                .append("select m.* from [pant:module] as m ")
+                .append("select m.* from [nt:base] as m ")
                     .append("INNER JOIN [pant:moduleRevision] as rev ON ISDESCENDANTNODE(rev, m) ")
                 .append("where (isdescendantnode(m, '/content/repositories') ")
                     .append("or isdescendantnode(m, '/content/modules') ")
                     .append("or isdescendantnode(m, '/content/sandbox')) ")
+                .append("AND m.[jcr:primaryType] = 'pant:module' ")
                 // look in ALL revisions (all locales)
                 .append("AND (rev.[metadata/jcr:title] like '%" + searchParam + "%' ")
                     .append("OR rev.[metadata/jcr:description] like " + "'%" + searchParam + "%') ");
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
-            queryBuilder.append(" order by m.[")
+            queryBuilder.append(" order by rev.[metadata/")
                     .append(keyParam).append("] ")
                     .append(directionParam);
         }
@@ -78,6 +81,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String resourcePath = resource.getPath();
         m.put("name", resource.getName());
         // TODO need to provide both released and draft to the api caller
+        m.put("pant:dateUploaded", draftMetadata.isPresent() ? draftMetadata.get().dateUploaded.get() : releasedMetadata.get().dateUploaded.get());
         m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title.get() : releasedMetadata.get().title.get());
         m.put("jcr:description", draftMetadata.isPresent() ? draftMetadata.get().description.get() : releasedMetadata.get().description.get());
         // Assume the path is something like: /content/<something>/my/resource/path
@@ -89,9 +93,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         if (!"modules".equals(fragments[2])) {
             m.put("pant:transientSourceName", fragments[3]);
         }
-        for (Map.Entry<String, Object> e : m.entrySet()) {
-            log.trace("{} :: {} :: {}", e.getKey(), e.getValue().getClass(), e.getValue());
-        }
+
+        log.trace(m.toString());
         return m;
     }
 }

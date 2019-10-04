@@ -5,6 +5,9 @@ import "isomorphic-fetch"
 import { mount, shallow } from 'enzyme';
 import { Bullseye, TextInput, FormGroup, Button } from '@patternfly/react-core';
 
+import sinon from "sinon";
+import renderer from 'react-test-renderer';
+
 describe('Login tests', () => {
   test('should render Login component', () => {
     const view = shallow(<Module />);
@@ -38,9 +41,68 @@ describe('Login tests', () => {
 
   it('test click event', () => {
     const mockCallBack = jest.fn();
-  
+
     const button = shallow((<Button onClick={mockCallBack}>Submit</Button>));
     button.find('button').simulate('click');
     expect(mockCallBack.mock.calls.length).toEqual(1);
+  });
+
+  test('saveModule() click event', () => {
+    const wrapper = shallow(<Module />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'saveModule');
+
+    wrapper.setState({ buildDate: '', commitHash: '', commitText: '' })
+    wrapper.find(Button).at(0).simulate('click');
+    sinon.assert.calledOnce(spy);
+  });
+
+  it('test handleNameInput function', () => {
+    const wrapper = renderer.create(<Module />);
+    const inst = wrapper.getInstance();
+    expect(inst.handleNameInput()).toMatchSnapshot();
+  });
+
+  it('test handleModuleInput function', () => {
+    const wrapper = renderer.create(<Module />);
+    const inst = wrapper.getInstance();
+    expect(inst.handleModuleInput()).toMatchSnapshot();
+  });
+
+  it('test handleFileChange function', () => {
+    const wrapper = renderer.create(<Module />);
+    const inst = wrapper.getInstance();
+    const mockedEvent = { target: {} }
+    expect(inst.handleFileChange(mockedEvent)).toMatchSnapshot();
+  });
+
+  it('test setFile function', () => {
+    const wrapper = renderer.create(<Module />);
+    const inst = wrapper.getInstance();
+    expect(inst.setFile()).toMatchSnapshot();
+  });
+
+  it('test renderRedirect function', () => {
+    const wrapper = renderer.create(<Module />);
+    const inst = wrapper.getInstance();
+    expect(inst.renderRedirect()).toMatchSnapshot();
+  });
+
+  it('test loginRedirect function', () => {
+    const wrapper = renderer.create(<Module />);
+    const inst = wrapper.getInstance();
+    expect(inst.loginRedirect()).toMatchSnapshot();
+  });
+
+  it('test checkAuth function', () => {
+    const wrapper = renderer.create(<Module />);
+    const inst = wrapper.getInstance();
+    expect(inst.checkAuth()).toMatchSnapshot();
+  });
+
+  it('test dismissNotification function', () => {
+    const wrapper = renderer.create(<Module />);
+    const inst = wrapper.getInstance();
+    expect(inst.dismissNotification()).toMatchSnapshot();
   });
 });

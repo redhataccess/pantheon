@@ -10,3 +10,9 @@ exports[`User tests should render User component 1`] = `
   </Link>
 </Fragment>
 `;
+
+exports[`User tests test componentDidMount function 1`] = `[Function]`;
+
+exports[`User tests test conditionalRedirect function 1`] = `undefined`;
+
+exports[`User tests test render function 1`] = `[Function]`;

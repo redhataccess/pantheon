@@ -6,18 +6,37 @@ import fetch from 'isomorphic-fetch';
 // BASE is used in the fetch call to check if isLoggedIn or isAdmin. It currently breaks the Navlinks.
 // only search is displayed when BASE is consumed.
 // const BASE = process.env.BROWSER? '': `http://localhost`;
-class NavLinks extends Component {
+class NavLinks extends Component<any, any> {
 
-  public state = {
-    activeGroup: 'grp-1',
-    activeItem: 'grp-1_itm-1',
-    gotUserInfo: false,
-    isAdmin: false,
-    isDropdownOpen: false,
-    isKebabDropdownOpen: false,
-    isLoggedIn: false,
+  constructor(props) {
+    super(props)
+    this.state = {
+      activeGroup: '',
+      activeItem: '',
+      gotUserInfo: false,
+      isAdmin: false,
+      isDropdownOpen: false,
+      isKebabDropdownOpen: false,
+      isLoggedIn: false,
+    }
   }
 
+  public componentDidMount() {
+    if (!this.state.isLoggedIn) {
+      fetch("/system/sling/info.sessionInfo.json")
+        .then(response => response.json())
+        .then(responseJSON => {
+          if (responseJSON.userID !== 'anonymous') {
+            this.setState({ moduleText: 'New Module' })
+            this.setState({ isLoggedIn: true })
+          }
+          if (responseJSON.userID === 'admin') {
+            this.setState({ isAdmin: true })
+          }
+        })
+    }
+    this.setState({ activeGroup: 'grp-1', activeItem: 'grp-1_itm-1' });
+  }
   public render() {
     const browserText = 'Content Browser'
     const consoleText = 'Web Console'
@@ -27,9 +46,7 @@ class NavLinks extends Component {
     const productsText = 'Product Listing'
     const searchText = 'Search'
     const slingHomeText = 'Sling Welcome'
-    if (!this.state.isLoggedIn) {
-      this.checkAuth();
-    }
+
     return (
       <React.Fragment>
         <NavList>
@@ -53,50 +70,20 @@ class NavLinks extends Component {
             </NavItem>)}
           </NavExpandable>)}
           {(this.state.isLoggedIn) && (this.state.isAdmin) && (<NavExpandable title="Admin Panel" groupId="grp-3" isActive={this.state.activeGroup === 'grp-3'}>
-            <NavItem groupId="grp-3" itemId="grp-3_itm-1" isActive={this.state.activeItem === 'grp-3_itm-1'} onClick={this.welcomeLink()}>
-              <Link to='/starter/index.html'>{slingHomeText}</Link>
+            <NavItem groupId="grp-3" itemId="grp-3_itm-1" isActive={this.state.activeItem === 'grp-3_itm-1'} preventDefault={false} component='a'>
+              <a href='/starter/index.html' target='_blank'>{slingHomeText}</a>
             </NavItem>
-            <NavItem groupId="grp-3" itemId="grp-3_itm-2" isActive={this.state.activeItem === 'grp-3_itm-2'} onClick={this.browserLink()}>
-              <Link to='/bin/browser.html' >{browserText}</Link>
+            <NavItem groupId="grp-3" itemId="grp-3_itm-2" isActive={this.state.activeItem === 'grp-3_itm-2'} preventDefault={false} component='a'>
+              <a href='/bin/browser.html' target='_blank'>{browserText}</a>
             </NavItem>
-            <NavItem groupId="grp-3" itemId="grp-3_itm-3" isActive={this.state.activeItem === 'grp-3_itm-3'} onClick={this.consoleLink()}>
-              <Link to='/system/console/bundles.html'>{consoleText}</Link>
+            <NavItem groupId="grp-3" itemId="grp-3_itm-3" isActive={this.state.activeItem === 'grp-3_itm-3'} preventDefault={false} component='a'>
+              <a href='/system/console/bundles.html' target='_blank'>{consoleText}</a>
             </NavItem>
           </NavExpandable>)}
         </NavList>
       </React.Fragment>
     );
   }
-
-  private checkAuth = () => {
-    const id = 'userID';
-    fetch("/system/sling/info.sessionInfo.json")
-      .then(response => response.json())
-      .then(responseJSON => {
-        this.setState({ gotUserInfo: true })
-        if (responseJSON[id]) {
-          if (responseJSON[id] !== 'anonymous') {
-            this.setState({ isLoggedIn: true })
-          }
-          if (responseJSON[id] === 'admin') {
-            this.setState({ isAdmin: true })
-          }
-        }
-      })
-      .catch(() => { })
-  };
-
-  private browserLink = () => (event: any) => {
-    return window.open("/bin/browser.html");
-  };
-
-  private welcomeLink = () => (event: any) => {
-    return window.open("/starter/index.html");
-  };
-
-  private consoleLink = () => (event: any) => {
-    return window.open("/system/console/bundles.html");
-  };
 }
 
 export { NavLinks }

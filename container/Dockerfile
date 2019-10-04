@@ -1,9 +1,6 @@
 #Build stage
-FROM fedora:30 AS builder
-#Force the use of the mirror: http://download-ib01.fedoraproject.org/pub
-RUN sed -e '/metalink/s/^/#/g' -i /etc/yum.repos.d/fedora.repo && sed -i '/baseurl/s/^#//g' /etc/yum.repos.d/fedora.repo && sed -i 's/download/download-ib01/g' /etc/yum.repos.d/fedora.repo && sed -e '/metalink/s/^/#/g' -i /etc/yum.repos.d/fedora-updates.repo && sed -i '/baseurl/s/^#//g' /etc/yum.repos.d/fedora-updates.repo && sed -i 's/download/download-ib01/g' /etc/yum.repos.d/fedora-updates.repo && sed -e '/metalink/s/^/#/g' -i /etc/yum.repos.d/fedora-updates-modular.repo && sed -i '/baseurl/s/^#//g' /etc/yum.repos.d/fedora-updates-modular.repo && sed -i 's/download/download-ib01/g' /etc/yum.repos.d/fedora-updates-modular.repo && sed -e '/metalink/s/^/#/g' -i /etc/yum.repos.d/fedora-modular.repo && sed -i '/baseurl/s/^#//g' /etc/yum.repos.d/fedora-modular.repo && sed -i 's/download/download-ib01/g' /etc/yum.repos.d/fedora-modular.repo
-
-RUN dnf -v -y install maven java-1.8.0-openjdk-devel
+FROM registry.access.redhat.com/ubi8/ubi AS builder
+RUN yum -v -y install maven java-1.8.0-openjdk-devel
 RUN mkdir -p /build && chmod -R 777 /build
 WORKDIR /build
 ADD ./containerInstall.sh ../mvnw ../mvnw.cmd ../pom.xml /build/

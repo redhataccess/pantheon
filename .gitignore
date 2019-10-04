@@ -8,3 +8,4 @@ uploader/.idea
 .vscode
 tools/git2pantheon/git2pantheon
 tools/git2pantheon/pantheon.py
+RH-IT-Root-CA.crt
