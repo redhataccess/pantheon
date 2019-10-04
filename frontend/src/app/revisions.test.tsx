@@ -3,7 +3,7 @@ import { Revisions } from '@app/revisions';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Dropdown, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput, DropdownItem, Title, Alert, AlertActionCloseButton, DataListContent } from '@patternfly/react-core';
+import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Dropdown, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput, DropdownItem, Title, Alert, AlertActionCloseButton, DataListContent, KebabToggle } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 
@@ -125,6 +125,16 @@ describe('Revisions tests', () => {
         expect(alert.exists()).toBe(true)
     });
 
+    it('should render a Button', () => {
+        const wrapper = mount(<Revisions {...props} />);
+        const button = wrapper.find(Button);
+        expect(button.exists()).toBe(true)
+    });
+
+    it('should render a KebabToggle', () => {
+        const wrapper = mount(<KebabToggle />);
+    });
+
     it('test fetchRevisions function', () => {
         const wrapper = renderer.create(<Revisions {...props} />);
         const inst = wrapper.getInstance();
@@ -228,7 +238,6 @@ describe('Revisions tests', () => {
         const inst = wrapper.getInstance();
         expect(inst.getHarrayChildNamed("__children__")).toMatchSnapshot();
     });
-
 
     test('Revision Button click', () => {
         const wrapper = shallow(<Revisions {...props} />);
