@@ -72,7 +72,7 @@ public class GetObjectByUUID extends SlingSafeMethodsServlet {
             try {
                 dereferenceMap.putAll(buildDereferenceMap(dereference));
             } catch (Exception e) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter '" + PARAM_DEREFERENCE + "' must follow the pattern resourceTypeA:propertyA,resourceTypeB:propertyB,etc...");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter '" + PARAM_DEREFERENCE + "' must follow the pattern [resourceTypeA:]propertyA,[resourceTypeB:]propertyB,etc...");
             }
         }
 
@@ -105,12 +105,14 @@ public class GetObjectByUUID extends SlingSafeMethodsServlet {
         Map<String, Set<String>> map = new HashMap<>();
         for (String token : dereference.split(",")) {
             String[] pair = token.split(":", 2);
-            Set<String> props = map.get(pair[0]);
+            String key = pair.length > 1 ? pair[0] : null;
+            String value = pair.length > 1 ? pair[1] : pair[0];
+            Set<String> props = map.get(key);
             if (props == null) {
                 props = new HashSet<>();
-                map.put(pair[0], props);
+                map.put(key, props);
             }
-            props.add(pair[1]);
+            props.add(value);
         }
         return map;
     }
@@ -137,12 +139,15 @@ public class GetObjectByUUID extends SlingSafeMethodsServlet {
             }
 
             String type = resource.getResourceType();
-            Set<String> referenceFields = dereferenceMap.get(type);
-            if (referenceFields != null) {
-                for (Map.Entry<String, Object> entry : resource.getValueMap().entrySet()) {
-                    if (referenceFields.contains(entry.getKey())) {
-                        Resource child = getResourceByUuid((String) entry.getValue());
-                        ret.put(entry.getKey(), resourceToMapRecursive(child, depth - 1, dereferenceMap));
+            Set<String> referenceFieldsResourceSpecific = dereferenceMap.get(type);
+            Set<String> referenceFieldsGlobal = dereferenceMap.get(null);
+            for (Set<String> referenceFields : new Set[] { referenceFieldsGlobal, referenceFieldsResourceSpecific }) {
+                if (referenceFields != null) {
+                    for (Map.Entry<String, Object> entry : resource.getValueMap().entrySet()) {
+                        if (referenceFields.contains(entry.getKey())) {
+                            Resource child = getResourceByUuid((String) entry.getValue());
+                            ret.put(entry.getKey(), resourceToMapRecursive(child, depth - 1, dereferenceMap));
+                        }
                     }
                 }
             }

@@ -91,7 +91,7 @@ class GetObjectByUUIDTest {
     }
 
     @Test
-    void doGetWithDereference() throws ServletException, IOException {
+    void doGetWithSpecificDereference() throws ServletException, IOException {
         // Given
         sCtx.create().resource("/test",
                 "name", "a-name",
@@ -116,6 +116,43 @@ class GetObjectByUUIDTest {
         params.put("uuid", resource2Uuid);
         params.put("depth",  "2");
         params.put("dereference", "dummyType:dummyField,pantheon/test:referenceField");
+        sCtx.request().setParameterMap(params);
+        GetObjectByUUID servlet = new GetObjectByUUID();
+
+        // When
+        servlet.doGet(sCtx.request(), sCtx.response());
+
+        // Then
+        assertEquals(HttpStatus.SC_OK, sCtx.response().getStatus());
+        assertEquals(true, sCtx.response().getOutputAsString().contains("a-name"));
+    }
+
+    @Test
+    void doGetWithGlobalDereference() throws ServletException, IOException {
+        // Given
+        sCtx.create().resource("/test",
+                "name", "a-name",
+                "jcr:mixinTypes", "mix:referenceable");
+        String resourceUuid = sCtx.resourceResolver()
+                .getResource("/test")
+                .getValueMap()
+                .get("jcr:uuid")
+                .toString();
+        sCtx.create().resource("/test2",
+                "name", "child-name",
+                "referenceField", resourceUuid,
+                "sling:resourceType", "pantheon/test",
+                "jcr:mixinTypes", "mix:referenceable");
+        String resource2Uuid = sCtx.resourceResolver()
+                .getResource("/test2")
+                .getValueMap()
+                .get("jcr:uuid")
+                .toString();
+
+        Map params = newHashMap();
+        params.put("uuid", resource2Uuid);
+        params.put("depth",  "2");
+        params.put("dereference", "dummyField,referenceField");
         sCtx.request().setParameterMap(params);
         GetObjectByUUID servlet = new GetObjectByUUID();
 
