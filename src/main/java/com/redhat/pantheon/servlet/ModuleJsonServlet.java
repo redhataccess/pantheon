@@ -3,7 +3,7 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.Content;
-import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
@@ -66,7 +66,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     @Override
     protected boolean isValidResource(@Nonnull Resource resource) {
         Module module = resource.adaptTo(Module.class);
-        Optional<ModuleRevision> releasedRevision = module.getReleasedRevision(DEFAULT_MODULE_LOCALE);
+        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(DEFAULT_MODULE_LOCALE);
         return releasedRevision.isPresent();
     }
 
@@ -78,7 +78,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         // this needs to be done while handling localizations
         Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE);
         Optional<Content> releasedContent = module.getReleasedContent(DEFAULT_MODULE_LOCALE);
-        Optional<ModuleRevision> releasedRevision = module.getReleasedRevision(DEFAULT_MODULE_LOCALE);
+        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(DEFAULT_MODULE_LOCALE);
 
         Map<String, Object> moduleMap = super.resourceToMap(resource);
         Map<String, Object> moduleDetails = new HashMap<>();
