@@ -159,6 +159,20 @@ describe('Revisions tests', () => {
         expect(inst.onHeadingToggle()).toMatchSnapshot();
     });
 
+    it('test onExpandableToggle function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        const data = [{"isDropdownOpen": true}]
+        expect(inst.onExpandableToggle(data)).toMatchSnapshot();
+    });
+
+    it('test onArchiveToggle function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        const data = [{"isDropdownOpen": true}]
+        expect(inst.onArchiveToggle(data)).toMatchSnapshot();
+    });
+
     it('test previewDoc function', () => {
         const wrapper = renderer.create(<Revisions {...props} />);
         const inst = wrapper.getInstance();
@@ -169,6 +183,12 @@ describe('Revisions tests', () => {
         const wrapper = renderer.create(<Revisions {...props} />);
         const inst = wrapper.getInstance();
         expect(inst.saveMetadata()).toMatchSnapshot();
+    });
+
+    it('test componentDidMount function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.componentDidMount()).toMatchSnapshot();
     });
 
     it('test onChangeProduct function', () => {
