@@ -8,7 +8,7 @@ import org.apache.sling.api.resource.Resource;
 
 /**
  * Models a single instance of a module's content. Multiple content instances may be found on a
- * given module representing several content revisions.
+ * given module representing several content versions.
  */
 public class Content extends SlingResource {
 
@@ -23,7 +23,7 @@ public class Content extends SlingResource {
     }
 
     /**
-     * A child resource for a {@link ModuleRevision} which contains cached data
+     * A child resource for a {@link ModuleVersion} which contains cached data
      * when a resource is generated.
      */
     public static class CachedContent extends SlingResource {

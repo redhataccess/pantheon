@@ -7,13 +7,13 @@ import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import org.apache.sling.api.resource.Resource;
 
 /**
- * A {@link SlingResource} which describes the structure for a module revision.
+ * A {@link SlingResource} which describes the structure for a module version.
  * Contains all the properties and content for the state of a given module at
- * a given time. ModuleRevisions should differ in content when part of the same
+ * a given time. ModuleVersions should differ in content when part of the same
  * parent, but this is not validated.
  */
-@JcrPrimaryType("pant:moduleRevision")
-public class ModuleRevision extends SlingResource {
+@JcrPrimaryType("pant:moduleVersion")
+public class ModuleVersion extends SlingResource {
 
     public final Field<String> uuid = stringField("jcr:uuid");
 
@@ -21,7 +21,7 @@ public class ModuleRevision extends SlingResource {
 
     public final Child<Metadata> metadata = child("metadata", Metadata.class);
 
-    public ModuleRevision(Resource wrapped) {
+    public ModuleVersion(Resource wrapped) {
         super(wrapped);
     }
 }

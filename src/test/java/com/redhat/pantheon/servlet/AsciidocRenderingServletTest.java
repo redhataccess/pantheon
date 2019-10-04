@@ -2,8 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleRevision;
-import com.redhat.pantheon.util.TestUtils;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -38,7 +37,7 @@ public class AsciidocRenderingServletTest {
         // Given
         slingContext.build()
                 .resource("/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleRevision")
+                        "jcr:primaryType", "pant:moduleVersion")
                 .resource("/module/en_US/1/content/cachedHtml/jcr:content",
                         "jcr:data", "A generated html string")
                 .resource("/module/en_US/1/metadata")
@@ -52,7 +51,7 @@ public class AsciidocRenderingServletTest {
         slingContext.request().setResource(resource);
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
+                        any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
 
         // Test class
@@ -66,7 +65,7 @@ public class AsciidocRenderingServletTest {
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
         verify(asciidoctorService).getModuleHtml(
-                any(ModuleRevision.class), any(Resource.class), anyMap(), eq(false));
+                any(ModuleVersion.class), any(Resource.class), anyMap(), eq(false));
     }
 
     @Test
@@ -76,7 +75,7 @@ public class AsciidocRenderingServletTest {
         // Given
         slingContext.build()
                 .resource("/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleRevision")
+                        "jcr:primaryType", "pant:moduleVersion")
                 .resource("/module/en_US/1/content/cachedHtml/jcr:content",
                         "jcr:data", "A generated html string")
                 .commit();
@@ -90,7 +89,7 @@ public class AsciidocRenderingServletTest {
         slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
+                        any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
 
         // Test class
@@ -104,7 +103,7 @@ public class AsciidocRenderingServletTest {
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
         verify(asciidoctorService).getModuleHtml(
-                any(ModuleRevision.class), any(Resource.class), anyMap(), eq(false));
+                any(ModuleVersion.class), any(Resource.class), anyMap(), eq(false));
     }
 
     @Test
@@ -114,7 +113,7 @@ public class AsciidocRenderingServletTest {
         // Given
         slingContext.build()
                 .resource("/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleRevision")
+                        "jcr:primaryType", "pant:moduleVersion")
                 .resource("/module/en_US/1/content/cachedHtml/jcr:content",
                         "jcr:data", "A generated html string")
                 .commit();
@@ -129,7 +128,7 @@ public class AsciidocRenderingServletTest {
         slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
+                        any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
 
         // Test class
@@ -143,7 +142,7 @@ public class AsciidocRenderingServletTest {
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
         verify(asciidoctorService).getModuleHtml(
-                any(ModuleRevision.class), any(Resource.class), anyMap(), eq(true));
+                any(ModuleVersion.class), any(Resource.class), anyMap(), eq(true));
     }
 
     @Test
@@ -153,7 +152,7 @@ public class AsciidocRenderingServletTest {
         // Given
         slingContext.build()
                 .resource("/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleRevision")
+                        "jcr:primaryType", "pant:moduleVersion")
                 .resource("/module/en_US/1/content/cachedHtml/jcr:content",
                         "jcr:data", "A generated html string")
                 .commit();
@@ -170,7 +169,7 @@ public class AsciidocRenderingServletTest {
         slingContext.request().getParameterMap().put("non_ctx_arg", new String[]{"unaccepted"});
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(ModuleRevision.class), any(Resource.class), anyMap(), anyBoolean()))
+                        any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
 
         // Test class
@@ -186,7 +185,7 @@ public class AsciidocRenderingServletTest {
 
         ArgumentCaptor<Map> contextArguments = ArgumentCaptor.forClass(Map.class);
         verify(asciidoctorService).getModuleHtml(
-                any(ModuleRevision.class), any(Resource.class), contextArguments.capture(), eq(true));
+                any(ModuleVersion.class), any(Resource.class), contextArguments.capture(), eq(true));
         assertEquals(1, contextArguments.getValue().size());
         assertTrue(contextArguments.getValue().containsKey("arg"));
     }

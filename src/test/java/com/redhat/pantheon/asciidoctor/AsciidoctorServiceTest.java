@@ -5,7 +5,7 @@ import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -54,8 +54,8 @@ class AsciidoctorServiceTest {
                 .commit();
 
         Resource moduleResource = slingContext.resourceResolver().getResource("/module");
-        ModuleRevision moduleRevision =
-                new ModuleRevision(slingContext.resourceResolver().getResource("/module/locales/en_US/released"));
+        ModuleVersion moduleVersion =
+                new ModuleVersion(slingContext.resourceResolver().getResource("/module/locales/en_US/released"));
         // adapter (mock)
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(Content.class, slingContext);
@@ -68,7 +68,7 @@ class AsciidoctorServiceTest {
                 new AsciidoctorService(globalConfig, asciidoctorPool, serviceResourceResolverProvider);
 
         // When
-        String generatedHtml = asciidoctorService.getModuleHtml(moduleRevision, moduleResource, newHashMap(), false);
+        String generatedHtml = asciidoctorService.getModuleHtml(moduleVersion, moduleResource, newHashMap(), false);
 
         // Then
         assertTrue(generatedHtml.contains("This is a title"));
@@ -88,8 +88,8 @@ class AsciidoctorServiceTest {
                                             "pant:hash", "01000000")
                 .commit();
         Resource resource = slingContext.resourceResolver().getResource("/module");
-        ModuleRevision moduleRevision =
-                new ModuleRevision(slingContext.resourceResolver().getResource("/module/locales/en_US/released"));
+        ModuleVersion moduleVersion =
+                new ModuleVersion(slingContext.resourceResolver().getResource("/module/locales/en_US/released"));
         // adapter (mock)
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(Content.class, slingContext);
@@ -103,7 +103,7 @@ class AsciidoctorServiceTest {
 
         AsciidoctorService asciidoctorService =
                 new AsciidoctorService(globalConfig, asciidoctorPool, serviceResourceResolverProvider);
-        String generatedHtml = asciidoctorService.getModuleHtml(moduleRevision, resource, newHashMap(), false);
+        String generatedHtml = asciidoctorService.getModuleHtml(moduleVersion, resource, newHashMap(), false);
 
         // Then
         assertTrue(generatedHtml.contains("This is cached content"));

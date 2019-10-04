@@ -2,7 +2,7 @@ package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.servlets.post.HtmlResponse;
 import org.apache.sling.servlets.post.Modification;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith({SlingContextExtension.class})
-class UnpublishRevisionTest {
+class UnpublishVersionTest {
 
     SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
@@ -32,7 +32,7 @@ class UnpublishRevisionTest {
         // Given
         slingContext.create()
                 .resource("/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleRevision");
+                        "jcr:primaryType", "pant:moduleVersion");
         slingContext.create()
                 .resource("/module/en_US/1/metadata",
                         "jcr:title", "A published title");
@@ -42,12 +42,12 @@ class UnpublishRevisionTest {
         slingContext.resourceResolver().getResource("/module/en_US").adaptTo(ModifiableValueMap.class)
                 .put("released", slingContext.resourceResolver().getResource("/module/en_US/1").getValueMap().get("jcr:uuid"));
         registerMockAdapter(Module.class, slingContext);
-        registerMockAdapter(ModuleRevision.class, slingContext);
+        registerMockAdapter(ModuleVersion.class, slingContext);
         Events events = mock(Events.class);
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
-        UnpublishRevision operation = new UnpublishRevision(events);
+        UnpublishVersion operation = new UnpublishVersion(events);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);
@@ -63,8 +63,8 @@ class UnpublishRevisionTest {
     }
 
     @Test
-    @DisplayName("doRun for module with no released revision")
-    void doRunNoDraftRevision() throws Exception {
+    @DisplayName("doRun for module with no released version")
+    void doRunNoDraftVersion() throws Exception {
         // Given
         slingContext.build()
                 .resource("/module/locales/en_US/released/metadata")
@@ -74,7 +74,7 @@ class UnpublishRevisionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
-        UnpublishRevision operation = new UnpublishRevision(null);
+        UnpublishVersion operation = new UnpublishVersion(null);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);

@@ -25,7 +25,7 @@ class AsciidocContentRenderingServletTest {
         // Given
         sc.build()
                 .resource("/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleRevision")
+                        "jcr:primaryType", "pant:moduleVersion")
                 .resource("/module/en_US/1/content/asciidoc/jcr:content",
                         "jcr:data", "some asciidoc content")
                 .commit();
