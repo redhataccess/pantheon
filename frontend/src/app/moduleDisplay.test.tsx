@@ -6,7 +6,7 @@ import { mount, shallow } from 'enzyme';
 import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListCell, TextContent, Level, LevelItem } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
-import { Revisions } from './revisions';
+import { Versions } from './versions';
 
 const props = {
     location: { pathname: "module/test" }
@@ -80,10 +80,10 @@ describe('ModuleDisplay tests', () => {
         expect(levelItem.exists()).toBe(true)
     });
 
-    it('should render a Revisions Element', () => {
+    it('should render a Versions Element', () => {
         const wrapper = mount(<ModuleDisplay {...props} />);
-        const revisions = wrapper.find(Revisions);
-        expect(revisions.exists()).toBe(true)
+        const versions = wrapper.find(Versions);
+        expect(versions.exists()).toBe(true)
     });
 
     it('should render a h1 component', () => {

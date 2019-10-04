@@ -12,17 +12,17 @@ import { Redirect } from 'react-router-dom'
 
 export interface IProps {
     modulePath: string
-    revisionModulePath: string
+    versionModulePath: string
     draftUpdateDate: (draftUpdateDate, draft, draftPath) => any
     releaseUpdateDate: (releaseUpdateDate, release, releasePath) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
 
-class Revisions extends Component<IProps, any> {
+class Versions extends Component<IProps, any> {
 
-    public draft = [{ "icon": BlankImage, "path": "", "revision": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
-    public release = [{ "icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
+    public draft = [{ "icon": BlankImage, "path": "", "version": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
+    public release = [{ "icon": CheckImage, "path": "", "version": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
 
     constructor(props) {
         super(props)
@@ -124,7 +124,7 @@ class Revisions extends Component<IProps, any> {
                     Update Successful!
           </Alert>
                 }
-                {this.state.initialLoad && this.fetchRevisions()}
+                {this.state.initialLoad && this.fetchVersions()}
                 {this.state.metadataInitialLoad && this.getMetadata(this.state.metadataPath)}
                 <Card>
                     <div>
@@ -140,17 +140,17 @@ class Revisions extends Component<IProps, any> {
                                     />
                                     <DataListItemCells
                                         dataListCells={[
-                                            <DataListCell key="revision">
-                                                <span className="sp-prop-nosort" id="span-source-type-revision">Revision</span>
+                                            <DataListCell key="version">
+                                                <span className="sp-prop-nosort" id="span-source-type-version">Version</span>
                                             </DataListCell>,
                                             <DataListCell key="published">
-                                                <span className="sp-prop-nosort" id="span-source-type-revision-published">Published</span>
+                                                <span className="sp-prop-nosort" id="span-source-type-version-published">Published</span>
                                             </DataListCell>,
                                             <DataListCell key="updated">
-                                                <span className="sp-prop-nosort" id="span-source-type-revision-draft-uploaded">Draft Uploaded</span>
+                                                <span className="sp-prop-nosort" id="span-source-type-version-draft-uploaded">Draft Uploaded</span>
                                             </DataListCell>,
                                             <DataListCell key="publish_buttons">
-                                                <span className="sp-prop-nosort" id="span-source-name-revision-publish-buttons" />
+                                                <span className="sp-prop-nosort" id="span-source-name-version-publish-buttons" />
                                             </DataListCell>,
                                             <DataListCell key="module_view_button">
                                                 <span className="sp-prop-nosort" id="span-source-name" />
@@ -169,7 +169,7 @@ class Revisions extends Component<IProps, any> {
                                 {/* {console.log("[results]", this.state.results)} */}
                                 {this.state.results.map(type => (
                                     type.map(data => (
-                                        data.revision !== "" && (
+                                        data.version !== "" && (
                                             <DataList aria-label="Simple data list2">
                                                 <DataListItem aria-labelledby="simple-item2" isExpanded={data.isDropdownOpen}>
                                                     <DataListItemRow>
@@ -177,14 +177,14 @@ class Revisions extends Component<IProps, any> {
                                                             // tslint:disable-next-line: jsx-no-lambda
                                                             onClick={() => this.onExpandableToggle(data)}
                                                             isExpanded={data.isDropdownOpen}
-                                                            id={data.revision}
-                                                            aria-controls={data.revision}
+                                                            id={data.version}
+                                                            aria-controls={data.version}
                                                         />
                                                         <DataListItemCells
                                                             dataListCells={[
-                                                                <DataListCell key="revision">
+                                                                <DataListCell key="version">
                                                                     {/* <img src={CheckImage} width="20px" height="20px"/>                                                         */}
-                                                                    {data.revision}
+                                                                    {data.version}
                                                                 </DataListCell>,
                                                                 <DataListCell key="published">
                                                                     {data.publishedState}
@@ -214,8 +214,8 @@ class Revisions extends Component<IProps, any> {
                                                         />
                                                     </DataListItemRow>
                                                     <DataListContent
-                                                        aria-label={data.revision}
-                                                        id={data.revision}
+                                                        aria-label={data.version}
+                                                        id={data.version}
                                                         isHidden={!data.isDropdownOpen}
                                                         noPadding={true}
                                                     >
@@ -356,7 +356,7 @@ class Revisions extends Component<IProps, any> {
         );
     }
 
-    private fetchRevisions = () => {
+    private fetchVersions = () => {
         // TODO: need a better fix for the 404 error.
         if (this.props.modulePath !== '') {
             const fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
@@ -371,14 +371,14 @@ class Revisions extends Component<IProps, any> {
                         for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
                             const moduleVersion = responseJSON["__children__"][i]
                             if (moduleVersion["jcr:uuid"] === draftTag) {
-                                this.draft[0]["revision"] = "Version " + moduleVersion["__name__"];
+                                this.draft[0]["version"] = "Version " + moduleVersion["__name__"];
                                 this.draft[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
                                 this.draft[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
                                 this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
                                 this.props.draftUpdateDate(this.draft[0]["updatedDate"], "draft", this.draft[0]["path"]);
                             }
                             if (moduleVersion["jcr:uuid"] === releasedTag) {
-                                this.release[0]["revision"] = "Version " + moduleVersion["__name__"];
+                                this.release[0]["version"] = "Version " + moduleVersion["__name__"];
                                 this.release[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
                                 this.release[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
                                 this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
@@ -411,11 +411,11 @@ class Revisions extends Component<IProps, any> {
         if (buttonText === "Publish") {
             formData.append(":operation", "pant:release");
             // console.log('Published file path:', this.props.modulePath)
-            this.draft[0].revision = "";
+            this.draft[0].version = "";
         } else {
             formData.append(":operation", "pant:unpublish");
             // console.log('Unpublished file path:', this.props.modulePath);
-            this.release[0].revision = "";
+            this.release[0].version = "";
         }
         fetch("/content" + this.props.modulePath, {
             body: formData,
@@ -668,12 +668,12 @@ class Revisions extends Component<IProps, any> {
         this.setState({ successAlertVisble: false })
     }
 
-    private getMetadata = (revisionPath) => {
+    private getMetadata = (versionPath) => {
 
-        if (revisionPath.trim() !== "") {
-            // console.log("[getMetadata] revisionPath: ", revisionPath)
+        if (versionPath.trim() !== "") {
+            // console.log("[getMetadata] versionPath: ", versionPath)
             this.setState({ metadataInitialLoad: false })
-            fetch(revisionPath + "/metadata.json")
+            fetch(versionPath + "/metadata.json")
                 .then(response => response.json())
                 .then(responseJSON => this.setState({ metadataResults: responseJSON }))
                 .then(() => {
@@ -728,4 +728,4 @@ class Revisions extends Component<IProps, any> {
     }
 }
 
-export { Revisions }
+export { Versions }
