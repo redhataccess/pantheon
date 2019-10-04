@@ -1,6 +1,5 @@
 package com.redhat.pantheon.model.module;
 
-import com.redhat.pantheon.model.api.ReferenceField;
 import com.redhat.pantheon.model.api.SlingResource;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import org.apache.sling.api.resource.Resource;
@@ -10,10 +9,8 @@ import javax.jcr.RepositoryException;
 import java.util.Locale;
 import java.util.Optional;
 
-import static com.google.common.collect.Streams.stream;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.counting;
 
 /**
  * The definition of a Module resource in the system.
@@ -115,37 +112,5 @@ public class Module extends SlingResource {
     public Optional<Metadata> getDraftMetadata(final Locale locale) {
         return getDraftVersion(locale)
                 .map(moduleVersion -> moduleVersion.metadata.get());
-    }
-
-    /**
-     * A specific module locale node which houses all the versions for a specific language in the module.
-     */
-    @JcrPrimaryType("sling:OrderedFolder")
-    public static class ModuleLocale extends SlingResource {
-
-        public final ReferenceField<ModuleVersion> released = referenceField("released", ModuleVersion.class);
-
-        public final ReferenceField<ModuleVersion> draft = referenceField("draft", ModuleVersion.class);
-
-        public ModuleVersion getVersion(String name) {
-            return child(name, ModuleVersion.class).get();
-        }
-
-        public ModuleVersion getOrCreateVersion(String name) {
-            return child(name, ModuleVersion.class).getOrCreate();
-        }
-
-        public ModuleVersion createNextVersion() {
-            // Generate a new version name
-            return child(generateNextVersionName(), ModuleVersion.class).create();
-        }
-
-        private String generateNextVersionName() {
-            return "" + (stream(this.getChildren()).collect(counting()) + 1);
-        }
-
-        public ModuleLocale(@Nonnull Resource resource) {
-            super(resource);
-        }
     }
 }

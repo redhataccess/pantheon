@@ -3,7 +3,7 @@ package com.redhat.pantheon.servlet.module;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.Module.ModuleLocale;
+import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.servlets.post.AbstractPostOperation;

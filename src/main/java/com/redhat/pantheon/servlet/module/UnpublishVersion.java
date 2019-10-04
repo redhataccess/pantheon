@@ -4,6 +4,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.model.module.ModuleLocale;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static com.google.common.collect.Streams.stream;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 
 /**
@@ -58,8 +58,8 @@ public class UnpublishVersion extends AbstractPostOperation {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                     "The module is not released (published)");
         } else {
-            // Released version is emptied out
-            Module.ModuleLocale moduleLocale = module.getModuleLocale(locale);
+            // Released revision is emptied out
+            ModuleLocale moduleLocale = module.getModuleLocale(locale);
             String unpublishedRevId = moduleLocale.released.get();
             moduleLocale.released.set( null );
 

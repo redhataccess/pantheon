@@ -42,6 +42,9 @@
 [pant:module] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/module' mandatory autocreated
 
+[pant:moduleLocale] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+ - sling:resourceType (string) = 'pantheon/moduleLocale' mandatory autocreated
+
 [pant:moduleVersion] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/moduleVersion' mandatory autocreated
 
