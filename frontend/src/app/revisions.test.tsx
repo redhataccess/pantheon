@@ -185,12 +185,6 @@ describe('Revisions tests', () => {
         expect(inst.saveMetadata()).toMatchSnapshot();
     });
 
-    it('test componentDidMount function', () => {
-        const wrapper = renderer.create(<Revisions {...props} />);
-        const inst = wrapper.getInstance();
-        expect(inst.componentDidMount()).toMatchSnapshot();
-    });
-
     it('test onChangeProduct function', () => {
         const wrapper = renderer.create(<Revisions {...props} />);
         const inst = wrapper.getInstance();
@@ -257,6 +251,18 @@ describe('Revisions tests', () => {
         const wrapper = renderer.create(<Revisions {...props} />);
         const inst = wrapper.getInstance();
         expect(inst.getHarrayChildNamed("__children__")).toMatchSnapshot();
+    });
+
+    it('test fetchProductVersionDetails function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.fetchProductVersionDetails()).toMatchSnapshot();
+    });
+
+    it('test hideSuccessAlert function', () => {
+        const wrapper = renderer.create(<Revisions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.hideSuccessAlert()).toMatchSnapshot();
     });
 
     test('Revision Button click', () => {
