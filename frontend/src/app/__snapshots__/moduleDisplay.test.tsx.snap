@@ -112,7 +112,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
     </div>
     <div>
       <Card>
-        <Revisions
+        <Versions
           modulePath="module/test"
           onGetProduct={[Function]}
           onGetVersion={[Function]}

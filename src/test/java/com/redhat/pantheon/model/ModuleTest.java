@@ -21,7 +21,7 @@ class ModuleTest {
     private final SlingContext slingContext = new SlingContext();
 
     @Test
-    void createNewRevision() throws Exception {
+    void createNewVersion() throws Exception {
         // Given
         slingContext.build()
                 .resource("/content/module1")
@@ -31,7 +31,7 @@ class ModuleTest {
 
         // When
         module.createModuleLocale(new Locale("es", "ES"))
-                .createNextRevision();
+                .createNextVersion();
         module.getResourceResolver().commit();
 
         // Then
@@ -39,7 +39,7 @@ class ModuleTest {
     }
 
     @Test
-    void getRevisionByLocaleAndRevisionName() throws Exception {
+    void getVersionByLocaleAndVersionName() throws Exception {
         // Given
         slingContext.build()
                 // module 1, en_US
@@ -63,26 +63,26 @@ class ModuleTest {
 
         // Then
         assertNotNull(
-                module1.getModuleLocale(new Locale("en", "US")).getRevision("1"));
+                module1.getModuleLocale(new Locale("en", "US")).getVersion("1"));
         assertNotNull(
-                module1.getModuleLocale(new Locale("en", "US")).getRevision("2"));
+                module1.getModuleLocale(new Locale("en", "US")).getVersion("2"));
         assertNotNull(
-                module1.getModuleLocale(new Locale("es", "ES")).getRevision("1"));
+                module1.getModuleLocale(new Locale("es", "ES")).getVersion("1"));
         assertNotNull(
-                module1.getModuleLocale(new Locale("es", "ES")).getRevision("2"));
+                module1.getModuleLocale(new Locale("es", "ES")).getVersion("2"));
         assertNotNull(
-                module2.getModuleLocale(new Locale("en", "US")).getRevision("1"));
+                module2.getModuleLocale(new Locale("en", "US")).getVersion("1"));
         assertNotNull(
-                module2.getModuleLocale(new Locale("en", "US")).getRevision("2"));
+                module2.getModuleLocale(new Locale("en", "US")).getVersion("2"));
         assertNotNull(
-                module2.getModuleLocale(new Locale("es", "ES")).getRevision("1"));
+                module2.getModuleLocale(new Locale("es", "ES")).getVersion("1"));
         assertNotNull(
-                module2.getModuleLocale(new Locale("es", "ES")).getRevision("2"));
+                module2.getModuleLocale(new Locale("es", "ES")).getVersion("2"));
 
         assertNull(
                 module1.getModuleLocale(Locale.SIMPLIFIED_CHINESE));
         assertNull(
-                module1.getModuleLocale(new Locale("es", "ES")).getRevision("abc"));
+                module1.getModuleLocale(new Locale("es", "ES")).getVersion("abc"));
     }
 
 }

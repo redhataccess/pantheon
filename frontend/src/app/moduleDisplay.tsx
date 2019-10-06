@@ -4,8 +4,7 @@ import {
     DataList, DataListItem, DataListItemRow, DataListItemCells,
     DataListCell, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core';
-import { Revisions } from '@app/revisions';
-import { Link } from "react-router-dom";
+import { Versions } from '@app/versions';
 
 class ModuleDisplay extends Component<any, any, any> {
 
@@ -104,7 +103,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         </div>
                         <div>
                             <Card>
-                                <Revisions
+                                <Versions
                                     modulePath={this.state.modulePath}
                                     revisionModulePath={this.state.moduleTitle}
                                     updateDate={this.updateDate}

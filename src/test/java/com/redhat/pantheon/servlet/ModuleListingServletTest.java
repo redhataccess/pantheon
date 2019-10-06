@@ -57,7 +57,7 @@ class ModuleListingServletTest {
         // Given
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleRevision");
+                        "jcr:primaryType", "pant:moduleVersion");
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/1/metadata",
                         "jcr:title", "A title",

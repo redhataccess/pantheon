@@ -1,7 +1,7 @@
 package com.redhat.pantheon.extension;
 
-import com.redhat.pantheon.extension.events.ModuleRevisionPublishedEvent;
-import com.redhat.pantheon.model.module.ModuleRevision;
+import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
 import org.osgi.service.component.annotations.Activate;
@@ -34,12 +34,12 @@ public class Events {
     }
 
     /**
-     * Fires an event indicating that a module revision has been publsihed. As its name implies,
+     * Fires an event indicating that a module version has been publsihed. As its name implies,
      * this event should be fired only after a module is published.
-     * @param moduleRevision The module revision which has just been published.
+     * @param moduleVersion The module version which has just been published.
      */
-    public void fireModuleRevisionPublishedEvent(ModuleRevision moduleRevision) {
-        ModuleRevisionPublishedEvent event = new ModuleRevisionPublishedEvent(moduleRevision.getPath());
+    public void fireModuleVersionPublishedEvent(ModuleVersion moduleVersion) {
+        ModuleVersionPublishedEvent event = new ModuleVersionPublishedEvent(moduleVersion.getPath());
         Map<String, Object> props = newHashMap();
         props.put(Event.class.getName(), event);
         Job job = jobManager.createJob(MODULE_POST_PUBLISH_EVENT)

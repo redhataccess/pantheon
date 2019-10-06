@@ -254,8 +254,8 @@ def process_file(path, filetype):
             logger.debug('url: %s', url)
             jcr_primary_type = "pant:module" if isModule else "pant:title"
             data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type="nt:file")
-            # This is needed to add a new module revision, otherwise it won't be handled
-            data[":operation"] = "pant:newModuleRevision"
+            # This is needed to add a new module version, otherwise it won't be handled
+            data[":operation"] = "pant:newModuleVersion"
             files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
 
             # Minor question: which is correct, text/asciidoc or text/x-asciidoc?

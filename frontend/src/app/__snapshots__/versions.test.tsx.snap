@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Revisions tests should render Revisions component 1`] = `
+exports[`Versions tests should render Versions component 1`] = `
 <Fragment>
   <Card>
     <div>
@@ -28,7 +28,7 @@ exports[`Revisions tests should render Revisions component 1`] = `
                       className="sp-prop-nosort"
                       id="span-source-type-revision"
                     >
-                      Revision
+                      Version
                     </span>
                   </DataListCell>,
                   <DataListCell>
@@ -306,38 +306,38 @@ exports[`Revisions tests should render Revisions component 1`] = `
 </Fragment>
 `;
 
-exports[`Revisions tests test changePublishState function 1`] = `undefined`;
+exports[`Versions tests test changePublishState function 1`] = `undefined`;
 
-exports[`Revisions tests test dismissNotification function 1`] = `undefined`;
+exports[`Versions tests test dismissNotification function 1`] = `undefined`;
 
-exports[`Revisions tests test fetchProductVersionDetails function 1`] = `Array []`;
+exports[`Versions tests test fetchProductVersionDetails function 1`] = `Array []`;
 
-exports[`Revisions tests test fetchRevisions function 1`] = `undefined`;
+exports[`Versions tests test fetchVersions function 1`] = `undefined`;
 
-exports[`Revisions tests test getHarrayChildNamed function 1`] = `""`;
+exports[`Versions tests test getHarrayChildNamed function 1`] = `""`;
 
-exports[`Revisions tests test getModuleUrl function 1`] = `"/content/modules.query.json?nodeType=pant:module&where=[urlFragment]=\\"undefined\\""`;
+exports[`Versions tests test getModuleUrl function 1`] = `"/content/modules.query.json?nodeType=pant:module&where=[urlFragment]=\\"undefined\\""`;
 
-exports[`Revisions tests test handleURLInput function 1`] = `undefined`;
+exports[`Versions tests test handleURLInput function 1`] = `undefined`;
 
-exports[`Revisions tests test hideSuccessAlert function 1`] = `undefined`;
+exports[`Versions tests test hideSuccessAlert function 1`] = `undefined`;
 
-exports[`Revisions tests test loginRedirect function 1`] = `""`;
+exports[`Versions tests test loginRedirect function 1`] = `""`;
 
-exports[`Revisions tests test onArchiveSelect function 1`] = `undefined`;
+exports[`Versions tests test onArchiveSelect function 1`] = `undefined`;
 
-exports[`Revisions tests test onArchiveToggle function 1`] = `undefined`;
+exports[`Versions tests test onArchiveToggle function 1`] = `undefined`;
 
-exports[`Revisions tests test onChangeProduct function 1`] = `undefined`;
+exports[`Versions tests test onChangeProduct function 1`] = `undefined`;
 
-exports[`Revisions tests test onChangeUsecase function 1`] = `undefined`;
+exports[`Versions tests test onChangeUsecase function 1`] = `undefined`;
 
-exports[`Revisions tests test onExpandableToggle function 1`] = `undefined`;
+exports[`Versions tests test onExpandableToggle function 1`] = `undefined`;
 
-exports[`Revisions tests test onHeadingToggle function 1`] = `undefined`;
+exports[`Versions tests test onHeadingToggle function 1`] = `undefined`;
 
-exports[`Revisions tests test previewDoc function 1`] = `undefined`;
+exports[`Versions tests test previewDoc function 1`] = `undefined`;
 
-exports[`Revisions tests test renderRedirect function 1`] = `""`;
+exports[`Versions tests test renderRedirect function 1`] = `""`;
 
-exports[`Revisions tests test saveMetadata function 1`] = `undefined`;
+exports[`Versions tests test saveMetadata function 1`] = `undefined`;

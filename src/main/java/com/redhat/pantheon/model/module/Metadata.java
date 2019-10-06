@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * Models an instance of metadata for a module. Multiple metadata
  * instances may found on a given module representing different
- * revisions of said metadata.
+ * versions of said metadata.
  */
 public class Metadata extends SlingResource {
 

@@ -18,7 +18,7 @@ export interface IProps {
     onGetVersion: (versionValue) => any
 }
 
-class Revisions extends Component<IProps, any> {
+class Versions extends Component<IProps, any> {
 
     public draft = [{ "type":"draft","icon": BlankImage, "path": "", "revision": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
     public release = [{ "type":"release","icon": CheckImage, "path": "", "revision": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '',"draftUploadDate": "" }]
@@ -124,7 +124,7 @@ class Revisions extends Component<IProps, any> {
                     Update Successful!
           </Alert>
                 }
-                {this.state.initialLoad && this.fetchRevisions()}
+                {this.state.initialLoad && this.fetchVersions()}
                 {this.state.metadataInitialLoad && this.getMetadata(this.state.metadataPath)}
                 <Card>
                     <div>
@@ -141,7 +141,7 @@ class Revisions extends Component<IProps, any> {
                                     <DataListItemCells
                                         dataListCells={[
                                             <DataListCell key="revision">
-                                                <span className="sp-prop-nosort" id="span-source-type-revision">Revision</span>
+                                                <span className="sp-prop-nosort" id="span-source-type-revision">Version</span>
                                             </DataListCell>,
                                             <DataListCell key="published">
                                                 <span className="sp-prop-nosort" id="span-source-type-revision-published">Published</span>
@@ -359,7 +359,7 @@ class Revisions extends Component<IProps, any> {
         );
     }
 
-    private fetchRevisions = () => {
+    private fetchVersions = () => {
 
         // TODO: need a better fix for the 404 error.
         if (this.props.modulePath !== '') {
@@ -735,4 +735,4 @@ class Revisions extends Component<IProps, any> {
     }
 }
 
-export { Revisions }
+export { Versions }
