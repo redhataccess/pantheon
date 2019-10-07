@@ -398,9 +398,12 @@ class Versions extends Component<IProps, any> {
     }
 
     private getHarrayChildNamed = (object, name) => {
-        for (const child in object["__children__"]) {
-            if (child["__name__"] === name) {
-                return child
+        for (const childName in object.__children__) {
+            if (object.__children__.hasOwnProperty(childName)) { // Not sure what this does, but makes tslin happy
+                const child = object.__children__[childName]
+                if (child.__name__ === name) {
+                    return child
+                }
             }
         }
         return ''
