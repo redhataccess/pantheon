@@ -286,4 +286,10 @@ describe('Versions tests', () => {
         const versions = mount(<Versions {...props} />).matchesElement
         expect(versions.length === 1)
     });
+
+    it('test getHarrayChildNamed function', () => {
+        const wrapper = renderer.create(<Versions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.getHarrayChildNamed(anymatch, 'metadata')).toMatchSnapshot();
+    });
 });
