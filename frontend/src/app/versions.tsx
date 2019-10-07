@@ -296,7 +296,7 @@ class Versions extends Component<IProps, any> {
                             <div className="notification-container">
                                 <Alert
                                     variant="warning"
-                                    title={this.state.versionSelected === '' ? "Please select a version." : "All fields are required."}
+                                    title="All fields are required."
                                     action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                 />
                                 <br />
@@ -315,7 +315,7 @@ class Versions extends Component<IProps, any> {
                                         <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
-                                <FormSelect value={this.state.versionUUID} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
+                                <FormSelect value={this.state.versionUUID} onClick={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
                                     {verOptions.map((option) => (
 
                                         <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} required={false} />
@@ -374,14 +374,16 @@ class Versions extends Component<IProps, any> {
                                 this.draft[0]["version"] = "Version " + moduleVersion["__name__"];
                                 this.draft[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
                                 this.draft[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
+                                // this.props.modulePath starts with a slash
+                                this.draft[0]["path"] = "/content" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
                                 this.props.draftUpdateDate(this.draft[0]["updatedDate"], "draft", this.draft[0]["path"]);
                             }
                             if (moduleVersion["jcr:uuid"] === releasedTag) {
                                 this.release[0]["version"] = "Version " + moduleVersion["__name__"];
                                 this.release[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
                                 this.release[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
+                                // this.props.modulePath starts with a slash
+                                this.release[0]["path"] = "/content" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
                                 this.props.releaseUpdateDate(this.release[0]["updatedDate"], "release", this.release[0]["path"])
                             }
 
