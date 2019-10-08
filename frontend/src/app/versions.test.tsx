@@ -14,7 +14,7 @@ const props = {
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
-    revisionModulePath: "/modules/test/en_US/1",
+    versionModulePath: "/modules/test/en_US/1",
 }
 
 describe('Versions tests', () => {
@@ -334,7 +334,7 @@ describe('Versions tests', () => {
     // Value testing with Enzyme.
     it('renders Version heading', () => {
         const wrapper = mount(<Versions {...props} />);
-        const sourceTypeText = wrapper.find('#span-source-type-revision').text();
+        const sourceTypeText = wrapper.find('#span-source-type-version').text();
 
         // ensure it matches what is expected
         expect(sourceTypeText).toEqual("Version");
@@ -342,7 +342,7 @@ describe('Versions tests', () => {
 
     it('renders Published heading', () => {
         const wrapper = mount(<Versions {...props} />);
-        const sourceTypeText = wrapper.find('#span-source-type-revision-published').text();
+        const sourceTypeText = wrapper.find('#span-source-type-version-published').text();
 
         // ensure it matches what is expected
         expect(sourceTypeText).toEqual("Published");
@@ -350,7 +350,7 @@ describe('Versions tests', () => {
 
     it('renders Draft Uploaded heading', () => {
         const wrapper = mount(<Versions {...props} />);
-        const sourceTypeText = wrapper.find('#span-source-type-revision-draft-uploaded').text();
+        const sourceTypeText = wrapper.find('#span-source-type-version-draft-uploaded').text();
 
         // ensure it matches what is expected
         expect(sourceTypeText).toEqual("Draft Uploaded");
