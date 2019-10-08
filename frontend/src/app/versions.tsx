@@ -364,25 +364,25 @@ class Versions extends Component<IProps, any> {
                 .then(response => response.json())
                 .then(responseJSON => {
                     this.setState(updateState => {
-                        const releasedTag = responseJSON["released"];
-                        const draftTag = responseJSON["draft"];
-                        const versionCount = responseJSON["__children__"].length
+                        const releasedTag = responseJSON.released;
+                        const draftTag = responseJSON.draft;
+                        const versionCount = responseJSON.__children__.length
 
                         for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
-                            const moduleVersion = responseJSON["__children__"][i]
+                            const moduleVersion = responseJSON.__children__[i]
                             if (moduleVersion["jcr:uuid"] === draftTag) {
-                                this.draft[0]["version"] = "Version " + moduleVersion["__name__"];
-                                this.draft[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
-                                this.draft[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
-                                this.props.draftUpdateDate(this.draft[0]["updatedDate"], "draft", this.draft[0]["path"]);
+                                this.draft[0].version = "Version " + moduleVersion.__name__;
+                                this.draft[0].updatedDate = moduleVersion["jcr:lastModified"];
+                                this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.draft[0].path = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion.__name__;
+                                this.props.draftUpdateDate(this.draft[0].updatedDate, "draft", this.draft[0].path);
                             }
                             if (moduleVersion["jcr:uuid"] === releasedTag) {
-                                this.release[0]["version"] = "Version " + moduleVersion["__name__"];
-                                this.release[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
-                                this.release[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
-                                this.props.releaseUpdateDate(this.release[0]["updatedDate"], "release", this.release[0]["path"])
+                                this.release[0].version = "Version " + moduleVersion.__name__;
+                                this.release[0].updatedDate = moduleVersion["jcr:lastModified"];
+                                this.release[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.release[0].path = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion.__name__;
+                                this.props.releaseUpdateDate(this.release[0].updatedDate, "release", this.release[0].path)
                             }
 
                         }
