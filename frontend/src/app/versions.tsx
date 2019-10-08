@@ -104,11 +104,9 @@ class Versions extends Component<IProps, any> {
               </p>
             </React.Fragment>
         );
-        console.log("[render] allProducts", this.state.allProducts)
         let verOptions = this.state.versionOptions
         if (this.state.allProducts[this.state.productValue]) {
             verOptions = this.state.allProducts[this.state.productValue]
-            console.log("verOptions ", verOptions)
         }
 
         const ucOptions = this.state.usecaseOptions
@@ -593,8 +591,7 @@ class Versions extends Component<IProps, any> {
 
                             if (versionObj) {
                                 let vKey;
-                                let versions = new Array();
-                                // versions.push({ value: '', label: 'Select a Version'});
+                                const versions = [{ value: '', label: 'Select a Version', disabled: false }]
                                 // tslint:disable-next-line: no-shadowed-variable
                                 const nameKey = "name";
                                 const uuidKey = "jcr:uuid";
@@ -604,8 +601,7 @@ class Versions extends Component<IProps, any> {
 
                                         if (vKey !== 'jcr:primaryType') {
                                             if (versionObj[vKey][nameKey]) {
-
-                                                versions.push({ value: versionObj[vKey][uuidKey], label: versionObj[vKey][nameKey] })
+                                                versions.push({ value: versionObj[vKey][uuidKey], label: versionObj[vKey][nameKey], disabled: false })
                                             }
                                         }
                                     }
