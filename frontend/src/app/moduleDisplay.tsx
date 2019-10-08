@@ -18,7 +18,8 @@ class ModuleDisplay extends Component<any, any, any> {
             productValue: "",
             releasePath: '',
             releaseUpdateDate: '',
-            resourceType: '',
+            releaseVersion: '',
+            moduleType: '',
             results: {},
             versionUUID: "",
             versionValue: ""
@@ -79,18 +80,20 @@ class ModuleDisplay extends Component<any, any, any> {
                                                     <span>
                                                         {this.state.releaseUpdateDate.trim() !== ""
                                                             && this.state.releaseUpdateDate.length >= 15 ?
-                                                            this.state.releaseUpdateDate.substring(4, 15) : "-"}
+                                                            this.state.releaseUpdateDate : "-"} <br/>
+                                                        {this.state.releaseUpdateDate.trim() !== "" &&                                                                                                             
+                                                        <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a>}    
                                                     </span>
                                                 </DataListCell>,
                                                 <DataListCell key="updated">
                                                     <span>
                                                         {this.state.draftUpdateDate.trim() !== ""
                                                             && this.state.draftUpdateDate.length >= 15 ?
-                                                            this.state.draftUpdateDate.substring(4, 15) : "-"}
+                                                            this.state.draftUpdateDate : "-"}
                                                     </span>
                                                 </DataListCell>,
                                                 <DataListCell key="module_type">
-                                                    <span>{this.state.resourceType}</span>
+                                                    <span>{this.state.moduleType !== undefined ? this.state.moduleType : "-"}</span>
                                                 </DataListCell>,
                                             ]}
                                         />
@@ -103,8 +106,7 @@ class ModuleDisplay extends Component<any, any, any> {
                                 <Versions
                                     modulePath={this.state.modulePath}
                                     versionModulePath={this.state.moduleTitle}
-                                    draftUpdateDate={this.updateDate}
-                                    releaseUpdateDate={this.updateDate}
+                                    updateDate={this.updateDate}
                                     onGetProduct={this.getProduct}
                                     onGetVersion={this.getVersion}
                                 />
@@ -115,26 +117,20 @@ class ModuleDisplay extends Component<any, any, any> {
         );
     }
 
-    private updateDate = (date, type, path) => {
-        if (type === "draft") {
+    private updateDate = (draftDate,releaseDate,releaseVersion) => {
             this.setState({
-                draftUpdateDate: date,
+                draftUpdateDate: draftDate,
                 // tslint:disable-next-line: object-literal-sort-keys
-                draftPath: path
+                releaseUpdateDate: releaseDate,
+                releaseVersion: releaseVersion                
             });
-        }
-        else {
-            this.setState({
-                releaseUpdateDate: date,
-                // tslint:disable-next-line: object-literal-sort-keys
-                releasePath: path
-            });
-        }
-
-    };
-
+    }
+    
     private fetchModuleDetails = (data) => {
-        this.setState({ modulePath: data.location.pathname })
+        this.setState({
+            modulePath: data.location.pathname, 
+            releasePath: "/content" + data.location.pathname + ".preview"
+        })
 
         fetch(data.location.pathname + '.4.json')
             .then(response => response.json())
@@ -142,7 +138,7 @@ class ModuleDisplay extends Component<any, any, any> {
                 // console.log('fetch results:',responseJSON["en_US"])
                 this.setState({
                     moduleTitle: responseJSON.en_US["1"].metadata["jcr:title"],
-                    resourceType: responseJSON["sling:resourceType"],
+                    moduleType: responseJSON.en_US["1"].metadata["pant:moduleType"],
                 })
             })
     }

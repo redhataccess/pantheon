@@ -13,20 +13,20 @@ import { Redirect } from 'react-router-dom'
 export interface IProps {
     modulePath: string
     versionModulePath: string
-    draftUpdateDate: (draftUpdateDate, draft, draftPath) => any
-    releaseUpdateDate: (releaseUpdateDate, release, releasePath) => any
+    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
 
 class Versions extends Component<IProps, any> {
 
-    public draft = [{ "icon": BlankImage, "path": "", "version": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
-    public release = [{ "icon": CheckImage, "path": "", "version": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
+    public draft = [{ "type":"draft","icon": BlankImage, "path": "", "version": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
+    public release = [{ "type":"release","icon": CheckImage, "path": "", "version": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '',"draftUploadDate": "" }]
 
     constructor(props) {
         super(props)
         this.state = {
+            changePublishState: false,
             initialLoad: true,
             isArchiveDropDownOpen: false,
             isArchiveSelect: false,
@@ -187,10 +187,12 @@ class Versions extends Component<IProps, any> {
                                                                     {data.version}
                                                                 </DataListCell>,
                                                                 <DataListCell key="published">
-                                                                    {data.publishedState}
+                                                                    {data.publishedState==="Not published" && data.publishedState}
+                                                                    {data.publishedState==="Released" && data.updatedDate}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated">
-                                                                    {data.updatedDate.trim() !== "" && data.updatedDate.length >= 15 ? data.updatedDate.substring(4, 15) : "-"}
+                                                                    {data["type"]==="draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
+                                                                    {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
                                                                 </DataListCell>,
                                                                 <DataListCell key="publish_buttons">
                                                                     <Button variant="primary" onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>{'  '}
@@ -235,7 +237,8 @@ class Versions extends Component<IProps, any> {
                                                                     <span className="sp-prop-nosort" id="span-source-type-upload-time">Upload Time</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
-                                                                    {data.updatedDate}
+                                                                    {data["type"]==="draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
+                                                                    {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
                                                                 </DataListCell>,
                                                             ]}
                                                         />
@@ -250,7 +253,7 @@ class Versions extends Component<IProps, any> {
                                                                     <span className="sp-prop-nosort" id="span-source-type-module-title">Module Title</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
-                                                                    {(data.metadata !== undefined && data.metadata["jcr:title"] !== undefined) ? data.metadata["jcr:title"] : ''}
+                                                                    {(data["metadata"]["jcr:title"] !== undefined) ? data["metadata"]["jcr:title"] : '-'}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={2}>
                                                                     <span className="sp-prop-nosort" id="span-source-type-context-package">Context Package</span>
@@ -357,6 +360,7 @@ class Versions extends Component<IProps, any> {
     }
 
     private fetchVersions = () => {
+
         // TODO: need a better fix for the 404 error.
         if (this.props.modulePath !== '') {
             const fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
@@ -372,18 +376,21 @@ class Versions extends Component<IProps, any> {
                             const moduleVersion = responseJSON["__children__"][i]
                             if (moduleVersion["jcr:uuid"] === draftTag) {
                                 this.draft[0]["version"] = "Version " + moduleVersion["__name__"];
-                                this.draft[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
-                                this.draft[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
-                                this.props.draftUpdateDate(this.draft[0]["updatedDate"], "draft", this.draft[0]["path"]);
+                                this.draft[0]["metadata"] = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.draft[0]["updatedDate"] = this.draft[0]["metadata"]["pant:dateUploaded"] !== undefined ? this.draft[0]["metadata"]["pant:dateUploaded"] : '';
+                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];                                
                             }
                             if (moduleVersion["jcr:uuid"] === releasedTag) {
                                 this.release[0]["version"] = "Version " + moduleVersion["__name__"];
-                                this.release[0]["updatedDate"] = moduleVersion["jcr:lastModified"];
-                                this.release[0]["metaData"] = this.getHarrayChildNamed(moduleVersion, "metadata")
-                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];
-                                this.props.releaseUpdateDate(this.release[0]["updatedDate"], "release", this.release[0]["path"])
+                                this.release[0]["metadata"] = this.getHarrayChildNamed(moduleVersion, "metadata")
+                                this.release[0]["updatedDate"] = this.release[0]["metadata"]["pant:datePublished"] !== undefined ? this.release[0]["metadata"]["pant:datePublished"] : '';
+                                this.release[0]["draftUploadDate"] = this.release[0]["metadata"]["pant:dateUploaded"] !== undefined ? this.release[0]["metadata"]["pant:dateUploaded"] : '';
+                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];                                
                             }
+                            if(releasedTag===undefined){
+                                this.release[0].updatedDate = "-";
+                            }
+                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate,this.release[0]["version"]);
 
                         }
                         return {
@@ -399,8 +406,8 @@ class Versions extends Component<IProps, any> {
 
     private getHarrayChildNamed = (object, name) => {
         for (const child in object["__children__"]) {
-            if (child["__name__"] === name) {
-                return child
+            if (object["__children__"][child]["__name__"] === name) {
+                return object["__children__"][child]
             }
         }
         return ''
@@ -423,10 +430,10 @@ class Versions extends Component<IProps, any> {
         }).then(response => {
             if (response.status === 201 || response.status === 200) {
                 // console.log(buttonText + " works: " + response.status)
-                this.setState({ initialLoad: true })
+                this.setState({ initialLoad: true, changePublishState: true })
             } else {
-                // console.log(buttonText + " failed " + response.status)
-                this.setState({ initialLoad: true })
+                console.log(buttonText + " failed " + response.status)
+                this.setState({ initialLoad: true, changePublishState: true })
             }
         });
 
