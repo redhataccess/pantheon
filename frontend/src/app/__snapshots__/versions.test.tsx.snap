@@ -26,7 +26,7 @@ exports[`Versions tests should render Versions component 1`] = `
                   <DataListCell>
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-type-revision"
+                      id="span-source-type-version"
                     >
                       Version
                     </span>
@@ -34,7 +34,7 @@ exports[`Versions tests should render Versions component 1`] = `
                   <DataListCell>
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-type-revision-published"
+                      id="span-source-type-version-published"
                     >
                       Published
                     </span>
@@ -42,7 +42,7 @@ exports[`Versions tests should render Versions component 1`] = `
                   <DataListCell>
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-type-revision-draft-uploaded"
+                      id="span-source-type-version-draft-uploaded"
                     >
                       Draft Uploaded
                     </span>
@@ -50,7 +50,7 @@ exports[`Versions tests should render Versions component 1`] = `
                   <DataListCell>
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-name-revision-publish-buttons"
+                      id="span-source-name-version-publish-buttons"
                     />
                   </DataListCell>,
                   <DataListCell>
