@@ -157,7 +157,6 @@ exports[`Versions tests should render Versions component 1`] = `
             isValid={true}
             onBlur={[Function]}
             onChange={[Function]}
-            onClick={[Function]}
             onFocus={[Function]}
             value=""
           >

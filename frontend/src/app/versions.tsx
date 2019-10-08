@@ -104,9 +104,11 @@ class Versions extends Component<IProps, any> {
               </p>
             </React.Fragment>
         );
+        console.log("[render] allProducts", this.state.allProducts)
         let verOptions = this.state.versionOptions
         if (this.state.allProducts[this.state.productValue]) {
             verOptions = this.state.allProducts[this.state.productValue]
+            console.log("verOptions ", verOptions)
         }
 
         const ucOptions = this.state.usecaseOptions
@@ -315,7 +317,7 @@ class Versions extends Component<IProps, any> {
                                         <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
-                                <FormSelect value={this.state.versionUUID} onClick={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
+                                <FormSelect value={this.state.versionUUID} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
                                     {verOptions.map((option) => (
 
                                         <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} required={false} />
@@ -518,6 +520,8 @@ class Versions extends Component<IProps, any> {
                     this.handleModalClose()
                     this.setState({ successAlertVisble: true })
                     this.setState({ versionSelected: '' })
+                    this.props.onGetProduct(this.state.productValue)
+                    this.props.onGetVersion(this.state.versionValue)
                 } else if (response.status === 500) {
                     // console.log(" Needs login " + response.status)
                     this.setState({ login: true })
@@ -533,7 +537,7 @@ class Versions extends Component<IProps, any> {
     }
     private onChangeVersion = () => {
 
-        // console.log("[onChangeVersion] event: ", event)
+        console.log("[onChangeVersion] event: ", event)
         if (event !== undefined) {
             if (event.target !== null) {
                 // tslint:disable-next-line: no-string-literal
@@ -544,9 +548,6 @@ class Versions extends Component<IProps, any> {
                         versionValue: event.target["selectedOptions"][0].label,
                         // tslint:disable-next-line: object-literal-sort-keys
                         versionSelected: event.target["selectedOptions"][0].label
-                    }, () => {
-                        this.props.onGetProduct(this.state.productValue)
-                        this.props.onGetVersion(this.state.versionValue)
                     });
                 }
             }
@@ -592,7 +593,8 @@ class Versions extends Component<IProps, any> {
 
                             if (versionObj) {
                                 let vKey;
-                                const versions = new Array();
+                                let versions = new Array();
+                                // versions.push({ value: '', label: 'Select a Version'});
                                 // tslint:disable-next-line: no-shadowed-variable
                                 const nameKey = "name";
                                 const uuidKey = "jcr:uuid";
@@ -610,7 +612,7 @@ class Versions extends Component<IProps, any> {
                                 }
 
                                 products[pName] = versions
-
+                                console.log("versions ", versions)
                             }
                         }
                     }
