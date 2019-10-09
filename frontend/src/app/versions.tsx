@@ -535,7 +535,7 @@ class Versions extends Component<IProps, any> {
     }
     private onChangeVersion = () => {
 
-        console.log("[onChangeVersion] event: ", event)
+        // console.log("[onChangeVersion] event: ", event)
         if (event !== undefined) {
             if (event.target !== null) {
                 // tslint:disable-next-line: no-string-literal
@@ -608,7 +608,6 @@ class Versions extends Component<IProps, any> {
                                 }
 
                                 products[pName] = versions
-                                console.log("versions ", versions)
                             }
                         }
                     }
