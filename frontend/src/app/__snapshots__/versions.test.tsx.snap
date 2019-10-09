@@ -316,6 +316,8 @@ exports[`Versions tests test fetchVersions function 1`] = `undefined`;
 
 exports[`Versions tests test getHarrayChildNamed function 1`] = `""`;
 
+exports[`Versions tests test getHarrayChildNamed function 2`] = `""`;
+
 exports[`Versions tests test getModuleUrl function 1`] = `"/content/modules.query.json?nodeType=pant:module&where=[urlFragment]=\\"undefined\\""`;
 
 exports[`Versions tests test handleURLInput function 1`] = `undefined`;
