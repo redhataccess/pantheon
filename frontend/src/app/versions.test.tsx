@@ -3,18 +3,17 @@ import { Versions } from '@app/versions';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Dropdown, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput, DropdownItem, Title, Alert, AlertActionCloseButton, DataListContent } from '@patternfly/react-core';
+import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Dropdown, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput, DropdownItem, Title, Alert, AlertActionCloseButton, DataListContent, KebabToggle } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 
 const anymatch = require('anymatch');
 
 const props = {
-    draftUpdateDate: anymatch,
+    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion) => anymatch,
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
-    releaseUpdateDate: anymatch,
     versionModulePath: "/modules/test/en_US/1",
 }
 
@@ -126,6 +125,16 @@ describe('Versions tests', () => {
         expect(alert.exists()).toBe(true)
     });
 
+    it('should render a Button', () => {
+        const wrapper = mount(<Versions {...props} />);
+        const button = wrapper.find(Button);
+        expect(button.exists()).toBe(true)
+    });
+
+    it('should render a KebabToggle', () => {
+        const wrapper = mount(<KebabToggle />);
+    });
+
     it('test fetchVersions function', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
@@ -148,6 +157,20 @@ describe('Versions tests', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
         expect(inst.onHeadingToggle()).toMatchSnapshot();
+    });
+
+    it('test onExpandableToggle function', () => {
+        const wrapper = renderer.create(<Versions {...props} />);
+        const inst = wrapper.getInstance();
+        const data = [{"isDropdownOpen": true}]
+        expect(inst.onExpandableToggle(data)).toMatchSnapshot();
+    });
+
+    it('test onArchiveToggle function', () => {
+        const wrapper = renderer.create(<Versions {...props} />);
+        const inst = wrapper.getInstance();
+        const data = [{"isDropdownOpen": true}]
+        expect(inst.onArchiveToggle(data)).toMatchSnapshot();
     });
 
     it('test previewDoc function', () => {
@@ -224,6 +247,24 @@ describe('Versions tests', () => {
         expect(instance.state['usecases'][0]).toEqual('Administer')
     });
 
+    it('test getHarrayChildNamed function', () => {
+        const wrapper = renderer.create(<Versions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.getHarrayChildNamed("__children__")).toMatchSnapshot();
+    });
+
+    it('test fetchProductVersionDetails function', () => {
+        const wrapper = renderer.create(<Versions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.fetchProductVersionDetails()).toMatchSnapshot();
+    });
+
+    it('test hideSuccessAlert function', () => {
+        const wrapper = renderer.create(<Versions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.hideSuccessAlert()).toMatchSnapshot();
+    });
+
     test('Version Button click', () => {
         const wrapper = shallow(<Versions {...props} />);
         const instance = wrapper.instance();
@@ -232,6 +273,15 @@ describe('Versions tests', () => {
         wrapper.find(DataListToggle).simulate('click');
         sinon.assert.called(spy);
     });
+
+    it('should handle state changes for changePublishState', () => {
+        const wrapper = shallow(<Versions {...props} />)
+
+        expect(wrapper.state('changePublishState')).toBe(false)
+        wrapper.setState({ 'changePublishState': true })
+        expect(wrapper.state('changePublishState')).toBe(true)
+    });
+
 
     it('should handle state changes for login', () => {
         const wrapper = shallow(<Versions {...props} />)
@@ -247,6 +297,30 @@ describe('Versions tests', () => {
         expect(wrapper.state('initialLoad')).toBe(true)
         wrapper.setState({ 'initialLoad': false })
         expect(wrapper.state('initialLoad')).toBe(false)
+    });
+
+    it('should handle state changes for versionSelected', () => {
+        const wrapper = shallow(<Versions {...props} />)
+
+        expect(wrapper.state('versionSelected')).toBe('')
+        wrapper.setState({ 'versionSelected': "Please select a version" })
+        expect(wrapper.state('versionSelected')).toBe("Please select a version")
+    });
+
+    it('should handle state changes for versionUUID', () => {
+        const wrapper = shallow(<Versions {...props} />)
+
+        expect(wrapper.state('versionUUID')).toBe("")
+        wrapper.setState({ 'versionUUID': "Select a Version" })
+        expect(wrapper.state('versionUUID')).toBe("Select a Version")
+    });
+
+    it('should handle state changes for versionValue', () => {
+        const wrapper = shallow(<Versions {...props} />)
+
+        expect(wrapper.state('versionValue')).toBe('')
+        wrapper.setState({ 'versionValue': "version value" })
+        expect(wrapper.state('versionValue')).toBe("version value")
     });
 
     it('should handle state changes for isHeadingToggle', () => {
