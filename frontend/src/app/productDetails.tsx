@@ -22,7 +22,7 @@ class ProductDetails extends Component<IProps, any> {
     public render() {
         return (
             <React.Fragment>
-                {this.state.fetchProductDetails && this.fetchProductDetails(this.state.allVersionNames)}
+                {this.fetchProductDetails(this.state.allVersionNames)}
                 <div className="app-container">
                     <Breadcrumb>
                         <BreadcrumbItem>All Products</BreadcrumbItem>
@@ -124,7 +124,7 @@ class ProductDetails extends Component<IProps, any> {
             method: 'post',
         }).then(response => {
             if (response.status === 200 || response.status === 201) {
-                this.setState({ fetchProductDetails: true, newVersion: '' })
+                this.setState({ newVersion: '' })
             } else {
                 console.log('Version adding failure')
             }

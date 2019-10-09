@@ -299,7 +299,7 @@ class Versions extends Component<IProps, any> {
                             <div className="notification-container">
                                 <Alert
                                     variant="warning"
-                                    title={this.state.versionSelected === '' ? "Please select a version." : "All fields are required."}
+                                    title="All fields are required."
                                     action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                 />
                                 <br />
@@ -378,14 +378,16 @@ class Versions extends Component<IProps, any> {
                                 this.draft[0]["version"] = "Version " + moduleVersion["__name__"];
                                 this.draft[0]["metadata"] = this.getHarrayChildNamed(moduleVersion, "metadata")
                                 this.draft[0]["updatedDate"] = this.draft[0]["metadata"]["pant:dateUploaded"] !== undefined ? this.draft[0]["metadata"]["pant:dateUploaded"] : '';
-                                this.draft[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];                                
+                                // this.props.modulePath starts with a slash
+                                this.draft[0]["path"] = "/content" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];                                
                             }
                             if (moduleVersion["jcr:uuid"] === releasedTag) {
                                 this.release[0]["version"] = "Version " + moduleVersion["__name__"];
                                 this.release[0]["metadata"] = this.getHarrayChildNamed(moduleVersion, "metadata")
                                 this.release[0]["updatedDate"] = this.release[0]["metadata"]["pant:datePublished"] !== undefined ? this.release[0]["metadata"]["pant:datePublished"] : '';
                                 this.release[0]["draftUploadDate"] = this.release[0]["metadata"]["pant:dateUploaded"] !== undefined ? this.release[0]["metadata"]["pant:dateUploaded"] : '';
-                                this.release[0]["path"] = "/content/" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];                                
+                                // this.props.modulePath starts with a slash
+                                this.release[0]["path"] = "/content" + this.props.modulePath + "/en_US/" + moduleVersion["__name__"];                                
                             }
                             if(releasedTag===undefined){
                                 this.release[0].updatedDate = "-";
@@ -523,6 +525,8 @@ class Versions extends Component<IProps, any> {
                     this.handleModalClose()
                     this.setState({ successAlertVisble: true })
                     this.setState({ versionSelected: '' })
+                    this.props.onGetProduct(this.state.productValue)
+                    this.props.onGetVersion(this.state.versionValue)
                 } else if (response.status === 500) {
                     // console.log(" Needs login " + response.status)
                     this.setState({ login: true })
@@ -549,9 +553,6 @@ class Versions extends Component<IProps, any> {
                         versionValue: event.target["selectedOptions"][0].label,
                         // tslint:disable-next-line: object-literal-sort-keys
                         versionSelected: event.target["selectedOptions"][0].label
-                    }, () => {
-                        this.props.onGetProduct(this.state.productValue)
-                        this.props.onGetVersion(this.state.versionValue)
                     });
                 }
             }
@@ -597,7 +598,7 @@ class Versions extends Component<IProps, any> {
 
                             if (versionObj) {
                                 let vKey;
-                                const versions = new Array();
+                                const versions = [{ value: '', label: 'Select a Version', disabled: false }]
                                 // tslint:disable-next-line: no-shadowed-variable
                                 const nameKey = "name";
                                 const uuidKey = "jcr:uuid";
@@ -607,15 +608,13 @@ class Versions extends Component<IProps, any> {
 
                                         if (vKey !== 'jcr:primaryType') {
                                             if (versionObj[vKey][nameKey]) {
-
-                                                versions.push({ value: versionObj[vKey][uuidKey], label: versionObj[vKey][nameKey] })
+                                                versions.push({ value: versionObj[vKey][uuidKey], label: versionObj[vKey][nameKey], disabled: false })
                                             }
                                         }
                                     }
                                 }
 
                                 products[pName] = versions
-
                             }
                         }
                     }
