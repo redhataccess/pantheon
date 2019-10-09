@@ -89,6 +89,8 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                   <DataListCell>
                     <span>
                       -
+                       
+                      <br />
                     </span>
                   </DataListCell>,
                   <DataListCell>
@@ -111,11 +113,10 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
     <div>
       <Card>
         <Versions
-          draftUpdateDate={[Function]}
           modulePath="module/test"
           onGetProduct={[Function]}
           onGetVersion={[Function]}
-          releaseUpdateDate={[Function]}
+          updateDate={[Function]}
           versionModulePath=""
         />
       </Card>
