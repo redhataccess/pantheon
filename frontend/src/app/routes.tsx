@@ -72,13 +72,14 @@ const routes: IAppRoute[] = [
 class Routes extends Component<IAppState> {
 
   public render() {
+    console.log('routes username: ' + this.props.username)
     return (
 
       <Switch>
         {routes.map(({path, exact, component}, idx) => (
-          <Route path={path} exact={exact} component={component} key={idx} />
+          <Route path={path} exact={exact} component={component} key={idx} {...this.props} />
         ))}
-        <Route component={Search} />
+        <Route component={Search} {...this.props} />
       </Switch>
     )
   }

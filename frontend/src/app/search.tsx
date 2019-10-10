@@ -9,9 +9,9 @@ import '@app/app.css';
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import { App } from '@app/app'
+import { App, IAppState } from '@app/app'
 
-export default class Search extends Component<any, any> {
+export default class Search extends Component<IAppState, any> {
   public transientPaths: string[] = [];
   constructor(props) {
     super(props);
@@ -30,7 +30,6 @@ export default class Search extends Component<any, any> {
       isEmptyResults: false,
       isModalOpen: false,
       isSortedUp: true,
-      loggedinStatus: false,
       moduleName: '',
       modulePath: '',
       moduleType: '',
@@ -47,14 +46,10 @@ export default class Search extends Component<any, any> {
   }
 
   public componentDidMount() {
-    fetch("/system/sling/info.sessionInfo.json")
-      .then(response => response.json())
-      .then(responseJSON => {
-        if (responseJSON.userID !== 'anonymous') {
-          this.setState({ loggedinStatus: true })
-        }
-      })
-
+    console.log("search username: " + this.props.username)
+    if (this.props.username !== undefined && this.props.username !== 'anonymous') {
+      this.setState({ loggedinStatus: true })
+    }
     this.doSearch()
   }
 
