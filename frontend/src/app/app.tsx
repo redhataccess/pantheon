@@ -1,16 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   Page,
   PageSection,
   PageSectionVariants
-} from '@patternfly/react-core';
-import { Header } from '@app/components/Chrome/Header/Header';
-import { Sidebar } from '@app/components/Chrome/Sidebar/Sidebar';
-import { Routes } from '@app/routes';
-import '@app/app.css';
+} from '@patternfly/react-core'
+import { Header } from '@app/components/Chrome/Header/Header'
+import { Sidebar } from '@app/components/Chrome/Sidebar/Sidebar'
+import { Routes } from '@app/routes'
+import '@app/app.css'
 
 export interface IAppState {
-  isNavOpen: boolean,
+  isNavOpen: boolean
+  userAuthenticated: boolean
   username: string
 }
 
@@ -22,6 +23,7 @@ class App extends Component<any, IAppState> {
 
     this.state = {
       isNavOpen: true,
+      userAuthenticated: false,
       username: App.ANON_USER
     };
   }
@@ -30,7 +32,7 @@ class App extends Component<any, IAppState> {
     fetch("/system/sling/info.sessionInfo.json")
       .then(response => response.json())
       .then(responseJSON => {
-          this.setState({ username: responseJSON.userID })
+          this.setState({ username: responseJSON.userID, userAuthenticated: responseJSON.userID !== App.ANON_USER })
     })
   }
 
@@ -45,7 +47,7 @@ class App extends Component<any, IAppState> {
     return (
       <React.Fragment>
        <Page
-          header={<Header isNavOpen={this.state.isNavOpen} onNavToggle={this.onNavToggle} />}
+          header={<Header isNavOpen={this.state.isNavOpen} onNavToggle={this.onNavToggle} appState={this.state} />}
           sidebar={<Sidebar isNavOpen={this.state.isNavOpen} />}>
           <PageSection variant={PageSectionVariants.light}>
             <Routes {...this.state} />

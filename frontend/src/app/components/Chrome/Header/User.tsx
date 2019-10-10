@@ -1,33 +1,27 @@
-import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import React, { Component } from 'react'
+import { Link } from "react-router-dom"
+import { IAppState } from '@app/app'
 
-class User extends Component<any, any> {
+class User extends Component<IAppState, any> {
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
-            isLoggedIn: false,
             linkText: 'Log In'
-        };
+        }
     }
 
     public componentDidMount() {
-
-        if (!this.state.isLoggedIn) {
-            fetch("/system/sling/info.sessionInfo.json")
-                .then(response => response.json())
-                .then(responseJSON => {
-                    if (responseJSON.userID !== 'anonymous') {
-                        this.setState({ linkText: 'Log Out [' + responseJSON.userID + ']' })
-                        this.setState({ isLoggedIn: true })
-                    }
-                })
+        if (!this.props.userAuthenticated) {
+            if (this.props.username !== 'anonymous') {
+                this.setState({ linkText: 'Log Out [' + this.props.username + ']' })
+            }
         }
     }
 
     public render() {
         return (
             <React.Fragment>
-                <Link to={this.state.isLoggedIn ? '' : '/login'}
+                <Link to={this.props.userAuthenticated ? '' : '/login'}
                     onClick={this.conditionalRedirect}>
                     {this.state.linkText}
                 </Link>

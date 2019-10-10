@@ -46,10 +46,6 @@ export default class Search extends Component<IAppState, any> {
   }
 
   public componentDidMount() {
-    console.log("search username: " + this.props.username)
-    if (this.props.username !== undefined && this.props.username !== 'anonymous') {
-      this.setState({ loggedinStatus: true })
-    }
     this.doSearch()
   }
 
@@ -89,7 +85,7 @@ export default class Search extends Component<IAppState, any> {
             <DataList aria-label="Simple data list" >
               <DataListItem aria-labelledby="simple-item1">
                 <DataListItemRow id="data-rows-header" >
-                  {this.state.loggedinStatus && !this.state.isEmptyResults &&
+                  {this.props.userAuthenticated && !this.state.isEmptyResults &&
                     <DataListCheck aria-labelledby="width-ex1-check1"
                       className="checkbox"
                       isChecked={this.state.check}
@@ -129,7 +125,7 @@ export default class Search extends Component<IAppState, any> {
                 </DataListItemRow>
                 {this.state.results.map(data => (
                   <DataListItemRow id="data-rows">
-                    {this.state.loggedinStatus && !this.state.isEmptyResults &&
+                    {this.props.userAuthenticated && !this.state.isEmptyResults &&
                       <DataListCheck aria-labelledby="width-ex3-check1"
                         className="checkbox"
                         isChecked={data[this.state.checkedItemKey]}
@@ -143,9 +139,9 @@ export default class Search extends Component<IAppState, any> {
                     <DataListItemCells key={data["pant:transientPath"]}
                       dataListCells={[
                         <DataListCell key="div-title" width={2}>
-                          {this.state.loggedinStatus &&
+                          {this.props.userAuthenticated &&
                             <Link to={data['pant:transientPath']}>{data["jcr:title"]}</Link>}
-                          {!this.state.loggedinStatus &&
+                          {!this.props.userAuthenticated &&
                             <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
                         </DataListCell>,
                         <DataListCell key="div-description" width={2}>
