@@ -118,4 +118,10 @@ describe('ProductDetails tests', () => {
     wrapper.find(Button).simulate('click');
     sinon.assert.called(spy);
   });
+
+  it('test componentWillReceiveProps function', () => {
+    const wrapper = renderer.create(<ProductDetails {...props} />);
+    const inst = wrapper.getInstance();
+    expect(inst.componentWillReceiveProps({...props})).toMatchSnapshot();
+  });
 });

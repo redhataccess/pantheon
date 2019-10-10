@@ -7,9 +7,17 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
   >
     <Breadcrumb>
       <BreadcrumbItem>
-        All Products
+        <a
+          href="#/products"
+          onClick={[Function]}
+        >
+          All Products
+        </a>
       </BreadcrumbItem>
-      <BreadcrumbItem>
+      <BreadcrumbItem
+        isActive={true}
+        to="#"
+      >
         Product Details
       </BreadcrumbItem>
     </Breadcrumb>
@@ -74,6 +82,8 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
   </div>
 </Fragment>
 `;
+
+exports[`ProductDetails tests test componentWillReceiveProps function 1`] = `undefined`;
 
 exports[`ProductDetails tests test createVersionsPath function 1`] = `[Function]`;
 

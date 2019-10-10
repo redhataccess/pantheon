@@ -18,15 +18,20 @@ class ProductDetails extends Component<IProps, any> {
             newVersion: ''
         };
     }
-
+    public componentWillReceiveProps(nextProps) {
+        // allow page load from productDetails to products listing
+        if (nextProps.productName !== undefined && nextProps.productName.trim() !== '') {
+            return window.location.reload(false)
+        }
+    }
     public render() {
         return (
             <React.Fragment>
                 {this.fetchProductDetails(this.state.allVersionNames)}
                 <div className="app-container">
                     <Breadcrumb>
-                        <BreadcrumbItem>All Products</BreadcrumbItem>
-                        <BreadcrumbItem>Product Details</BreadcrumbItem>
+                        <BreadcrumbItem ><a href="#/products" onClick={() => window.location.reload(false)}>All Products</a></BreadcrumbItem>
+                        <BreadcrumbItem to="#" isActive={true}>Product Details</BreadcrumbItem>
                     </Breadcrumb>
                 </div>
                 <div className="app-container">
