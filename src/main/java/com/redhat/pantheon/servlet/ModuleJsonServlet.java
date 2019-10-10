@@ -19,10 +19,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.servlet.Servlet;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.conf.GlobalConfig.CONTENT_TYPE;
@@ -89,14 +86,14 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         String resourcePath = resource.getPath();
         moduleMap.put("locale", module.getModuleLocale(DEFAULT_MODULE_LOCALE).getName());
         moduleMap.put("revision_id", releasedRevision.get().getName());
-        moduleMap.put("title", resource.getName());
+        moduleMap.put("title", releasedMetadata.get().title.get());
         moduleMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline.get() : "");
         moduleMap.put("description", releasedMetadata.get().description.get());
         moduleMap.put("content_type", CONTENT_TYPE);
         moduleMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished.get().toInstant().toString() : "");
 
         // Assume the path is something like: /content/<something>/my/resource/path
-        moduleMap.put("module_url_fragment", resourcePath.substring("/content/modules/".length()));
+        moduleMap.put("module_url_fragment", resourcePath.substring("/content/repositories/".length(), resourcePath.length()));
 
         // Striping out the jcr: from key name
         moduleMap.put("module_uuid", moduleMap.remove("jcr:uuid"));
