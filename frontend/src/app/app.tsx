@@ -16,7 +16,7 @@ export interface IAppState {
 }
 
 class App extends Component<any, IAppState> {
-  public static ANON_USER = 'anonymous'
+  public static ANON_USER = 'anonymoffffffffffffffus'
 
   constructor(props) {
     super(props)
@@ -32,6 +32,7 @@ class App extends Component<any, IAppState> {
     fetch("/system/sling/info.sessionInfo.json")
       .then(response => response.json())
       .then(responseJSON => {
+        console.log("Got username of: " + responseJSON.userID)
           this.setState({ username: responseJSON.userID, userAuthenticated: responseJSON.userID !== App.ANON_USER })
     })
   }

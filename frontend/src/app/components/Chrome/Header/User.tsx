@@ -11,6 +11,7 @@ class User extends Component<IAppState, any> {
     }
 
     public componentDidMount() {
+        console.log("User.tsx username: " + this.props.username)
         if (!this.props.userAuthenticated) {
             if (this.props.username !== 'anonymous') {
                 this.setState({ linkText: 'Log Out [' + this.props.username + ']' })
