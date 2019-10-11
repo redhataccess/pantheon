@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
-import { NavItem, NavExpandable, NavList } from '@patternfly/react-core';
-import { Link } from "react-router-dom";
-import fetch from 'isomorphic-fetch';
+import React, { Component } from 'react'
+import { NavItem, NavExpandable, NavList } from '@patternfly/react-core'
+import { Link } from "react-router-dom"
+import fetch from 'isomorphic-fetch'
+import { IAppState } from '@app/app'
 
 // BASE is used in the fetch call to check if isLoggedIn or isAdmin. It currently breaks the Navlinks.
 // only search is displayed when BASE is consumed.
 // const BASE = process.env.BROWSER? '': `http://localhost`;
-class NavLinks extends Component<any, any> {
+class NavLinks extends Component<IAppState, any> {
 
   constructor(props) {
     super(props)
@@ -14,29 +15,15 @@ class NavLinks extends Component<any, any> {
       activeGroup: '',
       activeItem: '',
       gotUserInfo: false,
-      isAdmin: false,
       isDropdownOpen: false,
-      isKebabDropdownOpen: false,
-      isLoggedIn: false,
+      isKebabDropdownOpen: false
     }
   }
 
   public componentDidMount() {
-    if (!this.state.isLoggedIn) {
-      fetch("/system/sling/info.sessionInfo.json")
-        .then(response => response.json())
-        .then(responseJSON => {
-          if (responseJSON.userID !== 'anonymous') {
-            this.setState({ moduleText: 'New Module' })
-            this.setState({ isLoggedIn: true })
-          }
-          if (responseJSON.userID === 'admin') {
-            this.setState({ isAdmin: true })
-          }
-        })
-    }
     this.setState({ activeGroup: 'grp-1', activeItem: 'grp-1_itm-1' });
   }
+
   public render() {
     const browserText = 'Content Browser'
     const consoleText = 'Web Console'
@@ -54,14 +41,14 @@ class NavLinks extends Component<any, any> {
             <NavItem groupId="grp-1" itemId="grp-1_itm-1" isActive={this.state.activeItem === 'grp-1_itm-1'}>
               <Link to='/search' data-testid="navLink_search">{searchText}</Link>
             </NavItem>
-            {(this.state.isLoggedIn) && (<NavItem groupId="grp-1" itemId="grp-1_itm-2" isActive={this.state.activeItem === 'grp-1_itm-2'}>
+            {(this.props.userAuthenticated) && (<NavItem groupId="grp-1" itemId="grp-1_itm-2" isActive={this.state.activeItem === 'grp-1_itm-2'}>
               <Link to='/module'>{moduleText}</Link>
             </NavItem>)}
-            {(this.state.isLoggedIn) && (<NavItem groupId="grp-1" itemId="grp-1_itm-3" isActive={this.state.activeItem === 'grp-1_itm-3'}>
+            {(this.props.userAuthenticated) && (<NavItem groupId="grp-1" itemId="grp-1_itm-3" isActive={this.state.activeItem === 'grp-1_itm-3'}>
               <Link to='/git'>{gitText}</Link>
             </NavItem>)}
           </NavExpandable>
-          {(this.state.isLoggedIn) && (<NavExpandable title="Products" groupId="grp-2" isActive={this.state.activeGroup === 'grp-2'}>
+          {(this.props.userAuthenticated) && (<NavExpandable title="Products" groupId="grp-2" isActive={this.state.activeGroup === 'grp-2'}>
             <NavItem groupId="grp-2" itemId="grp-2_itm-1" isActive={this.state.activeItem === 'grp-2_itm-1'}>
               <Link to='/products'>{productsText}</Link>
             </NavItem>
@@ -69,7 +56,7 @@ class NavLinks extends Component<any, any> {
               <Link to='/product'>{productText}</Link>
             </NavItem>)}
           </NavExpandable>)}
-          {(this.state.isLoggedIn) && (this.state.isAdmin) && (<NavExpandable title="Admin Panel" groupId="grp-3" isActive={this.state.activeGroup === 'grp-3'}>
+          {(this.props.userAuthenticated) && this.props.isAdmin && (<NavExpandable title="Admin Panel" groupId="grp-3" isActive={this.state.activeGroup === 'grp-3'}>
             <NavItem groupId="grp-3" itemId="grp-3_itm-1" isActive={this.state.activeItem === 'grp-3_itm-1'} preventDefault={false} component='a'>
               <a href='/starter/index.html' target='_blank'>{slingHomeText}</a>
             </NavItem>

@@ -118,7 +118,6 @@ exports[`Versions tests should render Versions component 1`] = `
     title="Edit metadata"
     width="60%"
   >
-    <div />
     <div
       className="app-container"
     />

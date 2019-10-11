@@ -20,7 +20,12 @@ exports[`Sidebar tests should render Sidebar component 1`] = `
           className="pf-c-nav__list"
           variant="default"
         >
-          <NavLinks />
+          <NavLinks
+            isAdmin={false}
+            isNavOpen={true}
+            userAuthenticated={true}
+            username="demo"
+          />
         </NavList>
       </Nav>
     </aside>

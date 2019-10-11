@@ -5,7 +5,6 @@ import {
 } from '@patternfly/react-core';
 import '@app/app.css';
 import { ProductDetails } from '@app/productDetails';
-import { Redirect } from 'react-router-dom'
 
 class ProductListing extends Component<any, any, any> {
 
@@ -13,13 +12,10 @@ class ProductListing extends Component<any, any, any> {
     super(props);
     this.state = {
       allProducts: [],
-      initialLoad: true,
       input: '',
       isEmptyResults: false,
       isOpen: false,
       isProductDetails: false,
-      loggedinStatus: false,
-      login: false,
       productName: '',
       redirect: false,
       results: []
@@ -27,17 +23,6 @@ class ProductListing extends Component<any, any, any> {
   }
 
   public componentDidMount() {
-
-    if (!this.state.loggedinStatus && this.state.initialLoad === true) {
-      fetch("/system/sling/info.sessionInfo.json")
-        .then(response => response.json())
-        .then(responseJSON => {
-          if (responseJSON.userID !== 'anonymous') {
-            this.setState({ loggedinStatus: true })
-          }
-        })
-    }
-
     if (this.props.match !== undefined) {
 
       // prop will be true if it comes through nav links
@@ -53,7 +38,6 @@ class ProductListing extends Component<any, any, any> {
 
     }
 
-    this.checkAuth()
     this.getProducts(this.state.allProducts)
   }
 
@@ -135,15 +119,11 @@ class ProductListing extends Component<any, any, any> {
               )}
             </DataList>
           </div>)}
-        <div>
-          {this.loginRedirect()}
-        </div>
       </React.Fragment>
     );
   }
 
   private getProducts = (allProducts) => {
-    this.setState({ initialLoad: false })
     fetch(this.getProductsUrl())
       .then(response => response.json())
       .then(responseJSON => {
@@ -157,7 +137,6 @@ class ProductListing extends Component<any, any, any> {
         this.setState({ results: allProducts })
       })
       .then(() => {
-        // console.log(this.state.loggedinStatus)
         if (Object.keys(this.state.results).length === 0) {
           this.setState({
             isEmptyResults: true
@@ -186,7 +165,6 @@ class ProductListing extends Component<any, any, any> {
 
   private onSelect = (event, data) => () => {
     this.setState({
-      initialLoad: false,
       isProductDetails: !this.state.isProductDetails,
       productName: data.name,
     });
@@ -204,24 +182,6 @@ class ProductListing extends Component<any, any, any> {
     });
     this.setState({ results: versions })
   };
-
-  private loginRedirect = () => {
-    if (this.state.login) {
-      return <Redirect to='/login' />
-    } else {
-      return ""
-    }
-  }
-
-  private checkAuth = () => {
-    fetch("/system/sling/info.sessionInfo.json")
-      .then(response => response.json())
-      .then(responseJSON => {
-        if (responseJSON.userID === 'anonymous') {
-          this.setState({ login: true })
-        }
-      })
-  }
 }
 
 export { ProductListing }

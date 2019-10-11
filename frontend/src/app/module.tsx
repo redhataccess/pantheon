@@ -9,16 +9,11 @@ class Module extends Component<any, any> {
     this.state = {
       failedPost: false,
       isMissingFields: false,
-      login: false,
       moduleDescription: '',
       moduleFile: File,
       moduleName: '',
       redirect: false
     };
-  }
-
-  public componentDidMount() {
-    this.checkAuth();
   }
 
   public render() {
@@ -61,7 +56,6 @@ class Module extends Component<any, any> {
               <br />
               <Button aria-label="Uploads the .adoc file with the Name and Description specified." onClick={this.saveModule}>Save</Button>
               <div>
-                {this.loginRedirect()}
                 {this.renderRedirect()}
               </div>
             </div>
@@ -118,13 +112,8 @@ class Module extends Component<any, any> {
         method: 'post'
       }).then(response => {
         if (response.status === 201 || response.status === 200) {
-          console.log(" Works " + response.status)
           this.setState({ redirect: true })
-        } else if (response.status === 500) {
-          console.log(" Needs login " + response.status)
-          this.setState({ login: true })
         } else {
-          console.log(" Failed " + response.status)
           this.setState({ failedPost: true })
         }
       });
@@ -137,25 +126,6 @@ class Module extends Component<any, any> {
     } else {
       return ""
     }
-  }
-
-  private loginRedirect = () => {
-    if (this.state.login) {
-      return <Redirect to='/login' />
-    } else {
-      return ""
-    }
-  }
-
-  private checkAuth = () => {
-    fetch("/system/sling/info.sessionInfo.json")
-      .then(response => response.json())
-      .then(responseJSON => {
-        const key = "userID"
-        if (responseJSON[key] === 'anonymous') {
-          this.setState({ login: true })
-        }
-      })
   }
 
   private dismissNotification = () => {

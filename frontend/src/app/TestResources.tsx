@@ -1,9 +1,26 @@
 import { IAppState } from './app';
 
-const fakeState: IAppState = {
+const mockStateUser: IAppState = {
+    isAdmin: false,
     isNavOpen: true,
     userAuthenticated: true,
     username: "demo"
 }
 
-export { fakeState }
+const mockStateAdmin: IAppState = {
+    isAdmin: true,
+    isNavOpen: true,
+    userAuthenticated: true,
+    username: "admin"
+}
+
+const mockStateGuest: IAppState = {
+    isAdmin: false,
+    isNavOpen: true,
+    userAuthenticated: false,
+    username: "anonymous"
+}
+
+export { mockStateUser }
+export { mockStateAdmin }
+export { mockStateGuest }

@@ -10,7 +10,6 @@ class Product extends Component<any, any> {
       failedPost: false,
       isDup: false,
       isMissingFields: false,
-      login: false,
       productDescription: '',
       productName: '',
       redirect: false,
@@ -19,9 +18,6 @@ class Product extends Component<any, any> {
 
   }
 
-  public componentDidMount() {
-    this.checkAuth()
-  }
   // render method transforms the react components into DOM nodes for the browser.
   public render() {
     const { productName, productDescription, isMissingFields, isDup } = this.state;
@@ -68,7 +64,6 @@ class Product extends Component<any, any> {
                 <ActionGroup>
                   <Button aria-label="Creates a new Product Name with Description specified." onClick={this.saveProduct}>Save</Button>
                   <div>
-                    {this.loginRedirect()}
                     {this.renderRedirect()}
                   </div>
                 </ActionGroup>
@@ -118,11 +113,7 @@ class Product extends Component<any, any> {
           }).then(response => {
             if (response.status === 201 || response.status === 200) {
               this.setState({ redirect: true })
-            } else if (response.status === 500) {
-              // console.log(" Needs login " + response.status)
-              this.setState({ login: true })
             } else {
-              console.log(" Failed " + response.status)
               this.setState({ failedPost: true })
             }
           });
@@ -138,24 +129,6 @@ class Product extends Component<any, any> {
     } else {
       return ""
     }
-  }
-
-  private loginRedirect = () => {
-    if (this.state.login) {
-      return <Redirect to='/login' />
-    } else {
-      return ""
-    }
-  }
-
-  private checkAuth = () => {
-    fetch("/system/sling/info.sessionInfo.json")
-      .then(response => response.json())
-      .then(responseJSON => {
-        if (responseJSON.userID === 'anonymous') {
-          this.setState({ login: true })
-        }
-      })
   }
 
   private dismissNotification = () => {

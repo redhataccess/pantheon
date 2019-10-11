@@ -10,6 +10,7 @@ import { Routes } from '@app/routes'
 import '@app/app.css'
 
 export interface IAppState {
+  isAdmin: boolean
   isNavOpen: boolean
   userAuthenticated: boolean
   username: string
@@ -17,11 +18,13 @@ export interface IAppState {
 
 class App extends Component<any, IAppState> {
   public static ANON_USER = 'anonymous'
+  public static ADMIN_USER = 'admin'
 
   constructor(props) {
     super(props)
 
     this.state = {
+      isAdmin: false,
       isNavOpen: true,
       userAuthenticated: false,
       username: App.ANON_USER
@@ -32,7 +35,11 @@ class App extends Component<any, IAppState> {
     fetch("/system/sling/info.sessionInfo.json")
       .then(response => response.json())
       .then(responseJSON => {
-          this.setState({ username: responseJSON.userID, userAuthenticated: responseJSON.userID !== App.ANON_USER })
+          this.setState({ 
+            isAdmin: responseJSON.userID === App.ADMIN_USER ,
+            userAuthenticated: responseJSON.userID !== App.ANON_USER,
+            username: responseJSON.userID
+          })
     })
   }
 
@@ -47,7 +54,7 @@ class App extends Component<any, IAppState> {
       <React.Fragment>
        <Page
           header={<Header isNavOpen={this.state.isNavOpen} onNavToggle={this.onNavToggle} appState={this.state} />}
-          sidebar={<Sidebar isNavOpen={this.state.isNavOpen} />}>
+          sidebar={<Sidebar isNavOpen={this.state.isNavOpen} appState={this.state} />}>
           <PageSection variant={PageSectionVariants.light}>
             <Routes {...this.state} />
           </PageSection>
