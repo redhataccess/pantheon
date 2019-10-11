@@ -70,13 +70,9 @@ const routes: IAppRoute[] = [
 ];
 
 class Routes extends Component<IAppState> {
-
   public render() {
-    console.log('routes username: ' + this.props.username)
     return (
-
       // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
-
       <Switch>
         {routes.map(({path, exact, component}, idx) => (
           <Route path={path} exact={exact} component={component} key={idx} {...this.props} />
