@@ -57,9 +57,6 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                     .append("or isdescendantnode(m, '/content/modules') ")
                     .append("or isdescendantnode(m, '/content/sandbox')) ")
                 .append("AND m.[jcr:primaryType] = 'pant:module' ");
-                // look in ALL versions (all locales)
-                // .append("AND (rev.[metadata/jcr:title] like '%" + searchParam + "%' ")
-                //     .append("OR rev.[metadata/jcr:description] like " + "'%" + searchParam + "%') ");
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
             queryBuilder.append(" order by rev.[metadata/")
