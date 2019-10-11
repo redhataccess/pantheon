@@ -15,6 +15,7 @@ export interface IAppRoute {
   icon: any;
   exact?: boolean;
   path: string;
+  requiresLogin: boolean;
 }
 
 const routes: IAppRoute[] = [
@@ -23,49 +24,56 @@ const routes: IAppRoute[] = [
     exact: true,
     icon: null,
     label: 'Search',
-    path: '/search'
+    path: '/search',
+    requiresLogin: false
   },
   {
     component: Module,
     exact: true,
     icon: null,
     label: '',
-    path: '/module'
+    path: '/module',
+    requiresLogin: true
   },
   {
     component: Product,
     exact: true,
     icon: null,
     label: '',
-    path: '/product'
+    path: '/product',
+    requiresLogin: true
   },
   {
     component: ProductListing,
     exact: true,
     icon: null,
     label: '',
-    path: '/products'
+    path: '/products',
+    requiresLogin: true
   },
   {
     component: GitImport,
     exact: true,
     icon: null,
     label: '',
-    path: '/git'
+    path: '/git',
+    requiresLogin: true
   },
   {
     component: Login,
     exact: true,
     icon: null,
     label: '', // Empty because we are using the Brand component to render the text.
-    path: '/login'
+    path: '/login',
+    requiresLogin: false
   },
   {
     component: ModuleDisplay,
     exact: false,
     icon: null,
     label: '', // Empty because we are using the Brand component to render the text.
-    path: '/:data'
+    path: '/:data',
+    requiresLogin: true
   }
 ];
 
@@ -74,7 +82,8 @@ class Routes extends Component<IAppState> {
     return (
       // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
       <Switch>
-        {routes.map(({path, exact, component}, idx) => (
+        {routes.map(({path, exact, component, requiresLogin}, idx) => (
+          (this.props.userAuthenticated || !requiresLogin) && 
           <Route path={path} exact={exact} component={component} key={idx} {...this.props} />
         ))}
         <Route render={() => <Search {...this.props} />} />

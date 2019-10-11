@@ -8,8 +8,11 @@ class BuildInfo extends Component {
         commitText: ''
     };
 
-    public render() {
+    public componentDidMount() {
         this.getBuildInfo()
+    }
+
+    public render() {
         return (
             <React.Fragment>
                 <div className="column-view">
