@@ -48,11 +48,11 @@ exports[`Login tests should render Login component 1`] = `
         </FormGroup>
         <br />
         <div>
-          <Component
+          <Button
             onClick={[Function]}
           >
             Log In
-          </Component>
+          </Button>
         </div>
       </div>
     </div>

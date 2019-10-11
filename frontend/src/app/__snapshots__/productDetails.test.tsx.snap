@@ -5,7 +5,7 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
   <div
     className="app-container"
   >
-    <Component>
+    <Breadcrumb>
       <BreadcrumbItem>
         <a
           href="#/products"
@@ -20,7 +20,7 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
       >
         Product Details
       </BreadcrumbItem>
-    </Component>
+    </Breadcrumb>
   </div>
   <div
     className="app-container"
@@ -70,12 +70,12 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
           />
         </FormGroup>
         <ActionGroup>
-          <Component
+          <Button
             aria-label="Creates a new Version Name."
             onClick={[Function]}
           >
             Save
-          </Component>
+          </Button>
         </ActionGroup>
       </div>
     </Form>

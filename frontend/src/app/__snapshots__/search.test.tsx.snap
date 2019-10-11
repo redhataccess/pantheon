@@ -25,11 +25,11 @@ exports[`Search tests should render default Search component 1`] = `
             type="text"
             value=""
           />
-          <Component
+          <Button
             onClick={[Function]}
           >
             Search
-          </Component>
+          </Button>
         </div>
       </FormGroup>
       <div

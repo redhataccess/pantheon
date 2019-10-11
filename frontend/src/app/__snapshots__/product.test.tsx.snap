@@ -48,12 +48,12 @@ exports[`Product tests should render Product component 1`] = `
           </FormGroup>
           <br />
           <ActionGroup>
-            <Component
+            <Button
               aria-label="Creates a new Product Name with Description specified."
               onClick={[Function]}
             >
               Save
-            </Component>
+            </Button>
             <div />
           </ActionGroup>
         </div>

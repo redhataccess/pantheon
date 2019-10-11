@@ -39,14 +39,6 @@ describe('Search tests', () => {
     expect(buildInfo.exists()).toBe(true)
   });
 
-  it('test click event', () => {
-    const mockCallBack = jest.fn();
-
-    const button = shallow((<Button onClick={mockCallBack}>Submit</Button>));
-    button.find('button').simulate('click');
-    expect(mockCallBack.mock.calls.length).toEqual(1);
-  });
-
   it('test getRows function', () => {
     const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>);
     const inst = wrapper.getInstance();
@@ -151,15 +143,5 @@ describe('Search tests', () => {
     const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>);
     const inst = wrapper.getInstance();
     expect(inst.fetchTimeout).toMatchSnapshot();
-  });
-
-  test('newSearch() click event', () => {
-    const wrapper = shallow(<Search />);
-    const instance = wrapper.instance();
-    const spy = sinon.spy(instance, 'newSearch');
-
-    wrapper.setState({ "iput": "test" })
-    wrapper.find(Button).simulate('click');
-    sinon.assert.called(spy);
   });
 });

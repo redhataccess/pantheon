@@ -58,12 +58,12 @@ exports[`Login tests should render Login component 1`] = `
           />
         </FormGroup>
         <br />
-        <Component
+        <Button
           aria-label="Uploads the .adoc file with the Name and Description specified."
           onClick={[Function]}
         >
           Save
-        </Component>
+        </Button>
         <div />
       </div>
     </div>

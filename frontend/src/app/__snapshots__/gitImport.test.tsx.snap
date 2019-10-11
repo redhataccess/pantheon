@@ -45,12 +45,12 @@ exports[`Login tests should render Login component 1`] = `
           />
         </FormGroup>
         <br />
-        <Component
+        <Button
           aria-label="Submit the repository and branch information to the git integration service."
           onClick={[Function]}
         >
           Submit
-        </Component>
+        </Button>
         <div />
       </div>
     </div>
