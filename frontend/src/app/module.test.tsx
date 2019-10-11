@@ -88,18 +88,6 @@ describe('Login tests', () => {
     expect(inst.renderRedirect()).toMatchSnapshot();
   });
 
-  it('test loginRedirect function', () => {
-    const wrapper = renderer.create(<Module />);
-    const inst = wrapper.getInstance();
-    expect(inst.loginRedirect()).toMatchSnapshot();
-  });
-
-  it('test checkAuth function', () => {
-    const wrapper = renderer.create(<Module />);
-    const inst = wrapper.getInstance();
-    expect(inst.checkAuth()).toMatchSnapshot();
-  });
-
   it('test dismissNotification function', () => {
     const wrapper = renderer.create(<Module />);
     const inst = wrapper.getInstance();

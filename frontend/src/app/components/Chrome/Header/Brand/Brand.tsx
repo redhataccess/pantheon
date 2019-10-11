@@ -4,7 +4,6 @@ import logo from '../../../../images/Pantheon2-logo-white.png';
 
 class Brand extends Component {
     public state = {
-        isLoggedIn: false,
         linkText: 'Pantheon',
         logoWidth: 220
     };

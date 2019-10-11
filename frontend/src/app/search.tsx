@@ -9,8 +9,9 @@ import '@app/app.css';
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import { App, IAppState } from '@app/app'
 
-export default class Search extends Component<any, any> {
+export default class Search extends Component<IAppState, any> {
   public transientPaths: string[] = [];
   constructor(props) {
     super(props);
@@ -29,7 +30,6 @@ export default class Search extends Component<any, any> {
       isEmptyResults: false,
       isModalOpen: false,
       isSortedUp: true,
-      loggedinStatus: false,
       moduleName: '',
       modulePath: '',
       moduleType: '',
@@ -46,14 +46,6 @@ export default class Search extends Component<any, any> {
   }
 
   public componentDidMount() {
-    fetch("/system/sling/info.sessionInfo.json")
-      .then(response => response.json())
-      .then(responseJSON => {
-        if (responseJSON.userID !== 'anonymous') {
-          this.setState({ loggedinStatus: true })
-        }
-      })
-
     this.doSearch()
   }
 
@@ -93,7 +85,7 @@ export default class Search extends Component<any, any> {
             <DataList aria-label="Simple data list" >
               <DataListItem aria-labelledby="simple-item1">
                 <DataListItemRow id="data-rows-header" >
-                  {this.state.loggedinStatus && !this.state.isEmptyResults &&
+                  {this.props.userAuthenticated && !this.state.isEmptyResults &&
                     <DataListCheck aria-labelledby="width-ex1-check1"
                       className="checkbox"
                       isChecked={this.state.check}
@@ -133,7 +125,7 @@ export default class Search extends Component<any, any> {
                 </DataListItemRow>
                 {this.state.results.map(data => (
                   <DataListItemRow id="data-rows">
-                    {this.state.loggedinStatus && !this.state.isEmptyResults &&
+                    {this.props.userAuthenticated && !this.state.isEmptyResults &&
                       <DataListCheck aria-labelledby="width-ex3-check1"
                         className="checkbox"
                         isChecked={data[this.state.checkedItemKey]}
@@ -147,9 +139,9 @@ export default class Search extends Component<any, any> {
                     <DataListItemCells key={data["pant:transientPath"]}
                       dataListCells={[
                         <DataListCell key="div-title" width={2}>
-                          {this.state.loggedinStatus &&
+                          {this.props.userAuthenticated &&
                             <Link to={data['pant:transientPath']}>{data["jcr:title"]}</Link>}
-                          {!this.state.loggedinStatus &&
+                          {!this.props.userAuthenticated &&
                             <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
                         </DataListCell>,
                         <DataListCell key="div-description" width={2}>

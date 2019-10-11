@@ -8,100 +8,85 @@ import { Link } from 'react-router-dom';
 import renderer from 'react-test-renderer';
 import sinon from "sinon";
 import { resolve } from 'dns';
+import { mockStateUser, mockStateGuest, mockStateAdmin } from '@app/TestResources'
 
 describe('NavLinks tests', () => {
   test('should render NavLinks component', () => {
-    const view = shallow(<NavLinks />);
+    const view = shallow(<NavLinks {...mockStateUser} />);
     expect(view).toMatchSnapshot();
   });
 
   it('should render a NavList', () => {
-    const wrapper = mount(<Router><NavLinks /></Router>);
+    const wrapper = mount(<Router><NavLinks {...mockStateUser} /></Router>);
     const navList = wrapper.find(NavList);
     expect(navList.exists()).toBe(true)
   });
 
   it('should render a NavItem', () => {
-    const wrapper = mount(<Router><NavLinks /></Router>);
+    const wrapper = mount(<Router><NavLinks {...mockStateUser} /></Router>);
     const navItem = wrapper.find(NavItem);
     expect(navItem.exists()).toBe(true)
   });
 
   it('should render a Link component', () => {
-    const wrapper = mount(<Router><NavLinks /></Router>);
+    const wrapper = mount(<Router><NavLinks {...mockStateUser} /></Router>);
     const navLinks = wrapper.find(Link);
     expect(navLinks.exists()).toBe(true)
   });
 
   it('should render an Expandable component', () => {
-    const wrapper = mount(<Router><NavLinks /></Router>);
+    const wrapper = mount(<Router><NavLinks {...mockStateUser} /></Router>);
     const expandable = wrapper.find(NavExpandable);
     expect(expandable.exists()).toBe(true)
   });
 
   it('should contain 1 NavItem without authentication', () => {
-    const wrapper = shallow(<NavLinks />);
+    const wrapper = shallow(<NavLinks {...mockStateGuest} />);
 
     const items = wrapper.find(NavItem);
     expect(items).toHaveLength(1);
   });
 
   it('should handle state changes for isLoggedIn', () => {
-    const wrapper = shallow(<NavLinks />)
-
-    expect(wrapper.state('isLoggedIn')).toBe(false);
-    wrapper.setState({ 'isLoggedIn': true })
-    expect(wrapper.state('isLoggedIn')).toBe(true);
-
-    wrapper.setState({ 'moduleText': 'New Module' });
-    wrapper.setState({ 'gitText': 'Git Import' });
+    const wrapper = shallow(<NavLinks {...mockStateUser} />)
     const navGroup1 = wrapper.find('[groupId="grp-1"]');
     expect(navGroup1.length).toBe(4)
-
     const navGroup2 = wrapper.find('[groupId="grp-2"]');
     expect(navGroup2.length).toBe(3)
   });
 
   it('should handle state changes for isAdmin', () => {
-    const wrapper = shallow(<NavLinks />)
-
-    expect(wrapper.state('isLoggedIn')).toBe(false);
-    wrapper.setState({ 'isLoggedIn': true })
-    expect(wrapper.state('isLoggedIn')).toBe(true);
-
-    expect(wrapper.state('isAdmin')).toBe(false)
-    wrapper.setState({ 'isAdmin': true })
-    expect(wrapper.state('isAdmin')).toBe(true)
+    const wrapper = shallow(<NavLinks {...mockStateAdmin} />)
     const navGroup3 = wrapper.find('[groupId="grp-3"]');
     expect(navGroup3.length).toBe(4)
   });
 
   it('test browserLink function', () => {
-    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const wrapper = renderer.create(<Router><NavLinks {...mockStateUser} /></Router>);
     const inst = wrapper.getInstance();
     expect(inst.browserLink).toMatchSnapshot();
   });
 
   it('test welcomeLink function', () => {
-    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const wrapper = renderer.create(<Router><NavLinks {...mockStateUser} /></Router>);
     const inst = wrapper.getInstance();
     expect(inst.welcomeLink).toMatchSnapshot();
   });
 
   it('test webConsole function', () => {
-    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const wrapper = renderer.create(<Router><NavLinks {...mockStateUser} /></Router>);
     const inst = wrapper.getInstance();
     expect(inst.consoleLink).toMatchSnapshot();
   });
 
   it('test render function', () => {
-    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const wrapper = renderer.create(<Router><NavLinks {...mockStateUser} /></Router>);
     const inst = wrapper.getInstance();
     expect(inst.render).toMatchSnapshot();
   });
 
   it('test checkAuth function', () => {
-    const wrapper = renderer.create(<Router><NavLinks /></Router>);
+    const wrapper = renderer.create(<Router><NavLinks {...mockStateUser} /></Router>);
     const inst = wrapper.getInstance();
     expect(inst.checkAuth).toMatchSnapshot();
   });
@@ -152,7 +137,7 @@ describe('NavLinks tests', () => {
           })
         });
       });
-      const wrapper = await shallow(<NavLinks />)
+      const wrapper = await shallow(<NavLinks {...mockStateUser} />)
       await wrapper.update()
       expect(wrapper.state('getUserInfo')).toBe(true)
       expect(wrapper.state('isLoggedIn')).toBe(true)

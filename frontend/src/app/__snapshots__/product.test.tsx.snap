@@ -63,7 +63,7 @@ exports[`Product tests should render Product component 1`] = `
 </Fragment>
 `;
 
-exports[`Product tests test checkAuth function 1`] = `[Function]`;
+exports[`Product tests test checkAuth function 1`] = `undefined`;
 
 exports[`Product tests test dismissNotification function 1`] = `[Function]`;
 
@@ -71,7 +71,7 @@ exports[`Product tests test handleNameInput function 1`] = `undefined`;
 
 exports[`Product tests test handleProductInput function 1`] = `undefined`;
 
-exports[`Product tests test loginRedirect function 1`] = `[Function]`;
+exports[`Product tests test loginRedirect function 1`] = `undefined`;
 
 exports[`Product tests test productExist function 1`] = `Promise {}`;
 

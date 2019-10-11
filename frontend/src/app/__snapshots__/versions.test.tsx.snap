@@ -118,7 +118,6 @@ exports[`Versions tests should render Versions component 1`] = `
     title="Edit metadata"
     width="60%"
   >
-    <div />
     <div
       className="app-container"
     />
@@ -318,13 +317,9 @@ exports[`Versions tests test getHarrayChildNamed function 1`] = `""`;
 
 exports[`Versions tests test getHarrayChildNamed function 2`] = `""`;
 
-exports[`Versions tests test getModuleUrl function 1`] = `"/content/modules.query.json?nodeType=pant:module&where=[urlFragment]=\\"undefined\\""`;
-
 exports[`Versions tests test handleURLInput function 1`] = `undefined`;
 
 exports[`Versions tests test hideSuccessAlert function 1`] = `undefined`;
-
-exports[`Versions tests test loginRedirect function 1`] = `""`;
 
 exports[`Versions tests test onArchiveSelect function 1`] = `undefined`;
 
@@ -339,7 +334,5 @@ exports[`Versions tests test onExpandableToggle function 1`] = `undefined`;
 exports[`Versions tests test onHeadingToggle function 1`] = `undefined`;
 
 exports[`Versions tests test previewDoc function 1`] = `undefined`;
-
-exports[`Versions tests test renderRedirect function 1`] = `""`;
 
 exports[`Versions tests test saveMetadata function 1`] = `undefined`;

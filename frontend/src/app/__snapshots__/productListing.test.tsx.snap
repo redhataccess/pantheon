@@ -60,16 +60,15 @@ exports[`ProductListing tests should render ProductListing component 1`] = `
       </DataListItem>
     </DataList>
   </div>
-  <div />
 </Fragment>
 `;
 
-exports[`ProductListing tests test checkAuth function 1`] = `[Function]`;
+exports[`ProductListing tests test checkAuth function 1`] = `undefined`;
 
 exports[`ProductListing tests test getProducts function 1`] = `undefined`;
 
 exports[`ProductListing tests test getProductsUrl function 1`] = `"/content/products.query.json?nodeType=pant:product&orderby=name"`;
 
-exports[`ProductListing tests test loginRedirect function 1`] = `[Function]`;
+exports[`ProductListing tests test loginRedirect function 1`] = `undefined`;
 
 exports[`ProductListing tests test setInput function 1`] = `undefined`;

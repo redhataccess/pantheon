@@ -71,8 +71,6 @@ exports[`Login tests should render Login component 1`] = `
 </Fragment>
 `;
 
-exports[`Login tests test checkAuth function 1`] = `undefined`;
-
 exports[`Login tests test dismissNotification function 1`] = `undefined`;
 
 exports[`Login tests test handleFileChange function 1`] = `undefined`;
@@ -80,8 +78,6 @@ exports[`Login tests test handleFileChange function 1`] = `undefined`;
 exports[`Login tests test handleModuleInput function 1`] = `undefined`;
 
 exports[`Login tests test handleNameInput function 1`] = `undefined`;
-
-exports[`Login tests test loginRedirect function 1`] = `""`;
 
 exports[`Login tests test renderRedirect function 1`] = `""`;
 

@@ -8,8 +8,11 @@ class BuildInfo extends Component {
         commitText: ''
     };
 
-    public render() {
+    public componentDidMount() {
         this.getBuildInfo()
+    }
+
+    public render() {
         return (
             <React.Fragment>
                 <div className="column-view">
@@ -23,7 +26,7 @@ class BuildInfo extends Component {
         );
     }
 
-    private getBuildInfo() {
+    public getBuildInfo() {
         const backend = "/pantheon/builddate.json"
         if (this.state.buildDate === '') {
             fetch(backend)

@@ -10,7 +10,6 @@ class GitImport extends Component {
     isFormSubmitted: false,
     isMissingFields: false,
     isSucess: false,
-    login: false,
     redirect: false,
     repository: '',
     submitMsg: ''
@@ -68,8 +67,6 @@ class GitImport extends Component {
               <br />
               <Button aria-label="Submit the repository and branch information to the git integration service." onClick={this.cloneRepo}>Submit</Button>
               <div>
-                {this.checkAuth()}
-                {this.loginRedirect()}
                 {this.renderRedirect()}
               </div>
             </div>
@@ -150,25 +147,6 @@ class GitImport extends Component {
     } else {
       return ""
     }
-  }
-
-  private loginRedirect = () => {
-    if (this.state.login) {
-      return <Redirect to='/login' />
-    } else {
-      return ""
-    }
-  }
-
-  private checkAuth = () => {
-    fetch("/system/sling/info.sessionInfo.json")
-      .then(response => response.json())
-      .then(responseJSON => {
-        const key = "userID"
-        if (responseJSON[key] === 'anonymous') {
-          this.setState({ login: true })
-        }
-      })
   }
 
   private dismissNotification = () => {

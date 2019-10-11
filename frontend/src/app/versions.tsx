@@ -8,7 +8,6 @@ import {
 } from '@patternfly/react-core';
 import CheckImage from '@app/images/check_image.jpg';
 import BlankImage from '@app/images/blank.jpg';
-import { Redirect } from 'react-router-dom'
 
 export interface IProps {
     modulePath: string
@@ -27,14 +26,12 @@ class Versions extends Component<IProps, any> {
         super(props)
         this.state = {
             changePublishState: false,
-            initialLoad: true,
             isArchiveDropDownOpen: false,
             isArchiveSelect: false,
             isDropDownOpen: false,
             isHeadingToggle: true,
             isOpen: false,
             isRowToggle: false,
-            login: false,
             results: [this.draft, this.release],
 
             allProducts: [],
@@ -46,8 +43,6 @@ class Versions extends Component<IProps, any> {
             isProductDropdownOpen: false,
             isUsecaseDropdownOpen: false,
             isVersionDropdownOpen: false,
-            loggedinStatus: false,
-            metadataInitialLoad: true,
             metadataPath: '',
             metadataResults: [],
             moduleUrl: '',
@@ -56,7 +51,6 @@ class Versions extends Component<IProps, any> {
             ],
             productValue: '',
             productVersion: '',
-            redirect: false,
 
             successAlertVisble: false,
             usecaseOptions: [
@@ -78,17 +72,8 @@ class Versions extends Component<IProps, any> {
 
     public componentDidMount() {
         this.fetchProductVersionDetails()
-        if (!this.state.loggedinStatus && this.state.initialLoad === true) {
-            fetch("/system/sling/info.sessionInfo.json")
-                .then(response => response.json())
-                .then(responseJSON => {
-                    if (responseJSON.userID) {
-                        if (responseJSON.userID !== 'anonymous') {
-                            this.setState({ loggedinStatus: true })
-                        }
-                    }
-                })
-        }
+        this.fetchVersions()
+        this.getMetadata(this.state.metadataPath)
     }
 
     public render() {
@@ -124,8 +109,6 @@ class Versions extends Component<IProps, any> {
                     Update Successful!
           </Alert>
                 }
-                {this.state.initialLoad && this.fetchVersions()}
-                {this.state.metadataInitialLoad && this.getMetadata(this.state.metadataPath)}
                 <Card>
                     <div>
                         <DataList aria-label="Simple data list">
@@ -289,10 +272,6 @@ class Versions extends Component<IProps, any> {
             </Button>
                     ]}
                 >
-                    <div>
-                        {this.loginRedirect()}
-                        {this.renderRedirect()}
-                    </div>
                     <div className="app-container">
 
                         {this.state.isMissingFields && (
@@ -396,7 +375,6 @@ class Versions extends Component<IProps, any> {
 
                         }
                         return {
-                            initialLoad: false,
                             results: [this.draft, this.release],
                             // tslint:disable-next-line: object-literal-sort-keys
                             metadatPath: this.draft ? this.draft[0].path : this.release[0].path
@@ -435,10 +413,10 @@ class Versions extends Component<IProps, any> {
         }).then(response => {
             if (response.status === 201 || response.status === 200) {
                 // console.log(buttonText + " works: " + response.status)
-                this.setState({ initialLoad: true, changePublishState: true })
+                this.setState({ changePublishState: true })
             } else {
                 console.log(buttonText + " failed " + response.status)
-                this.setState({ initialLoad: true, changePublishState: true })
+                this.setState({ changePublishState: true })
             }
         });
 
@@ -524,15 +502,12 @@ class Versions extends Component<IProps, any> {
             }).then(response => {
                 if (response.status === 201 || response.status === 200) {
                     // console.log("successful edit ", response.status)
-                    // this.setState({ redirect: true, successAlertVisble: true })
+                    // this.setState({ successAlertVisble: true })
                     this.handleModalClose()
                     this.setState({ successAlertVisble: true })
                     this.setState({ versionSelected: '' })
                     this.props.onGetProduct(this.state.productValue)
                     this.props.onGetVersion(this.state.versionValue)
-                } else if (response.status === 500) {
-                    // console.log(" Needs login " + response.status)
-                    this.setState({ login: true })
                 } else {
                     // console.log(" Failed " + response.status)
                     this.setState({ failedPost: true })
@@ -645,28 +620,6 @@ class Versions extends Component<IProps, any> {
         return products;
     };
 
-    private getModuleUrl = (moduleUrl) => {
-        const backend = '/content/modules.query.json?nodeType=pant:module&where=[urlFragment]="' + moduleUrl + '"'
-        return backend
-
-    }
-
-    private renderRedirect = () => {
-        if (this.state.redirect) {
-            return <Redirect to='/search' />
-        } else {
-            return ""
-        }
-    }
-
-    private loginRedirect = () => {
-        if (this.state.login) {
-            return <Redirect to='/login' />
-        } else {
-            return ""
-        }
-    }
-
     private dismissNotification = () => {
         if (this.state.isMissingFields === true) {
             this.setState({ isMissingFields: false });
@@ -681,7 +634,6 @@ class Versions extends Component<IProps, any> {
 
         if (versionPath.trim() !== "") {
             // console.log("[getMetadata] versionPath: ", versionPath)
-            this.setState({ metadataInitialLoad: false })
             fetch(versionPath + "/metadata.json")
                 .then(response => response.json())
                 .then(responseJSON => this.setState({ metadataResults: responseJSON }))

@@ -4,9 +4,9 @@ exports[`User tests should render User component 1`] = `
 <Fragment>
   <Link
     onClick={[Function]}
-    to="/login"
+    to=""
   >
-    Log In
+    Log Out [demo]
   </Link>
 </Fragment>
 `;

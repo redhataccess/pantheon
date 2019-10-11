@@ -7,14 +7,9 @@ class Login extends Component<any, any, any> {
     super(props)
     this.state = {
       authMessage: '',
-      currentLogin: 'anonymous',
       password: '',
       username: ''
     };
-  }
-
-  public componentDidMount() {
-    this.checkAuth()
   }
 
   public render() {
@@ -92,20 +87,6 @@ class Login extends Component<any, any, any> {
         this.setState({ authMessage: "Unknown failure - HTTP " + response.status + ": " + response.statusText })
       }
     });
-  }
-
-  private checkAuth = () => {
-    console.log('Check auth: ' + this.state.currentLogin)
-    if (this.state.currentLogin === 'anonymous') {
-      fetch("/system/sling/info.sessionInfo.json")
-        .then(response => response.json())
-        .then(responseJSON => {
-          const key = "userID"
-          if (responseJSON[key] !== 'anonymous') {
-            this.setState({ currentLogin: responseJSON[key] })
-          }
-        })
-    }
   }
 }
 

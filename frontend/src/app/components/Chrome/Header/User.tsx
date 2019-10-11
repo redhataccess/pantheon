@@ -1,42 +1,21 @@
-import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import React, { Component } from 'react'
+import { Link } from "react-router-dom"
+import { IAppState } from '@app/app'
 
-class User extends Component<any, any> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isLoggedIn: false,
-            linkText: 'Log In'
-        };
-    }
-
-    public componentDidMount() {
-
-        if (!this.state.isLoggedIn) {
-            fetch("/system/sling/info.sessionInfo.json")
-                .then(response => response.json())
-                .then(responseJSON => {
-                    if (responseJSON.userID !== 'anonymous') {
-                        this.setState({ linkText: 'Log Out [' + responseJSON.userID + ']' })
-                        this.setState({ isLoggedIn: true })
-                    }
-                })
-        }
-    }
-
+class User extends Component<IAppState, any> {
     public render() {
         return (
             <React.Fragment>
-                <Link to={this.state.isLoggedIn ? '' : '/login'}
+                <Link to={this.props.userAuthenticated ? '' : '/login'}
                     onClick={this.conditionalRedirect}>
-                    {this.state.linkText}
+                    {this.props.userAuthenticated ? 'Log Out [' + this.props.username + ']' : 'Log In'}
                 </Link>
             </React.Fragment>
         );
     }
 
     private conditionalRedirect = () => {
-        if (this.state.linkText.includes("Log Out")) {
+        if (this.props.userAuthenticated) {
             fetch('/system/sling/logout')
                 .then(response => window.location.href = "/pantheon")
         }
