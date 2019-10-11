@@ -152,4 +152,14 @@ describe('Search tests', () => {
     const inst = wrapper.getInstance();
     expect(inst.fetchTimeout).toMatchSnapshot();
   });
+
+  test('newSearch() click event', () => {
+    const wrapper = shallow(<Search />);
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'newSearch');
+
+    wrapper.setState({ "iput": "test" })
+    wrapper.find(Button).simulate('click');
+    sinon.assert.called(spy);
+  });
 });
