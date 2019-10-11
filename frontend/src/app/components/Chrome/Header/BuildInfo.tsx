@@ -26,7 +26,7 @@ class BuildInfo extends Component {
         );
     }
 
-    private getBuildInfo() {
+    public getBuildInfo() {
         const backend = "/pantheon/builddate.json"
         if (this.state.buildDate === '') {
             fetch(backend)

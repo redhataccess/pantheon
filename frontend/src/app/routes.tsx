@@ -83,8 +83,7 @@ class Routes extends Component<IAppState> {
       // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
       <Switch>
         {routes.map(({path, exact, component, requiresLogin}, idx) => (
-          (this.props.userAuthenticated || !requiresLogin) && 
-          <Route path={path} exact={exact} component={component} key={idx} {...this.props} />
+          <Route path={path} exact={exact} component={this.props.userAuthenticated || !requiresLogin ? component : Login} key={idx} {...this.props} />
         ))}
         <Route render={() => <Search {...this.props} />} />
       </Switch>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { BuildInfo }  from './BuildInfo';
 import "isomorphic-fetch"
-import sinon from "sinon";
 
 import { shallow } from 'enzyme';
 
@@ -12,12 +11,10 @@ describe('BuildInfo tests', () => {
   });
 
   test('getBuildInfo call', () => {
-    const wrapper = shallow(<BuildInfo />);
-    const instance = wrapper.instance();
-    const spy = sinon.spy(instance, 'getBuildInfo');
+    const spy = jest.spyOn(BuildInfo.prototype, 'getBuildInfo');
+    shallow(<BuildInfo />);
 
-    wrapper.setState({buildDate: '',commitHash: '', commitText: ''})
-    sinon.assert.calledOnce(spy);
+    expect(spy).toHaveBeenCalled()
   });
 
 });
