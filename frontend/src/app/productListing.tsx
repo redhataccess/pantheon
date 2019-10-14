@@ -5,6 +5,7 @@ import {
 } from '@patternfly/react-core';
 import '@app/app.css';
 import { ProductDetails } from '@app/productDetails';
+import { CaretDownIcon } from '@patternfly/react-icons';
 
 class ProductListing extends Component<any, any, any> {
 
@@ -97,7 +98,7 @@ class ProductListing extends Component<any, any, any> {
                               menuItems={[
                                 <OptionsMenuItem onSelect={this.onSelect(event, data)} key="dropdown">Product Details</OptionsMenuItem>]}
                               isOpen={data.isOpen}
-                              toggle={<OptionsMenuToggle onToggle={this.onToggle(data['jcr:uuid'])} />} />
+                              toggle={<OptionsMenuToggle onToggle={this.onToggle(data['jcr:uuid'])} toggleTemplate={<CaretDownIcon aria-hidden="true" />} aria-label="Sort by" hideCaret={true} />} />
                           </DataListAction>
                         </DataListCell>
                       ]}

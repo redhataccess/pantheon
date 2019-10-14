@@ -36,14 +36,6 @@ describe('Product tests', () => {
     const button = wrapper.find(Button);
     expect(button.exists()).toBe(true)
   });
-  
-  it('test click event', () => {
-    const mockCallBack = jest.fn();
-  
-    const button = shallow((<Button onClick={mockCallBack}>Submit</Button>));
-    button.find('button').simulate('click');
-    expect(mockCallBack.mock.calls.length).toEqual(1);
-  });
 
   it('test renderRedirect function', () => {
     const wrapper = renderer.create(<Product />);

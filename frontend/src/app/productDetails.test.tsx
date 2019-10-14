@@ -77,14 +77,6 @@ describe('ProductDetails tests', () => {
     expect(productDetails.length === 1)
   });
 
-  it('test click event', () => {
-    const mockCallBack = jest.fn();
-
-    const button = shallow((<Button onClick={mockCallBack}>Submit</Button>));
-    button.find('button').simulate('click');
-    expect(mockCallBack.mock.calls.length).toEqual(1);
-  });
-
   it('test fetchProductDetails function', () => {
     const wrapper = renderer.create(<ProductDetails {...props} />);
     const inst = wrapper.getInstance();
