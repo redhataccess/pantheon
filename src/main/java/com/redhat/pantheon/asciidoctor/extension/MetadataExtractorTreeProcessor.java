@@ -1,9 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
-import com.google.common.collect.Streams;
 import com.redhat.pantheon.model.module.Metadata;
-import com.redhat.pantheon.util.function.FunctionalUtils;
-import org.asciidoctor.ast.Block;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.StructuralNode;
 import org.asciidoctor.extension.Treeprocessor;
