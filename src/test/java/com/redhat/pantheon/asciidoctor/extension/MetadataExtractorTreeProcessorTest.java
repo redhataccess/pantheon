@@ -97,6 +97,45 @@ class MetadataExtractorTreeProcessorTest {
         assertEquals("Headline", metadata.headline.get());
     }
 
+    /**
+     * CCS-3176
+     * This specific regression test makes sure that when the context property is not available in a given block,
+     * the extension code doesn't fail. This has been observed when the content has a data list
+     */
+    @Test
+    void extractHeadlineWithException() {
+        // Given
+        slingContext.build()
+                .resource("/content/module1/locales/en_US/1/metadata")
+                .commit();
+        Metadata metadata =
+                new Metadata(
+                        slingContext.resourceResolver().getResource(
+                                "/content/module1/locales/en_US/1/metadata"));
+        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
+        Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+        asciidoctor.javaExtensionRegistry().treeprocessor(extension);
+        final String adocContent =
+                "`GTC` — Generic Token Card.\n" +
+                "\n" +
+                "`Username`::\n" +
+                "+\n" +
+                "Enter the user name to be used in the authentication process.\n" +
+                "\n" +
+                "`Password`::\n" +
+                "+\n" +
+                "Enter the password to be used in the authentication process.\n" +
+                "\n" +
+                "[[bh-Configuring_Protected_EAP_PEAP_Settings]]\n" +
+                "[discrete]\n";
+
+        // When
+        asciidoctor.load(adocContent, new HashMap<>());
+
+        // Then
+        assertNull(metadata.headline.get());
+    }
+
     @Test
     void extractHeadlineNotPresent() {
         // Given
