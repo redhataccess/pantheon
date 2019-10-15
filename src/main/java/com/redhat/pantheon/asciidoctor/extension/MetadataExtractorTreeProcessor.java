@@ -77,7 +77,7 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                         return block.getContext().equals("section") && block.getLevel() == 1;
                     } catch (Exception e) {
                         // Asciidoctor (the Ruby code) throws certain exceptions when properties are not available.
-                        // In this case 'context' might not be available, so in that case the filter should just
+                        // In this case 'context' might not be available, and so the filter should just
                         // return false
                         return false;
                     }
