@@ -417,9 +417,9 @@
     "@fortawesome/free-brands-svg-icons" "^5.8.1"
 
 "@patternfly/react-icons@^3.9.1":
-  version "3.14.10"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.14.10.tgz#64752344b2ffb00db42a70f006120e439727566a"
-  integrity sha512-ShU/ieUSvI4Q3P7SsJQN9CNL8qxosUIyA4DpQcvwOOkXXGullp31fL8++Yp1NVTHihfowUPzHNt4fa8rw/L+UQ==
+  version "3.14.12"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.14.12.tgz#ddf49e70c4f744a93e81a39ac5a70d2d26ca0b80"
+  integrity sha512-qKkgT9Z46jOt7UxVyiJkIIUkFW3qqjIG8zrgVKAzC/twFccX1eNy2C25HsNb3lpd+MB/pgYL8F4yjSme+SQJfQ==
   dependencies:
     "@fortawesome/free-brands-svg-icons" "^5.8.1"
 

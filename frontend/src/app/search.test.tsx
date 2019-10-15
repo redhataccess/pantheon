@@ -129,19 +129,18 @@ describe('Search tests', () => {
     expect(inst.setInput).toMatchSnapshot()
   })
 
-  test('newSearch() click event', () => {
-    const wrapper = shallow(<Search {...mockStateUser} />)
-    const instance = wrapper.instance()
-    const spy = sinon.spy(instance, 'newSearch')
-
-    wrapper.setState({ "iput": "test" })
-    wrapper.find(Button).simulate('click')
-    sinon.assert.called(spy)
-  })
-
   it('test fetchTimeout function', () => {
     const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
     const inst = wrapper.getInstance()
     expect(inst.fetchTimeout).toMatchSnapshot()
   })
+
+  test('Version Button click', () => {
+    const wrapper = shallow(<Search {...mockStateUser} />);
+    const instance = wrapper.instance()
+    const spy = sinon.spy(instance, 'doSearch');
+    wrapper.setState({ isSortedUp: false })
+    sinon.assert.called(spy);
+  })
+
 })

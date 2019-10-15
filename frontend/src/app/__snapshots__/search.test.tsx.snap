@@ -4,34 +4,14 @@ exports[`Search tests should render default Search component 1`] = `
 <Fragment>
   <div>
     <div>
-      <FormGroup
-        fieldId="search"
-        helperText="Search is case sensitive. An empty search will show all modules."
-        label="Search Query"
-      >
-        <div
-          className="row-view"
-        >
-          <TextInput
-            aria-label={null}
-            className=""
-            id="search"
-            isDisabled={false}
-            isReadOnly={false}
-            isRequired={false}
-            isValid={true}
-            onChange={[Function]}
-            onKeyDown={[Function]}
-            type="text"
-            value=""
-          />
-          <Component
-            onClick={[Function]}
-          >
-            Search
-          </Component>
-        </div>
-      </FormGroup>
+      <SearchFilter
+        isSortedUp={true}
+        onChange={[Function]}
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onSort={[Function]}
+        value=""
+      />
       <div
         className="notification-container"
       >

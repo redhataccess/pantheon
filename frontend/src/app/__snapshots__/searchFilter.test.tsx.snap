@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SearchFilter tests should render default Search component 1`] = `
+<Fragment>
+  <div
+    className="row-filter"
+  >
+    <InputGroup
+      className="small-margin"
+    >
+      <TextInput
+        aria-label={null}
+        className=""
+        id="searchFilterInput"
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        type="text"
+      />
+      <Component
+        aria-label="search button for search input"
+        variant="control"
+      >
+        <SearchIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Component>
+    </InputGroup>
+    <Component
+      aria-label="search button for search input"
+      variant="control"
+    >
+      <SortAlphaUpIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+        title={null}
+      />
+    </Component>
+  </div>
+</Fragment>
+`;
