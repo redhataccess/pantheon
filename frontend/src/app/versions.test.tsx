@@ -203,6 +203,24 @@ describe('Versions tests', () => {
         expect(inst.handleURLInput()).toMatchSnapshot();
     });
 
+    it('test getModuleUrl function', () => {
+        const wrapper = renderer.create(<Versions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.getModuleUrl()).toMatchSnapshot();
+    });
+
+    it('test renderRedirect function', () => {
+        const wrapper = renderer.create(<Versions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.renderRedirect()).toMatchSnapshot();
+    });
+
+    it('test loginRedirect function', () => {
+        const wrapper = renderer.create(<Versions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.loginRedirect()).toMatchSnapshot();
+    });
+
     it('test dismissNotification function', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
@@ -262,6 +280,23 @@ describe('Versions tests', () => {
         expect(wrapper.state('changePublishState')).toBe(false)
         wrapper.setState({ 'changePublishState': true })
         expect(wrapper.state('changePublishState')).toBe(true)
+    });
+
+
+    it('should handle state changes for login', () => {
+        const wrapper = shallow(<Versions {...props} />)
+
+        expect(wrapper.state('login')).toBe(false)
+        wrapper.setState({ 'login': true })
+        expect(wrapper.state('login')).toBe(true)
+    });
+
+    it('should handle state changes for initialLoad', () => {
+        const wrapper = shallow(<Versions {...props} />)
+
+        expect(wrapper.state('initialLoad')).toBe(true)
+        wrapper.setState({ 'initialLoad': false })
+        expect(wrapper.state('initialLoad')).toBe(false)
     });
 
     it('should handle state changes for versionSelected', () => {
