@@ -67,6 +67,15 @@ podman pod stop pantheon
 podman pod start pantheon
 ```
 
+### Running straight from the Kubernetes pod definition
+
+There kubernetes definition at [containers/pantheon.yaml](containers/pantheon.yaml)
+will also start the full pod described above with a single command:
+
+```sh
+podman play kube container/pantheon.yaml
+```
+
 ### Building the application in the a container.
 
 We also provide an podman image under the container folder that does a two stage build that will generate a container with the application.
