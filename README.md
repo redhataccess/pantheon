@@ -19,13 +19,28 @@ mvn test
 
 ### How to run this App
 
-To run the application, run the Apache sling podman container.
+The best way to run Pantheon is to install [podman](https://podman.io).
+
+First, create a pod:
 
 ```sh
-podman run -p 8080:8080 --name slingapp apache/sling 
+podman pod create --name pantheon -p 8080 -p 5005
 ```
 
-This will create a container called `slingapp`.
+This will create a `pantheon` pod with ports 8080 (for web access) and 5005 (for
+remote Java debugging) open.
+
+Run a mongo database container in the pod.
+
+```sh
+podman run --pod pantheon --name slingmongo -d mongo
+```
+
+Run the sling container pod in the pod.
+
+```sh
+podman run --pod pantheon -d -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://localhost:27017' --name sling apache/sling
+```
 
 The Sling launchpad can be accessed at `http://localhost:8080` and you can log in to
 it using the `admin/admin` username password combo.
@@ -45,24 +60,21 @@ Head to http://localhost:8080/pantheon for the application's entry point.
 
 For sling's management UI, you can head to http://localhost:8080/starter/index.html
 
-### How to run against a Mongo datastore
+You can stop and start the pod as necessary with podman's pod command:
 
-Pull the mongo db image:
 ```sh
-podman pull mongo
+podman pod stop pantheon
+podman pod start pantheon
 ```
 
-Run a mongo db container (were are calling it `slingmongo` here)
-```sh
-podman run --network=host --name slingmongo -d mongo
-```
+### Running straight from the Kubernetes pod definition
 
-Run a transient Sling container which stores everything in the linked mongo db:
-```sh
-podman run --network=host --rm -d -p 8080:8080 -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://localhost:27017' apache/sling
-```
+There kubernetes definition at [containers/pantheon.yaml](containers/pantheon.yaml)
+will also start the full pod described above with a single command:
 
-**Notice the --network flag** this is needed for both containers that talk to each other. You can see the --network flag documentation in this [Link.](https://github.com/containers/libpod/blob/master/docs/podman-create.1.md)
+```sh
+podman play kube container/pantheon.yaml
+```
 
 ### Building the application in the a container.
 
@@ -99,5 +111,3 @@ podman ps
 ```
 podman exec -it PROCESS bash
 ```
-
-### more to come...
