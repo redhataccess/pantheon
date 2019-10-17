@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
-import { Level, LevelItem } from '@patternfly/react-core';
+import { Level, LevelItem, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import {
-    DataList, DataListItem, DataListItemRow, DataListItemCells,
+    ClipboardCopy, DataList, DataListItem, DataListItemRow, DataListItemCells,
     DataListCell, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core';
 import { Versions } from '@app/versions';
+import { FontAwesomeAltIcon } from '@patternfly/react-icons';
 
 class ModuleDisplay extends Component<any, any, any> {
 
     constructor(props) {
         super(props)
         this.state = {
+            copySuccess: '',
+            cp_url: '',
             draftPath: '',
             draftUpdateDate: '',
             modulePath: '',
@@ -35,110 +38,131 @@ class ModuleDisplay extends Component<any, any, any> {
         // console.log('Props: ', this.props);
         return (
             <React.Fragment>
-                    <div>
-                        <div>
-                            <Level gutter="md">
-                                <LevelItem>
-                                    <TextContent>
-                                        <Text component={TextVariants.h1}>{this.state.moduleTitle}</Text>
-                                    </TextContent>
-                                </LevelItem>
-                                <LevelItem />
-                            </Level>
-                        </div>
-                        <div>
-                            <a href='http://access.redhat.com'>View on Customer Portal</a>
-                        </div>
-                        <div>
-                            <DataList aria-label="single action data list">
-                                <DataListItem aria-labelledby="simple-item1">
-                                    <DataListItemRow id="data-rows-header" >
-                                        <DataListItemCells
-                                            dataListCells={[
-                                                <DataListCell width={2} key="products">
-                                                    <span className="sp-prop-nosort" id="span-source-type-products">Products</span>
-                                                </DataListCell>,
-                                                <DataListCell key="published">
-                                                    <span className="sp-prop-nosort" id="span-source-type-published">Published</span>
-                                                </DataListCell>,
-                                                <DataListCell key="updated">
-                                                    <span className="sp-prop-nosort" id="span-source-type-draft-uploaded">Draft Uploaded</span>
-                                                </DataListCell>,
-                                                <DataListCell key="module_type">
-                                                    <span className="sp-prop-nosort" id="span-source-name-module-type">Module Type</span>
-                                                </DataListCell>
-                                            ]}
-                                        />
-                                    </DataListItemRow>
-                                    <DataListItemRow>
-                                        <DataListItemCells
-                                            dataListCells={[
-                                                <DataListCell width={2} key="products">
-                                                    <span>{this.state.productValue + ' ' + this.state.versionValue}</span>
-                                                </DataListCell>,
-                                                <DataListCell key="published">
-                                                    <span>
-                                                        {this.state.releaseUpdateDate.trim() !== ""
-                                                            && this.state.releaseUpdateDate.length >= 15 ?
-                                                            this.state.releaseUpdateDate : "-"} <br/>
-                                                        {this.state.releaseUpdateDate.trim() !== "" &&                                                                                                             
-                                                        <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a>}    
-                                                    </span>
-                                                </DataListCell>,
-                                                <DataListCell key="updated">
-                                                    <span>
-                                                        {this.state.draftUpdateDate.trim() !== ""
-                                                            && this.state.draftUpdateDate.length >= 15 ?
-                                                            this.state.draftUpdateDate : "-"}
-                                                    </span>
-                                                </DataListCell>,
-                                                <DataListCell key="module_type">
-                                                    <span>{this.state.moduleType !== undefined ? this.state.moduleType : "-"}</span>
-                                                </DataListCell>,
-                                            ]}
-                                        />
-                                    </DataListItemRow>
-                                </DataListItem>
-                            </DataList>
-                        </div>
-                        <div>
-                            <Card>
-                                <Versions
-                                    modulePath={this.state.modulePath}
-                                    versionModulePath={this.state.moduleTitle}
-                                    updateDate={this.updateDate}
-                                    onGetProduct={this.getProduct}
-                                    onGetVersion={this.getVersion}
-                                />
-                            </Card>
-                        </div>
+                <div>
+                    <div className="app-container">
+                        <Breadcrumb>
+                            <BreadcrumbItem ><a href="#/search">Modules</a></BreadcrumbItem>
+                            <BreadcrumbItem to="#" isActive={true}>{this.state.moduleTitle}</BreadcrumbItem>
+                        </Breadcrumb>
                     </div>
+                    <br />
+                    <div>
+                        <Level gutter="md">
+                            <LevelItem>
+                                <TextContent>
+                                    <Text component={TextVariants.h1}>{this.state.moduleTitle}</Text>
+                                </TextContent>
+                            </LevelItem>
+                            <LevelItem />
+                        </Level>
+                    </div>
+                    <div>
+                        <span>
+                            {this.state.cp_url !== '' &&
+                                <a href={this.state.cp_url} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a>
+                            }
+                        </span>
+                        <span>&emsp;&emsp;</span>
+                        <span>
+                            {this.state.cp_url !== '' && this.state.releasePath !== '' &&
+                                <a id="permanentURL" onClick={this.copyToClipboard}>Copy permanent URL  <i className="fa pf-icon-folder-close" /></a>
+                            }
+                        </span>
+                        <span className="pf-c-tooltip__content pf-m-text-align-left">&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
+                    </div>
+                    <br />
+                    <div>
+                        <DataList aria-label="single action data list">
+                            <DataListItem aria-labelledby="simple-item1">
+                                <DataListItemRow id="data-rows-header" >
+                                    <DataListItemCells
+                                        dataListCells={[
+                                            <DataListCell width={2} key="product">
+                                                <span className="sp-prop-nosort" id="span-source-type-product">Product</span>
+                                            </DataListCell>,
+                                            <DataListCell key="published">
+                                                <span className="sp-prop-nosort" id="span-source-type-published">Published</span>
+                                            </DataListCell>,
+                                            <DataListCell key="updated">
+                                                <span className="sp-prop-nosort" id="span-source-type-draft-uploaded">Draft Uploaded</span>
+                                            </DataListCell>,
+                                            <DataListCell key="module_type">
+                                                <span className="sp-prop-nosort" id="span-source-name-module-type">Module Type</span>
+                                            </DataListCell>
+                                        ]}
+                                    />
+                                </DataListItemRow>
+                                <DataListItemRow>
+                                    <DataListItemCells
+                                        dataListCells={[
+                                            <DataListCell width={2} key="product">
+                                                <span>{this.state.productValue + ' ' + this.state.versionValue}</span>
+                                            </DataListCell>,
+                                            <DataListCell key="published">
+                                                <span>
+                                                    {this.state.releaseUpdateDate.trim() !== ""
+                                                        && this.state.releaseUpdateDate.length >= 15 ?
+                                                        this.state.releaseUpdateDate : "-"} <br />
+                                                    {this.state.releaseUpdateDate.trim() !== "" &&
+                                                        <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a>}
+                                                </span>
+                                            </DataListCell>,
+                                            <DataListCell key="updated">
+                                                <span>
+                                                    {this.state.draftUpdateDate.trim() !== ""
+                                                        && this.state.draftUpdateDate.length >= 15 ?
+                                                        this.state.draftUpdateDate : "-"}
+                                                </span>
+                                            </DataListCell>,
+                                            <DataListCell key="module_type">
+                                                <span>{this.state.moduleType !== undefined ? this.state.moduleType : "-"}</span>
+                                            </DataListCell>,
+                                        ]}
+                                    />
+                                </DataListItemRow>
+                            </DataListItem>
+                        </DataList>
+                    </div>
+                    <div>
+                        <Card>
+                            <Versions
+                                modulePath={this.state.modulePath}
+                                versionModulePath={this.state.moduleTitle}
+                                updateDate={this.updateDate}
+                                onGetProduct={this.getProduct}
+                                onGetVersion={this.getVersion}
+                            />
+                        </Card>
+                    </div>
+                </div>
             </React.Fragment>
         );
     }
 
-    private updateDate = (draftDate,releaseDate,releaseVersion) => {
-            this.setState({
-                draftUpdateDate: draftDate,
-                // tslint:disable-next-line: object-literal-sort-keys
-                releaseUpdateDate: releaseDate,
-                releaseVersion: releaseVersion                
-            });
+    private updateDate = (draftDate, releaseDate, releaseVersion) => {
+        this.setState({
+            draftUpdateDate: draftDate,
+            // tslint:disable-next-line: object-literal-sort-keys
+            releaseUpdateDate: releaseDate,
+            releaseVersion: releaseVersion
+        });
     }
-    
+
     private fetchModuleDetails = (data) => {
         this.setState({
-            modulePath: data.location.pathname, 
+            modulePath: data.location.pathname,
             releasePath: "/content" + data.location.pathname + ".preview"
         })
 
         fetch(data.location.pathname + '.4.json')
             .then(response => response.json())
             .then(responseJSON => {
-                // console.log('fetch results:',responseJSON["en_US"])
+                // console.log('fetch results:', responseJSON)
                 this.setState({
+                    cp_url: responseJSON['jcr:uuid'] !== undefined && responseJSON.en_US.released !== undefined ? 'https://access.redhat.com/topics/en-us/' + responseJSON['jcr:uuid'] : '',
                     moduleTitle: responseJSON.en_US["1"].metadata["jcr:title"],
                     moduleType: responseJSON.en_US["1"].metadata["pant:moduleType"],
+
                 })
             })
     }
@@ -219,6 +243,21 @@ class ModuleDisplay extends Component<any, any, any> {
 
             })
     }
+
+    private copyToClipboard = () => {
+        const textField = document.createElement('textarea')
+        if (window.location.href !== undefined) {
+            const targetHref = window.location.href
+            if (window.location.pathname !== undefined) {
+                textField.innerText = targetHref.split(window.location.pathname)[0] + this.state.releasePath
+                document.body.appendChild(textField)
+                textField.select()
+                document.execCommand('copy')
+                textField.remove()
+                this.setState({ copySuccess: 'Copied!' });
+            }
+        }
+    };
 }
 
 export { ModuleDisplay }

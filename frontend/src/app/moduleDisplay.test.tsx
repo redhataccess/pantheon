@@ -3,7 +3,7 @@ import { ModuleDisplay } from '@app/moduleDisplay';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListCell, TextContent, Level, LevelItem } from '@patternfly/react-core';
+import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListCell, TextContent, Level, LevelItem, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 import { Versions } from './versions';
@@ -16,6 +16,18 @@ describe('ModuleDisplay tests', () => {
     test('should render ModuleDisplay component', () => {
         const view = shallow(<ModuleDisplay {...props} />);
         expect(view).toMatchSnapshot();
+    });
+
+    it('should render a Breadcrumb', () => {
+        const wrapper = mount(<ModuleDisplay {...props} />);
+        const breadcrumb = wrapper.find(Breadcrumb);
+        expect(breadcrumb.exists()).toBe(true)
+    });
+
+    it('should render a BreadcrumbItem', () => {
+        const wrapper = mount(<ModuleDisplay {...props} />);
+        const breadcrumbItem = wrapper.find(BreadcrumbItem);
+        expect(breadcrumbItem.exists()).toBe(true)
     });
 
     it('should render a Button', () => {
@@ -59,7 +71,7 @@ describe('ModuleDisplay tests', () => {
         const dataListCell = wrapper.find(DataListCell);
         expect(dataListCell.exists()).toBe(true)
         // console.log("[DataListCell] length", dataListCell.length)
-        expect(dataListCell.at(0).contains("Products")).toBe(true)
+        expect(dataListCell.at(0).contains("Product")).toBe(true)
     });
 
     it('should render a TextContent Element', () => {
@@ -128,12 +140,12 @@ describe('ModuleDisplay tests', () => {
     });
 
     // Value testing with Enzyme.
-    it('renders Products heading', () => {
+    it('renders Product heading', () => {
         const wrapper = mount(<ModuleDisplay {...props} />);
-        const sourceTypeText = wrapper.find('#span-source-type-products').first().text();
+        const sourceTypeText = wrapper.find('#span-source-type-product').first().text();
 
         // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("Products");
+        expect(sourceTypeText).toEqual("Product");
     });
 
     it('renders Published heading', () => {
@@ -162,10 +174,11 @@ describe('ModuleDisplay tests', () => {
 
     it('renders View on Customer Portal hotlink', () => {
         const wrapper = mount(<ModuleDisplay {...props} />);
-        const sourceTypeText = wrapper.find('a').first().text();
+        wrapper.setState({ 'cp_url': "https://access.redhat.com" })
+        const sourceTypeText = wrapper.find('a').at(2).text();
 
         // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("View on Customer Portal");
+        expect(sourceTypeText).toContain("View on Customer Portal");
     });
 
     it('should check if draftUpdateDate exists', () => {

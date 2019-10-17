@@ -3,6 +3,24 @@
 exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
 <Fragment>
   <div>
+    <div
+      className="app-container"
+    >
+      <Component>
+        <BreadcrumbItem>
+          <a
+            href="#/search"
+          >
+            Modules
+          </a>
+        </BreadcrumbItem>
+        <BreadcrumbItem
+          isActive={true}
+          to="#"
+        />
+      </Component>
+    </div>
+    <br />
     <div>
       <Level
         gutter="md"
@@ -18,12 +36,18 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
       </Level>
     </div>
     <div>
-      <a
-        href="http://access.redhat.com"
+      <span />
+      <span>
+          
+      </span>
+      <span />
+      <span
+        className="pf-c-tooltip__content pf-m-text-align-left"
       >
-        View on Customer Portal
-      </a>
+         
+      </span>
     </div>
+    <br />
     <div>
       <DataList
         aria-label="single action data list"
@@ -42,9 +66,9 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                   >
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-type-products"
+                      id="span-source-type-product"
                     >
-                      Products
+                      Product
                     </span>
                   </DataListCell>,
                   <DataListCell>
