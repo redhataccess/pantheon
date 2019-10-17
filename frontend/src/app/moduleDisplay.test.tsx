@@ -7,6 +7,7 @@ import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRo
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 import { Versions } from './versions';
+import anymatch = require('anymatch');
 
 const props = {
     location: { pathname: "module/test" }
@@ -238,5 +239,23 @@ describe('ModuleDisplay tests', () => {
         wrapper.setState({ 'login': true })
         const len = wrapper.setState({ "versionValue": "8.x" });
         expect(wrapper.state('versionValue')).toBeDefined();
+    });
+
+    it('renders Copy permanent URL', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        wrapper.setState({ 'login': true })
+        wrapper.setState({ 'releasePath': anymatch })
+        wrapper.setState({ 'cp_url': "https://example.com" })
+        const permanentURL = wrapper.find('a#permanentURL').first()
+        expect(permanentURL.exists).toBeTruthy();
+    });
+    
+    it('renders copySuccess Message', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        wrapper.setState({ 'login': true })
+        wrapper.setState({ 'releasePath': anymatch })
+        wrapper.setState({ 'cp_url': "https://example.com" })
+        wrapper.setState({ "copySuccess": "Copied!" });
+        expect(wrapper.state('copySuccess')).toContain("Copied!");
     });
 });
