@@ -133,6 +133,12 @@ describe('ModuleDisplay tests', () => {
         const inst = wrapper.getInstance();
         expect(inst.getProductInitialLoad()).toMatchSnapshot();
     });
+   
+    it('test componentDidMount function', () => {
+        const wrapper = renderer.create(<ModuleDisplay {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.componentDidMount()).toMatchSnapshot();
+    });
 
     it('has a props', () => {
         const moduleDisplay = mount(<ModuleDisplay {...props} />).matchesElement

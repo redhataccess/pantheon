@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { Level, LevelItem, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import {
-    ClipboardCopy, DataList, DataListItem, DataListItemRow, DataListItemCells,
+    DataList, DataListItem, DataListItemRow, DataListItemCells,
     DataListCell, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core';
 import { Versions } from '@app/versions';
-import { FontAwesomeAltIcon } from '@patternfly/react-icons';
 
 class ModuleDisplay extends Component<any, any, any> {
 
@@ -68,7 +67,7 @@ class ModuleDisplay extends Component<any, any, any> {
                                 <a id="permanentURL" onClick={this.copyToClipboard}>Copy permanent URL  <i className="fa pf-icon-folder-close" /></a>
                             }
                         </span>
-                        <span className="pf-c-tooltip__content pf-m-text-align-left">&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
+                        <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
                     </div>
                     <br />
                     <div>

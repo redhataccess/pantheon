@@ -41,9 +41,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
           
       </span>
       <span />
-      <span
-        className="pf-c-tooltip__content pf-m-text-align-left"
-      >
+      <span>
          
       </span>
     </div>
@@ -148,6 +146,8 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
   </div>
 </Fragment>
 `;
+
+exports[`ModuleDisplay tests test componentDidMount function 1`] = `undefined`;
 
 exports[`ModuleDisplay tests test fetchModuleDetails function 1`] = `undefined`;
 
