@@ -209,6 +209,8 @@ exports[`Search tests test buildSearchUrl function 1`] = `undefined`;
 
 exports[`Search tests test cancelDeleteOperation function 1`] = `undefined`;
 
+exports[`Search tests test componentDidMount function 1`] = `[Function]`;
+
 exports[`Search tests test confirmDeleteOperation function 1`] = `undefined`;
 
 exports[`Search tests test delete function 1`] = `undefined`;

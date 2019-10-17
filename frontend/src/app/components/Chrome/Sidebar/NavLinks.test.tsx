@@ -144,4 +144,10 @@ describe('NavLinks tests', () => {
       expect(wrapper.state('isAdmin')).toBe(false)
     })
   });
+
+  it('test componentDidMount function', () => {
+    const wrapper = renderer.create(<Router><NavLinks {...mockStateUser} /></Router>);
+    const inst = wrapper.getInstance();
+    expect(inst.componentDidMount).toMatchSnapshot();
+  });
 });

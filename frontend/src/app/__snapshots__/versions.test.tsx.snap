@@ -313,6 +313,8 @@ exports[`Versions tests should render Versions component 1`] = `
 
 exports[`Versions tests test changePublishState function 1`] = `undefined`;
 
+exports[`Versions tests test componentDidMount function 1`] = `[Function]`;
+
 exports[`Versions tests test dismissNotification function 1`] = `undefined`;
 
 exports[`Versions tests test fetchProductVersionDetails function 1`] = `Array []`;

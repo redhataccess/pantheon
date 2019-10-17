@@ -93,6 +93,8 @@ exports[`NavLinks tests test browserLink function 1`] = `undefined`;
 
 exports[`NavLinks tests test checkAuth function 1`] = `undefined`;
 
+exports[`NavLinks tests test componentDidMount function 1`] = `[Function]`;
+
 exports[`NavLinks tests test render function 1`] = `[Function]`;
 
 exports[`NavLinks tests test webConsole function 1`] = `undefined`;

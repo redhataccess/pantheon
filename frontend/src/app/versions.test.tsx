@@ -366,4 +366,10 @@ describe('Versions tests', () => {
         const inst = wrapper.getInstance();
         expect(inst.getHarrayChildNamed(anymatch, 'metadata')).toMatchSnapshot();
     });
+
+    it('test componentDidMount function', () => {
+        const wrapper = renderer.create(<Versions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.componentDidMount).toMatchSnapshot();
+    });
 });
