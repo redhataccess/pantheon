@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { NavItem, NavExpandable, NavList } from '@patternfly/react-core'
 import { Link } from "react-router-dom"
-import fetch from 'isomorphic-fetch'
 import { IAppState } from '@app/app'
 
 // BASE is used in the fetch call to check if isLoggedIn or isAdmin. It currently breaks the Navlinks.
@@ -21,7 +20,7 @@ class NavLinks extends Component<IAppState, any> {
   }
 
   public componentDidMount() {
-    this.setState({ activeGroup: 'grp-1', activeItem: 'grp-1_itm-1' });
+    this.setState({ activeGroup: 'grp-1', activeItem: 'grp-1_itm-1' })
   }
 
   public render() {

@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   Alert, AlertActionCloseButton, TextInput,
   DataList, DataListItem, DataListItemRow, DataListItemCells,
   DataListCell, FormGroup, Button, DataListCheck, Modal,
   Level, LevelItem
-} from '@patternfly/react-core';
-import '@app/app.css';
+} from '@patternfly/react-core'
+import '@app/app.css'
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
-import { Pagination } from '@app/Pagination';
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import { App, IAppState } from '@app/app'
+import { Pagination } from '@app/Pagination'
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import { IAppState } from '@app/app'
 
 export default class Search extends Component<IAppState, any> {
   public transientPaths: string[] = [];
@@ -25,7 +25,6 @@ export default class Search extends Component<IAppState, any> {
       countOfCheckedBoxes: 0,
       deleteButtonVisible: false,
       deleteState: '',
-      initialLoad: true,
       input: '',
       isEmptyResults: false,
       isModalOpen: false,
@@ -55,8 +54,6 @@ export default class Search extends Component<IAppState, any> {
 
     return (
       <React.Fragment>
-        {/* {console.log("initial load: ", this.state.initialLoad)} */}
-        {this.state.initialLoad && this.doSearch()}
         <div>
           <div>
             <FormGroup
@@ -254,13 +251,11 @@ export default class Search extends Component<IAppState, any> {
   private setInput = (event) => this.setState({ input: event });
 
   private handleSelectAll = (event) => {
-    // console.log('handleSelectAll')
     this.setState({ check: !this.state.check }, () => {
       this.setState(prevState => {
         this.transientPaths = []
         const selectAllcheck = this.state.results.map(dataitem => {
           dataitem[this.state.checkedItemKey] = this.state.check
-          // console.log(dataitem["pant:transientPath"]+":"+dataitem[this.state.checkedItemKey])
           if (this.state.check) {
             this.transientPaths.push(dataitem["pant:transientPath"])
           }
@@ -268,19 +263,15 @@ export default class Search extends Component<IAppState, any> {
         })
         if (this.state.check === true) {
           this.setState({ countOfCheckedBoxes: this.state.results.length }, () => {
-            // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
             if (this.state.countOfCheckedBoxes > 0) {
               this.setState({ deleteButtonVisible: true })
             } else {
               this.setState({ deleteButtonVisible: false })
             }
-            // console.log('transientPaths:'+this.transientPaths)
           })
         } else {
           this.setState({ countOfCheckedBoxes: 0 }, () => {
-            // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
             this.transientPaths = []
-            // console.log('transientPaths:'+this.transientPaths)
             this.setState({ deleteButtonVisible: false })
           })
         }
@@ -299,19 +290,15 @@ export default class Search extends Component<IAppState, any> {
           data[this.state.checkedItemKey] = !data[this.state.checkedItemKey]
           if (data[this.state.checkedItemKey] === true) {
             this.setState({ countOfCheckedBoxes: this.state.countOfCheckedBoxes + 1 }, () => {
-              // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
               if (this.state.countOfCheckedBoxes > 0) {
                 this.setState({ deleteButtonVisible: true })
               } else {
                 this.setState({ deleteButtonVisible: false })
               }
             })
-            this.transientPaths.push(data["pant:transientPath"]);
-            // console.log('transientPaths:'+this.transientPaths)
-            // console.log('all Paths:'+this.state.allPaths)
+            this.transientPaths.push(data["pant:transientPath"])
           } else {
             this.setState({ countOfCheckedBoxes: this.state.countOfCheckedBoxes - 1 }, () => {
-              // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
               if (this.state.countOfCheckedBoxes > 0) {
                 this.setState({ deleteButtonVisible: true })
               } else {
@@ -319,8 +306,6 @@ export default class Search extends Component<IAppState, any> {
               }
             })
             this.transientPaths.splice(this.transientPaths.indexOf(id), 1)
-            // console.log('transientPaths:'+this.transientPaths)
-            // console.log('all Paths:'+this.state.allPaths)
           }
         }
         return data
@@ -332,8 +317,6 @@ export default class Search extends Component<IAppState, any> {
   };
 
   private delete = (keydata) => (event: any) => {
-    // console.log(keydata)
-    // console.log('in the delete function')
     const formData = new FormData();
     formData.append(':operation', 'delete')
     for (const item of keydata) {
@@ -346,40 +329,36 @@ export default class Search extends Component<IAppState, any> {
       if (response.status === 200) {
         this.setState({ deleteState: 'positive' }, () =>
           this.transientPaths = [])
-        // console.log('deleteState:'+this.state.deleteState)
       } else if (response.status === 403) {
         this.setState({ deleteState: 'negative' }, () =>
           this.transientPaths = [])
-        // console.log('deleteState:'+this.state.deleteState)
       } else {
         this.setState({ deleteState: 'unknown' }, () =>
           this.transientPaths = [])
-        // console.log('deleteState:'+this.state.deleteState)
       }
     });
   }
 
   private getRows = (event) => {
     if (event.key === 'Enter') {
-      this.setState({ page: 1, initialLoad: true }, () => {
+      this.setState({ page: 1 }, () => {
         this.doSearch()
       })
     }
   };
 
   private newSearch = () => {
-    this.setState({ page: 1, initialLoad: true }, () => {
+    this.setState({ page: 1 }, () => {
       this.doSearch()
     })
   }
 
   // Handle gateway timeout on slow connections.
   private doSearch = () => {
-    this.fetchTimeout(1000, fetch(this.buildSearchUrl())
+    fetch(this.buildSearchUrl())
       .then(response => response.json())
       .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
       .then(() => {
-        this.setState({ initialLoad: false })
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
             check: false,
@@ -398,7 +377,7 @@ export default class Search extends Component<IAppState, any> {
       .catch(error => {
         // might be a timeout error
         console.log("[doSearch] error ", error)
-      }));
+      })
   }
 
 
@@ -434,7 +413,6 @@ export default class Search extends Component<IAppState, any> {
   }
 
   private sort(key: string) {
-    // console.log("My Sort Key is: " + key)
     // Switch the direction each time some clicks.
     this.setState({ isSortedUp: !this.state.isSortedUp, sortKey: key }, () => {
       this.getSortedRows()
@@ -464,8 +442,6 @@ export default class Search extends Component<IAppState, any> {
     }
     backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
     backend += "&offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
-    // console.log('itemsPerPaeProp: '+this.state.pageLimit)
-    // console.log(backend)
     return backend
   }
 
@@ -473,42 +449,34 @@ export default class Search extends Component<IAppState, any> {
     this.setState({
       confirmDelete: false,
       deleteState: '',
-      initialLoad: true,
       page: 1
     });
   });
 
-  private confirmDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete }, () => {
-    console.log('confirmDelete:' + this.state.confirmDelete)
-  });
+  private confirmDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete })
 
-  private cancelDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete }, () => {
-    console.log('confirmDelete cancelled:' + this.state.confirmDelete)
-  });
+  private cancelDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete })
 
   private updatePageCounter = (direction: string) => () => {
     if (direction === "L" && this.state.page > 1) {
-      this.setState({ page: this.state.page - 1, initialLoad: true })
+      this.setState({ page: this.state.page - 1 }, () => {
+        this.doSearch()
+      })
     } else if (direction === "R") {
-      this.setState({ page: this.state.page + 1, initialLoad: true })
+      this.setState({ page: this.state.page + 1 }, () => {
+        this.doSearch()
+      })
     } else if (direction === "F") {
-      this.setState({ page: 1, initialLoad: true })
+      this.setState({ page: 1 }, () => {
+        this.doSearch()
+      })
     }
   }
 
   private changePerPageLimit = (pageLimitValue) => {
-    this.setState({ pageLimit: pageLimitValue, initialLoad: true, page: 1 }, () => {
+    this.setState({ pageLimit: pageLimitValue, page: 1 }, () => {
       // console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
       return (this.state.pageLimit + " items per page")
-    })
-  }
-
-  private fetchTimeout(ms, promise) {
-    return new Promise(() => (resolve, reject) => {
-      setTimeout(() => {
-        reject(new Error("timeout"))
-      }, ms)
-      promise.then(resolve, reject)
     })
   }
 }
