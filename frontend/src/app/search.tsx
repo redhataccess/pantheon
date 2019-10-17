@@ -450,7 +450,7 @@ export default class Search extends Component<IAppState, any> {
       confirmDelete: false,
       deleteState: '',
       page: 1
-    });
+    }, () => { this.doSearch() });
   });
 
   private confirmDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete })

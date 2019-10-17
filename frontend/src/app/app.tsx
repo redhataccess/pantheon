@@ -22,7 +22,6 @@ class App extends Component<any, IAppState> {
 
   constructor(props) {
     super(props)
-
     this.state = {
       isAdmin: false,
       isNavOpen: true,
@@ -44,6 +43,8 @@ class App extends Component<any, IAppState> {
   }
 
   public onNavToggle() {
+    console.log('onNavToggle called')
+    console.log(this)
     this.setState({
       isNavOpen: !this.state.isNavOpen
     })
