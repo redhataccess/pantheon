@@ -1,5 +1,5 @@
 import React from 'react'
-import Search from '@app/search'
+import { Search } from '@app/search'
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { HashRouter as Router } from 'react-router-dom'
 import { mount, shallow } from 'enzyme'

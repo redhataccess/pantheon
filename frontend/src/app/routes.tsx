@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
-import Search from '@app/search';
+import { Search } from '@app/search';
 import { Module } from '@app/module';
 import { Product } from '@app/product';
 import { ProductListing } from '@app/productListing';
