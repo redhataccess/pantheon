@@ -7,7 +7,7 @@ import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRo
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 import { Versions } from './versions';
-import anymatch = require('anymatch');
+import assert = require('assert');
 
 const props = {
     location: { pathname: "module/test" }
@@ -134,7 +134,7 @@ describe('ModuleDisplay tests', () => {
         const inst = wrapper.getInstance();
         expect(inst.getProductInitialLoad()).toMatchSnapshot();
     });
-   
+
     it('test componentDidMount function', () => {
         const wrapper = renderer.create(<ModuleDisplay {...props} />);
         const inst = wrapper.getInstance();
@@ -244,18 +244,30 @@ describe('ModuleDisplay tests', () => {
     it('renders Copy permanent URL', () => {
         const wrapper = shallow(<ModuleDisplay {...props} />);
         wrapper.setState({ 'login': true })
-        wrapper.setState({ 'releasePath': anymatch })
+        wrapper.setState({ 'releasePath': "somepath" })
         wrapper.setState({ 'cp_url': "https://example.com" })
         const permanentURL = wrapper.find('a#permanentURL').first()
         expect(permanentURL.exists).toBeTruthy();
     });
-    
+
     it('renders copySuccess Message', () => {
         const wrapper = shallow(<ModuleDisplay {...props} />);
         wrapper.setState({ 'login': true })
-        wrapper.setState({ 'releasePath': anymatch })
+        wrapper.setState({ 'releasePath': "somepath" })
         wrapper.setState({ 'cp_url': "https://example.com" })
         wrapper.setState({ "copySuccess": "Copied!" });
         expect(wrapper.state('copySuccess')).toContain("Copied!");
     });
+
+    it('should call getVersionUUID once with argument', () => {
+
+        const object = { getVersionUUID(path) { } };
+        const spy = sinon.spy(object, "getVersionUUID");
+
+        object.getVersionUUID("path1");
+        object.getVersionUUID("path2");
+        assert(spy.withArgs("path1").calledOnce);
+        assert(spy.withArgs("path2").calledOnce);
+    });
+
 });
