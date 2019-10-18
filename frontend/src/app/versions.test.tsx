@@ -1,5 +1,5 @@
 import React from 'react';
-import { Versions } from '@app/versions';
+import { Versions, IProps } from '@app/versions';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
@@ -10,7 +10,7 @@ import sinon from 'sinon'
 const anymatch = require('anymatch');
 
 const props = {
-    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion) => anymatch,
+    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion) => anymatch,
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
@@ -163,14 +163,14 @@ describe('Versions tests', () => {
     it('test onExpandableToggle function', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
-        const data = [{"isDropdownOpen": true}]
+        const data = [{ "isDropdownOpen": true }]
         expect(inst.onExpandableToggle(data)).toMatchSnapshot();
     });
 
     it('test onArchiveToggle function', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
-        const data = [{"isDropdownOpen": true}]
+        const data = [{ "isDropdownOpen": true }]
         expect(inst.onArchiveToggle(data)).toMatchSnapshot();
     });
 
@@ -366,5 +366,19 @@ describe('Versions tests', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
         expect(inst.getHarrayChildNamed(anymatch, 'metadata')).toMatchSnapshot();
+    });
+
+    it('has a moduleUUID of "1234"', () => {
+        const state: IProps = {
+            modulePath: "somePath",
+            versionModulePath: "versionPath",
+            // tslint:disable-next-line: no-unused-expression
+            updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
+            onGetProduct: (productValue) => anymatch,
+            onGetVersion: (versionValue) => anymatch
+        };
+        state.updateDate("-", "-", 1, "1234");
+        expect(state.modulePath).toEqual('somePath');
+        expect(state.versionModulePath).toEqual('versionPath');
     });
 });
