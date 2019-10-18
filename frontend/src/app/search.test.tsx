@@ -144,10 +144,4 @@ describe('Search tests', () => {
     const inst = wrapper.getInstance();
     expect(inst.fetchTimeout).toMatchSnapshot();
   });
-
-  it('test componentDidMount function', () => {
-    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>);
-    const inst = wrapper.getInstance();
-    expect(inst.componentDidMount).toMatchSnapshot();
-  });
 });
