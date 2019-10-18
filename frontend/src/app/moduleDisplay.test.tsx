@@ -247,7 +247,6 @@ describe('ModuleDisplay tests', () => {
         const wrapper = shallow(<ModuleDisplay {...props} />);
         wrapper.setState({ 'login': true })
         wrapper.setState({ 'moduleUUID': "somepath" })
-        // wrapper.setState({ 'cp_url': "https://example.com" })
         const permanentURL = wrapper.find('a#permanentURL').first()
         expect(permanentURL.exists).toBeTruthy();
     });
@@ -256,7 +255,7 @@ describe('ModuleDisplay tests', () => {
         const wrapper = shallow(<ModuleDisplay {...props} />);
         wrapper.setState({ 'login': true })
         wrapper.setState({ 'releasePath': "somepath" })
-        wrapper.setState({ 'cp_url': "https://example.com" })
+        wrapper.setState({ 'moduleUUID': "1234" })
         wrapper.setState({ "copySuccess": "Copied!" });
         expect(wrapper.state('copySuccess')).toContain("Copied!");
     });
@@ -266,7 +265,7 @@ describe('ModuleDisplay tests', () => {
         const instance = wrapper.instance();
         const spy = sinon.spy(instance, 'copyToClipboard');
 
-        wrapper.setState({ cp_url: 'yarn', releasePath: 'yarn' })
+        wrapper.setState({ moduleUUID: '1234', releasePath: 'yarn' })
         expect(wrapper.find('#permanentURL').exists())
     });
 });
