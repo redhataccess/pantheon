@@ -39,14 +39,6 @@ describe('Login tests', () => {
     expect(button.exists()).toBe(true)
   });
 
-  it('test click event', () => {
-    const mockCallBack = jest.fn();
-
-    const button = shallow((<Button onClick={mockCallBack}>Submit</Button>));
-    button.find('button').simulate('click');
-    expect(mockCallBack.mock.calls.length).toEqual(1);
-  });
-
   test('saveModule() click event', () => {
     const wrapper = shallow(<Module />);
     const instance = wrapper.instance();
@@ -86,18 +78,6 @@ describe('Login tests', () => {
     const wrapper = renderer.create(<Module />);
     const inst = wrapper.getInstance();
     expect(inst.renderRedirect()).toMatchSnapshot();
-  });
-
-  it('test loginRedirect function', () => {
-    const wrapper = renderer.create(<Module />);
-    const inst = wrapper.getInstance();
-    expect(inst.loginRedirect()).toMatchSnapshot();
-  });
-
-  it('test checkAuth function', () => {
-    const wrapper = renderer.create(<Module />);
-    const inst = wrapper.getInstance();
-    expect(inst.checkAuth()).toMatchSnapshot();
   });
 
   it('test dismissNotification function', () => {

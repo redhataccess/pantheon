@@ -1,8 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
-import com.google.common.collect.Streams;
 import com.redhat.pantheon.model.module.Metadata;
-import org.asciidoctor.ast.Block;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.StructuralNode;
 import org.asciidoctor.extension.Treeprocessor;
@@ -74,7 +72,16 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
         // Get the first section (that's where a subtitle will be)
         Optional<StructuralNode> headlineBlock = nodeFlatMap(document)
                 // find section blocks with level == 1
-                .filter(block -> block.getContext().equals("section") && block.getLevel() == 1)
+                .filter(block -> {
+                    try {
+                        return block.getContext().equals("section") && block.getLevel() == 1;
+                    } catch (Exception e) {
+                        // Asciidoctor (the Ruby code) throws certain exceptions when properties are not available.
+                        // In this case 'context' might not be available, and so the filter should just
+                        // return false
+                        return false;
+                    }
+                })
                 .findFirst();
         headlineBlock.ifPresent(headline -> metadata.headline.set(headline.getTitle()));
 

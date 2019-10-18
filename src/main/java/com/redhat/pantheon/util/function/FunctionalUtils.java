@@ -1,6 +1,5 @@
 package com.redhat.pantheon.util.function;
 
-import javax.annotation.Nullable;
 import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 

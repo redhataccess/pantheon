@@ -25,11 +25,11 @@ exports[`Search tests should render default Search component 1`] = `
             type="text"
             value=""
           />
-          <Button
+          <Component
             onClick={[Function]}
           >
             Search
-          </Button>
+          </Component>
         </div>
       </FormGroup>
       <div
@@ -56,6 +56,16 @@ exports[`Search tests should render default Search component 1`] = `
           <DataListItemRow
             id="data-rows-header"
           >
+            <DataListCheck
+              aria-label="controlled checkbox example"
+              aria-labelledby="width-ex1-check1"
+              checked={false}
+              className="checkbox"
+              id="check"
+              isChecked={false}
+              isDisabled={false}
+              onClick={[Function]}
+            />
             <DataListItemCells
               dataListCells={
                 Array [
@@ -119,18 +129,27 @@ exports[`Search tests should render default Search component 1`] = `
           <DataListItemRow
             id="data-rows"
           >
+            <DataListCheck
+              aria-label="controlled checkbox example"
+              aria-labelledby="width-ex3-check1"
+              checked={false}
+              className="checkbox"
+              id=""
+              isChecked={false}
+              name=""
+              onClick={[Function]}
+            />
             <DataListItemCells
               dataListCells={
                 Array [
                   <DataListCell
                     width={2}
                   >
-                    <a
-                      href="/.preview"
-                      target="_blank"
+                    <Link
+                      to=""
                     >
                       
-                    </a>
+                    </Link>
                   </DataListCell>,
                   <DataListCell
                     width={2}

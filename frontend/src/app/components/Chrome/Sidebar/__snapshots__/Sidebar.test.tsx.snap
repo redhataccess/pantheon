@@ -7,12 +7,10 @@ exports[`Sidebar tests should render Sidebar component 1`] = `
     <aside
       className="pf-c-page__sidebar"
     >
-      <Nav
+      <Unknown
         aria-label="Primary Nav Default"
         className="pf-c-nav"
         id="page-layout-default-nav-primary-nav"
-        onSelect={[Function]}
-        onToggle={[Function]}
       >
         <NavList
           ariaLeftScroll="Scroll left"
@@ -20,9 +18,14 @@ exports[`Sidebar tests should render Sidebar component 1`] = `
           className="pf-c-nav__list"
           variant="default"
         >
-          <NavLinks />
+          <NavLinks
+            isAdmin={false}
+            isNavOpen={true}
+            userAuthenticated={true}
+            username="demo"
+          />
         </NavList>
-      </Nav>
+      </Unknown>
     </aside>
   }
 />
