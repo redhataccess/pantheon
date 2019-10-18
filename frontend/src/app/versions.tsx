@@ -372,7 +372,7 @@ class Versions extends Component<IProps, any> {
                         const draftTag = responseJSON.draft;
                         const versionCount = responseJSON.__children__.length
 
-                        for (let i = versionCount - 1; i >= 0; i--) {
+                        for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
                             const moduleVersion = responseJSON.__children__[i]
                             if (moduleVersion["jcr:uuid"] === draftTag) {
                                 this.draft[0].version = "Version " + moduleVersion.__name__;
