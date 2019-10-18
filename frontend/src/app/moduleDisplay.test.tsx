@@ -7,7 +7,6 @@ import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRo
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 import { Versions } from './versions';
-import assert = require('assert');
 
 const props = {
     location: { pathname: "module/test" }
@@ -266,8 +265,8 @@ describe('ModuleDisplay tests', () => {
 
         object.getVersionUUID("path1");
         object.getVersionUUID("path2");
-        assert(spy.withArgs("path1").calledOnce);
-        assert(spy.withArgs("path2").calledOnce);
+        expect(spy.withArgs("path1").calledOnce);
+        expect(spy.withArgs("path2").calledOnce);
     });
 
 });
