@@ -1,5 +1,5 @@
 import React from 'react';
-import { Versions } from '@app/versions';
+import { Versions, IProps } from '@app/versions';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
@@ -10,7 +10,7 @@ import sinon from 'sinon'
 const anymatch = require('anymatch');
 
 const props = {
-    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion) => anymatch,
+    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion) => anymatch,
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
@@ -162,14 +162,14 @@ describe('Versions tests', () => {
     it('test onExpandableToggle function', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
-        const data = [{"isDropdownOpen": true}]
+        const data = [{ "isDropdownOpen": true }]
         expect(inst.onExpandableToggle(data)).toMatchSnapshot();
     });
 
     it('test onArchiveToggle function', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
-        const data = [{"isDropdownOpen": true}]
+        const data = [{ "isDropdownOpen": true }]
         expect(inst.onArchiveToggle(data)).toMatchSnapshot();
     });
 
@@ -371,5 +371,29 @@ describe('Versions tests', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
         expect(inst.componentDidMount).toMatchSnapshot();
+    });
+
+    it('has a modulePath of "/content/modules/test"', () => {
+        const state: IProps = {
+            modulePath: "/content/modules/test",
+            versionModulePath: "/content/modules/test/en-us/1",
+            // tslint:disable-next-line: object-literal-sort-keys
+            updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion) => anymatch,
+            onGetProduct: (productValue) => anymatch,
+            onGetVersion: (versionValue) => anymatch
+        };
+        expect(state.modulePath).toEqual('/content/modules/test');
+    });
+
+    it('has a versionModulePath of "/content/modules/test/en-us/1"', () => {
+        const state: IProps = {
+            modulePath: "/content/modules/test",
+            versionModulePath: "/content/modules/test/en-us/1",
+            // tslint:disable-next-line: object-literal-sort-keys
+            updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion) => anymatch,
+            onGetProduct: (productValue) => anymatch,
+            onGetVersion: (versionValue) => anymatch
+        };
+        expect(state.versionModulePath).toEqual('/content/modules/test/en-us/1');
     });
 });
