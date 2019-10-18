@@ -13,7 +13,7 @@ import { Redirect } from 'react-router-dom'
 export interface IProps {
     modulePath: string
     versionModulePath: string
-    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion) => any
+    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion, moduleUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
@@ -392,7 +392,7 @@ class Versions extends Component<IProps, any> {
                             if(releasedTag===undefined){
                                 this.release[0].updatedDate = "-";
                             }
-                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate,this.release[0]["version"]);
+                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate,this.release[0]["version"], responseJSON['jcr:uuid']);
 
                         }
                         return {

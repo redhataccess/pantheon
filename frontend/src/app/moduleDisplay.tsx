@@ -12,11 +12,11 @@ class ModuleDisplay extends Component<any, any, any> {
         super(props)
         this.state = {
             copySuccess: '',
-            cp_url: '',
             draftPath: '',
             draftUpdateDate: '',
             modulePath: '',
             moduleTitle: "",
+            moduleUUID: '',
             productValue: "",
             releasePath: '',
             releaseUpdateDate: '',
@@ -57,14 +57,16 @@ class ModuleDisplay extends Component<any, any, any> {
                     </div>
                     <div>
                         <span>
-                            {this.state.cp_url !== '' &&
-                                <a href={this.state.cp_url} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a>
+                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                                && this.state.moduleUUID !== ""
+                                && <a href={'https://access.redhat.com/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a>
                             }
                         </span>
                         <span>&emsp;&emsp;</span>
                         <span>
-                            {this.state.cp_url !== '' && this.state.releasePath !== '' &&
-                                <a id="permanentURL" onClick={this.copyToClipboard}>Copy permanent URL  <i className="fa pf-icon-folder-close" /></a>
+                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                                && this.state.moduleUUID !== ""
+                                && <a id="permanentURL" onClick={this.copyToClipboard}>Copy permanent URL  <i className="fa pf-icon-folder-close" /></a>
                             }
                         </span>
                         <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
@@ -138,12 +140,14 @@ class ModuleDisplay extends Component<any, any, any> {
         );
     }
 
-    private updateDate = (draftDate, releaseDate, releaseVersion) => {
+    private updateDate = (draftDate, releaseDate, releaseVersion, moduleUUID) => {
         this.setState({
             draftUpdateDate: draftDate,
             // tslint:disable-next-line: object-literal-sort-keys
             releaseUpdateDate: releaseDate,
-            releaseVersion: releaseVersion
+            releaseVersion: releaseVersion,
+            // tslint:disable-next-line: object-literal-sort-keys
+            moduleUUID
         });
     }
 
@@ -158,7 +162,6 @@ class ModuleDisplay extends Component<any, any, any> {
             .then(responseJSON => {
                 // console.log('fetch results:', responseJSON)
                 this.setState({
-                    cp_url: responseJSON['jcr:uuid'] !== undefined && responseJSON.en_US.released !== undefined ? 'https://access.redhat.com/topics/en-us/' + responseJSON['jcr:uuid'] : '',
                     moduleTitle: responseJSON.en_US["1"].metadata["jcr:title"],
                     moduleType: responseJSON.en_US["1"].metadata["pant:moduleType"],
 

@@ -15,6 +15,7 @@ const props = {
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
     versionModulePath: "/modules/test/en_US/1",
+    moduleUUID: anymatch
 }
 
 describe('Versions tests', () => {

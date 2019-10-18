@@ -7,6 +7,7 @@ import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRo
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 import { Versions } from './versions';
+const anymatch = require('anymatch');
 
 const props = {
     location: { pathname: "module/test" }
@@ -180,7 +181,9 @@ describe('ModuleDisplay tests', () => {
 
     it('renders View on Customer Portal hotlink', () => {
         const wrapper = mount(<ModuleDisplay {...props} />);
-        wrapper.setState({ 'cp_url': "https://access.redhat.com" })
+        wrapper.setState({ 'login': true })
+        wrapper.setState({ 'releaseUpdateDate': "Fri Oct 18 2019 17:35:50 GMT-0400" })
+        wrapper.setState({ 'moduleUUID': "123" })
         const sourceTypeText = wrapper.find('a').at(2).text();
 
         // ensure it matches what is expected
@@ -243,8 +246,8 @@ describe('ModuleDisplay tests', () => {
     it('renders Copy permanent URL', () => {
         const wrapper = shallow(<ModuleDisplay {...props} />);
         wrapper.setState({ 'login': true })
-        wrapper.setState({ 'releasePath': "somepath" })
-        wrapper.setState({ 'cp_url': "https://example.com" })
+        wrapper.setState({ 'moduleUUID': "somepath" })
+        // wrapper.setState({ 'cp_url': "https://example.com" })
         const permanentURL = wrapper.find('a#permanentURL').first()
         expect(permanentURL.exists).toBeTruthy();
     });
@@ -258,15 +261,12 @@ describe('ModuleDisplay tests', () => {
         expect(wrapper.state('copySuccess')).toContain("Copied!");
     });
 
-    it('should call getVersionUUID once with argument', () => {
+    test('copyToClipboard click event', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        const instance = wrapper.instance();
+        const spy = sinon.spy(instance, 'copyToClipboard');
 
-        const object = { getVersionUUID(path) { } };
-        const spy = sinon.spy(object, "getVersionUUID");
-
-        object.getVersionUUID("path1");
-        object.getVersionUUID("path2");
-        expect(spy.withArgs("path1").calledOnce);
-        expect(spy.withArgs("path2").calledOnce);
+        wrapper.setState({ cp_url: 'yarn', releasePath: 'yarn' })
+        expect(wrapper.find('#permanentURL').exists())
     });
-
 });
