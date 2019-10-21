@@ -87,4 +87,10 @@ describe('ProductListing tests', () => {
     const inst = wrapper.getInstance();
     expect(inst.checkAuth).toMatchSnapshot();
   });
+
+  it('test componentDidMount function', () => {
+    const wrapper = renderer.create(<ProductListing />);
+    const inst = wrapper.getInstance();
+    expect(inst.componentDidMount).toMatchSnapshot();
+  });
 });

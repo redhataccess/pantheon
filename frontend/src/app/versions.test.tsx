@@ -1,5 +1,5 @@
 import React from 'react';
-import { Versions } from '@app/versions';
+import { Versions, IProps } from '@app/versions';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
@@ -10,11 +10,11 @@ import sinon from 'sinon'
 const anymatch = require('anymatch');
 
 const props = {
-    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion) => anymatch,
+    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
-    versionModulePath: "/modules/test/en_US/1",
+    versionModulePath: "/modules/test/en_US/1"
 }
 
 describe('Versions tests', () => {
@@ -125,14 +125,14 @@ describe('Versions tests', () => {
         expect(alert.exists()).toBe(true)
     });
 
-    it('should render a Button', () => {
+    it('should render a KebabToggle element', () => {
         const wrapper = mount(<Versions {...props} />);
-        const button = wrapper.find(Button);
-        expect(button.exists()).toBe(true)
-    });
-
-    it('should render a KebabToggle', () => {
-        const wrapper = mount(<KebabToggle />);
+        wrapper.setState({ 'login': true })
+        wrapper.setState({
+            'results': [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]],
+        })
+        const kebabToggle = wrapper.find(KebabToggle);
+        expect(kebabToggle.exists()).toBe(true)
     });
 
     it('test fetchVersions function', () => {
@@ -162,14 +162,14 @@ describe('Versions tests', () => {
     it('test onExpandableToggle function', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
-        const data = [{"isDropdownOpen": true}]
+        const data = [{ "isDropdownOpen": true }]
         expect(inst.onExpandableToggle(data)).toMatchSnapshot();
     });
 
     it('test onArchiveToggle function', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
-        const data = [{"isDropdownOpen": true}]
+        const data = [{ "isDropdownOpen": true }]
         expect(inst.onArchiveToggle(data)).toMatchSnapshot();
     });
 
@@ -365,5 +365,31 @@ describe('Versions tests', () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
         expect(inst.getHarrayChildNamed(anymatch, 'metadata')).toMatchSnapshot();
+    });
+
+    it('has a moduleUUID of "1234"', () => {
+        const state: IProps = {
+            modulePath: "somePath",
+            versionModulePath: "versionPath",
+            // tslint:disable-next-line: no-unused-expression
+            updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
+            onGetProduct: (productValue) => anymatch,
+            onGetVersion: (versionValue) => anymatch
+        };
+        state.updateDate("-", "-", 1, "1234");
+        expect(state.modulePath).toEqual('somePath');
+        expect(state.versionModulePath).toEqual('versionPath');
+    });
+
+    test('changePublishState click', () => {
+        const wrapper = mount(<Versions {...props} />);
+        const instance = wrapper.instance();
+        wrapper.setState({ 'login': true })
+        wrapper.setState({
+            'results': [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]],
+        })
+        const spy = sinon.spy(instance, 'changePublishState');
+        wrapper.find(Button).at(2).simulate('click');
+        sinon.assert.called(spy);
     });
 });

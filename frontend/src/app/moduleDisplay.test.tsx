@@ -3,10 +3,11 @@ import { ModuleDisplay } from '@app/moduleDisplay';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
-import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListCell, TextContent, Level, LevelItem } from '@patternfly/react-core';
+import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListCell, TextContent, Level, LevelItem, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import renderer from 'react-test-renderer';
 import sinon from 'sinon'
 import { Versions } from './versions';
+const anymatch = require('anymatch');
 
 const props = {
     location: { pathname: "module/test" }
@@ -16,6 +17,18 @@ describe('ModuleDisplay tests', () => {
     test('should render ModuleDisplay component', () => {
         const view = shallow(<ModuleDisplay {...props} />);
         expect(view).toMatchSnapshot();
+    });
+
+    it('should render a Breadcrumb', () => {
+        const wrapper = mount(<ModuleDisplay {...props} />);
+        const breadcrumb = wrapper.find(Breadcrumb);
+        expect(breadcrumb.exists()).toBe(true)
+    });
+
+    it('should render a BreadcrumbItem', () => {
+        const wrapper = mount(<ModuleDisplay {...props} />);
+        const breadcrumbItem = wrapper.find(BreadcrumbItem);
+        expect(breadcrumbItem.exists()).toBe(true)
     });
 
     it('should render a Button', () => {
@@ -59,7 +72,7 @@ describe('ModuleDisplay tests', () => {
         const dataListCell = wrapper.find(DataListCell);
         expect(dataListCell.exists()).toBe(true)
         // console.log("[DataListCell] length", dataListCell.length)
-        expect(dataListCell.at(0).contains("Products")).toBe(true)
+        expect(dataListCell.at(0).contains("Product")).toBe(true)
     });
 
     it('should render a TextContent Element', () => {
@@ -122,18 +135,24 @@ describe('ModuleDisplay tests', () => {
         expect(inst.getProductInitialLoad()).toMatchSnapshot();
     });
 
+    it('test componentDidMount function', () => {
+        const wrapper = renderer.create(<ModuleDisplay {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.componentDidMount()).toMatchSnapshot();
+    });
+
     it('has a props', () => {
         const moduleDisplay = mount(<ModuleDisplay {...props} />).matchesElement
         expect(moduleDisplay.length === 1)
     });
 
     // Value testing with Enzyme.
-    it('renders Products heading', () => {
+    it('renders Product heading', () => {
         const wrapper = mount(<ModuleDisplay {...props} />);
-        const sourceTypeText = wrapper.find('#span-source-type-products').first().text();
+        const sourceTypeText = wrapper.find('#span-source-type-product').first().text();
 
         // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("Products");
+        expect(sourceTypeText).toEqual("Product");
     });
 
     it('renders Published heading', () => {
@@ -162,10 +181,13 @@ describe('ModuleDisplay tests', () => {
 
     it('renders View on Customer Portal hotlink', () => {
         const wrapper = mount(<ModuleDisplay {...props} />);
-        const sourceTypeText = wrapper.find('a').first().text();
+        wrapper.setState({ 'login': true })
+        wrapper.setState({ 'releaseUpdateDate': "Fri Oct 18 2019 17:35:50 GMT-0400" })
+        wrapper.setState({ 'moduleUUID': "123" })
+        const sourceTypeText = wrapper.find('a').at(2).text();
 
         // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("View on Customer Portal");
+        expect(sourceTypeText).toContain("View on Customer Portal");
     });
 
     it('should check if draftUpdateDate exists', () => {
@@ -219,5 +241,31 @@ describe('ModuleDisplay tests', () => {
         wrapper.setState({ 'login': true })
         const len = wrapper.setState({ "versionValue": "8.x" });
         expect(wrapper.state('versionValue')).toBeDefined();
+    });
+
+    it('renders Copy permanent URL', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        wrapper.setState({ 'login': true })
+        wrapper.setState({ 'moduleUUID': "somepath" })
+        const permanentURL = wrapper.find('a#permanentURL').first()
+        expect(permanentURL.exists).toBeTruthy();
+    });
+
+    it('renders copySuccess Message', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        wrapper.setState({ 'login': true })
+        wrapper.setState({ 'releasePath': "somepath" })
+        wrapper.setState({ 'moduleUUID': "1234" })
+        wrapper.setState({ "copySuccess": "Copied!" });
+        expect(wrapper.state('copySuccess')).toContain("Copied!");
+    });
+
+    test('copyToClipboard click event', () => {
+        const wrapper = shallow(<ModuleDisplay {...props} />);
+        const instance = wrapper.instance();
+        const spy = sinon.spy(instance, 'copyToClipboard');
+
+        wrapper.setState({ moduleUUID: '1234', releasePath: 'yarn' })
+        expect(wrapper.find('#permanentURL').exists())
     });
 });

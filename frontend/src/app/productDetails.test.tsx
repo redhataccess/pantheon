@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProductDetails } from '@app/productDetails';
+import { ProductDetails, IProps } from '@app/productDetails';
 import "isomorphic-fetch"
 
 import { mount, shallow } from 'enzyme';
@@ -114,6 +114,13 @@ describe('ProductDetails tests', () => {
   it('test componentWillReceiveProps function', () => {
     const wrapper = renderer.create(<ProductDetails {...props} />);
     const inst = wrapper.getInstance();
-    expect(inst.componentWillReceiveProps({...props})).toMatchSnapshot();
+    expect(inst.componentWillReceiveProps({ ...props })).toMatchSnapshot();
+  });
+
+  it('has a productName of "Red Hat Enterprise Linux"', () => {
+    const state: IProps = {
+      productName: "Red Hat Enterprise Linux"
+    };
+    expect(state.productName).toEqual('Red Hat Enterprise Linux');
   });
 });
