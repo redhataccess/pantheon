@@ -2,8 +2,8 @@ import React, { Component, FormEvent } from 'react'
 import {
   Alert, AlertActionCloseButton, TextInput,
   DataList, DataListItem, DataListItemRow, DataListItemCells,
-  DataListCell, FormGroup, Button, DataListCheck, Modal,
-  Level, LevelItem
+  DataListCell, FormGroup, Button, Modal,
+  Level, LevelItem, Checkbox
 } from '@patternfly/react-core'
 import '@app/app.css'
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
@@ -16,7 +16,6 @@ export interface ISearchState {
   checkNextPageRow: string
   columns: string[]
   confirmDelete: boolean
-  deleteButtonVisible: boolean
   deleteState: string
   input: string
   isEmptyResults: boolean
@@ -41,7 +40,6 @@ class Search extends Component<IAppState, ISearchState> {
   public static KEY_CHECKEDITEM: string = "checkedItem"
   public static KEY_TRANSIENTPATH: string = "pant:transientPath"
 
-  public transientPaths: string[] = [];
   constructor(props) {
     super(props);
     this.state = {
@@ -49,7 +47,6 @@ class Search extends Component<IAppState, ISearchState> {
       checkNextPageRow: "",
       columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
       confirmDelete: false,
-      deleteButtonVisible: false,
       deleteState: '',
       input: '',
       isEmptyResults: false,
@@ -110,9 +107,9 @@ class Search extends Component<IAppState, ISearchState> {
               <DataListItem aria-labelledby="simple-item1">
                 <DataListItemRow id="data-rows-header" >
                   {this.props.userAuthenticated && !this.state.isEmptyResults &&
-                    <DataListCheck aria-labelledby="width-ex1-check1"
+                    <Checkbox aria-labelledby="width-ex1-check1"
                       className="checkbox"
-                      // isChecked={this.state.selectAllCheckValue}
+                      isChecked={this.state.selectAllCheckValue}
                       checked={this.state.selectAllCheckValue}
                       aria-label="controlled checkbox example"
                       id="check"
@@ -141,23 +138,23 @@ class Search extends Component<IAppState, ISearchState> {
                 {/* Delete button at the top */}
                 <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
                   {
-                    this.state.deleteButtonVisible ?
+                    this.buildTransientPathArray().length > 0 ?
                       <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
                       : null
                   }
                 </DataListItemRow>
-                {this.state.results.map(data => (
+                {this.state.results.map((data, key) => (
                   <DataListItemRow id="data-rows">
-                  {console.log(data[Search.KEY_CHECKEDITEM], data[Search.KEY_TRANSIENTPATH])}
                     {this.props.userAuthenticated && !this.state.isEmptyResults &&
-                      <DataListCheck aria-labelledby="width-ex3-check1"
+                      <Checkbox aria-labelledby="width-ex3-check1"
                         className="checkbox"
                         isChecked={data[Search.KEY_CHECKEDITEM]}
                         checked={data[Search.KEY_CHECKEDITEM]}
                         aria-label="controlled checkbox example"
-                        // id={data[Search.KEY_TRANSIENTPATH]}
+                        id={data[Search.KEY_TRANSIENTPATH]}
                         name={data[Search.KEY_TRANSIENTPATH]}
                         onChange={this.handleDeleteCheckboxChange}
+                        key={key}
                       />}
 
                     <DataListItemCells key={data[Search.KEY_TRANSIENTPATH]}
@@ -187,7 +184,7 @@ class Search extends Component<IAppState, ISearchState> {
                 {/* Delete button at the bottom */}
                 <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
                   {
-                    this.state.deleteButtonVisible ?
+                    this.buildTransientPathArray().length > 0 ?
                       <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
                       : null
                   }
@@ -235,7 +232,7 @@ class Search extends Component<IAppState, ISearchState> {
                 title="Confirmation"
                 isOpen={!this.state.isModalOpen}
                 onClose={this.hideAlertOne}
-                actions={[<Button key="yes" variant="primary" onClick={this.delete(this.transientPaths)}>Yes</Button>,
+                actions={[<Button key="yes" variant="primary" onClick={this.delete}>Yes</Button>,
                 <Button key="no" variant="secondary" onClick={this.cancelDeleteOperation}>No</Button>]}
               >
                 Are you sure you want to delete the selected items?
@@ -278,48 +275,36 @@ class Search extends Component<IAppState, ISearchState> {
   private setInput = (event) => this.setState({ input: event });
 
   private handleSelectAll = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
-    console.log('selectAll start')
-    console.log(this.state.results)
-
-    this.transientPaths = []
+    const newResults: any[] = []
     this.state.results.map(dataitem => {
-      dataitem[Search.KEY_CHECKEDITEM] = checked
-      if (checked) {
-        this.transientPaths.push(dataitem[Search.KEY_TRANSIENTPATH])
-      }
+      newResults.push(JSON.parse(JSON.stringify(dataitem))) // clones the object
+      newResults[newResults.length - 1][Search.KEY_CHECKEDITEM] = checked
     })
 
     this.setState({
-      deleteButtonVisible: checked,
+      results: newResults,
       selectAllCheckValue: checked
-    }, () => {
-      console.log('selectAll finish')
-      console.log(this.state.results)
     })
   }
 
   private handleDeleteCheckboxChange = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
-    console.log('handling check change for ', event.target['name'])
-    this.transientPaths = []
-
+    const newResults: any[] = []
     this.state.results.map(data => {
+      newResults.push(JSON.parse(JSON.stringify(data))) // clones the object
       if (data[Search.KEY_TRANSIENTPATH] === event.target['name']) {
-        data[Search.KEY_CHECKEDITEM] = checked
-
-        if (data[Search.KEY_CHECKEDITEM]) {
-          this.transientPaths.push(data[Search.KEY_TRANSIENTPATH])
-        }
+        newResults[newResults.length - 1][Search.KEY_CHECKEDITEM] = checked
       }
     })
 
     this.setState({
-      deleteButtonVisible: this.transientPaths.length > 0,
+      results: newResults,
       selectAllCheckValue: false
     })
   };
 
-  private delete = (keydata) => (event: any) => {
-    const formData = new FormData();
+  private delete = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const formData = new FormData()
+    const keydata = this.buildTransientPathArray()
     formData.append(':operation', 'delete')
     for (const item of keydata) {
       formData.append(':applyTo', '/content/' + item)
@@ -329,14 +314,11 @@ class Search extends Component<IAppState, ISearchState> {
       method: 'post'
     }).then(response => {
       if (response.status === 200) {
-        this.setState({ deleteState: 'positive' }, () =>
-          this.transientPaths = [])
+        this.setState({ deleteState: 'positive' })
       } else if (response.status === 403) {
-        this.setState({ deleteState: 'negative' }, () =>
-          this.transientPaths = [])
+        this.setState({ deleteState: 'negative' })
       } else {
-        this.setState({ deleteState: 'unknown' }, () =>
-          this.transientPaths = [])
+        this.setState({ deleteState: 'unknown' })
       }
     });
   }
@@ -363,13 +345,11 @@ class Search extends Component<IAppState, ISearchState> {
       .then(() => {
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
-            deleteButtonVisible: false,
             isEmptyResults: true,
             selectAllCheckValue: false
           })
         } else {
           this.setState({
-            deleteButtonVisible: false,
             isEmptyResults: false,
             selectAllCheckValue: false,
           })
@@ -473,6 +453,16 @@ class Search extends Component<IAppState, ISearchState> {
       // console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
       return (this.state.pageLimit + " items per page")
     })
+  }
+
+  private buildTransientPathArray = () => {
+    const tPaths: string[] = []
+    this.state.results.map(item => {
+      if (item[Search.KEY_CHECKEDITEM]) {
+        tPaths.push(item[Search.KEY_TRANSIENTPATH])
+      }
+    })
+    return tPaths
   }
 }
 
