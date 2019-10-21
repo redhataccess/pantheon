@@ -437,7 +437,7 @@ class Versions extends Component<IProps, any> {
                 // console.log(buttonText + " works: " + response.status)
                 this.setState({ initialLoad: true, changePublishState: true })
             } else {
-                console.log(buttonText + " failed " + response.status)
+                // console.log(buttonText + " failed " + response.status)
                 this.setState({ initialLoad: true, changePublishState: true })
             }
         });

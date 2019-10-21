@@ -10,12 +10,11 @@ import sinon from 'sinon'
 const anymatch = require('anymatch');
 
 const props = {
-    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion) => anymatch,
+    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
-    versionModulePath: "/modules/test/en_US/1",
-    moduleUUID: anymatch
+    versionModulePath: "/modules/test/en_US/1"
 }
 
 describe('Versions tests', () => {
@@ -126,14 +125,14 @@ describe('Versions tests', () => {
         expect(alert.exists()).toBe(true)
     });
 
-    it('should render a Button', () => {
+    it('should render a KebabToggle element', () => {
         const wrapper = mount(<Versions {...props} />);
-        const button = wrapper.find(Button);
-        expect(button.exists()).toBe(true)
-    });
-
-    it('should render a KebabToggle', () => {
-        const wrapper = mount(<KebabToggle />);
+        wrapper.setState({ 'login': true })
+        wrapper.setState({
+            'results': [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]],
+        })
+        const kebabToggle = wrapper.find(KebabToggle);
+        expect(kebabToggle.exists()).toBe(true)
     });
 
     it('test fetchVersions function', () => {
@@ -380,5 +379,17 @@ describe('Versions tests', () => {
         state.updateDate("-", "-", 1, "1234");
         expect(state.modulePath).toEqual('somePath');
         expect(state.versionModulePath).toEqual('versionPath');
+    });
+
+    test('changePublishState click', () => {
+        const wrapper = mount(<Versions {...props} />);
+        const instance = wrapper.instance();
+        wrapper.setState({ 'login': true })
+        wrapper.setState({
+            'results': [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]],
+        })
+        const spy = sinon.spy(instance, 'changePublishState');
+        wrapper.find(Button).at(2).simulate('click');
+        sinon.assert.called(spy);
     });
 });
