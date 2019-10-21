@@ -36,11 +36,9 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
       </Level>
     </div>
     <div>
-      <span />
       <span>
           
       </span>
-      <span />
       <span>
          
       </span>

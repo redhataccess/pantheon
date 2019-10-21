@@ -56,19 +56,18 @@ class ModuleDisplay extends Component<any, any, any> {
                         </Level>
                     </div>
                     <div>
-                        <span>
-                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                                && this.state.moduleUUID !== ""
-                                && <a href={'https://access.redhat.com/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a>
-                            }
-                        </span>
+                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                            && this.state.moduleUUID !== ""
+                            && <span><a href={'https://access.redhat.com/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                        }
+
                         <span>&emsp;&emsp;</span>
-                        <span>
-                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                                && this.state.moduleUUID !== ""
-                                && <a id="permanentURL" onClick={this.copyToClipboard}>Copy permanent URL  <i className="fa pf-icon-folder-close" /></a>
-                            }
-                        </span>
+
+                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                            && this.state.moduleUUID !== ""
+                            && <span><a id="permanentURL" onClick={this.copyToClipboard}>Copy permanent URL  <i className="fa pf-icon-folder-close" /></a></span>
+                        }
+
                         <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
                     </div>
                     <br />
