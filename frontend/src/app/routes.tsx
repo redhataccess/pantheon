@@ -9,7 +9,7 @@ import { GitImport } from './gitImport'
 import { ModuleDisplay } from '@app/moduleDisplay'
 import { IAppState } from './app'
 
-export interface IAppRoute {
+interface IAppRoute {
   label: string
   component: JSX.Element
   icon: any
@@ -20,10 +20,8 @@ export interface IAppRoute {
 
 class Routes extends Component<IAppState> {
 
-  private routes: IAppRoute[]
-  constructor(props) {
-    super(props)
-    this.routes = [
+  public render() {
+    const routes: IAppRoute[] = [
       {
         component: <Search {...this.props} />,
         exact: true,
@@ -81,13 +79,11 @@ class Routes extends Component<IAppState> {
         requiresLogin: true
       }
     ]
-  }
 
-  public render() {
     return (
       // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
       <Switch>
-        {this.routes.map(({path, exact, component, requiresLogin}, idx) => (
+        {routes.map(({path, exact, component, requiresLogin}, idx) => (
           <Route path={path} exact={exact} render={() => this.props.userAuthenticated || !requiresLogin ? component : <Login />} key={idx} />
         ))}
         <Route render={() => <Search {...this.props} />} />
