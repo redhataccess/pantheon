@@ -142,11 +142,9 @@ class ModuleDisplay extends Component<any, any, any> {
     private updateDate = (draftDate, releaseDate, releaseVersion, moduleUUID) => {
         this.setState({
             draftUpdateDate: draftDate,
-            // tslint:disable-next-line: object-literal-sort-keys
+            moduleUUID,
             releaseUpdateDate: releaseDate,
-            releaseVersion: releaseVersion,
-            // tslint:disable-next-line: object-literal-sort-keys
-            moduleUUID
+            releaseVersion,
         });
     }
 
