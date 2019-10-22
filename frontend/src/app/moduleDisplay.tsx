@@ -127,6 +127,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         <Card>
                             <Versions
                                 modulePath={this.state.modulePath}
+                                productInfo={this.state.productValue}
                                 versionModulePath={this.state.moduleTitle}
                                 updateDate={this.updateDate}
                                 onGetProduct={this.getProduct}

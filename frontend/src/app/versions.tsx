@@ -12,6 +12,7 @@ import { Redirect } from 'react-router-dom'
 
 export interface IProps {
     modulePath: string
+    productInfo: string
     versionModulePath: string
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => any
     onGetProduct: (productValue) => any
@@ -373,7 +374,6 @@ class Versions extends Component<IProps, any> {
     }
 
     private fetchVersions = () => {
-
         // TODO: need a better fix for the 404 error.
         if (this.props.modulePath !== '') {
             const fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
@@ -412,7 +412,7 @@ class Versions extends Component<IProps, any> {
                             initialLoad: false,
                             results: [this.draft, this.release],
                             // tslint:disable-next-line: object-literal-sort-keys
-                            metadatPath: this.draft ? this.draft[0].path : this.release[0].path
+                            metadataPath: this.draft ? this.draft[0].path : this.release[0].path
                         }
                     })
                 })
@@ -432,8 +432,8 @@ class Versions extends Component<IProps, any> {
     }
 
     private changePublishState = (buttonText) => {
-        // Validate productValue before Publish
-        if (this.state.versionUUID !== undefined && this.state.versionUUID.trim() === "" && buttonText === "Publish") {
+        // Validate productValue before Publishs
+        if (this.props.productInfo !== undefined && this.props.productInfo.trim() === "" && buttonText === "Publish") {
             this.setState({ canChangePublishState: false, publishAlertVisible: true })
         } else {
 
@@ -454,7 +454,7 @@ class Versions extends Component<IProps, any> {
                 }).then(response => {
                     if (response.status === 201 || response.status === 200) {
                         console.log(buttonText + " works: " + response.status)
-                        this.setState({ initialLoad: true, changePublishState: true, publishAlertVisble: false })
+                        this.setState({ initialLoad: true, changePublishState: true, publishAlertVisble: false, canChangePublishState: true })
                     } else {
                         console.log(buttonText + " failed " + response.status)
                         this.setState({ initialLoad: true, changePublishState: true, publishAlertVisble: true })

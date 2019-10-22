@@ -13,6 +13,7 @@ const props = {
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
+    productInfo: "Red Hat Enterprise Linux",
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
     versionModulePath: "/modules/test/en_US/1"
 }
@@ -378,6 +379,7 @@ describe('Versions tests', () => {
             modulePath: "somePath",
             onGetProduct: (productValue) => anymatch,
             onGetVersion: (versionValue) => anymatch,
+            productInfo: "Red Hat Enterprise Linux",
             updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
             versionModulePath: "versionPath"
         };
