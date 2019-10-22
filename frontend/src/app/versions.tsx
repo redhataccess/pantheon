@@ -8,24 +8,26 @@ import {
 } from '@patternfly/react-core';
 import CheckImage from '@app/images/check_image.jpg';
 import BlankImage from '@app/images/blank.jpg';
+import CopyImage from '@app/images/copy.svg';
 import { Redirect } from 'react-router-dom'
 
 export interface IProps {
     modulePath: string
     versionModulePath: string
-    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion, moduleUUID) => any
+    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
 
 class Versions extends Component<IProps, any> {
 
-    public draft = [{ "type":"draft","icon": BlankImage, "path": "", "version": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
-    public release = [{ "type":"release","icon": CheckImage, "path": "", "version": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '',"draftUploadDate": "" }]
+    public draft = [{ "type": "draft", "icon": BlankImage, "path": "", "version": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
+    public release = [{ "type": "release", "icon": CheckImage, "path": "", "version": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '', "draftUploadDate": "" }]
 
     constructor(props) {
         super(props)
         this.state = {
+            canChangePublishState: true,
             changePublishState: false,
             initialLoad: true,
             isArchiveDropDownOpen: false,
@@ -56,9 +58,10 @@ class Versions extends Component<IProps, any> {
             ],
             productValue: '',
             productVersion: '',
+            publishAlertVisible: false,
             redirect: false,
 
-            successAlertVisble: false,
+            successAlertVisible: false,
             usecaseOptions: [
                 { value: '', label: 'Select Use Case', disabled: false }
             ],
@@ -116,12 +119,21 @@ class Versions extends Component<IProps, any> {
 
         return (
             <React.Fragment>
-                {this.state.successAlertVisble && <Alert
+                {this.state.successAlertVisible && <Alert
                     variant="success"
                     title="Edit Metadata"
                     action={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
                 >
                     Update Successful!
+          </Alert>
+                }
+
+                {this.state.publishAlertVisible && this.state.canChangePublishState === false && <Alert
+                    variant="warning"
+                    title="Module Versions"
+                    action={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
+                >
+                    Empty Product info. Please edit metadata before Publish!
           </Alert>
                 }
                 {this.state.initialLoad && this.fetchVersions()}
@@ -187,15 +199,17 @@ class Versions extends Component<IProps, any> {
                                                                     {data.version}
                                                                 </DataListCell>,
                                                                 <DataListCell key="published">
-                                                                    {data.publishedState==="Not published" && data.publishedState}
-                                                                    {data.publishedState==="Released" && data.updatedDate}
+                                                                    {data.publishedState === "Not published" && data.publishedState}
+                                                                    {data.publishedState === "Released" && data.updatedDate}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated">
-                                                                    {data["type"]==="draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
-                                                                    {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
+                                                                    {data.type === "draft" && (data.updatedDate.trim() !== "" ? data.updatedDate : "-")}
+                                                                    {data.type === "release" && (data.draftUploadDate.trim() !== "" ? data.draftUploadDate : "-")}
                                                                 </DataListCell>,
                                                                 <DataListCell key="publish_buttons">
+                                                                    {/* tslint:disable-next-line: jsx-no-lambda*/}
                                                                     <Button variant="primary" onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>{'  '}
+                                                                    {/* tslint:disable-next-line: jsx-no-lambda*/}
                                                                     <Button variant="secondary" onClick={() => this.previewDoc(data.secondButtonText)}>{data.secondButtonText}</Button>{'  '}
                                                                 </DataListCell>,
                                                                 <DataListCell key="image" width={1}>
@@ -237,8 +251,8 @@ class Versions extends Component<IProps, any> {
                                                                     <span className="sp-prop-nosort" id="span-source-type-upload-time">Upload Time</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
-                                                                    {data["type"]==="draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
-                                                                    {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
+                                                                    {data.type === "draft" && (data.updatedDate.trim() !== "" ? data.updatedDate : "-")}
+                                                                    {data.type === "release" && (data.draftUploadDate.trim() !== "" ? data.draftUploadDate : "-")}
                                                                 </DataListCell>,
                                                             ]}
                                                         />
@@ -253,7 +267,7 @@ class Versions extends Component<IProps, any> {
                                                                     <span className="sp-prop-nosort" id="span-source-type-module-title">Module Title</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={4}>
-                                                                    {(data["metadata"]["jcr:title"] !== undefined) ? data["metadata"]["jcr:title"] : '-'}
+                                                                    {(data.metadata["jcr:title"] !== undefined) ? data.metadata["jcr:title"] : '-'}
                                                                 </DataListCell>,
                                                                 <DataListCell key="updated" width={2}>
                                                                     <span className="sp-prop-nosort" id="span-source-type-context-package">Context Package</span>
@@ -379,7 +393,7 @@ class Versions extends Component<IProps, any> {
                                 this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
                                 this.draft[0].updatedDate = this.draft[0].metadata["pant:dateUploaded"] !== undefined ? this.draft[0].metadata["pant:dateUploaded"] : '';
                                 // this.props.modulePath starts with a slash
-                                this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__;                                
+                                this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__;
                             }
                             if (moduleVersion["jcr:uuid"] === releasedTag) {
                                 this.release[0].version = "Version " + moduleVersion.__name__;
@@ -387,12 +401,12 @@ class Versions extends Component<IProps, any> {
                                 this.release[0].updatedDate = this.release[0].metadata["pant:datePublished"] !== undefined ? this.release[0].metadata["pant:datePublished"] : '';
                                 this.release[0].draftUploadDate = this.release[0].metadata["pant:dateUploaded"] !== undefined ? this.release[0].metadata["pant:dateUploaded"] : '';
                                 // this.props.modulePath starts with a slash
-                                this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__;                                
+                                this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__;
                             }
-                            if(releasedTag===undefined){
+                            if (releasedTag === undefined) {
                                 this.release[0].updatedDate = "-";
                             }
-                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate,this.release[0]["version"], responseJSON['jcr:uuid']);
+                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate), this.release[0].updatedDate, this.release[0]["version"], responseJSON['jcr:uuid']);
 
                         }
                         return {
@@ -419,29 +433,36 @@ class Versions extends Component<IProps, any> {
     }
 
     private changePublishState = (buttonText) => {
-        const formData = new FormData();
-        if (buttonText === "Publish") {
-            formData.append(":operation", "pant:release");
-            // console.log('Published file path:', this.props.modulePath)
-            this.draft[0].version = "";
+        // Validate productValue before Publish
+        if (this.state.versionUUID !== undefined && this.state.versionUUID.trim() === "" && buttonText === "Publish") {
+            this.setState({ canChangePublishState: false, publishAlertVisible: true })
         } else {
-            formData.append(":operation", "pant:unpublish");
-            // console.log('Unpublished file path:', this.props.modulePath);
-            this.release[0].version = "";
-        }
-        fetch("/content" + this.props.modulePath, {
-            body: formData,
-            method: 'post'
-        }).then(response => {
-            if (response.status === 201 || response.status === 200) {
-                // console.log(buttonText + " works: " + response.status)
-                this.setState({ initialLoad: true, changePublishState: true })
-            } else {
-                // console.log(buttonText + " failed " + response.status)
-                this.setState({ initialLoad: true, changePublishState: true })
-            }
-        });
 
+            if (this.state.canChangePublishState === true) {
+                const formData = new FormData();
+                if (buttonText === "Publish") {
+                    formData.append(":operation", "pant:release");
+                    // console.log('Published file path:', this.props.modulePath)
+                    this.draft[0].version = "";
+                } else {
+                    formData.append(":operation", "pant:unpublish");
+                    // console.log('Unpublished file path:', this.props.modulePath);
+                    this.release[0].version = "";
+                }
+                fetch("/content" + this.props.modulePath, {
+                    body: formData,
+                    method: 'post'
+                }).then(response => {
+                    if (response.status === 201 || response.status === 200) {
+                        console.log(buttonText + " works: " + response.status)
+                        this.setState({ initialLoad: true, changePublishState: true, publishAlertVisble: false })
+                    } else {
+                        console.log(buttonText + " failed " + response.status)
+                        this.setState({ initialLoad: true, changePublishState: true, publishAlertVisble: true })
+                    }
+                });
+            }
+        }
     }
 
     private onArchiveSelect = event => {
@@ -524,10 +545,8 @@ class Versions extends Component<IProps, any> {
             }).then(response => {
                 if (response.status === 201 || response.status === 200) {
                     // console.log("successful edit ", response.status)
-                    // this.setState({ redirect: true, successAlertVisble: true })
                     this.handleModalClose()
-                    this.setState({ successAlertVisble: true })
-                    this.setState({ versionSelected: '' })
+                    this.setState({ successAlertVisible: true, canChangePublishState: true, versionSelected: '' })
                     this.props.onGetProduct(this.state.productValue)
                     this.props.onGetVersion(this.state.versionValue)
                 } else if (response.status === 500) {
@@ -550,12 +569,13 @@ class Versions extends Component<IProps, any> {
             if (event.target !== null) {
                 // tslint:disable-next-line: no-string-literal
                 if (this.state.versionUUID !== event.target["selectedOptions"][0].value) {
-                    // tslint:disable-next-line: no-string-literal
                     this.setState({
+                        // tslint:disable-next-line: no-string-literal
+                        versionSelected: event.target["selectedOptions"][0].label,
+                        // tslint:disable-next-line: no-string-literal
                         versionUUID: event.target["selectedOptions"][0].value,
+                        // tslint:disable-next-line: no-string-literal
                         versionValue: event.target["selectedOptions"][0].label,
-                        // tslint:disable-next-line: object-literal-sort-keys
-                        versionSelected: event.target["selectedOptions"][0].label
                     });
                 }
             }
@@ -674,7 +694,11 @@ class Versions extends Component<IProps, any> {
     }
 
     private hideSuccessAlert = () => {
-        this.setState({ successAlertVisble: false })
+        this.setState({ successAlertVisible: false })
+    }
+
+    private hidePublishAlert = () => {
+        this.setState({ publishAlertVisible: false })
     }
 
     private getMetadata = (versionPath) => {
