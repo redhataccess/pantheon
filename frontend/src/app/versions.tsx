@@ -8,7 +8,6 @@ import {
 } from '@patternfly/react-core';
 import CheckImage from '@app/images/check_image.jpg';
 import BlankImage from '@app/images/blank.jpg';
-import CopyImage from '@app/images/copy.svg';
 import { Redirect } from 'react-router-dom'
 
 export interface IProps {
@@ -133,7 +132,7 @@ class Versions extends Component<IProps, any> {
                     title="Module Versions"
                     action={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
                 >
-                    Empty Product info. Please edit metadata before Publish!
+                    Empty Product info. Please edit metadata before publishing
           </Alert>
                 }
                 {this.state.initialLoad && this.fetchVersions()}
