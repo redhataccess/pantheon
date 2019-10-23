@@ -1,31 +1,53 @@
-import React, { Component } from 'react';
+import React, { Component, FormEvent } from 'react'
 import {
   Alert, AlertActionCloseButton, TextInput,
   DataList, DataListItem, DataListItemRow, DataListItemCells,
-  DataListCell, FormGroup, Button, DataListCheck, Modal,
-  Level, LevelItem
-} from '@patternfly/react-core';
-import '@app/app.css';
+  DataListCell, FormGroup, Button, Modal,
+  Level, LevelItem, Checkbox
+} from '@patternfly/react-core'
+import '@app/app.css'
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
-import { Pagination } from '@app/Pagination';
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import { App, IAppState } from '@app/app'
+import { Pagination } from '@app/Pagination'
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import { IAppState } from '@app/app'
 
-export default class Search extends Component<IAppState, any> {
-  public transientPaths: string[] = [];
+export interface ISearchState {
+  alertOneVisible: boolean
+  checkNextPageRow: string
+  columns: string[]
+  confirmDelete: boolean
+  deleteState: string
+  input: string
+  isEmptyResults: boolean
+  isModalOpen: boolean
+  isSortedUp: boolean
+  moduleName: string
+  modulePath: string
+  moduleType: string
+  moduleUpdatedDate: string
+  nextPageRowCount: number
+  page: number
+  pageLimit: number
+  redirect: boolean
+  redirectLocation: string
+  results: any
+  selectAllCheckValue: boolean
+  showDropdownOptions: boolean
+  sortKey: string
+}
+
+class Search extends Component<IAppState, ISearchState> {
+  public static KEY_CHECKEDITEM: string = "checkedItem"
+  public static KEY_TRANSIENTPATH: string = "pant:transientPath"
+
   constructor(props) {
     super(props);
     this.state = {
       alertOneVisible: true,
-      check: false,
       checkNextPageRow: "",
-      checkedItemKey: "checkedItem",
       columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
       confirmDelete: false,
-      countOfCheckedBoxes: 0,
-      deleteButtonVisible: false,
       deleteState: '',
-      initialLoad: true,
       input: '',
       isEmptyResults: false,
       isModalOpen: false,
@@ -40,6 +62,7 @@ export default class Search extends Component<IAppState, any> {
       redirect: false,
       redirectLocation: '',
       results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false }],
+      selectAllCheckValue: false,
       showDropdownOptions: true,
       sortKey: ''
     };
@@ -55,8 +78,6 @@ export default class Search extends Component<IAppState, any> {
 
     return (
       <React.Fragment>
-        {/* {console.log("initial load: ", this.state.initialLoad)} */}
-        {this.state.initialLoad && this.doSearch()}
         <div>
           <div>
             <FormGroup
@@ -86,14 +107,13 @@ export default class Search extends Component<IAppState, any> {
               <DataListItem aria-labelledby="simple-item1">
                 <DataListItemRow id="data-rows-header" >
                   {this.props.userAuthenticated && !this.state.isEmptyResults &&
-                    <DataListCheck aria-labelledby="width-ex1-check1"
+                    <Checkbox aria-labelledby="width-ex1-check1"
                       className="checkbox"
-                      isChecked={this.state.check}
-                      checked={this.state.check}
+                      isChecked={this.state.selectAllCheckValue}
+                      checked={this.state.selectAllCheckValue}
                       aria-label="controlled checkbox example"
                       id="check"
-                      onClick={this.handleSelectAll}
-                      isDisabled={false}
+                      onChange={this.handleSelectAll}
                     />}
                   <DataListItemCells
                     dataListCells={[
@@ -116,27 +136,28 @@ export default class Search extends Component<IAppState, any> {
                   />
                 </DataListItemRow>
                 {/* Delete button at the top */}
-                <DataListItemRow id="data-rows" key={this.state.results["pant:transientPath"]}>
+                <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
                   {
-                    this.state.deleteButtonVisible ?
+                    this.buildTransientPathArray().length > 0 ?
                       <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
                       : null
                   }
                 </DataListItemRow>
-                {this.state.results.map(data => (
+                {this.state.results.map((data, key) => (
                   <DataListItemRow id="data-rows">
                     {this.props.userAuthenticated && !this.state.isEmptyResults &&
-                      <DataListCheck aria-labelledby="width-ex3-check1"
+                      <Checkbox aria-labelledby="width-ex3-check1"
                         className="checkbox"
-                        isChecked={data[this.state.checkedItemKey]}
-                        checked={data[this.state.checkedItemKey]}
+                        isChecked={data[Search.KEY_CHECKEDITEM]}
+                        checked={data[Search.KEY_CHECKEDITEM]}
                         aria-label="controlled checkbox example"
-                        id={data["pant:transientPath"]}
-                        name={data["pant:transientPath"]}
-                        onClick={this.handleDeleteCheckboxChange(data["pant:transientPath"])}
+                        id={data[Search.KEY_TRANSIENTPATH]}
+                        name={data[Search.KEY_TRANSIENTPATH]}
+                        onChange={this.handleDeleteCheckboxChange}
+                        key={key}
                       />}
 
-                    <DataListItemCells key={data["pant:transientPath"]}
+                    <DataListItemCells key={data[Search.KEY_TRANSIENTPATH]}
                       dataListCells={[
                         <DataListCell key="div-title" width={2}>
                           {this.props.userAuthenticated &&
@@ -161,9 +182,9 @@ export default class Search extends Component<IAppState, any> {
                   </DataListItemRow>
                 ))}
                 {/* Delete button at the bottom */}
-                <DataListItemRow id="data-rows" key={this.state.results["pant:transientPath"]}>
+                <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
                   {
-                    this.state.deleteButtonVisible ?
+                    this.buildTransientPathArray().length > 0 ?
                       <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
                       : null
                   }
@@ -211,7 +232,7 @@ export default class Search extends Component<IAppState, any> {
                 title="Confirmation"
                 isOpen={!this.state.isModalOpen}
                 onClose={this.hideAlertOne}
-                actions={[<Button key="yes" variant="primary" onClick={this.delete(this.transientPaths)}>Yes</Button>,
+                actions={[<Button key="yes" variant="primary" onClick={this.delete}>Yes</Button>,
                 <Button key="no" variant="secondary" onClick={this.cancelDeleteOperation}>No</Button>]}
               >
                 Are you sure you want to delete the selected items?
@@ -253,88 +274,37 @@ export default class Search extends Component<IAppState, any> {
 
   private setInput = (event) => this.setState({ input: event });
 
-  private handleSelectAll = (event) => {
-    // console.log('handleSelectAll')
-    this.setState({ check: !this.state.check }, () => {
-      this.setState(prevState => {
-        this.transientPaths = []
-        const selectAllcheck = this.state.results.map(dataitem => {
-          dataitem[this.state.checkedItemKey] = this.state.check
-          // console.log(dataitem["pant:transientPath"]+":"+dataitem[this.state.checkedItemKey])
-          if (this.state.check) {
-            this.transientPaths.push(dataitem["pant:transientPath"])
-          }
-          return dataitem
-        })
-        if (this.state.check === true) {
-          this.setState({ countOfCheckedBoxes: this.state.results.length }, () => {
-            // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
-            if (this.state.countOfCheckedBoxes > 0) {
-              this.setState({ deleteButtonVisible: true })
-            } else {
-              this.setState({ deleteButtonVisible: false })
-            }
-            // console.log('transientPaths:'+this.transientPaths)
-          })
-        } else {
-          this.setState({ countOfCheckedBoxes: 0 }, () => {
-            // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
-            this.transientPaths = []
-            // console.log('transientPaths:'+this.transientPaths)
-            this.setState({ deleteButtonVisible: false })
-          })
-        }
-        return {
-          data: selectAllcheck
-        }
-      })
+  private handleSelectAll = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
+    const newResults: any[] = []
+    this.state.results.map(dataitem => {
+      newResults.push(JSON.parse(JSON.stringify(dataitem))) // clones the object
+      newResults[newResults.length - 1][Search.KEY_CHECKEDITEM] = checked
+    })
 
+    this.setState({
+      results: newResults,
+      selectAllCheckValue: checked
     })
   }
 
-  private handleDeleteCheckboxChange = (id) => (event: any) => {
-    this.setState(prevState => {
-      const updatedData = this.state.results.map(data => {
-        if (data["pant:transientPath"] === id) {
-          data[this.state.checkedItemKey] = !data[this.state.checkedItemKey]
-          if (data[this.state.checkedItemKey] === true) {
-            this.setState({ countOfCheckedBoxes: this.state.countOfCheckedBoxes + 1 }, () => {
-              // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
-              if (this.state.countOfCheckedBoxes > 0) {
-                this.setState({ deleteButtonVisible: true })
-              } else {
-                this.setState({ deleteButtonVisible: false })
-              }
-            })
-            this.transientPaths.push(data["pant:transientPath"]);
-            // console.log('transientPaths:'+this.transientPaths)
-            // console.log('all Paths:'+this.state.allPaths)
-          } else {
-            this.setState({ countOfCheckedBoxes: this.state.countOfCheckedBoxes - 1 }, () => {
-              // console.log('countOfCheckedBoxes: '+this.state.countOfCheckedBoxes)
-              if (this.state.countOfCheckedBoxes > 0) {
-                this.setState({ deleteButtonVisible: true })
-              } else {
-                this.setState({ deleteButtonVisible: false })
-              }
-            })
-            this.transientPaths.splice(this.transientPaths.indexOf(id), 1)
-            // console.log('transientPaths:'+this.transientPaths)
-            // console.log('all Paths:'+this.state.allPaths)
-          }
-        }
-        return data
-      })
-      return {
-        data: updatedData
+  private handleDeleteCheckboxChange = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
+    const newResults: any[] = []
+    this.state.results.map(data => {
+      newResults.push(JSON.parse(JSON.stringify(data))) // clones the object
+      if (data[Search.KEY_TRANSIENTPATH] === event.target['name']) {
+        newResults[newResults.length - 1][Search.KEY_CHECKEDITEM] = checked
       }
+    })
+
+    this.setState({
+      results: newResults,
+      selectAllCheckValue: false
     })
   };
 
-  private delete = (keydata) => (event: any) => {
-    // console.log(keydata)
-    // console.log('in the delete function')
-    const formData = new FormData();
+  private delete = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const formData = new FormData()
+    const keydata = this.buildTransientPathArray()
     formData.append(':operation', 'delete')
     for (const item of keydata) {
       formData.append(':applyTo', '/content/' + item)
@@ -344,61 +314,51 @@ export default class Search extends Component<IAppState, any> {
       method: 'post'
     }).then(response => {
       if (response.status === 200) {
-        this.setState({ deleteState: 'positive' }, () =>
-          this.transientPaths = [])
-        // console.log('deleteState:'+this.state.deleteState)
+        this.setState({ deleteState: 'positive' })
       } else if (response.status === 403) {
-        this.setState({ deleteState: 'negative' }, () =>
-          this.transientPaths = [])
-        // console.log('deleteState:'+this.state.deleteState)
+        this.setState({ deleteState: 'negative' })
       } else {
-        this.setState({ deleteState: 'unknown' }, () =>
-          this.transientPaths = [])
-        // console.log('deleteState:'+this.state.deleteState)
+        this.setState({ deleteState: 'unknown' })
       }
     });
   }
 
   private getRows = (event) => {
     if (event.key === 'Enter') {
-      this.setState({ page: 1, initialLoad: true }, () => {
+      this.setState({ page: 1 }, () => {
         this.doSearch()
       })
     }
   };
 
   private newSearch = () => {
-    this.setState({ page: 1, initialLoad: true }, () => {
+    this.setState({ page: 1 }, () => {
       this.doSearch()
     })
   }
 
   // Handle gateway timeout on slow connections.
   private doSearch = () => {
-    this.fetchTimeout(1000, fetch(this.buildSearchUrl())
+    fetch(this.buildSearchUrl())
       .then(response => response.json())
       .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
       .then(() => {
-        this.setState({ initialLoad: false })
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
-            check: false,
-            deleteButtonVisible: false,
-            isEmptyResults: true
+            isEmptyResults: true,
+            selectAllCheckValue: false
           })
         } else {
           this.setState({
-            check: false,
-            countOfCheckedBoxes: 0,
-            deleteButtonVisible: false,
-            isEmptyResults: false
+            isEmptyResults: false,
+            selectAllCheckValue: false,
           })
         }
       })
       .catch(error => {
         // might be a timeout error
         console.log("[doSearch] error ", error)
-      }));
+      })
   }
 
 
@@ -434,7 +394,6 @@ export default class Search extends Component<IAppState, any> {
   }
 
   private sort(key: string) {
-    // console.log("My Sort Key is: " + key)
     // Switch the direction each time some clicks.
     this.setState({ isSortedUp: !this.state.isSortedUp, sortKey: key }, () => {
       this.getSortedRows()
@@ -444,17 +403,11 @@ export default class Search extends Component<IAppState, any> {
   private getSortedRows() {
     fetch(this.buildSearchUrl())
       .then(response => response.json())
-      .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
-      .then(() => {
-        if (JSON.stringify(this.state.results) === "[]") {
-          this.setState({
-            data: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "" }],
-            isEmptyResults: true
-          })
-        } else {
-          this.setState({ isEmptyResults: false })
-        }
-      })
+      .then(responseJSON => this.setState({
+        isEmptyResults: responseJSON.results === '[]',
+        nextPageRowCount: responseJSON.hasNextPage ? 1 : 0,
+        results: responseJSON.results
+       }))
   };
 
   private buildSearchUrl() {
@@ -464,8 +417,6 @@ export default class Search extends Component<IAppState, any> {
     }
     backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
     backend += "&offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
-    // console.log('itemsPerPaeProp: '+this.state.pageLimit)
-    // console.log(backend)
     return backend
   }
 
@@ -473,42 +424,46 @@ export default class Search extends Component<IAppState, any> {
     this.setState({
       confirmDelete: false,
       deleteState: '',
-      initialLoad: true,
       page: 1
-    });
+    }, () => { this.doSearch() });
   });
 
-  private confirmDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete }, () => {
-    console.log('confirmDelete:' + this.state.confirmDelete)
-  });
+  private confirmDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete })
 
-  private cancelDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete }, () => {
-    console.log('confirmDelete cancelled:' + this.state.confirmDelete)
-  });
+  private cancelDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete })
 
   private updatePageCounter = (direction: string) => () => {
     if (direction === "L" && this.state.page > 1) {
-      this.setState({ page: this.state.page - 1, initialLoad: true })
+      this.setState({ page: this.state.page - 1 }, () => {
+        this.doSearch()
+      })
     } else if (direction === "R") {
-      this.setState({ page: this.state.page + 1, initialLoad: true })
+      this.setState({ page: this.state.page + 1 }, () => {
+        this.doSearch()
+      })
     } else if (direction === "F") {
-      this.setState({ page: 1, initialLoad: true })
+      this.setState({ page: 1 }, () => {
+        this.doSearch()
+      })
     }
   }
 
   private changePerPageLimit = (pageLimitValue) => {
-    this.setState({ pageLimit: pageLimitValue, initialLoad: true, page: 1 }, () => {
+    this.setState({ pageLimit: pageLimitValue, page: 1 }, () => {
       // console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
       return (this.state.pageLimit + " items per page")
     })
   }
 
-  private fetchTimeout(ms, promise) {
-    return new Promise(() => (resolve, reject) => {
-      setTimeout(() => {
-        reject(new Error("timeout"))
-      }, ms)
-      promise.then(resolve, reject)
+  private buildTransientPathArray = () => {
+    const tPaths: string[] = []
+    this.state.results.map(item => {
+      if (item[Search.KEY_CHECKEDITEM]) {
+        tPaths.push(item[Search.KEY_TRANSIENTPATH])
+      }
     })
+    return tPaths
   }
 }
+
+export { Search }

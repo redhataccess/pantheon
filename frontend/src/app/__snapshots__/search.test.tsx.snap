@@ -56,7 +56,7 @@ exports[`Search tests should render default Search component 1`] = `
           <DataListItemRow
             id="data-rows-header"
           >
-            <DataListCheck
+            <Checkbox
               aria-label="controlled checkbox example"
               aria-labelledby="width-ex1-check1"
               checked={false}
@@ -64,7 +64,8 @@ exports[`Search tests should render default Search component 1`] = `
               id="check"
               isChecked={false}
               isDisabled={false}
-              onClick={[Function]}
+              isValid={true}
+              onChange={[Function]}
             />
             <DataListItemCells
               dataListCells={
@@ -129,15 +130,18 @@ exports[`Search tests should render default Search component 1`] = `
           <DataListItemRow
             id="data-rows"
           >
-            <DataListCheck
+            <Checkbox
               aria-label="controlled checkbox example"
               aria-labelledby="width-ex3-check1"
               checked={false}
               className="checkbox"
               id=""
               isChecked={false}
+              isDisabled={false}
+              isValid={true}
+              key="0"
               name=""
-              onClick={[Function]}
+              onChange={[Function]}
             />
             <DataListItemCells
               dataListCells={
