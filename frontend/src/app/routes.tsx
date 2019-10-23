@@ -11,7 +11,7 @@ import { IAppState } from './app'
 
 interface IAppRoute {
   label: string
-  component: JSX.Element
+  component: (routeProps) => JSX.Element
   icon: any
   exact?: boolean
   path: string
@@ -23,7 +23,7 @@ class Routes extends Component<IAppState> {
   public render() {
     const routes: IAppRoute[] = [
       {
-        component: <Search {...this.props} />,
+        component: (routeProps) => <Search {...this.props} />,
         exact: true,
         icon: null,
         label: 'Search',
@@ -31,7 +31,7 @@ class Routes extends Component<IAppState> {
         requiresLogin: false
       },
       {
-        component: <Module />,
+        component: (routeProps) => <Module />,
         exact: true,
         icon: null,
         label: '',
@@ -39,7 +39,7 @@ class Routes extends Component<IAppState> {
         requiresLogin: true
       },
       {
-        component: <Product />,
+        component: (routeProps) => <Product />,
         exact: true,
         icon: null,
         label: '',
@@ -47,7 +47,7 @@ class Routes extends Component<IAppState> {
         requiresLogin: true
       },
       {
-        component: <ProductListing />,
+        component: (routeProps) => <ProductListing />,
         exact: true,
         icon: null,
         label: '',
@@ -55,7 +55,7 @@ class Routes extends Component<IAppState> {
         requiresLogin: true
       },
       {
-        component: <GitImport />,
+        component: (routeProps) => <GitImport />,
         exact: true,
         icon: null,
         label: '',
@@ -63,7 +63,7 @@ class Routes extends Component<IAppState> {
         requiresLogin: true
       },
       {
-        component: <Login />,
+        component: (routeProps) => <Login />,
         exact: true,
         icon: null,
         label: '', // Empty because we are using the Brand component to render the text.
@@ -71,7 +71,7 @@ class Routes extends Component<IAppState> {
         requiresLogin: false
       },
       {
-        component: <ModuleDisplay />,
+        component: (routeProps) => <ModuleDisplay {...routeProps} />,
         exact: false,
         icon: null,
         label: '', // Empty because we are using the Brand component to render the text.
@@ -84,7 +84,7 @@ class Routes extends Component<IAppState> {
       // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
       <Switch>
         {routes.map(({path, exact, component, requiresLogin}, idx) => (
-          <Route path={path} exact={exact} render={() => this.props.userAuthenticated || !requiresLogin ? component : <Login />} key={idx} />
+          <Route path={path} exact={exact} render={(routeProps) => this.props.userAuthenticated || !requiresLogin ? component(routeProps) : <Login />} key={idx} />
         ))}
         <Route render={() => <Search {...this.props} />} />
       </Switch>
