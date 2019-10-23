@@ -135,12 +135,4 @@ describe('Search tests', () => {
     expect(inst.fetchTimeout).toMatchSnapshot()
   })
 
-  test('Version Button click', () => {
-    const wrapper = shallow(<Search {...mockStateUser} />);
-    const instance = wrapper.instance()
-    const spy = sinon.spy(instance, 'doSearch');
-    wrapper.setState({ isSortedUp: false })
-    sinon.assert.called(spy);
-  })
-
 })
