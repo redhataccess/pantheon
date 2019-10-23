@@ -10,6 +10,7 @@ import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import { IAppState } from '@app/app'
+import { SearchFilter } from '@app/searchFilter'
 
 export interface ISearchState {
   alertOneVisible: boolean
@@ -80,16 +81,14 @@ class Search extends Component<IAppState, ISearchState> {
       <React.Fragment>
         <div>
           <div>
-            <FormGroup
-              label="Search Query"
-              fieldId="search"
-              helperText="Search is case sensitive. An empty search will show all modules."
-            >
-              <div className="row-view">
-                <TextInput id="search" type="text" onKeyDown={this.getRows} onChange={this.setInput} value={this.state.input} />
-                <Button onClick={this.newSearch}>Search</Button>
-              </div>
-            </FormGroup>
+          <SearchFilter
+            onKeyDown={this.getRows} 
+            onChange={this.setInput} 
+            value={this.state.input}
+            onClick={this.newSearch}
+            onSort={this.setSortedUp}
+            isSortedUp={this.state.isSortedUp}
+            />
             <div className="notification-container">
               <Pagination
                 handleMoveLeft={this.updatePageCounter("L")}
@@ -395,8 +394,14 @@ class Search extends Component<IAppState, ISearchState> {
 
   private sort(key: string) {
     // Switch the direction each time some clicks.
-    this.setState({ isSortedUp: !this.state.isSortedUp, sortKey: key }, () => {
+    this.setSortedUp()
+    this.setState({sortKey: key }, () => {
       this.getSortedRows()
+    }) 
+  };
+
+  private setSortedUp = () => {
+    this.setState({ isSortedUp: !this.state.isSortedUp }, () => {      this.getSortedRows()
     })
   };
 
