@@ -1,65 +1,75 @@
+- $dlistNum += 1
 - case @style
 - when 'qanda'
   %div{:id=>@id, :class=>['qlist', 'qanda', role]}
+    - if (@id)
+      - heading_id = "#{@id}_heading"
+    - else
+      - heading_id = "dlist_heading_#{$dlistNum}"
+
     - if title?
-      .title=title
-    %ol
+      %strong.heading{:id=>heading_id}=title
+      - aria_header = heading_id
+    %ol{:aria=>{:labelledby=>(aria_header) ? aria_header : nil}}
       - items.each do |questions, answer|
         %li
           - [*questions].each do |question|
-            %p<
-              %em=question.text
-          - unless answer.nil?
-            - if answer.text?
-              %p<=answer.text
-            - if answer.blocks?
-              =answer.content
+            %dl
+              %dt=question.text
+              - unless answer.nil?
+                %dd
+                  - if answer.text?
+                    =answer.text
+                  - if answer.blocks?
+                    =answer.content
 - when 'horizontal'
-  %div{:id=>@id, :class=>['hdlist', role]}
-    - if title?
-      %strong.heading=title
-    %table
-      - if (attr? :labelwidth) || (attr? :itemwidth)
-        %colgroup
-          %col{:style=>((attr? :labelwidth) ? %(width:#{(attr :labelwidth).chomp '%'}%;) : nil)}
-          %col{:style=>((attr? :itemwidth) ? %(width:#{(attr :itemwidth).chomp '%'}%;) : nil)}
-      - items.each do |terms, dd|
-        %tr
-          %td{:class=>['hdlist1', ('strong' if (option? :strong))]}
-            - terms = [*terms]
-            - last_term = terms.last
-            - terms.each do |dt|
-              =dt.text
-              - if dt != last_term
-                %br
-          %td.hdlist2
-            - unless dd.nil?
-              - if dd.text?
-                %p<=dd.text
-              - if dd.blocks?
-                =dd.content
-- else
   - if title?
-    %div{:id=>@id, :class=>['dlist', @style, role]}
+    %div{:id=>@id, :class=>['hdlist', @style, role]}
       %strong.heading=title
-      %dl
+      %dl{:class=>'list-struct'}
         - items.each do |terms, dd|
           - [*terms].each do |dt|
-            %dt{:class=>('hdlist1' unless @style)}=dt.text
+            %dt{:style=>((attr? :labelwidth) ? %(width:#{(attr :labelwidth).chomp '%'}%;) : nil)}=dt.text
           - unless dd.nil?
-            %dd
+            %dd{:style=>((attr? :itemwidth) ? %(width:#{(attr :itemwidth).chomp '%'}%;) : nil)}
               - if dd.text?
-                %p<=dd.text
+                =dd.text
               - if dd.blocks?
                 =dd.content
   - else
-    %dl
+    %dl{:class=>'list-struct'}
       - items.each do |terms, dd|
         - [*terms].each do |dt|
-          %dt{:class=>('hdlist1' unless @style)}=dt.text
+          %dt{:style=>((attr? :labelwidth) ? %(width:#{(attr :labelwidth).chomp '%'}%;) : nil)}=dt.text
+        - unless dd.nil?
+          %dd{:style=>((attr? :itemwidth) ? %(width:#{(attr :itemwidth).chomp '%'}%;) : nil)}
+            - if dd.text?
+              =dd.text
+            - if dd.blocks?
+              =dd.content
+- else
+  - if title?
+    %div{:id=>@id, :class=>['dlist', @style]}
+      %strong.heading=title
+      -# Moving 'role' down from div to handle struct-lists properly (grandfathering in)
+      %dl{:class=>[role]}
+        - items.each do |terms, dd|
+          - [*terms].each do |dt|
+            %dt=dt.text
+          - unless dd.nil?
+            %dd
+              - if dd.text?
+                =dd.text
+              - if dd.blocks?
+                =dd.content
+  - else
+    %dl{:class=>[role]}
+      - items.each do |terms, dd|
+        - [*terms].each do |dt|
+          %dt=dt.text
         - unless dd.nil?
           %dd
             - if dd.text?
-              %p<=dd.text
+              =dd.text
             - if dd.blocks?
               =dd.content
