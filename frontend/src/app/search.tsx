@@ -9,13 +9,16 @@ import '@app/app.css';
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { Pagination } from '@app/Pagination';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import { App, IAppState } from '@app/app'
+import { App, IAppState } from '@app/app';
+import SpinImage from '@app/images/spin.gif';
+import '@app/app.css';
 
 export default class Search extends Component<IAppState, any> {
   public transientPaths: string[] = [];
   constructor(props) {
     super(props);
     this.state = {
+      loadIcon: true,
       alertOneVisible: true,
       check: false,
       checkNextPageRow: "",
@@ -123,7 +126,22 @@ export default class Search extends Component<IAppState, any> {
                       : null
                   }
                 </DataListItemRow>
-                {this.state.results.map(data => (
+                {this.state.loadIcon && (
+                  <Level gutter="md">
+                    <LevelItem />
+                    <LevelItem>
+                      <div className="notification-container">
+                        <br />
+                        <br />
+                          <img src={SpinImage} alt="Spinlogo"/>
+                        <br />
+                        <br />
+                      </div></LevelItem>
+                    <LevelItem />
+                  </Level>
+
+                )}
+                {!this.state.loadIcon && (this.state.results.map(data => (
                   <DataListItemRow id="data-rows">
                     {this.props.userAuthenticated && !this.state.isEmptyResults &&
                       <DataListCheck aria-labelledby="width-ex3-check1"
@@ -159,7 +177,8 @@ export default class Search extends Component<IAppState, any> {
                       ]}
                     />
                   </DataListItemRow>
-                ))}
+                )))}
+
                 {/* Delete button at the bottom */}
                 <DataListItemRow id="data-rows" key={this.state.results["pant:transientPath"]}>
                   {
@@ -375,30 +394,32 @@ export default class Search extends Component<IAppState, any> {
 
   // Handle gateway timeout on slow connections.
   private doSearch = () => {
-    this.fetchTimeout(1000, fetch(this.buildSearchUrl())
-      .then(response => response.json())
-      .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
-      .then(() => {
-        this.setState({ initialLoad: false })
-        if (JSON.stringify(this.state.results) === "[]") {
-          this.setState({
-            check: false,
-            deleteButtonVisible: false,
-            isEmptyResults: true
-          })
-        } else {
-          this.setState({
-            check: false,
-            countOfCheckedBoxes: 0,
-            deleteButtonVisible: false,
-            isEmptyResults: false
-          })
-        }
-      })
-      .catch(error => {
-        // might be a timeout error
-        console.log("[doSearch] error ", error)
-      }));
+    setTimeout(() => {
+      this.fetchTimeout(1000, fetch(this.buildSearchUrl())
+        .then(response => response.json())
+        .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
+        .then(() => {
+          this.setState({ initialLoad: false, loadIcon: false })
+          if (JSON.stringify(this.state.results) === "[]") {
+            this.setState({
+              check: false,
+              deleteButtonVisible: false,
+              isEmptyResults: true
+            })
+          } else {
+            this.setState({
+              check: false,
+              countOfCheckedBoxes: 0,
+              deleteButtonVisible: false,
+              isEmptyResults: false
+            })
+          }
+        })
+        .catch(error => {
+          // might be a timeout error
+          console.log("[doSearch] error ", error)
+        }));
+    }, 3000);
   }
 
 

@@ -60,3 +60,17 @@ body {
   height: 100vh;
 }
 
+/* .spin-logo{
+  animation: spin-logo-rotate infinite 2s linear;
+  pointer-events: none;
+  height: 20vmin;
+} */
+
+/* @keyframes spin-logo-rotate {
+  from{
+    transform: rotate(0deg);
+  }
+  to{
+   transform: rotate(360deg); 
+  }
+} */

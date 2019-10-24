@@ -126,56 +126,26 @@ exports[`Search tests should render default Search component 1`] = `
           <DataListItemRow
             id="data-rows"
           />
-          <DataListItemRow
-            id="data-rows"
+          <Level
+            gutter="md"
           >
-            <DataListCheck
-              aria-label="controlled checkbox example"
-              aria-labelledby="width-ex3-check1"
-              checked={false}
-              className="checkbox"
-              id=""
-              isChecked={false}
-              name=""
-              onClick={[Function]}
-            />
-            <DataListItemCells
-              dataListCells={
-                Array [
-                  <DataListCell
-                    width={2}
-                  >
-                    <Link
-                      to=""
-                    >
-                      
-                    </Link>
-                  </DataListCell>,
-                  <DataListCell
-                    width={2}
-                  >
-                    <span>
-                      
-                    </span>
-                  </DataListCell>,
-                  <DataListCell>
-                    <span />
-                  </DataListCell>,
-                  <DataListCell>
-                    <span>
-                      
-                    </span>
-                  </DataListCell>,
-                  <DataListCell>
-                    <span>
-                      
-                    </span>
-                  </DataListCell>,
-                ]
-              }
-              key=""
-            />
-          </DataListItemRow>
+            <LevelItem />
+            <LevelItem>
+              <div
+                className="notification-container"
+              >
+                <br />
+                <br />
+                <img
+                  alt="Spinlogo"
+                  src="test-file-stub"
+                />
+                <br />
+                <br />
+              </div>
+            </LevelItem>
+            <LevelItem />
+          </Level>
           <DataListItemRow
             id="data-rows"
           />
