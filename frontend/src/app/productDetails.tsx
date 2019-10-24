@@ -3,6 +3,7 @@ import {
     ActionGroup, Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Level, LevelItem, List, ListItem,
     Text, TextContent, TextVariants, TextInput
 } from '@patternfly/react-core'
+import { Fields, JcrTypes, SlingTypes } from '@app/Constants'
 
 export interface IProps {
     productName: string
@@ -101,7 +102,7 @@ class ProductDetails extends Component<IProps, any> {
                 // tslint:disable-next-line: prefer-for-of
                 for (let i = 0; i < Object.keys(responseJSON).length; i++) {
                     key = Object.keys(responseJSON)[i]
-                    if ((key !== 'jcr:primaryType')) {
+                    if ((key !== Fields.JCR_PRIMARYTYPE)) {
                         if (responseJSON[key].name !== undefined) {
                             versionNames.push(responseJSON[key].name)
                         }
@@ -123,9 +124,9 @@ class ProductDetails extends Component<IProps, any> {
 
     private saveVersion = () => {
         const formData = new FormData()
-        formData.append("name", this.state.newVersion)
-        formData.append("sling:resourceType", "pantheon/productVersion")
-        formData.append("jcr:primaryType", 'pant:productVersion')
+        formData.append(Fields.NAME, this.state.newVersion)
+        formData.append(Fields.SLING_RESOURCETYPE, SlingTypes.PRODUCT_VERSION)
+        formData.append(Fields.JCR_PRIMARYTYPE, JcrTypes.PRODUCT_VERSION)
 
         const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
         const encodedVersion = this.state.newVersion.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
