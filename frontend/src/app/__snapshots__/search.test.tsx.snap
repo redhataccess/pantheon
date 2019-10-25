@@ -4,34 +4,14 @@ exports[`Search tests should render default Search component 1`] = `
 <Fragment>
   <div>
     <div>
-      <FormGroup
-        fieldId="search"
-        helperText="Search is case sensitive. An empty search will show all modules."
-        label="Search Query"
-      >
-        <div
-          className="row-view"
-        >
-          <TextInput
-            aria-label={null}
-            className=""
-            id="search"
-            isDisabled={false}
-            isReadOnly={false}
-            isRequired={false}
-            isValid={true}
-            onChange={[Function]}
-            onKeyDown={[Function]}
-            type="text"
-            value=""
-          />
-          <Component
-            onClick={[Function]}
-          >
-            Search
-          </Component>
-        </div>
-      </FormGroup>
+      <SearchFilter
+        isSortedUp={true}
+        onChange={[Function]}
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onSort={[Function]}
+        value=""
+      />
       <div
         className="notification-container"
       >
@@ -56,7 +36,7 @@ exports[`Search tests should render default Search component 1`] = `
           <DataListItemRow
             id="data-rows-header"
           >
-            <DataListCheck
+            <Checkbox
               aria-label="controlled checkbox example"
               aria-labelledby="width-ex1-check1"
               checked={false}
@@ -64,7 +44,8 @@ exports[`Search tests should render default Search component 1`] = `
               id="check"
               isChecked={false}
               isDisabled={false}
-              onClick={[Function]}
+              isValid={true}
+              onChange={[Function]}
             />
             <DataListItemCells
               dataListCells={
@@ -129,6 +110,7 @@ exports[`Search tests should render default Search component 1`] = `
           <Level
             gutter="md"
           >
+<<<<<<< HEAD
             <LevelItem />
             <LevelItem>
               <div
@@ -146,6 +128,58 @@ exports[`Search tests should render default Search component 1`] = `
             </LevelItem>
             <LevelItem />
           </Level>
+=======
+            <Checkbox
+              aria-label="controlled checkbox example"
+              aria-labelledby="width-ex3-check1"
+              checked={false}
+              className="checkbox"
+              id=""
+              isChecked={false}
+              isDisabled={false}
+              isValid={true}
+              key="0"
+              name=""
+              onChange={[Function]}
+            />
+            <DataListItemCells
+              dataListCells={
+                Array [
+                  <DataListCell
+                    width={2}
+                  >
+                    <Link
+                      to=""
+                    >
+                      
+                    </Link>
+                  </DataListCell>,
+                  <DataListCell
+                    width={2}
+                  >
+                    <span>
+                      
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span />
+                  </DataListCell>,
+                  <DataListCell>
+                    <span>
+                      
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span>
+                      
+                    </span>
+                  </DataListCell>,
+                ]
+              }
+              key=""
+            />
+          </DataListItemRow>
+>>>>>>> ea7f5c2f2ec5c70305cc0ff234dd6e17b82fa940
           <DataListItemRow
             id="data-rows"
           />

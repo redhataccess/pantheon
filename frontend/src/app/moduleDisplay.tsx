@@ -16,12 +16,12 @@ class ModuleDisplay extends Component<any, any, any> {
             draftUpdateDate: '',
             modulePath: '',
             moduleTitle: "",
+            moduleType: '',
             moduleUUID: '',
             productValue: "",
             releasePath: '',
             releaseUpdateDate: '',
             releaseVersion: '',
-            moduleType: '',
             results: {},
             versionUUID: "",
             versionValue: ""
