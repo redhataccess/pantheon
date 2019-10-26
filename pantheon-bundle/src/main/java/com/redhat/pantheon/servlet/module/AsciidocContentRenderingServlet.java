@@ -1,4 +1,4 @@
-package com.redhat.pantheon.servlet;
+package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Module;

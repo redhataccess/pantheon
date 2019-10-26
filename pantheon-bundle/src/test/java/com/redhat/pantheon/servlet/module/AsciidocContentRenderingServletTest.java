@@ -1,4 +1,4 @@
-package com.redhat.pantheon.servlet;
+package com.redhat.pantheon.servlet.module;
 
 import com.google.common.collect.Maps;
 import com.redhat.pantheon.model.module.Module;
