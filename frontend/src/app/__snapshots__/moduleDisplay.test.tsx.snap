@@ -156,3 +156,5 @@ exports[`ModuleDisplay tests test getProductInitialLoad function 1`] = `undefine
 exports[`ModuleDisplay tests test getVersion function 1`] = `undefined`;
 
 exports[`ModuleDisplay tests test getVersionUUID function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test mouseLeave function 1`] = `undefined`;

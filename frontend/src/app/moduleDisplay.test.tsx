@@ -268,4 +268,10 @@ describe('ModuleDisplay tests', () => {
         wrapper.setState({ moduleUUID: '1234', releasePath: 'yarn' })
         expect(wrapper.find('#permanentURL').exists())
     })
+
+    it('test mouseLeave function', () => {
+        const wrapper = renderer.create(<ModuleDisplay {...props} />)
+        const inst = wrapper.getInstance()
+        expect(inst.mouseLeave()).toMatchSnapshot()
+    })
 })
