@@ -21,4 +21,3 @@
   org.apache.sling/org.apache.sling.starter/11/slingstart
   org.apache.felix/org.apache.felix.shell/1.4.3
   org.apache.felix/org.apache.felix.shell.remote/1.1.2
-  com.redhat.pantheon/pantheon-bundle/1.0-SNAPSHOT
