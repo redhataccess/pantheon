@@ -3,7 +3,7 @@ import { Search } from '@app/search'
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { HashRouter as Router } from 'react-router-dom'
 import { mount, shallow } from 'enzyme'
-import { DataList, Button, TextInput } from '@patternfly/react-core'
+import { DataList, Button, TextInput, Level, LevelItem } from '@patternfly/react-core'
 import renderer from 'react-test-renderer'
 import sinon from "sinon"
 import { mockStateUser } from '@app/TestResources'
@@ -37,6 +37,18 @@ describe('Search tests', () => {
     const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
     const buildInfo = wrapper.find(BuildInfo)
     expect(buildInfo.exists()).toBe(true)
+  })
+
+  it('should render a level component', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const level = wrapper.find(Level)
+    expect(level.exists()).toBe(true)
+  })
+
+  it('should render a levelItem component', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const levelItem = wrapper.find(LevelItem)
+    expect(levelItem.exists()).toBe(true)
   })
 
   it('test getRows function', () => {
