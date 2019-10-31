@@ -5,6 +5,7 @@ import {
     DataListCell, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core';
 import { Versions } from '@app/versions';
+import CopyImage from '@app/images/copy.png';
 
 class ModuleDisplay extends Component<any, any, any> {
 
@@ -65,7 +66,7 @@ class ModuleDisplay extends Component<any, any, any> {
 
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.moduleUUID !== ""
-                            && <span><a id="permanentURL" onClick={this.copyToClipboard}>Copy permanent URL  <i className="fa pf-icon-folder-close" /></a></span>
+                            && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <img src={CopyImage} width="16px" height="16px" /></a></span>
                         }
 
                         <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
@@ -245,18 +246,19 @@ class ModuleDisplay extends Component<any, any, any> {
 
     private copyToClipboard = () => {
         const textField = document.createElement('textarea')
-        if (window.location.href !== undefined) {
-            const targetHref = window.location.href
-            if (window.location.pathname !== undefined) {
-                textField.innerText = targetHref.split(window.location.pathname)[0] + this.state.releasePath
-                document.body.appendChild(textField)
-                textField.select()
-                document.execCommand('copy')
-                textField.remove()
-                this.setState({ copySuccess: 'Copied!' });
-            }
+        if (this.state.moduleUUID.trim() !== '') {
+            textField.value = 'https://access.redhat.com/topics/en-us/' + this.state.moduleUUID
+            document.body.appendChild(textField)
+            textField.select()
+            document.execCommand('copy')
+            textField.remove()
+            this.setState({ copySuccess: 'Copied!' });
         }
-    };
+    }
+
+    private mouseLeave = () => {
+        this.setState({ copySuccess: '' });
+    }
 }
 
 export { ModuleDisplay }
