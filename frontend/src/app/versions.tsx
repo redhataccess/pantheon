@@ -28,7 +28,6 @@ class Versions extends Component<IProps, any> {
         super(props)
         this.state = {
             canChangePublishState: true,
-            changePublishState: false,
             initialLoad: true,
             isArchiveDropDownOpen: false,
             isArchiveSelect: false,
@@ -454,10 +453,10 @@ class Versions extends Component<IProps, any> {
                 }).then(response => {
                     if (response.status === 201 || response.status === 200) {
                         console.log(buttonText + " works: " + response.status)
-                        this.setState({ initialLoad: true, changePublishState: true, publishAlertVisble: false, canChangePublishState: true })
+                        this.setState({ initialLoad: true, publishAlertVisble: false, canChangePublishState: true })
                     } else {
                         console.log(buttonText + " failed " + response.status)
-                        this.setState({ initialLoad: true, changePublishState: true, publishAlertVisble: true })
+                        this.setState({ initialLoad: true, publishAlertVisble: true })
                     }
                 });
             }

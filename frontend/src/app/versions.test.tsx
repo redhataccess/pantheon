@@ -281,12 +281,12 @@ describe('Versions tests', () => {
         sinon.assert.called(spy);
     });
 
-    it('should handle state changes for changePublishState', () => {
+    it('should handle state changes for canChangePublishState', () => {
         const wrapper = shallow(<Versions {...props} />)
 
-        expect(wrapper.state('changePublishState')).toBe(false)
-        wrapper.setState({ 'changePublishState': true })
-        expect(wrapper.state('changePublishState')).toBe(true)
+        expect(wrapper.state('canChangePublishState')).toBe(true)
+        wrapper.setState({ 'canChangePublishState': false })
+        expect(wrapper.state('canChangePublishState')).toBe(false)
     });
 
 
