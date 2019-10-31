@@ -1,6 +1,7 @@
 export class Fields {
     public static JCR_DESCRIPTION = 'jcr:description'
     public static JCR_PRIMARYTYPE = 'jcr:primaryType'
+    public static JCR_UUID = 'jcr:uuid'
     public static NAME = 'name'
     public static SLING_RESOURCETYPE = 'sling:resourceType'
 }
