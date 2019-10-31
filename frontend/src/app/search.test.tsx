@@ -1,9 +1,9 @@
 import React from 'react'
 import { Search } from '@app/search'
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
-import { HashRouter as Router } from 'react-router-dom'
+import { HashRouter as Router, Link } from 'react-router-dom'
 import { mount, shallow } from 'enzyme'
-import { DataList, Button, TextInput, Level, LevelItem } from '@patternfly/react-core'
+import { DataList, Button, TextInput, Level, LevelItem, Checkbox } from '@patternfly/react-core'
 import renderer from 'react-test-renderer'
 import sinon from "sinon"
 import { mockStateUser } from '@app/TestResources'
@@ -50,6 +50,29 @@ describe('Search tests', () => {
     const levelItem = wrapper.find(LevelItem)
     expect(levelItem.exists()).toBe(true)
   })
+  
+  it('should handle state changes for loadIcon', () => {
+    const wrapper = shallow(<Router><Search {...mockStateUser} /></Router>)
+    wrapper.setState({ 'loadIcon': true })
+    expect(wrapper.state('loadIcon')).toBe(true)
+    wrapper.setState({ 'loadIcon': false })
+    expect(wrapper.state('loadIcon')).toBe(false)
+  })
+
+  it('should handle state changes for empty results for search', () => {
+    const wrapper = shallow(<Router><Search {...mockStateUser} /></Router>)
+    wrapper.setState({ 'isEmptyResults': false })
+    expect(wrapper.state('isEmptyResults')).toBe(false)
+    wrapper.setState({ 'isEmptyResults': true })
+    expect(wrapper.state('isEmptyResults')).toBe(true)
+  })
+
+  it('should render a level component', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const level = wrapper.find(Level)
+    expect(level.exists()).toBe(true)
+  })
+
 
   it('test getRows function', () => {
     const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
