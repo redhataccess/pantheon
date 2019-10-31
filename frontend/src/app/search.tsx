@@ -23,6 +23,7 @@ export interface ISearchState {
   isEmptyResults: boolean
   isModalOpen: boolean
   isSortedUp: boolean
+  loadIcon: boolean
   moduleName: string
   modulePath: string
   moduleType: string
@@ -363,11 +364,13 @@ class Search extends Component<IAppState, ISearchState> {
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
             isEmptyResults: true,
+            loadIcon: false,
             selectAllCheckValue: false
           })
         } else {
           this.setState({
             isEmptyResults: false,
+            loadIcon: false,
             selectAllCheckValue: false,
           })
         }
