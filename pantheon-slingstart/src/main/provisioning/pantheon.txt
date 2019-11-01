@@ -21,7 +21,6 @@
 
     # Create the sling users
     create group pantheon-users
-    create user demo with password demo
     create service user pantheon
 
     # Assign ACLs
