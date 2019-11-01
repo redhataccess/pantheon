@@ -1,7 +1,8 @@
 import React from 'react';
-import SearchFilter from '@app/searchFilter';
+import { SearchFilter } from '@app/searchFilter';
 import { mount, shallow } from 'enzyme';
 import { Button, InputGroup } from '@patternfly/react-core';
+import '@app/fetchMock'
 
 describe('SearchFilter tests', () => {
   test('should render default Search component', () => {

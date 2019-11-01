@@ -5,6 +5,7 @@ exports[`Search tests should render default Search component 1`] = `
   <div>
     <div>
       <SearchFilter
+        filterQuery={[Function]}
         isSortedUp={true}
         onChange={[Function]}
         onClick={[Function]}
