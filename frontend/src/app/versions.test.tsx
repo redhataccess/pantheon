@@ -203,18 +203,6 @@ describe('Versions tests', () => {
         expect(inst.handleURLInput()).toMatchSnapshot()
     })
 
-    it('test getModuleUrl function', () => {
-        const wrapper = renderer.create(<Versions {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.getModuleUrl()).toMatchSnapshot()
-    })
-
-    it('test renderRedirect function', () => {
-        const wrapper = renderer.create(<Versions {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.renderRedirect()).toMatchSnapshot()
-    })
-
     it('test loginRedirect function', () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
@@ -239,12 +227,6 @@ describe('Versions tests', () => {
 
         const useCaseValue = wrapper.find('[aria-label="FormSelect Usecase"]').simulate('change', { target: { value: 'Administer' } })
         expect(useCaseValue.exists()).toBe(true)
-
-        wrapper.setState({ 'moduleUrl': urlFragment })
-        expect(wrapper.state('moduleUrl')).toBeDefined()
-
-        wrapper.setState({ 'usecaseValue': useCaseValue })
-        expect(instance.state['usecases'][0]).toEqual('Administer')
     })
 
     it('test getHarrayChildNamed function', () => {
@@ -272,63 +254,6 @@ describe('Versions tests', () => {
 
         wrapper.find(DataListToggle).simulate('click')
         sinon.assert.called(spy)
-    })
-
-    it('should handle state changes for changePublishState', () => {
-        const wrapper = shallow(<Versions {...props} />)
-
-        expect(wrapper.state('changePublishState')).toBe(false)
-        wrapper.setState({ 'changePublishState': true })
-        expect(wrapper.state('changePublishState')).toBe(true)
-    })
-
-
-    it('should handle state changes for login', () => {
-        const wrapper = shallow(<Versions {...props} />)
-
-        expect(wrapper.state('login')).toBe(false)
-        wrapper.setState({ 'login': true })
-        expect(wrapper.state('login')).toBe(true)
-    })
-
-    it('should handle state changes for initialLoad', () => {
-        const wrapper = shallow(<Versions {...props} />)
-
-        expect(wrapper.state('initialLoad')).toBe(true)
-        wrapper.setState({ 'initialLoad': false })
-        expect(wrapper.state('initialLoad')).toBe(false)
-    })
-
-    it('should handle state changes for versionSelected', () => {
-        const wrapper = shallow(<Versions {...props} />)
-
-        expect(wrapper.state('versionSelected')).toBe('')
-        wrapper.setState({ 'versionSelected': "Please select a version" })
-        expect(wrapper.state('versionSelected')).toBe("Please select a version")
-    })
-
-    it('should handle state changes for versionUUID', () => {
-        const wrapper = shallow(<Versions {...props} />)
-
-        expect(wrapper.state('versionUUID')).toBe("")
-        wrapper.setState({ 'versionUUID': "Select a Version" })
-        expect(wrapper.state('versionUUID')).toBe("Select a Version")
-    })
-
-    it('should handle state changes for versionValue', () => {
-        const wrapper = shallow(<Versions {...props} />)
-
-        expect(wrapper.state('versionValue')).toBe('')
-        wrapper.setState({ 'versionValue': "version value" })
-        expect(wrapper.state('versionValue')).toBe("version value")
-    })
-
-    it('should handle state changes for isHeadingToggle', () => {
-        const wrapper = shallow(<Versions {...props} />)
-
-        expect(wrapper.state('isHeadingToggle')).toBe(true)
-        wrapper.setState({ 'isHeadingToggle': false })
-        expect(wrapper.state('isHeadingToggle')).toBe(false)
     })
 
     // Value testing with Enzyme.
