@@ -36,6 +36,10 @@ public class Metadata extends SlingResource {
 
     public final Field<String> primaryType = stringField("jcr:primaryType");
 
+	public final Field<String> productVersion = stringField("productVersion");
+
+	public final Field<String> urlFragment = stringField("urlFragment");
+
     public Metadata(Resource wrapped) {
         super(wrapped);
     }

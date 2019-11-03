@@ -5,6 +5,7 @@ import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
 
@@ -17,8 +18,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.Servlet;
+import javax.servlet.ServletException;
 
+import java.io.IOException;
 import java.util.*;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
@@ -47,9 +54,12 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @SlingServletPaths(value = "/api/module")
 public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     private final Logger log = LoggerFactory.getLogger(ModuleJsonServlet.class);
+    
+    private SlingHttpServletRequest request;
 
     @Override
     protected String getQuery(SlingHttpServletRequest request) {
+    	this.request = request;
         // Get the query parameter(s)
         String uuidParam = paramValue(request, "module_id", "");
 
@@ -67,8 +77,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         return releasedRevision.isPresent();
     }
 
-    @Override
-    protected Map<String, Object> resourceToMap(@NotNull Resource resource) {
+    protected Map<String, Object> resourceToMap(@NotNull Resource resource) throws RepositoryException {
         Module module = resource.adaptTo(Module.class);
 
         // The DEFAULT_MODULE_LOCALE should later be replaced with 'localeParam' variable
@@ -102,12 +111,29 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleMap.put("date_modified", dateModified.toInstant().toString());
         moduleMap.put("body", releasedContent.get().cachedHtml.get().data.get());
 
+        		
         // Fields that are part of the spec and yet to be implemented
         moduleMap.put("context_url_fragment", "");
         moduleMap.put("context_id", "");
         moduleMap.put("product_name", "");
         moduleMap.put("product_version", "");
-
+        
+        // Process productVersion from metadata
+        String versionUUID = releasedMetadata.get().getValueMap().containsKey("productVersion") ? releasedMetadata.get().productVersion.get() : "";
+        if (!versionUUID.isEmpty()) {
+        	try {
+        		moduleMap.put("product_version", getResourceByUuid(versionUUID).getName());
+        	}  catch (RepositoryException e) {
+                throw new RepositoryException(e);
+            }
+        }
+        // Process product_name based off version UUID reference
+        
+        // Process url_fragment from metadata
+        String urlFragment = releasedMetadata.get().getValueMap().containsKey("urlFragment") ? releasedMetadata.get().urlFragment.get() : "";
+        if (!urlFragment.isEmpty()) {
+        	moduleMap.put("context_url_fragment", urlFragment);
+        }
         // remove unnecessary fields from the map
         moduleMap.remove("jcr:lastModified");
         moduleMap.remove("jcr:lastModifiedBy");
@@ -120,5 +146,17 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleDetails.put("module", moduleMap);
 
         return moduleDetails;
+    }
+    
+    private Resource getResourceByUuid(String uuid) throws ItemNotFoundException, RepositoryException {
+        Node foundNode = request.getResourceResolver()
+                .adaptTo(Session.class)
+                .getNodeByIdentifier(uuid);
+
+        // turn the node back into a resource
+        Resource foundResource = request.getResourceResolver()
+                .getResource(foundNode.getPath());
+
+        return foundResource;
     }
 }
