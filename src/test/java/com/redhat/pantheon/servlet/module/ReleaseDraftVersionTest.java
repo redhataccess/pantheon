@@ -34,7 +34,7 @@ class ReleaseDraftVersionTest {
                         "jcr:primaryType", "pant:moduleVersion");
         slingContext.create()
                 .resource("/module/en_US/1/metadata",
-                        "jcr:title", "A draft title");
+                        "jcr:title", "A draft title", "productVersion", "123456", "urlFragment", "/test");
         slingContext.create()
                 .resource("/module/en_US/1/content/asciidoc/jcr:content",
                         "jcr:data", "The draft content");
