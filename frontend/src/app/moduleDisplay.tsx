@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
-import { Level, LevelItem, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
+import React, { Component } from 'react'
+import { Level, LevelItem, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core'
 import {
     DataList, DataListItem, DataListItemRow, DataListItemCells,
     DataListCell, Card, Text, TextContent, TextVariants
-} from '@patternfly/react-core';
-import { Versions } from '@app/versions';
+} from '@patternfly/react-core'
+import { Versions } from '@app/versions'
+import { Fields } from '@app/Constants'
+import CopyImage from '@app/images/copy.png'
 
 class ModuleDisplay extends Component<any, any, any> {
 
@@ -23,9 +25,8 @@ class ModuleDisplay extends Component<any, any, any> {
             releaseUpdateDate: '',
             releaseVersion: '',
             results: {},
-            versionUUID: "",
             versionValue: ""
-        };
+        }
     }
 
     public componentDidMount() {
@@ -34,7 +35,7 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     public render() {
-        // console.log('Props: ', this.props);
+        // console.log('Props: ', this.props)
         return (
             <React.Fragment>
                 <div>
@@ -65,7 +66,7 @@ class ModuleDisplay extends Component<any, any, any> {
 
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.moduleUUID !== ""
-                            && <span><a id="permanentURL" onClick={this.copyToClipboard}>Copy permanent URL  <i className="fa pf-icon-folder-close" /></a></span>
+                            && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <img src={CopyImage} width="16px" height="16px" /></a></span>
                         }
 
                         <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
@@ -137,7 +138,7 @@ class ModuleDisplay extends Component<any, any, any> {
                     </div>
                 </div>
             </React.Fragment>
-        );
+        )
     }
 
     private updateDate = (draftDate, releaseDate, releaseVersion, moduleUUID) => {
@@ -146,7 +147,7 @@ class ModuleDisplay extends Component<any, any, any> {
             moduleUUID,
             releaseUpdateDate: releaseDate,
             releaseVersion,
-        });
+        })
     }
 
     private fetchModuleDetails = (data) => {
@@ -168,96 +169,63 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     private getProduct = (product) => {
-        // console.log("[getProduct] ", product)
         this.setState({ productValue: product })
     }
 
     private getVersion = (version) => {
-        // console.log("[getVersion] ", version)
         this.setState({ versionValue: version })
     }
 
     private getVersionUUID = (path) => {
-        // console.log("[getVersionUUID] path", path)
         path = "/content" + path + "/en_US/1/metadata.json"
         fetch(path)
             .then(response => response.json())
             .then((responseJSON) => {
-                // console.log("[responseJSON]", responseJSON)
                 if (responseJSON.productVersion !== undefined) {
-                    // console.log("[allproducts inside fetch call] ", this.state.allProducts)
-
-                    // const versionUUID = responseJSON["productVersion"]
-                    this.setState({ versionUUID: responseJSON.productVersion }, () => {
-                        this.getProductInitialLoad()
-                    })
+                    this.getProductInitialLoad(responseJSON.productVersion)
                 }
             })
-
     }
 
-    private getProductInitialLoad = () => {
-        const path = '/content/products.3.json'
-        let key
+    private getProductInitialLoad = (uuid) => {
+        const path = '/content/products.harray.3.json'
         fetch(path)
             .then(response => response.json())
             .then(responseJSON => {
-                // console.log('fetch results:',responseJSON)
-                // tslint:disable-next-line: prefer-for-of
-                for (let i = 0; i < Object.keys(responseJSON).length; i++) {
-                    key = Object.keys(responseJSON)[i];
-                    const versionKey = "versions"
-                    if ((key !== 'jcr:primaryType')) {
-                        if (responseJSON[key].name !== undefined) {
-                            const pName = responseJSON[key].name
-                            const versionObj = responseJSON[key][versionKey]
-                            if (versionObj) {
-                                // console.log("[getProductFromUUID] versionObj ", versionObj)
-                                let vKey;
-                                const versions = new Array();
-                                // tslint:disable-next-line: no-shadowed-variable
-                                for (const item in Object.keys(versionObj)) {
-                                    if (Object.keys(versionObj)[item] !== undefined) {
-                                        vKey = Object.keys(versionObj)[item]
-                                        if (vKey !== 'jcr:primaryType') {
-                                            if (versionObj[vKey].name) {
-                                                if (versionObj[vKey]["jcr:uuid"] === this.state.versionUUID) {
-                                                    // process productValue and versionValue on initial load
-                                                    this.setState({ productValue: pName, versionValue: versionObj[vKey].name }, () => {
-                                                        // console.log("[getProductFromUUID] item/productvalue", pName)
-                                                        // console.log("[getProductFromUUID] versionValue", versionObj[vKey][nameKey])
-                                                    })
-                                                    break;
-                                                }
-
-                                            }
-                                        }
-                                    }
-                                }
-
+                for (const product of responseJSON.__children__) {
+                    if (!product.__children__) {
+                        continue
+                    }
+                    for (const productChild of product.__children__) {
+                        if (productChild.__name__ !== 'versions') {
+                            continue
+                        }
+                        for (const productVersion of productChild.__children__) {
+                            if (productVersion[Fields.JCR_UUID] === uuid) {
+                                this.setState({ productValue: product.__name__, versionValue: productVersion.__name__ })
+                                break
                             }
-
                         }
                     }
                 }
-
             })
     }
 
     private copyToClipboard = () => {
         const textField = document.createElement('textarea')
-        if (window.location.href !== undefined) {
-            const targetHref = window.location.href
-            if (window.location.pathname !== undefined) {
-                textField.innerText = targetHref.split(window.location.pathname)[0] + this.state.releasePath
-                document.body.appendChild(textField)
-                textField.select()
-                document.execCommand('copy')
-                textField.remove()
-                this.setState({ copySuccess: 'Copied!' });
-            }
+        if (this.state.moduleUUID.trim() !== '') {
+            textField.value = 'https://access.redhat.com/topics/en-us/' + this.state.moduleUUID
+            document.body.appendChild(textField)
+            textField.select()
+            document.execCommand('copy')
+            textField.remove()
+            this.setState({ copySuccess: 'Copied!' })
         }
-    };
+    }
+
+    private mouseLeave = () => {
+        this.setState({ copySuccess: '' })
+    }
 }
 
 export { ModuleDisplay }

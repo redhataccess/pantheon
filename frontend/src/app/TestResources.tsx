@@ -21,6 +21,4 @@ const mockStateGuest: IAppState = {
     username: "anonymous"
 }
 
-export { mockStateUser }
-export { mockStateAdmin }
-export { mockStateGuest }
+export { mockStateUser, mockStateAdmin, mockStateGuest }

@@ -1,8 +1,8 @@
-import React from 'react';
-import { Dropdown } from '@app/Dropdown';
-import "isomorphic-fetch"
+import React from 'react'
+import { Dropdown } from '@app/Dropdown'
+import '@app/fetchMock'
 
-import { mount, shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme'
 
 describe('Tests for Dropdown', () => {
 
@@ -11,19 +11,19 @@ describe('Tests for Dropdown', () => {
         perPageValue={move}
         newPerPagevalue={"25 items per page"}
       />
-    );
-    expect(view).toMatchSnapshot();
-  });
+    )
+    expect(view).toMatchSnapshot()
+  })
 
   it('should render dropdown list', () => {
     const wrapper = mount(<Dropdown
         perPageValue={move}
         newPerPagevalue={"25 items per page"}
       />
-    );
-  });  
+    )
+  })
 
   function move(){
     return "R"
   }
-});
+})

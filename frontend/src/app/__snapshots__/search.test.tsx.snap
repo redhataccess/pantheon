@@ -4,34 +4,14 @@ exports[`Search tests should render default Search component 1`] = `
 <Fragment>
   <div>
     <div>
-      <FormGroup
-        fieldId="search"
-        helperText="Search is case sensitive. An empty search will show all modules."
-        label="Search Query"
-      >
-        <div
-          className="row-view"
-        >
-          <TextInput
-            aria-label={null}
-            className=""
-            id="search"
-            isDisabled={false}
-            isReadOnly={false}
-            isRequired={false}
-            isValid={true}
-            onChange={[Function]}
-            onKeyDown={[Function]}
-            type="text"
-            value=""
-          />
-          <Component
-            onClick={[Function]}
-          >
-            Search
-          </Component>
-        </div>
-      </FormGroup>
+      <SearchFilter
+        isSortedUp={true}
+        onChange={[Function]}
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onSort={[Function]}
+        value=""
+      />
       <div
         className="notification-container"
       >
@@ -56,7 +36,7 @@ exports[`Search tests should render default Search component 1`] = `
           <DataListItemRow
             id="data-rows-header"
           >
-            <DataListCheck
+            <Checkbox
               aria-label="controlled checkbox example"
               aria-labelledby="width-ex1-check1"
               checked={false}
@@ -64,7 +44,8 @@ exports[`Search tests should render default Search component 1`] = `
               id="check"
               isChecked={false}
               isDisabled={false}
-              onClick={[Function]}
+              isValid={true}
+              onChange={[Function]}
             />
             <DataListItemCells
               dataListCells={
@@ -128,16 +109,20 @@ exports[`Search tests should render default Search component 1`] = `
           />
           <DataListItemRow
             id="data-rows"
+            key="0"
           >
-            <DataListCheck
+            <Checkbox
               aria-label="controlled checkbox example"
               aria-labelledby="width-ex3-check1"
               checked={false}
               className="checkbox"
               id=""
               isChecked={false}
+              isDisabled={false}
+              isValid={true}
+              key="checked_0"
               name=""
-              onClick={[Function]}
+              onChange={[Function]}
             />
             <DataListItemCells
               dataListCells={
@@ -173,7 +158,7 @@ exports[`Search tests should render default Search component 1`] = `
                   </DataListCell>,
                 ]
               }
-              key=""
+              key="cells_0"
             />
           </DataListItemRow>
           <DataListItemRow

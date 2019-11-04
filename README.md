@@ -76,7 +76,7 @@ will also start the full pod described above with a single command:
 podman play kube container/pantheon.yaml
 ```
 
-### Building the application in the a container.
+### Building the application in the a container
 
 We also provide an podman image under the container folder that does a two stage build that will generate a container with the application.
 
@@ -111,3 +111,22 @@ podman ps
 ```
 podman exec -it PROCESS bash
 ```
+
+### Developing the frontend code
+
+If making modifications that are entirely contained within the frontend, it is not necessary to use maven to rebuild and redeploy the package on every change.
+
+These instructions provide an imperfect-but-workable shortcut that can accelerate development.
+
+```sh
+cd pantheon/frontend
+yarn start
+```
+
+```sh
+chromium-browser --disable-web-security --user-data-dir=/home/user/anywhere/chromeDev/ &
+```
+
+This works because there is code in app.tsx that preempts all fetch() calls and checks if the app is being served from localhost. If so, it modifies the request to point to localhost:8080 specifically, rather than localhost:9000 which is where webpack-dev-server serves the frontend code from.
+
+It might be possible to improve this technique. Suggestions are welcome.
