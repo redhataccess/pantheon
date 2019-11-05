@@ -1,9 +1,9 @@
-import React from 'react';
-import { Pagination } from '@app/Pagination';
-import "isomorphic-fetch"
+import React from 'react'
+import { Pagination } from '@app/Pagination'
+import '@app/fetchMock'
 
-import { mount, shallow } from 'enzyme';
-import { LevelItem } from '@patternfly/react-core';
+import { mount, shallow } from 'enzyme'
+import { LevelItem } from '@patternfly/react-core'
 
 describe('Tests for Pagination', () => {
 
@@ -18,9 +18,9 @@ describe('Tests for Pagination', () => {
     perPageLimit={1}
     showDropdownOptions={true}
     bottom={true}
-/>);
-    expect(view).toMatchSnapshot();
-  });
+/>)
+    expect(view).toMatchSnapshot()
+  })
 
   it('should render Badge for displaying page number', () => {
     const wrapper = mount(<Pagination 
@@ -33,12 +33,12 @@ describe('Tests for Pagination', () => {
       perPageLimit={1}
       showDropdownOptions={true}
       bottom={true}
-    />);
-    const pageNumberDisplay = wrapper.find(LevelItem);
+    />)
+    const pageNumberDisplay = wrapper.find(LevelItem)
     expect(pageNumberDisplay.exists()).toBe(true)
-  });  
+  })  
 
   function move(){
     return "R"
   }
-});
+})

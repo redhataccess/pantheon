@@ -41,6 +41,17 @@ module Haml::Helpers
     'spread' if !(option? 'autowidth') && (attr :tablepcwidth) == 100
   end
 
+  # Counting Tables in WHOLE Doc for unique IDs
+  $tableNum = 0
+
+  #--------------------------------------------------------
+  # block_ulist & block_olist & block_dlist
+  #
+
+  $dlistNum = 0
+  $olistNum = 0
+  $ulistNum = 0
+
   #--------------------------------------------------------
   # block_video
   #

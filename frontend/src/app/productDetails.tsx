@@ -1,33 +1,39 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
     ActionGroup, Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Level, LevelItem, List, ListItem,
     Text, TextContent, TextVariants, TextInput
-} from '@patternfly/react-core';
+} from '@patternfly/react-core'
+import { Fields, JcrTypes, SlingTypes } from '@app/Constants'
 
 export interface IProps {
     productName: string
 }
 
 class ProductDetails extends Component<IProps, any> {
-    public versionNames: string[] = [];
+    public versionNames: string[] = []
 
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
             allVersionNames: [],
             newVersion: ''
-        };
+        }
     }
+
     public componentWillReceiveProps(nextProps) {
         // allow page load from productDetails to products listing
         if (nextProps.productName !== undefined && nextProps.productName.trim() !== '') {
             return window.location.reload(false)
         }
     }
+
+    public componentDidMount() {
+        this.fetchProductDetails(this.state.allVersionNames)
+    }
+    
     public render() {
         return (
             <React.Fragment>
-                {this.fetchProductDetails(this.state.allVersionNames)}
                 <div className="app-container">
                     <Breadcrumb>
                         <BreadcrumbItem ><a href="#/products" onClick={() => window.location.reload(false)}>All Products</a></BreadcrumbItem>
@@ -70,35 +76,35 @@ class ProductDetails extends Component<IProps, any> {
                     </Form>
                 </div>
             </React.Fragment>
-        );
+        )
     }
 
     private fetchProductDetails = (versionNames) => {
         // setup url fragment
-        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
         const path = '/content/products/' + urlFragment + '/versions.2.json'
-        let key;
+        let key
         versionNames = []
 
         fetch(path)
             .then((response) => {
                 if (response.ok) {
-                    return response.json();
+                    return response.json()
                 } else if (response.status === 404) {
                     // create versions path
-                    this.createVersionsPath();
-                    return versionNames;
+                    this.createVersionsPath()
+                    return versionNames
                 } else {
-                    throw new Error(response.statusText);
+                    throw new Error(response.statusText)
                 }
             })
             .then(responseJSON => {
                 // tslint:disable-next-line: prefer-for-of
                 for (let i = 0; i < Object.keys(responseJSON).length; i++) {
-                    key = Object.keys(responseJSON)[i];
-                    if ((key !== 'jcr:primaryType')) {
+                    key = Object.keys(responseJSON)[i]
+                    if ((key !== Fields.JCR_PRIMARYTYPE)) {
                         if (responseJSON[key].name !== undefined) {
-                            versionNames.push(responseJSON[key].name);
+                            versionNames.push(responseJSON[key].name)
                         }
                     }
                 }
@@ -108,38 +114,39 @@ class ProductDetails extends Component<IProps, any> {
             })
             .catch((error) => {
                 console.log(error)
-            });
-        return versionNames;
-    };
+            })
+        return versionNames
+    }
 
     private handleTextInputChange = newVersion => {
-        this.setState({ newVersion });
-    };
+        this.setState({ newVersion })
+    }
 
     private saveVersion = () => {
-        const formData = new FormData();
-        formData.append("name", this.state.newVersion)
-        formData.append("sling:resourceType", "pantheon/productVersion")
-        formData.append("jcr:primaryType", 'pant:productVersion')
+        const formData = new FormData()
+        formData.append(Fields.NAME, this.state.newVersion)
+        formData.append(Fields.SLING_RESOURCETYPE, SlingTypes.PRODUCT_VERSION)
+        formData.append(Fields.JCR_PRIMARYTYPE, JcrTypes.PRODUCT_VERSION)
 
-        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
-        const encodedVersion = this.state.newVersion.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
+        const encodedVersion = this.state.newVersion.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
         fetch(encodeURI('/content/products/' + urlFragment + '/versions/' + encodedVersion), {
             body: formData,
             method: 'post',
         }).then(response => {
             if (response.status === 200 || response.status === 201) {
                 this.setState({ newVersion: '' })
+                this.fetchProductDetails(this.state.allVersionNames)
             } else {
                 console.log('Version adding failure')
             }
-        });
+        })
 
-    };
+    }
 
     private createVersionsPath = () => {
-        const formData = new FormData();
-        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
+        const formData = new FormData()
+        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
         fetch(encodeURI('/content/products/' + urlFragment + '/versions'), {
             body: formData,
             method: 'post',
@@ -150,7 +157,7 @@ class ProductDetails extends Component<IProps, any> {
                 console.log(' Created versions path  failed!')
 
             }
-        });
+        })
     }
 
 }

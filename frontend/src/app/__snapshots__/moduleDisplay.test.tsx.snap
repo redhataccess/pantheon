@@ -3,6 +3,24 @@
 exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
 <Fragment>
   <div>
+    <div
+      className="app-container"
+    >
+      <Component>
+        <BreadcrumbItem>
+          <a
+            href="#/search"
+          >
+            Modules
+          </a>
+        </BreadcrumbItem>
+        <BreadcrumbItem
+          isActive={true}
+          to="#"
+        />
+      </Component>
+    </div>
+    <br />
     <div>
       <Level
         gutter="md"
@@ -18,12 +36,14 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
       </Level>
     </div>
     <div>
-      <a
-        href="http://access.redhat.com"
-      >
-        View on Customer Portal
-      </a>
+      <span>
+          
+      </span>
+      <span>
+         
+      </span>
     </div>
+    <br />
     <div>
       <DataList
         aria-label="single action data list"
@@ -42,9 +62,9 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                   >
                     <span
                       className="sp-prop-nosort"
-                      id="span-source-type-products"
+                      id="span-source-type-product"
                     >
-                      Products
+                      Product
                     </span>
                   </DataListCell>,
                   <DataListCell>
@@ -125,6 +145,8 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
 </Fragment>
 `;
 
+exports[`ModuleDisplay tests test componentDidMount function 1`] = `undefined`;
+
 exports[`ModuleDisplay tests test fetchModuleDetails function 1`] = `undefined`;
 
 exports[`ModuleDisplay tests test getProduct function 1`] = `undefined`;
@@ -134,3 +156,5 @@ exports[`ModuleDisplay tests test getProductInitialLoad function 1`] = `undefine
 exports[`ModuleDisplay tests test getVersion function 1`] = `undefined`;
 
 exports[`ModuleDisplay tests test getVersionUUID function 1`] = `undefined`;
+
+exports[`ModuleDisplay tests test mouseLeave function 1`] = `undefined`;

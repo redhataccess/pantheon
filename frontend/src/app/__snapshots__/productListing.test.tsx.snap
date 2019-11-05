@@ -65,6 +65,8 @@ exports[`ProductListing tests should render ProductListing component 1`] = `
 
 exports[`ProductListing tests test checkAuth function 1`] = `undefined`;
 
+exports[`ProductListing tests test componentDidMount function 1`] = `[Function]`;
+
 exports[`ProductListing tests test getProducts function 1`] = `undefined`;
 
 exports[`ProductListing tests test getProductsUrl function 1`] = `"/content/products.query.json?nodeType=pant:product&orderby=name"`;

@@ -1,24 +1,25 @@
-import React, { Component } from 'react';
-import { Button } from '@patternfly/react-core';
+import React, { Component } from 'react'
+import { Button } from '@patternfly/react-core'
 import {
     Alert, AlertActionCloseButton, BaseSizes, Card, DataList, DataListItem, DataListItemRow,
     DataListItemCells, DataListCell, DataListToggle, DataListContent, Dropdown, DropdownItem,
     DropdownPosition, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, KebabToggle,
     Modal, InputGroupText, Title, TitleLevel, TextInput
-} from '@patternfly/react-core';
-import CheckImage from '@app/images/check_image.jpg';
-import BlankImage from '@app/images/blank.jpg';
+} from '@patternfly/react-core'
+import CheckImage from '@app/images/check_image.jpg'
+import BlankImage from '@app/images/blank.jpg'
 import { Redirect } from 'react-router-dom'
 
 export interface IProps {
     modulePath: string
     versionModulePath: string
-    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion) => any
+    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion, moduleUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
 
 class Versions extends Component<IProps, any> {
+    private static USE_CASES = ['Select Use Case', 'Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network', 'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize']
 
     public draft = [{ "type":"draft","icon": BlankImage, "path": "", "version": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
     public release = [{ "type":"release","icon": CheckImage, "path": "", "version": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '',"draftUploadDate": "" }]
@@ -27,26 +28,16 @@ class Versions extends Component<IProps, any> {
         super(props)
         this.state = {
             changePublishState: false,
-            initialLoad: true,
             isArchiveDropDownOpen: false,
-            isArchiveSelect: false,
             isDropDownOpen: false,
             isHeadingToggle: true,
-            isOpen: false,
-            isRowToggle: false,
             login: false,
             results: [this.draft, this.release],
 
             allProducts: [],
-            formInvalid: false,
 
-            isEmptyResults: false,
             isMissingFields: false,
             isModalOpen: false,
-            isProductDropdownOpen: false,
-            isUsecaseDropdownOpen: false,
-            isVersionDropdownOpen: false,
-            loggedinStatus: false,
             metadataInitialLoad: true,
             metadataPath: '',
             metadataResults: [],
@@ -56,15 +47,12 @@ class Versions extends Component<IProps, any> {
             ],
             productValue: '',
             productVersion: '',
-            redirect: false,
 
             successAlertVisble: false,
             usecaseOptions: [
                 { value: '', label: 'Select Use Case', disabled: false }
             ],
             usecaseValue: '',
-            usecases: ['Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network',
-                'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize'],
 
             versionOptions: [
                 { value: '', label: 'Select a Version', disabled: false },
@@ -72,22 +60,18 @@ class Versions extends Component<IProps, any> {
             versionSelected: '',
             versionUUID: "",
             versionValue: '',
-        };
+        }
 
     }
 
     public componentDidMount() {
         this.fetchProductVersionDetails()
-        if (!this.state.loggedinStatus && this.state.initialLoad === true) {
-            fetch("/system/sling/info.sessionInfo.json")
-                .then(response => response.json())
-                .then(responseJSON => {
-                    if (responseJSON.userID) {
-                        if (responseJSON.userID !== 'anonymous') {
-                            this.setState({ loggedinStatus: true })
-                        }
-                    }
-                })
+        this.fetchVersions()
+    }
+
+    public componentDidUpdate(prevProps) {
+        if (this.props.modulePath !== prevProps.modulePath) {
+            this.fetchVersions()
         }
     }
 
@@ -103,16 +87,11 @@ class Versions extends Component<IProps, any> {
                     All fields are required.
               </p>
             </React.Fragment>
-        );
+        )
         let verOptions = this.state.versionOptions
         if (this.state.allProducts[this.state.productValue]) {
             verOptions = this.state.allProducts[this.state.productValue]
         }
-
-        const ucOptions = this.state.usecaseOptions
-        this.state.usecases.map((item) => (
-            ucOptions.push({ value: item, label: item, disabled: false })
-        ))
 
         return (
             <React.Fragment>
@@ -124,7 +103,6 @@ class Versions extends Component<IProps, any> {
                     Update Successful!
           </Alert>
                 }
-                {this.state.initialLoad && this.fetchVersions()}
                 {this.state.metadataInitialLoad && this.getMetadata(this.state.metadataPath)}
                 <Card>
                     <div>
@@ -140,19 +118,19 @@ class Versions extends Component<IProps, any> {
                                     />
                                     <DataListItemCells
                                         dataListCells={[
-                                            <DataListCell key="version">
+                                            <DataListCell key="version_header_version">
                                                 <span className="sp-prop-nosort" id="span-source-type-version">Version</span>
                                             </DataListCell>,
-                                            <DataListCell key="published">
+                                            <DataListCell key="version_header_published">
                                                 <span className="sp-prop-nosort" id="span-source-type-version-published">Published</span>
                                             </DataListCell>,
-                                            <DataListCell key="updated">
+                                            <DataListCell key="version_header_updated">
                                                 <span className="sp-prop-nosort" id="span-source-type-version-draft-uploaded">Draft Uploaded</span>
                                             </DataListCell>,
-                                            <DataListCell key="publish_buttons">
+                                            <DataListCell key="version_header_publish_buttons">
                                                 <span className="sp-prop-nosort" id="span-source-name-version-publish-buttons" />
                                             </DataListCell>,
-                                            <DataListCell key="module_view_button">
+                                            <DataListCell key="version_header_module_view_button">
                                                 <span className="sp-prop-nosort" id="span-source-name" />
                                             </DataListCell>
                                         ]}
@@ -164,41 +142,44 @@ class Versions extends Component<IProps, any> {
                                 id={"Content"}
                                 isHidden={!this.state.isHeadingToggle}
                                 noPadding={true}
+                                key='details_dlc'
                             >
                                 {/* this is the data list for the inner row */}
                                 {/* {console.log("[results]", this.state.results)} */}
-                                {this.state.results.map(type => (
-                                    type.map(data => (
+                                {this.state.results.map((type, key1) => (
+                                    type.map((data, key2) => (
                                         data.version !== "" && (
-                                            <DataList aria-label="Simple data list2">
-                                                <DataListItem aria-labelledby="simple-item2" isExpanded={data.isDropdownOpen}>
-                                                    <DataListItemRow>
+                                            <DataList aria-label="Simple data list2" key={'datalist_' + key1 + '_' + key2}>
+                                                <DataListItem aria-labelledby="simple-item2" isExpanded={data.isDropdownOpen} key={'datalistitem1_' + key1 + '_' + key2}>
+                                                    <DataListItemRow key={'datalistitemrow1_' + key1 + '_' + key2}>
                                                         <DataListToggle
                                                             // tslint:disable-next-line: jsx-no-lambda
                                                             onClick={() => this.onExpandableToggle(data)}
                                                             isExpanded={data.isDropdownOpen}
                                                             id={data.version}
                                                             aria-controls={data.version}
+                                                            key={'datalisttoggle1_' + key1 + '_' + key2}
                                                         />
                                                         <DataListItemCells
+                                                            key={'datalistitemcells1_' + key1 + '_' + key2}
                                                             dataListCells={[
-                                                                <DataListCell key="version">
-                                                                    {/* <img src={CheckImage} width="20px" height="20px"/>                                                         */}
+                                                                <DataListCell key={'version_value_' + key1 + '_' + key2}>
+                                                                    {/* <img src={CheckImage} width="20px" height="20px"/> */}
                                                                     {data.version}
                                                                 </DataListCell>,
-                                                                <DataListCell key="published">
+                                                                <DataListCell key={'published_value_' + key1 + '_' + key2}>
                                                                     {data.publishedState==="Not published" && data.publishedState}
                                                                     {data.publishedState==="Released" && data.updatedDate}
                                                                 </DataListCell>,
-                                                                <DataListCell key="updated">
+                                                                <DataListCell key={'version_updated_' + key1 + '_' + key2}>
                                                                     {data["type"]==="draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
                                                                     {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
                                                                 </DataListCell>,
-                                                                <DataListCell key="publish_buttons">
+                                                                <DataListCell key={'publish_buttons_' + key1 + '_' + key2}>
                                                                     <Button variant="primary" onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>{'  '}
                                                                     <Button variant="secondary" onClick={() => this.previewDoc(data.secondButtonText)}>{data.secondButtonText}</Button>{'  '}
                                                                 </DataListCell>,
-                                                                <DataListCell key="image" width={1}>
+                                                                <DataListCell key={'image_' + key1 + '_' + key2} width={1}>
                                                                     <Dropdown
                                                                         isPlain={true}
                                                                         position={DropdownPosition.right}
@@ -206,9 +187,10 @@ class Versions extends Component<IProps, any> {
                                                                         onSelect={this.onArchiveSelect}
                                                                         // tslint:disable-next-line: jsx-no-lambda
                                                                         toggle={<KebabToggle onToggle={() => this.onArchiveToggle(data)} />}
+                                                                        key={'kebab_' + key1 + '_' + key2}
                                                                         dropdownItems={[
-                                                                            <DropdownItem key="archive" isDisabled={true}>Archive</DropdownItem>,
-                                                                            <DropdownItem id={data.path} key={data.path} component="button" onClick={this.handleModalToggle}>Edit metadata</DropdownItem>,
+                                                                            <DropdownItem key={'archive_' + key1 + '_' + key2} isDisabled={true}>Archive</DropdownItem>,
+                                                                            <DropdownItem id={data.path} key={'edit_metadata_' + key1 + '_' + key2} component="button" onClick={this.handleModalToggle}>Edit metadata</DropdownItem>,
                                                                         ]}
                                                                     />
                                                                 </DataListCell>
@@ -220,23 +202,25 @@ class Versions extends Component<IProps, any> {
                                                         id={data.version}
                                                         isHidden={!data.isDropdownOpen}
                                                         noPadding={true}
+                                                        key={'details_' + key1 + '_' + key2}
                                                     >
                                                         {/* this is the content for the inner data list content */}
                                                         <DataListItemCells
+                                                            key={'details_cells_' + key1 + '_' + key2}
                                                             dataListCells={[
-                                                                <DataListCell key="File name" width={2}>
+                                                                <DataListCell key={"details_whitespace_" + key1 + '_' + key2} width={2}>
                                                                     <span>{' '}</span>
                                                                 </DataListCell>,
-                                                                <DataListCell key="File name" width={2}>
+                                                                <DataListCell key={"details_file_name_" + key1 + '_' + key2} width={2}>
                                                                     <span className="sp-prop-nosort" id="span-source-type-filename">File Name</span>
                                                                 </DataListCell>,
-                                                                <DataListCell key="published" width={4}>
+                                                                <DataListCell key={"details_modulePath_" + key1 + '_' + key2} width={4}>
                                                                     {this.props.modulePath}
                                                                 </DataListCell>,
-                                                                <DataListCell key="updated" width={2}>
+                                                                <DataListCell key={"details_upload_time_" + key1 + '_' + key2} width={2}>
                                                                     <span className="sp-prop-nosort" id="span-source-type-upload-time">Upload Time</span>
                                                                 </DataListCell>,
-                                                                <DataListCell key="updated" width={4}>
+                                                                <DataListCell key={"details_updated_" + key1 + '_' + key2} width={4}>
                                                                     {data["type"]==="draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
                                                                     {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
                                                                 </DataListCell>,
@@ -244,21 +228,22 @@ class Versions extends Component<IProps, any> {
                                                         />
 
                                                         <DataListItemCells
+                                                            key={'details_cells2_' + key1 + '_' + key2}
                                                             dataListCells={[
-                                                                <DataListCell key="File name" width={2}>
+                                                                <DataListCell key={"details_whitespace2_" + key1 + '_' + key2} width={2}>
                                                                     <span>{' '}</span>
                                                                 </DataListCell>,
-                                                                <DataListCell key="updated" width={2}>
+                                                                <DataListCell key={"details_module_title_" + key1 + '_' + key2} width={2}>
                                                                     <span>{'  '}</span>
                                                                     <span className="sp-prop-nosort" id="span-source-type-module-title">Module Title</span>
                                                                 </DataListCell>,
-                                                                <DataListCell key="updated" width={4}>
+                                                                <DataListCell key={"details_jcr_title_" + key1 + '_' + key2} width={4}>
                                                                     {(data["metadata"]["jcr:title"] !== undefined) ? data["metadata"]["jcr:title"] : '-'}
                                                                 </DataListCell>,
-                                                                <DataListCell key="updated" width={2}>
+                                                                <DataListCell key={"details_context_package_" + key1 + '_' + key2} width={2}>
                                                                     <span className="sp-prop-nosort" id="span-source-type-context-package">Context Package</span>
                                                                 </DataListCell>,
-                                                                <DataListCell key="updated" width={4}>
+                                                                <DataListCell key={"details_context_value_" + key1 + '_' + key2} width={4}>
                                                                     N/A
                                                                 </DataListCell>,
                                                             ]}
@@ -291,7 +276,6 @@ class Versions extends Component<IProps, any> {
                 >
                     <div>
                         {this.loginRedirect()}
-                        {this.renderRedirect()}
                     </div>
                     <div className="app-container">
 
@@ -332,8 +316,8 @@ class Versions extends Component<IProps, any> {
                             fieldId="document-usecase"
                         >
                             <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
-                                {ucOptions.map((option, index) => (
-                                    <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
+                                {Versions.USE_CASES.map((option, key) => (
+                                    <FormSelectOption key={'usecase_' + key} value={option} label={option} />
                                 ))}
                             </FormSelect>
                         </FormGroup>
@@ -356,47 +340,46 @@ class Versions extends Component<IProps, any> {
                 </Modal>
             </React.Fragment>
 
-        );
+        )
     }
 
     private fetchVersions = () => {
 
         // TODO: need a better fix for the 404 error.
         if (this.props.modulePath !== '') {
-            const fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json";
+            const fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json"
             fetch(fetchpath)
                 .then(response => response.json())
                 .then(responseJSON => {
                     this.setState(updateState => {
-                        const releasedTag = responseJSON.released;
-                        const draftTag = responseJSON.draft;
+                        const releasedTag = responseJSON.released
+                        const draftTag = responseJSON.draft
                         const versionCount = responseJSON.__children__.length
 
                         for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
                             const moduleVersion = responseJSON.__children__[i]
                             if (moduleVersion["jcr:uuid"] === draftTag) {
-                                this.draft[0].version = "Version " + moduleVersion.__name__;
+                                this.draft[0].version = "Version " + moduleVersion.__name__
                                 this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
-                                this.draft[0].updatedDate = this.draft[0].metadata["pant:dateUploaded"] !== undefined ? this.draft[0].metadata["pant:dateUploaded"] : '';
+                                this.draft[0].updatedDate = this.draft[0].metadata["pant:dateUploaded"] !== undefined ? this.draft[0].metadata["pant:dateUploaded"] : ''
                                 // this.props.modulePath starts with a slash
-                                this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__;                                
+                                this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__
                             }
                             if (moduleVersion["jcr:uuid"] === releasedTag) {
-                                this.release[0].version = "Version " + moduleVersion.__name__;
+                                this.release[0].version = "Version " + moduleVersion.__name__
                                 this.release[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
-                                this.release[0].updatedDate = this.release[0].metadata["pant:datePublished"] !== undefined ? this.release[0].metadata["pant:datePublished"] : '';
-                                this.release[0].draftUploadDate = this.release[0].metadata["pant:dateUploaded"] !== undefined ? this.release[0].metadata["pant:dateUploaded"] : '';
+                                this.release[0].updatedDate = this.release[0].metadata["pant:datePublished"] !== undefined ? this.release[0].metadata["pant:datePublished"] : ''
+                                this.release[0].draftUploadDate = this.release[0].metadata["pant:dateUploaded"] !== undefined ? this.release[0].metadata["pant:dateUploaded"] : ''
                                 // this.props.modulePath starts with a slash
-                                this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__;                                
+                                this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__
                             }
                             if(releasedTag===undefined){
-                                this.release[0].updatedDate = "-";
+                                this.release[0].updatedDate = "-"
                             }
-                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate,this.release[0]["version"]);
+                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate,this.release[0]["version"], responseJSON['jcr:uuid'])
 
                         }
                         return {
-                            initialLoad: false,
                             results: [this.draft, this.release],
                             // tslint:disable-next-line: object-literal-sort-keys
                             metadatPath: this.draft ? this.draft[0].path : this.release[0].path
@@ -419,15 +402,15 @@ class Versions extends Component<IProps, any> {
     }
 
     private changePublishState = (buttonText) => {
-        const formData = new FormData();
+        const formData = new FormData()
         if (buttonText === "Publish") {
-            formData.append(":operation", "pant:release");
+            formData.append(":operation", "pant:release")
             // console.log('Published file path:', this.props.modulePath)
-            this.draft[0].version = "";
+            this.draft[0].version = ""
         } else {
-            formData.append(":operation", "pant:unpublish");
-            // console.log('Unpublished file path:', this.props.modulePath);
-            this.release[0].version = "";
+            formData.append(":operation", "pant:unpublish")
+            // console.log('Unpublished file path:', this.props.modulePath)
+            this.release[0].version = ""
         }
         fetch("/content" + this.props.modulePath, {
             body: formData,
@@ -435,56 +418,54 @@ class Versions extends Component<IProps, any> {
         }).then(response => {
             if (response.status === 201 || response.status === 200) {
                 // console.log(buttonText + " works: " + response.status)
-                this.setState({ initialLoad: true, changePublishState: true })
+                this.setState({ changePublishState: true })
             } else {
-                console.log(buttonText + " failed " + response.status)
-                this.setState({ initialLoad: true, changePublishState: true })
+                // console.log(buttonText + " failed " + response.status)
+                this.setState({ changePublishState: true })
             }
-        });
+        })
 
     }
 
     private onArchiveSelect = event => {
         this.setState({
             isArchiveDropDownOpen: !this.state.isArchiveDropDownOpen
-        });
-    };
+        })
+    }
 
     private onArchiveToggle = (data) => {
-        data.isArchiveDropDownOpen = !data.isArchiveDropDownOpen;
+        data.isArchiveDropDownOpen = !data.isArchiveDropDownOpen
         this.setState({
             isArchiveDropDownOpen: this.state.isArchiveDropDownOpen
-        });
-    };
+        })
+    }
 
     private onExpandableToggle = (data) => {
-        data.isDropdownOpen = !data.isDropdownOpen;
-        this.setState({
-            isRowToggle: this.state.isRowToggle
-        });
+        data.isDropdownOpen = !data.isDropdownOpen
+        this.forceUpdate()
     }
 
     private onHeadingToggle = () => {
         this.setState({
             isHeadingToggle: !this.state.isHeadingToggle
-        });
+        })
     }
 
     private previewDoc = (buttonText) => {
-        let docPath = "";
+        let docPath = ""
         if (buttonText === "Preview") {
-            docPath = "/content" + this.props.modulePath + ".preview?draft=true";
+            docPath = "/content" + this.props.modulePath + ".preview?draft=true"
         } else {
-            docPath = "/content" + this.props.modulePath + ".preview";
+            docPath = "/content" + this.props.modulePath + ".preview"
         }
         // console.log("Preview path: ", docPath)
-        return window.open(docPath);
+        return window.open(docPath)
     }
 
     private handleModalToggle = (event) => {
         this.setState({
             isModalOpen: !this.state.isModalOpen
-        });
+        })
 
         // process path
         this.setState({ metadataPath: event.target.id })
@@ -502,8 +483,8 @@ class Versions extends Component<IProps, any> {
             || this.state.versionUUID === undefined || this.state.versionUUID === 'Select a Version' || this.state.versionUUID === ''
             || this.state.usecaseValue === undefined || this.state.usecaseValue === 'Select Use Case' || this.state.usecaseValue === ''
             || this.state.moduleUrl.trim() === "" || this.state.versionSelected === '') {
-            this.setState({ isMissingFields: true })
-            this.setState({ formInvalid: true })
+
+                this.setState({ isMissingFields: true })
 
         } else {
             const hdrs = {
@@ -511,7 +492,7 @@ class Versions extends Component<IProps, any> {
                 'cache-control': 'no-cache'
             }
 
-            const formData = new FormData(event.target.form);
+            const formData = new FormData(event.target.form)
 
             formData.append("productVersion", this.state.versionUUID)
             formData.append("documentUsecase", this.state.usecaseValue)
@@ -537,11 +518,11 @@ class Versions extends Component<IProps, any> {
                     // console.log(" Failed " + response.status)
                     this.setState({ failedPost: true })
                 }
-            });
+            })
         }
     }
     private onChangeProduct = (productValue) => {
-        this.setState({ productValue });
+        this.setState({ productValue })
     }
     private onChangeVersion = () => {
 
@@ -552,22 +533,21 @@ class Versions extends Component<IProps, any> {
                 if (this.state.versionUUID !== event.target["selectedOptions"][0].value) {
                     // tslint:disable-next-line: no-string-literal
                     this.setState({
+                        versionSelected: event.target["selectedOptions"][0].label,
                         versionUUID: event.target["selectedOptions"][0].value,
-                        versionValue: event.target["selectedOptions"][0].label,
-                        // tslint:disable-next-line: object-literal-sort-keys
-                        versionSelected: event.target["selectedOptions"][0].label
-                    });
+                        versionValue: event.target["selectedOptions"][0].label
+                    })
                 }
             }
         }
     }
 
     private onChangeUsecase = (usecaseValue, event) => {
-        this.setState({ usecaseValue });
+        this.setState({ usecaseValue })
     }
 
     private handleURLInput = moduleUrl => {
-        this.setState({ moduleUrl });
+        this.setState({ moduleUrl })
     }
 
     private fetchProductVersionDetails = () => {
@@ -580,18 +560,18 @@ class Versions extends Component<IProps, any> {
             .then((response) => {
                 if (response.ok) {
                     // console.log("[responseJSON] response.ok ", response.json())
-                    return response.json();
+                    return response.json()
                 } else if (response.status === 404) {
                     // console.log("Something unexpected happen!")
                     return products
                 } else {
-                    throw new Error(response.statusText);
+                    throw new Error(response.statusText)
                 }
             })
             .then(responseJSON => {
                 // tslint:disable-next-line: prefer-for-of
                 for (let i = 0; i < Object.keys(responseJSON).length; i++) {
-                    key = Object.keys(responseJSON)[i];
+                    key = Object.keys(responseJSON)[i]
                     const nameKey = "name"
                     const versionKey = "versions"
                     if ((key !== 'jcr:primaryType')) {
@@ -600,11 +580,11 @@ class Versions extends Component<IProps, any> {
                             const versionObj = responseJSON[key][versionKey]
 
                             if (versionObj) {
-                                let vKey;
+                                let vKey
                                 const versions = [{ value: '', label: 'Select a Version', disabled: false }]
                                 // tslint:disable-next-line: no-shadowed-variable
-                                const nameKey = "name";
-                                const uuidKey = "jcr:uuid";
+                                const nameKey = "name"
+                                const uuidKey = "jcr:uuid"
                                 for (const item in Object.keys(versionObj)) {
                                     if (Object.keys(versionObj)[item] !== undefined) {
                                         vKey = Object.keys(versionObj)[item]
@@ -641,22 +621,8 @@ class Versions extends Component<IProps, any> {
             })
             .catch((error) => {
                 console.log(error)
-            });
-        return products;
-    };
-
-    private getModuleUrl = (moduleUrl) => {
-        const backend = '/content/modules.query.json?nodeType=pant:module&where=[urlFragment]="' + moduleUrl + '"'
-        return backend
-
-    }
-
-    private renderRedirect = () => {
-        if (this.state.redirect) {
-            return <Redirect to='/search' />
-        } else {
-            return ""
-        }
+            })
+        return products
     }
 
     private loginRedirect = () => {
@@ -668,9 +634,7 @@ class Versions extends Component<IProps, any> {
     }
 
     private dismissNotification = () => {
-        if (this.state.isMissingFields === true) {
-            this.setState({ isMissingFields: false });
-        }
+            this.setState({ isMissingFields: false })
     }
 
     private hideSuccessAlert = () => {
@@ -693,7 +657,7 @@ class Versions extends Component<IProps, any> {
                         if (this.state.metadataResults.urlFragment) {
                             let url = this.state.metadataResults.urlFragment
                             if (url.indexOf('/') === 0) {
-                                url = url.replace('/', '');
+                                url = url.replace('/', '')
 
                             }
                             this.setState({ moduleUrl: url })
@@ -720,7 +684,7 @@ class Versions extends Component<IProps, any> {
                                                     versionValue: this.state.allProducts[item][j].label
                                                 })
 
-                                                break;
+                                                break
                                             }
                                         }
                                     }
