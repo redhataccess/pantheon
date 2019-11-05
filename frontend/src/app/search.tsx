@@ -161,7 +161,7 @@ class Search extends Component<IAppState, ISearchState> {
 
                 )}
                 {!this.state.loadIcon && (this.state.results.map((data, key) => (
-                  <DataListItemRow id="data-rows">
+                  <DataListItemRow id="data-rows" key={key}>
                     {this.props.userAuthenticated && !this.state.isEmptyResults &&
                       <Checkbox aria-labelledby="width-ex3-check1"
                         className="checkbox"
@@ -171,27 +171,27 @@ class Search extends Component<IAppState, ISearchState> {
                         id={data[Search.KEY_TRANSIENTPATH]}
                         name={data[Search.KEY_TRANSIENTPATH]}
                         onChange={this.handleDeleteCheckboxChange}
-                        key={key}
+                        key={'checked_' + key}
                       />}
 
-                    <DataListItemCells key={data[Search.KEY_TRANSIENTPATH]}
+                    <DataListItemCells key={"cells_" + key}
                       dataListCells={[
-                        <DataListCell key="div-title" width={2}>
+                        <DataListCell key={"title_" + key} width={2}>
                           {this.props.userAuthenticated &&
-                            <Link to={data['pant:transientPath']}>{data["jcr:title"]}</Link>}
+                            <Link to={data['pant:transientPath']} key={"link_" + key}>{data["jcr:title"]}</Link>}
                           {!this.props.userAuthenticated &&
                             <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
                         </DataListCell>,
-                        <DataListCell key="div-description" width={2}>
+                        <DataListCell key={"description_" + key} width={2}>
                           <span>{data["jcr:description"]}</span>
                         </DataListCell>,
-                        <DataListCell key="div-transient-source">
+                        <DataListCell key={"transient-source_" + key}>
                           <span>{data["pant:transientSource"]}</span>
                         </DataListCell>,
-                        <DataListCell key="div-transient-source-name">
+                        <DataListCell key={"transient-source-name_" + key}>
                           <span>{data["pant:transientSourceName"]}</span>
                         </DataListCell>,
-                        <DataListCell key="div-created">
+                        <DataListCell key={"created_" + key}>
                           <span >{this.formatDate(new Date(data["pant:dateUploaded"]))}</span>
                         </DataListCell>
                       ]}
@@ -343,7 +343,7 @@ class Search extends Component<IAppState, ISearchState> {
 
   private getRows = (event) => {
     if (event.key === 'Enter') {
-      this.setState({ page: 1 }, () => {
+      this.setState({ page: 1, loadIcon: true }, () => {
         this.doSearch()
       })
     }
