@@ -54,13 +54,11 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         // is not returning any results
         StringBuilder queryBuilder = new StringBuilder()
                 .append("SELECT m.* from [nt:base] AS m ")
-                .append("LEFT OUTER JOIN [nt:base] AS loc ON  ISDESCENDANTNODE(loc, m) ")
+                .append("LEFT OUTER JOIN [nt:base] AS loc ON  ISCHILDNODE(loc, m) ")
                 .append("LEFT OUTER JOIN [nt:base] AS draft ON  draft.[jcr:uuid] = loc.[draft] ")
                 .append("LEFT OUTER JOIN [nt:base] AS release ON  release.[jcr:uuid] = loc.[released] ")
-                .append("LEFT OUTER JOIN [nt:base] AS ver ON  ISDESCENDANTNODE(ver, loc) ")
                 .append("WHERE m.[jcr:primaryType] = 'pant:module' ")
                 .append("AND loc.[jcr:primaryType] = 'pant:moduleLocale' ")
-                .append("AND ver.[jcr:primaryType] = 'pant:moduleVersion' ")
                 .append("AND (draft.[jcr:primaryType] = 'pant:moduleVersion' OR draft.[jcr:primaryType] IS NULL) ")
                 .append("AND (release.[jcr:primaryType] = 'pant:moduleVersion' OR release.[jcr:primaryType] IS NULL) ")
                 .append("AND (draft.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
@@ -69,8 +67,9 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                     .append("OR release.[metadata/jcr:description] LIKE '%" + searchParam + "%')");
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
-            queryBuilder.append(" ORDER BY ver.[metadata/")
-                    .append(keyParam).append("] ")
+            queryBuilder.append(" ORDER BY coalesce(release.[metadata/")
+                    .append(keyParam).append("],draft.[metadata/")
+                    .append(keyParam).append("]) ")
                     .append(directionParam);
         }
 
