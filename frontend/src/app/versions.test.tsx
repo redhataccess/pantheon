@@ -121,7 +121,7 @@ describe('Versions tests', () => {
     it('should render a success Alert', () => {
         const wrapper = shallow(<Versions {...props} />)
         wrapper.setState({ 'login': true })
-        wrapper.setState({ 'successAlertVisble': true })
+        wrapper.setState({ 'successAlertVisible': true })
         const alert = wrapper.find(Alert)
         expect(alert.exists()).toBe(true)
     })
@@ -306,7 +306,7 @@ describe('Versions tests', () => {
             onGetVersion: (versionValue) => anymatch,
             productInfo: "Red Hat Enterprise Linux",
             updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
-            versionModulePath: "/modules/test/en_US/1"
+            versionModulePath: "versionPath"
         }
         state.updateDate("-", "-", 1, "1234")
         expect(state.modulePath).toEqual('somePath')

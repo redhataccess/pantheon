@@ -28,12 +28,8 @@ class Versions extends Component<IProps, any> {
     constructor(props) {
         super(props)
         this.state = {
-<<<<<<< HEAD
             canChangePublishState: true,
             initialLoad: true,
-=======
-            changePublishState: false,
->>>>>>> db3da869f7a74fa9fcaf4b0d637e2d808d10881d
             isArchiveDropDownOpen: false,
             isDropDownOpen: false,
             isHeadingToggle: true,
@@ -53,11 +49,7 @@ class Versions extends Component<IProps, any> {
             ],
             productValue: '',
             productVersion: '',
-<<<<<<< HEAD
             publishAlertVisible: false,
-            redirect: false,
-=======
->>>>>>> db3da869f7a74fa9fcaf4b0d637e2d808d10881d
 
             successAlertVisible: false,
             usecaseOptions: [
@@ -114,7 +106,6 @@ class Versions extends Component<IProps, any> {
                     Update Successful!
           </Alert>
                 }
-<<<<<<< HEAD
 
                 {this.state.publishAlertVisible && this.state.canChangePublishState === false && <Alert
                     variant="warning"
@@ -125,8 +116,6 @@ class Versions extends Component<IProps, any> {
           </Alert>
                 }
                 {this.state.initialLoad && this.fetchVersions()}
-=======
->>>>>>> db3da869f7a74fa9fcaf4b0d637e2d808d10881d
                 {this.state.metadataInitialLoad && this.getMetadata(this.state.metadataPath)}
                 <Card>
                     <div>
@@ -191,18 +180,6 @@ class Versions extends Component<IProps, any> {
                                                                     {/* <img src={CheckImage} width="20px" height="20px"/> */}
                                                                     {data.version}
                                                                 </DataListCell>,
-<<<<<<< HEAD
-                                                                <DataListCell key="published">
-                                                                    {data.publishedState === "Not published" && data.publishedState}
-                                                                    {data.publishedState === "Released" && data.updatedDate}
-                                                                </DataListCell>,
-                                                                <DataListCell key="updated">
-                                                                    {data.type === "draft" && (data.updatedDate.trim() !== "" ? data.updatedDate : "-")}
-                                                                    {data.type === "release" && (data.draftUploadDate.trim() !== "" ? data.draftUploadDate : "-")}
-                                                                </DataListCell>,
-                                                                <DataListCell key="publish_buttons">
-                                                                    {/* tslint:disable-next-line: jsx-no-lambda*/}
-=======
                                                                 <DataListCell key={'published_value_' + key1 + '_' + key2}>
                                                                     {data.publishedState==="Not published" && data.publishedState}
                                                                     {data.publishedState==="Released" && data.updatedDate}
@@ -212,7 +189,6 @@ class Versions extends Component<IProps, any> {
                                                                     {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
                                                                 </DataListCell>,
                                                                 <DataListCell key={'publish_buttons_' + key1 + '_' + key2}>
->>>>>>> db3da869f7a74fa9fcaf4b0d637e2d808d10881d
                                                                     <Button variant="primary" onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>{'  '}
                                                                     {/* tslint:disable-next-line: jsx-no-lambda*/}
                                                                     <Button variant="secondary" onClick={() => this.previewDoc(data.secondButtonText)}>{data.secondButtonText}</Button>{'  '}
@@ -258,15 +234,9 @@ class Versions extends Component<IProps, any> {
                                                                 <DataListCell key={"details_upload_time_" + key1 + '_' + key2} width={2}>
                                                                     <span className="sp-prop-nosort" id="span-source-type-upload-time">Upload Time</span>
                                                                 </DataListCell>,
-<<<<<<< HEAD
-                                                                <DataListCell key="updated" width={4}>
-                                                                    {data.type === "draft" && (data.updatedDate.trim() !== "" ? data.updatedDate : "-")}
-                                                                    {data.type === "release" && (data.draftUploadDate.trim() !== "" ? data.draftUploadDate : "-")}
-=======
                                                                 <DataListCell key={"details_updated_" + key1 + '_' + key2} width={4}>
                                                                     {data["type"]==="draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
                                                                     {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
->>>>>>> db3da869f7a74fa9fcaf4b0d637e2d808d10881d
                                                                 </DataListCell>,
                                                             ]}
                                                         />
@@ -281,13 +251,8 @@ class Versions extends Component<IProps, any> {
                                                                     <span>{'  '}</span>
                                                                     <span className="sp-prop-nosort" id="span-source-type-module-title">Module Title</span>
                                                                 </DataListCell>,
-<<<<<<< HEAD
-                                                                <DataListCell key="updated" width={4}>
-                                                                    {(data.metadata["jcr:title"] !== undefined) ? data.metadata["jcr:title"] : '-'}
-=======
                                                                 <DataListCell key={"details_jcr_title_" + key1 + '_' + key2} width={4}>
                                                                     {(data["metadata"]["jcr:title"] !== undefined) ? data["metadata"]["jcr:title"] : '-'}
->>>>>>> db3da869f7a74fa9fcaf4b0d637e2d808d10881d
                                                                 </DataListCell>,
                                                                 <DataListCell key={"details_context_package_" + key1 + '_' + key2} width={2}>
                                                                     <span className="sp-prop-nosort" id="span-source-type-context-package">Context Package</span>
@@ -411,11 +376,7 @@ class Versions extends Component<IProps, any> {
                                 this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
                                 this.draft[0].updatedDate = this.draft[0].metadata["pant:dateUploaded"] !== undefined ? this.draft[0].metadata["pant:dateUploaded"] : ''
                                 // this.props.modulePath starts with a slash
-<<<<<<< HEAD
-                                this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__;
-=======
                                 this.draft[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__
->>>>>>> db3da869f7a74fa9fcaf4b0d637e2d808d10881d
                             }
                             if (moduleVersion["jcr:uuid"] === releasedTag) {
                                 this.release[0].version = "Version " + moduleVersion.__name__
@@ -423,21 +384,12 @@ class Versions extends Component<IProps, any> {
                                 this.release[0].updatedDate = this.release[0].metadata["pant:datePublished"] !== undefined ? this.release[0].metadata["pant:datePublished"] : ''
                                 this.release[0].draftUploadDate = this.release[0].metadata["pant:dateUploaded"] !== undefined ? this.release[0].metadata["pant:dateUploaded"] : ''
                                 // this.props.modulePath starts with a slash
-<<<<<<< HEAD
-                                this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__;
-                            }
-                            if (releasedTag === undefined) {
-                                this.release[0].updatedDate = "-";
-                            }
-                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate), this.release[0].updatedDate, this.release[0]["version"], responseJSON['jcr:uuid']);
-=======
                                 this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__
                             }
                             if(releasedTag===undefined){
                                 this.release[0].updatedDate = "-"
                             }
                             this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate,this.release[0]["version"], responseJSON['jcr:uuid'])
->>>>>>> db3da869f7a74fa9fcaf4b0d637e2d808d10881d
 
                         }
                         return {
@@ -463,35 +415,10 @@ class Versions extends Component<IProps, any> {
     }
 
     private changePublishState = (buttonText) => {
-<<<<<<< HEAD
-        // Validate productValue before Publishs
+        // Validate productValue before Publish
         if (this.props.productInfo !== undefined && this.props.productInfo.trim() === "" && buttonText === "Publish") {
             this.setState({ canChangePublishState: false, publishAlertVisible: true })
         } else {
-=======
-        const formData = new FormData()
-        if (buttonText === "Publish") {
-            formData.append(":operation", "pant:release")
-            // console.log('Published file path:', this.props.modulePath)
-            this.draft[0].version = ""
-        } else {
-            formData.append(":operation", "pant:unpublish")
-            // console.log('Unpublished file path:', this.props.modulePath)
-            this.release[0].version = ""
-        }
-        fetch("/content" + this.props.modulePath, {
-            body: formData,
-            method: 'post'
-        }).then(response => {
-            if (response.status === 201 || response.status === 200) {
-                // console.log(buttonText + " works: " + response.status)
-                this.setState({ changePublishState: true })
-            } else {
-                // console.log(buttonText + " failed " + response.status)
-                this.setState({ changePublishState: true })
-            }
-        })
->>>>>>> db3da869f7a74fa9fcaf4b0d637e2d808d10881d
 
             if (this.state.canChangePublishState === true) {
                 const formData = new FormData();
@@ -623,7 +550,6 @@ class Versions extends Component<IProps, any> {
                 // tslint:disable-next-line: no-string-literal
                 if (this.state.versionUUID !== event.target["selectedOptions"][0].value) {
                     this.setState({
-<<<<<<< HEAD
                         // tslint:disable-next-line: no-string-literal
                         versionSelected: event.target["selectedOptions"][0].label,
                         // tslint:disable-next-line: no-string-literal
@@ -631,12 +557,6 @@ class Versions extends Component<IProps, any> {
                         // tslint:disable-next-line: no-string-literal
                         versionValue: event.target["selectedOptions"][0].label,
                     });
-=======
-                        versionSelected: event.target["selectedOptions"][0].label,
-                        versionUUID: event.target["selectedOptions"][0].value,
-                        versionValue: event.target["selectedOptions"][0].label
-                    })
->>>>>>> db3da869f7a74fa9fcaf4b0d637e2d808d10881d
                 }
             }
         }
