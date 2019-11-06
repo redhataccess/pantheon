@@ -9,6 +9,7 @@ import org.apache.sling.models.annotations.Default;
 
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.SlingResource;
+import com.redhat.pantheon.model.module.ModuleLocale;
 
 /**
  * Represents a ProductVersion as a sling resource.

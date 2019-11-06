@@ -109,6 +109,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         moduleMap.put("date_modified", dateModified.toInstant().toString());
+        //TODO: strip html tags
         moduleMap.put("body", releasedContent.get().cachedHtml.get().data.get());
 
         		
@@ -123,6 +124,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         if (!versionUUID.isEmpty()) {
         	try {
         		moduleMap.put("product_version", getResourceByUuid(versionUUID).getName());
+        		moduleMap.put("product_name", getResourceByUuid(versionUUID).getParent().getParent().getName());
         	}  catch (RepositoryException e) {
                 throw new RepositoryException(e);
             }
@@ -132,7 +134,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         // Process url_fragment from metadata
         String urlFragment = releasedMetadata.get().getValueMap().containsKey("urlFragment") ? releasedMetadata.get().urlFragment.get() : "";
         if (!urlFragment.isEmpty()) {
-        	moduleMap.put("context_url_fragment", urlFragment);
+        	moduleMap.put("vanity_url_fragment", urlFragment);
         }
         // remove unnecessary fields from the map
         moduleMap.remove("jcr:lastModified");
