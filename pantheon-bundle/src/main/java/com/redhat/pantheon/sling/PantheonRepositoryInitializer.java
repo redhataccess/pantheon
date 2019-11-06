@@ -1,5 +1,6 @@
 package com.redhat.pantheon.sling;
 
+import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.jcr.api.SlingRepository;
@@ -10,7 +11,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 /**
@@ -30,19 +30,21 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
 
     @Override
     public void processRepository(SlingRepository slingRepository) throws Exception {
-        setSyncServiceUrl(serviceResourceResolverProvider.getServiceResourceResolver());
+        setSyncServiceUrl();
     }
 
-    private void setSyncServiceUrl(ResourceResolver resourceResolver) throws RepositoryException, PersistenceException {
-        String syncServiceUrl = getSyncServiceUrl();
-        if (syncServiceUrl != null) {
-            resourceResolver.getResource("/conf/pantheon")
-                    .adaptTo(Node.class)
-                    .setProperty("pant:syncServiceUrl", syncServiceUrl);
-            resourceResolver.commit();
-            log.info("Synchronization service URL: " + syncServiceUrl);
-        } else {
-            log.info("Environment Variable SYNC_SERVICE_URL is not set.");
+    private void setSyncServiceUrl() throws RepositoryException, PersistenceException {
+        try (ResourceResolver resourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
+            String syncServiceUrl = getSyncServiceUrl();
+            if (syncServiceUrl != null) {
+                resourceResolver.getResource("/conf/pantheon")
+                        .adaptTo(ModifiableValueMap.class)
+                        .put("pant:syncServiceUrl", syncServiceUrl);
+                resourceResolver.commit();
+                log.info("Synchronization service URL: " + syncServiceUrl);
+            } else {
+                log.info("Environment Variable SYNC_SERVICE_URL is not set.");
+            }
         }
     }
 

@@ -1,23 +1,19 @@
 package com.redhat.pantheon.sling;
 
+import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.jcr.api.SlingRepository;
-import org.apache.sling.testing.mock.sling.ResourceResolverType;
-import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
-@ExtendWith({MockitoExtension.class, SlingContextExtension.class})
+@ExtendWith({MockitoExtension.class})
 class PantheonRepositoryInitializerTest {
-
-
-    SlingContext sc = new SlingContext(ResourceResolverType.JCR_MOCK);
 
     @Mock
     ServiceResourceResolverProvider serviceResourceResolverProvider;
@@ -25,10 +21,12 @@ class PantheonRepositoryInitializerTest {
     @Test
     void processRepository() throws Exception {
         // Given
-        sc.build()
-                .resource("/conf/pantheon")
-        .commit();
-        when(serviceResourceResolverProvider.getServiceResourceResolver()).thenReturn(sc.resourceResolver());
+        ResourceResolver resourceResolver = mock(ResourceResolver.class);
+        Resource configNode = mock(Resource.class);
+        ModifiableValueMap mvm = mock(ModifiableValueMap.class);
+        when(resourceResolver.getResource(eq("/conf/pantheon"))).thenReturn(configNode);
+        when(configNode.adaptTo(ModifiableValueMap.class)).thenReturn(mvm);
+        when(serviceResourceResolverProvider.getServiceResourceResolver()).thenReturn(resourceResolver);
         PantheonRepositoryInitializer pri = new PantheonRepositoryInitializer(serviceResourceResolverProvider);
         // partial mock
         pri = spy(pri);
@@ -38,23 +36,20 @@ class PantheonRepositoryInitializerTest {
         pri.processRepository(mock(SlingRepository.class));
 
         // Then
-        assertEquals("http://localhost:8080",
-                sc.resourceResolver().getResource("/conf/pantheon").getValueMap().get("pant:syncServiceUrl"));
+        verify(mvm).put(eq("pant:syncServiceUrl"), eq("http://localhost:8080"));
     }
 
     @Test
     void processRepositoryWithoutSyncservice() throws Exception {
         // Given
-        sc.build()
-                .resource("/conf/pantheon")
-                .commit();
-        when(serviceResourceResolverProvider.getServiceResourceResolver()).thenReturn(sc.resourceResolver());
+        ResourceResolver resourceResolver = mock(ResourceResolver.class);
+        when(serviceResourceResolverProvider.getServiceResourceResolver()).thenReturn(resourceResolver);
         PantheonRepositoryInitializer pri = new PantheonRepositoryInitializer(serviceResourceResolverProvider);
 
         // When
         pri.processRepository(mock(SlingRepository.class));
 
         // Then
-        assertNull(sc.resourceResolver().getResource("/conf/pantheon").getValueMap().get("pant:syncServiceUrl"));
+        verify(resourceResolver, times(0)).getResource(any());
     }
 }
