@@ -1,0 +1,223 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Search tests should render default Search component 1`] = `
+<Fragment>
+  <div>
+    <div>
+      <SearchFilter
+        isSortedUp={true}
+        onChange={[Function]}
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onSort={[Function]}
+        value=""
+      />
+      <div
+        className="notification-container"
+      >
+        <Pagination
+          bottom={false}
+          handleMoveLeft={[Function]}
+          handleMoveRight={[Function]}
+          handleMoveToFirst={[Function]}
+          handlePerPageLimit={[Function]}
+          nextPageRecordCount={1}
+          pageNumber={1}
+          perPageLimit={25}
+          showDropdownOptions={true}
+        />
+      </div>
+      <DataList
+        aria-label="Simple data list"
+      >
+        <DataListItem
+          aria-labelledby="simple-item1"
+        >
+          <DataListItemRow
+            id="data-rows-header"
+          >
+            <Checkbox
+              aria-label="controlled checkbox example"
+              aria-labelledby="width-ex1-check1"
+              checked={false}
+              className="checkbox"
+              id="check"
+              isChecked={false}
+              isDisabled={false}
+              isValid={true}
+              onChange={[Function]}
+            />
+            <DataListItemCells
+              dataListCells={
+                Array [
+                  <DataListCell
+                    width={2}
+                  >
+                    <button
+                      aria-label="sort column by name"
+                      className="sp-prop"
+                      id="span-name"
+                      onClick={[Function]}
+                    >
+                      Name
+                    </button>
+                  </DataListCell>,
+                  <DataListCell
+                    width={2}
+                  >
+                    <button
+                      aria-label="sort column by description"
+                      className="sp-prop"
+                      id="span-name"
+                      onClick={[Function]}
+                    >
+                      Description
+                    </button>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-type"
+                    >
+                      Source Type
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-name"
+                    >
+                      Source Name
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <button
+                      aria-label="sort column by upload time"
+                      className="sp-prop"
+                      id="span-name"
+                      onClick={[Function]}
+                    >
+                      Upload Time
+                    </button>
+                  </DataListCell>,
+                ]
+              }
+            />
+          </DataListItemRow>
+          <DataListItemRow
+            id="data-rows"
+          />
+          <DataListItemRow
+            id="data-rows"
+            key="0"
+          >
+            <Checkbox
+              aria-label="controlled checkbox example"
+              aria-labelledby="width-ex3-check1"
+              checked={false}
+              className="checkbox"
+              id=""
+              isChecked={false}
+              isDisabled={false}
+              isValid={true}
+              key="checked_0"
+              name=""
+              onChange={[Function]}
+            />
+            <DataListItemCells
+              dataListCells={
+                Array [
+                  <DataListCell
+                    width={2}
+                  >
+                    <Link
+                      to=""
+                    >
+                      
+                    </Link>
+                  </DataListCell>,
+                  <DataListCell
+                    width={2}
+                  >
+                    <span>
+                      
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span />
+                  </DataListCell>,
+                  <DataListCell>
+                    <span>
+                      
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span>
+                      
+                    </span>
+                  </DataListCell>,
+                ]
+              }
+              key="cells_0"
+            />
+          </DataListItemRow>
+          <DataListItemRow
+            id="data-rows"
+          />
+        </DataListItem>
+      </DataList>
+      <div
+        className="notification-container"
+      >
+        <Pagination
+          bottom={true}
+          handleMoveLeft={[Function]}
+          handleMoveRight={[Function]}
+          handleMoveToFirst={[Function]}
+          handlePerPageLimit={[Function]}
+          nextPageRecordCount={1}
+          pageNumber={1}
+          perPageLimit={25}
+          showDropdownOptions={false}
+        />
+        <BuildInfo />
+      </div>
+      <div
+        className="alert"
+      />
+    </div>
+  </div>
+</Fragment>
+`;
+
+exports[`Search tests test buildSearchUrl function 1`] = `undefined`;
+
+exports[`Search tests test cancelDeleteOperation function 1`] = `undefined`;
+
+exports[`Search tests test confirmDeleteOperation function 1`] = `undefined`;
+
+exports[`Search tests test delete function 1`] = `undefined`;
+
+exports[`Search tests test dismissNotification function 1`] = `undefined`;
+
+exports[`Search tests test doSearch function 1`] = `undefined`;
+
+exports[`Search tests test fetchTimeout function 1`] = `undefined`;
+
+exports[`Search tests test getRows function 1`] = `undefined`;
+
+exports[`Search tests test handleDeleteCheckboxChange function 1`] = `undefined`;
+
+exports[`Search tests test handleSelectAll function 1`] = `undefined`;
+
+exports[`Search tests test hideAlertOne function 1`] = `undefined`;
+
+exports[`Search tests test newSearch function 1`] = `undefined`;
+
+exports[`Search tests test setInput function 1`] = `undefined`;
+
+exports[`Search tests test sortByDescription function 1`] = `undefined`;
+
+exports[`Search tests test sortByName function 1`] = `undefined`;
+
+exports[`Search tests test sortByUploadTime function 1`] = `undefined`;

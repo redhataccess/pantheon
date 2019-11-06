@@ -1,0 +1,334 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Versions tests should render Versions component 1`] = `
+<Fragment>
+  <Card>
+    <div>
+      <DataList
+        aria-label="Simple data list"
+      >
+        <DataListItem
+          aria-labelledby="simple-item1"
+          isExpanded={true}
+        >
+          <DataListItemRow
+            id="data-rows-header"
+          >
+            <DataListToggle
+              aria-controls="width-ex3-expand1"
+              id="width-ex3-toggle1"
+              isExpanded={true}
+              onClick={[Function]}
+            />
+            <DataListItemCells
+              dataListCells={
+                Array [
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-type-version"
+                    >
+                      Version
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-type-version-published"
+                    >
+                      Published
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-type-version-draft-uploaded"
+                    >
+                      Draft Uploaded
+                    </span>
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-name-version-publish-buttons"
+                    />
+                  </DataListCell>,
+                  <DataListCell>
+                    <span
+                      className="sp-prop-nosort"
+                      id="span-source-name"
+                    />
+                  </DataListCell>,
+                ]
+              }
+            />
+          </DataListItemRow>
+        </DataListItem>
+        <DataListContent
+          aria-label="Secondary Content Details"
+          id="Content"
+          isHidden={false}
+          key="details_dlc"
+          noPadding={true}
+        />
+      </DataList>
+    </div>
+  </Card>
+  <Modal
+    actions={
+      Array [
+        <Unknown
+          form="edit_metadata"
+          onClick={[Function]}
+          variant="primary"
+        >
+          Save
+        </Unknown>,
+        <Unknown
+          onClick={[Function]}
+          variant="secondary"
+        >
+          Cancel
+        </Unknown>,
+      ]
+    }
+    appendTo={<body />}
+    ariaDescribedById="edit-metadata"
+    className=""
+    header={
+      <React.Fragment>
+        <Title
+          headingLevel="h1"
+          size="2xl"
+        >
+          Edit Metadata
+        </Title>
+        <br />
+        <p
+          className="pf-u-pl-sm"
+        >
+          All fields are required.
+        </p>
+      </React.Fragment>
+    }
+    hideTitle={false}
+    isFooterLeftAligned={false}
+    isLarge={false}
+    isOpen={false}
+    isSmall={false}
+    onClose={[Function]}
+    showClose={true}
+    title="Edit metadata"
+    width="60%"
+  >
+    <div />
+    <div
+      className="app-container"
+    />
+    <Form
+      id="edit_metadata"
+      isHorizontal={true}
+    >
+      <FormGroup
+        fieldId="product-name"
+        isRequired={true}
+        label="Product Name"
+      >
+        <InputGroup>
+          <FormSelect
+            aria-label="FormSelect Product"
+            className=""
+            isDisabled={false}
+            isRequired={false}
+            isValid={true}
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            value=""
+          >
+            <FormSelectOption
+              isDisabled={false}
+              key="0"
+              label="Select a Product"
+              value=""
+            />
+          </FormSelect>
+          <FormSelect
+            aria-label="FormSelect Version"
+            className=""
+            id="productVersion"
+            isDisabled={false}
+            isRequired={false}
+            isValid={true}
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            value=""
+          >
+            <FormSelectOption
+              isDisabled={false}
+              key=""
+              label="Select a Version"
+              required={false}
+              value=""
+            />
+          </FormSelect>
+        </InputGroup>
+      </FormGroup>
+      <FormGroup
+        fieldId="document-usecase"
+        isRequired={true}
+        label="Document use case"
+      >
+        <FormSelect
+          aria-label="FormSelect Usecase"
+          className=""
+          isDisabled={false}
+          isRequired={false}
+          isValid={true}
+          onBlur={[Function]}
+          onChange={[Function]}
+          onFocus={[Function]}
+          value=""
+        >
+          <FormSelectOption
+            key="usecase_0"
+            label="Select Use Case"
+            value="Select Use Case"
+          />
+          <FormSelectOption
+            key="usecase_1"
+            label="Administer"
+            value="Administer"
+          />
+          <FormSelectOption
+            key="usecase_2"
+            label="Deploy"
+            value="Deploy"
+          />
+          <FormSelectOption
+            key="usecase_3"
+            label="Develop"
+            value="Develop"
+          />
+          <FormSelectOption
+            key="usecase_4"
+            label="Install"
+            value="Install"
+          />
+          <FormSelectOption
+            key="usecase_5"
+            label="Migrate"
+            value="Migrate"
+          />
+          <FormSelectOption
+            key="usecase_6"
+            label="Monitor"
+            value="Monitor"
+          />
+          <FormSelectOption
+            key="usecase_7"
+            label="Network"
+            value="Network"
+          />
+          <FormSelectOption
+            key="usecase_8"
+            label="Plan"
+            value="Plan"
+          />
+          <FormSelectOption
+            key="usecase_9"
+            label="Provision"
+            value="Provision"
+          />
+          <FormSelectOption
+            key="usecase_10"
+            label="Release"
+            value="Release"
+          />
+          <FormSelectOption
+            key="usecase_11"
+            label="Troubleshoot"
+            value="Troubleshoot"
+          />
+          <FormSelectOption
+            key="usecase_12"
+            label="Optimize"
+            value="Optimize"
+          />
+        </FormSelect>
+      </FormGroup>
+      <FormGroup
+        fieldId="url-fragment"
+        isRequired={true}
+        label="Vanity URL fragment"
+      >
+        <InputGroup>
+          <InputGroupText
+            aria-label="/"
+            id="slash"
+          >
+            <span>
+              /
+            </span>
+          </InputGroupText>
+          <TextInput
+            aria-label={null}
+            className=""
+            id="url-fragment"
+            isDisabled={false}
+            isReadOnly={false}
+            isRequired={true}
+            isValid={true}
+            onChange={[Function]}
+            placeholder="Enter URL"
+            type="text"
+            value=""
+          />
+        </InputGroup>
+      </FormGroup>
+      <div>
+        <input
+          name="productVersion@TypeHint"
+          type="hidden"
+          value="Reference"
+        />
+      </div>
+    </Form>
+  </Modal>
+</Fragment>
+`;
+
+exports[`Versions tests test changePublishState function 1`] = `undefined`;
+
+exports[`Versions tests test dismissNotification function 1`] = `undefined`;
+
+exports[`Versions tests test fetchProductVersionDetails function 1`] = `Array []`;
+
+exports[`Versions tests test fetchVersions function 1`] = `undefined`;
+
+exports[`Versions tests test getHarrayChildNamed function 1`] = `""`;
+
+exports[`Versions tests test getHarrayChildNamed function 2`] = `""`;
+
+exports[`Versions tests test handleURLInput function 1`] = `undefined`;
+
+exports[`Versions tests test hideSuccessAlert function 1`] = `undefined`;
+
+exports[`Versions tests test loginRedirect function 1`] = `""`;
+
+exports[`Versions tests test onArchiveSelect function 1`] = `undefined`;
+
+exports[`Versions tests test onArchiveToggle function 1`] = `undefined`;
+
+exports[`Versions tests test onChangeProduct function 1`] = `undefined`;
+
+exports[`Versions tests test onChangeUsecase function 1`] = `undefined`;
+
+exports[`Versions tests test onExpandableToggle function 1`] = `undefined`;
+
+exports[`Versions tests test onHeadingToggle function 1`] = `undefined`;
+
+exports[`Versions tests test previewDoc function 1`] = `undefined`;
+
+exports[`Versions tests test saveMetadata function 1`] = `undefined`;
