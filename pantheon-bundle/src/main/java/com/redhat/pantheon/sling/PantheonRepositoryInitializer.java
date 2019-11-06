@@ -34,14 +34,22 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
     }
 
     private void setSyncServiceUrl(ResourceResolver resourceResolver) throws RepositoryException, PersistenceException {
-        if (System.getenv("SYNC_SERVICE_URL") != null) {
+        String syncServiceUrl = getSyncServiceUrl();
+        if (syncServiceUrl != null) {
             resourceResolver.getResource("/conf/pantheon")
                     .adaptTo(Node.class)
-                    .setProperty("pant:syncServiceUrl", System.getenv("SYNC_SERVICE_URL"));
+                    .setProperty("pant:syncServiceUrl", syncServiceUrl);
             resourceResolver.commit();
-            log.info("Synchronization service URL: " + System.getenv("SYNC_SERVICE_URL"));
+            log.info("Synchronization service URL: " + syncServiceUrl);
         } else {
             log.info("Environment Variable SYNC_SERVICE_URL is not set.");
         }
+    }
+
+    /**
+     * Retrieves the environment variable value for the sync service url
+     */
+    String getSyncServiceUrl() {
+        return System.getenv("SYNC_SERVICE_URL");
     }
 }
