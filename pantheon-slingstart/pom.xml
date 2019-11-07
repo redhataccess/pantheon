@@ -27,6 +27,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <createWebapp>true</createWebapp>
+                    <modelDirectory>${basedir}/src/main/provisioning</modelDirectory>
                 </configuration>
             </plugin>
         </plugins>
