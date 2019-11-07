@@ -67,8 +67,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                     .append("OR release.[metadata/jcr:description] LIKE '%" + searchParam + "%')");
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
-            queryBuilder.append(" ORDER BY coalesce(release.[metadata/")
-                    .append(keyParam).append("],draft.[metadata/")
+            queryBuilder.append(" ORDER BY coalesce(draft.[metadata/")
+                    .append(keyParam).append("],release.[metadata/")
                     .append(keyParam).append("]) ")
                     .append(directionParam);
         }
