@@ -129,7 +129,6 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
                 throw new RepositoryException(e);
             }
         }
-        // Process product_name based off version UUID reference
         
         // Process url_fragment from metadata
         String urlFragment = releasedMetadata.get().getValueMap().containsKey("urlFragment") ? releasedMetadata.get().urlFragment.get() : "";

@@ -42,6 +42,8 @@ public class Events {
         ModuleVersionPublishedEvent event = new ModuleVersionPublishedEvent(moduleVersion.getPath());
         Map<String, Object> props = newHashMap();
         props.put(Event.class.getName(), event);
+        
+        
         Job job = jobManager.createJob(MODULE_POST_PUBLISH_EVENT)
                 .properties(props)
                 .add();
@@ -49,5 +51,8 @@ public class Events {
         if(job == null) {
             throw new RuntimeException("Something went wrong creating a " + MODULE_POST_PUBLISH_EVENT + " job");
         }
+        
+//      Module module = moduleVersion.getParent().getParent().adaptTo(Module.class);
+//      ModuleVersionPublishedEvent event2 = new ModuleVersionPublishedEvent(module.get().getValueMap().containsKey("jcr:uuid"));
     }
 }
