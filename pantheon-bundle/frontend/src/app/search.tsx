@@ -23,7 +23,7 @@ export interface ISearchState {
   isEmptyResults: boolean
   isModalOpen: boolean
   isSortedUp: boolean
-  loadIcon: boolean
+  displayLoadIcon: boolean
   moduleName: string
   modulePath: string
   moduleType: string
@@ -51,11 +51,11 @@ class Search extends Component<IAppState, ISearchState> {
       columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
       confirmDelete: false,
       deleteState: '',
+      displayLoadIcon: true,
       input: '',
       isEmptyResults: false,
       isModalOpen: false,
       isSortedUp: true,
-      loadIcon: true,
       moduleName: '',
       modulePath: '',
       moduleType: '',
@@ -145,7 +145,7 @@ class Search extends Component<IAppState, ISearchState> {
                       : null
                   }
                 </DataListItemRow>
-                {this.state.loadIcon && (
+                {this.state.displayLoadIcon && (
                   <Level gutter="md">
                     <LevelItem />
                     <LevelItem>
@@ -160,7 +160,7 @@ class Search extends Component<IAppState, ISearchState> {
                   </Level>
 
                 )}
-                {!this.state.loadIcon && (this.state.results.map((data, key) => (
+                {!this.state.displayLoadIcon && (this.state.results.map((data, key) => (
                   <DataListItemRow id="data-rows" key={key}>
                     {this.props.userAuthenticated && !this.state.isEmptyResults &&
                       <Checkbox aria-labelledby="width-ex3-check1"
@@ -343,7 +343,7 @@ class Search extends Component<IAppState, ISearchState> {
 
   private getRows = (event) => {
     if (event.key === 'Enter') {
-      this.setState({ page: 1, loadIcon: true }, () => {
+      this.setState({ page: 1 }, () => {
         this.doSearch()
       })
     }
@@ -357,20 +357,22 @@ class Search extends Component<IAppState, ISearchState> {
 
   // Handle gateway timeout on slow connections.
   private doSearch = () => {
+    console.log("do seach called")
+    this.setState({ displayLoadIcon: true })
     fetch(this.buildSearchUrl())
       .then(response => response.json())
       .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
       .then(() => {
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
+            displayLoadIcon: false,
             isEmptyResults: true,
-            loadIcon: false,
             selectAllCheckValue: false
           })
         } else {
           this.setState({
+            displayLoadIcon: false,
             isEmptyResults: false,
-            loadIcon: false,
             selectAllCheckValue: false,
           })
         }
