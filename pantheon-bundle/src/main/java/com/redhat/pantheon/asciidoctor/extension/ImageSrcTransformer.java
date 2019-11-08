@@ -1,5 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
+import org.apache.jackrabbit.oak.commons.PathUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.asciidoctor.ast.Document;
@@ -36,10 +37,8 @@ public class ImageSrcTransformer extends Postprocessor {
         doc.select("img")
                 .forEach(imageElement -> {
                     String imgSrc = imageElement.attr("src");
-                    Resource resolvedImage = resourceResolver.getResource(module.getParent(), imgSrc);
-                    if(resolvedImage != null) {
-                        imageElement.attr("src", encodeImgSrc(resolvedImage.getPath()));
-                    }
+                    String imagePath = PathUtils.concat(module.getParent().getPath(), imgSrc);
+                    imageElement.attr("src", encodeImgSrc(imagePath));
                 });
         output = doc.html();
 

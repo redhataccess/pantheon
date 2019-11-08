@@ -8,9 +8,7 @@ import org.asciidoctor.ast.Document;
 import org.jsoup.Jsoup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 
-import java.util.Base64;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,6 +29,8 @@ class ImageSrcTransformerTest {
                 "<p>" +
                 "with a single image " +
                 "<img src='some/image/path'>" +
+                "<img src='./some/image/path'>" +
+                "<img src='../nonexistent/image/path'>" +
                 "</p>" +
                 "</html>";
         sc.build()
