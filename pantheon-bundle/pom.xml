@@ -94,7 +94,19 @@
                         <artifactId>org.apache.sling.bnd.models</artifactId>
                         <version>1.0.0</version>
                     </dependency>
+                    <!-- https://mvnrepository.com/artifact/org.fusesource.stompjms/stompjms-client -->
+					<dependency>
+					    <groupId>org.fusesource.stompjms</groupId>
+					    <artifactId>stompjms-client</artifactId>
+					    <version>1.19</version>
+					</dependency>
+					<dependency>
+						  <groupId>org.apache.activemq</groupId>
+						  <artifactId>activemq-all</artifactId>
+						  <version>5.11.0</version>
+						</dependency>
                 </dependencies>
+                
             </plugin>
             <plugin>
                 <groupId>org.apache.sling</groupId>
@@ -114,6 +126,19 @@
                     <target>8</target>
                 </configuration>
             </plugin>
+            <!-- <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>  -->
             <!-- JUnit 5 requires Surefire version 2.22.1 or higher -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
