@@ -44,7 +44,7 @@
             </resource>
             <resource>
                 <directory>frontend/dist</directory>
-                <targetPath>SLING-INF/content/pantheon/</targetPath>
+                <targetPath>SLING-INF/SPA</targetPath>
                 <filtering>false</filtering>
             </resource>
         </resources>
@@ -70,6 +70,7 @@
                             SLING-INF/root;overwrite:=false;overwriteProperties:=true;uninstall:=false;path:=/,
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
                             SLING-INF/content;overwrite:=false;uninstall:=false;path:=/content,
+                            SLING-INF/SPA;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/pantheon,
                             SLING-INF/users;overwrite:=false;uninstall:=false,
                             SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index,
                         ]]></Sling-Initial-Content>
