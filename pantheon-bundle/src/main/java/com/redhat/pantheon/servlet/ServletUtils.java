@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A set of utilities when working with servlets.
@@ -128,5 +130,37 @@ public final class ServletUtils {
         response.setContentType("application/json");
         Writer w = response.getWriter();
         w.write(new ObjectMapper().writer().writeValueAsString(payload));
+    }
+
+    /**
+     * Utility method to help with path parameter extraction. Servlet filters in Sling may be
+     * mapped to regular expression patterns. Since these expressions allow for named groups,
+     * the provided matcher allows for extraction of these path sections or path paramters.
+     *
+     * Example:
+     *
+     * For a servlet filter path regex = /servlet/(?<param1>[^/]+)/(?<param2>[^/]+)
+     * and an actual filter path = /servlet/value1/value2
+     *
+     * getPathMatcher(regex, request).group("param1") == "value1"
+     * getPathMatcher(regex, request).group("param2") == "value2"
+     *
+     * more complex manipulations may be done depending on the regular expression and use case.
+     *
+     * @param pathRegexp The Path defining regular expression. This regex ideally should be the same
+     *                  one used in the {@link org.apache.sling.servlets.annotations.SlingServletFilter}
+     *                  annotation, but it's not necessary. To be useful for extraction it should contain
+     *                  either named or ordered groups.
+     * @param request The request being operated on. The actual path will be extracted from this request.
+     * @return A matcher to extract values from or validate the path of an actual request.
+     * @throws {@link RuntimeException} if the request's path does not match the provided regular expression
+     */
+    public static Matcher getPathMatcher(final String pathRegexp, final HttpServletRequest request) {
+        Matcher matcher = Pattern.compile(pathRegexp).matcher(request.getPathInfo());
+        if(!matcher.matches()) {
+            throw new RuntimeException("Request path: " + request.getPathInfo() + " does not match provided regexp: "
+                    + pathRegexp);
+        }
+        return matcher;
     }
 }

@@ -53,6 +53,7 @@ public class Html {
      * @return An html extactor function.
      */
     public static Function<Document, String> getBody() {
-        return document -> document.body().outerHtml();
+        // returns the inner content of the body tag
+        return document -> document.body().html();
     }
 }
