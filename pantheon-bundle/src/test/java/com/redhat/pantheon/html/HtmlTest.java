@@ -66,7 +66,7 @@ class HtmlTest {
     void getBody() {
         // Given
         String html = "<html>" +
-                "<head>This is the head</head>" +
+                "<head><title>This is the head</title></head>" +
                 "<body>This is the body</body>" +
                 "</html>";
 
@@ -76,8 +76,6 @@ class HtmlTest {
                 .apply(html);
 
         // Then
-        assertTrue(body.startsWith("<body>"));
-        assertTrue(body.endsWith("</body>"));
-        assertTrue(body.contains("This is the body"));
+        assertEquals("This is the body", body);
     }
 }
