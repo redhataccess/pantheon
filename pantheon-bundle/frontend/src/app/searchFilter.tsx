@@ -12,6 +12,8 @@ class SearchFilter extends Component<any, any> {
       allProducts: [],
       chipGroups: [],
       moduleTypeValue: '',
+     //  this.props.value+"+sortBy="+this.state.sortByValue+"+""type="+this.state.moduleTypeValue+"+"
+      // 
       productOptions: [
         { value: '', label: 'Select a Product', disabled: false },
       ],
@@ -132,27 +134,28 @@ class SearchFilter extends Component<any, any> {
           key = i
           const nameKey = "name"
           const versionKey = "versions"
+          const uuidKey = "jcr:uuid";
           if ((key !== 'jcr:primaryType')) {
             if (responseJSON[key][nameKey] !== undefined) {
               const pName = responseJSON[key][nameKey]
               const versionObj = responseJSON[key][versionKey]
-
+              const productUUID = responseJSON[key][uuidKey]
               if (versionObj) {
                 let vKey;
                 const versions = [{ value: '', label: 'Select a Version', disabled: false }, { value: 'All', label: 'All', disabled: false },]
-                const uuidKey = "jcr:uuid";
                 for (const item in Object.keys(versionObj)) {
                   if (Object.keys(versionObj)[item] !== undefined) {
                     vKey = Object.keys(versionObj)[item]
                     if (vKey !== 'jcr:primaryType') {
                       if (versionObj[vKey][nameKey]) {
                         versions.push({ value: versionObj[vKey][uuidKey], label: versionObj[vKey][nameKey], disabled: false })
+                        console.log("thing: " + versionObj[vKey][uuidKey])
                       }
                     }
                   }
                 }
-
                 products[pName] = versions
+                // create new map with pName = uuid and track the uuid for the url there.
               }
             }
           }
@@ -199,10 +202,14 @@ class SearchFilter extends Component<any, any> {
   }
 
   private onChangeSort = (sortByValue) => {
-    this.setState({ sortByValue });
+    this.setState({ sortByValue }, () => {
+        this.setQuery();
+    });
   }
   private onChangeModuleType = (moduleTypeValue) => {
-    this.setState({ moduleTypeValue });
+    this.setState({ moduleTypeValue }, () => {
+        this.setQuery();
+    });
   }
 
   private deleteItem = (id) => (event: any) => {
@@ -214,9 +221,13 @@ class SearchFilter extends Component<any, any> {
         // check if this is the last item in the group category
         if (copyOfChipGroups[i].chips.length === 0) {
           copyOfChipGroups.splice(i, 1);
-          this.setState({ chipGroups: copyOfChipGroups });
+          this.setState({ chipGroups: copyOfChipGroups }, () => {
+            this.setQuery();
+        });
         } else {
-          this.setState({ chipGroups: copyOfChipGroups });
+          this.setState({ chipGroups: copyOfChipGroups }, () => {
+            this.setQuery();
+        });
         }
       }
     }
@@ -252,9 +263,16 @@ class SearchFilter extends Component<any, any> {
         chips: [this.state.versionSelected]
       })
     }
-    this.setState({ chipGroups: copyOfChipGroups });
-    this.props.filterQuery(this.state.productValue)
+    this.setState({ chipGroups: copyOfChipGroups }, () => {
+      this.setQuery();
+  });
   };
+
+  // Should be called after each change of state
+  private setQuery = () => {
+    this.props.filterQuery("search="+this.props.value+"&product="+this.state.productUUID+"&productversion="+this.state.versionUUID+"&type="+this.state.moduleTypeValue+"&key="+this.state.sortByValue+"&direction="+this.props.isSortedUp)
+  }
+
 }
 
 export { SearchFilter }; 
