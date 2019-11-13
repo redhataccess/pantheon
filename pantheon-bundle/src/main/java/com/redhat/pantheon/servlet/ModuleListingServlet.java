@@ -7,6 +7,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
@@ -59,7 +60,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
         // Add all product revisions resolved from product ids
         try {
-            productVersionIds = ArrayUtils.addAll(productVersionIds, resolveProductVersions(request, productIds));
+            productVersionIds = ArrayUtils.addAll(productVersionIds,
+                    resolveProductVersions(request.getResourceResolver(), productIds));
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
@@ -103,12 +105,21 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         return queryBuilder.toString();
     }
 
-    private String[] resolveProductVersions(SlingHttpServletRequest request, String[] productIds) throws RepositoryException {
+    /**
+     * Auxiliary method to resolve product version ids from a single product id.
+     * @param resourceResolver The resource resolver to use to resolve the product version ids
+     * @param productIds The collection of product ids to resolve
+     * @return An array containing all product version ids which belong to any of the products which
+     * ids has been passed in the parameters
+     * @throws RepositoryException If there is a problem doing the resolution
+     */
+    private String[] resolveProductVersions(ResourceResolver resourceResolver, String[] productIds)
+            throws RepositoryException {
         if(productIds == null || productIds.length == 0) {
             return new String[]{};
         }
 
-        JcrQueryHelper queryHelper = new JcrQueryHelper(request.getResourceResolver());
+        JcrQueryHelper queryHelper = new JcrQueryHelper(resourceResolver);
 
         // product conditions
         String productCondition = "";
