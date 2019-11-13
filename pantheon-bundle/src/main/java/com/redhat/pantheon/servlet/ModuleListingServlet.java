@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet;
 
+import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
@@ -66,6 +67,13 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             throw new RuntimeException(e);
         }
 
+        // Condition for module Use Case
+        String useCaseCondition = "";
+        if(!Strings.isNullOrEmpty(type)) {
+            useCaseCondition = "AND (draft.[metadata/documentUsecase] = '" + type + "' " +
+                    "OR release.[metadata/documentUsecase] = '" + type + "') ";
+        }
+
         // product version conditions
         String productVersionCondition = "";
         if (productVersionIds != null && productVersionIds.length > 0) {
@@ -93,6 +101,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                     .append("OR draft.[metadata/jcr:description] LIKE '%" + searchParam + "%' ")
                     .append("OR release.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
                     .append("OR release.[metadata/jcr:description] LIKE '%" + searchParam + "%') ")
+                .append(useCaseCondition)
                 .append(productVersionCondition);
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
