@@ -1,7 +1,5 @@
 package com.redhat.pantheon.extension;
 
-import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
-import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
 import org.osgi.service.component.annotations.Activate;
@@ -24,7 +22,7 @@ import static com.google.common.collect.Maps.newHashMap;
 public class Events {
 
     private static final Logger log = LoggerFactory.getLogger(Events.class);
-    public static final String MODULE_POST_PUBLISH_EVENT = "com/redhat/pantheon/ModulePostPublish";
+    public static final String EVENT_TOPIC_NAME = "com/redhat/pantheon/Event";
 
     private JobManager jobManager;
 
@@ -33,21 +31,15 @@ public class Events {
         this.jobManager = jobManager;
     }
 
-    /**
-     * Fires an event indicating that a module version has been publsihed. As its name implies,
-     * this event should be fired only after a module is published.
-     * @param moduleVersion The module version which has just been published.
-     */
-    public void fireModuleVersionPublishedEvent(ModuleVersion moduleVersion) {
-        ModuleVersionPublishedEvent event = new ModuleVersionPublishedEvent(moduleVersion.getPath());
+    public void fireEvent(Event evt) {
         Map<String, Object> props = newHashMap();
-        props.put(Event.class.getName(), event);
-        Job job = jobManager.createJob(MODULE_POST_PUBLISH_EVENT)
+        props.put(Event.class.getName(), evt);
+        Job job = jobManager.createJob(EVENT_TOPIC_NAME)
                 .properties(props)
                 .add();
 
         if(job == null) {
-            throw new RuntimeException("Something went wrong creating a " + MODULE_POST_PUBLISH_EVENT + " job");
+            throw new RuntimeException("Something went wrong firing a " + evt.getClass().getName() + " event");
         }
     }
 }
