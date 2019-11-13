@@ -1,22 +1,9 @@
 package com.redhat.pantheon.servlet;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
-import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
-import static java.util.stream.Collectors.toList;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.servlet.Servlet;
-
+import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
-
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -25,6 +12,20 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.RepositoryException;
+import javax.servlet.Servlet;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by ben on 4/18/19.
@@ -56,6 +57,13 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             directionParam = "asc";
         }
 
+        // Add all product revisions resolved from product ids
+        try {
+            productVersionIds = ArrayUtils.addAll(productVersionIds, resolveProductVersions(request, productIds));
+        } catch (RepositoryException e) {
+            throw new RuntimeException(e);
+        }
+
         // product version conditions
         String productVersionCondition = "";
         if (productVersionIds != null && productVersionIds.length > 0) {
@@ -68,16 +76,6 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             productVersionCondition = "AND (" + StringUtils.join(conditions, " OR ") + ") ";
         }
 
-        // product conditions
-        String productCondition = "";
-        if (productIds != null && productIds.length > 0) {
-            List<String> conditions = Arrays.stream(productIds)
-                    .map(id -> "draftProduct.[jcr:uuid] = " + id)
-                    .collect(toList());
-            productCondition = "AND (" + StringUtils.join(conditions, " OR ") + ") ";
-        }
-
-
         // FIXME Searching by resourceType because in some cases, searching directly on the primaryType
         // is not returning any results
         StringBuilder queryBuilder = new StringBuilder()
@@ -85,24 +83,15 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                 .append("LEFT OUTER JOIN [nt:base] AS loc ON  ISCHILDNODE(loc, m) ")
                 .append("LEFT OUTER JOIN [nt:base] AS draft ON  draft.[jcr:uuid] = loc.[draft] ")
                 .append("LEFT OUTER JOIN [nt:base] AS release ON  release.[jcr:uuid] = loc.[released] ")
-//                .append("LEFT OUTER JOIN [nt:base] AS draftProdVersion ON draftProdVersion.[jcr:uuid] = draft.[metadata/productVersion] ")
-//                .append("LEFT OUTER JOIN [nt:base] AS releaseProdVersion ON releaseProdVersion.[jcr:uuid] = release.[metadata/productVersion] ")
-//                .append("LEFT OUTER JOIN [nt:base] AS draftProduct ON ISDESCENDANTNODE(draftProdVersion, draftProduct) ")
-//                .append("LEFT OUTER JOIN [nt:base] AS releaseProduct ON ISDESCENDANTNODE(releaseProdVersion, releaseProduct) ")
                 .append("WHERE m.[jcr:primaryType] = 'pant:module' ")
                 .append("AND loc.[jcr:primaryType] = 'pant:moduleLocale' ")
                 .append("AND (draft.[jcr:primaryType] = 'pant:moduleVersion' OR draft.[jcr:primaryType] IS NULL) ")
                 .append("AND (release.[jcr:primaryType] = 'pant:moduleVersion' OR release.[jcr:primaryType] IS NULL) ")
-//                .append("AND (draftProdVersion.[jcr:primaryType] = 'pant:productVersion' OR draftProdVersion.[jcr:primaryType] IS NULL) ")
-//                .append("AND (releaseProdVersion.[jcr:primaryType] = 'pant:productVersion' OR releaseProdVersion.[jcr:primaryType] IS NULL) ")
-//                .append("AND (draftProduct.[jcr:primaryType] = 'pant:product' OR draftProduct.[jcr:primaryType] IS NULL) ")
-//                .append("AND (releaseProduct.[jcr:primaryType] = 'pant:product' OR releaseProduct.[jcr:primaryType] IS NULL) ")
                 .append("AND (draft.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
                     .append("OR draft.[metadata/jcr:description] LIKE '%" + searchParam + "%' ")
                     .append("OR release.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
                     .append("OR release.[metadata/jcr:description] LIKE '%" + searchParam + "%') ")
                 .append(productVersionCondition);
-//                .append(productCondition);
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
             queryBuilder.append(" ORDER BY coalesce(draft.[metadata/")
@@ -112,6 +101,34 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         return queryBuilder.toString();
+    }
+
+    private String[] resolveProductVersions(SlingHttpServletRequest request, String[] productIds) throws RepositoryException {
+        if(productIds == null || productIds.length == 0) {
+            return new String[]{};
+        }
+
+        JcrQueryHelper queryHelper = new JcrQueryHelper(request.getResourceResolver());
+
+        // product conditions
+        String productCondition = "";
+        List<String> conditions = Arrays.stream(productIds)
+                .map(id -> "product.[jcr:uuid] = '" + id + "'")
+                .collect(toList());
+        productCondition = "AND (" + StringUtils.join(conditions, " OR ") + ") ";
+
+        StringBuilder query = new StringBuilder()
+                .append("SELECT pv.* from [nt:base] AS pv ")
+                .append("INNER JOIN [nt:base] AS product ON ISDESCENDANTNODE(pv, product) ")
+                .append("WHERE pv.[jcr:primaryType] = 'pant:productVersion' ")
+                .append("AND product.[jcr:primaryType] = 'pant:product' ")
+                .append(productCondition);
+
+        // TODO Right now this queries for everything, complex queries with lots of products might not scale
+        Stream<Resource> results = queryHelper.query(query.toString());
+        return results.map(resource -> resource.getValueMap().get("jcr:uuid"))
+                .collect(toList())
+                .toArray(new String[]{});
     }
 
     @Override
