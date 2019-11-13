@@ -495,7 +495,7 @@ class Versions extends Component<IProps, any> {
             const formData = new FormData(event.target.form)
 
             formData.append("productVersion", this.state.versionUUID)
-            formData.append("documentUsecase", this.state.usecaseValue)
+            formData.append("documentUseCase", this.state.usecaseValue)
             formData.append("urlFragment", "/" + this.state.moduleUrl)
             // console.log("[metadataPath] ", this.state.metadataPath)
             fetch(this.state.metadataPath + '/metadata', {
@@ -663,7 +663,7 @@ class Versions extends Component<IProps, any> {
                             this.setState({ moduleUrl: url })
                         }
                         this.setState({
-                            usecaseValue: this.state.metadataResults.documentUsecase,
+                            usecaseValue: this.state.metadataResults.documentUseCase,
                             versionUUID: this.state.metadataResults.productVersion
                         }, () => {
                             // console.log("versionUUID", this.state.versionUUID)

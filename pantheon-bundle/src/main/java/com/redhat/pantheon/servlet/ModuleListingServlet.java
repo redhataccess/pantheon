@@ -70,8 +70,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         // Condition for module Use Case
         String useCaseCondition = "";
         if(!Strings.isNullOrEmpty(type)) {
-            useCaseCondition = "AND (draft.[metadata/documentUsecase] = '" + type + "' " +
-                    "OR release.[metadata/documentUsecase] = '" + type + "') ";
+            useCaseCondition = "AND (draft.[metadata/documentUseCase] = '" + type + "' " +
+                    "OR release.[metadata/documentUseCase] = '" + type + "') ";
         }
 
         // product version conditions
