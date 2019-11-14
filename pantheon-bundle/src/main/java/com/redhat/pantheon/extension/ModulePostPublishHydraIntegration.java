@@ -29,7 +29,7 @@ import com.redhat.pantheon.model.module.Module;
  * working properly.
  */
 @Component(
-        service = ModulePostPublishExtension.class
+        service = ModuleVersionPublishedEvent.class
 )
 
 public class ModulePostPublishHydraIntegration implements EventProcessingExtension {
@@ -49,6 +49,12 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	private SSLContext sslContext;
 	private ResourceResolverFactory resolverFactory;
 
+	@Override
+	public boolean canProcessEvent(Event event) {
+		//TODO: return true if resource is published
+		return true;
+	}
+	
 	@Override
 	public void processEvent(Event event) throws Exception {
 

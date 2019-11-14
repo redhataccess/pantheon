@@ -6,13 +6,16 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.redhat.pantheon.extension.Events.EVENT_TOPIC_NAME;
 
 /**
  * Base class for all Job consumers for fired events. It contains most of the logic necessary to
@@ -24,20 +27,16 @@ import static com.google.common.collect.Lists.newArrayList;
  * Subclasses of this are necessary only to declare the right OSGI component configuration so that each
  * type of event can be sent to a different queue. If this is not desired, this class should be sufficient to
  * process ALL events from a single queue.
- * @param <EXT>
  *
  * @author Carlos Munoz
  */
-abstract class EventJobConsumer<EXT extends EventProcessingExtension> implements JobConsumer {
+@Component(
+        service = JobConsumer.class,
+        property = JobConsumer.PROPERTY_TOPICS + "=" + EVENT_TOPIC_NAME
+)
+public class EventJobConsumer implements JobConsumer {
 
     public static final Logger log = LoggerFactory.getLogger(EventJobConsumer.class);
-
-    /** The specific extension class this job consumer satisfies */
-    protected final Class<EXT> extensionClass;
-
-    protected EventJobConsumer(Class<EXT> extensionClass) {
-        this.extensionClass = extensionClass;
-    }
 
     /**
      * Generic method that processes a job. The job will always check for the presence of
@@ -56,10 +55,12 @@ abstract class EventJobConsumer<EXT extends EventProcessingExtension> implements
         }
 
         try {
-            getExtensions().forEach(service -> {
+            getEventProcessingServices().forEach(service -> {
                 try {
-                    service.processEvent(firedEvent);
-                    log.trace("Extension " + service.getClass().getName() + " finished successfully");
+                    if(service.canProcessEvent(firedEvent)) {
+                        service.processEvent(firedEvent);
+                        log.trace("Extension " + service.getClass().getName() + " finished successfully");
+                    }
                 } catch (Throwable t) {
                     log.warn("Extension " + service.getClass().getName() + " did not execute successfully", t);
                 }
@@ -73,19 +74,19 @@ abstract class EventJobConsumer<EXT extends EventProcessingExtension> implements
     }
 
     /**
-     * Collects all the services registered as implementations of the given interface.
+     * Collects all the services registered as implementations of {@link EventProcessingExtension}.
      *
-     * @return A set of extension services which implement the extension interface for this consumer
+     * @return A set of extension services which implement the extension interface for event processing
      */
-    protected Collection<EXT> getExtensions() throws InvalidSyntaxException {
-        List<EXT> extensions = newArrayList();
-        BundleContext bundleContext = FrameworkUtil.getBundle(extensionClass).getBundleContext();
-        Collection<ServiceReference<EXT>> serviceReferences =
+    Collection<EventProcessingExtension> getEventProcessingServices() throws InvalidSyntaxException {
+        List<EventProcessingExtension> extensions = newArrayList();
+        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+        Collection<ServiceReference<EventProcessingExtension>> serviceReferences =
                 bundleContext
-                        .getServiceReferences(extensionClass, null);
+                        .getServiceReferences(EventProcessingExtension.class, null);
 
-        for (ServiceReference<EXT> reference : serviceReferences) {
-            EXT service = bundleContext.getService(reference);
+        for (ServiceReference<EventProcessingExtension> reference : serviceReferences) {
+            EventProcessingExtension service = bundleContext.getService(reference);
             extensions.add(service);
         }
         return extensions;

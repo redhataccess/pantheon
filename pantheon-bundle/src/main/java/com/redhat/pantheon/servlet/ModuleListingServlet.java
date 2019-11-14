@@ -1,7 +1,18 @@
 package com.redhat.pantheon.servlet;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
+
+import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.Servlet;
+
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
+
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
@@ -9,15 +20,6 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.Servlet;
-import java.util.Map;
-import java.util.Optional;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
-import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 
 /**
  * Created by ben on 4/18/19.
@@ -51,19 +53,23 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         // FIXME Searching by resourceType because in some cases, searching directly on the primaryType
         // is not returning any results
         StringBuilder queryBuilder = new StringBuilder()
-                .append("select m.* from [nt:base] as m ")
-                    .append("INNER JOIN [pant:moduleVersion] as rev ON ISDESCENDANTNODE(rev, m) ")
-                .append("where (isdescendantnode(m, '/content/repositories') ")
-                    .append("or isdescendantnode(m, '/content/modules') ")
-                    .append("or isdescendantnode(m, '/content/sandbox')) ")
-                .append("AND m.[jcr:primaryType] = 'pant:module' ")
-                // look in ALL versions (all locales)
-                .append("AND (rev.[metadata/jcr:title] like '%" + searchParam + "%' ")
-                    .append("OR rev.[metadata/jcr:description] like " + "'%" + searchParam + "%') ");
+                .append("SELECT m.* from [nt:base] AS m ")
+                .append("LEFT OUTER JOIN [nt:base] AS loc ON  ISCHILDNODE(loc, m) ")
+                .append("LEFT OUTER JOIN [nt:base] AS draft ON  draft.[jcr:uuid] = loc.[draft] ")
+                .append("LEFT OUTER JOIN [nt:base] AS release ON  release.[jcr:uuid] = loc.[released] ")
+                .append("WHERE m.[jcr:primaryType] = 'pant:module' ")
+                .append("AND loc.[jcr:primaryType] = 'pant:moduleLocale' ")
+                .append("AND (draft.[jcr:primaryType] = 'pant:moduleVersion' OR draft.[jcr:primaryType] IS NULL) ")
+                .append("AND (release.[jcr:primaryType] = 'pant:moduleVersion' OR release.[jcr:primaryType] IS NULL) ")
+                .append("AND (draft.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
+                    .append("OR draft.[metadata/jcr:description] LIKE '%" + searchParam + "%' ")
+                    .append("OR release.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
+                    .append("OR release.[metadata/jcr:description] LIKE '%" + searchParam + "%')");
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
-            queryBuilder.append(" order by rev.[metadata/")
-                    .append(keyParam).append("] ")
+            queryBuilder.append(" ORDER BY coalesce(draft.[metadata/")
+                    .append(keyParam).append("],release.[metadata/")
+                    .append(keyParam).append("]) ")
                     .append(directionParam);
         }
 

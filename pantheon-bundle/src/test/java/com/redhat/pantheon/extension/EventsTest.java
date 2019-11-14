@@ -1,5 +1,6 @@
 package com.redhat.pantheon.extension;
 
+import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.event.jobs.JobBuilder;
 import org.apache.sling.event.jobs.JobManager;
@@ -30,11 +31,11 @@ class EventsTest {
         lenient().when(jobBuilder.properties(anyMap())).thenReturn(jobBuilder);
 
         // When
-        events.fireModuleVersionPublishedEvent(moduleVersion);
+        events.fireEvent(new ModuleVersionPublishedEvent("/a/odule/version/path"));
 
         // Then
         verify(jobBuilder, times(1)).properties(anyMap());
         verify(jobBuilder, times(1)).add();
-        verify(jobManager, times(1)).createJob(eq(Events.MODULE_POST_PUBLISH_EVENT));
+        verify(jobManager, times(1)).createJob(eq(Events.EVENT_TOPIC_NAME));
     }
 }

@@ -1,12 +1,8 @@
 package com.redhat.pantheon.sling;
 
-import org.apache.jackrabbit.api.JackrabbitSession;
-import org.apache.jackrabbit.api.security.JackrabbitAccessControlList;
-import org.apache.jackrabbit.api.security.JackrabbitAccessControlManager;
-import org.apache.jackrabbit.api.security.JackrabbitAccessControlPolicy;
-import org.apache.jackrabbit.api.security.principal.PrincipalManager;
-import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
-import org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils;
+import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.jcr.api.SlingRepositoryInitializer;
 import org.osgi.service.component.annotations.Activate;
@@ -15,20 +11,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.ValueFactory;
-import javax.jcr.security.AccessControlPolicy;
-import javax.jcr.security.Privilege;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils.privilegesFromNames;
 
 /**
  * Created by ben on 3/7/19.
@@ -47,18 +30,28 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
 
     @Override
     public void processRepository(SlingRepository slingRepository) throws Exception {
-        setSyncServiceUrl(getSession(slingRepository));
+        setSyncServiceUrl();
     }
 
-    private JackrabbitSession getSession(SlingRepository slingRepository) throws RepositoryException {
-        return (JackrabbitSession) slingRepository.loginAdministrative(null);
-    }
-
-    private void setSyncServiceUrl(JackrabbitSession s) throws RepositoryException {
-        if (System.getenv("SYNC_SERVICE_URL") != null) {
-            log.info("Synchronization service URL: " + System.getenv("SYNC_SERVICE_URL"));
-        } else {
-            log.info("Environment Variable SYNC_SERVICE_URL is not set.");
+    private void setSyncServiceUrl() throws RepositoryException, PersistenceException {
+        try (ResourceResolver resourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
+            String syncServiceUrl = getSyncServiceUrl();
+            if (syncServiceUrl != null) {
+                resourceResolver.getResource("/conf/pantheon")
+                        .adaptTo(ModifiableValueMap.class)
+                        .put("pant:syncServiceUrl", syncServiceUrl);
+                resourceResolver.commit();
+                log.info("Synchronization service URL: " + syncServiceUrl);
+            } else {
+                log.info("Environment Variable SYNC_SERVICE_URL is not set.");
+            }
         }
+    }
+
+    /**
+     * Retrieves the environment variable value for the sync service url
+     */
+    String getSyncServiceUrl() {
+        return System.getenv("SYNC_SERVICE_URL");
     }
 }

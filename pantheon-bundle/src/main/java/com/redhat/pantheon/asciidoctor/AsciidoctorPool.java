@@ -1,5 +1,6 @@
 package com.redhat.pantheon.asciidoctor;
 
+import com.redhat.pantheon.asciidoctor.extension.ImageSrcTransformer;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.util.pool.ObjectPool;
@@ -51,6 +52,8 @@ public class AsciidoctorPool extends ObjectPool<Asciidoctor> {
             // TODO - extensions, and then this try/catch->returnObject construct can disappear as well.
             asciidoctor.javaExtensionRegistry().includeProcessor(
                     new SlingResourceIncludeProcessor(base));
+            asciidoctor.javaExtensionRegistry().postprocessor(
+                    new ImageSrcTransformer(base));
             return asciidoctor;
         } catch (Exception e) {
             returnObject(asciidoctor);
