@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
+import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVersion;
@@ -63,7 +64,7 @@ public class ReleaseDraftVersion extends AbstractPostOperation {
             changes.add(Modification.onModified(module.getPath()));
 
             // call the extension point
-            events.fireModuleVersionPublishedEvent(moduleLocale.released.getReference());
+            events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.released.getReference().getPath()));
         }
     }
 }
