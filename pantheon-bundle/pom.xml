@@ -44,7 +44,7 @@
             </resource>
             <resource>
                 <directory>frontend/dist</directory>
-                <targetPath>SLING-INF/content/pantheon/</targetPath>
+                <targetPath>SLING-INF/SPA</targetPath>
                 <filtering>false</filtering>
             </resource>
         </resources>
@@ -70,6 +70,7 @@
                             SLING-INF/root;overwrite:=false;overwriteProperties:=true;uninstall:=false;path:=/,
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
                             SLING-INF/content;overwrite:=false;uninstall:=false;path:=/content,
+                            SLING-INF/SPA;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/pantheon,
                             SLING-INF/users;overwrite:=false;uninstall:=false,
                             SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index,
                         ]]></Sling-Initial-Content>
@@ -272,6 +273,11 @@
             <artifactId>guava</artifactId>
             <version>27.0.1-jre</version>
         </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.12.1</version>
+        </dependency>
 
         <!-- Provided dependencies -->
         <dependency>
@@ -392,6 +398,12 @@
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-api</artifactId>
             <version>2.16.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <artifactId>oak-commons</artifactId>
+            <version>1.8.8</version>
+            <groupId>org.apache.jackrabbit</groupId>
             <scope>provided</scope>
         </dependency>
         <dependency>

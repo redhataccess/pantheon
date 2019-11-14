@@ -39,6 +39,8 @@ public class GlobalConfig {
 
     public static final String CONTENT_TYPE = "documentation";
 
+    public static final String IMAGE_PATH_PREFIX = "/imageassets";
+
     private final LoadableValue<List<String>> GEM_PATHS = new LoadableValue<>(this::loadGemPaths);
 
     private final LoadableValue<Optional<File>> TEMPLATE_DIRECTORY =
