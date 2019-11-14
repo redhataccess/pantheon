@@ -64,6 +64,7 @@ public class ReleaseDraftVersion extends AbstractPostOperation {
 
             // call the extension point
             events.fireModuleVersionPublishedEvent(moduleLocale.released.getReference());
+            // TODO: trigger the call to send message to the broker
         }
     }
 }
