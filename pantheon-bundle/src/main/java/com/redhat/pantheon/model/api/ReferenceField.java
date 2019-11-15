@@ -9,7 +9,7 @@ import javax.jcr.*;
  * Referecne fields add convenience to fetch the referenced resource.
  * @param <T>
  */
-public class ReferenceField<T extends SlingResource> extends Field<String> implements Reference<T> {
+public class ReferenceField<T extends SlingModel> extends Field<String> implements Reference<T> {
 
     private final Class<T> referenceType;
 

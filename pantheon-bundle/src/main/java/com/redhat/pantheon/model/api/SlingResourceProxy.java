@@ -2,6 +2,7 @@ package com.redhat.pantheon.model.api;
 
 import com.redhat.pantheon.model.api.v2.Child;
 import com.redhat.pantheon.model.api.v2.Field;
+import com.redhat.pantheon.model.api.v2.Reference;
 import org.apache.sling.api.resource.Resource;
 
 import javax.inject.Named;
@@ -40,6 +41,12 @@ class SlingResourceProxy extends SlingResource implements InvocationHandler {
             Class childType = extractParameterizedReturnType(method);
             return this.child(childName, childType);
         }
+        // methods which access a Reference field
+        else if( isReferenceAccessor(method) ) {
+            String referenceName = extractFieldName(method);
+            Class referenceType = extractParameterizedReturnType(method);
+            return this.referenceField(referenceName, referenceType);
+        }
         // by default pass to the calling object
         // If the method isn't defined, there will be an exception
         return method.invoke(this, args);
@@ -51,6 +58,10 @@ class SlingResourceProxy extends SlingResource implements InvocationHandler {
 
     private static boolean isFieldAccessor(Method method) {
         return method.getReturnType().equals(Field.class) && method.getParameters().length == 0;
+    }
+
+    private static boolean isReferenceAccessor(Method method) {
+        return method.getReturnType().equals(Reference.class) && method.getParameters().length == 0;
     }
 
     private static String extractFieldName(Method method) {

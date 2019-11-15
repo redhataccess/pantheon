@@ -1,7 +1,9 @@
 package com.redhat.pantheon.model.api;
 
+import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import com.redhat.pantheon.model.api.v2.Child;
 import com.redhat.pantheon.model.api.v2.Field;
+import com.redhat.pantheon.model.api.v2.Reference;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -253,8 +255,7 @@ class SlingModelsTest {
         Field<Long> deepField();
 
         @Named("child")
-        com.redhat.pantheon.model.api.v2.Child<ChildResource> child();
-
+        Child<ChildResource> child();
     }
 
     interface ChildResource extends SlingModel {
