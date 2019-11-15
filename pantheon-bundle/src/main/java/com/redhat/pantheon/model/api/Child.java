@@ -2,7 +2,6 @@ package com.redhat.pantheon.model.api;
 
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static com.redhat.pantheon.model.api.SlingResourceUtil.createNewSlingResource;
 import static com.redhat.pantheon.model.api.SlingResourceUtil.toSlingResource;
@@ -15,7 +14,7 @@ import static com.redhat.pantheon.model.api.SlingResourceUtil.toSlingResource;
  * @param <T>
  * @author Carlos Munoz
  */
-public class Child<T extends SlingModel> implements Supplier<T> {
+public class Child<T extends SlingModel> implements com.redhat.pantheon.model.api.v2.Child<T> {
 
     private final String name;
     private final Class<T> type;
@@ -27,10 +26,12 @@ public class Child<T extends SlingModel> implements Supplier<T> {
         this.owner = owner;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public Class<T> getType() {
         return type;
     }
@@ -49,6 +50,7 @@ public class Child<T extends SlingModel> implements Supplier<T> {
      * in the process if necessary.
      * @return The child resource as indicated by this definition
      */
+    @Override
     public T getOrCreate() {
         if(owner.getChild(name) == null) {
             return create();
@@ -61,6 +63,7 @@ public class Child<T extends SlingModel> implements Supplier<T> {
      * throw an exception if the child already exists.
      * @return The newly created child resource
      */
+    @Override
     public T create() {
         return createNewSlingResource(owner, name, type);
     }
@@ -75,6 +78,7 @@ public class Child<T extends SlingModel> implements Supplier<T> {
      * returns null, or if the value of this child was not present in the first place,
      * this returns an empty Optional
      */
+    @Override
     public <R> Optional<R> map(Function<? super T, ? extends R> func) {
         T value = get();
         if(value == null) {

@@ -1,5 +1,7 @@
 package com.redhat.pantheon.model.api;
 
+import com.redhat.pantheon.model.api.v2.Reference;
+
 import javax.jcr.*;
 
 /**
@@ -7,7 +9,7 @@ import javax.jcr.*;
  * Referecne fields add convenience to fetch the referenced resource.
  * @param <T>
  */
-public class ReferenceField<T extends SlingResource> extends Field<String> {
+public class ReferenceField<T extends SlingResource> extends Field<String> implements Reference<T> {
 
     private final Class<T> referenceType;
 

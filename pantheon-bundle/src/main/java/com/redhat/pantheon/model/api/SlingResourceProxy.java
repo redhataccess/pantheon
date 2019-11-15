@@ -1,5 +1,7 @@
 package com.redhat.pantheon.model.api;
 
+import com.redhat.pantheon.model.api.v2.Child;
+import com.redhat.pantheon.model.api.v2.Field;
 import org.apache.sling.api.resource.Resource;
 
 import javax.inject.Named;

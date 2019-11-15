@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  * @param <T>
  * @author Carlos Munoz
  */
-public class Field<T> implements Supplier<T>, Consumer<T> {
+public class Field<T> implements com.redhat.pantheon.model.api.v2.Field<T> {
 
     protected final String name;
     protected final Class<T> type;
@@ -27,10 +27,12 @@ public class Field<T> implements Supplier<T>, Consumer<T> {
         this.owner = owner;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public Class<T> getType() {
         return type;
     }
@@ -41,6 +43,7 @@ public class Field<T> implements Supplier<T>, Consumer<T> {
      * @param defVal The default value to use
      * @return The field itself
      */
+    @Override
     public Field<T> defaultValue(final T defVal) {
         if(this.get() == null) {
             this.owner.setProperty(this.name, defVal);
@@ -61,6 +64,7 @@ public class Field<T> implements Supplier<T>, Consumer<T> {
      * Setting a field to null effectively removes the field from the resource.
      * @param value
      */
+    @Override
     public void set(@Nullable T value) {
         ModifiableValueMap mvm = owner.adaptTo(ModifiableValueMap.class);
         if(value == null) {
@@ -69,15 +73,5 @@ public class Field<T> implements Supplier<T>, Consumer<T> {
         else {
             mvm.put(name, value);
         }
-    }
-
-    /**
-     * Same as {@link #set(Object)}, just to conform to the {@link Consumer} interface.
-     * @see #set(Object)
-     * @param t
-     */
-    @Override
-    public void accept(T t) {
-        set(t);
     }
 }
