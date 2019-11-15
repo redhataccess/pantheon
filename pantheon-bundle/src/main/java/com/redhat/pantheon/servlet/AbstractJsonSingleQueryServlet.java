@@ -46,7 +46,7 @@ public abstract class AbstractJsonSingleQueryServlet extends SlingSafeMethodsSer
      * The default implementation just returns the corresponding value map.
      * @param resource The Resource obtained as a result of the query.
      * @return A map with the actual value to be returned to the servlet's caller.
-     * @throws RepositoryException 
+     * @throws RepositoryException
      */
     protected Map<String, Object> resourceToMap(@NotNull Resource resource) throws RepositoryException {
         return newHashMap(resource.getValueMap());
@@ -63,7 +63,7 @@ public abstract class AbstractJsonSingleQueryServlet extends SlingSafeMethodsSer
     }
 
     @Override
-    protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response)
+    protected final void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response)
             throws ServletException, IOException {
 
         JcrQueryHelper queryHelper = new JcrQueryHelper(request.getResourceResolver());

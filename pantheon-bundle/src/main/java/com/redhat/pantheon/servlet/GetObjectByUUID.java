@@ -117,7 +117,7 @@ public class GetObjectByUUID extends SlingSafeMethodsServlet {
         return map;
     }
 
-    public Resource getResourceByUuid(String uuid) throws RepositoryException {
+    private Resource getResourceByUuid(String uuid) throws RepositoryException {
         Node foundNode = request.getResourceResolver()
                 .adaptTo(Session.class)
                 .getNodeByIdentifier(uuid);
