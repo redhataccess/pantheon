@@ -158,7 +158,11 @@ exports[`Search tests should render default Search component 1`] = `
 
 exports[`Search tests test buildSearchUrl function 1`] = `undefined`;
 
+exports[`Search tests test buildTransientPathArray function 1`] = `undefined`;
+
 exports[`Search tests test cancelDeleteOperation function 1`] = `undefined`;
+
+exports[`Search tests test changePerPageLimit function 1`] = `undefined`;
 
 exports[`Search tests test confirmDeleteOperation function 1`] = `undefined`;
 

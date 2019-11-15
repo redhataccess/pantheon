@@ -3,7 +3,7 @@ import { Search } from '@app/search'
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
 import { HashRouter as Router, Link } from 'react-router-dom'
 import { mount, shallow } from 'enzyme'
-import { DataList, Button, TextInput, Level, LevelItem, Checkbox } from '@patternfly/react-core'
+import { DataList, Button, TextInput, Level, LevelItem, Checkbox, Alert } from '@patternfly/react-core'
 import renderer from 'react-test-renderer'
 import sinon from "sinon"
 import { mockStateUser } from '@app/TestResources'
@@ -45,18 +45,38 @@ describe('Search tests', () => {
     expect(level.exists()).toBe(true)
   })
 
+  it('should render a Level component', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const level = wrapper.find(Level)
+    expect(level.exists()).toBe(true)
+  })
+
   it('should render a levelItem component', () => {
     const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
     const levelItem = wrapper.find(LevelItem)
     expect(levelItem.exists()).toBe(true)
   })
-  
-  it('should handle state changes for loadIcon', () => {
+
+  it('should not render a dangerAlert for null or positive search results', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const dangerAlert = wrapper.find(Alert)
+    expect(dangerAlert.exists()).toBe(false)
+  })
+
+  it('should handle state changes for displayLoadIcon', () => {
     const wrapper = shallow(<Router><Search {...mockStateUser} /></Router>)
-    wrapper.setState({ 'loadIcon': true })
-    expect(wrapper.state('loadIcon')).toBe(true)
-    wrapper.setState({ 'loadIcon': false })
-    expect(wrapper.state('loadIcon')).toBe(false)
+    wrapper.setState({ 'displayLoadIcon': true })
+    expect(wrapper.state('displayLoadIcon')).toBe(true)
+    wrapper.setState({ 'displayLoadIcon': false })
+    expect(wrapper.state('displayLoadIcon')).toBe(false)
+  })
+
+  it('should handle state changes for isSearchException', () => {
+    const wrapper = shallow(<Router><Search {...mockStateUser} /></Router>)
+    wrapper.setState({ 'isSearchException': false })
+    expect(wrapper.state('isSearchException')).toBe(false)
+    wrapper.setState({ 'isSearchException': true })
+    expect(wrapper.state('isSearchException')).toBe(true)
   })
 
   it('should handle state changes for empty results for search', () => {
@@ -168,6 +188,18 @@ describe('Search tests', () => {
     const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
     const inst = wrapper.getInstance()
     expect(inst.fetchTimeout).toMatchSnapshot()
+  })
+
+  it('test changePerPageLimit function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.changePerPageLimit).toMatchSnapshot()
+  })
+
+  it('test buildTransientPathArray function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.buildTransientPathArray).toMatchSnapshot()
   })
 
 })
