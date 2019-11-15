@@ -1,11 +1,10 @@
 package com.redhat.pantheon.model.api;
 
-import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import com.redhat.pantheon.model.api.v2.Child;
 import com.redhat.pantheon.model.api.v2.Field;
-import com.redhat.pantheon.model.api.v2.Reference;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith({SlingContextExtension.class})
 class SlingModelsTest {
 
-    SlingContext sc;
+    SlingContext sc = new SlingContext(ResourceResolverType.JCR_OAK);
 
     @Test
     void simpleModel() {
@@ -47,7 +46,7 @@ class SlingModelsTest {
     }
 
     @Test
-    void setters() {
+    void setters() throws Exception {
         // Given
         sc.build()
                 .resource("/test")
@@ -64,14 +63,15 @@ class SlingModelsTest {
         model.longField().set(20L);
         model.stringArrayField().set(arrayValue);
         model.enumField().set(TestResource.Value.VALUE_2);
+        model.getResourceResolver().commit();
 
         // Then
         assertEquals("new name", model.name().get());
-        assertEquals(now, model.dateField().get());
+        assertEquals(now.getTimeInMillis(), model.dateField().get().getTimeInMillis());
         assertEquals(true, model.booleanField().get());
         assertEquals(new Integer(10), model.intField().get());
         assertEquals(new Long(20), model.longField().get());
-        assertEquals(arrayValue, model.stringArrayField().get());
+        assertArrayEquals(arrayValue, model.stringArrayField().get());
         assertEquals(TestResource.Value.VALUE_2, model.enumField().get());
     }
 
@@ -88,7 +88,7 @@ class SlingModelsTest {
                         "booleanField", true,
                         "dateField", now,
                         "stringArrayField", arrayValue,
-                        "enumField", TestResource.Value.VALUE_2)
+                        "enumField", TestResource.Value.VALUE_2.name())
                 .commit();
 
         // When
@@ -96,11 +96,11 @@ class SlingModelsTest {
 
         // Then
         assertEquals("new name", model.name().get());
-        assertEquals(now, model.dateField().get());
+        assertEquals(now.getTimeInMillis(), model.dateField().get().getTimeInMillis());
         assertEquals(true, model.booleanField().get());
         assertEquals(new Integer(10), model.intField().get());
         assertEquals(new Long(20), model.longField().get());
-        assertEquals(arrayValue, model.stringArrayField().get());
+        assertArrayEquals(arrayValue, model.stringArrayField().get());
         assertEquals(TestResource.Value.VALUE_2, model.enumField().get());
     }
 
@@ -204,7 +204,7 @@ class SlingModelsTest {
                         "booleanField", true,
                         "dateField", Calendar.getInstance(),
                         "stringArrayField", arrayValue,
-                        "enumField", TestResource.Value.VALUE_2)
+                        "enumField", TestResource.Value.VALUE_2.name())
                 .commit();
 
         // When
@@ -219,7 +219,7 @@ class SlingModelsTest {
         assertEquals(true, map.get("booleanField"));
         assertTrue(map.containsKey("stringArrayField"));
         assertArrayEquals(arrayValue, (String[])map.get("stringArrayField"));
-        assertEquals(TestResource.Value.VALUE_2.name(), ((TestResource.Value)map.get("enumField")).name());
+        assertEquals(TestResource.Value.VALUE_2.name(), map.get("enumField"));
     }
 
     @Test

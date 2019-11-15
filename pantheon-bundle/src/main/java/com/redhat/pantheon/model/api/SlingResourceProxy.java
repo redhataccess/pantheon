@@ -29,8 +29,14 @@ class SlingResourceProxy extends SlingResource implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        // methods which access an enum Field
+        if( isEnumFieldAccessor(method) ) {
+            String fieldName = extractFieldName(method);
+            Class fieldType = extractParameterizedReturnType(method);
+            return this.enumField(fieldName, fieldType);
+        }
         // methods which access a Field
-        if( isFieldAccessor(method) ) {
+        else if( isFieldAccessor(method) ) {
             String fieldName = extractFieldName(method);
             Class fieldType = extractParameterizedReturnType(method);
             return this.field(fieldName, fieldType);
@@ -50,6 +56,10 @@ class SlingResourceProxy extends SlingResource implements InvocationHandler {
         // by default pass to the calling object
         // If the method isn't defined, there will be an exception
         return method.invoke(this, args);
+    }
+
+    private static boolean isEnumFieldAccessor(Method method) {
+        return isFieldAccessor(method) && Enum.class.isAssignableFrom(extractParameterizedReturnType(method));
     }
 
     private static boolean isChildAccessor(Method method) {
