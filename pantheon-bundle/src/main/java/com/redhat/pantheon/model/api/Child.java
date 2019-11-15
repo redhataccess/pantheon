@@ -15,7 +15,7 @@ import static com.redhat.pantheon.model.api.SlingResourceUtil.toSlingResource;
  * @param <T>
  * @author Carlos Munoz
  */
-public class Child<T extends SlingResource> implements Supplier<T> {
+public class Child<T extends SlingModel> implements Supplier<T> {
 
     private final String name;
     private final Class<T> type;

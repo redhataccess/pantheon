@@ -34,7 +34,7 @@ public final class SlingResourceUtil {
      * @return A newly created resource wrapped around the provided model type.
      * @throws RuntimeException if the resource already exists.
      */
-    public static <T extends SlingResource> T
+    public static <T extends SlingModel> T
     createNewSlingResource(Resource parent, String childName, Class<T> modelType) {
         if (parent.getChild(childName) != null) {
             throw new RuntimeException("Tried to create a new resource in an existing path: " + parent.getPath() + "/"
@@ -68,7 +68,7 @@ public final class SlingResourceUtil {
      * @return The newly created resource
      * @throws RuntimeException if the resource already exists at the path
      */
-    public static <T extends SlingResource>
+    public static <T extends SlingModel>
     T createNewSlingResource(ResourceResolver resourceResolver, String path, Class<T> modelType) {
         String parentPath = ResourceUtil.getParent(path);
         String resourceName = ResourceUtil.getName(path);
@@ -83,12 +83,17 @@ public final class SlingResourceUtil {
      * @param <T>
      * @return A new object of class modelType wrapping the backingResource, or null if backingResource is null
      */
-    public static <T extends SlingResource> T toSlingResource(Resource backingResource, Class<T> modelType) {
+    public static <T extends SlingModel> T toSlingResource(Resource backingResource, Class<T> modelType) {
         if (backingResource == null) {
             return null;
         }
 
         try {
+            // If the class is an interface, it means a model (v2) is being built, delegate to that class
+            if(modelType.isInterface()) {
+                return SlingModels.getModel(backingResource, modelType);
+            }
+
             // If there is a one-arg constructor, invoke it
             Constructor<T> constructor = modelType.getConstructor(Resource.class);
 
@@ -129,7 +134,7 @@ public final class SlingResourceUtil {
      * @return A String containing the jcr:primaryType to use for the given resource type.
      */
     @Nonnull
-    private static final String getJcrPrimaryType(Class<? extends SlingResource> resourceType) {
+    private static final String getJcrPrimaryType(Class<? extends SlingModel> resourceType) {
         JcrPrimaryType primaryType = resourceType.getAnnotation(JcrPrimaryType.class);
         if(primaryType != null) {
             return primaryType.value();

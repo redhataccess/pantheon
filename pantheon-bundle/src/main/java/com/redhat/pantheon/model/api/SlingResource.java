@@ -18,7 +18,7 @@ import static com.redhat.pantheon.model.api.SlingResourceUtil.toSlingResource;
  *
  * @author Carlos Munoz
  */
-public class SlingResource implements Resource {
+public class SlingResource implements SlingModel {
 
     static final String DEFAULT_PRIMARY_TYPE = "nt:unstructured";
 
@@ -28,35 +28,18 @@ public class SlingResource implements Resource {
         this.wrapped = wrapped;
     }
 
-    /**
-     * Creates a child resource given a name and a set of initial properties
-     * @param name The child's name
-     * @param modelType The {@link SlingResource} type to create the child as.
-     * @return The newly created child resource
-     * @throws PersistenceException If there is a problem creating the child resource
-     */
-    public <T extends SlingResource> T createChild(final String name, Class<T> modelType) {
+    @Override
+    public <T extends SlingModel> T createChild(final String name, Class<T> modelType) {
         return SlingResourceUtil.createNewSlingResource(wrapped, name, modelType);
     }
 
-    /**
-     * Returns a child resource
-     * @param name The child's name
-     * @param type The type of SlingResource to interpret it as
-     * @param <T>
-     * @return The child resource or null if one doesn't exist by the given name
-     */
-    public <T extends SlingResource> T getChild(String name, Class<T> type) {
+    @Override
+    public <T extends SlingModel> T getChild(String name, Class<T> type) {
         return toSlingResource(getChild(name), type);
     }
 
-    /**
-     * Returns a child resource, creating it if it doesn't exist.
-     * @param name The child's name
-     * @return The found or created child resource
-     * @throws PersistenceException If there is a problem creating the new child resource
-     */
-    public <T extends SlingResource> T getOrCreateChild(String name, Class<T> type) {
+    @Override
+    public <T extends SlingModel> T getOrCreateChild(String name, Class<T> type) {
         if(wrapped.getChild(name) == null) {
             return createChild(name, type);
         }
@@ -70,7 +53,8 @@ public class SlingResource implements Resource {
      * @param <T>
      * @return The newly create child resource.
      */
-    public <T extends SlingResource> T createChild(Child<T> child) {
+    @Deprecated
+    public <T extends SlingModel> T createChild(Child<T> child) {
         return SlingResourceUtil.createNewSlingResource(wrapped, child.getName(), child.getType());
     }
 
@@ -80,31 +64,20 @@ public class SlingResource implements Resource {
      * @param <T> The found or created child resource
      * @return The found or created child resource.
      */
-    public <T extends SlingResource> T getOrCreateChild(Child<T> child) {
+    @Deprecated
+    public <T extends SlingModel> T getOrCreateChild(Child<T> child) {
         if(isPresent(child)) {
             return toSlingResource(wrapped.getChild(child.getName()), child.getType());
         }
         return createChild(child);
     }
 
-    /**
-     * Returns a resource's property
-     * @param name The name of the property
-     * @param type The type into which to cast the property value
-     * @param <T>
-     * @return The property's value, or null if no such property exists
-     */
+    @Override
     public <T> T getProperty(String name, Class<T> type) {
         return wrapped.getValueMap().get(name, type);
     }
 
-    /**
-     * Sets a resoruce's property. This is a convenience method. Be aware that the underlying
-     * implementation might throw an exception if the resource is not modifiable, or if the type
-     * of value is not recognized
-     * @param name The name of the property
-     * @param value The value to set
-     */
+    @Override
     public void setProperty(String name, Object value) {
         wrapped.adaptTo(ModifiableValueMap.class).put(name, value);
     }
@@ -114,14 +87,12 @@ public class SlingResource implements Resource {
      * @param child The child resource definition
      * @return True if a child based on the definition's name exists, false otherwise.
      */
+    @Deprecated
     public boolean isPresent(Child<?> child) {
         return wrapped.getChild(child.getName()) != null;
     }
 
-    /**
-     * Deletes this resource from the repository.
-     * @throws PersistenceException If there was a problem deleting the node, such as a failed constraing validation
-     */
+    @Override
     public void delete() throws PersistenceException {
         wrapped.getResourceResolver().delete(this);
     }
