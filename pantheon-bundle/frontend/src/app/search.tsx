@@ -22,6 +22,7 @@ export interface ISearchState {
   input: string
   isEmptyResults: boolean
   isModalOpen: boolean
+  isSearchException: boolean
   isSortedUp: boolean
   displayLoadIcon: boolean
   moduleName: string
@@ -55,6 +56,7 @@ class Search extends Component<IAppState, ISearchState> {
       input: '',
       isEmptyResults: false,
       isModalOpen: false,
+      isSearchException: false,
       isSortedUp: true,
       moduleName: '',
       modulePath: '',
@@ -227,6 +229,24 @@ class Search extends Component<IAppState, ISearchState> {
                   </Level>
 
                 )}
+                {this.state.isSearchException && (
+                  <Level gutter="md">
+                    <LevelItem />
+                    <LevelItem>
+                      <div className="notification-container">
+                        <br />
+                        <br />
+                        <Alert
+                          variant="danger"
+                          title={"Error in fetching search results"}
+                          action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                        />
+                        <br />
+                        <br />
+                      </div></LevelItem>
+                    <LevelItem />
+                  </Level>
+                )}
               </DataListItem>
             </DataList>
             <div className="notification-container">
@@ -357,7 +377,6 @@ class Search extends Component<IAppState, ISearchState> {
 
   // Handle gateway timeout on slow connections.
   private doSearch = () => {
-    console.log("do seach called")
     this.setState({ displayLoadIcon: true })
     fetch(this.buildSearchUrl())
       .then(response => response.json())
@@ -379,7 +398,11 @@ class Search extends Component<IAppState, ISearchState> {
       })
       .catch(error => {
         // might be a timeout error
-        console.log("[doSearch] error ", error)
+        this.setState({
+          displayLoadIcon: false,
+          isSearchException: true
+        },()=>{ console.log("[doSearch] error ", error) })
+        
       })
   }
 
@@ -400,7 +423,7 @@ class Search extends Component<IAppState, ISearchState> {
   };
 
   private dismissNotification = () => {
-    this.setState({ isEmptyResults: false });
+    this.setState({ isEmptyResults: false, isSearchException: false });
   };
 
   private sortByName = () => {
