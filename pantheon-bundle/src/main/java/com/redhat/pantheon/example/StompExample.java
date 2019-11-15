@@ -28,7 +28,6 @@ public class StompExample {
 	private static final String PANTHEON_PASS = "cGFudGhlMG4ydTVlcg==";
 	
 	private static final String TLS_VERSION = "TLSv1.2";
-	private static final Destination Destination = null;
 	private static SSLContext sslContext;
 	
 	protected static ConnectionFactory createConnectionFactory() throws Exception {
@@ -52,7 +51,7 @@ public class StompExample {
 	public static void main(final String[] args) throws Exception {
 		
 		 Connection connection = createConnectionFactory().createConnection();
-		 connection.setClientID("pantheon2user");
+//		 connection.setClientID("pantheon2user");
 		 
 		 try {
 			 connection.start();
@@ -62,10 +61,8 @@ public class StompExample {
 	     
 	     Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 	     MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
-
-	     producer.send(session.createTextMessage("{\"id\":\"http://pantheon2-stage.int.us-east.aws.preprod.paas.redhat.com/api/module?locale=en-us&module_id=ebc84786-3b10-4152-8415-cc824a7e69f5\"}"));
 	     
-	  
+	     producer.send(session.createTextMessage("{\"id\":\"http://pantheon2-stage.int.us-east.aws.preprod.paas.redhat.com/api/module?locale=en-us&module_id=ebc84786-3b10-4152-8415-cc824a7e69f5\"}"));
 	     connection.close();
 	   }
 }
