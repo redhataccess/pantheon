@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import javax.inject.Named;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -234,6 +235,41 @@ class SlingModelsTest {
 
         // Then
         assertThrows(IllegalArgumentException.class, () -> model.wrongMethod(true));
+    }
+
+    @Test
+    void nullSafeTest() {
+        // Given
+        sc.build()
+                .resource("/test")
+                .commit();
+
+        // When
+        TestResource model = SlingModels.getModel(sc.resourceResolver().getResource("/test"), TestResource.class);
+
+        // Then
+        assertNull(model.child().get());
+        assertFalse(model.child()
+                .map(ChildResource::grandchild)
+                .map(Supplier::get)
+                .isPresent());
+        assertFalse(model.child()
+                .map(ChildResource::grandchild)
+                .map(Supplier::get)
+                .map(Grandchild::number)
+                .isPresent());
+        assertFalse(model.child()
+                .map(ChildResource::grandchild)
+                .map(Supplier::get)
+                .map(Grandchild::number)
+                .map(Supplier::get)
+                .isPresent());
+        assertEquals(new Long(10), model.child()
+                .map(ChildResource::grandchild)
+                .map(Supplier::get)
+                .map(Grandchild::number)
+                .map(Supplier::get)
+                .orElse(10L));
     }
 
     interface TestResource extends SlingModel {
