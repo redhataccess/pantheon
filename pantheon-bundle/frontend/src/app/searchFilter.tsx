@@ -3,7 +3,7 @@ import {
   Button, ButtonVariant, TextInput, InputGroup, Chip, ChipGroup, ChipGroupToolbarItem, FormSelect, FormSelectOption
 } from '@patternfly/react-core';
 import '@app/app.css';
-import { CaretDownIcon, SearchIcon, SortAlphaDownIcon, SortAlphaUpIcon } from '@patternfly/react-icons';
+import { SearchIcon, SortAlphaDownIcon, SortAlphaUpIcon } from '@patternfly/react-icons';
 
 class SearchFilter extends Component<any, any> {
   constructor(props) {
@@ -11,13 +11,14 @@ class SearchFilter extends Component<any, any> {
     this.state = {
       allProducts: [],
       chipGroups: [],
+      isSortedUp: true,
       moduleTypeValue: '',
-     //  this.props.value+"+sortBy="+this.state.sortByValue+"+""type="+this.state.moduleTypeValue+"+"
-      // 
       productOptions: [
         { value: '', label: 'Select a Product', disabled: false },
       ],
       productValue: '',
+      productsToQuery: [],
+      searchText: '',
       sortByValue: '',
       versionOptions: [
         { value: '', label: 'Select a Version', disabled: false },
@@ -25,6 +26,7 @@ class SearchFilter extends Component<any, any> {
       versionSelected: '',
       versionUUID: '',
       versionValue: '',
+      versionsToQuery: [],
     };
   }
 
@@ -60,7 +62,7 @@ class SearchFilter extends Component<any, any> {
       <React.Fragment>
         <div className="row-filter" >
           <InputGroup className="small-margin">
-            <TextInput id="searchFilterInput" type="text" onKeyDown={this.props.onKeyDown} value={this.props.value} onChange={this.props.onChange} />
+            <TextInput id="searchFilterInput" type="text" onKeyDown={this.props.onKeyDown} value={this.state.searchText} onChange={this.setSearchText} />
             <Button onClick={this.props.onClick} variant={ButtonVariant.control} aria-label="search button for search input">
               <SearchIcon />
             </Button>
@@ -91,8 +93,8 @@ class SearchFilter extends Component<any, any> {
             ))}
           </FormSelect>
 
-          <Button onClick={this.props.onSort} variant={ButtonVariant.control} aria-label="search button for search input">
-            {this.props.isSortedUp ? <SortAlphaDownIcon /> : <SortAlphaUpIcon />}
+          <Button onClick={this.setSortedUp} variant={ButtonVariant.control} aria-label="search button for search input">
+            {this.state.isSortedUp ? <SortAlphaDownIcon /> : <SortAlphaUpIcon />}
           </Button>
 
 
@@ -109,9 +111,19 @@ class SearchFilter extends Component<any, any> {
           ))}
         </ChipGroup>
       </React.Fragment>
-      
+
     );
   }
+
+  private setSearchText = (event) => this.setState({ searchText: event }, () => {
+    this.setQuery();
+  });
+
+  private setSortedUp = () => {
+    this.setState({ isSortedUp: !this.state.isSortedUp }, () => {
+      this.setQuery()
+    })
+  };
 
   private fetchProductVersionDetails = () => {
 
@@ -203,12 +215,12 @@ class SearchFilter extends Component<any, any> {
 
   private onChangeSort = (sortByValue) => {
     this.setState({ sortByValue }, () => {
-        this.setQuery();
+      this.setQuery();
     });
   }
   private onChangeModuleType = (moduleTypeValue) => {
     this.setState({ moduleTypeValue }, () => {
-        this.setQuery();
+      this.setQuery();
     });
   }
 
@@ -223,11 +235,11 @@ class SearchFilter extends Component<any, any> {
           copyOfChipGroups.splice(i, 1);
           this.setState({ chipGroups: copyOfChipGroups }, () => {
             this.setQuery();
-        });
+          });
         } else {
           this.setState({ chipGroups: copyOfChipGroups }, () => {
             this.setQuery();
-        });
+          });
         }
       }
     }
@@ -265,14 +277,48 @@ class SearchFilter extends Component<any, any> {
     }
     this.setState({ chipGroups: copyOfChipGroups }, () => {
       this.setQuery();
-  });
+    });
   };
 
   // Should be called after each change of state
   private setQuery = () => {
-    this.props.filterQuery("search="+this.props.value+"&product="+this.state.productUUID+"&productversion="+this.state.versionUUID+"&type="+this.state.moduleTypeValue+"&key="+this.state.sortByValue+"&direction="+this.props.isSortedUp)
-  }
+    let searchQuery = ""
+    if (this.state.searchText !== "") {
+      // Add this check to all others this one is not needed because search goes first in the list.
+      if (searchQuery !== "") {
+        searchQuery += "&"
+      }
+      searchQuery += "search=" + this.state.searchText
+    }
 
+    // Default is All and should not add to the filter.
+    if (this.state.moduleTypeValue !== "" && this.state.moduleTypeValue !== "All") {
+      if (searchQuery !== "") {
+        searchQuery += "&"
+      }
+      searchQuery += "type=" + this.state.moduleTypeValue
+    }
+
+    // Default key is Title
+    if (searchQuery !== "") {
+      searchQuery += "&"
+    }
+    if (this.state.sortByValue === "") {
+      searchQuery += "key=Title"
+    } else {
+      searchQuery += "key=" + this.state.sortByValue
+    }
+
+    // isSortedUp is a boolean and will always have a set default
+    if (searchQuery !== "") {
+      searchQuery += "&"
+    }
+    searchQuery += "direction=" + (this.state.isSortedUp ? "desc" : "asc")
+
+    // &product="+this.state.productUUID+"&productversion="+this.state.versionUUID+"
+    this.props.filterQuery(searchQuery)
+    console.log("This is the query: " + searchQuery)
+  }
 }
 
 export { SearchFilter }; 
