@@ -1,7 +1,5 @@
 package com.redhat.pantheon.model.api.v2;
 
-import com.redhat.pantheon.model.api.SlingModel;
-
 import javax.jcr.RepositoryException;
 
 /**

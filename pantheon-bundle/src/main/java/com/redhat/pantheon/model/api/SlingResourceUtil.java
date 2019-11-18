@@ -2,6 +2,8 @@ package com.redhat.pantheon.model.api;
 
 import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
+import com.redhat.pantheon.model.api.v2.SlingModel;
+import com.redhat.pantheon.model.api.v2.SlingModels;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;

@@ -1,7 +1,5 @@
 package com.redhat.pantheon.model.api.v2;
 
-import com.redhat.pantheon.model.api.SlingModel;
-
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;

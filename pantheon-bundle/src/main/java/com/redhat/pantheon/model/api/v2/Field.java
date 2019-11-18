@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * A strongly typed jcr field definition for a {@link com.redhat.pantheon.model.api.SlingModel}.
+ * A strongly typed jcr field definition for a {@link SlingModel}.
  * Field definitions have a reference to their owning object so they
  * can read and modify said owner when necessary.
  *

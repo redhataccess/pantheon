@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.api;
 
+import com.redhat.pantheon.model.api.v2.SlingModel;
 import org.apache.sling.api.resource.*;
 
 import java.util.Calendar;

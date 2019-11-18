@@ -1,8 +1,6 @@
-package com.redhat.pantheon.model.api;
+package com.redhat.pantheon.model.api.v2;
 
-import com.redhat.pantheon.model.api.v2.Child;
-import com.redhat.pantheon.model.api.v2.Field;
-import com.redhat.pantheon.model.api.v2.Reference;
+import com.redhat.pantheon.model.api.SlingResource;
 import org.apache.sling.api.resource.Resource;
 
 import javax.inject.Named;
@@ -33,25 +31,25 @@ class SlingResourceProxy extends SlingResource implements InvocationHandler {
         if( isEnumFieldAccessor(method) ) {
             String fieldName = extractFieldName(method);
             Class fieldType = extractParameterizedReturnType(method);
-            return this.enumField(fieldName, fieldType);
+            return new EnumFieldImpl(fieldName, fieldType, this);
         }
         // methods which access a Field
         else if( isFieldAccessor(method) ) {
             String fieldName = extractFieldName(method);
             Class fieldType = extractParameterizedReturnType(method);
-            return this.field(fieldName, fieldType);
+            return new FieldImpl(fieldName, fieldType, this);
         }
         // methods which access a Child
         else if( isChildAccessor(method) ) {
             String childName = extractFieldName(method);
             Class childType = extractParameterizedReturnType(method);
-            return this.child(childName, childType);
+            return new ChildImpl(childName, childType, this);
         }
         // methods which access a Reference field
         else if( isReferenceAccessor(method) ) {
             String referenceName = extractFieldName(method);
             Class referenceType = extractParameterizedReturnType(method);
-            return this.referenceField(referenceName, referenceType);
+            return new ReferenceFieldImpl(referenceName, referenceType, this);
         }
         // by default pass to the calling object
         // If the method isn't defined, there will be an exception

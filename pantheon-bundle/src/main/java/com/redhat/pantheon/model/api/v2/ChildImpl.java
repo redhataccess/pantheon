@@ -1,28 +1,27 @@
-package com.redhat.pantheon.model.api;
-
-import com.redhat.pantheon.model.api.v2.SlingModel;
+package com.redhat.pantheon.model.api.v2;
 
 import java.util.Optional;
 import java.util.function.Function;
 
+import static com.redhat.pantheon.model.api.v2.SlingModels.getModel;
 import static com.redhat.pantheon.model.api.SlingResourceUtil.createNewSlingResource;
-import static com.redhat.pantheon.model.api.SlingResourceUtil.toSlingResource;
 
 /**
- * A strongly typed child resource definition for a {@link SlingResource}.
- * Child definitions have a reference to their owning object so they
+ * Default implementation of the {@link Child} interface.
+ * A strongly typed child resource definition for a {@link SlingModel}.
+ * Child definitions have a reference to their owning parent so they
  * can read and modify said owner when necessary.
  *
- * @param <T>
  * @author Carlos Munoz
  */
-public class Child<T extends SlingModel> implements com.redhat.pantheon.model.api.v2.Child<T> {
+public class ChildImpl<T extends SlingModel> implements Child<T> {
 
     private final String name;
     private final Class<T> type;
-    private final SlingResource owner;
+    private final SlingModel owner;
 
-    Child(String name, Class<T> type, SlingResource owner) {
+    // TODO Make this package protected
+    public ChildImpl(String name, Class<T> type, SlingModel owner) {
         this.name = name;
         this.type = type;
         this.owner = owner;
@@ -44,7 +43,7 @@ public class Child<T extends SlingModel> implements com.redhat.pantheon.model.ap
      */
     @Override
     public T get() {
-        return toSlingResource(owner.getChild(name), type);
+        return getModel(owner.getChild(name), type);
     }
 
     /**

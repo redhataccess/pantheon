@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model.api;
+package com.redhat.pantheon.model.api.v2;
 
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;

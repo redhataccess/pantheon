@@ -2,6 +2,8 @@ package com.redhat.pantheon.model.api;
 
 import com.redhat.pantheon.model.api.v2.Field;
 import com.redhat.pantheon.model.api.v2.Reference;
+import com.redhat.pantheon.model.api.v2.SlingModel;
+import com.redhat.pantheon.model.api.v2.SlingModels;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
