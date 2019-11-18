@@ -230,25 +230,48 @@ class SearchFilter extends Component<any, any> {
 
   private deleteItem = (id) => (event: any) => {
     const copyOfChipGroups = this.state.chipGroups;
+    let product = ''
     for (let i = 0; copyOfChipGroups.length > i; i++) {
       const index = copyOfChipGroups[i].chips.indexOf(id);
       if (index !== -1) {
+        const categoryKey = "category"
+        product = copyOfChipGroups[i][categoryKey]
         copyOfChipGroups[i].chips.splice(index, 1);
         // check if this is the last item in the group category
         if (copyOfChipGroups[i].chips.length === 0) {
           copyOfChipGroups.splice(i, 1);
-          this.setState({ chipGroups: copyOfChipGroups }, () => {
-            this.setQuery();
-          });
-        } else {
-          this.setState({ chipGroups: copyOfChipGroups }, () => {
-            this.setQuery();
-          });
         }
       }
     }
 
-    // TODO DELETE from productversionsQueryParam and productsQueryParam
+    const uuidKey = "value"
+    const versionUUID = this.state.allProducts[product].filter((e) => e.label === id)[0][uuidKey]
+    const productUUID = this.state.productsUUID[product]
+    if (versionUUID === "All") {
+      let prodQuery = this.state.productsQueryParam
+      prodQuery = prodQuery.replace("product=" + productUUID, '')
+      if (prodQuery === '&') {
+        prodQuery = ''
+      }
+      if (prodQuery.includes("&&")) {
+        prodQuery = prodQuery.replace('&&', '&')
+      }
+      this.setState({ chipGroups: copyOfChipGroups, productsQueryParam: prodQuery }, () => {
+        this.setQuery();
+      });
+    } else {
+      let verQuery = this.state.productversionsQueryParam
+      verQuery = verQuery.replace("productversion=" + versionUUID, '')
+      if (verQuery === '&') {
+        verQuery = ''
+      }
+      if (verQuery.includes("&&")) {
+        verQuery = verQuery.replace('&&', '&')
+      }
+      this.setState({ chipGroups: copyOfChipGroups, productversionsQueryParam: verQuery }, () => {
+        this.setQuery();
+      });
+    }
   };
 
   private addChipItem = () => {
@@ -283,8 +306,6 @@ class SearchFilter extends Component<any, any> {
     }
 
     const uuidKey = "value"
-    // console.log("This is the Selected Product UUID: " + JSON.stringify(this.state.productsUUID[this.state.productValue]))
-    // console.log("This is the Selected Version: " + JSON.stringify(this.state.allProducts[this.state.productValue].filter((e) => e.label === this.state.versionValue)[0][uuidKey]))
     const versionUUID = this.state.allProducts[this.state.productValue].filter((e) => e.label === this.state.versionValue)[0][uuidKey]
     // If version is All just add the product.
     let prodQuery = this.state.productsQueryParam
@@ -301,7 +322,7 @@ class SearchFilter extends Component<any, any> {
       verQuery += "productversion=" + versionUUID
     }
 
-    this.setState({ chipGroups: copyOfChipGroups,productsQueryParam: prodQuery, productversionsQueryParam: verQuery }, () => {
+    this.setState({ chipGroups: copyOfChipGroups, productsQueryParam: prodQuery, productversionsQueryParam: verQuery }, () => {
       this.setQuery();
     });
   };
