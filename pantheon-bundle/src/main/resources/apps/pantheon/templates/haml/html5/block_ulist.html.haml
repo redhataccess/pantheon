@@ -1,0 +1,42 @@
+- $ulistNum += 1
+
+- if (checklist = (option? :checklist) ? 'checklist' : nil)
+  - if option? :interactive
+    - marker_checked = '<input type="checkbox" data-item-complete="1" checked>'
+    - marker_unchecked = '<input type="checkbox" data-item-complete="0">'
+  - else
+    - if @document.attr? :icons, 'font'
+      - marker_checked = '<i class="fa fa-check-square-o"></i>'
+      - marker_unchecked = '<i class="fa fa-square-o"></i>'
+    - else
+      - marker_checked = '&#10003;'
+      - marker_unchecked = '&#10063;'
+- if title?
+  %div{:id=>@id, :class=>['ulist', checklist, @style, role]}
+    - if (@id)
+      - heading_id = "#{@id}_heading"
+    - else
+      - heading_id = "ulist_heading_#{$olistNum}"
+    - aria_header = heading_id
+
+    %strong.heading{:id=>heading_id}=title
+
+    %ul{:class=>(checklist || @style), :aria=>{:labelledby=>(aria_header) ? aria_header : nil}}
+      - items.each do |item|
+        %li
+          - if checklist && (item.attr? :checkbox)
+            %p<=%(#{(item.attr? :checked) ? marker_checked : marker_unchecked} #{item.text})
+          - else
+            %p=item.text
+          - if item.blocks?
+            =item.content
+- else
+  %ul{:class=>(checklist || @style)}
+    - items.each do |item|
+      %li
+        - if checklist && (item.attr? :checkbox)
+          %p<=%(#{(item.attr? :checked) ? marker_checked : marker_unchecked} #{item.text})
+        - else
+          %p=item.text
+        - if item.blocks?
+          =item.content

@@ -1,0 +1,24 @@
+- $olistNum += 1
+- if title?
+  %div{:id=>@id, :class=>['olist', @style, role]}
+    - if (@id)
+      - heading_id = "#{@id}_heading"
+    - else
+      - heading_id = "olist_heading_#{$olistNum}"
+    - aria_header = heading_id
+
+    %strong.heading{:id=>heading_id}=title
+
+    %ol{:class=>@style, :start=>(attr :start), :type=>list_marker_keyword, :aria=>{:labelledby=>(aria_header) ? aria_header : nil}}
+      - items.each do |item|
+        %li
+          %p=item.text
+          - if item.blocks?
+            =item.content
+- else
+  %ol{:class=>@style, :start=>(attr :start), :type=>list_marker_keyword}
+    - items.each do |item|
+      %li
+        %p=item.text
+        - if item.blocks?
+          =item.content

@@ -1,0 +1,8 @@
+-# This needs some accessibility improvements, like unique IDs and aria-labelledby attributes
+%span.colist-num
+  - if @document.attr? :icons, 'font'
+    %i.conum{:aria=>{:label=>"See \##{@text} in list below"}}>=@text
+  - elsif @document.attr? :icons
+    %img{:src=>icon_uri("callouts/#{@text}"), :alt=>@text}
+  - else
+    %i.conum{:aria=>{:label=>"See \##{@text} in list below"}}>=@text

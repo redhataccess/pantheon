@@ -1,0 +1,75 @@
+- $dlistNum += 1
+- case @style
+- when 'qanda'
+  %div{:id=>@id, :class=>['qlist', 'qanda', role]}
+    - if (@id)
+      - heading_id = "#{@id}_heading"
+    - else
+      - heading_id = "dlist_heading_#{$dlistNum}"
+
+    - if title?
+      %strong.heading{:id=>heading_id}=title
+      - aria_header = heading_id
+    %ol{:aria=>{:labelledby=>(aria_header) ? aria_header : nil}}
+      - items.each do |questions, answer|
+        %li
+          - [*questions].each do |question|
+            %dl
+              %dt=question.text
+              - unless answer.nil?
+                %dd
+                  - if answer.text?
+                    =answer.text
+                  - if answer.blocks?
+                    =answer.content
+- when 'horizontal'
+  - if title?
+    %div{:id=>@id, :class=>['hdlist', @style, role]}
+      %strong.heading=title
+      %dl{:class=>'list-struct'}
+        - items.each do |terms, dd|
+          - [*terms].each do |dt|
+            %dt{:style=>((attr? :labelwidth) ? %(width:#{(attr :labelwidth).chomp '%'}%;) : nil)}=dt.text
+          - unless dd.nil?
+            %dd{:style=>((attr? :itemwidth) ? %(width:#{(attr :itemwidth).chomp '%'}%;) : nil)}
+              - if dd.text?
+                =dd.text
+              - if dd.blocks?
+                =dd.content
+  - else
+    %dl{:class=>'list-struct'}
+      - items.each do |terms, dd|
+        - [*terms].each do |dt|
+          %dt{:style=>((attr? :labelwidth) ? %(width:#{(attr :labelwidth).chomp '%'}%;) : nil)}=dt.text
+        - unless dd.nil?
+          %dd{:style=>((attr? :itemwidth) ? %(width:#{(attr :itemwidth).chomp '%'}%;) : nil)}
+            - if dd.text?
+              =dd.text
+            - if dd.blocks?
+              =dd.content
+- else
+  - if title?
+    %div{:id=>@id, :class=>['dlist', @style]}
+      %strong.heading=title
+      -# Moving 'role' down from div to handle struct-lists properly (grandfathering in)
+      %dl{:class=>[role]}
+        - items.each do |terms, dd|
+          - [*terms].each do |dt|
+            %dt=dt.text
+          - unless dd.nil?
+            %dd
+              - if dd.text?
+                =dd.text
+              - if dd.blocks?
+                =dd.content
+  - else
+    %dl{:class=>[role]}
+      - items.each do |terms, dd|
+        - [*terms].each do |dt|
+          %dt=dt.text
+        - unless dd.nil?
+          %dd
+            - if dd.text?
+              =dd.text
+            - if dd.blocks?
+              =dd.content
