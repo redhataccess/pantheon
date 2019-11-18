@@ -105,7 +105,7 @@ class Versions extends Component<IProps, any> {
           </Alert>
                 }
 
-                {this.state.publishAlertVisible && this.state.canChangePublishState === false && <Alert
+                {this.state.publishAlertVisible && <Alert
                     variant="warning"
                     title="Module Versions"
                     action={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
@@ -524,7 +524,7 @@ class Versions extends Component<IProps, any> {
                 if (response.status === 201 || response.status === 200) {
                     // console.log("successful edit ", response.status)
                     this.handleModalClose()
-                    this.setState({ successAlertVisible: true, canChangePublishState: true, versionSelected: '' })
+                    this.setState({ successAlertVisible: true, canChangePublishState: true, publishAlertVisible: false, versionSelected: '' })
                     this.props.onGetProduct(this.state.productValue)
                     this.props.onGetVersion(this.state.versionValue)
                 } else if (response.status === 500) {
