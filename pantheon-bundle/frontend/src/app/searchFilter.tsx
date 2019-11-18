@@ -17,7 +17,10 @@ class SearchFilter extends Component<any, any> {
         { value: '', label: 'Select a Product', disabled: false },
       ],
       productValue: '',
+      productsQueryParam: '',
       productsToQuery: [],
+      productsUUID: [],
+      productversionsQueryParam: '',
       searchText: '',
       sortByValue: '',
       versionOptions: [
@@ -130,6 +133,7 @@ class SearchFilter extends Component<any, any> {
     const path = '/content/products.3.json'
     let key
     const products = new Array()
+    const prodUUID = new Array()
 
     fetch(path)
       .then((response) => {
@@ -161,19 +165,19 @@ class SearchFilter extends Component<any, any> {
                     if (vKey !== 'jcr:primaryType') {
                       if (versionObj[vKey][nameKey]) {
                         versions.push({ value: versionObj[vKey][uuidKey], label: versionObj[vKey][nameKey], disabled: false })
-                        console.log("thing: " + versionObj[vKey][uuidKey])
                       }
                     }
                   }
                 }
                 products[pName] = versions
-                // create new map with pName = uuid and track the uuid for the url there.
+                prodUUID[pName] = productUUID
               }
             }
           }
         }
         this.setState({
-          allProducts: products
+          allProducts: products,
+          productsUUID: prodUUID
         })
 
         if (products) {
@@ -243,6 +247,8 @@ class SearchFilter extends Component<any, any> {
         }
       }
     }
+
+    // TODO DELETE from productversionsQueryParam and productsQueryParam
   };
 
   private addChipItem = () => {
@@ -266,7 +272,7 @@ class SearchFilter extends Component<any, any> {
         }
 
       }
-      if (!chipExists) {
+      if (!chipExists && this.state.versionSelected !== "Select a Version") {
         copyOfChipGroups[index].chips.push(this.state.versionSelected);
       }
     } else {
@@ -275,7 +281,27 @@ class SearchFilter extends Component<any, any> {
         chips: [this.state.versionSelected]
       })
     }
-    this.setState({ chipGroups: copyOfChipGroups }, () => {
+
+    const uuidKey = "value"
+    // console.log("This is the Selected Product UUID: " + JSON.stringify(this.state.productsUUID[this.state.productValue]))
+    // console.log("This is the Selected Version: " + JSON.stringify(this.state.allProducts[this.state.productValue].filter((e) => e.label === this.state.versionValue)[0][uuidKey]))
+    const versionUUID = this.state.allProducts[this.state.productValue].filter((e) => e.label === this.state.versionValue)[0][uuidKey]
+    // If version is All just add the product.
+    let prodQuery = this.state.productsQueryParam
+    let verQuery = this.state.productversionsQueryParam
+    if (versionUUID === "All") {
+      if (this.state.productsQueryParam !== '') {
+        prodQuery += '&'
+      }
+      prodQuery += "product=" + this.state.productsUUID[this.state.productValue]
+    } else if (versionUUID !== "") {
+      if (this.state.productversionsQueryParam !== '') {
+        verQuery += '&'
+      }
+      verQuery += "productversion=" + versionUUID
+    }
+
+    this.setState({ chipGroups: copyOfChipGroups,productsQueryParam: prodQuery, productversionsQueryParam: verQuery }, () => {
       this.setQuery();
     });
   };
@@ -284,11 +310,21 @@ class SearchFilter extends Component<any, any> {
   private setQuery = () => {
     let searchQuery = ""
     if (this.state.searchText !== "") {
-      // Add this check to all others this one is not needed because search goes first in the list.
+      searchQuery += "search=" + this.state.searchText
+    }
+
+    if (this.state.productsQueryParam !== "") {
       if (searchQuery !== "") {
         searchQuery += "&"
       }
-      searchQuery += "search=" + this.state.searchText
+      searchQuery += this.state.productsQueryParam
+    }
+
+    if (this.state.productversionsQueryParam !== "") {
+      if (searchQuery !== "") {
+        searchQuery += "&"
+      }
+      searchQuery += this.state.productversionsQueryParam
     }
 
     // Default is All and should not add to the filter.
@@ -315,7 +351,6 @@ class SearchFilter extends Component<any, any> {
     }
     searchQuery += "direction=" + (this.state.isSortedUp ? "desc" : "asc")
 
-    // &product="+this.state.productUUID+"&productversion="+this.state.versionUUID+"
     this.props.filterQuery(searchQuery)
     console.log("This is the query: " + searchQuery)
   }
