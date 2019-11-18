@@ -202,7 +202,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         }
                         for (const productVersion of productChild.__children__) {
                             if (productVersion[Fields.JCR_UUID] === uuid) {
-                                this.setState({ productValue: product.__name__, versionValue: productVersion.__name__ })
+                                this.setState({ productValue: product.name, versionValue: productVersion.name })
                                 break
                             }
                         }
