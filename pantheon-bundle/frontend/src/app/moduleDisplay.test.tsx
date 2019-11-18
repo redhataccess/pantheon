@@ -6,7 +6,7 @@ import { mount, shallow } from 'enzyme'
 import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListCell, TextContent, Level, LevelItem, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core'
 import renderer from 'react-test-renderer'
 import sinon from 'sinon'
-import { Versions } from './versions'
+import { Versions } from '@app/versions'
 const anymatch = require('anymatch')
 
 const props = {
