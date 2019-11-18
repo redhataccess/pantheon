@@ -29,7 +29,6 @@ class Versions extends Component<IProps, any> {
         super(props)
         this.state = {
             canChangePublishState: true,
-            initialLoad: true,
             isArchiveDropDownOpen: false,
             isDropDownOpen: false,
             isHeadingToggle: true,
@@ -64,7 +63,6 @@ class Versions extends Component<IProps, any> {
             versionUUID: "",
             versionValue: '',
         }
-
     }
 
     public componentDidMount() {
@@ -115,7 +113,6 @@ class Versions extends Component<IProps, any> {
                     Empty Product info. Please edit metadata before publishing
           </Alert>
                 }
-                {this.state.initialLoad && this.fetchVersions()}
                 {this.state.metadataInitialLoad && this.getMetadata(this.state.metadataPath)}
                 <Card>
                     <div>
@@ -437,11 +434,12 @@ class Versions extends Component<IProps, any> {
                 }).then(response => {
                     if (response.status === 201 || response.status === 200) {
                         console.log(buttonText + " works: " + response.status)
-                        this.setState({ initialLoad: true, publishAlertVisible: false, canChangePublishState: true })
+                        this.setState({ publishAlertVisible: false, canChangePublishState: true })
                     } else {
                         console.log(buttonText + " failed " + response.status)
-                        this.setState({ initialLoad: true, publishAlertVisible: true })
+                        this.setState({ publishAlertVisible: true })
                     }
+                    this.fetchVersions()
                 });
             }
         }
