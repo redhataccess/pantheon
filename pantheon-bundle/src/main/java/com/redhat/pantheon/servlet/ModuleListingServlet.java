@@ -68,10 +68,10 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         // Condition for module Use Case
-        String useCaseCondition = "";
+        String moduleTypeCondition = "";
         if(!Strings.isNullOrEmpty(type)) {
-            useCaseCondition = "AND (draft.[metadata/documentUseCase] = '" + type + "' " +
-                    "OR release.[metadata/documentUseCase] = '" + type + "') ";
+            moduleTypeCondition = "AND (draft.[metadata/moduleType] = '" + type + "' " +
+                    "OR release.[metadata/moduleType] = '" + type + "') ";
         }
 
         // product version conditions
@@ -101,7 +101,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                     .append("OR draft.[metadata/jcr:description] LIKE '%" + searchParam + "%' ")
                     .append("OR release.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
                     .append("OR release.[metadata/jcr:description] LIKE '%" + searchParam + "%') ")
-                .append(useCaseCondition)
+                .append(moduleTypeCondition)
                 .append(productVersionCondition);
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
