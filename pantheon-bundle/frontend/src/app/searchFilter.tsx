@@ -53,6 +53,7 @@ class SearchFilter extends Component<any, any> {
     ]
 
     const sortItems = [
+      { value: 'Uploaded date', label: 'Uploaded date', disabled: false },
       { value: 'Title', label: 'Title', disabled: false },
       { value: 'Product', label: 'Product', disabled: false },
       { value: 'Published date', label: 'Published date', disabled: false },
@@ -356,12 +357,12 @@ class SearchFilter extends Component<any, any> {
       searchQuery += "type=" + this.state.moduleTypeValue
     }
 
-    // Default key is Title
+    // Default key is Uploaded
     if (searchQuery !== "") {
       searchQuery += "&"
     }
     if (this.state.sortByValue === "") {
-      searchQuery += "key=Title"
+      searchQuery += "key=Uploaded"
     } else {
       searchQuery += "key=" + this.state.sortByValue
     }

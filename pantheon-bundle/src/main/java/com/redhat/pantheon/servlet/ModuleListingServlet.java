@@ -6,6 +6,7 @@ import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -52,9 +53,22 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String[] productVersionIds = request.getParameterValues("productversion");
         String type = paramValue(request, "type");
 
-        if(!newArrayList("jcr:title", "jcr:description").contains(keyParam)) {
+        if(!newArrayList("Title", "Product", "Published", "Module", "Updated" ).contains(keyParam)) {
             keyParam = "pant:dateUploaded";
         }
+        if (keyParam.contains("Title")){
+            keyParam = "jcr:title";
+        }
+        if (keyParam.contains("Published")){
+            keyParam = "pant:datePublished";
+        }
+        if (keyParam.contains("Module")){
+            keyParam = "pant:moduleType";
+        }
+        if (keyParam.contains("Updated")){
+            keyParam = JcrConstants.JCR_LASTMODIFIED;
+        }
+
         if(!"desc".equals(directionParam)) {
             directionParam = "asc";
         }
@@ -67,7 +81,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             throw new RuntimeException(e);
         }
 
-        // Condition for module Use Case
+        // Condition for module type
         String moduleTypeCondition = "";
         if(!Strings.isNullOrEmpty(type)) {
             moduleTypeCondition = "AND (draft.[metadata/moduleType] = '" + type + "' " +
