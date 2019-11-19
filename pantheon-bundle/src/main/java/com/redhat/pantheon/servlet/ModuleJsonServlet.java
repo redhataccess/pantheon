@@ -108,7 +108,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
                         .andThen(Html.getBody())
-                        .apply(releasedContent.get().cachedHtml.get().data.get()));
+                        .apply(releasedContent.get().cachedHtml().get().data().get()));
 
         // Fields that are part of the spec and yet to be implemented
         moduleMap.put("context_url_fragment", "");

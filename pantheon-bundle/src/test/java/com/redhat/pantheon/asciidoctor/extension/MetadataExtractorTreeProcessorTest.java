@@ -46,7 +46,7 @@ class MetadataExtractorTreeProcessorTest {
 
         // Then
         assertEquals("A title for content", metadata.title().get());
-        assertEquals("This is the module abstract",  metadata.mAbstract.get());
+        assertEquals("This is the module abstract",  metadata.mAbstract().get());
     }
 
     @Test

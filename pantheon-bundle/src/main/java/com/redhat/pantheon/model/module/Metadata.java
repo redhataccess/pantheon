@@ -42,10 +42,12 @@ public interface Metadata extends SlingModel {
     @Named("pant:dateUploaded")
     Field<Calendar> dateUploaded();
 
-    public final ReferenceField<ProductVersion> productVersion = referenceField("productVersion", ProductVersion.class);
+    @Named(JcrConstants.JCR_LASTMODIFIED)
+    Field<Calendar> dateModified();
 
-    public final Field<String> urlFragment = stringField("urlFragment");
+    Field<String> productVersion();
 
+    Field<String> urlFragment();
 
     @Named(JcrConstants.JCR_PRIMARYTYPE)
     Field<String> primaryType();

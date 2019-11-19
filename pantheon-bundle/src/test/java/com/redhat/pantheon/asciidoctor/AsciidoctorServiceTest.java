@@ -1,7 +1,6 @@
 package com.redhat.pantheon.asciidoctor;
 
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.api.v2.FileResource;
 import com.redhat.pantheon.model.api.v2.SlingModels;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Module;
@@ -22,7 +21,7 @@ import java.util.Optional;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 class AsciidoctorServiceTest {
@@ -104,10 +103,4 @@ class AsciidoctorServiceTest {
         // Then
         assertTrue(generatedHtml.contains("This is cached content"));
     }
-        FileResource.JcrContent content =
-                SlingModels.getModel(slingContext.resourceResolver().getResource("/module/en_US/1/asciidoc/jcr:content"),
-                        FileResource.JcrContent.class);
-        Metadata metadata =
-                SlingModels.getModel(slingContext.resourceResolver().getResource("/module/en_US/1/metadata"),
-                        Metadata.class);
 }

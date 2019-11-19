@@ -112,11 +112,11 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                             }
                         })
                         .findFirst();
-        abstractNode.ifPresent(node -> metadata.mAbstract.set(node.getContent().toString()));
+        abstractNode.ifPresent(node -> metadata.mAbstract().set(node.getContent().toString()));
 
         // if no abstract is detected, reset if
         if(!abstractNode.isPresent()) {
-            metadata.mAbstract.set(null);
+            metadata.mAbstract().set(null);
         }
     }
 

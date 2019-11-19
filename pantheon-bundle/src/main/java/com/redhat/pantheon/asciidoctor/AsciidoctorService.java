@@ -178,15 +178,15 @@ public class AsciidoctorService {
         // add specific extensions for metadata regeneration
         if(regenMetadata) {
             asciidoctor.javaExtensionRegistry().treeprocessor(
-                    new MetadataExtractorTreeProcessor(moduleVersion.metadata.getOrCreate()));
+                    new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
         }
 
         String html = "";
         try {
             html = asciidoctor.convert(
-                    moduleVersion.content.get().asciidocContent.get(),
+                    moduleVersion.content().get().asciidocContent().get(),
                     ob.get());
-            cacheContent(moduleVersion.content.get(), html);
+            cacheContent(moduleVersion.content().get(), html);
         } finally {
             asciidoctorPool.returnObject(asciidoctor);
         }
