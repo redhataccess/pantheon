@@ -1,7 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
 import com.redhat.pantheon.conf.GlobalConfig;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.asciidoctor.ast.Document;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(SlingContextExtension.class)
-class ImageSrcTransformerTest {
+class HtmlModulePostprocessorTest {
 
     final Pattern imageRegEx = Pattern.compile(GlobalConfig.IMAGE_PATH_PREFIX + "/.*");
 
@@ -37,7 +36,7 @@ class ImageSrcTransformerTest {
                 .resource("/a/module")
                 .resource("/a/some/image/path")
                 .commit();
-        ImageSrcTransformer transformer = new ImageSrcTransformer(sc.resourceResolver().getResource("/a/module"));
+        HtmlModulePostprocessor transformer = new HtmlModulePostprocessor(sc.resourceResolver().getResource("/a/module"));
 
         // When
         String processedOutput = transformer.process(mock(Document.class), html);
@@ -49,19 +48,5 @@ class ImageSrcTransformerTest {
         doc.select("img").forEach(image -> {
             assertTrue(image.attr("src").matches(imageRegEx.pattern()));
         });
-    }
-
-    @Test
-    void encodeImgSrc() {
-        // Given
-        String path1 = "/a/content/image.png";
-        String path2 = "../../a/relative/image.jpg";
-
-        // When
-        ImageSrcTransformer transformer = new ImageSrcTransformer(mock(Resource.class));
-
-        // Then
-        assertTrue(imageRegEx.matcher(transformer.encodeImgSrc(path1)).matches());
-        assertTrue(imageRegEx.matcher(transformer.encodeImgSrc(path2)).matches());
     }
 }

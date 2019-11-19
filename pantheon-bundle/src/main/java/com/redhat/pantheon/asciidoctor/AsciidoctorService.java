@@ -3,12 +3,13 @@ package com.redhat.pantheon.asciidoctor;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import com.redhat.pantheon.asciidoctor.extension.ContentAbstractBlockProcessor;
+import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
+import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -28,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -76,7 +76,8 @@ public class AsciidoctorService {
     }
 
     /**
-     * Returns a module's html representation.
+     * Returns a module's html representation. If the module has not been built before, or if it is explicitly requested,
+     * it is fully built. Otherwise a cached copy of the html is returned.
      * @param moduleVersion The module version to generate content for
      * @param base The resource base (probably at the module level) to find included artifacts
      * @param context any necessary context (attributes and their values) necessary to generate the html
@@ -97,8 +98,7 @@ public class AsciidoctorService {
         // asciidoc has changed,
         // then generate and save it
         if( forceRegen || content.cachedHtml.get() == null || !generatedContentHashMatches(content) ) {
-            html = generateHtml(content.asciidocContent.get(), base, context);
-            cacheContent(content, html);
+            html = buildModule(base.adaptTo(Module.class), moduleVersion, context, true);
         } else {
             html = content.cachedHtml.get()
                     .data.get();
@@ -126,39 +126,16 @@ public class AsciidoctorService {
     }
 
     /**
-     * Extracts metadata from asciidoctor content and writes it to the metadata jcr node.
-     * @param content The source node that contains the asciidoc content
-     * @param metadata The destination node where the extracted metadata will be written
+     * Builds a module. This means generating the html code for the module at one of its revisions.
+     * @param base The base module. This should be the same module that the moduleVersion belongs to, but the code
+     *             won't check this. The module will only be used as a base for resolving included resources and images.
+     * @param moduleVersion The actual module version that is being generated. It should have its asciidoc content present.
+     * @param context Any asciidoc attributes necessary to inject into the generation process
+     * @param regenMetadata If true, metadata will be extracted from the content and repopulated into the JCR module.
+     * @return The generated html string.
      */
-    public void extractMetadata(FileResource.JcrContent content, Metadata metadata) {
-        log.trace("=== Start extracting metadata ");
-        long startTime = System.currentTimeMillis();
-        Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
-        try {
-            asciidoctor.javaExtensionRegistry().treeprocessor(
-                    new MetadataExtractorTreeProcessor(metadata));
-            asciidoctor.javaExtensionRegistry().block(
-                    new ContentAbstractBlockProcessor(metadata));
-
-            asciidoctor.load(content.jcrData.get(), newHashMap());
-        }
-        finally {
-            asciidoctorPool.returnObject(asciidoctor);
-        }
-        long endTime = System.currentTimeMillis();
-        log.trace("=== End extracting metadata. Time lapsed: " + (endTime-startTime)/1000 + " secs");
-    }
-
-    /**
-     * Generates html content from an asciidoc string
-     * @param asciidoc The asciidoc contents
-     * @param base The base resource to use as 'current location' when generating the html. This is so that relative
-     *             includes are able to be referenced in the JCR repository as they would when using asciidoctor
-     *             from the command line.
-     * @param context Any attributes necessary to inject into the generation process
-     * @return The generated html for the provided asciidoc string and context
-     */
-    private String generateHtml(String asciidoc, Resource base, Map<String, Object> context) {
+    private String buildModule(Module base, ModuleVersion moduleVersion, Map<String, Object> context,
+                               final boolean regenMetadata) {
 
         // build the attributes (default + those coming from http parameters)
         AttributesBuilder atts = AttributesBuilder.attributes()
@@ -190,12 +167,25 @@ public class AsciidoctorService {
         globalConfig.getTemplateDirectory().ifPresent(ob::templateDir);
 
         long start = System.currentTimeMillis();
-        Asciidoctor asciidoctor = asciidoctorPool.borrowObject(base);
+        Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
+        // extensions needed to generate a module's html
+        asciidoctor.javaExtensionRegistry().includeProcessor(
+                new SlingResourceIncludeProcessor(base));
+        asciidoctor.javaExtensionRegistry().postprocessor(
+                new HtmlModulePostprocessor(base));
+
+        // add specific extensions for metadata regeneration
+        if(regenMetadata) {
+            asciidoctor.javaExtensionRegistry().treeprocessor(
+                    new MetadataExtractorTreeProcessor(moduleVersion.metadata.getOrCreate()));
+        }
+
         String html = "";
         try {
             html = asciidoctor.convert(
-                    asciidoc,
+                    moduleVersion.content.get().asciidocContent.get(),
                     ob.get());
+            cacheContent(moduleVersion.content.get(), html);
         } finally {
             asciidoctorPool.returnObject(asciidoctor);
         }

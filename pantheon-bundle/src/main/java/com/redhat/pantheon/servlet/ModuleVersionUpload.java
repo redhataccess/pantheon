@@ -109,6 +109,9 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             boolean generateHtml = false;
             String jcrData = jcrContent.jcrData.get();
 
+            // Html is generated if:
+            // a. the draft content has changed as part of this upload
+            // b. a draft hasn't already been built before
             if ((jcrData != null && !jcrData.equals(asciidocContent)) || !draftVersion.map(i -> i.content.get()).map(i -> i.cachedHtml.get()).isPresent()) {
                 generateHtml = true;
             }
@@ -123,8 +126,6 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             metadata.dateModified.set(now);
             metadata.dateUploaded.set(now);
             metadata.moduleType.set( determineModuleType(module) );
-
-            asciidoctorService.extractMetadata(jcrContent, metadata);
 
             request.getResourceResolver().commit();
 

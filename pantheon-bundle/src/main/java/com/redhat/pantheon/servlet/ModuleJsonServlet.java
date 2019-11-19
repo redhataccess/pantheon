@@ -1,5 +1,7 @@
 package com.redhat.pantheon.servlet;
 
+import com.google.common.base.Charsets;
+import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.Content;
@@ -100,7 +102,11 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         moduleMap.put("date_modified", dateModified.toInstant().toString());
-        moduleMap.put("body", releasedContent.get().cachedHtml.get().data.get());
+        // Return the body content of the module ONLY
+        moduleMap.put("body",
+                Html.parse(Charsets.UTF_8.name())
+                        .andThen(Html.getBody())
+                        .apply(releasedContent.get().cachedHtml.get().data.get()));
 
         // Fields that are part of the spec and yet to be implemented
         moduleMap.put("context_url_fragment", "");
