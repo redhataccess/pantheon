@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static com.redhat.pantheon.model.api.v2.SlingModels.getModel;
-import static com.redhat.pantheon.model.api.SlingResourceUtil.createNewSlingResource;
 
 /**
  * Default implementation of the {@link Child} interface.
@@ -66,7 +65,7 @@ public class ChildImpl<T extends SlingModel> implements Child<T> {
      */
     @Override
     public T create() {
-        return createNewSlingResource(owner, name, type);
+        return SlingModels.createModel(owner, name, type);
     }
 
     /**

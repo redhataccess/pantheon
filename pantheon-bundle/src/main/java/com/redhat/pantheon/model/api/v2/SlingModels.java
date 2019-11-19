@@ -1,11 +1,11 @@
 package com.redhat.pantheon.model.api.v2;
 
 import com.google.common.collect.ImmutableMap;
-import com.redhat.pantheon.model.api.SlingResource;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceUtil;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Proxy;
@@ -90,7 +90,24 @@ public class SlingModels {
     }
 
     /**
-     * Returns the primary type for a given {@link SlingResource} class.
+     * Creates a new {@link SlingModel} of a given type.
+     *
+     * @param resourceResolver The resource resolver used to create the child
+     * @param path The full absolute path where to create the resource
+     * @param modelType The specific type of {@link SlingModel} to return
+     * @param <T>
+     * @return The newly created resource
+     * @throws RuntimeException if the resource already exists at the path
+     */
+    public static <T extends SlingModel>
+    T createModel(ResourceResolver resourceResolver, String path, Class<T> modelType) {
+        String parentPath = ResourceUtil.getParent(path);
+        String resourceName = ResourceUtil.getName(path);
+        return createModel(resourceResolver.resolve(parentPath),  resourceName, modelType);
+    }
+
+    /**
+     * Returns the primary type for a given {@link SlingModel} class.
      * @param resourceType The resource type
      * @return A String containing the jcr:primaryType to use for the given resource type.
      */

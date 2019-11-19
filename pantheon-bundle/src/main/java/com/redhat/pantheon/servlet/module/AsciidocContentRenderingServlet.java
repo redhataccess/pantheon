@@ -63,7 +63,7 @@ public class AsciidocContentRenderingServlet extends SlingSafeMethodsServlet {
 
         if(content.isPresent()) {
             response.setContentType(ContentType.TEXT_PLAIN.toString());
-            w.write(content.get().asciidocContent.get());
+            w.write(content.get().asciidocContent().get());
         } else {
             response.sendError(SC_NOT_FOUND, "Requested content not found for locale " + locale.toString()
                     + " and in state " + (draft ? "'draft'" : "released"));

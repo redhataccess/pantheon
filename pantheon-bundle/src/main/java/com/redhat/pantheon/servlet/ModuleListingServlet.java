@@ -87,9 +87,9 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String resourcePath = resource.getPath();
         m.put("name", resource.getName());
         // TODO need to provide both released and draft to the api caller
-        m.put("pant:dateUploaded", draftMetadata.isPresent() ? draftMetadata.get().dateUploaded.get() : releasedMetadata.get().dateUploaded.get());
-        m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title.get() : releasedMetadata.get().title.get());
-        m.put("jcr:description", draftMetadata.isPresent() ? draftMetadata.get().description.get() : releasedMetadata.get().description.get());
+        m.put("pant:dateUploaded", draftMetadata.isPresent() ? draftMetadata.get().dateUploaded().get() : releasedMetadata.get().dateUploaded().get());
+        m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title().get() : releasedMetadata.get().title().get());
+        m.put("jcr:description", draftMetadata.isPresent() ? draftMetadata.get().description().get() : releasedMetadata.get().description().get());
         // Assume the path is something like: /content/<something>/my/resource/path
         m.put("pant:transientPath", resourcePath.substring("/content/".length()));
         // Example path: /content/repositories/ben_2019-04-11_16-15-15/shared/attributes.module.adoc

@@ -1,5 +1,7 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
+import com.redhat.pantheon.model.api.v2.SlingModel;
+import com.redhat.pantheon.model.api.v2.SlingModels;
 import com.redhat.pantheon.model.module.Metadata;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -26,9 +28,10 @@ class MetadataExtractorTreeProcessorTest {
                 .resource("/content/module1/locales/en_US/1/metadata")
                 .commit();
         Metadata metadata =
-                new Metadata(
-                    slingContext.resourceResolver().getResource(
-                            "/content/module1/locales/en_US/1/metadata"));
+                SlingModels.getModel(
+                        slingContext.resourceResolver().getResource(
+                                "/content/module1/locales/en_US/1/metadata"),
+                        Metadata.class);
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
@@ -42,7 +45,7 @@ class MetadataExtractorTreeProcessorTest {
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
-        assertEquals("A title for content", metadata.title.get());
+        assertEquals("A title for content", metadata.title().get());
         assertEquals("This is the module abstract",  metadata.mAbstract.get());
     }
 
@@ -53,8 +56,10 @@ class MetadataExtractorTreeProcessorTest {
                 .resource("/content/module1/locales/en_US/1/metadata")
                 .commit();
         Metadata metadata =
-                new Metadata(
-                        slingContext.resourceResolver().getResource("/content/module1/locales/en_US/1/metadata"));
+                SlingModels.getModel(
+                        slingContext.resourceResolver().getResource(
+                                "/content/module1/locales/en_US/1/metadata"),
+                        Metadata.class);
         Resource module = slingContext.resourceResolver().getResource("/content/module1");
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
@@ -65,7 +70,7 @@ class MetadataExtractorTreeProcessorTest {
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
-        assertNull(metadata.mAbstract.get());
+        assertNull(metadata.mAbstract().get());
     }
 
     @Test
@@ -75,9 +80,10 @@ class MetadataExtractorTreeProcessorTest {
                 .resource("/content/module1/locales/en_US/1/metadata")
                 .commit();
         Metadata metadata =
-                new Metadata(
+                SlingModels.getModel(
                         slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"));
+                                "/content/module1/locales/en_US/1/metadata"),
+                        Metadata.class);
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
@@ -96,7 +102,7 @@ class MetadataExtractorTreeProcessorTest {
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
-        assertEquals("Headline", metadata.headline.get());
+        assertEquals("Headline", metadata.headline().get());
     }
 
     /**
@@ -111,9 +117,10 @@ class MetadataExtractorTreeProcessorTest {
                 .resource("/content/module1/locales/en_US/1/metadata")
                 .commit();
         Metadata metadata =
-                new Metadata(
+                SlingModels.getModel(
                         slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"));
+                                "/content/module1/locales/en_US/1/metadata"),
+                        Metadata.class);
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
@@ -135,7 +142,7 @@ class MetadataExtractorTreeProcessorTest {
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
-        assertNull(metadata.headline.get());
+        assertNull(metadata.headline().get());
     }
 
     @Test
@@ -145,9 +152,10 @@ class MetadataExtractorTreeProcessorTest {
                 .resource("/content/module1/locales/en_US/1/metadata")
                 .commit();
         Metadata metadata =
-                new Metadata(
+                SlingModels.getModel(
                         slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"));
+                                "/content/module1/locales/en_US/1/metadata"),
+                        Metadata.class);
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
@@ -158,6 +166,6 @@ class MetadataExtractorTreeProcessorTest {
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
-        assertNull(metadata.headline.get());
+        assertNull(metadata.headline().get());
     }
 }

@@ -2,8 +2,9 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.api.FileResource.JcrContent;
-import com.redhat.pantheon.model.api.SlingResourceUtil;
+import com.redhat.pantheon.model.api.v2.FileResource.JcrContent;
+import com.redhat.pantheon.model.api.v2.SlingModels;
+import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * Post operation to add a new Module version to the system.
@@ -81,7 +83,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
 
             if(moduleResource == null) {
                 module =
-                        SlingResourceUtil.createNewSlingResource(
+                        SlingModels.createModel(
                                 request.getResourceResolver(),
                                 path,
                                 Module.class);
@@ -98,34 +100,39 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                         module.getOrCreateModuleLocale(localeObj)
                         .createNextVersion());
                 module.getOrCreateModuleLocale(localeObj)
-                        .draft.set( draftVersion.get().uuid.get() );
+                        .draft().set( draftVersion.get().uuid().get() );
             }
 
             // modify only the draft content/metadata
             JcrContent jcrContent = draftVersion.get()
-                    .content.getOrCreate()
-                    .asciidoc.getOrCreate()
-                    .jcrContent.getOrCreate();
+                    .content().getOrCreate()
+                    .asciidoc().getOrCreate()
+                    .jcrContent().getOrCreate();
             boolean generateHtml = false;
-            String jcrData = jcrContent.jcrData.get();
+            String jcrData = jcrContent.jcrData().get();
 
             // Html is generated if:
             // a. the draft content has changed as part of this upload
             // b. a draft hasn't already been built before
-            if ((jcrData != null && !jcrData.equals(asciidocContent)) || !draftVersion.map(i -> i.content.get()).map(i -> i.cachedHtml.get()).isPresent()) {
+            if ((jcrData != null && !jcrData.equals(asciidocContent))
+                    || !draftVersion.map(ModuleVersion::content)
+                            .map(Supplier::get)
+                            .map(Content::cachedHtml)
+                            .map(Supplier::get)
+                            .isPresent()) {
                 generateHtml = true;
             }
-            jcrContent.jcrData.set(asciidocContent);
-            jcrContent.mimeType.set("text/x-asciidoc");
+            jcrContent.jcrData().set(asciidocContent);
+            jcrContent.mimeType().set("text/x-asciidoc");
 
             Metadata metadata = draftVersion.get()
-                    .metadata.getOrCreate();
-            metadata.title.set(moduleName);
-            metadata.description.set(description);
+                    .metadata().getOrCreate();
+            metadata.title().set(moduleName);
+            metadata.description().set(description);
             Calendar now = Calendar.getInstance();
-            metadata.dateModified.set(now);
-            metadata.dateUploaded.set(now);
-            metadata.moduleType.set( determineModuleType(module) );
+            metadata.dateModified().set(now);
+            metadata.dateUploaded().set(now);
+            metadata.moduleType().set( determineModuleType(module) );
 
             request.getResourceResolver().commit();
 

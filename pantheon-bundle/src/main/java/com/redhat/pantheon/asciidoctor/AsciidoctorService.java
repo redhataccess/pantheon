@@ -7,6 +7,7 @@ import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.api.v2.FileResource;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
@@ -68,9 +69,9 @@ public class AsciidoctorService {
      * content. False otherwise.
      */
     private boolean generatedContentHashMatches(Content content) {
-        String srcContent = content.asciidocContent.get();
-        String existingHash = content.cachedHtml.get()
-                .hash.get();
+        String srcContent = content.asciidocContent().get();
+        String existingHash = content.cachedHtml().get()
+                .hash().get();
 
         return hash(srcContent).toString().equals(existingHash);
     }
@@ -91,17 +92,17 @@ public class AsciidoctorService {
                                 Map<String, Object> context,
                                 boolean forceRegen) {
 
-        Content content = moduleVersion.content.get();
-        Metadata metadata = moduleVersion.metadata.get();
+        Content content = moduleVersion.content().get();
+        Metadata metadata = moduleVersion.metadata().get();
         String html;
         // If regeneration is forced, the content doesn't exist yet, or it needs generation because the original
         // asciidoc has changed,
         // then generate and save it
-        if( forceRegen || content.cachedHtml.get() == null || !generatedContentHashMatches(content) ) {
+        if( forceRegen || content.cachedHtml().get() == null || !generatedContentHashMatches(content) ) {
             html = buildModule(base.adaptTo(Module.class), moduleVersion, context, true);
         } else {
-            html = content.cachedHtml.get()
-                    .data.get();
+            html = content.cachedHtml().get()
+                    .data().get();
         }
 
         return html;
@@ -203,17 +204,17 @@ public class AsciidoctorService {
      */
     private void cacheContent(final Content content, final String html) {
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
-            String asciidoc = content.asciidocContent.get();
+            String asciidoc = content.asciidocContent().get();
             // reload from the service-level resolver
             Content writeableContent =
                     serviceResourceResolver.getResource(content.getPath()).adaptTo(Content.class);
 
-            writeableContent.cachedHtml.getOrCreate()
-                    .hash.set(
+            writeableContent.cachedHtml().getOrCreate()
+                    .hash().set(
                         hash(asciidoc).toString()
                     );
-            writeableContent.cachedHtml.getOrCreate()
-                    .data.set(html);
+            writeableContent.cachedHtml().getOrCreate()
+                    .data().set(html);
             serviceResourceResolver.commit();
         } catch (Exception e) {
             throw new RuntimeException(e);

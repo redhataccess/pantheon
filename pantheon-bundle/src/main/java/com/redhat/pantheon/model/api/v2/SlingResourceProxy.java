@@ -1,15 +1,16 @@
 package com.redhat.pantheon.model.api.v2;
 
-import com.redhat.pantheon.model.api.SlingResource;
 import org.apache.sling.api.resource.Resource;
 
 import javax.inject.Named;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 
 /**
- * A specialized {@link SlingResource} extension which also acts as an {@link InvocationHandler}
+ * A specialized {@link ResourceDecorator} extension which also acts as an {@link InvocationHandler}
  * to provide additional methods in {@link SlingModel} interfaces. It provides all the existing
  * methods in the base class, plus the ability to process additional ones which conform to the
  * model contract.
@@ -19,7 +20,7 @@ import java.lang.reflect.ParameterizedType;
  *
  * @author Carlos Munoz
  */
-class SlingResourceProxy extends SlingResource implements InvocationHandler {
+class SlingResourceProxy extends ResourceDecorator implements InvocationHandler {
 
     public SlingResourceProxy(Resource wrapped) {
         super(wrapped);
@@ -27,8 +28,23 @@ class SlingResourceProxy extends SlingResource implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        // default interface methods
+        // (default methods declared in the SlingModel interface themselves)
+        if( method.isDefault() ) {
+            // FIXME This will need to change in Java8+ versions
+            // See: https://blog.jooq.org/2018/03/28/correct-reflective-access-to-interface-default-methods-in-java-8-9-10/
+            final Class<?> declaringClass = method.getDeclaringClass();
+            Constructor<MethodHandles.Lookup> constructor = MethodHandles.Lookup.class
+                    .getDeclaredConstructor(Class.class);
+            constructor.setAccessible(true);
+            return constructor.newInstance(declaringClass)
+                    .in(declaringClass)
+                    .unreflectSpecial(method, declaringClass)
+                    .bindTo(proxy)
+                    .invokeWithArguments(args);
+        }
         // methods which access an enum Field
-        if( isEnumFieldAccessor(method) ) {
+        else if( isEnumFieldAccessor(method) ) {
             String fieldName = extractFieldName(method);
             Class fieldType = extractParameterizedReturnType(method);
             return new EnumFieldImpl(fieldName, fieldType, this);

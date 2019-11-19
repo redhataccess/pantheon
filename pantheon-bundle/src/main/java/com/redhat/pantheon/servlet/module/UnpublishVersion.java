@@ -60,13 +60,13 @@ public class UnpublishVersion extends AbstractPostOperation {
         } else {
             // Released revision is emptied out
             ModuleLocale moduleLocale = module.getModuleLocale(locale);
-            String unpublishedRevId = moduleLocale.released.get();
-            moduleLocale.released.set( null );
+            String unpublishedRevId = moduleLocale.released().get();
+            moduleLocale.released().set( null );
 
             // if there is no draft version, set the recently unpublished one as draft
             // it is guaranteed to be the latest one
             if (!module.getDraftVersion(locale).isPresent()) {
-                moduleLocale.draft.set(unpublishedRevId);
+                moduleLocale.draft().set(unpublishedRevId);
             }
 
             changes.add(Modification.onModified(module.getPath()));

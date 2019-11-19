@@ -1,11 +1,8 @@
 package com.redhat.pantheon.model.module;
 
-import com.redhat.pantheon.model.api.ReferenceField;
-import com.redhat.pantheon.model.api.SlingResource;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
-import org.apache.sling.api.resource.Resource;
-
-import javax.annotation.Nonnull;
+import com.redhat.pantheon.model.api.v2.Reference;
+import com.redhat.pantheon.model.api.v2.SlingModel;
 
 import static com.google.common.collect.Streams.stream;
 import static java.util.stream.Collectors.counting;
@@ -14,30 +11,26 @@ import static java.util.stream.Collectors.counting;
  * A specific module locale node which houses all the versions for a specific language in the module.
  */
 @JcrPrimaryType("pant:moduleLocale")
-public class ModuleLocale extends SlingResource {
+public interface ModuleLocale extends SlingModel {
 
-    public final ReferenceField<ModuleVersion> released = referenceField("released", ModuleVersion.class);
+    Reference<ModuleVersion> released();
 
-    public final ReferenceField<ModuleVersion> draft = referenceField("draft", ModuleVersion.class);
+    Reference<ModuleVersion> draft();
 
-    public ModuleLocale(@Nonnull Resource resource) {
-        super(resource);
+    default ModuleVersion getVersion(String name) {
+        return getChild(name, ModuleVersion.class);
     }
 
-    public ModuleVersion getVersion(String name) {
-        return child(name, ModuleVersion.class).get();
+    default ModuleVersion getOrCreateVersion(String name) {
+        return getOrCreateChild(name, ModuleVersion.class);
     }
 
-    public ModuleVersion getOrCreateVersion(String name) {
-        return child(name, ModuleVersion.class).getOrCreate();
-    }
-
-    public ModuleVersion createNextVersion() {
+    default ModuleVersion createNextVersion() {
         // Generate a new version name
-        return child(generateNextVersionName(), ModuleVersion.class).create();
+        return createChild(generateNextVersionName(), ModuleVersion.class);
     }
 
-    private String generateNextVersionName() {
+    default String generateNextVersionName() {
         return "" + (stream(this.getChildren()).collect(counting()) + 1);
     }
 }

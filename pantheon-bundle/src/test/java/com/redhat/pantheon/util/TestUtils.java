@@ -1,15 +1,12 @@
 package com.redhat.pantheon.util;
 
 import com.google.common.base.Function;
-import com.redhat.pantheon.model.api.SlingResource;
+import com.redhat.pantheon.model.api.v2.SlingModel;
+import com.redhat.pantheon.model.api.v2.SlingModels;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
-
-import javax.annotation.Nullable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * A set of test-only utilities
@@ -25,20 +22,11 @@ public class TestUtils {
      *
      * @param adapterClass The adapter class to register.
      * @param context The sling context to register the mock adapter
-     * @param <T> A subtype of {@link SlingResource}
+     * @param <T> A subtype of {@link SlingModel}
      */
-    public static <T extends SlingResource> void registerMockAdapter(final Class<T> adapterClass,
-                                                                     final SlingContext context) {
-        Function<Resource, T> adapterFunction = resource -> {
-            try {
-                Constructor<T> constructor = adapterClass.getConstructor(Resource.class);
-                return constructor.newInstance(resource);
-            } catch (NoSuchMethodException | InstantiationException
-                    | IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        };
-
+    public static <T extends SlingModel> void registerMockAdapter(final Class<T> adapterClass,
+                                                                  final SlingContext context) {
+        Function<Resource, T> adapterFunction = resource -> SlingModels.getModel(resource, adapterClass);
         context.registerAdapter(Resource.class, adapterClass, adapterFunction);
     }
 

@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model;
 
+import com.redhat.pantheon.model.api.v2.SlingModels;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -27,7 +28,9 @@ class ModuleTest {
                 .resource("/content/module1")
                 .commit();
         slingContext.registerAdapter(Resource.class, Node.class, mock(Node.class));
-        Module module = new Module(slingContext.resourceResolver().getResource("/content/module1"));
+        Module module =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module1"),
+                        Module.class);
 
         // When
         module.createModuleLocale(new Locale("es", "ES"))
@@ -58,8 +61,10 @@ class ModuleTest {
         slingContext.registerAdapter(Resource.class, Node.class, mock(Node.class));
 
         // When
-        Module module1 = new Module(slingContext.resourceResolver().getResource("/content/module1"));
-        Module module2 = new Module(slingContext.resourceResolver().getResource("/content/module2"));
+        Module module1 =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module1"), Module.class);
+        Module module2 =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module2"), Module.class);
 
         // Then
         assertNotNull(

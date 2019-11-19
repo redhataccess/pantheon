@@ -90,11 +90,11 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         String resourcePath = resource.getPath();
         moduleMap.put("locale", module.getModuleLocale(DEFAULT_MODULE_LOCALE).getName());
         moduleMap.put("revision_id", releasedRevision.get().getName());
-        moduleMap.put("title", releasedMetadata.get().title.get());
-        moduleMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline.get() : "");
-        moduleMap.put("description", releasedMetadata.get().description.get());
+        moduleMap.put("title", releasedMetadata.get().title().get());
+        moduleMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline().get() : "");
+        moduleMap.put("description", releasedMetadata.get().description().get());
         moduleMap.put("content_type", CONTENT_TYPE);
-        moduleMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished.get().toInstant().toString() : "");
+        moduleMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
 
         // Assume the path is something like: /content/<something>/my/resource/path
         moduleMap.put("module_url_fragment", resourcePath.substring("/content/repositories/".length(), resourcePath.length()));
