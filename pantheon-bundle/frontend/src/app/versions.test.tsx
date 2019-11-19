@@ -10,10 +10,11 @@ import sinon from 'sinon'
 const anymatch = require('anymatch')
 
 const props = {
-    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
+    productInfo: "Red Hat Enterprise Linux",
+    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
     versionModulePath: "/modules/test/en_US/1"
 }
 
@@ -120,7 +121,7 @@ describe('Versions tests', () => {
     it('should render a success Alert', () => {
         const wrapper = shallow(<Versions {...props} />)
         wrapper.setState({ 'login': true })
-        wrapper.setState({ 'successAlertVisble': true })
+        wrapper.setState({ 'successAlertVisible': true })
         const alert = wrapper.find(Alert)
         expect(alert.exists()).toBe(true)
     })
@@ -247,6 +248,12 @@ describe('Versions tests', () => {
         expect(inst.hideSuccessAlert()).toMatchSnapshot()
     })
 
+    it('test hidePublishAlert function', () => {
+        const wrapper = renderer.create(<Versions {...props} />);
+        const inst = wrapper.getInstance();
+        expect(inst.hidePublishAlert()).toMatchSnapshot();
+    });
+
     test('Version Button click', () => {
         const wrapper = shallow(<Versions {...props} />)
         const instance = wrapper.instance()
@@ -295,11 +302,11 @@ describe('Versions tests', () => {
     it('has a moduleUUID of "1234"', () => {
         const state: IProps = {
             modulePath: "somePath",
-            versionModulePath: "versionPath",
-            // tslint:disable-next-line: no-unused-expression
-            updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
             onGetProduct: (productValue) => anymatch,
-            onGetVersion: (versionValue) => anymatch
+            onGetVersion: (versionValue) => anymatch,
+            productInfo: "Red Hat Enterprise Linux",
+            updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
+            versionModulePath: "versionPath"
         }
         state.updateDate("-", "-", 1, "1234")
         expect(state.modulePath).toEqual('somePath')
