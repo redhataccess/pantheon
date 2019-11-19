@@ -1,7 +1,6 @@
 package com.redhat.pantheon.extension;
 
 import java.util.Locale;
-import java.util.Optional;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -10,20 +9,17 @@ import javax.jms.Session;
 import javax.net.ssl.SSLContext;
 
 import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.fusesource.stomp.jms.StompJmsConnectionFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
-import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 
 /**
@@ -31,8 +27,7 @@ import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
  * 
  */
 @Component(
-        service = ModulePostPublishHydraIntegration.class
-        
+        service = EventProcessingExtension.class
 )
 public class ModulePostPublishHydraIntegration implements EventProcessingExtension {
 	// Environment variables.
@@ -51,7 +46,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	private SSLContext sslContext;
 	private ServiceResourceResolverProvider serviceResourceResolverProvider;
 	private final Logger log = LoggerFactory.getLogger(ModulePostPublishHydraIntegration.class);
-
+	
 
 	@Activate
 	public ModulePostPublishHydraIntegration(
@@ -71,35 +66,31 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	public void processEvent(Event event) throws Exception {
         
 		ModuleVersionPublishedEvent publishedEvent = (ModuleVersionPublishedEvent) event;
-		if (canProcessEvent(publishedEvent)) {
-    		Resource resource = null;
-    		Module module = null;
-    
-            try {
-            	// Get resource from path
-                resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleVersionPath(), 2));
-                module = resource.adaptTo(Module.class);
-            } catch (Exception e) {
-            	System.out.println(e.getMessage());
-            }
+    	Resource resource = null;
+    	Module module = null;
+        try {
+         	// Get resource from path
+            resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleVersionPath(), 2));
+            module = resource.adaptTo(Module.class);
+        } catch (Exception e) {
+          	System.out.println(e.getMessage());
+        }
             
-            Connection connection = createConnectionFactory().createConnection();
-            try {
-            	
-    			connection.start(); 
-    			log.info("[ModulePostPublishHydraIntegration] connection started " );  
-    		    Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-    		    log.info("[ModulePostPublishHydraIntegration] createSession " );
-    		    MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
-    		    String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
-    		    String msg = "{\"id\": " + this.getPanthoenHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"}";
-    			producer.send(session.createTextMessage(msg));
-    			log.info("[ModulePostPublishHydraIntegration] message sent: " + session.createTextMessage(msg) );
-    		} catch (Throwable t) {
-    			t.printStackTrace();
-    		} finally {
-    			connection.close();
-    		}
+        Connection connection = createConnectionFactory().createConnection();
+        try {
+            connection.start(); 
+    		log.info("[ModulePostPublishHydraIntegration] connection started " );  
+    		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+    		log.info("[ModulePostPublishHydraIntegration] createSession " );
+    		MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
+    		String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
+    		String msg = "{\"id\": " + this.getPanthoenHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"}";
+    		producer.send(session.createTextMessage(msg));
+    		log.info("[ModulePostPublishHydraIntegration] message sent: " + session.createTextMessage(msg) );
+    	} catch (Throwable t) {
+    		t.printStackTrace();
+    	} finally {
+    		connection.close();
     	}
 	}
 	
@@ -107,7 +98,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		if (System.getenv("HYDRA_HOST") != null){
             message_broker_hostname = System.getenv("HYDRA_HOST");
         } else {
-        	message_broker_hostname = "HYDRA_HOST is not set.";
+        	message_broker_hostname = "hydra-messaging-broker02.web.dev.ext.phx1.redhat.com";
             System.out.println("HYDRA_HOST environment variable is not set");
         }
 		
@@ -118,7 +109,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		if (System.getenv("HYDRA_PORT") != null) {
 			message_broker_port = System.getenv("HYDRA_PORT");
 		} else {
-			message_broker_port = "HYDRA_PORT is not set.";
+			message_broker_port = "61612";
             System.out.println("HYDRA_PORT environment variable is not set");
 		}
 		
@@ -129,7 +120,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		if (System.getenv("HYDRA_SCHEME") != null) {
 			message_broker_scheme = System.getenv("HYDRA_SCHEME");
 		} else {
-			message_broker_scheme = "HYDRA_SCHEME is not set.";
+			message_broker_scheme = "ssl";
             System.out.println("HYDRA_SCHEME environment variable is not set");
 		}
 		
@@ -140,7 +131,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		if (System.getenv("HYDRA_USER") != null) {
 			message_broker_username = System.getenv("HYDRA_USER");
 		} else {
-			message_broker_username = "HYDRA_USER is not set.";
+			message_broker_username = "pantheon2user";
             System.out.println("HYDRA_USER environment variable is not set");
 		}
 
@@ -151,7 +142,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		if (System.getenv("HYDRA_USER_PASS") != null) {
 			message_broker_username = System.getenv("HYDRA_USER_PASS");
 		} else {
-			message_broker_username = "HYDRA_USER_PASS is not set.";
+			message_broker_username = "cGFudGhlMG4ydTVlcg==";
             System.out.println("HYDRA_USER_PASS environment variable is not set");
 		}
 
@@ -162,7 +153,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		if (System.getenv("PANTHEON_USER") != null) {
 			pantheon_host = System.getenv("PANTHEON_USER");
 		} else {
-			pantheon_host = "PANTHEON_USER is not set.";
+			pantheon_host = "pantheon2user";
             System.out.println("PANTHEON_USER environment variable is not set");
 		}
 
@@ -187,4 +178,5 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
         
         return factory;
     }
+	
 }
