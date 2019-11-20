@@ -18,14 +18,6 @@ public interface Field<T> extends Supplier<T>, Consumer<T> {
     Class<T> getType();
 
     /**
-     * Sets the default value for this field. The default value is only set if there is
-     * no value set on the field
-     * @param defVal The default value to use
-     * @return The field itself
-     */
-    Field<T> defaultValue(T defVal);
-
-    /**
      * Sets the value on the jcr field of the underlying resource.
      * Setting a field to null effectively removes the field from the resource.
      * @param value

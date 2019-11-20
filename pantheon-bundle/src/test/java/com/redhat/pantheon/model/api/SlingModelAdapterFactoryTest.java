@@ -83,4 +83,10 @@ class SlingModelAdapterFactoryTest {
         // Then
         assertNull(adapter);
     }
+
+    @Test
+    void getUnrecognizedAdaptable() {
+        // When
+        assertNull(modelAdapterFactory.getAdapter("A string", Module.class));
+    }
 }
