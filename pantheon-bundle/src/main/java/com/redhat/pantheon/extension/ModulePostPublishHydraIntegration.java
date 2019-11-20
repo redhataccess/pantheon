@@ -1,12 +1,16 @@
 package com.redhat.pantheon.extension;
 
+import java.security.cert.X509Certificate;
 import java.util.Locale;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.sling.api.resource.Resource;
@@ -68,30 +72,28 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		ModuleVersionPublishedEvent publishedEvent = (ModuleVersionPublishedEvent) event;
     	Resource resource = null;
     	Module module = null;
-        try {
-         	// Get resource from path
-            resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleVersionPath(), 2));
-            module = resource.adaptTo(Module.class);
-        } catch (Exception e) {
-          	System.out.println(e.getMessage());
-        }
-            
+
+        // Get resource from path
+        resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleVersionPath(), 2));
+        module = resource.adaptTo(Module.class);
+
         Connection connection = createConnectionFactory().createConnection();
         try {
-            connection.start(); 
-    		log.info("[ModulePostPublishHydraIntegration] connection started " );  
-    		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-    		log.info("[ModulePostPublishHydraIntegration] createSession " );
-    		MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
-    		String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
-    		String msg = "{\"id\": " + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\"}";
-    		producer.send(session.createTextMessage(msg));
-    		log.info("[ModulePostPublishHydraIntegration] message sent: " + session.createTextMessage(msg) );
-    	} catch (Throwable t) {
-    		t.printStackTrace();
-    	} finally {
-    		connection.close();
-    	}
+			 connection.start();
+			 log.info("[ModulePostPublishHydraIntegration] connection started " );
+		 } catch (JMSException ex) {
+			 System.out.println("Exception: " + ex);
+		 }
+
+        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        log.info("[ModulePostPublishHydraIntegration] createSession " );
+        MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
+        String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
+        String msg = "{\"id\": " + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\"}";
+        producer.send(session.createTextMessage(msg));
+        log.info("[ModulePostPublishHydraIntegration] message sent: " + session.createTextMessage(msg) );
+
+        connection.close();
 	}
 	
 	public String getMessageBrokerHostname () {
@@ -99,7 +101,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
             message_broker_hostname = System.getenv("HYDRA_HOST");
         } else {
         	message_broker_hostname = "hydra-messaging-broker02.web.dev.ext.phx1.redhat.com";
-            System.out.println("HYDRA_HOST environment variable is not set");
+        	log.info("HYDRA_HOST environment variable is not set");
         }
 		
 		return message_broker_hostname;
@@ -110,7 +112,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 			message_broker_port = System.getenv("HYDRA_PORT");
 		} else {
 			message_broker_port = "61612";
-            System.out.println("HYDRA_PORT environment variable is not set");
+			log.info("HYDRA_PORT environment variable is not set");
 		}
 		
 		return message_broker_port;
@@ -121,7 +123,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 			message_broker_scheme = System.getenv("HYDRA_SCHEME");
 		} else {
 			message_broker_scheme = "ssl";
-            System.out.println("HYDRA_SCHEME environment variable is not set");
+			log.info("HYDRA_SCHEME environment variable is not set");
 		}
 		
 		return message_broker_scheme;
@@ -132,7 +134,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 			message_broker_username = System.getenv("HYDRA_USER");
 		} else {
 			message_broker_username = "pantheon2user";
-            System.out.println("HYDRA_USER environment variable is not set");
+			log.info("HYDRA_USER environment variable is not set");
 		}
 
 		return message_broker_username;
@@ -143,7 +145,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 			message_broker_user_pass = System.getenv("HYDRA_USER_PASS");
 		} else {
 			message_broker_user_pass = "cGFudGhlMG4ydTVlcg==";
-            System.out.println("HYDRA_USER_PASS environment variable is not set");
+			log.info("HYDRA_USER_PASS environment variable is not set");
 		}
 
 		return message_broker_user_pass;
@@ -154,7 +156,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 			pantheon_host = System.getenv("PANTHEON_HOST");
 		} else {
 			pantheon_host = "http://localhost:8080";
-            System.out.println("PANTHEON_USER environment variable is not set");
+			log.info("PANTHEON_HOST environment variable is not set");
 		}
 
 		return pantheon_host;
@@ -163,9 +165,19 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	private ConnectionFactory createConnectionFactory() throws Exception {
 		byte[] byteArray = Base64.decodeBase64(this.getMesasgeBrokerUserPass().getBytes());
 		String decodedPass = new String(byteArray);
+		TrustManager[] trustAllCerts = new TrustManager[] {
+			new X509TrustManager() {
+				public X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+				public void checkClientTrusted(X509Certificate[] certs, String authType) {
+				}
+				public void checkServerTrusted(X509Certificate[] certs, String authType) {
+				}
+			}
+		};
 		sslContext = SSLContext.getInstance(TLS_VERSION);
-		
-		sslContext.init(null, null, new java.security.SecureRandom());
+		sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
 		 
         StompJmsConnectionFactory factory = new StompJmsConnectionFactory();
         factory.setBrokerURI(this.getMessageBrokerScheme() + "://" + this.getMessageBrokerHostname() +":" + this.getMessageBrokerPort());
