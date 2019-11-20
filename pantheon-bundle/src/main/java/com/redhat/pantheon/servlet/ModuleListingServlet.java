@@ -55,18 +55,16 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
         if(!newArrayList("Title", "Product", "Published", "Module", "Updated" ).contains(keyParam)) {
             keyParam = "pant:dateUploaded";
-        }
-        if (keyParam.contains("Title")){
+        } else if (keyParam.contains("Title")) {
             keyParam = "jcr:title";
-        }
-        if (keyParam.contains("Published")){
+        } else if (keyParam.contains("Published")){
             keyParam = "pant:datePublished";
-        }
-        if (keyParam.contains("Module")){
+        } else if (keyParam.contains("Module")){
             keyParam = "pant:moduleType";
-        }
-        if (keyParam.contains("Updated")){
+        } else if (keyParam.contains("Updated")){
             keyParam = JcrConstants.JCR_LASTMODIFIED;
+        } else {
+            keyParam = "pant:dateUploaded";
         }
 
         if(!"desc".equals(directionParam)) {
