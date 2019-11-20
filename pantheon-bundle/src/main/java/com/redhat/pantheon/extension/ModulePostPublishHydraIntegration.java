@@ -84,7 +84,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
     		log.info("[ModulePostPublishHydraIntegration] createSession " );
     		MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
     		String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
-    		String msg = "{\"id\": " + this.getPanthoenHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"}";
+    		String msg = "{\"id\": " + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\"}";
     		producer.send(session.createTextMessage(msg));
     		log.info("[ModulePostPublishHydraIntegration] message sent: " + session.createTextMessage(msg) );
     	} catch (Throwable t) {
@@ -140,20 +140,20 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	
 	public String getMesasgeBrokerUserPass() {
 		if (System.getenv("HYDRA_USER_PASS") != null) {
-			message_broker_username = System.getenv("HYDRA_USER_PASS");
+			message_broker_user_pass = System.getenv("HYDRA_USER_PASS");
 		} else {
-			message_broker_username = "cGFudGhlMG4ydTVlcg==";
+			message_broker_user_pass = "cGFudGhlMG4ydTVlcg==";
             System.out.println("HYDRA_USER_PASS environment variable is not set");
 		}
 
 		return message_broker_user_pass;
 	}
 	
-	public String getPanthoenHost() {
-		if (System.getenv("PANTHEON_USER") != null) {
-			pantheon_host = System.getenv("PANTHEON_USER");
+	public String getPantheonHost() {
+		if (System.getenv("PANTHEON_HOST") != null) {
+			pantheon_host = System.getenv("PANTHEON_HOST");
 		} else {
-			pantheon_host = "pantheon2user";
+			pantheon_host = "http://localhost:8080";
             System.out.println("PANTHEON_USER environment variable is not set");
 		}
 
@@ -168,7 +168,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		sslContext.init(null, null, new java.security.SecureRandom());
 		 
         StompJmsConnectionFactory factory = new StompJmsConnectionFactory();
-        factory.setBrokerURI(this.getMessageBrokerScheme() + "://" + this.getPanthoenHost() +":" + this.getMessageBrokerPort());
+        factory.setBrokerURI(this.getMessageBrokerScheme() + "://" + this.getMessageBrokerHostname() +":" + this.getMessageBrokerPort());
 
         factory.setUsername(this.getMesasgeBrokerUsername());
         factory.setPassword(decodedPass);
