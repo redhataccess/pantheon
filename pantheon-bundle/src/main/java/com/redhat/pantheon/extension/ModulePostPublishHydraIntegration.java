@@ -29,6 +29,7 @@ import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 /**
  * A Hydra message producer for Module post publish events.
  * 
+ * @author Lisa Davidson
  */
 @Component(
         service = EventProcessingExtension.class
@@ -58,6 +59,9 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		this.serviceResourceResolverProvider = serviceResourceResolverProvider;
 	}
 	
+	/**
+	 * Proceed with processEvent if published
+	 */
 	public boolean canProcessEvent(Event event) {
 		// Return true if resource is published
 		ModuleVersionPublishedEvent publishedEvent = (ModuleVersionPublishedEvent) event;
@@ -67,6 +71,10 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		return module.getReleasedContent(DEFAULT_MODULE_LOCALE).isPresent();
 	}
 	
+	/**
+	 * Process ModuleVersionPublishedEvent. It sends a simple text message to the Message Broker.
+	 *
+	 */
 	public void processEvent(Event event) throws Exception {
         
 		ModuleVersionPublishedEvent publishedEvent = (ModuleVersionPublishedEvent) event;
@@ -82,11 +90,10 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 			 connection.start();
 			 log.info("[ModulePostPublishHydraIntegration] connection started " );
 		 } catch (JMSException ex) {
-			 System.out.println("Exception: " + ex);
+			 log.info("Exception: " + ex);
 		 }
 
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        log.info("[ModulePostPublishHydraIntegration] createSession " );
         MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
         String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
         String msg = "{\"id\": " + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\"}";
@@ -96,6 +103,10 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
         connection.close();
 	}
 	
+	/**
+	 * Broker hostname can be set as an environment variable
+	 * @return String
+	 */
 	public String getMessageBrokerHostname () {
 		if (System.getenv("HYDRA_HOST") != null){
             message_broker_hostname = System.getenv("HYDRA_HOST");
@@ -107,6 +118,10 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		return message_broker_hostname;
 	}
 	
+	/**
+	 * Broker port can be set as an environment variable
+	 * @return String
+	 */
 	public String getMessageBrokerPort () {
 		if (System.getenv("HYDRA_PORT") != null) {
 			message_broker_port = System.getenv("HYDRA_PORT");
@@ -118,6 +133,10 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		return message_broker_port;
 	}
 	
+	/**
+	 * Broker scheme can be set as an environment variable
+	 * @return String
+	 */
 	public String getMessageBrokerScheme() {
 		if (System.getenv("HYDRA_SCHEME") != null) {
 			message_broker_scheme = System.getenv("HYDRA_SCHEME");
@@ -129,6 +148,10 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		return message_broker_scheme;
 	}
 	
+	/**
+	 * Broker username can be set as an environment variable
+	 * @return String
+	 */
 	public String getMesasgeBrokerUsername() {
 		if (System.getenv("HYDRA_USER") != null) {
 			message_broker_username = System.getenv("HYDRA_USER");
@@ -140,6 +163,10 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		return message_broker_username;
 	}
 	
+	/**
+	 * Broker user pass can be set as an environment variable
+	 * @return String
+	 */
 	public String getMesasgeBrokerUserPass() {
 		if (System.getenv("HYDRA_USER_PASS") != null) {
 			message_broker_user_pass = System.getenv("HYDRA_USER_PASS");
@@ -151,6 +178,10 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		return message_broker_user_pass;
 	}
 	
+	/**
+	 * Pantheon hostname can be set as an environment variable
+	 * @return String
+	 */
 	public String getPantheonHost() {
 		if (System.getenv("PANTHEON_HOST") != null) {
 			pantheon_host = System.getenv("PANTHEON_HOST");
@@ -162,6 +193,12 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 		return pantheon_host;
 	}
 	
+	/**
+	 * Set up Remote connection properties for STOMP protocol with ssl support
+	 *
+	 * @return StompJmsConnectionFactory
+	 * @throws Exception
+	 */
 	private ConnectionFactory createConnectionFactory() throws Exception {
 		byte[] byteArray = Base64.decodeBase64(this.getMesasgeBrokerUserPass().getBytes());
 		String decodedPass = new String(byteArray);
