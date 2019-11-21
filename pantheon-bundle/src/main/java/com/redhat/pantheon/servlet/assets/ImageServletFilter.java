@@ -12,8 +12,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.regex.Matcher;
 
 import static com.redhat.pantheon.conf.GlobalConfig.IMAGE_PATH_PREFIX;
+import static com.redhat.pantheon.servlet.ServletUtils.getPathMatcher;
 
 /**
  * A servlet filter which serves image assets only. Images must be referened using an absolute path comprised
@@ -34,8 +36,11 @@ import static com.redhat.pantheon.conf.GlobalConfig.IMAGE_PATH_PREFIX;
 )
 @SlingServletFilter(
         methods = "GET",
-        pattern = "/imageassets/.*")
+        pattern = ImageServletFilter.PATH_PATTERN)
 public class ImageServletFilter implements Filter {
+
+    static final String PATH_PATTERN = IMAGE_PATH_PREFIX + "/(?<assetId>.*)";
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
@@ -43,10 +48,10 @@ public class ImageServletFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // Get the id, everything after the prefix
-        String contextPath = ((HttpServletRequest)request).getPathInfo();
-        contextPath = contextPath.substring((IMAGE_PATH_PREFIX + "/").length());
+        Matcher pathMatcher = getPathMatcher(PATH_PATTERN, (HttpServletRequest) request);
+        String assetId = pathMatcher.group("assetId");
 
-        String imagePath = new String(Base64.getUrlDecoder().decode(contextPath));
+        String imagePath = new String(Base64.getUrlDecoder().decode(assetId));
         request.getRequestDispatcher(imagePath)
             .forward(request, response);
     }

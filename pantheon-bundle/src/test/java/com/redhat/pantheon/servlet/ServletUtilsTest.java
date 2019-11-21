@@ -9,9 +9,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -34,9 +37,9 @@ class ServletUtilsTest {
         // When
 
         // Then
-        Assertions.assertEquals("stringValue", ServletUtils.paramValue(request, "stringParam"));
-        Assertions.assertEquals("", ServletUtils.paramValue(request, "emptyStringParam"));
-        Assertions.assertEquals(null, ServletUtils.paramValue(request, "nullStringParam"));
+        assertEquals("stringValue", ServletUtils.paramValue(request, "stringParam"));
+        assertEquals("", ServletUtils.paramValue(request, "emptyStringParam"));
+        assertEquals(null, ServletUtils.paramValue(request, "nullStringParam"));
     }
 
     @Test
@@ -50,9 +53,9 @@ class ServletUtilsTest {
         // When
 
         // Then
-        Assertions.assertEquals("stringValue", ServletUtils.paramValue(request, "stringParam", defaultValue));
-        Assertions.assertEquals("", ServletUtils.paramValue(request, "emptyStringParam", defaultValue));
-        Assertions.assertEquals(defaultValue, ServletUtils.paramValue(request, "nullStringParam", defaultValue));
+        assertEquals("stringValue", ServletUtils.paramValue(request, "stringParam", defaultValue));
+        assertEquals("", ServletUtils.paramValue(request, "emptyStringParam", defaultValue));
+        assertEquals(defaultValue, ServletUtils.paramValue(request, "nullStringParam", defaultValue));
     }
 
     @Test
@@ -67,11 +70,11 @@ class ServletUtilsTest {
         // When
 
         // Then
-        Assertions.assertEquals(new Long(15), ServletUtils.paramValueAsLong(request, "longParam"));
-        Assertions.assertEquals(null, ServletUtils.paramValueAsLong(request, "emptyLongParam"));
-        Assertions.assertEquals(null, ServletUtils.paramValueAsLong(request, "nullLongParam"));
-        Assertions.assertEquals(null, ServletUtils.paramValueAsLong(request, "unparseableParam"));
-        Assertions.assertEquals(new Long(-15), ServletUtils.paramValueAsLong(request, "negativeParam"));
+        assertEquals(new Long(15), ServletUtils.paramValueAsLong(request, "longParam"));
+        assertEquals(null, ServletUtils.paramValueAsLong(request, "emptyLongParam"));
+        assertEquals(null, ServletUtils.paramValueAsLong(request, "nullLongParam"));
+        assertEquals(null, ServletUtils.paramValueAsLong(request, "unparseableParam"));
+        assertEquals(new Long(-15), ServletUtils.paramValueAsLong(request, "negativeParam"));
     }
 
     @Test
@@ -86,11 +89,11 @@ class ServletUtilsTest {
         // When
 
         // Then
-        Assertions.assertEquals(new Long(15), ServletUtils.paramValueAsLong(request, "longParam", 20L));
-        Assertions.assertEquals(new Long(20), ServletUtils.paramValueAsLong(request, "emptyLongParam", 20L));
-        Assertions.assertEquals(new Long(20), ServletUtils.paramValueAsLong(request, "nullLongParam", 20L));
-        Assertions.assertEquals(new Long(20), ServletUtils.paramValueAsLong(request, "unparseableParam", 20L));
-        Assertions.assertEquals(new Long(-15), ServletUtils.paramValueAsLong(request, "negativeParam", 20L));
+        assertEquals(new Long(15), ServletUtils.paramValueAsLong(request, "longParam", 20L));
+        assertEquals(new Long(20), ServletUtils.paramValueAsLong(request, "emptyLongParam", 20L));
+        assertEquals(new Long(20), ServletUtils.paramValueAsLong(request, "nullLongParam", 20L));
+        assertEquals(new Long(20), ServletUtils.paramValueAsLong(request, "unparseableParam", 20L));
+        assertEquals(new Long(-15), ServletUtils.paramValueAsLong(request, "negativeParam", 20L));
     }
 
     @Test
@@ -131,5 +134,48 @@ class ServletUtilsTest {
         // Then
         verify(response).setContentType("application/json");
         verify(response).getWriter();
+    }
+
+    @Test
+    void paramValueAsLocale() {
+        // Given
+        lenient().when(request.getParameter(eq("locale"))).thenReturn("en_US");
+        lenient().when(request.getParameter(eq("wrongLocaleFormat"))).thenReturn("12345");
+
+        // When
+
+        // Then
+        assertEquals(Locale.US, ServletUtils.paramValueAsLocale(request, "locale", null));
+        assertNull(ServletUtils.paramValueAsLocale(request, "wrongLocaleFormat", null));
+        assertNull(ServletUtils.paramValueAsLocale(request, "nonExistentParameter", null));
+        assertEquals(Locale.FRANCE, ServletUtils.paramValueAsLocale(request, "nonExistentParameter", Locale.FRANCE));
+    }
+
+    @Test
+    void getPathMatcher() {
+        // Given
+        final String pathRegexp = "/prefix/(?<param1>[^/]+)/(?<param2>[^/]+)";
+        when(request.getPathInfo()).thenReturn("/prefix/value1/value2");
+
+        // When
+        Matcher pathMatcher = ServletUtils.getPathMatcher(pathRegexp, request);
+
+        // Then
+        assertEquals("value1", pathMatcher.group("param1"));
+        assertEquals("value1", pathMatcher.group(1));
+        assertEquals("value2", pathMatcher.group("param2"));
+        assertEquals("value2", pathMatcher.group(2));
+    }
+
+    @Test
+    void getInvalidPathMatcher() {
+        // Given
+        final String pathRegexp = "/prefix/(?<param1>[^/]+)/(?<param2>[^/]+)";
+        when(request.getPathInfo()).thenReturn("/prefix/value1/value2/value3");
+
+        // When
+
+        // Then
+        assertThrows(RuntimeException.class, () -> ServletUtils.getPathMatcher(pathRegexp, request));
     }
 }

@@ -35,13 +35,15 @@ class MetadataExtractorTreeProcessorTest {
         final String adocContent = "= A title for content" +
                 "\n" +
                 "\n" +
-                "This is the first paragraph which serves as abstract for a module";
+                "[.abstract]\n" +
+                "This is the module abstract";
 
         // When
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
         assertEquals("A title for content", metadata.title.get());
+        assertEquals("This is the module abstract",  metadata.mAbstract.get());
     }
 
     @Test
