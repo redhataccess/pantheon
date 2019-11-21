@@ -73,11 +73,8 @@ public class ReleaseDraftVersion extends AbstractPostOperation {
                     .datePublished.set(Calendar.getInstance());
             changes.add(Modification.onModified(module.getPath()));
 
-            // Trigger ModuleVersionPublishedEvent for Hydra Integration
-            if (System.getenv("HYDRA_HOST") != null){
-                // call the extension point
-                events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.released.getReference().getPath()));
-            }
+            // call the extension point
+            events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.released.getReference().getPath()));
 
         }
     }

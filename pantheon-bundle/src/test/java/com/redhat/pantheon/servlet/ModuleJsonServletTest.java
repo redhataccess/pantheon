@@ -61,7 +61,7 @@ class ModuleJsonServletTest {
 
 
     @Test
-    void resourceToMap() throws RepositoryException {
+    void resourceToMap() throws Exception {
         // Given
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/1",

@@ -43,11 +43,13 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	private static String message_broker_user_pass = "";
 	private static String pantheon_host = "";
 	
+	//@TODO: externalize the variables
 	private static final String PANTHEON_MODULE_API_PATH = "/api/module?locale=en-us&module_id=";
 	private static final String TLS_VERSION = "TLSv1.2";
 	private static final String UUID_FIELD = "jcr:uuid";
 	private static final String HYDRA_TOPIC = "VirtualTopic.eng.pantheon2.notifications";
 	public static final Locale DEFAULT_MODULE_LOCALE = Locale.US;
+
 	private SSLContext sslContext;
 	private ServiceResourceResolverProvider serviceResourceResolverProvider;
 	private final Logger log = LoggerFactory.getLogger(ModulePostPublishHydraIntegration.class);
@@ -60,15 +62,16 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	}
 	
 	/**
-	 * Proceed with processEvent if published
+	 * Validate if we can processEvent. 
 	 */
 	public boolean canProcessEvent(Event event) {
-		// Return true if resource is published
-		ModuleVersionPublishedEvent publishedEvent = (ModuleVersionPublishedEvent) event;
-		Resource resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleVersionPath(), 2));
-		Module module = resource.adaptTo(Module.class);
-		
-		return module.getReleasedContent(DEFAULT_MODULE_LOCALE).isPresent();
+		// Stop processEvent if broker properties are missing
+		if (System.getenv("HYDRA_HOST") == null || System.getenv("HYDRA_PORT") == null || System.getenv("HYDRA_SCHEME") == null
+				|| System.getenv("HYDRA_USER") == null || System.getenv("HYDRA_USER_PASS") == null || System.getenv("PANTHEON_HOST") == null){
+			return false;
+		}
+
+		return ModuleVersionPublishedEvent.class.equals(event.getClass());
 	}
 	
 	/**
@@ -76,42 +79,40 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	 *
 	 */
 	public void processEvent(Event event) throws Exception {
-        
 		ModuleVersionPublishedEvent publishedEvent = (ModuleVersionPublishedEvent) event;
-    	Resource resource = null;
-    	Module module = null;
+		Resource resource = null;
+		Module module = null;
 
-        // Get resource from path
-        resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleVersionPath(), 2));
-        module = resource.adaptTo(Module.class);
+		// Get resource from path
+		resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleVersionPath(), 2));
+		module = resource.adaptTo(Module.class);
 
-        Connection connection = createConnectionFactory().createConnection();
-        try {
-			 connection.start();
-			 log.info("[ModulePostPublishHydraIntegration] connection started " );
-		 } catch (JMSException ex) {
-			 log.info("Exception: " + ex);
-		 }
+		Connection connection = createConnectionFactory().createConnection();
+		try {
+			connection.start();
+			log.info("[" + ModulePostPublishHydraIntegration.class.getSimpleName() + "] connection started " );
+		} catch (JMSException ex) {
+			log.info("Exception: " + ex);
+		}
 
-        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
-        String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
-        String msg = "{\"id\": " + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\"}";
-        producer.send(session.createTextMessage(msg));
-        log.info("[ModulePostPublishHydraIntegration] message sent: " + session.createTextMessage(msg) );
+		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+		MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
+		String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
+		String msg = "{\"id\": " + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\"}";
+		producer.send(session.createTextMessage(msg));
+		log.info("[" + ModulePostPublishHydraIntegration.class.getSimpleName() + "] message sent: " + session.createTextMessage(msg) );
 
-        connection.close();
+		connection.close();
 	}
 	
 	/**
 	 * Broker hostname can be set as an environment variable
-	 * @return String
+	 * @return message_broker_hostname.
 	 */
 	public String getMessageBrokerHostname () {
 		if (System.getenv("HYDRA_HOST") != null){
             message_broker_hostname = System.getenv("HYDRA_HOST");
         } else {
-        	message_broker_hostname = "hydra-messaging-broker02.web.dev.ext.phx1.redhat.com";
         	log.info("HYDRA_HOST environment variable is not set");
         }
 		
@@ -120,13 +121,12 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	
 	/**
 	 * Broker port can be set as an environment variable
-	 * @return String
+	 * @return message_broker_port. Default: '61612'
 	 */
 	public String getMessageBrokerPort () {
 		if (System.getenv("HYDRA_PORT") != null) {
 			message_broker_port = System.getenv("HYDRA_PORT");
 		} else {
-			message_broker_port = "61612";
 			log.info("HYDRA_PORT environment variable is not set");
 		}
 		
@@ -135,13 +135,12 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	
 	/**
 	 * Broker scheme can be set as an environment variable
-	 * @return String
+	 * @return message_broker_scheme. Default: 'ssl'
 	 */
 	public String getMessageBrokerScheme() {
 		if (System.getenv("HYDRA_SCHEME") != null) {
 			message_broker_scheme = System.getenv("HYDRA_SCHEME");
 		} else {
-			message_broker_scheme = "ssl";
 			log.info("HYDRA_SCHEME environment variable is not set");
 		}
 		
@@ -149,14 +148,13 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	}
 	
 	/**
-	 * Broker username can be set as an environment variable
-	 * @return String
+	 * Broker user can be set as an environment variable
+	 * @return message_broker_username
 	 */
 	public String getMesasgeBrokerUsername() {
 		if (System.getenv("HYDRA_USER") != null) {
 			message_broker_username = System.getenv("HYDRA_USER");
 		} else {
-			message_broker_username = "pantheon2user";
 			log.info("HYDRA_USER environment variable is not set");
 		}
 
@@ -165,13 +163,12 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	
 	/**
 	 * Broker user pass can be set as an environment variable
-	 * @return String
+	 * @return message_broker_user_pass
 	 */
 	public String getMesasgeBrokerUserPass() {
 		if (System.getenv("HYDRA_USER_PASS") != null) {
 			message_broker_user_pass = System.getenv("HYDRA_USER_PASS");
 		} else {
-			message_broker_user_pass = "cGFudGhlMG4ydTVlcg==";
 			log.info("HYDRA_USER_PASS environment variable is not set");
 		}
 
@@ -179,14 +176,13 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
 	}
 	
 	/**
-	 * Pantheon hostname can be set as an environment variable
-	 * @return String
+	 * Pantheon host can be set as an environment variable
+	 * @return pantheon_host
 	 */
 	public String getPantheonHost() {
 		if (System.getenv("PANTHEON_HOST") != null) {
 			pantheon_host = System.getenv("PANTHEON_HOST");
 		} else {
-			pantheon_host = "http://localhost:8080";
 			log.info("PANTHEON_HOST environment variable is not set");
 		}
 

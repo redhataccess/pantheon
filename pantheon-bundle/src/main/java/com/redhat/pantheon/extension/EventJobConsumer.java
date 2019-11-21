@@ -47,7 +47,7 @@ public class EventJobConsumer implements JobConsumer {
      */
     @Override
     public final JobResult process(final Job job) {
-        final Event firedEvent = (Event)job.getProperty(Event.class.getName());
+        final Event firedEvent = job.getProperty(Event.class.getName(), Event.class);
 
         if (firedEvent == null) {
             log.error(this.getClass().getName() + " fired an event job with no event");
