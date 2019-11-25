@@ -40,7 +40,7 @@ class ModuleListingServletTest {
         ModuleListingServlet servlet = new ModuleListingServlet();
         Map<String, Object> map = newHashMap();
         map.put("search", "search terms");
-        map.put("key", "jcr:title");
+        map.put("key", "Updated");
         map.put("direction", "asc");
         map.put("productversion", new String[]{"id1", "id2", "id3"});
         map.put("product", new String[]{"prod1", "prod2", "prod3"});

@@ -63,8 +63,6 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             keyParam = "pant:moduleType";
         } else if (keyParam.contains("Updated")){
             keyParam = JcrConstants.JCR_LASTMODIFIED;
-        } else {
-            keyParam = "pant:dateUploaded";
         }
 
         if(!"desc".equals(directionParam)) {
