@@ -75,6 +75,7 @@ public class ReleaseDraftVersion extends AbstractPostOperation {
 
             // call the extension point
             events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.released.getReference().getPath()));
+
         }
     }
 }

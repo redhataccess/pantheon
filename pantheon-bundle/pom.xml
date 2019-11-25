@@ -80,7 +80,9 @@
                         </Sling-Model-Packages>
                         <Import-Package>
                             !jnr.a64asm,!jnr.x86asm,!org.apache.bsf,!org.apache.bsf.util,
-                            !org.apache.tools.ant,!org.joda.convert,!org.objectweb.asm,!sun.misc,*
+                            !org.apache.tools.ant,!org.joda.convert,!org.objectweb.asm,!sun.misc,
+                            !org.apache.activemq.apollo.filter,
+                            !org.apache.activemq.apollo.selector,*
                         </Import-Package>
                         <!-- Embed the necessary dependencies -->
                         <!-- The `inline=true` is important, don't remove it unless you want cryptic problems such as servlets that suddenly stop resolving without explanation -->
@@ -115,6 +117,7 @@
                     <target>8</target>
                 </configuration>
             </plugin>
+
             <!-- JUnit 5 requires Surefire version 2.22.1 or higher -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -123,6 +126,7 @@
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -273,12 +277,22 @@
             <artifactId>guava</artifactId>
             <version>27.0.1-jre</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.fusesource.stompjms/stompjms-client -->
+        <dependency>
+            <groupId>org.fusesource.stompjms</groupId>
+            <artifactId>stompjms-client</artifactId>
+            <version>1.19</version>
+        </dependency>
+	    <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+            <version>1.1</version>
+        </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.12.1</version>
         </dependency>
-
         <!-- Provided dependencies -->
         <dependency>
             <groupId>javax.servlet</groupId>

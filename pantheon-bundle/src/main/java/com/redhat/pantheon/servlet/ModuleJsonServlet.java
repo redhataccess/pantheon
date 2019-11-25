@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
 
 import java.util.*;
@@ -50,8 +51,10 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     private final Logger log = LoggerFactory.getLogger(ModuleJsonServlet.class);
 
+
     @Override
     protected String getQuery(SlingHttpServletRequest request) {
+
         // Get the query parameter(s)
         String uuidParam = paramValue(request, "module_id", "");
 
@@ -69,8 +72,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         return releasedRevision.isPresent();
     }
 
-    @Override
-    protected Map<String, Object> resourceToMap(@NotNull Resource resource) {
+    protected Map<String, Object> resourceToMap(@NotNull Resource resource) throws RepositoryException {
         Module module = resource.adaptTo(Module.class);
 
         // The DEFAULT_MODULE_LOCALE should later be replaced with 'localeParam' variable
@@ -114,6 +116,22 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleMap.put("product_name", "");
         moduleMap.put("product_version", "");
 
+        // Process productVersion from metadata
+        String productVersion = releasedMetadata.get().productVersion.getReference() != null ? releasedMetadata.get().productVersion.getReference().name.get() : "";
+        if (!productVersion.isEmpty()) {
+            try {
+                moduleMap.put("product_version", productVersion);
+                moduleMap.put("product_name", releasedMetadata.get().productVersion.getReference().getParent().getParent().getValueMap().get("name", String.class));
+            }  catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        // Process url_fragment from metadata
+        String urlFragment = releasedMetadata.get().urlFragment.get() != null ? releasedMetadata.get().urlFragment.get() : "";
+        if (!urlFragment.isEmpty()) {
+            moduleMap.put("vanity_url_fragment", urlFragment);
+        }
         // remove unnecessary fields from the map
         moduleMap.remove("jcr:lastModified");
         moduleMap.remove("jcr:lastModifiedBy");
