@@ -8,6 +8,7 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +61,7 @@ class ModuleJsonServletTest {
 
 
     @Test
-    void resourceToMap() {
+    void resourceToMap() throws Exception {
         // Given
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/1",

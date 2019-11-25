@@ -1,6 +1,8 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.Field;
+import com.redhat.pantheon.model.api.ReferenceField;
 import com.redhat.pantheon.model.api.SlingResource;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
@@ -35,6 +37,10 @@ public class Metadata extends SlingResource {
     public final Field<Calendar> dateModified = dateField(JcrConstants.JCR_LASTMODIFIED);
 
     public final Field<String> primaryType = stringField("jcr:primaryType");
+
+    public final ReferenceField<ProductVersion> productVersion = referenceField("productVersion", ProductVersion.class);
+
+    public final Field<String> urlFragment = stringField("urlFragment");
 
     public Metadata(Resource wrapped) {
         super(wrapped);

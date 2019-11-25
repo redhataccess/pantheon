@@ -12,8 +12,9 @@ import { Redirect } from 'react-router-dom'
 
 export interface IProps {
     modulePath: string
+    productInfo: string
     versionModulePath: string
-    updateDate: (draftUpdateDate,releaseUpdateDate,releaseVersion, moduleUUID) => any
+    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
@@ -21,13 +22,13 @@ export interface IProps {
 class Versions extends Component<IProps, any> {
     private static USE_CASES = ['Select Use Case', 'Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network', 'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize']
 
-    public draft = [{ "type":"draft","icon": BlankImage, "path": "", "version": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
-    public release = [{ "type":"release","icon": CheckImage, "path": "", "version": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '',"draftUploadDate": "" }]
+    public draft = [{ "type": "draft", "icon": BlankImage, "path": "", "version": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
+    public release = [{ "type": "release", "icon": CheckImage, "path": "", "version": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '', "draftUploadDate": "" }]
 
     constructor(props) {
         super(props)
         this.state = {
-            changePublishState: false,
+            canChangePublishState: true,
             isArchiveDropDownOpen: false,
             isDropDownOpen: false,
             isHeadingToggle: true,
@@ -47,8 +48,9 @@ class Versions extends Component<IProps, any> {
             ],
             productValue: '',
             productVersion: '',
+            publishAlertVisible: false,
 
-            successAlertVisble: false,
+            successAlertVisible: false,
             usecaseOptions: [
                 { value: '', label: 'Select Use Case', disabled: false }
             ],
@@ -61,7 +63,6 @@ class Versions extends Component<IProps, any> {
             versionUUID: "",
             versionValue: '',
         }
-
     }
 
     public componentDidMount() {
@@ -95,12 +96,21 @@ class Versions extends Component<IProps, any> {
 
         return (
             <React.Fragment>
-                {this.state.successAlertVisble && <Alert
+                {this.state.successAlertVisible && <Alert
                     variant="success"
                     title="Edit Metadata"
                     action={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
                 >
                     Update Successful!
+          </Alert>
+                }
+
+                {this.state.publishAlertVisible && <Alert
+                    variant="warning"
+                    title="Module Versions"
+                    action={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
+                >
+                    Empty Product info. Please edit metadata before publishing
           </Alert>
                 }
                 {this.state.metadataInitialLoad && this.getMetadata(this.state.metadataPath)}
@@ -177,6 +187,7 @@ class Versions extends Component<IProps, any> {
                                                                 </DataListCell>,
                                                                 <DataListCell key={'publish_buttons_' + key1 + '_' + key2}>
                                                                     <Button variant="primary" onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>{'  '}
+                                                                    {/* tslint:disable-next-line: jsx-no-lambda*/}
                                                                     <Button variant="secondary" onClick={() => this.previewDoc(data.secondButtonText)}>{data.secondButtonText}</Button>{'  '}
                                                                 </DataListCell>,
                                                                 <DataListCell key={'image_' + key1 + '_' + key2} width={1}>
@@ -344,7 +355,6 @@ class Versions extends Component<IProps, any> {
     }
 
     private fetchVersions = () => {
-
         // TODO: need a better fix for the 404 error.
         if (this.props.modulePath !== '') {
             const fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json"
@@ -382,7 +392,7 @@ class Versions extends Component<IProps, any> {
                         return {
                             results: [this.draft, this.release],
                             // tslint:disable-next-line: object-literal-sort-keys
-                            metadatPath: this.draft ? this.draft[0].path : this.release[0].path
+                            metadataPath: this.draft ? this.draft[0].path : this.release[0].path
                         }
                     })
                 })
@@ -402,29 +412,37 @@ class Versions extends Component<IProps, any> {
     }
 
     private changePublishState = (buttonText) => {
-        const formData = new FormData()
-        if (buttonText === "Publish") {
-            formData.append(":operation", "pant:release")
-            // console.log('Published file path:', this.props.modulePath)
-            this.draft[0].version = ""
+        // Validate productValue before Publish
+        if (this.props.productInfo !== undefined && this.props.productInfo.trim() === "" && buttonText === "Publish") {
+            this.setState({ canChangePublishState: false, publishAlertVisible: true })
         } else {
-            formData.append(":operation", "pant:unpublish")
-            // console.log('Unpublished file path:', this.props.modulePath)
-            this.release[0].version = ""
-        }
-        fetch("/content" + this.props.modulePath, {
-            body: formData,
-            method: 'post'
-        }).then(response => {
-            if (response.status === 201 || response.status === 200) {
-                // console.log(buttonText + " works: " + response.status)
-                this.setState({ changePublishState: true })
-            } else {
-                // console.log(buttonText + " failed " + response.status)
-                this.setState({ changePublishState: true })
-            }
-        })
 
+            if (this.state.canChangePublishState === true) {
+                const formData = new FormData();
+                if (buttonText === "Publish") {
+                    formData.append(":operation", "pant:release");
+                    // console.log('Published file path:', this.props.modulePath)
+                    this.draft[0].version = "";
+                } else {
+                    formData.append(":operation", "pant:unpublish");
+                    // console.log('Unpublished file path:', this.props.modulePath);
+                    this.release[0].version = "";
+                }
+                fetch("/content" + this.props.modulePath, {
+                    body: formData,
+                    method: 'post'
+                }).then(response => {
+                    if (response.status === 201 || response.status === 200) {
+                        console.log(buttonText + " works: " + response.status)
+                        this.setState({ publishAlertVisible: false, canChangePublishState: true })
+                    } else {
+                        console.log(buttonText + " failed " + response.status)
+                        this.setState({ publishAlertVisible: true })
+                    }
+                    this.fetchVersions()
+                });
+            }
+        }
     }
 
     private onArchiveSelect = event => {
@@ -505,10 +523,8 @@ class Versions extends Component<IProps, any> {
             }).then(response => {
                 if (response.status === 201 || response.status === 200) {
                     // console.log("successful edit ", response.status)
-                    // this.setState({ redirect: true, successAlertVisble: true })
                     this.handleModalClose()
-                    this.setState({ successAlertVisble: true })
-                    this.setState({ versionSelected: '' })
+                    this.setState({ successAlertVisible: true, canChangePublishState: true, publishAlertVisible: false, versionSelected: '' })
                     this.props.onGetProduct(this.state.productValue)
                     this.props.onGetVersion(this.state.versionValue)
                 } else if (response.status === 500) {
@@ -531,12 +547,14 @@ class Versions extends Component<IProps, any> {
             if (event.target !== null) {
                 // tslint:disable-next-line: no-string-literal
                 if (this.state.versionUUID !== event.target["selectedOptions"][0].value) {
-                    // tslint:disable-next-line: no-string-literal
                     this.setState({
+                        // tslint:disable-next-line: no-string-literal
                         versionSelected: event.target["selectedOptions"][0].label,
+                        // tslint:disable-next-line: no-string-literal
                         versionUUID: event.target["selectedOptions"][0].value,
-                        versionValue: event.target["selectedOptions"][0].label
-                    })
+                        // tslint:disable-next-line: no-string-literal
+                        versionValue: event.target["selectedOptions"][0].label,
+                    });
                 }
             }
         }
@@ -638,7 +656,11 @@ class Versions extends Component<IProps, any> {
     }
 
     private hideSuccessAlert = () => {
-        this.setState({ successAlertVisble: false })
+        this.setState({ successAlertVisible: false })
+    }
+
+    private hidePublishAlert = () => {
+        this.setState({ publishAlertVisible: false })
     }
 
     private getMetadata = (versionPath) => {

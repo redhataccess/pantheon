@@ -5,6 +5,7 @@ import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.StructuralNode;
 import org.asciidoctor.extension.Treeprocessor;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -12,6 +13,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Streams.concat;
 import static com.google.common.collect.Streams.stream;
 import static java.util.Optional.of;
+import static java.util.stream.Collectors.toList;
 
 /**
  * A tree processor that extracts metadata from the asciidoc AST and inserts it
@@ -47,8 +49,10 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
 
     @Override
     public Document process(Document document) {
+        List<StructuralNode> allNodes = nodeFlatMap(document).collect(toList());
         extractDocTitle(document);
-        extractHeadline(document);
+        extractHeadline(allNodes);
+        extractAbstract(allNodes);
         return document;
     }
 
@@ -66,11 +70,10 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
     /**
      * Extracts the document's headline from an asciidoc document.
      * The headline is the first second-level header in the document (if one is present).
-     * @param document
      */
-    private void extractHeadline(Document document) {
+    private void extractHeadline(List<StructuralNode> allNodes) {
         // Get the first section (that's where a subtitle will be)
-        Optional<StructuralNode> headlineBlock = nodeFlatMap(document)
+        Optional<StructuralNode> headlineBlock = allNodes.stream()
                 // find section blocks with level == 1
                 .filter(block -> {
                     try {
@@ -88,6 +91,32 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
         // if no headline is detected, reset it
         if(!headlineBlock.isPresent()) {
             metadata.headline.set(null);
+        }
+    }
+
+    /**
+     * Extracts the document's abstract.
+     * The abstract is the first found block with the 'abstract' role.
+     */
+    private void extractAbstract(List<StructuralNode> allNodes) {
+        Optional<StructuralNode> abstractNode =
+                allNodes.stream()
+                        .filter(block -> {
+                            try {
+                                return block.getRoles().contains("abstract");
+                            } catch (Exception e) {
+                                // Asciidoctor (the Ruby code) throws certain exceptions when properties are not available.
+                                // In this case 'context' might not be available, and so the filter should just
+                                // return false
+                                return false;
+                            }
+                        })
+                        .findFirst();
+        abstractNode.ifPresent(node -> metadata.mAbstract.set(node.getContent().toString()));
+
+        // if no abstract is detected, reset if
+        if(!abstractNode.isPresent()) {
+            metadata.mAbstract.set(null);
         }
     }
 
