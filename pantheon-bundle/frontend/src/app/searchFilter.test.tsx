@@ -2,7 +2,7 @@ import React from 'react';
 import { SearchFilter } from '@app/searchFilter';
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon'
-import { InputGroup } from '@patternfly/react-core';
+import { InputGroup, FormSelect, ChipGroup, Button } from '@patternfly/react-core';
 import renderer from 'react-test-renderer'
 import '@app/fetchMock'
 
@@ -16,11 +16,6 @@ describe('SearchFilter tests', () => {
     expect(view).toMatchSnapshot();
   });
 
-  it('should render a Inputgroup', () => {
-    const wrapper = mount(<SearchFilter />);
-    const input = wrapper.find(InputGroup);
-    expect(input.exists()).toBe(true)
-  });
 
   it('test fetchProductVersionDetails function', () => {
     const wrapper = renderer.create(<SearchFilter />);
@@ -78,4 +73,18 @@ describe('SearchFilter tests', () => {
     sinon.assert.called(spy)
   })
 
+  it('test addChipItem function', () => {
+    const wrapper = renderer.create(<SearchFilter {...props} />)
+    const inst = wrapper.getInstance()
+    const spy = sinon.spy(inst, 'addChipItem')
+
+    const products = new Array()
+    const pName = "productName";
+    const versions = [{ value: 'x', label: 'x', disabled: false }, { value: 'All', label: 'All', disabled: false },];
+    products[pName] = versions;
+    inst.setState({ versionValue:"x",productValue: "productName", allProducts: products, chipGroups: [], })
+
+    inst.addChipItem()
+    sinon.assert.called(spy)
+  })
 });
