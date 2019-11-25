@@ -190,3 +190,11 @@ exports[`SearchFilter tests should render default Search component 1`] = `
   />
 </Fragment>
 `;
+
+exports[`SearchFilter tests test addChipItem function 1`] = `[Function]`;
+
+exports[`SearchFilter tests test deleteItem function 1`] = `[Function]`;
+
+exports[`SearchFilter tests test fetchProductVersionDetails function 1`] = `[Function]`;
+
+exports[`SearchFilter tests test setQuery function 1`] = `[Function]`;
