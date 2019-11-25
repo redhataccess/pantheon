@@ -5,6 +5,9 @@ import '@app/fetchMock'
 import { mount, shallow } from 'enzyme'
 import { Bullseye, TextInput, FormGroup, Button } from '@patternfly/react-core'
 
+import renderer from 'react-test-renderer'
+import sinon from 'sinon'
+
 describe('Login tests', () => {
   test('should render Login component', () => {
     const view = shallow(<Login />)
@@ -34,5 +37,13 @@ describe('Login tests', () => {
     const bullseyeLayout = wrapper.find(Bullseye)
     expect(bullseyeLayout.exists()).toBe(true)
   })
+
+  it('test login function', () => {
+    const wrapper = renderer.create(<Login />)
+    const inst = wrapper.getInstance()
+    const spy = sinon.spy(inst, 'login')
+    inst.login()
+    sinon.assert.called(spy)
+})
 
 })

@@ -5,6 +5,9 @@ import '@app/fetchMock'
 import { mount, shallow } from 'enzyme'
 import { Bullseye, TextInput, FormGroup, Button } from '@patternfly/react-core'
 
+import sinon from 'sinon'
+import renderer from 'react-test-renderer'
+
 describe('Login tests', () => {
   test('should render Login component', () => {
     const view = shallow(<GitImport />)
@@ -33,6 +36,17 @@ describe('Login tests', () => {
     const wrapper = mount(<GitImport />)
     const button = wrapper.find(Button)
     expect(button.exists()).toBe(true)
+  })
+
+  it('test onChangeSort function', () => {
+    const wrapper = renderer.create(<GitImport />)
+    const inst = wrapper.getInstance()
+    const spy = sinon.spy(inst, 'cloneRepo')
+    inst.cloneRepo()
+    sinon.assert.called(spy)
+    inst.setState({ repository: "http" })
+    inst.cloneRepo()
+    sinon.assert.called(spy)
   })
 
 })

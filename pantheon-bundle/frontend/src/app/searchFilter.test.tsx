@@ -1,8 +1,7 @@
 import React from 'react';
 import { SearchFilter } from '@app/searchFilter';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import sinon from 'sinon'
-import { InputGroup, FormSelect, ChipGroup, Button } from '@patternfly/react-core';
 import renderer from 'react-test-renderer'
 import '@app/fetchMock'
 
@@ -31,6 +30,7 @@ describe('SearchFilter tests', () => {
     const spy = sinon.spy(inst, 'setQuery')
     inst.setQuery()
     sinon.assert.called(spy)
+    inst.setState({ productsQueryParam: "stuff&"})
   })
 
   it('test onChangeProduct function', () => {
