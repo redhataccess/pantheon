@@ -64,7 +64,7 @@ exports[`Search tests should render default Search component 1`] = `
                     <span
                       aria-label="column description"
                       className="sp-prop-nosort"
-                      id="span-name"
+                      id="span-description"
                     >
                       Description
                     </span>
@@ -89,7 +89,7 @@ exports[`Search tests should render default Search component 1`] = `
                     <span
                       aria-label="column upload time"
                       className="sp-prop-nosort"
-                      id="span-name"
+                      id="span-upload-time"
                     >
                       Upload Time
                     </span>

@@ -121,7 +121,7 @@ class Search extends Component<IAppState, ISearchState> {
                         <span className="sp-prop-nosort" id="span-name" aria-label="column name">Name</span>
                       </DataListCell>,
                       <DataListCell width={2} key="description">
-                        <span className="sp-prop-nosort" id="span-name" aria-label="column description">Description</span>
+                        <span className="sp-prop-nosort" id="span-description" aria-label="column description">Description</span>
                       </DataListCell>,
                       <DataListCell key="resource source">
                         <span className="sp-prop-nosort" id="span-source-type">Source Type</span>
@@ -130,7 +130,7 @@ class Search extends Component<IAppState, ISearchState> {
                         <span className="sp-prop-nosort" id="span-source-name">Source Name</span>
                       </DataListCell>,
                       <DataListCell key="upload time">
-                        <span className="sp-prop-nosort" id="span-name" aria-label="column upload time">Upload Time</span>
+                        <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">Upload Time</span>
                       </DataListCell>,
                     ]}
                   />

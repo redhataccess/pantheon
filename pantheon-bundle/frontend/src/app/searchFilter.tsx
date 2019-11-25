@@ -248,7 +248,7 @@ class SearchFilter extends Component<any, any> {
     const uuidKey = "value"
     const versionUUID = this.state.allProducts[product].filter((e) => e.label === id)[0][uuidKey]
     const productUUID = this.state.productsUUID[product]
-    if (versionUUID === "All") {
+    if (versionUUID.trim() === "All") {
       let prodQuery = this.state.productsQueryParam
       prodQuery = prodQuery.replace("product=" + productUUID, '')
       if (prodQuery === '&') {
@@ -296,7 +296,7 @@ class SearchFilter extends Component<any, any> {
         }
 
       }
-      if (!chipExists && this.state.versionSelected !== "Select a Version") {
+      if (!chipExists && this.state.versionSelected.trim() !== "Select a Version") {
         copyOfChipGroups[index].chips.push(this.state.versionSelected);
       }
     } else {
@@ -311,13 +311,13 @@ class SearchFilter extends Component<any, any> {
     // If version is All just add the product.
     let prodQuery = this.state.productsQueryParam
     let verQuery = this.state.productversionsQueryParam
-    if (versionUUID === "All") {
-      if (this.state.productsQueryParam !== '') {
+    if (versionUUID.trim() === "All") {
+      if (this.state.productsQueryParam.trim() !== "") {
         prodQuery += '&'
       }
       prodQuery += "product=" + this.state.productsUUID[this.state.productValue]
-    } else if (versionUUID !== "") {
-      if (this.state.productversionsQueryParam !== '') {
+    } else if (versionUUID.trim() !== "") {
+      if (this.state.productversionsQueryParam.trim() !== "") {
         verQuery += '&'
       }
       verQuery += "productversion=" + versionUUID
@@ -331,44 +331,44 @@ class SearchFilter extends Component<any, any> {
   // Should be called after each change of state
   private setQuery = () => {
     let searchQuery = ""
-    if (this.state.searchText !== "") {
+    if (this.state.searchText.trim() !== "") {
       searchQuery += "search=" + this.state.searchText
     }
 
-    if (this.state.productsQueryParam !== "") {
-      if (searchQuery !== "") {
+    if (this.state.productsQueryParam.trim() !== "") {
+      if (searchQuery.trim() !== "") {
         searchQuery += "&"
       }
       searchQuery += this.state.productsQueryParam
     }
 
-    if (this.state.productversionsQueryParam !== "") {
-      if (searchQuery !== "") {
+    if (this.state.productversionsQueryParam.trim() !== "") {
+      if (searchQuery.trim() !== "") {
         searchQuery += "&"
       }
       searchQuery += this.state.productversionsQueryParam
     }
 
     // Default is All and should not add to the filter.
-    if (this.state.moduleTypeValue !== "" && this.state.moduleTypeValue !== "All") {
-      if (searchQuery !== "") {
+    if (this.state.moduleTypeValue.trim() !== "" && this.state.moduleTypeValue.trim() !== "All") {
+      if (searchQuery.trim() !== "") {
         searchQuery += "&"
       }
       searchQuery += "type=" + this.state.moduleTypeValue
     }
 
     // Default key is Uploaded
-    if (searchQuery !== "") {
+    if (searchQuery.trim() !== "") {
       searchQuery += "&"
     }
-    if (this.state.sortByValue === "") {
+    if (this.state.sortByValue.trim() === "") {
       searchQuery += "key=Uploaded"
     } else {
       searchQuery += "key=" + this.state.sortByValue
     }
 
     // isSortedUp is a boolean and will always have a set default
-    if (searchQuery !== "") {
+    if (searchQuery.trim() !== "") {
       searchQuery += "&"
     }
     searchQuery += "direction=" + (this.state.isSortedUp ? "desc" : "asc")
