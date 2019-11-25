@@ -1,20 +1,19 @@
 import React from 'react';
 import { SearchFilter } from '@app/searchFilter';
 import { mount, shallow } from 'enzyme';
-import { Button, InputGroup } from '@patternfly/react-core';
+import sinon from 'sinon'
+import { InputGroup } from '@patternfly/react-core';
 import renderer from 'react-test-renderer'
 import '@app/fetchMock'
+
+const props = {
+  filterQuery: () => ("any"),
+}
 
 describe('SearchFilter tests', () => {
   test('should render default Search component', () => {
     const view = shallow(<SearchFilter />);
     expect(view).toMatchSnapshot();
-  });
-
-  it('should render a Button', () => {
-    const wrapper = mount(<SearchFilter />);
-    const button = wrapper.find(Button);
-    expect(button.exists()).toBe(true)
   });
 
   it('should render a Inputgroup', () => {
@@ -23,28 +22,60 @@ describe('SearchFilter tests', () => {
     expect(input.exists()).toBe(true)
   });
 
-  it('test addChipItem function', () => {
-    const wrapper = renderer.create(<SearchFilter/>)
+  it('test fetchProductVersionDetails function', () => {
+    const wrapper = renderer.create(<SearchFilter />);
     const inst = wrapper.getInstance()
-    expect(inst.addChipItem).toMatchSnapshot()
+    const spy = sinon.spy(inst, 'fetchProductVersionDetails')
+    inst.componentDidMount()
+    sinon.assert.called(spy)
   })
 
   it('test setQuery function', () => {
-    const wrapper = renderer.create(<SearchFilter/>)
+    const wrapper = renderer.create(<SearchFilter {...props} />)
     const inst = wrapper.getInstance()
-    expect(inst.setQuery).toMatchSnapshot()
+    const spy = sinon.spy(inst, 'setQuery')
+    inst.setQuery()
+    sinon.assert.called(spy)
+  })
+
+  it('test onChangeProduct function', () => {
+    const wrapper = renderer.create(<SearchFilter {...props} />)
+    const inst = wrapper.getInstance()
+    const spy = sinon.spy(inst, 'onChangeProduct')
+    inst.onChangeProduct("prod")
+    sinon.assert.called(spy)
+  })
+
+  it('test onChangeSort function', () => {
+    const wrapper = renderer.create(<SearchFilter {...props} />)
+    const inst = wrapper.getInstance()
+    const spy = sinon.spy(inst, 'onChangeSort')
+    inst.onChangeSort("asc")
+    sinon.assert.called(spy)
+  })
+
+
+  it('test onChangeModuleType function', () => {
+    const wrapper = renderer.create(<SearchFilter {...props} />)
+    const inst = wrapper.getInstance()
+    const spy = sinon.spy(inst, 'onChangeModuleType')
+    inst.onChangeModuleType("type")
+    sinon.assert.called(spy)
   })
 
   it('test deleteItem function', () => {
-    const wrapper = renderer.create(<SearchFilter/>)
+    const wrapper = renderer.create(<SearchFilter {...props} />)
     const inst = wrapper.getInstance()
-    expect(inst.deleteItem).toMatchSnapshot()
-  })
+    const spy = sinon.spy(inst, 'deleteItem')
 
-  it('test fetchProductVersionDetails function', () => {
-    const wrapper = renderer.create(<SearchFilter/>)
-    const inst = wrapper.getInstance()
-    expect(inst.fetchProductVersionDetails).toMatchSnapshot()
+    const products = new Array()
+    const pName = "productName";
+    const versions = [{ value: '', label: 'Select a Version', disabled: false }, { value: 'All', label: 'All', disabled: false },];
+    products[pName] = versions;
+    inst.setState({ productValue: "productName", allProducts: products, chipGroups: [], })
+
+    inst.deleteItem()
+    sinon.assert.called(spy)
   })
 
 });
