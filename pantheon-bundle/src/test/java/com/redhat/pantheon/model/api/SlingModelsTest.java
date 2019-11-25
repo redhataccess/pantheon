@@ -1,9 +1,5 @@
 package com.redhat.pantheon.model.api;
 
-import com.redhat.pantheon.model.api.v2.Child;
-import com.redhat.pantheon.model.api.v2.Field;
-import com.redhat.pantheon.model.api.v2.SlingModel;
-import com.redhat.pantheon.model.api.v2.SlingModels;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -13,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.inject.Named;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -237,7 +232,7 @@ class SlingModelsTest {
         WronglyDefinedResource model = SlingModels.getModel(sc.resourceResolver(), "/test", WronglyDefinedResource.class);
 
         // Then
-        assertThrows(UndeclaredThrowableException.class, () -> model.wrongMethod(true));
+        assertThrows(Exception.class, () -> model.wrongMethod(true));
     }
 
     @Test

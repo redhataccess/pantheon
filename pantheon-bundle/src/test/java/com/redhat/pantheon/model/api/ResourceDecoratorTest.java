@@ -1,6 +1,5 @@
 package com.redhat.pantheon.model.api;
 
-import com.redhat.pantheon.model.api.v2.ResourceDecorator;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -55,7 +54,6 @@ class ResourceDecoratorTest {
     void setProperty() {
         // Given
         ModifiableValueMap valueMap = mock(ModifiableValueMap.class);
-        when(valueMap.put(eq("prop"), anyString())).thenReturn("propval");
         when(resource.adaptTo(eq(ModifiableValueMap.class))).thenReturn(valueMap);
 
         // When

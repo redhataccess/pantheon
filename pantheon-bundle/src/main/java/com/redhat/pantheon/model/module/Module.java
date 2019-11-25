@@ -1,7 +1,7 @@
 package com.redhat.pantheon.model.module;
 
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
-import com.redhat.pantheon.model.api.v2.SlingModel;
+import com.redhat.pantheon.model.api.SlingModel;
 
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;

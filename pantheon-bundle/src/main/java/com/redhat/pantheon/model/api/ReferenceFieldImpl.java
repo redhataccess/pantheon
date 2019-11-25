@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model.api.v2;
+package com.redhat.pantheon.model.api;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -6,7 +6,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import static com.redhat.pantheon.model.api.v2.SlingModels.getModel;
+import static com.redhat.pantheon.model.api.SlingModels.getModel;
 
 /**
  * A {@link Field} implementation for JCR reference-typed fields. Adds methods to

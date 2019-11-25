@@ -1,9 +1,9 @@
-package com.redhat.pantheon.model.api.v2;
+package com.redhat.pantheon.model.api;
 
 import java.util.Optional;
 import java.util.function.Function;
 
-import static com.redhat.pantheon.model.api.v2.SlingModels.getModel;
+import static com.redhat.pantheon.model.api.SlingModels.getModel;
 
 /**
  * Default implementation of the {@link Child} interface.

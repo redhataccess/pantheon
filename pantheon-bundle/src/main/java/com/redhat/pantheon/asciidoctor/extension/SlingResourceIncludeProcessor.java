@@ -1,9 +1,9 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.api.v2.SlingModel;
+import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.api.v2.FileResource;
+import com.redhat.pantheon.model.api.FileResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.asciidoctor.ast.Document;

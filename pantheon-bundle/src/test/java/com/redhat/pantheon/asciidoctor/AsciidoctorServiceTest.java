@@ -1,7 +1,7 @@
 package com.redhat.pantheon.asciidoctor;
 
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.api.v2.SlingModels;
+import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;

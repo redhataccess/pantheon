@@ -2,8 +2,8 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.api.v2.FileResource.JcrContent;
-import com.redhat.pantheon.model.api.v2.SlingModels;
+import com.redhat.pantheon.model.api.FileResource.JcrContent;
+import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;

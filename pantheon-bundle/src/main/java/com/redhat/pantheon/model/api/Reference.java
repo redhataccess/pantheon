@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model.api.v2;
+package com.redhat.pantheon.model.api;
 
 import javax.jcr.RepositoryException;
 

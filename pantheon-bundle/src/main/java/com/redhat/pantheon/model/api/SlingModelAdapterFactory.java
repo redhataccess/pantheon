@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model.api.v2;
+package com.redhat.pantheon.model.api;
 
 import org.apache.sling.api.adapter.AdapterFactory;
 import org.apache.sling.api.resource.Resource;
@@ -26,13 +26,15 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
         service = AdapterFactory.class,
         property = {
                 ADAPTABLE_CLASSES + "=org.apache.sling.api.resource.Resource",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.api.v2.SlingModel",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.api.v2.FileResource",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.api.SlingModel",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.api.FileResource",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.Module",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleVersion",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.Content",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.Metadata",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.Metadata",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleLocale",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.Product",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.ProductVersion",
         }
 )
 public class SlingModelAdapterFactory implements AdapterFactory {

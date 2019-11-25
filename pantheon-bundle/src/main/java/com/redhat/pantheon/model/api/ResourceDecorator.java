@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model.api.v2;
+package com.redhat.pantheon.model.api;
 
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
@@ -9,8 +9,8 @@ import org.apache.sling.api.resource.ValueMap;
 
 import java.util.Iterator;
 
-import static com.redhat.pantheon.model.api.v2.SlingModels.createModel;
-import static com.redhat.pantheon.model.api.v2.SlingModels.getModel;
+import static com.redhat.pantheon.model.api.SlingModels.createModel;
+import static com.redhat.pantheon.model.api.SlingModels.getModel;
 
 /**
  * A decorator for Sling's {@link org.apache.sling.api.resource.Resource} objects. It adds convenience methods

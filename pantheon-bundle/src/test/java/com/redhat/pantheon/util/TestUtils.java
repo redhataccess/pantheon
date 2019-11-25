@@ -1,8 +1,8 @@
 package com.redhat.pantheon.util;
 
 import com.google.common.base.Function;
-import com.redhat.pantheon.model.api.v2.SlingModel;
-import com.redhat.pantheon.model.api.v2.SlingModels;
+import com.redhat.pantheon.model.api.SlingModel;
+import com.redhat.pantheon.model.api.SlingModels;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;

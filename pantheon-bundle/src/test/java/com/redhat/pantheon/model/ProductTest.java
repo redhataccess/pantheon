@@ -2,7 +2,7 @@ package com.redhat.pantheon.model;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.redhat.pantheon.model.api.v2.SlingModels;
+import com.redhat.pantheon.model.api.SlingModels;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;

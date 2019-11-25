@@ -2,9 +2,6 @@ package com.redhat.pantheon.model.api;
 
 import com.redhat.pantheon.model.Product;
 import com.redhat.pantheon.model.ProductVersion;
-import com.redhat.pantheon.model.api.v2.FileResource;
-import com.redhat.pantheon.model.api.v2.SlingModel;
-import com.redhat.pantheon.model.api.v2.SlingModelAdapterFactory;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;

@@ -1,9 +1,9 @@
 package com.redhat.pantheon.model.module;
 
-import com.redhat.pantheon.model.api.v2.FileResource;
-import com.redhat.pantheon.model.api.v2.Child;
-import com.redhat.pantheon.model.api.v2.Field;
-import com.redhat.pantheon.model.api.v2.SlingModel;
+import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.api.Child;
+import com.redhat.pantheon.model.api.Field;
+import com.redhat.pantheon.model.api.SlingModel;
 
 import javax.inject.Named;
 

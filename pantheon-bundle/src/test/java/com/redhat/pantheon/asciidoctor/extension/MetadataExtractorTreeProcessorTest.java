@@ -1,7 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
-import com.redhat.pantheon.model.api.v2.SlingModel;
-import com.redhat.pantheon.model.api.v2.SlingModels;
+import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Metadata;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
