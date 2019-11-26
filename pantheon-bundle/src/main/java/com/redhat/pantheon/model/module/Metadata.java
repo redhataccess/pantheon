@@ -1,9 +1,9 @@
 package com.redhat.pantheon.model.module;
 
-import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.api.Field;
+import com.redhat.pantheon.model.api.Reference;
 import com.redhat.pantheon.model.api.SlingModel;
-import com.redhat.pantheon.model.api.ReferenceField;
 import org.apache.jackrabbit.JcrConstants;
 
 import javax.inject.Named;
@@ -46,7 +46,7 @@ public interface Metadata extends SlingModel {
     @Named(JcrConstants.JCR_LASTMODIFIED)
     Field<Calendar> dateModified();
 
-    Field<String> productVersion();
+    Reference<ProductVersion> productVersion();
 
     Field<String> urlFragment();
 

@@ -22,7 +22,10 @@ import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.conf.GlobalConfig.CONTENT_TYPE;
@@ -117,18 +120,18 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleMap.put("product_version", "");
 
         // Process productVersion from metadata
-        String productVersion = releasedMetadata.get().productVersion.getReference() != null ? releasedMetadata.get().productVersion.getReference().name.get() : "";
+        String productVersion = releasedMetadata.get().productVersion().get() != null ? releasedMetadata.get().productVersion().getReference().name().get() : "";
         if (!productVersion.isEmpty()) {
             try {
                 moduleMap.put("product_version", productVersion);
-                moduleMap.put("product_name", releasedMetadata.get().productVersion.getReference().getParent().getParent().getValueMap().get("name", String.class));
+                moduleMap.put("product_name", releasedMetadata.get().productVersion().getReference().getParent().getParent().getValueMap().get("name", String.class));
             }  catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
         }
 
         // Process url_fragment from metadata
-        String urlFragment = releasedMetadata.get().urlFragment.get() != null ? releasedMetadata.get().urlFragment.get() : "";
+        String urlFragment = releasedMetadata.get().urlFragment().get() != null ? releasedMetadata.get().urlFragment().get() : "";
         if (!urlFragment.isEmpty()) {
             moduleMap.put("vanity_url_fragment", urlFragment);
         }
