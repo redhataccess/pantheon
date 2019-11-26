@@ -332,7 +332,7 @@ class SearchFilter extends Component<any, any> {
         verQuery += "productversion=" + versionUUID
       }
     }
-    this.setState({ chipGroups: copyOfChipGroups, productsQueryParam: prodQuery, productversionsQueryParam: verQuery }, () => {
+    this.setState({ chipGroups: copyOfChipGroups, productsQueryParam: prodQuery, productversionsQueryParam: verQuery, productValue: '', versionSelected: '', versionUUID: '', versionValue: '' }, () => {
       this.setQuery();
     });
   };
@@ -381,6 +381,10 @@ class SearchFilter extends Component<any, any> {
       searchQuery += "&"
     }
     searchQuery += "direction=" + (this.state.isSortedUp ? "desc" : "asc")
+
+    if (searchQuery.includes("&&")) {
+      searchQuery = searchQuery.replace('&&', '&')
+    }
 
     this.props.filterQuery(searchQuery)
     console.log("This is the query: " + searchQuery)
