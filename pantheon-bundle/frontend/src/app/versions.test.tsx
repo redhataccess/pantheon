@@ -324,4 +324,28 @@ describe('Versions tests', () => {
         wrapper.find(Button).at(2).simulate('click')
         sinon.assert.called(spy)
     })
+
+    it('test fetchProductVersionDetails function', () => {
+        const wrapper = renderer.create(<Versions {...props} />)
+        const inst = wrapper.getInstance()
+        const spy = sinon.spy(inst, 'fetchProductVersionDetails')
+        inst.componentDidMount()
+        sinon.assert.called(spy)
+    })
+
+    it('test fetchVersions function', () => {
+        const wrapper = renderer.create(<Versions {...props} />)
+        const inst = wrapper.getInstance()
+        const spy = sinon.spy(inst, 'fetchVersions')
+        inst.fetchVersions()
+        sinon.assert.called(spy)
+    })
+
+    it('test changePublishState function', () => {
+        const wrapper = renderer.create(<Versions {...props} />)
+        const inst = wrapper.getInstance()
+        const spy = sinon.spy(inst, 'changePublishState')
+        inst.changePublishState("ds")
+        sinon.assert.called(spy)
+    })
 })

@@ -1,8 +1,8 @@
 import React, { Component, FormEvent } from 'react'
 import {
-  Alert, AlertActionCloseButton, TextInput,
+  Alert, AlertActionCloseButton,
   DataList, DataListItem, DataListItemRow, DataListItemCells,
-  DataListCell, FormGroup, Button, Modal,
+  DataListCell, Button, Modal,
   Level, LevelItem, Checkbox
 } from '@patternfly/react-core'
 import '@app/app.css'
@@ -19,11 +19,10 @@ export interface ISearchState {
   columns: string[]
   confirmDelete: boolean
   deleteState: string
-  input: string
+  filterQuery: string
   isEmptyResults: boolean
   isModalOpen: boolean
   isSearchException: boolean
-  isSortedUp: boolean
   displayLoadIcon: boolean
   moduleName: string
   modulePath: string
@@ -53,11 +52,10 @@ class Search extends Component<IAppState, ISearchState> {
       confirmDelete: false,
       deleteState: '',
       displayLoadIcon: true,
-      input: '',
+      filterQuery: '',
       isEmptyResults: false,
       isModalOpen: false,
       isSearchException: false,
-      isSortedUp: true,
       moduleName: '',
       modulePath: '',
       moduleType: '',
@@ -86,13 +84,11 @@ class Search extends Component<IAppState, ISearchState> {
       <React.Fragment>
         <div>
           <div>
-          <SearchFilter
-            onKeyDown={this.getRows} 
-            onChange={this.setInput} 
-            value={this.state.input}
-            onClick={this.newSearch}
-            onSort={this.setSortedUp}
-            isSortedUp={this.state.isSortedUp}
+            <SearchFilter
+              onKeyDown={this.getRows}
+              onClick={this.newSearch}
+              filterQuery={this.setQuery}
+              // we could add one that monitors for changes and when is tru we run getRows. To discuss.
             />
             <div className="notification-container">
               <Pagination
@@ -122,10 +118,10 @@ class Search extends Component<IAppState, ISearchState> {
                   <DataListItemCells
                     dataListCells={[
                       <DataListCell width={2} key="title">
-                        <button onClick={this.sortByName} className="sp-prop" id="span-name" aria-label="sort column by name">Name</button>
+                        <span className="sp-prop-nosort" id="span-name" aria-label="column name">Name</span>
                       </DataListCell>,
                       <DataListCell width={2} key="description">
-                        <button onClick={this.sortByDescription} className="sp-prop" id="span-name" aria-label="sort column by description">Description</button>
+                        <span className="sp-prop-nosort" id="span-description" aria-label="column description">Description</span>
                       </DataListCell>,
                       <DataListCell key="resource source">
                         <span className="sp-prop-nosort" id="span-source-type">Source Type</span>
@@ -134,7 +130,7 @@ class Search extends Component<IAppState, ISearchState> {
                         <span className="sp-prop-nosort" id="span-source-name">Source Name</span>
                       </DataListCell>,
                       <DataListCell key="upload time">
-                        <button onClick={this.sortByUploadTime} className="sp-prop" id="span-name" aria-label="sort column by upload time">Upload Time</button>
+                        <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">Upload Time</span>
                       </DataListCell>,
                     ]}
                   />
@@ -219,7 +215,7 @@ class Search extends Component<IAppState, ISearchState> {
                         <br />
                         <Alert
                           variant="warning"
-                          title={"No modules found with your search of: " + this.state.input}
+                          title={"No modules found with your search"}
                           action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                         />
                         <br />
@@ -310,8 +306,6 @@ class Search extends Component<IAppState, ISearchState> {
     );
   }
 
-  private setInput = (event) => this.setState({ input: event });
-
   private handleSelectAll = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
     const newResults: any[] = []
     this.state.results.map(dataitem => {
@@ -327,9 +321,10 @@ class Search extends Component<IAppState, ISearchState> {
 
   private handleDeleteCheckboxChange = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
     const newResults: any[] = []
+    const nameStr = 'name'
     this.state.results.map(data => {
       newResults.push(JSON.parse(JSON.stringify(data))) // clones the object
-      if (data[Search.KEY_TRANSIENTPATH] === event.target['name']) {
+      if (data[Search.KEY_TRANSIENTPATH] === event.target[nameStr]) {
         newResults[newResults.length - 1][Search.KEY_CHECKEDITEM] = checked
       }
     })
@@ -363,9 +358,7 @@ class Search extends Component<IAppState, ISearchState> {
 
   private getRows = (event) => {
     if (event.key === 'Enter') {
-      this.setState({ page: 1 }, () => {
-        this.doSearch()
-      })
+      this.newSearch()
     }
   };
 
@@ -426,47 +419,13 @@ class Search extends Component<IAppState, ISearchState> {
     this.setState({ isEmptyResults: false, isSearchException: false });
   };
 
-  private sortByName = () => {
-    this.sort("jcr:title")
-  }
-
-  private sortByDescription = () => {
-    this.sort("jcr:description")
-  }
-
-  private sortByUploadTime = () => {
-    this.sort("pant:dateUploaded")
-  }
-
-  private sort(key: string) {
-    // Switch the direction each time some clicks.
-    this.setSortedUp()
-    this.setState({sortKey: key }, () => {
-      this.getSortedRows()
-    }) 
-  };
-
-  private setSortedUp = () => {
-    this.setState({ isSortedUp: !this.state.isSortedUp }, () => {      this.getSortedRows()
-    })
-  };
-
-  private getSortedRows() {
-    fetch(this.buildSearchUrl())
-      .then(response => response.json())
-      .then(responseJSON => this.setState({
-        isEmptyResults: responseJSON.results === '[]',
-        nextPageRowCount: responseJSON.hasNextPage ? 1 : 0,
-        results: responseJSON.results
-       }))
+  private setQuery = (prod: string) => {
+    this.setState({ filterQuery: prod })
   };
 
   private buildSearchUrl() {
-    let backend = "/modules.json?search="
-    if (this.state.input != null) {
-      backend += this.state.input
-    }
-    backend += "&key=" + this.state.sortKey + "&direction=" + (this.state.isSortedUp ? "desc" : "asc")
+    let backend = "/modules.json?"
+    backend += this.state.filterQuery
     backend += "&offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
     return backend
   }

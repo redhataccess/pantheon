@@ -5,12 +5,9 @@ exports[`Search tests should render default Search component 1`] = `
   <div>
     <div>
       <SearchFilter
-        isSortedUp={true}
-        onChange={[Function]}
+        filterQuery={[Function]}
         onClick={[Function]}
         onKeyDown={[Function]}
-        onSort={[Function]}
-        value=""
       />
       <div
         className="notification-container"
@@ -53,26 +50,24 @@ exports[`Search tests should render default Search component 1`] = `
                   <DataListCell
                     width={2}
                   >
-                    <button
-                      aria-label="sort column by name"
-                      className="sp-prop"
+                    <span
+                      aria-label="column name"
+                      className="sp-prop-nosort"
                       id="span-name"
-                      onClick={[Function]}
                     >
                       Name
-                    </button>
+                    </span>
                   </DataListCell>,
                   <DataListCell
                     width={2}
                   >
-                    <button
-                      aria-label="sort column by description"
-                      className="sp-prop"
-                      id="span-name"
-                      onClick={[Function]}
+                    <span
+                      aria-label="column description"
+                      className="sp-prop-nosort"
+                      id="span-description"
                     >
                       Description
-                    </button>
+                    </span>
                   </DataListCell>,
                   <DataListCell>
                     <span
@@ -91,14 +86,13 @@ exports[`Search tests should render default Search component 1`] = `
                     </span>
                   </DataListCell>,
                   <DataListCell>
-                    <button
-                      aria-label="sort column by upload time"
-                      className="sp-prop"
-                      id="span-name"
-                      onClick={[Function]}
+                    <span
+                      aria-label="column upload time"
+                      className="sp-prop-nosort"
+                      id="span-upload-time"
                     >
                       Upload Time
-                    </button>
+                    </span>
                   </DataListCell>,
                 ]
               }

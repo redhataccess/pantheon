@@ -18,6 +18,7 @@ exports[`SearchFilter tests should render default Search component 1`] = `
         isValid={true}
         onChange={[Function]}
         type="text"
+        value=""
       />
       <Component
         aria-label="search button for search input"
@@ -31,11 +32,147 @@ exports[`SearchFilter tests should render default Search component 1`] = `
         />
       </Component>
     </InputGroup>
+    <FormSelect
+      aria-label="FormSelect Product"
+      className=""
+      id="productForm"
+      isDisabled={false}
+      isRequired={false}
+      isValid={true}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      value=""
+    >
+      <FormSelectOption
+        isDisabled={false}
+        key="0"
+        label="Select a Product"
+        value=""
+      />
+    </FormSelect>
+    <FormSelect
+      aria-label="FormSelect Version"
+      className="small-margin"
+      id="productVersionForm"
+      isDisabled={false}
+      isRequired={false}
+      isValid={true}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      value=""
+    >
+      <FormSelectOption
+        isDisabled={false}
+        key=""
+        label="Select a Version"
+        required={false}
+        value=""
+      />
+    </FormSelect>
+    <FormSelect
+      aria-label="FormSelect ModuleType"
+      className="small-margin"
+      id="moduleTypeForm"
+      isDisabled={false}
+      isRequired={false}
+      isValid={true}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      value=""
+    >
+      <FormSelectOption
+        isDisabled={false}
+        key="All"
+        label="All"
+        required={false}
+        value="All"
+      />
+      <FormSelectOption
+        isDisabled={false}
+        key="Concept"
+        label="Concept"
+        required={false}
+        value="Concept"
+      />
+      <FormSelectOption
+        isDisabled={false}
+        key="Procedure"
+        label="Procedure"
+        required={false}
+        value="Procedure"
+      />
+      <FormSelectOption
+        isDisabled={false}
+        key="Reference"
+        label="Reference"
+        required={false}
+        value="Reference"
+      />
+    </FormSelect>
+    <FormSelect
+      aria-label="FormSelect Sort"
+      className="small-margin"
+      id="sortForm"
+      isDisabled={false}
+      isRequired={false}
+      isValid={true}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      value=""
+    >
+      <FormSelectOption
+        isDisabled={false}
+        key="Uploaded date"
+        label="Uploaded date"
+        required={false}
+        value="Uploaded date"
+      />
+      <FormSelectOption
+        isDisabled={false}
+        key="Title"
+        label="Title"
+        required={false}
+        value="Title"
+      />
+      <FormSelectOption
+        isDisabled={false}
+        key="Product"
+        label="Product"
+        required={false}
+        value="Product"
+      />
+      <FormSelectOption
+        isDisabled={false}
+        key="Published date"
+        label="Published date"
+        required={false}
+        value="Published date"
+      />
+      <FormSelectOption
+        isDisabled={false}
+        key="Updated date"
+        label="Updated date"
+        required={false}
+        value="Updated date"
+      />
+      <FormSelectOption
+        isDisabled={false}
+        key="Module type"
+        label="Module type"
+        required={false}
+        value="Module type"
+      />
+    </FormSelect>
     <Component
       aria-label="search button for search input"
+      onClick={[Function]}
       variant="control"
     >
-      <SortAlphaUpIcon
+      <SortAlphaDownIcon
         color="currentColor"
         noVerticalAlign={false}
         size="sm"
@@ -43,5 +180,13 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       />
     </Component>
   </div>
+  <ChipGroup
+    className=""
+    collapsedText="\${remaining} more"
+    defaultIsOpen={false}
+    expandedText="Show Less"
+    numChips={3}
+    withToolbar={true}
+  />
 </Fragment>
 `;
