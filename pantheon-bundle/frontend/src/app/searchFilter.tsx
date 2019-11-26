@@ -332,7 +332,7 @@ class SearchFilter extends Component<any, any> {
   private setQuery = () => {
     let searchQuery = ""
     if (this.state.searchText.trim() !== "") {
-      searchQuery += "search=" + this.state.searchText
+      searchQuery += "search=" + this.state.searchText.trim()
     }
 
     if (this.state.productsQueryParam.trim() !== "") {
