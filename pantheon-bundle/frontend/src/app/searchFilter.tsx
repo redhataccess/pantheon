@@ -321,14 +321,14 @@ class SearchFilter extends Component<any, any> {
       if (this.state.productsQueryParam.trim() !== "") {
         prodQuery += '&'
       }
-      if (!prodQuery.contains(this.state.productsUUID[this.state.productValue])) {
+      if (!prodQuery.includes(this.state.productsUUID[this.state.productValue])) {
         prodQuery += "product=" + this.state.productsUUID[this.state.productValue]
       }
     } else if (versionUUID.trim() !== "") {
       if (this.state.productversionsQueryParam.trim() !== "") {
         verQuery += '&'
       }
-      if (!verQuery.contains(versionUUID)) {
+      if (!verQuery.includes(versionUUID)) {
         verQuery += "productversion=" + versionUUID
       }
     }
