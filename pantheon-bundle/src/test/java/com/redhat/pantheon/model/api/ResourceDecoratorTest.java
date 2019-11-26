@@ -15,7 +15,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
- * TODO This class has a set of empty tests for methods which are already tested elsewhere.
  * @author Carlos Munoz
  */
 @ExtendWith({MockitoExtension.class})
@@ -23,18 +22,6 @@ class ResourceDecoratorTest {
 
     @Mock
     Resource resource;
-
-    @Test
-    void createChild() {
-    }
-
-    @Test
-    void getChild() {
-    }
-
-    @Test
-    void getOrCreateChild() {
-    }
 
     @Test
     void getProperty() {
@@ -79,32 +66,12 @@ class ResourceDecoratorTest {
     }
 
     @Test
-    void getPath() {
-    }
-
-    @Test
-    void getName() {
-    }
-
-    @Test
-    void getParent() {
-    }
-
-    @Test
     void listChildren() {
         // When
         new ResourceDecorator(resource).listChildren();
 
         // Then
         verify(resource, times(1)).listChildren();
-    }
-
-    @Test
-    void getChildren() {
-    }
-
-    @Test
-    void getChild1() {
     }
 
     @Test
@@ -153,17 +120,5 @@ class ResourceDecoratorTest {
 
         // Then
         verify(resource, times(1)).getResourceMetadata();
-    }
-
-    @Test
-    void getResourceResolver() {
-    }
-
-    @Test
-    void getValueMap() {
-    }
-
-    @Test
-    void adaptTo() {
     }
 }
