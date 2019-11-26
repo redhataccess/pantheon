@@ -41,7 +41,7 @@ func TestGetInfo(t *testing.T) {
 	fmt.Println(string(body))
 
 	if !strings.Contains(string(body), "not set") {
-		t.Errorf("ENV OPENSHIFT_BUILD_COMMIT should always be not set during build.")
+		t.Errorf("ENV COMMIT_HASH should always be not set during build.")
 	}
 
 	req = httptest.NewRequest("POST", "http://example.com/info", nil)

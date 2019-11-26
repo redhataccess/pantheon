@@ -69,11 +69,11 @@ func getInfo(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		var response = os.Getenv("OPENSHIFT_BUILD_COMMIT")
+		var response = os.Getenv("COMMIT_HASH")
 		if response == "" {
 			response = "not set"
 		}
-		fmt.Fprint(w, "OPENSHIFT_BUILD_COMMIT is : "+response)
+		fmt.Fprint(w, "COMMIT_HASH is : "+response)
 	} else {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
