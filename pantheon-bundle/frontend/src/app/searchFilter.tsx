@@ -257,6 +257,9 @@ class SearchFilter extends Component<any, any> {
       if (prodQuery.includes("&&")) {
         prodQuery = prodQuery.replace('&&', '&')
       }
+      if (prodQuery.startsWith('&')) {
+        prodQuery = prodQuery.substr(1)
+      }
       this.setState({ chipGroups: copyOfChipGroups, productsQueryParam: prodQuery }, () => {
         this.setQuery();
       });
@@ -268,6 +271,9 @@ class SearchFilter extends Component<any, any> {
       }
       if (verQuery.includes("&&")) {
         verQuery = verQuery.replace('&&', '&')
+      }
+      if (verQuery.startsWith('&')) {
+        verQuery = verQuery.substr(1)
       }
       this.setState({ chipGroups: copyOfChipGroups, productversionsQueryParam: verQuery }, () => {
         this.setQuery();
@@ -315,14 +321,17 @@ class SearchFilter extends Component<any, any> {
       if (this.state.productsQueryParam.trim() !== "") {
         prodQuery += '&'
       }
-      prodQuery += "product=" + this.state.productsUUID[this.state.productValue]
+      if (!prodQuery.contains(this.state.productsUUID[this.state.productValue])) {
+        prodQuery += "product=" + this.state.productsUUID[this.state.productValue]
+      }
     } else if (versionUUID.trim() !== "") {
       if (this.state.productversionsQueryParam.trim() !== "") {
         verQuery += '&'
       }
-      verQuery += "productversion=" + versionUUID
+      if (!verQuery.contains(versionUUID)) {
+        verQuery += "productversion=" + versionUUID
+      }
     }
-
     this.setState({ chipGroups: copyOfChipGroups, productsQueryParam: prodQuery, productversionsQueryParam: verQuery }, () => {
       this.setQuery();
     });
