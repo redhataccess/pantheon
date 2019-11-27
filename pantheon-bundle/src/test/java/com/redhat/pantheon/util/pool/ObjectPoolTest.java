@@ -6,19 +6,20 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Answers.RETURNS_MOCKS;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class})
 class ObjectPoolTest {
 
-    @Mock(answer = RETURNS_MOCKS)
+    @Mock
     PooledObjectLifecycle<Object> lifecycle;
 
     @Test
     void initialState() {
         // Given
+        when(lifecycle.createInstance()).thenReturn(new Object());
 
         // When
         ObjectPool<?> pool = new ObjectPool<>(lifecycle, 3, 5);
@@ -31,6 +32,7 @@ class ObjectPoolTest {
     @Test
     void borrowObject() {
         // Given
+        when(lifecycle.createInstance()).thenReturn(new Object());
         ObjectPool<?> pool = new ObjectPool<>(lifecycle, 3, 5);
 
         // When
@@ -47,6 +49,7 @@ class ObjectPoolTest {
     @Test
     void borrowObjectWhenNotCreated() {
         // Given
+        when(lifecycle.createInstance()).thenReturn(new Object());
         ObjectPool<?> pool = new ObjectPool<>(lifecycle, 0, 5);
 
         // When
@@ -64,6 +67,7 @@ class ObjectPoolTest {
     @Test
     void borrowObjectWhenPoolIsFull() {
         // Given
+        when(lifecycle.createInstance()).thenReturn(new Object());
         ObjectPool<?> pool = new ObjectPool<>(lifecycle, 1, 1);
         pool.borrowObject(); // use the only instance available
 
@@ -80,6 +84,7 @@ class ObjectPoolTest {
     @Test
     void returnObject() {
         // Given
+        when(lifecycle.createInstance()).thenReturn(new Object());
         ObjectPool<Object> pool = new ObjectPool<>(lifecycle, 3, 5);
 
         // When
@@ -117,6 +122,7 @@ class ObjectPoolTest {
     @Test
     void clear() {
         // Given
+        when(lifecycle.createInstance()).thenReturn(new Object());
         ObjectPool<Object> pool = new ObjectPool<>(lifecycle, 3, 5);
 
         // When
@@ -130,6 +136,7 @@ class ObjectPoolTest {
     @Test
     void close() throws Exception {
         // Given
+        when(lifecycle.createInstance()).thenReturn(new Object());
         ObjectPool<Object> pool = new ObjectPool<>(lifecycle, 3, 5);
 
         // When

@@ -14,7 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.ServletException;
 import java.util.Iterator;
+import java.util.Map;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -62,8 +64,10 @@ public class DefaultQueryServletTest {
     @DisplayName("Test a sorted query")
     public void testSortedQuery() throws Exception {
         // Given
+        Map<String, Object> paramMap = newHashMap();
         slingContext.request().setResource(slingContext.resourceResolver().getResource("/content/test"));
-        slingContext.request().getParameterMap().put("orderBy", new String[]{"name desc"});
+        paramMap.put("orderBy", new String[]{"name desc"});
+        slingContext.request().setParameterMap(paramMap);
 
         // When
         servlet.doGet(slingContext.request(), slingContext.response());
@@ -84,8 +88,10 @@ public class DefaultQueryServletTest {
     @DisplayName("Test a filtered query")
     public void testFilteredQuery() throws Exception {
         // Given
+        Map<String, Object> paramMap = newHashMap();
         slingContext.request().setResource(slingContext.resourceResolver().getResource("/content/test"));
-        slingContext.request().getParameterMap().put("where", new String[]{"number < 5"});
+        paramMap.put("where", new String[]{"number < 5"});
+        slingContext.request().setParameterMap(paramMap);
 
         // When
         servlet.doGet(slingContext.request(), slingContext.response());
@@ -104,8 +110,10 @@ public class DefaultQueryServletTest {
     @DisplayName("Test paged Query")
     public void testPagedQuery() throws Exception {
         // Given
+        Map<String, Object> paramMap = newHashMap();
+        paramMap.put("limit", new String[]{"5"});
+        slingContext.request().setParameterMap(paramMap);
         slingContext.request().setResource(slingContext.resourceResolver().getResource("/content/test"));
-        slingContext.request().getParameterMap().put("limit", new String[]{"5"});
 
         // When
         servlet.doGet(slingContext.request(), slingContext.response());
@@ -121,9 +129,11 @@ public class DefaultQueryServletTest {
     @DisplayName("Test paged Query followup")
     public void testPagedQueryFollowup() throws Exception {
         // Given
+        Map<String, Object> paramMap = newHashMap();
         slingContext.request().setResource(slingContext.resourceResolver().getResource("/content/test"));
-        slingContext.request().getParameterMap().put("limit", new String[]{"5"});
-        slingContext.request().getParameterMap().put("offset", new String[]{"5"});
+        paramMap.put("limit", new String[]{"5"});
+        paramMap.put("offset", new String[]{"5"});
+        slingContext.request().setParameterMap(paramMap);
 
 
         // When
@@ -146,8 +156,10 @@ public class DefaultQueryServletTest {
                 "jcr:primaryType", "pant:module")
             .commit();
 
+        Map<String, Object> paramMap = newHashMap();
         slingContext.request().setResource(slingContext.resourceResolver().getResource("/content/test"));
-        slingContext.request().getParameterMap().put("nodeType", new String[]{"pant:module"});
+        paramMap.put("nodeType", new String[]{"pant:module"});
+        slingContext.request().setParameterMap(paramMap);
 
         // When
         servlet.doGet(slingContext.request(), slingContext.response());
