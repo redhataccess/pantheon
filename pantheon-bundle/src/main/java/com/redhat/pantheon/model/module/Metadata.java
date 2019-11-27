@@ -2,11 +2,11 @@ package com.redhat.pantheon.model.module;
 
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.Field;
-import com.redhat.pantheon.model.api.ReferenceField;
-import com.redhat.pantheon.model.api.SlingResource;
+import com.redhat.pantheon.model.api.Reference;
+import com.redhat.pantheon.model.api.SlingModel;
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.sling.api.resource.Resource;
 
+import javax.inject.Named;
 import java.util.Calendar;
 
 /**
@@ -14,36 +14,42 @@ import java.util.Calendar;
  * instances may found on a given module representing different
  * versions of said metadata.
  */
-public class Metadata extends SlingResource {
+public interface Metadata extends SlingModel {
 
-    public final Field<String> title = stringField("jcr:title");
+    @Named("jcr:title")
+    Field<String> title();
 
-    public final Field<String> mAbstract = stringField("pant:abstract");
+    @Named("pant:abstract")
+    Field<String> mAbstract();
 
-    public final Field<String> headline = stringField("pant:headline");
+    @Named("pant:headline")
+    Field<String> headline();
 
-    public final Field<String> description = stringField("jcr:description");
+    @Named("jcr:description")
+    Field<String> description();
 
-    public final Field<Calendar> created = dateField("jcr:created");
+    @Named("jcr:created")
+    Field<Calendar> created();
 
-    public final Field<String> createdBy = stringField("jcr:createdBy");
+    @Named("jcr:createdBy")
+    Field<String> createdBy();
 
-    public final Field<ModuleType> moduleType = enumField("pant:moduleType", ModuleType.class);
+    @Named("pant:moduleType")
+    Field<ModuleType> moduleType();
 
-    public final Field<Calendar> datePublished = dateField("pant:datePublished");
+    @Named("pant:datePublished")
+    Field<Calendar> datePublished();
 
-    public final Field<Calendar> dateUploaded = dateField("pant:dateUploaded");
+    @Named("pant:dateUploaded")
+    Field<Calendar> dateUploaded();
 
-    public final Field<Calendar> dateModified = dateField(JcrConstants.JCR_LASTMODIFIED);
+    @Named(JcrConstants.JCR_LASTMODIFIED)
+    Field<Calendar> dateModified();
 
-    public final Field<String> primaryType = stringField("jcr:primaryType");
+    Reference<ProductVersion> productVersion();
 
-    public final ReferenceField<ProductVersion> productVersion = referenceField("productVersion", ProductVersion.class);
+    Field<String> urlFragment();
 
-    public final Field<String> urlFragment = stringField("urlFragment");
-
-    public Metadata(Resource wrapped) {
-        super(wrapped);
-    }
-
+    @Named(JcrConstants.JCR_PRIMARYTYPE)
+    Field<String> primaryType();
 }

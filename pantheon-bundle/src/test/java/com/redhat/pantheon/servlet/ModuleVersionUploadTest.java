@@ -1,6 +1,7 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
+import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleType;
@@ -63,14 +64,17 @@ class ModuleVersionUploadTest {
         assertNotNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/draft"));
         assertNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/released"));
 
-        Module module = new Module(slingContext.resourceResolver().getResource("/new/proc_module"));
+        Module module =
+                SlingModels.getModel(
+                        slingContext.resourceResolver().getResource("/new/proc_module"),
+                        Module.class);
         assertEquals(ModuleType.PROCEDURE,
                 module.getModuleLocale(LocaleUtils.toLocale("es_ES"))
                         .getVersion("1")
-                        .metadata.get()
-                        .moduleType.get());
+                        .metadata().get()
+                        .moduleType().get());
         assertEquals("This is the adoc content",
-                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
+                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent().get()
         );
         verify(asciidoctorService).getModuleHtml(
                 any(ModuleVersion.class), any(Resource.class), anyMap(), eq(true));
@@ -112,12 +116,13 @@ class ModuleVersionUploadTest {
         assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/content"));
         assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/metadata"));
 
-        Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
+        Module module =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/new/module"), Module.class);
         assertEquals("Draft asciidoc content",
-                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
+                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent().get()
         );
         assertEquals("This is the released adoc content",
-                module.getReleasedContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
+                module.getReleasedContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent().get()
         );
         verify(asciidoctorService).getModuleHtml(
                 any(ModuleVersion.class), any(Resource.class), anyMap(), eq(true));
@@ -167,12 +172,13 @@ class ModuleVersionUploadTest {
         assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/content"));
         assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/metadata"));
 
-        Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
+        Module module =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/new/module"), Module.class);
         assertEquals("Revised asciidoc content",
-                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
+                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent().get()
         );
         assertEquals("This is the released adoc content",
-                module.getReleasedContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
+                module.getReleasedContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent().get()
         );
         verify(asciidoctorService).getModuleHtml(
                 any(ModuleVersion.class), any(Resource.class), anyMap(), eq(true));
@@ -224,15 +230,16 @@ class ModuleVersionUploadTest {
         assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/content"));
         assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/metadata"));
 
-        Module module = new Module(slingContext.resourceResolver().getResource("/new/module"));
+        Module module =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/new/module"), Module.class);
         assertEquals("This is the draft adoc content",
-                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
+                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent().get()
         );
         assertEquals("This is the draft html content",
-                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().cachedHtml.get().data.get()
+                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().cachedHtml().get().data().get()
         );
         assertEquals("This is the released adoc content",
-                module.getReleasedContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent.get()
+                module.getReleasedContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent().get()
         );
         verify(asciidoctorService, never()).getModuleHtml(
                 any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean());

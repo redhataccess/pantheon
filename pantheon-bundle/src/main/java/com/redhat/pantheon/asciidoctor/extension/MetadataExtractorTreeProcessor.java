@@ -63,7 +63,7 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
     private void extractDocTitle(Document document) {
         String docTitle = document.getDoctitle();
         if(!isNullOrEmpty(docTitle)) {
-            metadata.title.set(docTitle);
+            metadata.title().set(docTitle);
         }
     }
 
@@ -86,11 +86,11 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                     }
                 })
                 .findFirst();
-        headlineBlock.ifPresent(headline -> metadata.headline.set(headline.getTitle()));
+        headlineBlock.ifPresent(headline -> metadata.headline().set(headline.getTitle()));
 
         // if no headline is detected, reset it
         if(!headlineBlock.isPresent()) {
-            metadata.headline.set(null);
+            metadata.headline().set(null);
         }
     }
 
@@ -112,11 +112,11 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                             }
                         })
                         .findFirst();
-        abstractNode.ifPresent(node -> metadata.mAbstract.set(node.getContent().toString()));
+        abstractNode.ifPresent(node -> metadata.mAbstract().set(node.getContent().toString()));
 
         // if no abstract is detected, reset if
         if(!abstractNode.isPresent()) {
-            metadata.mAbstract.set(null);
+            metadata.mAbstract().set(null);
         }
     }
 

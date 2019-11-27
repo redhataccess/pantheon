@@ -1,36 +1,46 @@
 package com.redhat.pantheon.model.api;
 
-import javax.jcr.*;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import static com.redhat.pantheon.model.api.SlingModels.getModel;
 
 /**
- * Specific implementation of a field of type reference.
- * Referecne fields add convenience to fetch the referenced resource.
- * @param <T>
+ * A {@link Field} implementation for JCR reference-typed fields. Adds methods to
+ * resolve the reference.
+ *
+ * @author Carlos Munoz
  */
-public class ReferenceField<T extends SlingResource> extends Field<String> {
+public class ReferenceFieldImpl<T extends SlingModel> extends FieldImpl<String> implements Reference<T> {
 
     private final Class<T> referenceType;
+    private final SlingModel owner;
 
-    ReferenceField(String name, Class<T> referenceType, SlingResource owner) {
+    // TODO make this package-protected
+    public ReferenceFieldImpl(String name, Class<T> referenceType, SlingModel owner) {
         super(name, String.class, owner);
         this.referenceType = referenceType;
+        this.owner = owner;
     }
 
     /**
-     * @see Field#set(Object)
+     * @see FieldImpl#set(Object)
      */
     @Override
     public void set(String value) {
         try {
             owner.adaptTo(Node.class)
-                    .setProperty(name, value, PropertyType.REFERENCE);
+                    .setProperty(getName(), value, PropertyType.REFERENCE);
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * @return The referenced object as a {@link SlingResource}, or null if the reference is null or
+     * @return The referenced object as a {@link SlingModel}, or null if the reference is null or
      * invalid
      * @throws RepositoryException If there was a proble
      */
@@ -43,7 +53,7 @@ public class ReferenceField<T extends SlingResource> extends Field<String> {
             Node node = owner.getResourceResolver()
                     .adaptTo(Session.class)
                     .getNodeByIdentifier(this.get());
-            return SlingResourceUtil.toSlingResource(
+            return getModel(
                     owner.getResourceResolver().getResource(node.getPath()),
                     referenceType);
         } catch (ItemNotFoundException infe) {

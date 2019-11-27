@@ -1,75 +1,28 @@
 package com.redhat.pantheon.model.api;
 
-import org.apache.sling.api.resource.ModifiableValueMap;
-
 import javax.annotation.Nullable;
-import javax.jcr.RepositoryException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * A strongly typed jcr field definition for a {@link SlingResource}.
+ * A strongly typed jcr field definition for a {@link SlingModel}.
  * Field definitions have a reference to their owning object so they
  * can read and modify said owner when necessary.
  *
  * @param <T>
  * @author Carlos Munoz
  */
-public class Field<T> implements Supplier<T>, Consumer<T> {
+public interface Field<T> extends Supplier<T>, Consumer<T> {
+    String getName();
 
-    protected final String name;
-    protected final Class<T> type;
-    protected final SlingResource owner;
-
-    Field(String name, Class<T> type, SlingResource owner) {
-        this.name = name;
-        this.type = type;
-        this.owner = owner;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Class<T> getType() {
-        return type;
-    }
-
-    /**
-     * Sets the default value for this field. The default value is only set if there is
-     * no value set on the field
-     * @param defVal The default value to use
-     * @return The field itself
-     */
-    public Field<T> defaultValue(final T defVal) {
-        if(this.get() == null) {
-            this.owner.setProperty(this.name, defVal);
-        }
-        return this;
-    }
-
-    /**
-     * @return The field's value from the underlying resource.
-     */
-    @Override
-    public T get() {
-        return owner.getValueMap().get(name, type);
-    }
+    Class<T> getType();
 
     /**
      * Sets the value on the jcr field of the underlying resource.
      * Setting a field to null effectively removes the field from the resource.
      * @param value
      */
-    public void set(@Nullable T value) {
-        ModifiableValueMap mvm = owner.adaptTo(ModifiableValueMap.class);
-        if(value == null) {
-            mvm.remove(name);
-        }
-        else {
-            mvm.put(name, value);
-        }
-    }
+    void set(@Nullable T value);
 
     /**
      * Same as {@link #set(Object)}, just to conform to the {@link Consumer} interface.
@@ -77,7 +30,7 @@ public class Field<T> implements Supplier<T>, Consumer<T> {
      * @param t
      */
     @Override
-    public void accept(T t) {
+    default void accept(T t) {
         set(t);
     }
 }

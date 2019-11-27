@@ -52,29 +52,29 @@ public class ReleaseDraftVersion extends AbstractPostOperation {
         if( !versionToRelease.isPresent() ) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                     "The module doesn't have a draft version to be released");
-        } else if (versionToRelease.get().metadata.getOrCreate().productVersion.get() == null
-        		||  versionToRelease.get().metadata.getOrCreate().productVersion.get().isEmpty()) {
+        } else if (versionToRelease.get().metadata().getOrCreate().productVersion().get() == null
+        		||  versionToRelease.get().metadata().getOrCreate().productVersion().get().isEmpty()) {
         	// Check if productVersion is set
         	response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                     "The version to be released doesn't have productVersion metadata");
-        } else if (versionToRelease.get().metadata.getOrCreate().urlFragment.get() == null
-        		||  versionToRelease.get().metadata.getOrCreate().urlFragment.get().isEmpty()) {
+        } else if (versionToRelease.get().metadata().getOrCreate().urlFragment().get() == null
+        		||  versionToRelease.get().metadata().getOrCreate().urlFragment().get().isEmpty()) {
         	// Check if urlFragment is set
         	response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                     "The version to be released doesn't have urlFragment metadata");
         } else {
             // Draft becomes the new released version
             ModuleLocale moduleLocale = module.getModuleLocale(locale);
-            moduleLocale.released.set( moduleLocale.draft.get() );
-            moduleLocale.draft.set( null );
+            moduleLocale.released().set( moduleLocale.draft().get() );
+            moduleLocale.draft().set( null );
             // set the published date on the released version
             versionToRelease.get()
-                    .metadata.getOrCreate()
-                    .datePublished.set(Calendar.getInstance());
+                    .metadata().getOrCreate()
+                    .datePublished().set(Calendar.getInstance());
             changes.add(Modification.onModified(module.getPath()));
 
             // call the extension point
-            events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.released.getReference().getPath()));
+            events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.released().getReference().getPath()));
 
         }
     }

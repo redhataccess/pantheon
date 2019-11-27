@@ -2,6 +2,7 @@ package com.redhat.pantheon.model;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.redhat.pantheon.model.api.SlingModels;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
@@ -21,11 +22,13 @@ class ProductTest {
                 .commit();
         
         // When
-        Product product = new Product(slingContext.resourceResolver().getResource("/content/product_tests/product1"));
+        Product product = SlingModels.getModel(
+                slingContext.resourceResolver().getResource("/content/product_tests/product1"),
+                Product.class);
 
         // Then
         assertNotNull(slingContext.resourceResolver().getResource("/content/product_tests/product1"));
-        assertNotNull(product.name);
+        assertNotNull(product.name());
     }
 
     @Test
@@ -36,10 +39,13 @@ class ProductTest {
                 .commit();
         
         // When
-        ProductVersion productVersion  = new ProductVersion(slingContext.resourceResolver().getResource("/content/product_tests/product1/verions/1"));
+        ProductVersion productVersion  = SlingModels.getModel(
+                slingContext.resourceResolver().getResource("/content/product_tests/product1/versions/1"),
+                ProductVersion.class
+        );
 
         // Then
         assertNotNull(slingContext.resourceResolver().getResource("/content/product_tests/product1/versions/1"));
-        assertNotNull(productVersion.name);
+        assertNotNull(productVersion.name());
     }
 }

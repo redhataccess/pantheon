@@ -1,6 +1,7 @@
 package com.redhat.pantheon.asciidoctor;
 
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
@@ -47,7 +48,8 @@ class AsciidoctorServiceTest {
 
         Resource moduleResource = slingContext.resourceResolver().getResource("/module");
         ModuleVersion moduleVersion =
-                new ModuleVersion(slingContext.resourceResolver().getResource("/module/locales/en_US/released"));
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/module/locales/en_US/released"),
+                        ModuleVersion.class);
         // adapter (mock)
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(Content.class, slingContext);
@@ -81,7 +83,8 @@ class AsciidoctorServiceTest {
                 .commit();
         Resource resource = slingContext.resourceResolver().getResource("/module");
         ModuleVersion moduleVersion =
-                new ModuleVersion(slingContext.resourceResolver().getResource("/module/locales/en_US/released"));
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/module/locales/en_US/released"),
+                        ModuleVersion.class);
         // adapter (mock)
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(Content.class, slingContext);

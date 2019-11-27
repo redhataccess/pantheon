@@ -1,39 +1,35 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
-import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.api.SlingResource;
-import org.apache.sling.api.resource.Resource;
+import com.redhat.pantheon.model.api.SlingModel;
+
+import javax.inject.Named;
 
 /**
  * Models a single instance of a module's content. Multiple content instances may be found on a
  * given module representing several content versions.
  */
-public class Content extends SlingResource {
+public interface Content extends SlingModel {
 
-    public final Field<String> asciidocContent = stringField("asciidoc/jcr:content/jcr:data");
+    @Named("asciidoc/jcr:content/jcr:data")
+    Field<String> asciidocContent();
 
-    public final Child<CachedContent> cachedHtml = child("cachedHtml", CachedContent.class);
+    Child<CachedContent> cachedHtml();
 
-    public final Child<FileResource> asciidoc = file("asciidoc");
-
-    public Content(Resource wrapped) {
-        super(wrapped);
-    }
+    Child<FileResource> asciidoc();
 
     /**
      * A child resource for a {@link ModuleVersion} which contains cached data
      * when a resource is generated.
      */
-    public static class CachedContent extends SlingResource {
+    interface CachedContent extends SlingModel {
 
-        public final Field<String> hash = stringField("pant:hash");
+        @Named("pant:hash")
+        Field<String> hash();
 
-        public final Field<String> data = stringField("jcr:data");
-
-        public CachedContent(Resource wrapped) {
-            super(wrapped);
-        }
+        @Named("jcr:data")
+        Field<String> data();
     }
 }
