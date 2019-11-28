@@ -104,6 +104,7 @@ class ModuleJsonServletTest {
         assertTrue(moduleMap.containsKey("content_type"));
         assertTrue(moduleMap.containsKey("date_modified"));
         assertTrue(moduleMap.containsKey("date_published"));
+        assertTrue(moduleMap.containsKey("status"));
         assertTrue(moduleMap.containsKey("context_id"));
         assertTrue(moduleMap.containsKey("headline"));
         assertTrue(moduleMap.containsKey("module_url_fragment"));
