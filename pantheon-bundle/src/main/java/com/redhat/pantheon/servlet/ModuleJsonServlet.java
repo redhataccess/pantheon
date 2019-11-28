@@ -98,6 +98,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleMap.put("description", releasedMetadata.get().description().get());
         moduleMap.put("content_type", CONTENT_TYPE);
         moduleMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
+        moduleMap.put("status", "published");
 
         // Assume the path is something like: /content/<something>/my/resource/path
         moduleMap.put("module_url_fragment", resourcePath.substring("/content/repositories/".length(), resourcePath.length()));
@@ -135,6 +136,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         if (!urlFragment.isEmpty()) {
             moduleMap.put("vanity_url_fragment", urlFragment);
         }
+
         // remove unnecessary fields from the map
         moduleMap.remove("jcr:lastModified");
         moduleMap.remove("jcr:lastModifiedBy");

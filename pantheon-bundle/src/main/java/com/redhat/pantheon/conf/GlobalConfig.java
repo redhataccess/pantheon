@@ -37,7 +37,7 @@ public class GlobalConfig {
 
     public static final Locale DEFAULT_MODULE_LOCALE = Locale.US;
 
-    public static final String CONTENT_TYPE = "documentation";
+    public static final String CONTENT_TYPE = "module";
 
     public static final String IMAGE_PATH_PREFIX = "/imageassets";
 
