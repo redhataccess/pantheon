@@ -107,7 +107,7 @@ class SearchFilter extends Component<any, any> {
           {chipGroups.map(currentGroup => (
             <ChipGroupToolbarItem key={currentGroup.category} categoryName={currentGroup.category}>
               {currentGroup.chips.map(chip => (
-                <Chip key={chip} onClick={this.deleteItem(chip)}>
+                <Chip key={chip} onClick={this.deleteItem(currentGroup.category, chip)}>
                   {chip}
                 </Chip>
               ))}
@@ -229,19 +229,22 @@ class SearchFilter extends Component<any, any> {
     });
   }
 
-  private deleteItem = (id) => (event: any) => {
+  private deleteItem = (product, id) => (event: any) => {
     const copyOfChipGroups = this.state.chipGroups;
-    let product = ''
     for (let i = 0; copyOfChipGroups.length > i; i++) {
-      const index = copyOfChipGroups[i].chips.indexOf(id);
-      if (index !== -1) {
-        const categoryKey = "category"
-        product = copyOfChipGroups[i][categoryKey]
-        copyOfChipGroups[i].chips.splice(index, 1);
-        // check if this is the last item in the group category
-        if (copyOfChipGroups[i].chips.length === 0) {
-          copyOfChipGroups.splice(i, 1);
+      const category = copyOfChipGroups[i].category
+      if (category === product) {
+        const index = copyOfChipGroups[i].chips.indexOf(id);
+        if (index !== -1) {
+          const categoryKey = "category"
+          product = copyOfChipGroups[i][categoryKey]
+          copyOfChipGroups[i].chips.splice(index, 1);
+          // check if this is the last item in the group category
+          if (copyOfChipGroups[i].chips.length === 0) {
+            copyOfChipGroups.splice(i, 1);
+          }
         }
+        break
       }
     }
 
