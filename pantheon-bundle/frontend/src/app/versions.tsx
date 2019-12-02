@@ -178,12 +178,12 @@ class Versions extends Component<IProps, any> {
                                                                     {data.version}
                                                                 </DataListCell>,
                                                                 <DataListCell key={'published_value_' + key1 + '_' + key2}>
-                                                                    {data.publishedState==="Not published" && data.publishedState}
-                                                                    {data.publishedState==="Released" && data.updatedDate}
+                                                                    {data.publishedState === "Not published" && data.publishedState}
+                                                                    {data.publishedState === "Released" && data.updatedDate}
                                                                 </DataListCell>,
                                                                 <DataListCell key={'version_updated_' + key1 + '_' + key2}>
-                                                                    {data["type"]==="draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
-                                                                    {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
+                                                                    {data["type"] === "draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
+                                                                    {data["type"] === "release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
                                                                 </DataListCell>,
                                                                 <DataListCell key={'publish_buttons_' + key1 + '_' + key2}>
                                                                     <Button variant="primary" onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>{'  '}
@@ -232,8 +232,8 @@ class Versions extends Component<IProps, any> {
                                                                     <span className="sp-prop-nosort" id="span-source-type-upload-time">Upload Time</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key={"details_updated_" + key1 + '_' + key2} width={4}>
-                                                                    {data["type"]==="draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
-                                                                    {data["type"]==="release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
+                                                                    {data["type"] === "draft" && (data["updatedDate"].trim() !== "" ? data.updatedDate : "-")}
+                                                                    {data["type"] === "release" && (data["draftUploadDate"].trim() !== "" ? data.draftUploadDate : "-")}
                                                                 </DataListCell>,
                                                             ]}
                                                         />
@@ -357,17 +357,18 @@ class Versions extends Component<IProps, any> {
     private fetchVersions = () => {
         // TODO: need a better fix for the 404 error.
         if (this.props.modulePath !== '') {
-            const fetchpath = "/content" + this.props.modulePath + "/en_US.harray.3.json"
+            // fetchpath needs to start from modulePath instead of modulePath/en_US.
+            // We need extact the module uuid for customer portal url to the module.
+            const fetchpath = "/content" + this.props.modulePath + ".harray.4.json"
             fetch(fetchpath)
                 .then(response => response.json())
                 .then(responseJSON => {
                     this.setState(updateState => {
-                        const releasedTag = responseJSON.released
-                        const draftTag = responseJSON.draft
-                        const versionCount = responseJSON.__children__.length
-
+                        const releasedTag = responseJSON.__children__[0].released
+                        const draftTag = responseJSON.__children__[0].draft
+                        const versionCount = responseJSON.__children__[0].__children__.length
                         for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
-                            const moduleVersion = responseJSON.__children__[i]
+                            const moduleVersion = responseJSON.__children__[0].__children__[i]
                             if (moduleVersion["jcr:uuid"] === draftTag) {
                                 this.draft[0].version = "Version " + moduleVersion.__name__
                                 this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
@@ -383,10 +384,10 @@ class Versions extends Component<IProps, any> {
                                 // this.props.modulePath starts with a slash
                                 this.release[0].path = "/content" + this.props.modulePath + "/en_US/" + moduleVersion.__name__
                             }
-                            if(releasedTag===undefined){
+                            if (releasedTag === undefined) {
                                 this.release[0].updatedDate = "-"
                             }
-                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate),this.release[0].updatedDate,this.release[0]["version"], responseJSON['jcr:uuid'])
+                            this.props.updateDate((this.draft[0].updatedDate !== "" ? this.draft[0].updatedDate : this.release[0].draftUploadDate), this.release[0].updatedDate, this.release[0].version, responseJSON['jcr:uuid'])
 
                         }
                         return {
@@ -502,7 +503,7 @@ class Versions extends Component<IProps, any> {
             || this.state.usecaseValue === undefined || this.state.usecaseValue === 'Select Use Case' || this.state.usecaseValue === ''
             || this.state.moduleUrl.trim() === "" || (this.state.versionSelected === '' && this.state.versionValue === '')) {
 
-                this.setState({ isMissingFields: true })
+            this.setState({ isMissingFields: true })
         } else {
             const hdrs = {
                 'Accept': 'application/json',
@@ -537,7 +538,7 @@ class Versions extends Component<IProps, any> {
         }
     }
     private onChangeProduct = (productValue) => {
-        this.setState({ productValue, versionUUID: ''})
+        this.setState({ productValue, versionUUID: '' })
     }
     private onChangeVersion = () => {
 
@@ -651,7 +652,7 @@ class Versions extends Component<IProps, any> {
     }
 
     private dismissNotification = () => {
-            this.setState({ isMissingFields: false })
+        this.setState({ isMissingFields: false })
     }
 
     private hideSuccessAlert = () => {
