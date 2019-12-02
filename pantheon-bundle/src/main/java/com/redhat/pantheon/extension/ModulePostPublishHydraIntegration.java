@@ -48,6 +48,9 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
     private static final String TLS_VERSION = "TLSv1.2";
     private static final String UUID_FIELD = "jcr:uuid";
     private static final String HYDRA_TOPIC = "VirtualTopic.eng.pantheon2.notifications";
+    private static final String ID_KEY = "id";
+    private static final String SOLR_COMMAND_KEY = "solr_command";
+    private static final String SOLR_COMMAND_VALUE = "index";
     public static final Locale DEFAULT_MODULE_LOCALE = Locale.US;
 
     private SSLContext sslContext;
@@ -98,7 +101,8 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
         String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
-        String msg = "{\"id\": " + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\"}";
+        String msg = "{\"" + ID_KEY + "\":" + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\","
+                + "\"" + SOLR_COMMAND_KEY + "\":" + "\"" + SOLR_COMMAND_VALUE + "\"}";
         producer.send(session.createTextMessage(msg));
         log.info("[" + ModulePostPublishHydraIntegration.class.getSimpleName() + "] message sent: " + session.createTextMessage(msg) );
 
@@ -195,7 +199,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
      * @return StompJmsConnectionFactory
      * @throws Exception
      */
-    private StompJmsConnectionFactory createConnectionFactory() throws Exception {
+    private ConnectionFactory createConnectionFactory() throws Exception {
         byte[] byteArray = Base64.decodeBase64(this.getMesasgeBrokerUserPass().getBytes());
         String decodedPass = new String(byteArray);
         TrustManager[] trustAllCerts = new TrustManager[] {
