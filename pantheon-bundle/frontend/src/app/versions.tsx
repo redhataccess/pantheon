@@ -500,10 +500,9 @@ class Versions extends Component<IProps, any> {
         if (this.state.productValue === undefined || this.state.productValue === 'Select a Product' || this.state.productValue === ''
             || this.state.versionUUID === undefined || this.state.versionUUID === 'Select a Version' || this.state.versionUUID === ''
             || this.state.usecaseValue === undefined || this.state.usecaseValue === 'Select Use Case' || this.state.usecaseValue === ''
-            || this.state.moduleUrl.trim() === "" || this.state.versionSelected === '') {
+            || this.state.moduleUrl.trim() === "" || (this.state.versionSelected === '' && this.state.versionValue === '')) {
 
                 this.setState({ isMissingFields: true })
-
         } else {
             const hdrs = {
                 'Accept': 'application/json',
@@ -538,7 +537,7 @@ class Versions extends Component<IProps, any> {
         }
     }
     private onChangeProduct = (productValue) => {
-        this.setState({ productValue })
+        this.setState({ productValue, versionUUID: ''})
     }
     private onChangeVersion = () => {
 
