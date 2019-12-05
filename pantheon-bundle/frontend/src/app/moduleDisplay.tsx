@@ -7,6 +7,8 @@ import {
 import { Versions } from '@app/versions'
 import { Fields } from '@app/Constants'
 import CopyImage from '@app/images/copy.png'
+// import { CP_HOST } from 'react-native-dotenv'
+// import '@app/lib/env'
 
 class ModuleDisplay extends Component<any, any, any> {
 
@@ -34,6 +36,9 @@ class ModuleDisplay extends Component<any, any, any> {
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
         this.getCPUrlEndpoint()
+        
+        console.log('CP host is ' + process.env.CP_HOST)
+        console.log('process.env ' + process.env)
     }
 
     public render() {
@@ -62,7 +67,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.moduleUUID !== ""
                             && this.state.portalHost.trim() !== ""
-                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                            && <span><a href={ process.env.CP_HOST + '/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                         }
 
                         <span>&emsp;&emsp;</span>
@@ -236,7 +241,7 @@ class ModuleDisplay extends Component<any, any, any> {
         let portal = ''
         switch (currentLocation[0]) {
             case 'localhost':
-                portal = 'https://access.devgssci.devlab.phx1.redhat.com';
+                portal = 'http://localhost';
                 break;
             case 'pantheon2-dev':
                 portal = 'https://access.devgssci.devlab.phx1.redhat.com';
