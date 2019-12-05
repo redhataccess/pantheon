@@ -165,7 +165,7 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       onClick={[Function]}
       variant="control"
     >
-      <SortAlphaDownIcon
+      <SortAlphaUpIcon
         color="currentColor"
         noVerticalAlign={false}
         size="sm"

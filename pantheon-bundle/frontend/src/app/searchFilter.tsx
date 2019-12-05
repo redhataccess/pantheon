@@ -97,7 +97,7 @@ class SearchFilter extends Component<any, any> {
           </FormSelect>
 
           <Button onClick={this.setSortedUp} variant={ButtonVariant.control} aria-label="search button for search input">
-            {this.state.isSortedUp ? <SortAlphaDownIcon /> : <SortAlphaUpIcon />}
+            {this.state.isSortedUp ? <SortAlphaUpIcon /> : <SortAlphaDownIcon />}
           </Button>
 
 
