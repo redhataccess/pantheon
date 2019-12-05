@@ -92,24 +92,24 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       />
       <FormSelectOption
         isDisabled={false}
-        key="Concept"
+        key="CONCEPT"
         label="Concept"
         required={false}
-        value="Concept"
+        value="CONCEPT"
       />
       <FormSelectOption
         isDisabled={false}
-        key="Procedure"
+        key="PROCEDURE"
         label="Procedure"
         required={false}
-        value="Procedure"
+        value="PROCEDURE"
       />
       <FormSelectOption
         isDisabled={false}
-        key="Reference"
+        key="REFERENCE"
         label="Reference"
         required={false}
-        value="Reference"
+        value="REFERENCE"
       />
     </FormSelect>
     <FormSelect
@@ -137,13 +137,6 @@ exports[`SearchFilter tests should render default Search component 1`] = `
         label="Title"
         required={false}
         value="Title"
-      />
-      <FormSelectOption
-        isDisabled={false}
-        key="Product"
-        label="Product"
-        required={false}
-        value="Product"
       />
       <FormSelectOption
         isDisabled={false}

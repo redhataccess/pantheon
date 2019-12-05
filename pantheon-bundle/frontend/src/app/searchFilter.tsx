@@ -47,15 +47,14 @@ class SearchFilter extends Component<any, any> {
 
     const moduleTypeItems = [
       { value: 'All', label: 'All', disabled: false },
-      { value: 'Concept', label: 'Concept', disabled: false },
-      { value: 'Procedure', label: 'Procedure', disabled: false },
-      { value: 'Reference', label: 'Reference', disabled: false }
+      { value: 'CONCEPT', label: 'Concept', disabled: false },
+      { value: 'PROCEDURE', label: 'Procedure', disabled: false },
+      { value: 'REFERENCE', label: 'Reference', disabled: false }
     ]
 
     const sortItems = [
       { value: 'Uploaded date', label: 'Uploaded date', disabled: false },
       { value: 'Title', label: 'Title', disabled: false },
-      { value: 'Product', label: 'Product', disabled: false },
       { value: 'Published date', label: 'Published date', disabled: false },
       { value: 'Updated date', label: 'Updated date', disabled: false },
       { value: 'Module type', label: 'Module type', disabled: false }
