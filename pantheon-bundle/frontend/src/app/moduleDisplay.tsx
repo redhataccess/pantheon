@@ -20,6 +20,7 @@ class ModuleDisplay extends Component<any, any, any> {
             moduleTitle: "",
             moduleType: '',
             moduleUUID: '',
+            portalHost: '',
             productValue: "",
             releasePath: '',
             releaseUpdateDate: '',
@@ -32,6 +33,7 @@ class ModuleDisplay extends Component<any, any, any> {
     public componentDidMount() {
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
+        this.getCPUrlEndpoint()
     }
 
     public render() {
@@ -59,13 +61,15 @@ class ModuleDisplay extends Component<any, any, any> {
                     <div>
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.moduleUUID !== ""
-                            && <span><a href={'https://access.redhat.com/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                            && this.state.portalHost.trim() !== ""
+                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                         }
 
                         <span>&emsp;&emsp;</span>
 
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.moduleUUID !== ""
+                            && this.state.portalHost.trim() !== ""
                             && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <img src={CopyImage} width="16px" height="16px" /></a></span>
                         }
 
@@ -214,7 +218,7 @@ class ModuleDisplay extends Component<any, any, any> {
     private copyToClipboard = () => {
         const textField = document.createElement('textarea')
         if (this.state.moduleUUID.trim() !== '') {
-            textField.value = 'https://access.redhat.com/topics/en-us/' + this.state.moduleUUID
+            textField.value = this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID
             document.body.appendChild(textField)
             textField.select()
             document.execCommand('copy')
@@ -225,6 +229,29 @@ class ModuleDisplay extends Component<any, any, any> {
 
     private mouseLeave = () => {
         this.setState({ copySuccess: '' })
+    }
+
+    private getCPUrlEndpoint = () => {
+        const currentLocation = window.location.hostname.split('.')
+        let portal = ''
+        switch (currentLocation[0]) {
+            case 'localhost':
+                portal = 'https://access.devgssci.devlab.phx1.redhat.com';
+                break;
+            case 'pantheon2-dev':
+                portal = 'https://access.devgssci.devlab.phx1.redhat.com';
+                break;
+            case 'pantheon2-qa':
+                portal = 'https://access.qa.redhat.com';
+                break;
+            case 'pantheon2-stage':
+                portal = 'https://access.stage.redhat.com';
+                break;
+            default:
+                portal = 'https://access.redhat.com';
+                break;
+        }
+        this.setState({ portalHost: portal })
     }
 }
 
