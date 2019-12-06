@@ -1,10 +1,25 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-//const dotenv = require('dotenv').config({ path: __dirname + '.env' });
-// const webpack = require('webpack');
-// const Dotenv = require('dotenv-webpack');
-
+const Dotenv = require('dotenv-webpack');
+const env = process.env.NODE_ENV;
+let envPath = '';
+switch (env) {
+    case 'development':
+        envPath = '.env.development';
+        break;
+    case 'testing':
+        envPath = '.env.testing';
+        break;
+    case 'staging':
+        envPath = '.env.staging';
+        break;
+    case 'production':
+        envPath = '.env';
+        break;
+    default:
+        envPath = '.env.default';
+}
 module.exports = {
     entry: {
         app: './src/index.tsx'
@@ -13,18 +28,10 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './src/index.html'
         }),
-        // new Dotenv({
-        //     // load this now instead of the ones in '.env'
-        //     path: './.env.development',
-        //     // load '.env.example' to verify the '.env' variables are all set. Can also be a string to a different file.
-        //     safe: true,
-        //     // load all the predefined 'process.env' variables which will trump anything local per dotenv specs.
-        //     systemvars: false,
-        //     // show errors
-        //     silent: false,
-        //     // load '.env.defaults' as the default values if empty.
-        //     defaults: false
-        // })
+        new Dotenv({
+            path: envPath, // Path to .env file
+            safe: true // load .env.example (defaults to "false" which does not use dotenv-safe)
+        })
     ],
     module: {
         rules: [{
@@ -113,5 +120,5 @@ module.exports = {
                 configFile: path.resolve(__dirname, './tsconfig.json')
             })
         ]
-    }
+    },
 };

@@ -9,4 +9,4 @@ coverage
 RH-IT-Root-CA.crt
 .yarnrc
 .env
-.env.*
+!.env.example

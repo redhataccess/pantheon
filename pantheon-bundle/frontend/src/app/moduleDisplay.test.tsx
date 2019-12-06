@@ -141,12 +141,6 @@ describe('ModuleDisplay tests', () => {
         expect(inst.componentDidMount()).toMatchSnapshot()
     })
 
-    it('test getCPUrlEndpoint function', () => {
-        const wrapper = renderer.create(<ModuleDisplay {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.getCPUrlEndpoint()).toMatchSnapshot()
-    })
-
     it('has a props', () => {
         const moduleDisplay = mount(<ModuleDisplay {...props} />).matchesElement
         expect(moduleDisplay.length === 1)

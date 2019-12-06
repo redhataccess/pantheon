@@ -35,10 +35,12 @@ class ModuleDisplay extends Component<any, any, any> {
     public componentDidMount() {
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
-        this.getCPUrlEndpoint()
         
-        console.log('CP host is ' + process.env.CP_HOST)
-        console.log('process.env ' + process.env)
+        if (process.env.CP_HOST !== undefined) {
+            this.setState({portalHost: process.env.CP_HOST})
+        }
+        // console.log('[moduleDisplay] process.env.CP_HOST: ' + process.env.CP_HOST)
+        // console.log('[moduleDisplay] process.env.NODE_ENV: ' + process.env.NODE_ENV)
     }
 
     public render() {
@@ -67,7 +69,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.moduleUUID !== ""
                             && this.state.portalHost.trim() !== ""
-                            && <span><a href={ process.env.CP_HOST + '/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                            && <span><a href={ this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                         }
 
                         <span>&emsp;&emsp;</span>
@@ -234,29 +236,6 @@ class ModuleDisplay extends Component<any, any, any> {
 
     private mouseLeave = () => {
         this.setState({ copySuccess: '' })
-    }
-
-    private getCPUrlEndpoint = () => {
-        const currentLocation = window.location.hostname.split('.')
-        let portal = ''
-        switch (currentLocation[0]) {
-            case 'localhost':
-                portal = 'http://localhost';
-                break;
-            case 'pantheon2-dev':
-                portal = 'https://access.devgssci.devlab.phx1.redhat.com';
-                break;
-            case 'pantheon2-qa':
-                portal = 'https://access.qa.redhat.com';
-                break;
-            case 'pantheon2-stage':
-                portal = 'https://access.stage.redhat.com';
-                break;
-            default:
-                portal = 'https://access.redhat.com';
-                break;
-        }
-        this.setState({ portalHost: portal })
     }
 }
 
