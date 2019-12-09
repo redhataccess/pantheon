@@ -150,7 +150,7 @@ exports[`ModuleDisplay tests test componentDidMount function 1`] = `undefined`;
 
 exports[`ModuleDisplay tests test fetchModuleDetails function 1`] = `undefined`;
 
-exports[`ModuleDisplay tests test getCPUrlEndpoint function 1`] = `undefined`;
+exports[`ModuleDisplay tests test getPortalUrl function 1`] = `undefined`;
 
 exports[`ModuleDisplay tests test getProduct function 1`] = `undefined`;
 
