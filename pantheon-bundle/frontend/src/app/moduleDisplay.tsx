@@ -7,8 +7,6 @@ import {
 import { Versions } from '@app/versions'
 import { Fields } from '@app/Constants'
 import CopyImage from '@app/images/copy.png'
-// import { CP_HOST } from 'react-native-dotenv'
-// import '@app/lib/env'
 
 class ModuleDisplay extends Component<any, any, any> {
 
@@ -35,12 +33,8 @@ class ModuleDisplay extends Component<any, any, any> {
     public componentDidMount() {
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
-        
-        if (process.env.CP_HOST !== undefined) {
-            this.setState({portalHost: process.env.CP_HOST})
-        }
-        // console.log('[moduleDisplay] process.env.CP_HOST: ' + process.env.CP_HOST)
-        // console.log('[moduleDisplay] process.env.NODE_ENV: ' + process.env.NODE_ENV)
+
+        this.getPortalUrl()
     }
 
     public render() {
@@ -68,15 +62,15 @@ class ModuleDisplay extends Component<any, any, any> {
                     <div>
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.moduleUUID !== ""
-                            && this.state.portalHost.trim() !== ""
-                            && <span><a href={ this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                            && this.state.portalHost !== ""
+                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                         }
 
                         <span>&emsp;&emsp;</span>
 
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.moduleUUID !== ""
-                            && this.state.portalHost.trim() !== ""
+                            && this.state.portalHost !== ""
                             && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <img src={CopyImage} width="16px" height="16px" /></a></span>
                         }
 
@@ -236,6 +230,18 @@ class ModuleDisplay extends Component<any, any, any> {
 
     private mouseLeave = () => {
         this.setState({ copySuccess: '' })
+    }
+
+    private getPortalUrl = () => {
+        fetch('/conf/pantheon/pant:portalUrl')
+            .then(resp => {
+                if (resp.ok) {
+                    resp.text().then(text => {
+                        this.setState({ portalHost: text })
+                        // console.log("set portalHost: " + this.state.portalHost)
+                    })
+                }
+            })
     }
 }
 
