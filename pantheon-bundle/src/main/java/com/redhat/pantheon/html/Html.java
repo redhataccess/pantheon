@@ -48,6 +48,19 @@ public class Html {
         };
     }
 
+    public static Function<Document, Document> encodeAllXrefs() {
+        return document -> {
+            document.select("a")
+                    .forEach(hyperlink -> {
+                        System.out.println("hyperlink:");
+                        System.out.println(hyperlink);
+                        hyperlink.childNodes().stream()
+                                .forEach(child -> System.out.println(child.nodeName() + " : " + child.outerHtml()));
+                    });
+            return document;
+        };
+    }
+
     /**
      * An extractor function which returns just the body content for the parsed html document.
      * @return An html extactor function.
