@@ -140,13 +140,6 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       />
       <FormSelectOption
         isDisabled={false}
-        key="Published date"
-        label="Published date"
-        required={false}
-        value="Published date"
-      />
-      <FormSelectOption
-        isDisabled={false}
         key="Updated date"
         label="Updated date"
         required={false}

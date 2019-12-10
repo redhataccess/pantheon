@@ -55,7 +55,6 @@ class SearchFilter extends Component<any, any> {
     const sortItems = [
       { value: 'Uploaded date', label: 'Uploaded date', disabled: false },
       { value: 'Title', label: 'Title', disabled: false },
-      { value: 'Published date', label: 'Published date', disabled: false },
       { value: 'Updated date', label: 'Updated date', disabled: false },
       { value: 'Module type', label: 'Module type', disabled: false }
     ]
