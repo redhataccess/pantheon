@@ -1,11 +1,15 @@
 package com.redhat.pantheon.html;
 
+import com.redhat.pantheon.jcr.JcrQueryHelper;
 import org.apache.jackrabbit.oak.commons.PathUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import javax.jcr.RepositoryException;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,7 +56,7 @@ public class Html {
         };
     }
 
-    public static Function<Document, Document> dereferenceAllHyperlinks() {
+    public static Function<Document, Document> dereferenceAllHyperlinks(ResourceResolver resolver) {
         return document -> {
             document.select("a")
                     .forEach(hyperlink -> {
@@ -61,7 +65,16 @@ public class Html {
                                 .map(child -> UUID_PATTERN.matcher(child.outerHtml()))
                                 .filter(matcher -> matcher.find())
                                 .map(matcher -> matcher.group())
-                                .forEach(uuid -> hyperlink.attr("href", "/" + uuid + "#" + uuid));
+                                .forEach(uuid -> {
+                                    try {
+                                        new JcrQueryHelper(resolver)
+                                                .query("select * from [pant:module] as module WHERE module.[jcr:uuid] = '" + uuid + "'")
+                                                .findFirst()
+                                                .ifPresent(resource -> hyperlink.attr("href", resource.getPath() + ".preview"));
+                                    } catch (RepositoryException e) {
+                                        e.printStackTrace();
+                                    }
+                                });
                     });
             return document;
         };
