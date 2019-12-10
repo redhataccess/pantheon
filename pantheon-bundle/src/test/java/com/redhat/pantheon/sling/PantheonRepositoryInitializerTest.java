@@ -31,16 +31,32 @@ class PantheonRepositoryInitializerTest {
         // partial mock
         pri = spy(pri);
         when(pri.getSyncServiceUrl()).thenReturn("http://localhost:8080");
+        when(pri.getPortalUrl()).thenReturn("https://example.com");
 
         // When
         pri.processRepository(mock(SlingRepository.class));
 
         // Then
         verify(mvm).put(eq("pant:syncServiceUrl"), eq("http://localhost:8080"));
+        verify(mvm).put(eq("pant:portalUrl"), eq("https://example.com"));
     }
 
     @Test
     void processRepositoryWithoutSyncservice() throws Exception {
+        // Given
+        ResourceResolver resourceResolver = mock(ResourceResolver.class);
+        when(serviceResourceResolverProvider.getServiceResourceResolver()).thenReturn(resourceResolver);
+        PantheonRepositoryInitializer pri = new PantheonRepositoryInitializer(serviceResourceResolverProvider);
+
+        // When
+        pri.processRepository(mock(SlingRepository.class));
+
+        // Then
+        verify(resourceResolver, times(0)).getResource(any());
+    }
+
+    @Test
+    void processRepositoryWithoutPortalUrl() throws Exception {
         // Given
         ResourceResolver resourceResolver = mock(ResourceResolver.class);
         when(serviceResourceResolverProvider.getServiceResourceResolver()).thenReturn(resourceResolver);
