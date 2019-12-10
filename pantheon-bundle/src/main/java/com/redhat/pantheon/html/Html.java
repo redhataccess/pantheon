@@ -7,6 +7,8 @@ import org.jsoup.nodes.Document;
 
 import java.util.Base64;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.redhat.pantheon.conf.GlobalConfig.IMAGE_PATH_PREFIX;
 
@@ -17,6 +19,8 @@ import static com.redhat.pantheon.conf.GlobalConfig.IMAGE_PATH_PREFIX;
  * @author Carlos Munoz
  */
 public class Html {
+
+    private static final Pattern UUID_PATTERN = Pattern.compile("([\\w]{8}-[\\w]{4}-[\\w]{4}-[\\w]{4}-[\\w]{12})");
 
     private Html() {
     }
@@ -48,14 +52,16 @@ public class Html {
         };
     }
 
-    public static Function<Document, Document> encodeAllXrefs() {
+    public static Function<Document, Document> dereferenceAllHyperlinks() {
         return document -> {
             document.select("a")
                     .forEach(hyperlink -> {
-                        System.out.println("hyperlink:");
-                        System.out.println(hyperlink);
                         hyperlink.childNodes().stream()
-                                .forEach(child -> System.out.println(child.nodeName() + " : " + child.outerHtml()));
+                                .filter(child -> "#comment".equals(child.nodeName()))
+                                .map(child -> UUID_PATTERN.matcher(child.outerHtml()))
+                                .filter(matcher -> matcher.find())
+                                .map(matcher -> matcher.group())
+                                .forEach(uuid -> hyperlink.attr("href", "/" + uuid + "#" + uuid));
                     });
             return document;
         };
