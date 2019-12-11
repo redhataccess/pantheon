@@ -141,6 +141,12 @@ describe('ModuleDisplay tests', () => {
         expect(inst.componentDidMount()).toMatchSnapshot()
     })
 
+    it('test getPortalUrl function', () => {
+        const wrapper = renderer.create(<ModuleDisplay {...props} />)
+        const inst = wrapper.getInstance()
+        expect(inst.getPortalUrl()).toMatchSnapshot()
+    })
+
     it('has a props', () => {
         const moduleDisplay = mount(<ModuleDisplay {...props} />).matchesElement
         expect(moduleDisplay.length === 1)
@@ -184,6 +190,7 @@ describe('ModuleDisplay tests', () => {
         wrapper.setState({ 'login': true })
         wrapper.setState({ 'releaseUpdateDate': "Fri Oct 18 2019 17:35:50 GMT-0400" })
         wrapper.setState({ 'moduleUUID': "123" })
+        wrapper.setState({ 'portalHost': "https://example.com" })
         const sourceTypeText = wrapper.find('a').at(2).text()
 
         // ensure it matches what is expected
@@ -273,5 +280,24 @@ describe('ModuleDisplay tests', () => {
         const wrapper = renderer.create(<ModuleDisplay {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.mouseLeave()).toMatchSnapshot()
+    })
+
+    it('test fetch api call for portalUrl', async () => {
+        window.fetch = jest.fn().mockImplementation(async () => {
+            return new Promise((resolve, reject) => {
+                resolve({
+                    ok: true,
+                    status: 200,
+                    json: () => new Promise((resolve, reject) => {
+                        resolve({
+                            "portalHost": "https://example.com",
+                        })
+                    })
+                })
+            })
+            const wrapper = await shallow(<ModuleDisplay {...props} />)
+            await wrapper.update()
+            expect(wrapper.state('portalHost')).toBe("https://example.com")
+        })
     })
 })
