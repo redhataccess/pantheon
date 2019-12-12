@@ -140,13 +140,17 @@ class ServletUtilsTest {
     void paramValueAsLocale() {
         // Given
         lenient().when(request.getParameter(eq("locale"))).thenReturn("en_US");
-        lenient().when(request.getParameter(eq("wrongLocaleFormat"))).thenReturn("12345");
+        lenient().when(request.getParameter(eq("locale2"))).thenReturn("en-us");
+        lenient().when(request.getParameter(eq("locale3"))).thenReturn("fr-fr");
+        lenient().when(request.getParameter(eq("locale4"))).thenReturn("fr_FR");
 
         // When
 
         // Then
         assertEquals(Locale.US, ServletUtils.paramValueAsLocale(request, "locale", null));
-        assertNull(ServletUtils.paramValueAsLocale(request, "wrongLocaleFormat", null));
+        assertEquals(Locale.US, ServletUtils.paramValueAsLocale(request, "locale2", null));
+        assertEquals(Locale.FRANCE, ServletUtils.paramValueAsLocale(request, "locale3", null));
+        assertEquals(Locale.FRANCE, ServletUtils.paramValueAsLocale(request, "locale4", null));
         assertNull(ServletUtils.paramValueAsLocale(request, "nonExistentParameter", null));
         assertEquals(Locale.FRANCE, ServletUtils.paramValueAsLocale(request, "nonExistentParameter", Locale.FRANCE));
     }
@@ -177,5 +181,13 @@ class ServletUtilsTest {
 
         // Then
         assertThrows(RuntimeException.class, () -> ServletUtils.getPathMatcher(pathRegexp, request));
+    }
+
+    @Test
+    void toLanguageTag() {
+        assertEquals("en-us", ServletUtils.toLanguageTag(Locale.US));
+        assertEquals("fr", ServletUtils.toLanguageTag(Locale.FRENCH));
+        assertEquals("ja-jp", ServletUtils.toLanguageTag(Locale.JAPAN));
+        assertEquals("es", ServletUtils.toLanguageTag(new Locale("es")));
     }
 }
