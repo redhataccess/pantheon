@@ -51,6 +51,11 @@ public class FieldImpl<T> implements Field<T> {
     @Override
     public void set(@Nullable T value) {
         ModifiableValueMap mvm = owner.adaptTo(ModifiableValueMap.class);
+        if(mvm == null) {
+            throw new RuntimeException("Cannot modify resource at " + owner.getPath()
+                    + ": This may be due to denied write  permissions");
+        }
+
         if(value == null) {
             mvm.remove(name);
         }
