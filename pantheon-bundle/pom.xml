@@ -277,6 +277,11 @@
             <artifactId>guava</artifactId>
             <version>27.0.1-jre</version>
         </dependency>
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>64.2</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.fusesource.stompjms/stompjms-client -->
         <dependency>
             <groupId>org.fusesource.stompjms</groupId>

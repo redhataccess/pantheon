@@ -35,7 +35,7 @@ public abstract class AbstractJsonSingleQueryServlet extends SlingSafeMethodsSer
     /**
      * Returns the query to execute. The query may be modified depending on the provided
      * parameters in the request.
-     * @param request The sling servlet request
+     * @param request The servlet request
      * @return A string with the query to execute. The results of this query will be used
      * to render the list of results.
      */
@@ -44,21 +44,24 @@ public abstract class AbstractJsonSingleQueryServlet extends SlingSafeMethodsSer
     /**
      * Provides a way to modify the returned objects based on the found resources.
      * The default implementation just returns the corresponding value map.
+     * @param request The servlet request
      * @param resource The Resource obtained as a result of the query.
      * @return A map with the actual value to be returned to the servlet's caller.
      * @throws RepositoryException
      */
-    protected Map<String, Object> resourceToMap(@NotNull Resource resource) throws RepositoryException {
+    protected Map<String, Object> resourceToMap(@Nonnull SlingHttpServletRequest request,
+                                                @NotNull Resource resource) throws RepositoryException {
         return newHashMap(resource.getValueMap());
     }
 
     /**
      * A post-processor that provides a way to add filter logic for returned objects
      * The default implementation returns true and can be overriden to check for conditions
+     * @param request The servlet request
      * @param resource The Resource obtained as a result of the query.
      * @return Boolean true.
     */
-    protected boolean isValidResource(@Nonnull Resource resource) {
+    protected boolean isValidResource(@Nonnull SlingHttpServletRequest request, @Nonnull Resource resource) {
         return true;
     }
 
@@ -72,9 +75,9 @@ public abstract class AbstractJsonSingleQueryServlet extends SlingSafeMethodsSer
 
             Optional<Resource> firstResource = resultStream.findFirst();
             if(firstResource.isPresent()) {
-                if(isValidResource((firstResource.get()))) {
+                if(isValidResource(request, firstResource.get())) {
                     // Convert the resource to JSON
-                    writeAsJson(response, resourceToMap(firstResource.get()));
+                    writeAsJson(response, resourceToMap(request, firstResource.get()));
                 }
                 else {
                     response.sendError(SC_NOT_FOUND, " Requested resource was invalid.");
