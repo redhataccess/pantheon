@@ -9,6 +9,11 @@ import org.osgi.service.component.annotations.Reference;
 
 import java.util.function.Consumer;
 
+/**
+ * Component that is able to provide a service-level resource resolver. Service-level resource
+ * resolvers have more rights than the calling user should have, so they should be used carefully
+ * as they might allow operations for users which are not intended.
+ */
 @Component(
         service = ServiceResourceResolverProvider.class
 )

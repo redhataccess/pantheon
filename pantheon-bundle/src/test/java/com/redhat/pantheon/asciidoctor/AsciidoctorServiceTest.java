@@ -53,6 +53,7 @@ class AsciidoctorServiceTest {
         // adapter (mock)
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(Content.class, slingContext);
+        registerMockAdapter(ModuleVersion.class, slingContext);
         lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
         lenient().when(asciidoctorPool.borrowObject())
                 .thenReturn(Asciidoctor.Factory.create());
