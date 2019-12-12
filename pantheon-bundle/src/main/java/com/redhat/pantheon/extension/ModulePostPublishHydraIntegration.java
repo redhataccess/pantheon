@@ -49,8 +49,8 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
     private static final String UUID_FIELD = "jcr:uuid";
     private static final String HYDRA_TOPIC = "VirtualTopic.eng.pantheon2.notifications";
     private static final String ID_KEY = "id";
-    private static final String SOLR_COMMAND_KEY = "solr_command";
-    private static final String SOLR_COMMAND_VALUE = "index";
+    private static final String EVENT_KEY = "event";
+    private static final String EVENT_VALUE = "publish";
     public static final Locale DEFAULT_MODULE_LOCALE = Locale.US;
 
     private SSLContext sslContext;
@@ -102,7 +102,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
         MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
         String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
         String msg = "{\"" + ID_KEY + "\":" + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\","
-                + "\"" + SOLR_COMMAND_KEY + "\":" + "\"" + SOLR_COMMAND_VALUE + "\"}";
+                + "\"" + EVENT_KEY + "\":" + "\"" + EVENT_VALUE + "\"}";
         producer.send(session.createTextMessage(msg));
         log.info("[" + ModulePostPublishHydraIntegration.class.getSimpleName() + "] message sent: " + session.createTextMessage(msg) );
 

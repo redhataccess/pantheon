@@ -54,7 +54,6 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     private final Logger log = LoggerFactory.getLogger(ModuleJsonServlet.class);
 
-
     @Override
     protected String getQuery(SlingHttpServletRequest request) {
 
@@ -104,7 +103,8 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleMap.put("module_url_fragment", resourcePath.substring("/content/repositories/".length(), resourcePath.length()));
 
         // Striping out the jcr: from key name
-        moduleMap.put("module_uuid", moduleMap.remove("jcr:uuid"));
+        String module_uuid = (String) moduleMap.remove("jcr:uuid");
+        moduleMap.put("module_uuid", module_uuid);
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         moduleMap.put("date_modified", dateModified.toInstant().toString());
@@ -135,6 +135,14 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         String urlFragment = releasedMetadata.get().urlFragment().get() != null ? releasedMetadata.get().urlFragment().get() : "";
         if (!urlFragment.isEmpty()) {
             moduleMap.put("vanity_url_fragment", urlFragment);
+        }
+
+        // Process view_uri
+        if (System.getenv("PORTAL_URL") != null) {
+            //@TODO: map Pantheon locale to view_uri locale
+            String view_uri_locale = "en-us";
+            String view_uri = System.getenv("PORTAL_URL") + "/topics/" + view_uri_locale + "/" + module_uuid;
+            moduleMap.put("view_uri", view_uri);
         }
 
         // remove unnecessary fields from the map
