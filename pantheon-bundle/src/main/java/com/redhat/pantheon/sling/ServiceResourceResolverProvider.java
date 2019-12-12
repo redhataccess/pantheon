@@ -1,6 +1,5 @@
 package com.redhat.pantheon.sling;
 
-import com.redhat.pantheon.model.api.SlingModel;
 import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
