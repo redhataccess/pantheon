@@ -11,15 +11,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
-import org.junit.Rule;
-import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.redhat.pantheon.model.module.Module;
@@ -30,16 +30,6 @@ class ModuleJsonServletTest {
     SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
     String testHTML = "<!DOCTYPE html> <html lang=\"en\"> <head><title>test title</title></head> <body " +
             "class=\"article\"><h1>test title</h1> </header> </body> </html>";
-
-    @Rule
-    public final EnvironmentVariables environmentVariables
-      = new EnvironmentVariables();
-
-    @Test
-    public void setEnvironmentVariable() {
-      environmentVariables.set("PORTAL_URL", "https://example.com");
-      assertEquals("https://example.com", System.getenv("PORTAL_URL"));
-    }
 
     @Test
     void getQueryNoParams() {
@@ -73,7 +63,6 @@ class ModuleJsonServletTest {
         // make sure query response is not null
         assertNotNull(slingContext.response());
     }
-
 
     @Test
     void resourceToMap() throws Exception {
@@ -126,8 +115,31 @@ class ModuleJsonServletTest {
         assertTrue(moduleMap.containsKey("module_url_fragment"));
         assertTrue(moduleMap.containsKey("revision_id"));
         assertTrue(moduleMap.containsKey("context_url_fragment"));
-        assertTrue(moduleMap.containsKey("view_uri"));
         assertEquals((map.get("message")), "Module Found");
         assertEquals((map.get("status")), SC_OK);
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "PORTAL_URL", matches = "https://example.com")
+    public void onlyRenderViewURIForPORTAL() throws RepositoryException {
+        // Given
+        slingContext.create()
+                .resource("/content/repositories/repo/module/en_US/1",
+                        "jcr:primaryType", "pant:moduleVersion");
+        slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US").adaptTo(ModifiableValueMap.class)
+        .put("released", slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/1").getValueMap()
+                .get("jcr:uuid"));
+
+        registerMockAdapter(Module.class, slingContext);
+        ModuleJsonServlet servlet = new ModuleJsonServlet();
+        slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
+
+        // When
+        Map<String, Object> map = servlet.resourceToMap(
+                slingContext.request(),
+                slingContext.resourceResolver().getResource("/content/repositories/repo/module"));
+        Map<String, Object> moduleMap = (Map<String, Object>)map.get("module");
+
+        assertTrue(moduleMap.containsKey("view_uri"));
     }
 }
