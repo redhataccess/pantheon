@@ -24,12 +24,14 @@ import javax.servlet.Servlet;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.conf.GlobalConfig.CONTENT_TYPE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 /**
@@ -69,29 +71,31 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     }
 
     @Override
-    protected boolean isValidResource(@Nonnull Resource resource) {
+    protected boolean isValidResource(@Nonnull SlingHttpServletRequest request, @Nonnull Resource resource) {
+        Locale locale = paramValueAsLocale(request, "locale", DEFAULT_MODULE_LOCALE);
         Module module = resource.adaptTo(Module.class);
-        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(DEFAULT_MODULE_LOCALE);
+        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(locale);
         return releasedRevision.isPresent();
     }
 
-    protected Map<String, Object> resourceToMap(@NotNull Resource resource) throws RepositoryException {
+    @Override
+    protected Map<String, Object> resourceToMap(@Nonnull SlingHttpServletRequest request,
+                                                @NotNull Resource resource) throws RepositoryException {
         Module module = resource.adaptTo(Module.class);
 
-        // The DEFAULT_MODULE_LOCALE should later be replaced with 'localeParam' variable
-        // this needs to be done while handling localizations
-        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE);
-        Optional<Content> releasedContent = module.getReleasedContent(DEFAULT_MODULE_LOCALE);
-        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(DEFAULT_MODULE_LOCALE);
+        Locale locale = paramValueAsLocale(request, "locale", DEFAULT_MODULE_LOCALE);
+        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(locale);
+        Optional<Content> releasedContent = module.getReleasedContent(locale);
+        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(locale);
 
-        Map<String, Object> moduleMap = super.resourceToMap(resource);
+        Map<String, Object> moduleMap = super.resourceToMap(request, resource);
         Map<String, Object> moduleDetails = new HashMap<>();
 
         moduleDetails.put("status", SC_OK);
         moduleDetails.put("message", "Module Found");
 
         String resourcePath = resource.getPath();
-        moduleMap.put("locale", module.getModuleLocale(DEFAULT_MODULE_LOCALE).getName());
+        moduleMap.put("locale", ServletUtils.toLanguageTag(locale));
         moduleMap.put("revision_id", releasedRevision.get().getName());
         moduleMap.put("title", releasedMetadata.get().title().get());
         moduleMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline().get() : "");

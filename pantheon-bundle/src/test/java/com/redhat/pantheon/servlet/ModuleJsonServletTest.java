@@ -8,9 +8,7 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
@@ -87,6 +85,7 @@ class ModuleJsonServletTest {
 
         // When
         Map<String, Object> map = servlet.resourceToMap(
+                slingContext.request(),
                 slingContext.resourceResolver().getResource("/content/repositories/repo/module"));
         Map<String, Object> moduleMap = (Map<String, Object>)map.get("module");
 
