@@ -6,6 +6,7 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,6 +20,7 @@ class PantheonRepositoryInitializerTest {
     ServiceResourceResolverProvider serviceResourceResolverProvider;
 
     @Test
+    @EnabledIf("null != systemEnvironment.get('PORTAL_URL') && null != systemEnvision.get('SYNC_SERVICE_URL')")
     void processRepository() throws Exception {
         // Given
         ResourceResolver resourceResolver = mock(ResourceResolver.class);
@@ -42,6 +44,7 @@ class PantheonRepositoryInitializerTest {
     }
 
     @Test
+    @EnabledIf("null != systemEnvironment.get('PORTAL_URL') && null != systemEnvision.get('SYNC_SERVICE_URL')")
     void processRepositoryWithoutSyncservice() throws Exception {
         // Given
         ResourceResolver resourceResolver = mock(ResourceResolver.class);
@@ -56,6 +59,7 @@ class PantheonRepositoryInitializerTest {
     }
 
     @Test
+    @EnabledIf("null != systemEnvironment.get('PORTAL_URL') && null != systemEnvision.get('SYNC_SERVICE_URL')")
     void processRepositoryWithoutPortalUrl() throws Exception {
         // Given
         ResourceResolver resourceResolver = mock(ResourceResolver.class);

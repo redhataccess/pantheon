@@ -1,7 +1,6 @@
 package com.redhat.pantheon.servlet;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -9,18 +8,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 
 import com.redhat.pantheon.model.module.Module;
 
@@ -49,7 +52,7 @@ class ModuleJsonServletTest {
         // Given
         ModuleJsonServlet servlet = new ModuleJsonServlet();
         Map<String, Object> map = newHashMap();
-        map.put("locale", DEFAULT_MODULE_LOCALE.toString());
+        map.put("locale", ServletUtils.toLanguageTag(Locale.US));
         map.put("module_id", "jcr:uuid");
         slingContext.request().setParameterMap(map);
 
@@ -120,7 +123,7 @@ class ModuleJsonServletTest {
     }
 
     @Test
-    @EnabledIfEnvironmentVariable(named = "PORTAL_URL", matches = "https://example.com")
+    @EnabledIf("null != systemEnvironment.get('PORTAL_URL')")
     public void onlyRenderViewURIForPORTAL() throws RepositoryException {
         // Given
         slingContext.create()
