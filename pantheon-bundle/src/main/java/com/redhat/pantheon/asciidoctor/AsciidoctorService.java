@@ -13,6 +13,7 @@ import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.asciidoctor.Asciidoctor;
@@ -137,61 +138,69 @@ public class AsciidoctorService {
     private String buildModule(Module base, ModuleVersion moduleVersion, Map<String, Object> context,
                                final boolean regenMetadata) {
 
-        // build the attributes (default + those coming from http parameters)
-        AttributesBuilder atts = AttributesBuilder.attributes()
-                // show the title on the generated html
-                .attribute("showtitle")
-                // link the css instead of embedding it
-                .linkCss(true)
-                // stylesheet reference
-                .styleSheetName("/static/rhdocs.css");
+        // Use a service-level resource resolver to build the module as it will require write access to the resources
+        try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
+            moduleVersion = serviceResourceResolver.getResource(moduleVersion.getPath()).adaptTo(ModuleVersion.class);
 
-        // Add the context as attributes to the generation process
-        context.entrySet().stream().forEach(entry -> {
-            atts.attribute(entry.getKey(), entry.getValue());
-        });
+            // build the attributes (default + those coming from http parameters)
+            AttributesBuilder atts = AttributesBuilder.attributes()
+                    // show the title on the generated html
+                    .attribute("showtitle")
+                    // link the css instead of embedding it
+                    .linkCss(true)
+                    // stylesheet reference
+                    .styleSheetName("/static/rhdocs.css");
 
-        // generate html
-        OptionsBuilder ob = OptionsBuilder.options()
-                // we're generating html
-                .backend("html")
-                // no physical file is being generated
-                .toFile(false)
-                // allow for some extra flexibility
-                .safe(SafeMode.UNSAFE) // This probably needs to change
-                .inPlace(false)
-                // Generate the html header and footer
-                .headerFooter(true)
-                // use the provided attributes
-                .attributes(atts);
-        globalConfig.getTemplateDirectory().ifPresent(ob::templateDir);
+            // Add the context as attributes to the generation process
+            context.entrySet().stream().forEach(entry -> {
+                atts.attribute(entry.getKey(), entry.getValue());
+            });
 
-        long start = System.currentTimeMillis();
-        Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
-        // extensions needed to generate a module's html
-        asciidoctor.javaExtensionRegistry().includeProcessor(
-                new SlingResourceIncludeProcessor(base));
-        asciidoctor.javaExtensionRegistry().postprocessor(
-                new HtmlModulePostprocessor(base));
+            // generate html
+            OptionsBuilder ob = OptionsBuilder.options()
+                    // we're generating html
+                    .backend("html")
+                    // no physical file is being generated
+                    .toFile(false)
+                    // allow for some extra flexibility
+                    .safe(SafeMode.UNSAFE) // This probably needs to change
+                    .inPlace(false)
+                    // Generate the html header and footer
+                    .headerFooter(true)
+                    // use the provided attributes
+                    .attributes(atts);
+            globalConfig.getTemplateDirectory().ifPresent(ob::templateDir);
 
-        // add specific extensions for metadata regeneration
-        if(regenMetadata) {
-            asciidoctor.javaExtensionRegistry().treeprocessor(
-                    new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
+            long start = System.currentTimeMillis();
+            Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
+            // extensions needed to generate a module's html
+            asciidoctor.javaExtensionRegistry().includeProcessor(
+                    new SlingResourceIncludeProcessor(base));
+            asciidoctor.javaExtensionRegistry().postprocessor(
+                    new HtmlModulePostprocessor(base));
+
+            // add specific extensions for metadata regeneration
+            if(regenMetadata) {
+                asciidoctor.javaExtensionRegistry().treeprocessor(
+                        new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
+            }
+
+            String html = "";
+            try {
+                html = asciidoctor.convert(
+                        moduleVersion.content().get().asciidocContent().get(),
+                        ob.get());
+                cacheContent(moduleVersion.content().get(), html);
+            } finally {
+                asciidoctorPool.returnObject(asciidoctor);
+            }
+            log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
+            serviceResourceResolver.commit();
+
+            return html;
+        } catch (PersistenceException pex) {
+            throw new RuntimeException(pex);
         }
-
-        String html = "";
-        try {
-            html = asciidoctor.convert(
-                    moduleVersion.content().get().asciidocContent().get(),
-                    ob.get());
-            cacheContent(moduleVersion.content().get(), html);
-        } finally {
-            asciidoctorPool.returnObject(asciidoctor);
-        }
-        log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
-
-        return html;
     }
 
     /**
@@ -202,22 +211,13 @@ public class AsciidoctorService {
      * @param html The html that was generated
      */
     private void cacheContent(final Content content, final String html) {
-        try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
-            String asciidoc = content.asciidocContent().get();
-            // reload from the service-level resolver
-            Content writeableContent =
-                    serviceResourceResolver.getResource(content.getPath()).adaptTo(Content.class);
-
-            writeableContent.cachedHtml().getOrCreate()
-                    .hash().set(
-                        hash(asciidoc).toString()
-                    );
-            writeableContent.cachedHtml().getOrCreate()
-                    .data().set(html);
-            serviceResourceResolver.commit();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        String asciidoc = content.asciidocContent().get();
+        content.cachedHtml().getOrCreate()
+                .hash().set(
+                    hash(asciidoc).toString()
+                );
+        content.cachedHtml().getOrCreate()
+                .data().set(html);
     }
 
     /*
