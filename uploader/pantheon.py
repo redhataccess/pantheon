@@ -91,7 +91,7 @@ parser.add_argument('--repository', '-r', help='The name of the Pantheon reposit
 parser.add_argument('--user', '-u', help='Username for authentication, default \'' + DEFAULT_USER + '\'', default=DEFAULT_USER)
 parser.add_argument('--password', '-p', help='Password for authentication, default \'' + DEFAULT_PASSWORD + '\'. If \'-\' is supplied, the script will prompt for the password.', default=DEFAULT_PASSWORD)
 parser.add_argument('--directory', '-d', help='Directory to upload, default is current working directory. (' + os.getcwd() + ')', default=os.getcwd())
-parser.add_argument('--links', '-l', help='Resolve symlinks when searching for files to upload', action='store_const', const=True)
+parser.add_argument('--links', '-l', help='Resolve symlinks when searching for files to upload', action='store_const', const=DEFAULT_LINKS)
 parser.add_argument('--verbose', '-v', help='Print information that may be helpful for debugging', action='store_const', const=True)
 parser.add_argument('--dry', '-D', help='Dry run; print information about what would be uploaded, but don\'t actually upload', action='store_const', const=True)
 parser.add_argument('--sandbox', '-b', help='Push to the user\'s personal sandbox. This parameter overrides --repository', action='store_const', const=True)
