@@ -13,8 +13,6 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -23,7 +21,6 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 
 import com.redhat.pantheon.model.module.Module;
 
