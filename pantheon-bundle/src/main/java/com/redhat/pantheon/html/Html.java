@@ -57,6 +57,7 @@ public class Html {
     }
 
     public static Function<Document, Document> dereferenceAllHyperlinks(ResourceResolver resolver) {
+        JcrQueryHelper qh = new JcrQueryHelper(resolver);
         return document -> {
             document.select("a")
                     .forEach(hyperlink -> {
@@ -67,8 +68,7 @@ public class Html {
                                 .map(matcher -> matcher.group())
                                 .forEach(uuid -> {
                                     try {
-                                        new JcrQueryHelper(resolver)
-                                                .query("select * from [pant:module] as module WHERE module.[jcr:uuid] = '" + uuid + "'")
+                                        qh.query("select * from [pant:module] as module WHERE module.[jcr:uuid] = '" + uuid + "'")
                                                 .findFirst()
                                                 .ifPresent(resource -> hyperlink.attr("href", resource.getPath() + ".preview"));
                                     } catch (RepositoryException e) {
