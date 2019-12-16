@@ -1,18 +1,15 @@
 #!/usr/bin/python3
-import os
-import requests
 import argparse
-import getpass
-import logging
-import yaml
-import socket
 import base64
-import sys
-import requests
-import pathlib
-import fnmatch
+import getpass
 import glob
+import logging
+import os
+import sys
 from pathlib import PurePath
+
+import requests
+import yaml
 
 DEFAULT_SERVER = 'http://localhost:8080'
 if "PANTHEON_SERVER" in os.environ:
@@ -45,35 +42,46 @@ def _generate_data(jcr_primary_type, base_name, path_name, asccidoc_type):
     return data
 
 
-def _info(message):
+def _info(message, colored=True):
     """
     Print an info message on the console. Warning messages are cyan
     """
-    print("\033[96m{}\033[00m" .format(message))
+    if colored:
+        print("\033[96m{}\033[00m" .format(message))
+    else:
+        print(message)
 
 
-def _warn(message):
+def _warn(message, colored=True):
     """
     Print a warning message on the console. Warning messages are yellow
     """
-    print("\033[93m{}\033[00m" .format(message))
+    if colored:
+        print("\033[93m{}\033[00m" .format(message))
+    else:
+        print(message)
 
 
-def _error(message):
+def _error(message, colored=True):
     """
     Print an error message on the console. Warning messages are red
     """
-    print("\033[91m{}\033[00m" .format(message))
+    if colored:
+        print("\033[91m{}\033[00m" .format(message))
+    else:
+        print(message)
 
 
-def _print_response(response_code, reason):
+def _print_response(filetype, path, response_code, reason):
     """
     Prints an http response in the appropriate terminal color
     """
     if 200 <= response_code < 300:
-        _info(str(response_code) + " " + reason)
+        _info(filetype + ': ' + str(path), False)
+        _info(str(response_code) + " " + reason, True)
     elif response_code >= 500:
-        _error(str(response_code) + " " + reason)
+        _error(filetype + ': ' + str(path), True)
+        _error(str(response_code) + " " + reason, True)
     else:
         print(response_code, reason)
 
@@ -204,90 +212,103 @@ def process_file(path, filetype):
     content_root = 'sandbox' if args.sandbox else 'repositories'
     url = server + "/content/" + content_root + "/" + repository
 
-    if isModule or isResource:
-        path = PurePath(path)
-        base_name = path.stem
+    path = PurePath(path)
+    base_name = path.stem
 
-        ppath = path
-        hiddenFolder = False
-        while not ppath == PurePath(args.directory):
-            logger.debug('ppath: %s', str(ppath.stem))
-            if ppath.stem[0] == '.':
-                hiddenFolder = True
-                break
-            ppath = ppath.parent
-        if hiddenFolder:
-            logger.debug('Skipping %s because it is hidden.', str(path))
-            logger.debug('')
-            #continue
+    ppath = path
+    hiddenFolder = False
+    while not ppath == PurePath(args.directory):
+        logger.debug('ppath: %s', str(ppath.stem))
+        if ppath.stem[0] == '.':
+            hiddenFolder = True
+            break
+        ppath = ppath.parent
+    if hiddenFolder:
+        logger.debug('Skipping %s because it is hidden.', str(path))
+        logger.debug('')
+        return
 
-        # parent directory
-        parent_dir_str = str(path.parent.relative_to(args.directory))
-        if parent_dir_str == '.':
-            parent_dir_str = ''
-        logger.debug('parent_dir_str: %s', parent_dir_str)
-        # file becomes a/file/name (no extension)
+    # parent directory
+    parent_dir_str = str(path.parent.relative_to(args.directory))
+    if parent_dir_str == '.':
+        parent_dir_str = ''
+    logger.debug('parent_dir_str: %s', parent_dir_str)
+    # file becomes a/file/name (no extension)
 
-        if parent_dir_str:
-            url += '/' + parent_dir_str
+    if parent_dir_str:
+        url += '/' + parent_dir_str
 
-        logger.debug('base name: %s', base_name)
+    logger.debug('base name: %s', base_name)
 
-        # Asciidoc content (treat as a module)
-        if isModule:
-            print(path)
+    # Asciidoc content (treat as a module)
+    if isModule:
+        url += '/' + path.name
+        logger.debug('url: %s', url)
+        jcr_primary_type = "pant:module"
+        data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type="nt:file")
+        # This is needed to add a new module version, otherwise it won't be handled
+        data[":operation"] = "pant:newModuleVersion"
+        files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
+
+        # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
+        # It is text/x-asciidoc. Here's why:
+        # https://tools.ietf.org/html/rfc2045#section-6.3
+        # Paraphrased: "If it's not an IANA standard, use the 'x-' prefix.
+        # Here's the list of standards; text/asciidoc isn't in it.
+        # https://www.iana.org/assignments/media-types/media-types.xhtml#text
+
+        if not args.dry:
+            r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
+            _print_response('module', path, r.status_code, r.reason)
+        processed_files.append(path)
+        logger.debug('')
+    elif isResource:
+        if os.path.islink(path):
+            target = str(os.readlink(path))
             url += '/' + path.name
             logger.debug('url: %s', url)
-            jcr_primary_type = "pant:module"
-            data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type="nt:file")
-            # This is needed to add a new module version, otherwise it won't be handled
-            data[":operation"] = "pant:newModuleVersion"
-            files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
+            if target[0] == '/':
+                _error('Absolute symlink paths are unsupported: ' + str(path) + ' -> ' + target)
+            elif not args.dry:
+                symlinkData = {}
+                symlinkData['jcr:primaryType'] = 'nt:unstructured'
+                symlinkData['sling:resourceType'] = 'pant:symlink'
+                symlinkData['pant:target'] = target
+                r = requests.post(url, headers=HEADERS, data=symlinkData, auth=(args.user, pw))
+                _print_response('symlink', path, r.status_code, r.reason)
 
-            # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
-            # It is text/x-asciidoc. Here's why:
-            # https://tools.ietf.org/html/rfc2045#section-6.3
-            # Paraphrased: "If it's not an IANA standard, use the 'x-' prefix.
-            # Here's the list of standards; text/asciidoc isn't in it.
-            # https://www.iana.org/assignments/media-types/media-types.xhtml#text
-
-            if not args.dry:
-                r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
-                _print_response(r.status_code, r.reason)
-            processed_files.append(path)
-            logger.debug('')
-        elif isResource:
+        else:
             # determine the file content type, for some common ones
             file_type = None
             if path.suffix in ['.adoc', '.asciidoc']:
                 file_type = "text/x-asciidoc"
             # Upload as a regular file(nt:file)
-            print(path)
             logger.debug('url: %s', url)
             jcr_primary_type = "nt:file"
             data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type=None)
             files = {path.name: (path.name, open(path, 'rb'), file_type)}
             if not args.dry:
                 r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
-                _print_response(r.status_code, r.reason)
+                _print_response('resource', path, r.status_code, r.reason)
             processed_files.append(path)
             logger.debug('')
 
-    return r.status_code, r.reason
+
+def listdir_recursive(directory, unspecified_files, non_resource_files):
+    for name in os.listdir(directory):
+        if name == 'pantheon2.yml' or name[0] == '.':
+            continue
+        path = PurePath(str(directory) + '/' + name)
+        if os.path.isdir(path) and not os.path.islink(path):
+            listdir_recursive(path, unspecified_files, non_resource_files)
+        elif path not in non_resource_files:
+            unspecified_files.append(path)
 
 
 def get_unspecified_files(directory, non_resource_files):
     """Collects files from the given directory that were not specified in patheon2.yml file and returns a list"""
     unspecified_files = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file == 'pantheon2.yml':
-                continue
-
-            path = PurePath(root + '/' + file)
-            if path not in non_resource_files:
-                unspecified_files.append(path)
-
+    listdir_recursive(directory, unspecified_files, non_resource_files)
     return unspecified_files
 
 
@@ -332,17 +353,17 @@ if module_files:
 unspecified_files = get_unspecified_files(args.directory, non_resource_files)
 if unspecified_files:
     for f in unspecified_files:
-        print("resource file: ", f)
+        # print("resource file: ", f)
         # Process files
-        (status_code, reason) = process_file(f, "resources")
+        process_file(f, "resources")
 
 # Now that resources are uploaded, go ahead with modules.
 if module_files:
     logger.debug('module_files: %s', module_files)
     for f in module_files:
-        print("module file: ", f)
+        # print("module file: ", f)
         # Process files
         logger.debug('File path: %s', f)
-        (status_code, reason) = process_file(f, "modules")
+        process_file(f, "modules")
 
 print('Finished!')
