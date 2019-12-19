@@ -2,9 +2,9 @@
 import argparse
 import base64
 import getpass
-import glob
 import logging
 import os
+import re
 import sys
 from pathlib import PurePath
 
@@ -12,7 +12,7 @@ import requests
 import yaml
 
 DEFAULT_SERVER = 'http://localhost:8080'
-if "PANTHEON_SERVER" in os.environ:
+if 'PANTHEON_SERVER' in os.environ:
     DEFAULT_REPOSITORY = 'gitImport'
 else:
     DEFAULT_REPOSITORY = getpass.getuser()
@@ -30,14 +30,14 @@ def _generate_data(jcr_primary_type, base_name, path_name, asccidoc_type):
     """
     data = {}
     if jcr_primary_type:
-        data["jcr:primaryType"] = jcr_primary_type
+        data['jcr:primaryType'] = jcr_primary_type
     if base_name:
-        data["jcr:title"] = base_name
-        data["jcr:description"] = base_name
+        data['jcr:title'] = base_name
+        data['jcr:description'] = base_name
     if path_name:
-        data["pant:originalName"] = path_name
+        data['pant:originalName'] = path_name
     if asccidoc_type:
-        data["asciidoc@TypeHint"] = asccidoc_type
+        data['asciidoc@TypeHint'] = asccidoc_type
 
     return data
 
@@ -47,7 +47,7 @@ def _info(message, colored=True):
     Print an info message on the console. Warning messages are cyan
     """
     if colored:
-        print("\033[96m{}\033[00m" .format(message))
+        print('\033[96m{}\033[00m' .format(message))
     else:
         print(message)
 
@@ -57,7 +57,7 @@ def _warn(message, colored=True):
     Print a warning message on the console. Warning messages are yellow
     """
     if colored:
-        print("\033[93m{}\033[00m" .format(message))
+        print('\033[93m{}\033[00m' .format(message))
     else:
         print(message)
 
@@ -67,7 +67,7 @@ def _error(message, colored=True):
     Print an error message on the console. Warning messages are red
     """
     if colored:
-        print("\033[91m{}\033[00m" .format(message))
+        print('\033[91m{}\033[00m' .format(message))
     else:
         print(message)
 
@@ -78,10 +78,10 @@ def _print_response(filetype, path, response_code, reason):
     """
     if 200 <= response_code < 300:
         _info(filetype + ': ' + str(path), False)
-        _info(str(response_code) + " " + reason, True)
+        _info(str(response_code) + ' ' + reason, True)
     elif response_code >= 500:
         _error(filetype + ': ' + str(path), True)
-        _error(str(response_code) + " " + reason, True)
+        _error(str(response_code) + ' ' + reason, True)
     else:
         print(response_code, reason)
 
@@ -106,13 +106,21 @@ parser.add_argument('--sample', '-S', help='Print a sample pantheon2.yml file to
 ## server: Pantheon server URL
 ## repository: a unique name, which is visible in the user facing URL
 
+## Note: Due to yaml syntax, any filepaths that start with a wildcard must be surrounded in quotes like so:
+# modules:
+#  - '*.adoc'
+
 server: http://localhost:8080
 repository: pantheonSampleRepo
 
 modules:
+ - master.adoc
+ - modules/*.adoc
+
+resources:
  - shared/legal.adoc
  - shared/foreword.adoc
- - modules/*.adoc
+ - resources/*
 ''')
 args = parser.parse_args()
 
@@ -131,7 +139,7 @@ if pw == '-':
 config = None
 
 if not os.path.exists(args.directory):
-    raise ValueError("Directory not found {}".format(args.directory))
+    raise ValueError('Directory not found {}'.format(args.directory))
 
 try:
     config = yaml.safe_load(open(args.directory + '/' + CONFIG_FILE))
@@ -166,35 +174,6 @@ def remove_trailing_slash(path):
     return path
 
 
-def find_files(patterns, directory):
-    """
-    Finds files matching patterns defined in patheon2.yml. To match everything
-    under a subdirectory, use pattern:
-    subdir/**/*
-
-    Parameters:
-    patterns (list): A list of file path patterns
-    directory (string): A directory that contains files to be uploaded
-
-    Returns:
-    list: A list of files matched
-    """
-    files = []
-
-    if patterns:
-        for pattern in patterns:
-            for file in glob.iglob(directory + '/' + pattern, recursive=True):
-                #logger.debug('file %s', file)
-                file = PurePath(file)
-                name = file.name
-                if name == 'pantheon2.yml':
-                    continue
-                if os.path.isfile(file):
-                    files.append(file)
-
-    return files
-
-
 def process_file(path, filetype):
     """
     Processes the matched files and upload to pantheon through sling api call
@@ -206,11 +185,10 @@ def process_file(path, filetype):
     Returns:
     list: It returns a list with value of the API call status_code and reason
     """
-    global processed_files
     isModule = True if filetype == 'modules' else False
     isResource = True if filetype == 'resources' else False
     content_root = 'sandbox' if args.sandbox else 'repositories'
-    url = server + "/content/" + content_root + "/" + repository
+    url = server + '/content/' + content_root + '/' + repository
 
     path = PurePath(path)
     base_name = path.stem
@@ -244,24 +222,22 @@ def process_file(path, filetype):
     if isModule:
         url += '/' + path.name
         logger.debug('url: %s', url)
-        jcr_primary_type = "pant:module"
-        data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type="nt:file")
+        jcr_primary_type = 'pant:module'
+        data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type='nt:file')
         # This is needed to add a new module version, otherwise it won't be handled
-        data[":operation"] = "pant:newModuleVersion"
+        data[':operation'] = 'pant:newModuleVersion'
         files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
 
         # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
         # It is text/x-asciidoc. Here's why:
         # https://tools.ietf.org/html/rfc2045#section-6.3
-        # Paraphrased: "If it's not an IANA standard, use the 'x-' prefix.
+        # Paraphrased: "If it's not an IANA standard, use the 'x-' prefix."
         # Here's the list of standards; text/asciidoc isn't in it.
         # https://www.iana.org/assignments/media-types/media-types.xhtml#text
 
         if not args.dry:
             r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
             _print_response('module', path, r.status_code, r.reason)
-        processed_files.append(path)
-        logger.debug('')
     elif isResource:
         if os.path.islink(path):
             target = str(os.readlink(path))
@@ -281,39 +257,58 @@ def process_file(path, filetype):
             # determine the file content type, for some common ones
             file_type = None
             if path.suffix in ['.adoc', '.asciidoc']:
-                file_type = "text/x-asciidoc"
+                file_type = 'text/x-asciidoc'
             # Upload as a regular file(nt:file)
             logger.debug('url: %s', url)
-            jcr_primary_type = "nt:file"
-            data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type=None)
             files = {path.name: (path.name, open(path, 'rb'), file_type)}
             if not args.dry:
                 r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
                 _print_response('resource', path, r.status_code, r.reason)
-            processed_files.append(path)
-            logger.debug('')
+    logger.debug('')
 
 
-def listdir_recursive(directory, unspecified_files, non_resource_files):
+def listdir_recursive(directory, allFiles):
     for name in os.listdir(directory):
         if name == 'pantheon2.yml' or name[0] == '.':
             continue
         path = PurePath(str(directory) + '/' + name)
         if os.path.isdir(path) and not os.path.islink(path):
-            listdir_recursive(path, unspecified_files, non_resource_files)
-        elif path not in non_resource_files:
-            unspecified_files.append(path)
+            listdir_recursive(path, allFiles)
+        else:
+            allFiles.append(path)
 
 
-def get_unspecified_files(directory, non_resource_files):
-    """Collects files from the given directory that were not specified in patheon2.yml file and returns a list"""
-    unspecified_files = []
-    listdir_recursive(directory, unspecified_files, non_resource_files)
-    return unspecified_files
+def readYamlGlob(config, keyword):
+    globs = config[keyword] if config is not None and keyword in config else ()
+    for i, val in enumerate(globs):
+        globs[i] = val.replace('*', '[^/]+')
+    return globs
 
 
-if "PANTHEON_SERVER" in os.environ:
-    server = os.environ["PANTHEON_SERVER"]
+def processRegexMatches(files, globs, filetype):
+    matches = []
+    logger.debug(' === ' + filetype)
+    for f in files:
+        if os.path.islink(f):
+            logger.debug(f)
+            logger.debug(' -- is symlink')
+            matches.append(f)
+            process_file(f, filetype)
+        else:
+            subpath = str(f)[len(args.directory) + 1:]
+            logger.debug(' Evaluating ' + subpath)
+            for regex in globs:
+                if re.match(regex, subpath):
+                    logger.debug(' -- match ' + filetype + ' ' + regex)
+                    matches.append(f)
+                    process_file(f, filetype)
+                    break  # necessary because the same file could potentially match more than 1 wildcard
+    for f in matches:
+        files.remove(f)
+
+
+if 'PANTHEON_SERVER' in os.environ:
+    server = os.environ['PANTHEON_SERVER']
 else:
     server = resolveOption(args.server, 'server', DEFAULT_SERVER)
 
@@ -329,41 +324,30 @@ server = remove_trailing_slash(server)
 if exists(server + '/pantheon'):
     logger.debug('server: %s is reachable', server)
 else:
-    sys.exit("server " + server + " is not reachable")
+    sys.exit('server ' + server + ' is not reachable')
 
 _info('Using server: ' + server)
 _info('Using ' + mode + ': ' + repository)
 print('--------------')
 
-moduleGlobs = config['modules'] if config is not None and 'modules' in config else ()
-processed_files = []
+moduleGlobs = readYamlGlob(config, 'modules')
+resourceGlobs = readYamlGlob(config, 'resources')
 non_resource_files = []
 logger.debug('moduleGlobs: %s', moduleGlobs)
+logger.debug('resourceGlobs: %s', resourceGlobs)
 logger.debug('args.directory: %s', args.directory)
 
-# Must gather all non-resources first but *not* process them. Resources must be uploaded first, but since 'resource'
-# is the default catch-all category, we need to know what *isn't* a resource first.
-# When we write assembly support someday, we'll need to do the same thing for assemblies here too.
-module_files = find_files(moduleGlobs, args.directory)
-if module_files:
-    for f in module_files:
-        non_resource_files.append(PurePath(f))
+# List all files in the directory
+allFiles = []
+listdir_recursive(args.directory, allFiles)
 
-# Now that we know what *isn't* a resource, find and upload all resources.
-unspecified_files = get_unspecified_files(args.directory, non_resource_files)
-if unspecified_files:
-    for f in unspecified_files:
-        # print("resource file: ", f)
-        # Process files
-        process_file(f, "resources")
+processRegexMatches(allFiles, resourceGlobs, 'resources')
+processRegexMatches(allFiles, moduleGlobs, 'modules')
 
-# Now that resources are uploaded, go ahead with modules.
-if module_files:
-    logger.debug('module_files: %s', module_files)
-    for f in module_files:
-        # print("module file: ", f)
-        # Process files
-        logger.debug('File path: %s', f)
-        process_file(f, "modules")
+leftoverFiles = len(allFiles)
+if leftoverFiles > 0:
+    _warn(f'{leftoverFiles} additional files detected but not uploaded. Only files specified in '
+          + CONFIG_FILE
+          + ' are handled for upload.')
 
 print('Finished!')
