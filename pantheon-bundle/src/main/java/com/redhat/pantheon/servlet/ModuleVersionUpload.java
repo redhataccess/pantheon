@@ -26,11 +26,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -57,6 +61,16 @@ public class ModuleVersionUpload extends AbstractPostOperation {
     private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
 
     private AsciidoctorService asciidoctorService;
+    private Set<String> excludes = Collections.unmodifiableSet(
+            new HashSet<>(
+                    Arrays.asList(
+                            "jcr:description",
+                            "jcr:lastModified",
+                            "jcr:primaryType",
+                            "jcr:title",
+                            "pant:dateUploaded",
+                            "pant:datePublished"
+                    )));
 
     @Activate
     public ModuleVersionUpload(@Reference AsciidoctorService asciidoctorService) {
@@ -101,6 +115,18 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                         .createNextVersion());
                 module.getOrCreateModuleLocale(localeObj)
                         .draft().set( draftVersion.get().uuid().get() );
+                //Need to copy the metadata from the released version, if it exists
+                Optional<ModuleVersion> releasedVersion = module.getReleasedVersion(localeObj);
+                if (releasedVersion.isPresent()) {
+                    Metadata releasedMeta = releasedVersion.get().metadata().get();
+                    Metadata draftMeta = draftVersion.get().metadata().getOrCreate();
+
+                    for (Map.Entry<String, Object> e : releasedMeta.getValueMap().entrySet()) {
+                        if (!excludes.contains(e.getKey())) {
+                            draftMeta.setProperty(e.getKey(), e.getValue());
+                        }
+                    }
+                }
             }
 
             // modify only the draft content/metadata
