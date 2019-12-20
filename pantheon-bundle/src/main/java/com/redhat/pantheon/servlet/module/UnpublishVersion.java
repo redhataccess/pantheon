@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
+import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleLocale;
@@ -71,8 +72,7 @@ public class UnpublishVersion extends AbstractPostOperation {
 
             changes.add(Modification.onModified(module.getPath()));
 
-            // TODO call an extension point similar to ReleaseDraftVersion
-            // events.fireModuleVersionUnpublishedEvent(...);
+            events.fireEvent(new ModuleVersionUnpublishedEvent(moduleLocale.draft().getReference().getPath()));
         }
     }
 }
