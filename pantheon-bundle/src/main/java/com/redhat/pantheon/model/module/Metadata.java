@@ -50,6 +50,8 @@ public interface Metadata extends SlingModel {
 
     Field<String> urlFragment();
 
+    Field<String> searchKeywords();
+
     @Named(JcrConstants.JCR_PRIMARYTYPE)
     Field<String> primaryType();
 }
