@@ -19,7 +19,38 @@ export interface IProps {
     onGetVersion: (versionValue) => any
 }
 
-class Versions extends Component<IProps, any> {
+interface IState {
+    canChangePublishState: boolean
+    isArchiveDropDownOpen: boolean
+    isDropDownOpen: boolean
+    isHeadingToggle: boolean
+    login: boolean
+    results: any
+
+    allProducts: any
+
+    isMissingFields: boolean
+    isModalOpen: boolean
+    keywords: string
+    metadataInitialLoad: boolean
+    metadataPath: string
+    moduleUrl: string
+    productOptions: any
+    productValue: string
+    productVersion: string
+    publishAlertVisible: boolean
+
+    successAlertVisible: boolean
+    usecaseOptions: any
+    usecaseValue: string
+
+    versionOptions: any
+    versionSelected: string
+    versionUUID: string
+    versionValue: string
+}
+
+class Versions extends Component<IProps, IState> {
     private static USE_CASES = ['Select Use Case', 'Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network', 'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize']
 
     public draft = [{ "type": "draft", "icon": BlankImage, "path": "", "version": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
@@ -39,9 +70,9 @@ class Versions extends Component<IProps, any> {
 
             isMissingFields: false,
             isModalOpen: false,
+            keywords: '',
             metadataInitialLoad: true,
             metadataPath: '',
-            metadataResults: [],
             moduleUrl: '',
             productOptions: [
                 { value: '', label: 'Select a Product', disabled: false },
@@ -344,6 +375,15 @@ class Versions extends Component<IProps, any> {
                                 <TextInput isRequired={true} id="url-fragment" type="text" placeholder="Enter URL" value={this.state.moduleUrl} onChange={this.handleURLInput} />
                             </InputGroup>
                         </FormGroup>
+                        <FormGroup
+                            label="Search keywords"
+                            isRequired={false}
+                            fieldId="search-keywords"
+                        >
+                            <InputGroup>
+                                <TextInput isRequired={false} id="search-keywords" type="text" placeholder="cat, dog, bird..." value={this.state.keywords} onChange={this.handleKeywordsInput} />
+                            </InputGroup>
+                        </FormGroup>
                         <div>
                             <input name="productVersion@TypeHint" type="hidden" value="Reference" />
                         </div>
@@ -515,6 +555,7 @@ class Versions extends Component<IProps, any> {
             formData.append("productVersion", this.state.versionUUID)
             formData.append("documentUsecase", this.state.usecaseValue)
             formData.append("urlFragment", "/" + this.state.moduleUrl)
+            formData.append("searchKeywords", this.state.keywords)
             // console.log("[metadataPath] ", this.state.metadataPath)
             fetch(this.state.metadataPath + '/metadata', {
                 body: formData,
@@ -530,9 +571,6 @@ class Versions extends Component<IProps, any> {
                 } else if (response.status === 500) {
                     // console.log(" Needs login " + response.status)
                     this.setState({ login: true })
-                } else {
-                    // console.log(" Failed " + response.status)
-                    this.setState({ failedPost: true })
                 }
             })
         }
@@ -566,6 +604,10 @@ class Versions extends Component<IProps, any> {
 
     private handleURLInput = moduleUrl => {
         this.setState({ moduleUrl })
+    }
+
+    private handleKeywordsInput = keywords => {
+        this.setState({ keywords })
     }
 
     private fetchProductVersionDetails = () => {
@@ -670,14 +712,12 @@ class Versions extends Component<IProps, any> {
             this.setState({ metadataInitialLoad: false })
             fetch(versionPath + "/metadata.json")
                 .then(response => response.json())
-                .then(responseJSON => this.setState({ metadataResults: responseJSON }))
-                .then(() => {
-                    if (JSON.stringify(this.state.metadataResults) !== "[]") {
+                .then(metadataResults => {
+                    if (JSON.stringify(metadataResults) !== "[]") {
                         // Process results
                         // Remove leading slash.
-                        // console.log("[metadataResults] ", this.state.metadataResults)
-                        if (this.state.metadataResults.urlFragment) {
-                            let url = this.state.metadataResults.urlFragment
+                        if (metadataResults.urlFragment) {
+                            let url = metadataResults.urlFragment
                             if (url.indexOf('/') === 0) {
                                 url = url.replace('/', '')
 
@@ -685,8 +725,9 @@ class Versions extends Component<IProps, any> {
                             this.setState({ moduleUrl: url })
                         }
                         this.setState({
-                            usecaseValue: this.state.metadataResults.documentUsecase,
-                            versionUUID: this.state.metadataResults.productVersion
+                            keywords: metadataResults.searchKeywords,
+                            usecaseValue: metadataResults.documentUsecase,
+                            versionUUID: metadataResults.productVersion
                         }, () => {
                             // console.log("versionUUID", this.state.versionUUID)
                             // Process versionValue and productValue here.

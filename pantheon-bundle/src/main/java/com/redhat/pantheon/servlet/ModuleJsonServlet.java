@@ -141,6 +141,11 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
             moduleMap.put("vanity_url_fragment", urlFragment);
         }
 
+        String searchKeywords = releasedMetadata.get().searchKeywords().get();
+        if (searchKeywords != null && !searchKeywords.isEmpty()) {
+            moduleMap.put("search_keywords", searchKeywords.split(", *"));
+        }
+
         // Process view_uri
         if (System.getenv("PORTAL_URL") != null) {
             String view_uri = System.getenv("PORTAL_URL") + "/topics/" + ServletUtils.toLanguageTag(locale) + "/" + module_uuid;
