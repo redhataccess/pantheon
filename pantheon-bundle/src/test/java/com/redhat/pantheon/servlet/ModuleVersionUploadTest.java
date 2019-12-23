@@ -5,6 +5,7 @@ import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleType;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.NonExistingResource;
@@ -40,6 +41,8 @@ class ModuleVersionUploadTest {
 
     @Mock
     AsciidoctorService asciidoctorService;
+    @Mock
+    ServiceResourceResolverProvider serviceResourceResolverProvider;
 
     @Test
     void createFirstVersion() throws Exception {
@@ -48,7 +51,9 @@ class ModuleVersionUploadTest {
                 asciidoctorService.getModuleHtml(
                         any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
+        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
+                .thenReturn(slingContext.resourceResolver());
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService, serviceResourceResolverProvider);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the adoc content");
@@ -99,7 +104,9 @@ class ModuleVersionUploadTest {
                 asciidoctorService.getModuleHtml(
                         any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
+        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
+                .thenReturn(slingContext.resourceResolver());
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService, serviceResourceResolverProvider);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "Draft asciidoc content");
@@ -155,7 +162,9 @@ class ModuleVersionUploadTest {
                 asciidoctorService.getModuleHtml(
                         any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
+        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
+                .thenReturn(slingContext.resourceResolver());
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService, serviceResourceResolverProvider);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "Revised asciidoc content");
@@ -213,7 +222,9 @@ class ModuleVersionUploadTest {
                 asciidoctorService.getModuleHtml(
                         any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
+        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
+                .thenReturn(slingContext.resourceResolver());
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService, serviceResourceResolverProvider);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the draft adoc content");

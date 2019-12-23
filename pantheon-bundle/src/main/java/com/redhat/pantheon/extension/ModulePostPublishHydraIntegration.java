@@ -89,7 +89,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
         Module module = null;
 
         // Get resource from path
-        resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleVersionPath(), 2));
+        resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleLocalePath(), 1));
         module = resource.adaptTo(Module.class);
 
         Connection connection = createConnectionFactory().createConnection();

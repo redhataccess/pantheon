@@ -11,13 +11,13 @@ import javax.annotation.Nonnull;
  */
 public class ModuleVersionPublishStateEvent implements Event {
 
-    private final String moduleVersionPath;
+    private final String moduleLocalePath;
 
-    protected ModuleVersionPublishStateEvent(@Nonnull String moduleVersionPath) {
-        this.moduleVersionPath = moduleVersionPath;
+    protected ModuleVersionPublishStateEvent(@Nonnull String moduleLocalePath) {
+        this.moduleLocalePath = moduleLocalePath;
     }
 
-    public String getModuleVersionPath() {
-        return moduleVersionPath;
+    public String getModuleLocalePath() {
+        return moduleLocalePath;
     }
 }

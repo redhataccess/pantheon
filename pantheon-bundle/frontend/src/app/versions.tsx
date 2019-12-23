@@ -141,7 +141,11 @@ class Versions extends Component<IProps, IState> {
                     title="Module Versions"
                     action={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
                 >
-                    Empty Product info. Please edit metadata before publishing
+                    Module failed to publish. Check the following:
+                    <ul>
+                        <li>Are you logged in as a publisher?</li>
+                        <li>Does the module have all required metadata?</li>
+                    </ul>
           </Alert>
                 }
                 {this.state.metadataInitialLoad && this.getMetadata(this.state.metadataPath)}
@@ -461,7 +465,7 @@ class Versions extends Component<IProps, IState> {
             if (this.state.canChangePublishState === true) {
                 const formData = new FormData();
                 if (buttonText === "Publish") {
-                    formData.append(":operation", "pant:release");
+                    formData.append(":operation", "pant:publish");
                     // console.log('Published file path:', this.props.modulePath)
                     this.draft[0].version = "";
                 } else {

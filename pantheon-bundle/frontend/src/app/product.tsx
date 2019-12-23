@@ -1,26 +1,33 @@
-import React, { Component } from 'react';
-import { Bullseye, Button, Alert, AlertActionCloseButton, Form, FormGroup, TextInput, ActionGroup } from '@patternfly/react-core';
-import '@app/app.css';
+import React, { Component } from 'react'
+import { Bullseye, Button, Alert, AlertActionCloseButton, Form, FormGroup, TextInput, ActionGroup } from '@patternfly/react-core'
+import '@app/app.css'
 import { Redirect } from 'react-router-dom'
 
-class Product extends Component<any, any> {
+interface IState {
+  failedPost: boolean
+  isDup: boolean
+  isMissingFields: boolean
+  productDescription: string
+  productName: string
+  redirect: boolean
+}
+
+class Product extends Component<any, IState> {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       failedPost: false,
       isDup: false,
       isMissingFields: false,
       productDescription: '',
       productName: '',
-      redirect: false,
-      results: [],
-    };
+      redirect: false
+    }
 
   }
 
   // render method transforms the react components into DOM nodes for the browser.
   public render() {
-    const { productName, productDescription, isMissingFields, isDup } = this.state;
     return (
       <React.Fragment>
         {/* Bullseye makes sure everyhting is in the middle */}
@@ -28,7 +35,7 @@ class Product extends Component<any, any> {
           <Form>
             <div className="app-container">
               <div>
-                {isMissingFields && (
+                {this.state.isMissingFields && 
                   <div className="notification-container">
                     <Alert
                       variant="warning"
@@ -36,8 +43,8 @@ class Product extends Component<any, any> {
                       action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                     />
                   </div>
-                )}
-                {isDup && (
+                }
+                {this.state.isDup && 
                   <div className="notification-container">
                     <Alert
                       variant="warning"
@@ -45,20 +52,31 @@ class Product extends Component<any, any> {
                       action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                     />
                   </div>
-                )}
+                }
+                {this.state.failedPost &&
+                  <div className="notification-container">
+                    <Alert
+                      variant="danger"
+                      title="Failed to create product."
+                      action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                    >
+                    Please check if you are logged in as a publisher.
+                    </Alert>
+                  </div>
+                }
                 <FormGroup
                   label="Product Name"
                   isRequired={true}
                   fieldId="product-name"
                 >
-                  <TextInput isRequired={true} id="product-name" type="text" placeholder="Product Name" value={productName} onChange={this.handleNameInput} />
+                  <TextInput isRequired={true} id="product-name" type="text" placeholder="Product Name" value={this.state.productName} onChange={this.handleNameInput} />
                 </FormGroup>
                 <br />
                 <FormGroup
                   label="Product Description"
                   fieldId="product-description"
                 >
-                  <TextInput id="product-description" type="text" placeholder="Product Description" value={productDescription} onChange={this.handleProductInput} />
+                  <TextInput id="product-description" type="text" placeholder="Product Description" value={this.state.productDescription} onChange={this.handleProductInput} />
                 </FormGroup>
                 <br />
                 <ActionGroup>
@@ -72,17 +90,17 @@ class Product extends Component<any, any> {
           </Form>
         </Bullseye>
       </React.Fragment>
-    );
+    )
   }
   // methods that handle the state changes.
   private handleNameInput = productName => {
-    this.setState({ productName });
-  };
+    this.setState({ productName })
+  }
 
   private handleProductInput = productDescription => {
-    this.setState({ productDescription });
+    this.setState({ productDescription })
     // console.log("Desc " + productDescription)
-  };
+  }
 
   private saveProduct = () => {
     if (this.state.productName === '') {
@@ -95,8 +113,8 @@ class Product extends Component<any, any> {
             'cache-control': 'no-cache'
           }
           // setup url fragment
-          const urlFragment = this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
-          const formData = new FormData();
+          const urlFragment = this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
+          const formData = new FormData()
           formData.append("name", this.state.productName)
           formData.append("description", this.state.productDescription)
           formData.append("sling:resourceType", "pantheon/product")
@@ -116,7 +134,7 @@ class Product extends Component<any, any> {
             } else {
               this.setState({ failedPost: true })
             }
-          });
+          })
         }
       }
       )
@@ -132,7 +150,7 @@ class Product extends Component<any, any> {
   }
 
   private dismissNotification = () => {
-    this.setState({ isMissingFields: false, isDup: false });
+    this.setState({ isMissingFields: false, isDup: false })
   }
 
   private productExist = () => {

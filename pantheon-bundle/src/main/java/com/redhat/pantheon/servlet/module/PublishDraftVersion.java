@@ -11,6 +11,7 @@ import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
+import org.apache.sling.servlets.post.SlingPostProcessor;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -30,22 +31,41 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
         property = {
                 Constants.SERVICE_DESCRIPTION + "=Releases the latest draft version of a module",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
-                PostOperation.PROP_OPERATION_NAME + "=pant:release"
+                PostOperation.PROP_OPERATION_NAME + "=pant:publish"
         })
-public class ReleaseDraftVersion extends AbstractPostOperation {
+public class PublishDraftVersion extends AbstractPostOperation {
 
     private Events events;
 
     @Activate
-    public ReleaseDraftVersion(@Reference Events events) {
+    public PublishDraftVersion(@Reference Events events) {
         this.events = events;
     }
 
-    @Override
-    protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
-        Locale locale = paramValueAsLocale(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE);
+    private Module getModule(SlingHttpServletRequest request) {
+        return request.getResource().adaptTo(Module.class);
+    }
 
-        Module module = request.getResource().adaptTo(Module.class);
+    private Locale getLocale(SlingHttpServletRequest request) {
+        return paramValueAsLocale(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE);
+    }
+
+    @Override
+    public void run(SlingHttpServletRequest request, PostResponse response, SlingPostProcessor[] processors) {
+        super.run(request, response, processors);
+        if (response.getError() == null) {
+            // call the extension point
+            Locale locale = getLocale(request);
+            Module module = getModule(request);
+            ModuleLocale moduleLocale = module.getModuleLocale(locale);
+            events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.getPath()));
+        }
+    }
+
+    @Override
+    protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) {
+        Locale locale = getLocale(request);
+        Module module = getModule(request);
 
         // Get the draft version, there should be one
         Optional<ModuleVersion> versionToRelease = module.getDraftVersion(locale);
@@ -72,10 +92,6 @@ public class ReleaseDraftVersion extends AbstractPostOperation {
                     .metadata().getOrCreate()
                     .datePublished().set(Calendar.getInstance());
             changes.add(Modification.onModified(module.getPath()));
-
-            // call the extension point
-            events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.released().getReference().getPath()));
-
         }
     }
 }
