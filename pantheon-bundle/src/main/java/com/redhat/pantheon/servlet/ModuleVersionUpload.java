@@ -99,12 +99,11 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             int responseCode = HttpServletResponse.SC_OK;
 
             // Try to find the module
-            ResourceResolver resolver = request.getResourceResolver();
+            ResourceResolver resolver = serviceResourceResolverProvider.getServiceResourceResolver();
             Resource moduleResource = resolver.getResource(path);
             Module module;
 
             if(moduleResource == null) {
-                resolver = serviceResourceResolverProvider.getServiceResourceResolver();
                 module =
                         SlingModels.createModel(
                                 resolver,
