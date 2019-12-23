@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith({SlingContextExtension.class})
-class ReleaseDraftVersionTest {
+class PublishDraftVersionTest {
 
     SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
@@ -45,7 +45,7 @@ class ReleaseDraftVersionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
-        ReleaseDraftVersion operation = new ReleaseDraftVersion(events);
+        PublishDraftVersion operation = new PublishDraftVersion(events);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);
@@ -71,7 +71,7 @@ class ReleaseDraftVersionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
-        ReleaseDraftVersion operation = new ReleaseDraftVersion(null);
+        PublishDraftVersion operation = new PublishDraftVersion(null);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);

@@ -16,8 +16,8 @@ if 'PANTHEON_SERVER' in os.environ:
     DEFAULT_REPOSITORY = 'gitImport'
 else:
     DEFAULT_REPOSITORY = getpass.getuser()
-DEFAULT_USER = 'demo'
-DEFAULT_PASSWORD = base64.b64decode(b'ZGVtbw==').decode()
+DEFAULT_USER = 'author'
+DEFAULT_PASSWORD = base64.b64decode(b'YXV0aG9y').decode()
 CONFIG_FILE = 'pantheon2.yml'
 
 HEADERS = {'cache-control': 'no-cache',

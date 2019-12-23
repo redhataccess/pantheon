@@ -30,14 +30,14 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
         property = {
                 Constants.SERVICE_DESCRIPTION + "=Releases the latest draft version of a module",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
-                PostOperation.PROP_OPERATION_NAME + "=pant:release"
+                PostOperation.PROP_OPERATION_NAME + "=pant:publish"
         })
-public class ReleaseDraftVersion extends AbstractPostOperation {
+public class PublishDraftVersion extends AbstractPostOperation {
 
     private Events events;
 
     @Activate
-    public ReleaseDraftVersion(@Reference Events events) {
+    public PublishDraftVersion(@Reference Events events) {
         this.events = events;
     }
 

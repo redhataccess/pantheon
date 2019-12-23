@@ -461,7 +461,7 @@ class Versions extends Component<IProps, IState> {
             if (this.state.canChangePublishState === true) {
                 const formData = new FormData();
                 if (buttonText === "Publish") {
-                    formData.append(":operation", "pant:release");
+                    formData.append(":operation", "pant:publish");
                     // console.log('Published file path:', this.props.modulePath)
                     this.draft[0].version = "";
                 } else {

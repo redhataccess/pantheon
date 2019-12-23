@@ -20,7 +20,8 @@
     create path /conf/pantheon(sling:Folder)
 
     # Create the sling users
-    create group pantheon-users
+    create group pantheon-authors
+    create group pantheon-publishers
     create service user pantheon
 
     # Assign ACLs
@@ -29,7 +30,23 @@
         allow jcr:read,jcr:write on /conf/pantheon
     end
 
-    set ACL for pantheon-users
+    set ACL for pantheon-authors
+        allow jcr:write,jcr:nodeTypeManagement on /content/repositories
+        allow jcr:write,jcr:nodeTypeManagement on /content/modules
+        allow jcr:write,jcr:nodeTypeManagement on /content/sandbox
+        allow jcr:read on /conf/pantheon
+
+        # Restricts authors from publishing modules. May have side effects if we put future properties on the locale.
+        # Theoretically it's possible to specify more then 1 restriction with this syntax:
+        # restriction(rep:ntNames,pant:moduleLocale) restriction(rep:itemNames,draft,released)
+        # ...but in practice, it doesn't seem to work.
+        # https://sling.apache.org/documentation/bundles/repository-initialization.html
+        deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:moduleLocale)
+        deny jcr:modifyProperties on /content/modules restriction(rep:ntNames,pant:moduleLocale)
+        deny jcr:modifyProperties on /content/sandbox restriction(rep:ntNames,pant:moduleLocale)
+    end
+
+    set ACL for pantheon-publishers
         allow jcr:write,jcr:nodeTypeManagement on /content/repositories
         allow jcr:write,jcr:nodeTypeManagement on /content/modules
         allow jcr:write,jcr:nodeTypeManagement on /content/products

@@ -9,14 +9,17 @@ import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleType;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -59,9 +62,7 @@ import java.util.function.Supplier;
 public class ModuleVersionUpload extends AbstractPostOperation {
 
     private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
-
-    private AsciidoctorService asciidoctorService;
-    private Set<String> excludes = Collections.unmodifiableSet(
+    private static final Set<String> EXCLUDES = Collections.unmodifiableSet(
             new HashSet<>(
                     Arrays.asList(
                             "jcr:description",
@@ -72,9 +73,15 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                             "pant:datePublished"
                     )));
 
+    private AsciidoctorService asciidoctorService;
+    private ServiceResourceResolverProvider serviceResourceResolverProvider;
+
     @Activate
-    public ModuleVersionUpload(@Reference AsciidoctorService asciidoctorService) {
+    public ModuleVersionUpload(
+            @Reference AsciidoctorService asciidoctorService,
+            @Reference ServiceResourceResolverProvider serviceResourceResolverProvider) {
         this.asciidoctorService = asciidoctorService;
+        this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
 
     @Override
@@ -92,13 +99,15 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             int responseCode = HttpServletResponse.SC_OK;
 
             // Try to find the module
-            Resource moduleResource = request.getResourceResolver().getResource(path);
+            ResourceResolver resolver = request.getResourceResolver();
+            Resource moduleResource = resolver.getResource(path);
             Module module;
 
             if(moduleResource == null) {
+                resolver = serviceResourceResolverProvider.getServiceResourceResolver();
                 module =
                         SlingModels.createModel(
-                                request.getResourceResolver(),
+                                resolver,
                                 path,
                                 Module.class);
                 responseCode = HttpServletResponse.SC_CREATED;
@@ -122,7 +131,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                     Metadata draftMeta = draftVersion.get().metadata().getOrCreate();
 
                     for (Map.Entry<String, Object> e : releasedMeta.getValueMap().entrySet()) {
-                        if (!excludes.contains(e.getKey())) {
+                        if (!EXCLUDES.contains(e.getKey())) {
                             draftMeta.setProperty(e.getKey(), e.getValue());
                         }
                     }
@@ -160,7 +169,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             metadata.dateUploaded().set(now);
             metadata.moduleType().set( determineModuleType(module) );
 
-            request.getResourceResolver().commit();
+            resolver.commit();
 
             if (generateHtml) {
                 Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
