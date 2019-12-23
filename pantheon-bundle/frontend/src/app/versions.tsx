@@ -141,7 +141,11 @@ class Versions extends Component<IProps, IState> {
                     title="Module Versions"
                     action={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
                 >
-                    Empty Product info. Please edit metadata before publishing
+                    Module failed to publish. Check the following:
+                    <ul>
+                        <li>Are you logged in as a publisher?</li>
+                        <li>Does the module have all required metadata?</li>
+                    </ul>
           </Alert>
                 }
                 {this.state.metadataInitialLoad && this.getMetadata(this.state.metadataPath)}
