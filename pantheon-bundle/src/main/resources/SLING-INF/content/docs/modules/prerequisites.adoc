@@ -1,0 +1,41 @@
+// Module included in the following assemblies:
+//
+// <List assemblies here, each on a new line>
+
+// Base the file name and the ID on the module title. For example:
+// * file name: prerequisites.adoc
+// * ID: [id='mprerequisites']
+// * Title: = prerequisites
+
+// The ID is used as an anchor for linking to the module. Avoid changing it after the module has been published to ensure existing links are not broken.
+[id='prerequisites_{context}']
+
+= Prerequisites
+
+.Operating Systems
+
+[NOTE]
+====
+Operating system support affects the performance of the uploader more than other Pantheon components.
+====
+
+Pantheon 2 is supported on the following operating systems:
+
+* Fedora 30 or later
+* RHEL 7 CSB
+* RHEL 8 CSB
+* macOS 10.15 (Catalina) or later
+
+
+.Browsers
+
+Pantheon 2 is supported on the following browsers:
+
+* Chrome 78.0 or later
+* Firefox 71.0 or later
+* Safari 13.0 or later
+
+[NOTE]
+====
+Pantheon 2 is not supported on Firefox 68.3.0 extended support version (ESR).
+====
