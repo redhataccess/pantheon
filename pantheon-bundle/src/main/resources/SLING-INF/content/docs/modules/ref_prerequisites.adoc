@@ -8,7 +8,7 @@
 // * Title: = prerequisites
 
 // The ID is used as an anchor for linking to the module. Avoid changing it after the module has been published to ensure existing links are not broken.
-[id='prerequisites_{context}']
+[id='ref_prerequisites_{context}']
 
 = Prerequisites
 
