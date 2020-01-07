@@ -11,3 +11,4 @@ Log in to Pantheon using your Red Hat credentials.
 . Enter your user name.
 . Enter your password.
 . Click `Log In`.
+// synch new commit
