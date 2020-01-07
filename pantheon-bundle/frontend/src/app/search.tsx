@@ -43,6 +43,14 @@ class Search extends Component<IAppState, ISearchState> {
   public static KEY_CHECKEDITEM: string = "checkedItem"
   public static KEY_TRANSIENTPATH: string = "pant:transientPath"
 
+  // //newCode
+  // public draft = [{ "type": "draft", "path": "", "version": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
+  // public release = [{ "type": "release", "path": "", "version": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '', "draftUploadDate": "" }]
+  // //newCode
+
+  public draftUploadDate = "-"
+  public published = "-"
+
   constructor(props) {
     super(props);
     this.state = {
@@ -65,7 +73,7 @@ class Search extends Component<IAppState, ISearchState> {
       pageLimit: 25,
       redirect: false,
       redirectLocation: '',
-      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false }],
+      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false, "draftUploadDate": "-","publishedDate": "-"}],
       selectAllCheckValue: false,
       showDropdownOptions: true,
       sortKey: ''
@@ -75,7 +83,6 @@ class Search extends Component<IAppState, ISearchState> {
   public componentDidMount() {
     this.doSearch()
   }
-
 
   public render() {
     const { isEmptyResults } = this.state;
@@ -118,19 +125,16 @@ class Search extends Component<IAppState, ISearchState> {
                   <DataListItemCells
                     dataListCells={[
                       <DataListCell width={2} key="title">
-                        <span className="sp-prop-nosort" id="span-name" aria-label="column name">Name</span>
-                      </DataListCell>,
-                      <DataListCell width={2} key="description">
-                        <span className="sp-prop-nosort" id="span-description" aria-label="column description">Description</span>
+                        <span className="sp-prop-nosort" id="span-name" aria-label="column name">Title</span>
                       </DataListCell>,
                       <DataListCell key="resource source">
-                        <span className="sp-prop-nosort" id="span-source-type">Source Type</span>
+                        <span className="sp-prop-nosort" id="span-source-type">Published</span>
                       </DataListCell>,
                       <DataListCell key="source name">
-                        <span className="sp-prop-nosort" id="span-source-name">Source Name</span>
+                        <span className="sp-prop-nosort" id="span-source-name">Draft Uploaded</span>
                       </DataListCell>,
                       <DataListCell key="upload time">
-                        <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">Upload Time</span>
+                        <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">Module Type</span>
                       </DataListCell>,
                     ]}
                   />
@@ -158,6 +162,9 @@ class Search extends Component<IAppState, ISearchState> {
                   </Level>
 
                 )}
+                
+                {console.log("res ui: ",this.state.results)}
+                
                 {!this.state.displayLoadIcon && (this.state.results.map((data, key) => (
                   <DataListItemRow id="data-rows" key={key}>
                     {this.props.userAuthenticated && !this.state.isEmptyResults &&
@@ -170,8 +177,7 @@ class Search extends Component<IAppState, ISearchState> {
                         name={data[Search.KEY_TRANSIENTPATH]}
                         onChange={this.handleDeleteCheckboxChange}
                         key={'checked_' + key}
-                      />}
-
+                      />}                                   
                     <DataListItemCells key={"cells_" + key}
                       dataListCells={[
                         <DataListCell key={"title_" + key} width={2}>
@@ -179,15 +185,12 @@ class Search extends Component<IAppState, ISearchState> {
                             <Link to={data['pant:transientPath']} key={"link_" + key}>{data["jcr:title"]}</Link>}
                           {!this.props.userAuthenticated &&
                             <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
+                        </DataListCell>,      
+                        <DataListCell key={"transient-source_" + key}>                          
+                          <span>{data["publishedDate"]}</span>
                         </DataListCell>,
-                        <DataListCell key={"description_" + key} width={2}>
-                          <span>{data["jcr:description"]}</span>
-                        </DataListCell>,
-                        <DataListCell key={"transient-source_" + key}>
-                          <span>{data["pant:transientSource"]}</span>
-                        </DataListCell>,
-                        <DataListCell key={"transient-source-name_" + key}>
-                          <span>{data["pant:transientSourceName"]}</span>
+                        <DataListCell key={"transient-source-name_" + key}>                              
+                          <span>{data["draftUploadDate"]}</span>
                         </DataListCell>,
                         <DataListCell key={"created_" + key}>
                           <span >{this.formatDate(new Date(data["pant:dateUploaded"]))}</span>
@@ -305,6 +308,52 @@ class Search extends Component<IAppState, ISearchState> {
       </React.Fragment>
     );
   }
+  
+  private publishedOrDraftUploadDate = (records) => {
+    // console.log("results:",results)
+    records.map(data =>{
+      if(data.name!==""){
+        const fetchpath = "/content/" + data["pant:transientPath"] + ".harray.4.json"
+        // console.log("fetchpath:",fetchpath)
+  
+        fetch(fetchpath)
+            .then(response => response.json())
+            .then(responseJSON => {
+                // console.log("responseJSON:",responseJSON)
+                const releasedTag = responseJSON.__children__[0].released
+                const draftTag = responseJSON.__children__[0].draft
+             
+                const versionCount = responseJSON.__children__[0].__children__.length
+                for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
+                    const moduleVersion = responseJSON.__children__[0].__children__[i]
+                    if (moduleVersion["jcr:uuid"] === draftTag) {
+                      const metadata = moduleVersion.__children__[1]
+                        if(metadata["pant:dateUploaded"]!==undefined){                        
+                          data["draftUploadDate"] = metadata["pant:dateUploaded"]
+                          // console.log("data:",data)
+                        }
+                    }
+                    if (moduleVersion["jcr:uuid"] === releasedTag) {
+                        const metadata = moduleVersion.__children__[1]
+                        if(metadata["pant:datePublished"]===undefined){                        
+                          data["publishedDate"] = metadata["pant:datePublished"]
+                          // console.log("data:",data)
+                        }   
+                    }
+                }     
+            })  
+      }
+    })
+    console.log("records:",records)
+    return records;
+    // this.setState({
+    //   results: records
+    // },()=>{
+    //   console.log("results:",this.state.results)
+    // })
+    
+
+}
 
   private handleSelectAll = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
     const newResults: any[] = []
@@ -373,20 +422,24 @@ class Search extends Component<IAppState, ISearchState> {
     this.setState({ displayLoadIcon: true })
     fetch(this.buildSearchUrl())
       .then(response => response.json())
-      .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
-      .then(() => {
+      .then(responseJSON => this.setState({ results: this.publishedOrDraftUploadDate(responseJSON.results), nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 },()=>{
+        console.log("responseJson:",responseJSON)        
+        console.log("results:",this.state.results)
+      }))
+      .then(() => {        
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
             displayLoadIcon: false,
             isEmptyResults: true,
             selectAllCheckValue: false
           })
-        } else {
+        } else {          
           this.setState({
             displayLoadIcon: false,
             isEmptyResults: false,
+            // results: this.state.results,
             selectAllCheckValue: false,
-          })
+          })          
         }
       })
       .catch(error => {
@@ -474,6 +527,7 @@ class Search extends Component<IAppState, ISearchState> {
     })
     return tPaths
   }
+
 }
 
 export { Search }

@@ -55,18 +55,7 @@ exports[`Search tests should render default Search component 1`] = `
                       className="sp-prop-nosort"
                       id="span-name"
                     >
-                      Name
-                    </span>
-                  </DataListCell>,
-                  <DataListCell
-                    width={2}
-                  >
-                    <span
-                      aria-label="column description"
-                      className="sp-prop-nosort"
-                      id="span-description"
-                    >
-                      Description
+                      Title
                     </span>
                   </DataListCell>,
                   <DataListCell>
@@ -74,7 +63,7 @@ exports[`Search tests should render default Search component 1`] = `
                       className="sp-prop-nosort"
                       id="span-source-type"
                     >
-                      Source Type
+                      Published
                     </span>
                   </DataListCell>,
                   <DataListCell>
@@ -82,7 +71,7 @@ exports[`Search tests should render default Search component 1`] = `
                       className="sp-prop-nosort"
                       id="span-source-name"
                     >
-                      Source Name
+                      Draft Uploaded
                     </span>
                   </DataListCell>,
                   <DataListCell>
@@ -91,7 +80,7 @@ exports[`Search tests should render default Search component 1`] = `
                       className="sp-prop-nosort"
                       id="span-upload-time"
                     >
-                      Upload Time
+                      Module Type
                     </span>
                   </DataListCell>,
                 ]
@@ -149,39 +138,3 @@ exports[`Search tests should render default Search component 1`] = `
   </div>
 </Fragment>
 `;
-
-exports[`Search tests test buildSearchUrl function 1`] = `undefined`;
-
-exports[`Search tests test buildTransientPathArray function 1`] = `undefined`;
-
-exports[`Search tests test cancelDeleteOperation function 1`] = `undefined`;
-
-exports[`Search tests test changePerPageLimit function 1`] = `undefined`;
-
-exports[`Search tests test confirmDeleteOperation function 1`] = `undefined`;
-
-exports[`Search tests test delete function 1`] = `undefined`;
-
-exports[`Search tests test dismissNotification function 1`] = `undefined`;
-
-exports[`Search tests test doSearch function 1`] = `undefined`;
-
-exports[`Search tests test fetchTimeout function 1`] = `undefined`;
-
-exports[`Search tests test getRows function 1`] = `undefined`;
-
-exports[`Search tests test handleDeleteCheckboxChange function 1`] = `undefined`;
-
-exports[`Search tests test handleSelectAll function 1`] = `undefined`;
-
-exports[`Search tests test hideAlertOne function 1`] = `undefined`;
-
-exports[`Search tests test newSearch function 1`] = `undefined`;
-
-exports[`Search tests test setInput function 1`] = `undefined`;
-
-exports[`Search tests test sortByDescription function 1`] = `undefined`;
-
-exports[`Search tests test sortByName function 1`] = `undefined`;
-
-exports[`Search tests test sortByUploadTime function 1`] = `undefined`;

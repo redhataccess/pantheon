@@ -171,6 +171,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         Map<String, Object> m = super.resourceToMap(resource);
         String resourcePath = resource.getPath();
         m.put("name", resource.getName());
+        m.put("draftUploadDate","-");
+        m.put("publishedDate","-");
         // TODO need to provide both released and draft to the api caller
         m.put("pant:dateUploaded", draftMetadata.isPresent() ? draftMetadata.get().dateUploaded().get() : releasedMetadata.get().dateUploaded().get());
         m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title().get() : releasedMetadata.get().title().get());
