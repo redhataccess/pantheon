@@ -12,6 +12,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import com.redhat.pantheon.extension.events.ModuleVersionPublishStateEvent;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceUtil;
@@ -49,8 +50,9 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
     private static final String UUID_FIELD = "jcr:uuid";
     private static final String HYDRA_TOPIC = "VirtualTopic.eng.pantheon2.notifications";
     private static final String ID_KEY = "id";
-    private static final String SOLR_COMMAND_KEY = "solr_command";
-    private static final String SOLR_COMMAND_VALUE = "index";
+    private static final String EVENT_KEY = "event";
+    private static final String EVENT_PUBLISH_VALUE = "publish";
+    private static final String EVENT_UNPUBLISH_VALUE = "unpublish";
     public static final Locale DEFAULT_MODULE_LOCALE = Locale.US;
 
     private SSLContext sslContext;
@@ -74,7 +76,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
             return false;
         }
 
-        return ModuleVersionPublishedEvent.class.equals(event.getClass());
+        return ModuleVersionPublishStateEvent.class.isAssignableFrom(event.getClass());
     }
 
     /**
@@ -82,12 +84,12 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
      *
      */
     public void processEvent(Event event) throws Exception {
-        ModuleVersionPublishedEvent publishedEvent = (ModuleVersionPublishedEvent) event;
+        ModuleVersionPublishStateEvent publishedEvent = (ModuleVersionPublishStateEvent) event;
         Resource resource = null;
         Module module = null;
 
         // Get resource from path
-        resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleVersionPath(), 2));
+        resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleLocalePath(), 1));
         module = resource.adaptTo(Module.class);
 
         Connection connection = createConnectionFactory().createConnection();
@@ -101,8 +103,10 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
         String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
-        String msg = "{\"" + ID_KEY + "\":" + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\","
-                + "\"" + SOLR_COMMAND_KEY + "\":" + "\"" + SOLR_COMMAND_VALUE + "\"}";
+        String eventValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
+        String msg = "{\""
+                + ID_KEY + "\":" + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\","
+                + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\"}";
         producer.send(session.createTextMessage(msg));
         log.info("[" + ModulePostPublishHydraIntegration.class.getSimpleName() + "] message sent: " + session.createTextMessage(msg) );
 

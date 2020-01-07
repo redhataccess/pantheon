@@ -1,8 +1,7 @@
 package com.redhat.pantheon.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.LocaleUtils;
-
+import com.ibm.icu.util.ULocale;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -97,12 +96,14 @@ public final class ServletUtils {
 
     /**
      * Returns a servlet request parameter as a {@link Locale}, or the provided default value if the
-     * parameter was not present or was not in the appropriate format.
+     * parameter was not present or if it was impossible to convert the locale code.
+     * This method accepts both IETF BCP 47 language tags (e.g. en-us), or locale codes following the java
+     * standards (e.g. en_US), hence it will attempt to canonicalize the provided locale value.
      * @param request
      * @param paramName
      * @param defaultValue
      * @return
-     * @see LocaleUtils accepted string formats
+     * @see ULocale
      */
     public static Locale paramValueAsLocale(final HttpServletRequest request,
                                             final String paramName,
@@ -111,13 +112,23 @@ public final class ServletUtils {
         String requestParamVal = request.getParameter(paramName);
 
         try {
-            paramVal = LocaleUtils.toLocale(requestParamVal);
-        } catch (IllegalArgumentException iaex) {
+            paramVal = ULocale.createCanonical(requestParamVal).toLocale();
+        } catch (Exception ex) {
             // do nothing, proceed with the default value
         }
 
         // there is a chance the locale is null
         return paramVal == null ? defaultValue : paramVal;
+    }
+
+    /**
+     * Transforms the locale to an IETF BCP 47 language tag, which is a common URL friendly tag.
+     * @param locale The locale object to convert
+     * @return The appropriate IETF BCP 47 language tag for the provided locale.
+     * @see ULocale#toLanguageTag()
+     */
+    public static String toLanguageTag(Locale locale) {
+        return ULocale.forLocale(locale).toLanguageTag().toLowerCase();
     }
 
     /**

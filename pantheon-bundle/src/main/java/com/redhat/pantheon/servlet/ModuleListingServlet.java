@@ -53,7 +53,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String[] productVersionIds = request.getParameterValues("productversion");
         String type = paramValue(request, "type");
 
-        if(!newArrayList("Title", "Product", "Published", "Module", "Updated" ).contains(keyParam)) {
+        if(!newArrayList("Title", "Published", "Module", "Updated" ).contains(keyParam)) {
             keyParam = "pant:dateUploaded";
         } else if (keyParam.contains("Title")) {
             keyParam = "jcr:title";
@@ -80,8 +80,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         // Condition for module type
         String moduleTypeCondition = "";
         if(!Strings.isNullOrEmpty(type)) {
-            moduleTypeCondition = "AND (draft.[metadata/moduleType] = '" + type + "' " +
-                    "OR release.[metadata/moduleType] = '" + type + "') ";
+            moduleTypeCondition = "AND (draft.[metadata/pant:moduleType] = '" + type + "' " +
+                    "OR release.[metadata/pant:moduleType] = '" + type + "') ";
         }
 
         // product version conditions

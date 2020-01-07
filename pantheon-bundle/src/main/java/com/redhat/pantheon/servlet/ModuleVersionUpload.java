@@ -9,14 +9,17 @@ import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleType;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -26,11 +29,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -55,12 +62,26 @@ import java.util.function.Supplier;
 public class ModuleVersionUpload extends AbstractPostOperation {
 
     private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
+    private static final Set<String> EXCLUDES = Collections.unmodifiableSet(
+            new HashSet<>(
+                    Arrays.asList(
+                            "jcr:description",
+                            "jcr:lastModified",
+                            "jcr:primaryType",
+                            "jcr:title",
+                            "pant:dateUploaded",
+                            "pant:datePublished"
+                    )));
 
     private AsciidoctorService asciidoctorService;
+    private ServiceResourceResolverProvider serviceResourceResolverProvider;
 
     @Activate
-    public ModuleVersionUpload(@Reference AsciidoctorService asciidoctorService) {
+    public ModuleVersionUpload(
+            @Reference AsciidoctorService asciidoctorService,
+            @Reference ServiceResourceResolverProvider serviceResourceResolverProvider) {
         this.asciidoctorService = asciidoctorService;
+        this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
 
     @Override
@@ -78,13 +99,14 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             int responseCode = HttpServletResponse.SC_OK;
 
             // Try to find the module
-            Resource moduleResource = request.getResourceResolver().getResource(path);
+            ResourceResolver resolver = serviceResourceResolverProvider.getServiceResourceResolver();
+            Resource moduleResource = resolver.getResource(path);
             Module module;
 
             if(moduleResource == null) {
                 module =
                         SlingModels.createModel(
-                                request.getResourceResolver(),
+                                resolver,
                                 path,
                                 Module.class);
                 responseCode = HttpServletResponse.SC_CREATED;
@@ -101,6 +123,18 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                         .createNextVersion());
                 module.getOrCreateModuleLocale(localeObj)
                         .draft().set( draftVersion.get().uuid().get() );
+                //Need to copy the metadata from the released version, if it exists
+                Optional<ModuleVersion> releasedVersion = module.getReleasedVersion(localeObj);
+                if (releasedVersion.isPresent()) {
+                    Metadata releasedMeta = releasedVersion.get().metadata().get();
+                    Metadata draftMeta = draftVersion.get().metadata().getOrCreate();
+
+                    for (Map.Entry<String, Object> e : releasedMeta.getValueMap().entrySet()) {
+                        if (!EXCLUDES.contains(e.getKey())) {
+                            draftMeta.setProperty(e.getKey(), e.getValue());
+                        }
+                    }
+                }
             }
 
             // modify only the draft content/metadata
@@ -134,7 +168,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             metadata.dateUploaded().set(now);
             metadata.moduleType().set( determineModuleType(module) );
 
-            request.getResourceResolver().commit();
+            resolver.commit();
 
             if (generateHtml) {
                 Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);

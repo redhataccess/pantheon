@@ -1,23 +1,28 @@
 package com.redhat.pantheon.servlet;
 
-import com.redhat.pantheon.model.module.Module;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Locale;
+import java.util.Map;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
+
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.google.common.collect.Maps.newHashMap;
-import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
-import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
-import static javax.servlet.http.HttpServletResponse.SC_OK;
-import static org.junit.jupiter.api.Assertions.*;
+import com.redhat.pantheon.model.module.Module;
 
 @ExtendWith({SlingContextExtension.class})
 class ModuleJsonServletTest {
@@ -44,7 +49,7 @@ class ModuleJsonServletTest {
         // Given
         ModuleJsonServlet servlet = new ModuleJsonServlet();
         Map<String, Object> map = newHashMap();
-        map.put("locale", DEFAULT_MODULE_LOCALE.toString());
+        map.put("locale", ServletUtils.toLanguageTag(Locale.US));
         map.put("module_id", "jcr:uuid");
         slingContext.request().setParameterMap(map);
 
@@ -58,7 +63,6 @@ class ModuleJsonServletTest {
         // make sure query response is not null
         assertNotNull(slingContext.response());
     }
-
 
     @Test
     void resourceToMap() throws Exception {
@@ -87,6 +91,7 @@ class ModuleJsonServletTest {
 
         // When
         Map<String, Object> map = servlet.resourceToMap(
+                slingContext.request(),
                 slingContext.resourceResolver().getResource("/content/repositories/repo/module"));
         Map<String, Object> moduleMap = (Map<String, Object>)map.get("module");
 
@@ -112,5 +117,29 @@ class ModuleJsonServletTest {
         assertTrue(moduleMap.containsKey("context_url_fragment"));
         assertEquals((map.get("message")), "Module Found");
         assertEquals((map.get("status")), SC_OK);
+    }
+
+    @Test
+    @EnabledIf("null != systemEnvironment.get('PORTAL_URL')")
+    public void onlyRenderViewURIForPORTAL() throws RepositoryException {
+        // Given
+        slingContext.create()
+                .resource("/content/repositories/repo/module/en_US/1",
+                        "jcr:primaryType", "pant:moduleVersion");
+        slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US").adaptTo(ModifiableValueMap.class)
+        .put("released", slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/1").getValueMap()
+                .get("jcr:uuid"));
+
+        registerMockAdapter(Module.class, slingContext);
+        ModuleJsonServlet servlet = new ModuleJsonServlet();
+        slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
+
+        // When
+        Map<String, Object> map = servlet.resourceToMap(
+                slingContext.request(),
+                slingContext.resourceResolver().getResource("/content/repositories/repo/module"));
+        Map<String, Object> moduleMap = (Map<String, Object>)map.get("module");
+
+        assertTrue(moduleMap.containsKey("view_uri"));
     }
 }

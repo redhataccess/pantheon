@@ -7,9 +7,9 @@ import javax.annotation.Nonnull;
  * Includes the module version path so it can be re-fetched in the
  * handlers if necessary.
  */
-public class ModuleVersionPublishedEvent extends ModuleVersionPublishStateEvent {
+public class ModuleVersionUnpublishedEvent extends ModuleVersionPublishStateEvent {
 
-    public ModuleVersionPublishedEvent(@Nonnull String moduleVersionPath) {
+    public ModuleVersionUnpublishedEvent(@Nonnull String moduleVersionPath) {
         super(moduleVersionPath);
     }
 }

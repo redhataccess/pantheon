@@ -1,6 +1,8 @@
 {
   "security:principals": [
     { "name": "demo", "password": "demo" },
-    { "name": "pantheon-users", "isgroup": true, "members": ["demo"] }
+    { "name": "author", "password": "author" },
+    { "name": "pantheon-authors", "isgroup": true, "members": ["author"] },
+    { "name": "pantheon-publishers", "isgroup": true, "members": ["demo"] }
   ]
 }

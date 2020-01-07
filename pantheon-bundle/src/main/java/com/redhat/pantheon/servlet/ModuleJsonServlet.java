@@ -24,12 +24,14 @@ import javax.servlet.Servlet;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.conf.GlobalConfig.CONTENT_TYPE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 /**
@@ -54,7 +56,6 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     private final Logger log = LoggerFactory.getLogger(ModuleJsonServlet.class);
 
-
     @Override
     protected String getQuery(SlingHttpServletRequest request) {
 
@@ -69,29 +70,31 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     }
 
     @Override
-    protected boolean isValidResource(@Nonnull Resource resource) {
+    protected boolean isValidResource(@Nonnull SlingHttpServletRequest request, @Nonnull Resource resource) {
+        Locale locale = paramValueAsLocale(request, "locale", DEFAULT_MODULE_LOCALE);
         Module module = resource.adaptTo(Module.class);
-        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(DEFAULT_MODULE_LOCALE);
+        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(locale);
         return releasedRevision.isPresent();
     }
 
-    protected Map<String, Object> resourceToMap(@NotNull Resource resource) throws RepositoryException {
+    @Override
+    protected Map<String, Object> resourceToMap(@Nonnull SlingHttpServletRequest request,
+                                                @NotNull Resource resource) throws RepositoryException {
         Module module = resource.adaptTo(Module.class);
 
-        // The DEFAULT_MODULE_LOCALE should later be replaced with 'localeParam' variable
-        // this needs to be done while handling localizations
-        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE);
-        Optional<Content> releasedContent = module.getReleasedContent(DEFAULT_MODULE_LOCALE);
-        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(DEFAULT_MODULE_LOCALE);
+        Locale locale = paramValueAsLocale(request, "locale", DEFAULT_MODULE_LOCALE);
+        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(locale);
+        Optional<Content> releasedContent = module.getReleasedContent(locale);
+        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(locale);
 
-        Map<String, Object> moduleMap = super.resourceToMap(resource);
+        Map<String, Object> moduleMap = super.resourceToMap(request, resource);
         Map<String, Object> moduleDetails = new HashMap<>();
 
         moduleDetails.put("status", SC_OK);
         moduleDetails.put("message", "Module Found");
 
         String resourcePath = resource.getPath();
-        moduleMap.put("locale", module.getModuleLocale(DEFAULT_MODULE_LOCALE).getName());
+        moduleMap.put("locale", ServletUtils.toLanguageTag(locale));
         moduleMap.put("revision_id", releasedRevision.get().getName());
         moduleMap.put("title", releasedMetadata.get().title().get());
         moduleMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline().get() : "");
@@ -104,7 +107,8 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleMap.put("module_url_fragment", resourcePath.substring("/content/repositories/".length(), resourcePath.length()));
 
         // Striping out the jcr: from key name
-        moduleMap.put("module_uuid", moduleMap.remove("jcr:uuid"));
+        String module_uuid = (String) moduleMap.remove("jcr:uuid");
+        moduleMap.put("module_uuid", module_uuid);
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         moduleMap.put("date_modified", dateModified.toInstant().toString());
@@ -135,6 +139,17 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         String urlFragment = releasedMetadata.get().urlFragment().get() != null ? releasedMetadata.get().urlFragment().get() : "";
         if (!urlFragment.isEmpty()) {
             moduleMap.put("vanity_url_fragment", urlFragment);
+        }
+
+        String searchKeywords = releasedMetadata.get().searchKeywords().get();
+        if (searchKeywords != null && !searchKeywords.isEmpty()) {
+            moduleMap.put("search_keywords", searchKeywords.split(", *"));
+        }
+
+        // Process view_uri
+        if (System.getenv("PORTAL_URL") != null) {
+            String view_uri = System.getenv("PORTAL_URL") + "/topics/" + ServletUtils.toLanguageTag(locale) + "/" + module_uuid;
+            moduleMap.put("view_uri", view_uri);
         }
 
         // remove unnecessary fields from the map

@@ -1,21 +1,29 @@
 import React, { Component } from 'react'
 import {
-    ActionGroup, Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Level, LevelItem, List, ListItem,
+    ActionGroup, Alert, AlertActionCloseButton, Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Level, LevelItem, List, ListItem,
     Text, TextContent, TextVariants, TextInput
 } from '@patternfly/react-core'
 import { Fields, JcrTypes, SlingTypes } from '@app/Constants'
+import { tsObjectKeyword } from '@babel/types';
 
 export interface IProps {
     productName: string
 }
 
-class ProductDetails extends Component<IProps, any> {
+interface IState {
+    allVersionNames: any[]
+    failedPost: boolean
+    newVersion: string
+}
+
+class ProductDetails extends Component<IProps, IState> {
     public versionNames: string[] = []
 
     constructor(props) {
         super(props)
         this.state = {
             allVersionNames: [],
+            failedPost: false,
             newVersion: ''
         }
     }
@@ -69,6 +77,17 @@ class ProductDetails extends Component<IProps, any> {
                             >
                                 <TextInput id="new_version_name_text" type="text" placeholder="New version name" onChange={this.handleTextInputChange} value={this.state.newVersion} />
                             </FormGroup>
+                            {this.state.failedPost &&
+                                <div className="notification-container">
+                                    <Alert
+                                    variant="danger"
+                                    title="Failed to create product version."
+                                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                    >
+                                    Please check if you are logged in as a publisher.
+                                    </Alert>
+                                </div>
+                            }
                             <ActionGroup>
                                 <Button aria-label="Creates a new Version Name." onClick={this.saveVersion}>Save</Button>
                             </ActionGroup>
@@ -77,6 +96,10 @@ class ProductDetails extends Component<IProps, any> {
                 </div>
             </React.Fragment>
         )
+    }
+
+    private dismissNotification = () => {
+        this.setState({ failedPost: false })
     }
 
     private fetchProductDetails = (versionNames) => {
@@ -138,6 +161,7 @@ class ProductDetails extends Component<IProps, any> {
                 this.setState({ newVersion: '' })
                 this.fetchProductDetails(this.state.allVersionNames)
             } else {
+                this.setState({ failedPost: true })
                 console.log('Version adding failure')
             }
         })
