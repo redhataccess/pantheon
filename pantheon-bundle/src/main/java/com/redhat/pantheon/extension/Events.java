@@ -32,8 +32,8 @@ public class Events {
         this.jobManager = jobManager;
     }
 
-    public void fireEvent(Event evt) {
-        final long delay = 30*1000;
+    public void fireEvent(Event evt, int delayInsecs) {
+        final long delay = delayInsecs * 1000;
         final Date fireDate = new Date();
         fireDate.setTime(System.currentTimeMillis() + delay);
         Map<String, Object> props = newHashMap();

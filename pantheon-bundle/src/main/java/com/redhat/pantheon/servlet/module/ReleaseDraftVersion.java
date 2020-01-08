@@ -73,8 +73,8 @@ public class ReleaseDraftVersion extends AbstractPostOperation {
                     .datePublished().set(Calendar.getInstance());
             changes.add(Modification.onModified(module.getPath()));
 
-            // call the extension point
-            events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.released().getReference().getPath()));
+            // Fire the event after 15 second's delay.
+            events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.released().getReference().getPath()), 15);
 
         }
     }
