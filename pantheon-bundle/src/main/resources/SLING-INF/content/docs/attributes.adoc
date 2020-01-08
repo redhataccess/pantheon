@@ -1,0 +1,11 @@
+:Year: 2020
+
+// Red Hat
+:RH: Red{nbsp}Hat
+
+// The product (Pantheon)
+:ProductName: Pantheon
+:ProductShortName: Pantheon
+:ProductNumber: 2
+
+:imagesdir: images
