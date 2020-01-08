@@ -35,7 +35,7 @@ class EventsTest {
 
         // Then
         verify(jobBuilder, times(1)).properties(anyMap());
-        verify(jobBuilder, times(1)).add();
+        verify(jobBuilder, times(1)).schedule();
         verify(jobManager, times(1)).createJob(eq(Events.EVENT_TOPIC_NAME));
     }
 }
