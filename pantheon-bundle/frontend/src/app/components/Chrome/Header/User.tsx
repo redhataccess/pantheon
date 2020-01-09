@@ -1,75 +1,80 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
 import {
-    Dropdown,
+    Button, Dropdown,
     DropdownToggle,
-    DropdownItem,
-    DropdownSeparator,
-    DropdownPosition,
-    DropdownDirection,
-    KebabToggle
-  } from '@patternfly/react-core'
+    DropdownItem, Modal
+} from '@patternfly/react-core'
 import { HelpIcon } from '@patternfly/react-icons'
 
 import { IAppState } from '@app/app'
 
-class User extends Component<IAppState, any> {
+interface IState {
+    helpDropdownOpen: boolean
+    placeholderDialogOpen: boolean
+}
+
+class User extends Component<IAppState, IState> {
     constructor(props) {
         super(props)
         this.state = {
-          isOpen: false
+            helpDropdownOpen: false,
+            placeholderDialogOpen: false
         }
-      }
-
-
-      onToggle = isOpen => {
-        this.setState({
-          isOpen
-        })
-      }
-      onSelect = event => {
-        this.setState({
-          isOpen: !this.state.isOpen
-        })
-      }
+    }
 
     public render() {
         const dropdownItems = [
-            <DropdownItem key="link">Link</DropdownItem>,
-            <DropdownItem key="action" component="button">
-              Action
-            </DropdownItem>,
-            <DropdownItem key="disabled link" isDisabled>
-              Disabled Link
-            </DropdownItem>,
-            <DropdownItem key="disabled action" isDisabled component="button">
-              Disabled Action
-            </DropdownItem>,
-            <DropdownSeparator key="separator" />,
-            <DropdownItem key="separated link">Separated Link</DropdownItem>,
-            <DropdownItem key="separated action" component="button">
-              Separated Action
-            </DropdownItem>
-          ]
+            <DropdownItem key="help" onClick={this.onPlaceholderShow}>Help</DropdownItem>,
+            <DropdownItem key="contribute" onClick={this.onPlaceholderShow}>Contribute to Pantheon</DropdownItem>
+        ]
+        const placeHolderModalButtons = [
+            <Button key="placeholderOk" onClick={this.onPlaceholderClose}>OK</Button>
+        ]
         return (
             <React.Fragment>
-                <Dropdown
-                    onSelect={this.onSelect}
-                    toggle={
-                    <DropdownToggle iconComponent={null} onToggle={this.onToggle} aria-label="Applications" id="toggle-id-7">
-                        <HelpIcon />
-                    </DropdownToggle>
-                    }
-                    isOpen={this.state.isOpen}
-                    isPlain
-                    dropdownItems={dropdownItems}
+                <Modal width={'60%'}
+                        title='Placeholder dialog'
+                        isOpen={this.state.placeholderDialogOpen}
+                        onClose={this.onPlaceholderClose}
+                        actions={placeHolderModalButtons}>
+                    This feature has not yet been implemented.
+                </Modal>
+                <Dropdown onSelect={this.onHelpSelect}
+                        toggle={
+                            <DropdownToggle iconComponent={null} onToggle={this.onHelpToggle}>
+                                <HelpIcon />
+                            </DropdownToggle>
+                        }
+                        isPlain={true}
+                        isOpen={this.state.helpDropdownOpen}
+                        dropdownItems={dropdownItems}
+                        position="right"
                 />
                 <Link to={this.props.userAuthenticated ? '' : '/login'}
-                    onClick={this.conditionalRedirect}>
+                        onClick={this.conditionalRedirect}>
                     {this.props.userAuthenticated ? 'Log Out [' + this.props.username + ']' : 'Log In'}
                 </Link>
             </React.Fragment>
         )
+    }
+
+    private onHelpToggle = helpDropdownOpen => {
+        this.setState({ helpDropdownOpen })
+    }
+
+    private onHelpSelect = () => {
+        this.setState({
+            helpDropdownOpen: !this.state.helpDropdownOpen
+        })
+    }
+
+    private onPlaceholderClose = () => {
+        this.setState({ placeholderDialogOpen: false })
+    }
+
+    private onPlaceholderShow = () => {
+        this.setState({ placeholderDialogOpen: true })
     }
 
     private conditionalRedirect = () => {
