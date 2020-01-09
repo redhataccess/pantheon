@@ -187,13 +187,13 @@ class Search extends Component<IAppState, ISearchState> {
                             <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
                         </DataListCell>,      
                         <DataListCell key={"transient-source_" + key}>                          
-                          <span>{data["publishedDate"]}</span>
+                          <span>{data["publishedDate"].substring(4,28)}</span>
                         </DataListCell>,
                         <DataListCell key={"transient-source-name_" + key}>                              
-                          <span>{data["draftUploadDate"]}</span>
+                          <span>{data["draftUploadDate"].substring(4,28)}</span>
                         </DataListCell>,
                         <DataListCell key={"created_" + key}>
-                          <span >{this.formatDate(new Date(data["pant:dateUploaded"]))}</span>
+                          <span >{data["moduleType"]}</span>
                         </DataListCell>
                       ]}
                     />
@@ -310,49 +310,45 @@ class Search extends Component<IAppState, ISearchState> {
   }
   
   private publishedOrDraftUploadDate = (records) => {
-    // console.log("results:",results)
     records.map(data =>{
       if(data.name!==""){
         const fetchpath = "/content/" + data["pant:transientPath"] + ".harray.4.json"
-        // console.log("fetchpath:",fetchpath)
   
         fetch(fetchpath)
             .then(response => response.json())
             .then(responseJSON => {
-                // console.log("responseJSON:",responseJSON)
                 const releasedTag = responseJSON.__children__[0].released
-                const draftTag = responseJSON.__children__[0].draft
-             
+                const draftTag = responseJSON.__children__[0].draft             
                 const versionCount = responseJSON.__children__[0].__children__.length
-                for (let i = versionCount - 1; i > versionCount - 3 && i >= 0; i--) {
-                    const moduleVersion = responseJSON.__children__[0].__children__[i]
-                    if (moduleVersion["jcr:uuid"] === draftTag) {
-                      const metadata = moduleVersion.__children__[1]
+                
+                for (let i = versionCount - 1; i >= 0; i--) {
+                    const moduleVersion = responseJSON.__children__[0].__children__[i]                    
+                    const metadata = moduleVersion.__children__[1]
+                    if(metadata["pant:moduleType"]===undefined){
+                      data["moduleType"] = "-"
+                    }else{
+                      data["moduleType"] = metadata["pant:moduleType"]
+                    }
+                    if (moduleVersion["jcr:uuid"] === draftTag) {                      
                         if(metadata["pant:dateUploaded"]!==undefined){                        
                           data["draftUploadDate"] = metadata["pant:dateUploaded"]
-                          // console.log("data:",data)
                         }
                     }
                     if (moduleVersion["jcr:uuid"] === releasedTag) {
-                        const metadata = moduleVersion.__children__[1]
-                        if(metadata["pant:datePublished"]===undefined){                        
-                          data["publishedDate"] = metadata["pant:datePublished"]
-                          // console.log("data:",data)
+                        if(data["draftUploadDate"]==="-" && metadata["pant:dateUploaded"]!==undefined){
+                          data["draftUploadDate"] = metadata["pant:dateUploaded"]
+                        }
+                        if(metadata["pant:datePublished"]!==undefined){                        
+                          data["publishedDate"] = metadata["pant:datePublished"]                          
+                        }else{
+                          data["publishedDate"] = "-"
                         }   
                     }
                 }     
             })  
       }
     })
-    console.log("records:",records)
     return records;
-    // this.setState({
-    //   results: records
-    // },()=>{
-    //   console.log("results:",this.state.results)
-    // })
-    
-
 }
 
   private handleSelectAll = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
@@ -423,8 +419,6 @@ class Search extends Component<IAppState, ISearchState> {
     fetch(this.buildSearchUrl())
       .then(response => response.json())
       .then(responseJSON => this.setState({ results: this.publishedOrDraftUploadDate(responseJSON.results), nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 },()=>{
-        console.log("responseJson:",responseJSON)        
-        console.log("results:",this.state.results)
       }))
       .then(() => {        
         if (JSON.stringify(this.state.results) === "[]") {
