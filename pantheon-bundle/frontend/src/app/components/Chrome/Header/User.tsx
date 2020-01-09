@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Link } from "react-router-dom"
+import { Link } from 'react-router-dom'
 import {
     Button, Dropdown,
     DropdownToggle,
@@ -25,11 +25,11 @@ class User extends Component<IAppState, IState> {
 
     public render() {
         const dropdownItems = [
-            <DropdownItem key="help" onClick={this.onPlaceholderShow}>Help</DropdownItem>,
-            <DropdownItem key="contribute" onClick={this.onPlaceholderShow}>Contribute to Pantheon</DropdownItem>
+            <DropdownItem key='help' onClick={this.onPlaceholderShow}>Help</DropdownItem>,
+            <DropdownItem key='contribute' href='https://github.com/redhataccess/pantheon' target='_blank'>Contribute to Pantheon</DropdownItem>
         ]
         const placeHolderModalButtons = [
-            <Button key="placeholderOk" onClick={this.onPlaceholderClose}>OK</Button>
+            <Button key='placeholderOk' onClick={this.onPlaceholderClose}>OK</Button>
         ]
         return (
             <React.Fragment>
@@ -49,7 +49,7 @@ class User extends Component<IAppState, IState> {
                         isPlain={true}
                         isOpen={this.state.helpDropdownOpen}
                         dropdownItems={dropdownItems}
-                        position="right"
+                        position='right'
                 />
                 <Link to={this.props.userAuthenticated ? '' : '/login'}
                         onClick={this.conditionalRedirect}>
@@ -80,7 +80,7 @@ class User extends Component<IAppState, IState> {
     private conditionalRedirect = () => {
         if (this.props.userAuthenticated) {
             fetch('/system/sling/logout')
-                .then(response => window.location.href = "/pantheon")
+                .then(response => window.location.href = '/pantheon')
         }
     }
 }
