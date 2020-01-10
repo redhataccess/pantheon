@@ -35,7 +35,6 @@ interface IState {
     metadataInitialLoad: boolean
     metadataPath: string
     moduleUrl: string
-    productOptions: any
     productValue: string
     productVersion: string
     publishAlertVisible: boolean
@@ -74,9 +73,6 @@ class Versions extends Component<IProps, IState> {
             metadataInitialLoad: true,
             metadataPath: '',
             moduleUrl: '',
-            productOptions: [
-                { value: '', label: 'Select a Product', disabled: false },
-            ],
             productValue: '',
             productVersion: '',
             publishAlertVisible: false,
@@ -87,9 +83,7 @@ class Versions extends Component<IProps, IState> {
             ],
             usecaseValue: '',
 
-            versionOptions: [
-                { value: '', label: 'Select a Version', disabled: false },
-            ],
+            versionOptions: [],
             versionSelected: '',
             versionUUID: "",
             versionValue: '',
@@ -97,7 +91,7 @@ class Versions extends Component<IProps, IState> {
     }
 
     public componentDidMount() {
-        this.fetchProductVersionDetails()
+        this.fetchProducts()
         this.fetchVersions()
     }
 
@@ -120,10 +114,6 @@ class Versions extends Component<IProps, IState> {
               </p>
             </React.Fragment>
         )
-        let verOptions = this.state.versionOptions
-        if (this.state.allProducts[this.state.productValue]) {
-            verOptions = this.state.allProducts[this.state.productValue]
-        }
 
         return (
             <React.Fragment>
@@ -344,14 +334,16 @@ class Versions extends Component<IProps, IState> {
                         >
                             <InputGroup>
                                 <FormSelect value={this.state.productValue} onChange={this.onChangeProduct} aria-label="FormSelect Product">
-                                    {this.state.productOptions.map((option, index) => (
-                                        <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
+                                    <FormSelectOption label='Select a Product'/>
+                                    {this.state.allProducts.map((option, key) => (
+                                        <FormSelectOption key={key} value={option} label={option}/>
                                     ))}
                                 </FormSelect>
                                 <FormSelect value={this.state.versionUUID} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
-                                    {verOptions.map((option) => (
+                                    <FormSelectOption label='Select a Version'/>
+                                    {this.state.versionOptions.map((option, key) => (
 
-                                        <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} required={false} />
+                                        <FormSelectOption key={key} value={option['jcr:uuid']} label={option.__name__}/>
                                     ))}
                                 </FormSelect>
                             </InputGroup>
@@ -579,8 +571,13 @@ class Versions extends Component<IProps, IState> {
             })
         }
     }
-    private onChangeProduct = (productValue) => {
+    private onChangeProduct = productValue => {
         this.setState({ productValue, versionUUID: '' })
+        fetch('/content/products/' + productValue + '/versions.harray.1.json')
+            .then(response => response.json())
+            .then(json => {
+                this.setState({ versionOptions: json.__children__ })
+            })
     }
     private onChangeVersion = () => {
 
@@ -596,7 +593,7 @@ class Versions extends Component<IProps, IState> {
                         versionUUID: event.target["selectedOptions"][0].value,
                         // tslint:disable-next-line: no-string-literal
                         versionValue: event.target["selectedOptions"][0].label,
-                    });
+                    })
                 }
             }
         }
@@ -614,74 +611,26 @@ class Versions extends Component<IProps, IState> {
         this.setState({ keywords })
     }
 
-    private fetchProductVersionDetails = () => {
+    private fetchProducts = () => {
 
-        const path = '/content/products.3.json'
-        let key
+        const path = '/content/products.harray.1.json'
         const products = new Array()
 
         fetch(path)
             .then((response) => {
                 if (response.ok) {
-                    // console.log("[responseJSON] response.ok ", response.json())
                     return response.json()
-                } else if (response.status === 404) {
-                    // console.log("Something unexpected happen!")
-                    return products
                 } else {
                     throw new Error(response.statusText)
                 }
             })
             .then(responseJSON => {
-                // tslint:disable-next-line: prefer-for-of
-                for (let i = 0; i < Object.keys(responseJSON).length; i++) {
-                    key = Object.keys(responseJSON)[i]
-                    const nameKey = "name"
-                    const versionKey = "versions"
-                    if ((key !== 'jcr:primaryType')) {
-                        if (responseJSON[key][nameKey] !== undefined) {
-                            const pName = responseJSON[key][nameKey]
-                            const versionObj = responseJSON[key][versionKey]
-
-                            if (versionObj) {
-                                let vKey
-                                const versions = [{ value: '', label: 'Select a Version', disabled: false }]
-                                // tslint:disable-next-line: no-shadowed-variable
-                                const nameKey = "name"
-                                const uuidKey = "jcr:uuid"
-                                for (const item in Object.keys(versionObj)) {
-                                    if (Object.keys(versionObj)[item] !== undefined) {
-                                        vKey = Object.keys(versionObj)[item]
-
-                                        if (vKey !== 'jcr:primaryType') {
-                                            if (versionObj[vKey][nameKey]) {
-                                                versions.push({ value: versionObj[vKey][uuidKey], label: versionObj[vKey][nameKey], disabled: false })
-                                            }
-                                        }
-                                    }
-                                }
-
-                                products[pName] = versions
-                            }
-                        }
-                    }
+                for (const product of responseJSON.__children__) {
+                    products.push(product.__name__)
                 }
                 this.setState({
                     allProducts: products
                 })
-
-                if (products) {
-                    const productItems = [{ value: 'Select a Product', label: 'Select a Product', disabled: false }]
-                    // tslint:disable-next-line: forin
-                    for (const item in products) {
-                        // console.log("[render] item ", item)
-                        productItems.push({ value: item, label: item, disabled: false })
-                    }
-                    if (productItems.length > 1) {
-                        this.setState({ productOptions: productItems })
-                        // console.log("[fetchProductVersionDetails] productOptions: ", this.state.productOptions)
-                    }
-                }
             })
             .catch((error) => {
                 console.log(error)
