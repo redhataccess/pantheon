@@ -42,7 +42,7 @@ func TestGetUploader(t *testing.T) {
 }
 
 func TestPush2Pantheon(t *testing.T) {
-	file := "./pantheon.py"
+	uploader := "./pantheon.py"
 	getUploader()
 
 	output := captureOutput(func() {
@@ -51,14 +51,14 @@ func TestPush2Pantheon(t *testing.T) {
 	if !strings.Contains(output, "pantheon2.yml was not found in the root of the repo, skipping upload.") {
 		t.Errorf("No pantheon2.yml is expected, this test should skip the upload.")
 	}
-	cleanup(file)
-	if _, err := os.Stat(file); err == nil {
-		t.Errorf("The %s file not should exist", file)
+	cleanup(uploader)
+	if _, err := os.Stat(uploader); err == nil {
+		t.Errorf("The %s file not should exist", uploader)
 	}
 }
 
 func TestPush2PantheonWithYML(t *testing.T) {
-	file := "./pantheon.py"
+	uploader := "./pantheon.py"
 	yml := "./pantheon2.yml"
 	getUploader()
 
@@ -77,11 +77,14 @@ func TestPush2PantheonWithYML(t *testing.T) {
 	if !strings.Contains(output, "Credentials not found") {
 		t.Errorf("ENV UPLOADER_PASSWORD and UPLOADER_USER should always be not set during build.")
 	}
-	cleanup(file)
+	cleanup(uploader)
 	cleanup(yml)
 
-	if _, err := os.Stat(file); err == nil {
-		t.Errorf("The %s file not should exist", file)
+	if _, err := os.Stat(uploader); err == nil {
+		t.Errorf("The %s file not should exist", uploader)
+	}
+	if _, err := os.Stat(yml); err == nil {
+		t.Errorf("The %s file not should exist", yml)
 	}
 }
 
