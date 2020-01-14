@@ -1,0 +1,19 @@
+[id='pantheon-user-interface']
+= Pantheon user interface
+
+
+The user interface is organized as a main work area and a tabbed sidebar with the following tabs:
+
+* `Modules` - Use this tab create new modules, organize, search and edit the modules in a project or product.
+** `Search` -
+** `New Module` -
+** `Git Import` -
+* `Products` - Use this tab to create new product categories.
+** `Product Listing` -
+** `New Product` -
+
+* `Admin panel` (admin user only??) -
+** 'Sling Welcome' -
+** 'Content Browser' -
+** 'Web Console' -
+ 
