@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -51,6 +52,34 @@ func TestPush2Pantheon(t *testing.T) {
 		t.Errorf("No pantheon2.yml is expected, this test should skip the upload.")
 	}
 	cleanup(file)
+	if _, err := os.Stat(file); err == nil {
+		t.Errorf("The %s file not should exist", file)
+	}
+}
+
+func TestPush2PantheonWithYML(t *testing.T) {
+	file := "./pantheon.py"
+	yml := "./pantheon2.yml"
+	getUploader()
+
+	dummy := []byte("dummy pantheon2.yml")
+	err := ioutil.WriteFile("./pantheon2.yml", dummy, 0644)
+	if err != nil {
+		t.Errorf("No pantheon2.yml was found, and no upload attempted.")
+	}
+
+	output := captureOutput(func() {
+		push2Pantheon(".")
+	})
+	if strings.Contains(output, "pantheon2.yml was not found in the root of the repo, skipping upload.") {
+		t.Errorf("No pantheon2.yml was found, and no upload attempted.")
+	}
+	if !strings.Contains(output, "Credentials not found") {
+		t.Errorf("ENV UPLOADER_PASSWORD and UPLOADER_USER should always be not set during build.")
+	}
+	cleanup(file)
+	cleanup(yml)
+
 	if _, err := os.Stat(file); err == nil {
 		t.Errorf("The %s file not should exist", file)
 	}

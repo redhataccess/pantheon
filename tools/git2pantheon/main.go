@@ -81,10 +81,10 @@ func getInfo(w http.ResponseWriter, r *http.Request) {
 
 func init() {
 	log.SetFlags(log.Lmicroseconds | log.Lshortfile)
-	flag.Parse()
 }
 
 func main() {
+	flag.Parse()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/clone", cloneBranch)
 	mux.HandleFunc("/info", getInfo)

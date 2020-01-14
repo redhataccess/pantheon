@@ -52,10 +52,16 @@ func push2Pantheon(directory string) {
 	if _, err := os.Stat(directory + "/pantheon2.yml"); os.IsNotExist(err) {
 		log.Print("pantheon2.yml was not found in the root of the repo, skipping upload.")
 	} else {
-		//Now call python
 		log.Print("Found pantheon2.yml in the root of the repo, uploading.")
-		args := []string{"pantheon.py", "push", "--directory", directory}
-		cmd := exec.Command("python3", args...) //TODO
+		var user = os.Getenv("UPLOADER_USER")
+		var password = os.Getenv("UPLOADER_PASSWORD")
+		args := []string{"pantheon.py", "push", "--user", user, "--password", password, "--directory", directory}
+		if user == "" || password == "" {
+			log.Print("Credentials not found, using uploaders default's credentials.")
+			args = []string{"pantheon.py", "push", "--directory", directory}
+		}
+		//Now call python
+		cmd := exec.Command("python3", args...)
 		out, err := cmd.Output()
 
 		log.Print(err)
