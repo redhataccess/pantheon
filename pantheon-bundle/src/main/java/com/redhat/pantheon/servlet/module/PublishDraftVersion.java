@@ -90,8 +90,8 @@ public class PublishDraftVersion extends AbstractPostOperation {
             // set the published date on the released version
             versionToRelease.get()
                     .metadata().getOrCreate()
-                    .datePublished().set(Calendar.getInstance());
-            changes.add(Modification.onModified(module.getPath()));
+                    .datePublished().set(Calendar.getInstance().getTime());
+            changes.add(Modification.onModified(module.getPath())); 
         }
     }
 }

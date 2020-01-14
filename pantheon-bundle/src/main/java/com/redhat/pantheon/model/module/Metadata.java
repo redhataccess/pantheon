@@ -8,6 +8,7 @@ import org.apache.jackrabbit.JcrConstants;
 
 import javax.inject.Named;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Models an instance of metadata for a module. Multiple metadata
@@ -38,10 +39,10 @@ public interface Metadata extends SlingModel {
     Field<ModuleType> moduleType();
 
     @Named("pant:datePublished")
-    Field<Calendar> datePublished();
-
+    Field<Date> datePublished();
+    
     @Named("pant:dateUploaded")
-    Field<Calendar> dateUploaded();
+    Field<Date> dateUploaded();
 
     @Named(JcrConstants.JCR_LASTMODIFIED)
     Field<Calendar> dateModified();

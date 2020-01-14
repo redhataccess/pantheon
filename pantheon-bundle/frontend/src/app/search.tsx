@@ -42,13 +42,6 @@ export interface ISearchState {
 class Search extends Component<IAppState, ISearchState> {
   public static KEY_CHECKEDITEM: string = "checkedItem"
   public static KEY_TRANSIENTPATH: string = "pant:transientPath"
-
-  // //newCode
-  // public draft = [{ "type": "draft", "path": "", "version": "", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]
-  // public release = [{ "type": "release", "path": "", "version": "", "publishedState": 'Released', "updatedDate": "", "firstButtonType": 'secondary', "secondButtonType": 'primary', "firstButtonText": 'Unpublish', "secondButtonText": 'View', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '', "draftUploadDate": "" }]
-  // //newCode
-
-  public draftUploadDate = "-"
   public published = "-"
 
   constructor(props) {
@@ -73,7 +66,7 @@ class Search extends Component<IAppState, ISearchState> {
       pageLimit: 25,
       redirect: false,
       redirectLocation: '',
-      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false, "draftUploadDate": "-","publishedDate": "-"}],
+      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false,"publishedDate": "-"}],
       selectAllCheckValue: false,
       showDropdownOptions: true,
       sortKey: ''
@@ -187,13 +180,13 @@ class Search extends Component<IAppState, ISearchState> {
                             <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
                         </DataListCell>,      
                         <DataListCell key={"transient-source_" + key}>                          
-                          <span>{data["publishedDate"].substring(4,28)}</span>
+                          <span>{data["pant:publishedDate"]}</span>
                         </DataListCell>,
                         <DataListCell key={"transient-source-name_" + key}>                              
-                          <span>{data["draftUploadDate"].substring(4,28)}</span>
+                          <span>{data["pant:dateUploaded"]}</span>
                         </DataListCell>,
                         <DataListCell key={"created_" + key}>
-                          <span >{data["moduleType"]}</span>
+                          <span >{data.moduleType}</span>
                         </DataListCell>
                       ]}
                     />
@@ -309,48 +302,6 @@ class Search extends Component<IAppState, ISearchState> {
     );
   }
   
-  private publishedOrDraftUploadDate = (records) => {
-    records.map(data =>{
-      if(data.name!==""){
-        const fetchpath = "/content/" + data["pant:transientPath"] + ".harray.4.json"
-  
-        fetch(fetchpath)
-            .then(response => response.json())
-            .then(responseJSON => {
-                const releasedTag = responseJSON.__children__[0].released
-                const draftTag = responseJSON.__children__[0].draft             
-                const versionCount = responseJSON.__children__[0].__children__.length
-                
-                for (let i = versionCount - 1; i >= 0; i--) {
-                    const moduleVersion = responseJSON.__children__[0].__children__[i]                    
-                    const metadata = moduleVersion.__children__[1]
-                    if(metadata["pant:moduleType"]===undefined){
-                      data["moduleType"] = "-"
-                    }else{
-                      data["moduleType"] = metadata["pant:moduleType"]
-                    }
-                    if (moduleVersion["jcr:uuid"] === draftTag) {                      
-                        if(metadata["pant:dateUploaded"]!==undefined){                        
-                          data["draftUploadDate"] = metadata["pant:dateUploaded"]
-                        }
-                    }
-                    if (moduleVersion["jcr:uuid"] === releasedTag) {
-                        if(data["draftUploadDate"]==="-" && metadata["pant:dateUploaded"]!==undefined){
-                          data["draftUploadDate"] = metadata["pant:dateUploaded"]
-                        }
-                        if(metadata["pant:datePublished"]!==undefined){                        
-                          data["publishedDate"] = metadata["pant:datePublished"]                          
-                        }else{
-                          data["publishedDate"] = "-"
-                        }   
-                    }
-                }     
-            })  
-      }
-    })
-    return records;
-}
-
   private handleSelectAll = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
     const newResults: any[] = []
     this.state.results.map(dataitem => {
@@ -418,8 +369,9 @@ class Search extends Component<IAppState, ISearchState> {
     this.setState({ displayLoadIcon: true })
     fetch(this.buildSearchUrl())
       .then(response => response.json())
-      .then(responseJSON => this.setState({ results: this.publishedOrDraftUploadDate(responseJSON.results), nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 },()=>{
-      }))
+      .then(responseJSON => {
+        this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })
+      })
       .then(() => {        
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
@@ -430,8 +382,7 @@ class Search extends Component<IAppState, ISearchState> {
         } else {          
           this.setState({
             displayLoadIcon: false,
-            isEmptyResults: false,
-            // results: this.state.results,
+            isEmptyResults: false,            
             selectAllCheckValue: false,
           })          
         }

@@ -19,10 +19,14 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
+import java.text.SimpleDateFormat;
+import java.time.Year;
+import java.util.Date;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
@@ -170,11 +174,35 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         // TODO Need some DTOs to convert to maps
         Map<String, Object> m = super.resourceToMap(resource);
         String resourcePath = resource.getPath();
-        m.put("name", resource.getName());
-        m.put("draftUploadDate","-");
-        m.put("publishedDate","-");
-        // TODO need to provide both released and draft to the api caller
-        m.put("pant:dateUploaded", draftMetadata.isPresent() ? draftMetadata.get().dateUploaded().get() : releasedMetadata.get().dateUploaded().get());
+        m.put("name", resource.getName());        
+        // TODO need to provide both released and draft to the api caller        
+        
+        SimpleDateFormat draftTimeStamp,relTimeStamp, releaseTimeStamp;
+        if(draftMetadata.isPresent()){
+            draftTimeStamp = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+            if(draftMetadata.get().dateUploaded().get()==null){
+                m.put("pant:dateUploaded",draftTimeStamp.format(new Date()));
+            }else{
+                m.put("pant:dateUploaded",draftTimeStamp.format(draftMetadata.get().dateUploaded().get()));
+            }
+            
+        }else{
+            relTimeStamp = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+            m.put("pant:dateUploaded",relTimeStamp.format(releasedMetadata.get().dateUploaded().get()));
+        }
+
+        if(releasedMetadata.isPresent()){
+            releaseTimeStamp = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+            if(releasedMetadata.get().datePublished().get()==null){
+                m.put("pant:publishedDate",releaseTimeStamp.format(new Date()));
+            }else{
+                m.put("pant:publishedDate",releaseTimeStamp.format(releasedMetadata.get().datePublished().get()));
+            }            
+        }else{
+            m.put("pant:publishedDate","-");
+        }
+        // need to revise this when the data is available for moduleType
+        m.put("moduleType","-");
         m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title().get() : releasedMetadata.get().title().get());
         m.put("jcr:description", draftMetadata.isPresent() ? draftMetadata.get().description().get() : releasedMetadata.get().description().get());
         // Assume the path is something like: /content/<something>/my/resource/path
@@ -186,7 +214,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         if (!"modules".equals(fragments[2])) {
             m.put("pant:transientSourceName", fragments[3]);
         }
-
+        
         log.trace(m.toString());
         return m;
     }
