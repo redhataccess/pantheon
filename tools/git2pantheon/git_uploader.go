@@ -57,7 +57,7 @@ func push2Pantheon(directory string) {
 		var password = os.Getenv("UPLOADER_PASSWORD")
 		args := []string{"pantheon.py", "push", "--user", user, "--password", password, "--directory", directory}
 		if user == "" || password == "" {
-			log.Print("Credentials not found, using uploaders default's credentials.")
+			log.Print("Credentials not found, using uploader's default credentials.")
 			args = []string{"pantheon.py", "push", "--directory", directory}
 		}
 		//Now call python
