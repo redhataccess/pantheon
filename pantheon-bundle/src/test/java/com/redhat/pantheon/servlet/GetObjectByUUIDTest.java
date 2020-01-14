@@ -48,6 +48,42 @@ class GetObjectByUUIDTest {
     }
 
     @Test
+    void doGetWithAncestors() throws ServletException, IOException {
+        // Given
+        sCtx.create().resource("/test",
+                "name", "a-name",
+                "testProp", "testValue1");
+        sCtx.create().resource("/test/child",
+                "name", "child-name",
+                "testProp", "testValue2");
+        sCtx.create().resource("/test/child/grandchild",
+                "name", "grandchild-name",
+                "testProp", "testValue3");
+        sCtx.create().resource("/test/child/grandchild/greatgc",
+                "name", "greatgc-name",
+                "jcr:mixinTypes", "mix:referenceable");
+        String resourceUuid = sCtx.resourceResolver()
+                .getResource("/test/child/grandchild/greatgc")
+                .getValueMap()
+                .get("jcr:uuid")
+                .toString();
+        Map params = newHashMap();
+        params.put("uuid", resourceUuid);
+        params.put("ancestors",  "2");
+        sCtx.request().setParameterMap(params);
+        GetObjectByUUID servlet = new GetObjectByUUID();
+
+        // When
+        servlet.doGet(sCtx.request(), sCtx.response());
+
+        // Then
+        assertEquals(HttpStatus.SC_OK, sCtx.response().getStatus());
+        assertEquals(false, sCtx.response().getOutputAsString().contains("testValue1"));
+        assertEquals(true, sCtx.response().getOutputAsString().contains("testValue2"));
+        assertEquals(true, sCtx.response().getOutputAsString().contains("testValue3"));
+    }
+
+    @Test
     void doGetNonexistentResource() throws ServletException, IOException {
         // Given
         Map params = newHashMap();
@@ -80,6 +116,22 @@ class GetObjectByUUIDTest {
         Map params = newHashMap();
         params.put("uuid", UUID.randomUUID().toString());
         params.put("depth", "-1");
+        sCtx.request().setParameterMap(params);
+        GetObjectByUUID servlet = new GetObjectByUUID();
+
+        // When
+        servlet.doGet(sCtx.request(), sCtx.response());
+
+        // Then
+        assertEquals(HttpStatus.SC_BAD_REQUEST, sCtx.response().getStatus());
+    }
+
+    @Test
+    void doGetWithInvalidAncestors() throws ServletException, IOException {
+        // Given
+        Map params = newHashMap();
+        params.put("uuid", UUID.randomUUID().toString());
+        params.put("ancestors", "-1");
         sCtx.request().setParameterMap(params);
         GetObjectByUUID servlet = new GetObjectByUUID();
 
