@@ -1,4 +1,4 @@
-[id='about-pantheon']
+[id='about-pantheon_{context}']
 = About Pantheon
 
 Pantheon is a content-management system and publishing platform developed by Red Hat. You can use it to publish documents based on AsciiDoc source. After adding your modules to Pantheon, add metadata, preview modules using the look and feel of the Customer Portal, associate the module with a product, publish and unpublish the module.
