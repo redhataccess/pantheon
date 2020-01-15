@@ -92,9 +92,6 @@ public class PublishDraftVersion extends AbstractPostOperation {
                     .metadata().getOrCreate()
                     .datePublished().set(Calendar.getInstance());
             changes.add(Modification.onModified(module.getPath()));
-
-            // Fire the event after 15 second's delay.
-            // events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.released().getReference().getPath()), 15);
         }
     }
 }
