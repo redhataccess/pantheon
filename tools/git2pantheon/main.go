@@ -54,7 +54,7 @@ func cloneBranch(w http.ResponseWriter, r *http.Request) {
 		if branch == "" {
 			branch = "master"
 		}
-		directory := "./" + randomAlphaNumericString()
+		directory := randomAlphaNumericString()
 
 		//start a new goroutine (lightweight thread) to handle clone/push/cleanup
 		go gitClone(repository, branch, directory)
