@@ -1,20 +1,24 @@
 [id='about-pantheon']
 = About Pantheon
 
-Pantheon is a publishing platform developed by Red Hat. You can use it to publish documents based on asciidoc source. With Pantheon 2, you can create modular documents, within the browser, to suit different user stories.
+Pantheon is a content-management system and publishing platform developed by Red Hat. You can use it to publish documents based on AsciiDoc source. After adding your modules to Pantheon, add metadata, preview modules using the look and feel of the Customer Portal, associate the module with a product, publish and unpublish the module.
 
-The traditional content model resembled a book, with chapters and a table of contents, but Pantheon 2 provides Red Hat customers  curated paths through independent and reusable content to allow for a much richer and targeted user experience.
+Pantheon provides:
 
-?? We use assemblies to put modules together into a document. So what exactly can you do with Pantheon 2? How does it help you create modular docs? ??
+    A GUI for managing modules and assemblies, including the ability for authors to search for specific content and other workflow features that are more user-friendly than those currently available
+    Metadata editing to optimize content for search engines
+    A module library to enable content reuse
+    A visual preview of a module so you can see how it will appear on the customer portal
 
-Pantheon 2 is designed to support the creation of smaller, independent pieces of content.
+Pantheon does not:
 
-Pantheon 2 can include content from both upstream and downstream sources.
+    Determine the appearance of content
+    Replace git as a source control system
 
-Pantheon 2 provides a GUI for managing modules and assemblies, including search and workflow features that are more user-friendly than those currently available.
+.Pantheon authoring workflow
 
-Pantheon 2 includes a module library that enables content reuse.
-
-
-
-Pantheon 2 includes
+    Write your content in modules.
+    Commit and push your modules to gitlab.
+    When you're ready to publish your modules, upload them to Pantheon.
+    Use Pantheon to add metadata and build a document based on modules.
+    Publish the document.
