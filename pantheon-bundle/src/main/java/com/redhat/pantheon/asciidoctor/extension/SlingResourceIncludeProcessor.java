@@ -50,6 +50,11 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
         Resource includeResource = resolver.getResource(parent, fixedTarget);
         String content = "Invalid include: " + target;
 
+        if (includeResource == null) {
+            //Check if maybe there are symlinks?
+            includeResource = resolveWithSymlinks(fixedTarget, parent);
+        }
+
         if(includeResource != null) {
             SlingModel includedResourceAsModel = includeResource.adaptTo(SlingModel.class);
 
@@ -73,5 +78,22 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
         }
 
         reader.push_include(content, target, target, 1, attributes);
+    }
+
+    private Resource resolveWithSymlinks(String path, Resource pathParent) {
+        Resource resource = pathParent;
+        for (String resourceName : path.split("/")) {
+            if (resourceName.isEmpty()) {
+                continue;
+            }
+            resource = resolver.getResource(resource, resourceName);
+            if (resource == null) {
+                return null;
+            }
+            if ("pant:symlink".equals(resource.getResourceType())) {
+                resource = resolveWithSymlinks(resource.getValueMap().get("pant:target", String.class), resource.getParent());
+            }
+        }
+        return resource;
     }
 }

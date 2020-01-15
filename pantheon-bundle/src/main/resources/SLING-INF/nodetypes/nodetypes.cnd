@@ -55,9 +55,9 @@
     - sling:resourceType (string) = 'pantheon/productVersion' mandatory autocreated
 
 // Base type for titles
-[pant:title] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
-	- sling:resourceType (string) = 'pantheon/title' mandatory autocreated
-    + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated
+//[pant:title] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+//	- sling:resourceType (string) = 'pantheon/title' mandatory autocreated
+//    + cachedContent (nt:unstructured) = nt:unstructured mandatory autocreated
 
 // Additional types:
 // nt:folder - https://wiki.apache.org/jackrabbit/nt%3Afolder
