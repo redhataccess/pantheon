@@ -2,18 +2,27 @@
 = Pantheon user interface
 
 
-The user interface is organized as a main work area and a tabbed sidebar with the following tabs:
+The user interface is organized with a main work area, an upper toolbar with a `Login` button and a show/hide button for displaying the sidebar, and a tabbed sidebar with the following tabs:
 
-* `Modules` - Use this tab create new modules, organize, search and edit the modules in a project or product.
-** `Search` -
-** `New Module` -
-** `Git Import` -
-* `Products` - Use this tab to create new product categories.
-** `Product Listing` -
-** `New Product` -
+* `Modules` - Use this tab to create new document modules, search for, edit, or delete modules.
+** `Search` - Provides advanced search options, including keyword search, search by product name, product version, document module  type (procedure, concept, reference) and upload date.
+*** Select a module check box to delete the selected module.
+*** Select a module name to view the module status and details, and publish, unpublish, preview or view the module in the customer portal.
+*** A drop-down menu allows editing the metadata of a module.
+** `New Module` - Use this tab to create a new module title.
+*** Enter a module name and description in the provided fields, upload an *.adoc file for the module, and click `Save`.
+** `Git Import` - Use this tab to import a module file directly from GitHub.
+*** Enter the repository URL and branch name in the provided fields and click `Submit`.
+* `Products` - Use this tab to view a list of product titles and details, and create new product titles.
+** `Product Listing` - Lists the available product titles. A drop down menu allows viewing product details.
+** `New Product` - Use this tab to create a new product title.
+*** Enter a product name and description in the provided fields and click `Save`.
 
 * `Admin panel` (admin user only??) -
-** 'Sling Welcome' -
-** 'Content Browser' -
-** 'Web Console' -
- 
+// Is this for Admin level users only??
+// TBD - will this section be visible to users in the final product?
+** 'Sling Welcome' - Displays the Sling management portal entry page.
+// Why do we need the Sling site welcome page??
+** 'Content Browser' - Displays the local Sling resource management screen.
+** 'Web Console' - Displays the `Apache Sling Web Console
+Bundles` management screen.
