@@ -19,9 +19,11 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,6 +49,7 @@ public class GetObjectByUUID extends SlingSafeMethodsServlet {
     final String PARAM_UUID = "uuid";
     final String PARAM_DEPTH = "depth";
     final String PARAM_DEREFERENCE = "dereference";
+    final String PARAM_ANCESTORS = "ancestors";
 
     private SlingHttpServletRequest request;
 
@@ -57,10 +60,15 @@ public class GetObjectByUUID extends SlingSafeMethodsServlet {
 
         String uuid = paramValue(request, PARAM_UUID);
         Long depth = paramValueAsLong(request, PARAM_DEPTH, 0L);
+        Long ancestors = paramValueAsLong(request, PARAM_ANCESTORS, 0L);
         String dereference = paramValue(request, PARAM_DEREFERENCE);
 
         if(isNullOrEmpty(uuid)) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter '" + PARAM_UUID + "' must be provided");
+            return;
+        }
+        if (ancestors < 0) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter '" + PARAM_ANCESTORS + "' must be >= 0");
             return;
         }
         if (depth < 0) {
@@ -79,6 +87,20 @@ public class GetObjectByUUID extends SlingSafeMethodsServlet {
         try {
             Resource foundResource = getResourceByUuid(uuid);
             Map<String, Object> payload = resourceToMapRecursive(foundResource, depth, dereferenceMap);
+            Resource ancestor = foundResource;
+            List<Map> ancestorList = new ArrayList<>();
+            for (int i = 0 ; i < ancestors ; i++) {
+                ancestor = ancestor.getParent();
+                if (ancestor == null) {
+                    break;
+                }
+                Map m = new HashMap(ancestor.getValueMap());
+                m.put("__name__", ancestor.getName());
+                ancestorList.add(m);
+            }
+            if (!ancestorList.isEmpty()) {
+                payload.put("ancestors", ancestorList);
+            }
             writeAsJson(response, payload);
         } catch (ItemNotFoundException infex) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

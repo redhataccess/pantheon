@@ -127,7 +127,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleMap.put(PRODUCT_NAME, "");
         moduleMap.put(PRODUCT_VERSION, "");
         moduleMap.put(VANITY_URL_FRAGMENT, "");
-        moduleMap.put(SEARCH_KEYWORDS, "");
+        moduleMap.put(SEARCH_KEYWORDS, new String[] {});
         moduleMap.put(VIEW_URI, "");
 
         // Process productVersion from metadata

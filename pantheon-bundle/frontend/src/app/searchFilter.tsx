@@ -388,7 +388,6 @@ class SearchFilter extends Component<any, any> {
     }
 
     this.props.filterQuery(searchQuery)
-    console.log("This is the query: " + searchQuery)
   }
 }
 

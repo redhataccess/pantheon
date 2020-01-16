@@ -186,12 +186,6 @@ describe('Versions tests', () => {
         expect(inst.saveMetadata()).toMatchSnapshot()
     })
 
-    it('test onChangeProduct function', () => {
-        const wrapper = renderer.create(<Versions {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.onChangeProduct()).toMatchSnapshot()
-    })
-
     it('test onChangeUsecase function', () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
@@ -234,12 +228,6 @@ describe('Versions tests', () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.getHarrayChildNamed("__children__")).toMatchSnapshot()
-    })
-
-    it('test fetchProductVersionDetails function', () => {
-        const wrapper = renderer.create(<Versions {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.fetchProductVersionDetails()).toMatchSnapshot()
     })
 
     it('test hideSuccessAlert function', () => {
@@ -325,10 +313,10 @@ describe('Versions tests', () => {
         sinon.assert.called(spy)
     })
 
-    it('test fetchProductVersionDetails function', () => {
+    it('test fetchProducts function', () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
-        const spy = sinon.spy(inst, 'fetchProductVersionDetails')
+        const spy = sinon.spy(inst, 'fetchProducts')
         inst.componentDidMount()
         sinon.assert.called(spy)
     })
