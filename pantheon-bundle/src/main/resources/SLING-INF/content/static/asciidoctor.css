@@ -389,7 +389,9 @@ p a > code:hover { color: rgba(0, 0, 0, 0.9); }
 #rhdocs-content h1 > a.link, h2 > a.link, h3 > a.link, #rhdocs-toctitle > a.link, .sidebarblock > .content > .title > a.link, h4 > a.link, h5 > a.link, h6 > a.link { color: #ba3925; text-decoration: none; }
 #rhdocs-content h1 > a.link:hover, h2 > a.link:hover, h3 > a.link:hover, #rhdocs-toctitle > a.link:hover, .sidebarblock > .content > .title > a.link:hover, h4 > a.link:hover, h5 > a.link:hover, h6 > a.link:hover { color: #a53221; }
 
-.audioblock, .imageblock, .literalblock, .listingblock, .stemblock, .videoblock { margin-bottom: 1.25em; }
+details, .audioblock, .imageblock, .literalblock, .listingblock, .stemblock, .videoblock { margin-bottom: 1.25em; }
+
+details > summary:first-of-type { cursor: pointer; display: list-item; outline: none; margin-bottom: 0.75em; }
 
 .admonitionblock td.content > .title, .audioblock > .title, .exampleblock > .title, .imageblock > .title, .listingblock > .title, .literalblock > .title, .stemblock > .title, .openblock > .title, .paragraph > .title, .quoteblock > .title, table.tableblock > .title, .verseblock > .title, .videoblock > .title, .dlist > .title, .olist > .title, .ulist > .title, .qlist > .title, .hdlist > .title { text-rendering: optimizeLegibility; text-align: left; font-family: "Noto Serif", "DejaVu Serif", serif; font-size: 1rem; font-style: italic; }
 
@@ -421,9 +423,9 @@ table.tableblock #preamble > .sectionbody > [class="paragraph"]:first-of-type p 
 @media only screen and (min-width: 768px) { .literalblock pre, .listingblock > .content > pre { font-size: 0.90625em; } }
 @media only screen and (min-width: 1280px) { .literalblock pre, .listingblock > .content > pre { font-size: 1em; } }
 
-.literalblock.output pre { color: #f7f7f8; background-color: rgba(0, 0, 0, 0.9); }
+.literalblock pre, .listingblock > .content > pre:not(.highlight), .listingblock > .content > pre[class="highlight"], .listingblock > .content > pre[class^="highlight "] { background: #f7f7f8; }
 
-.listingblock > .content > pre:not(.highlight), .listingblock > .content > pre[class="highlight"], .listingblock > .content > pre[class^="highlight "] { background: #f7f7f8; }
+.literalblock.output pre { color: #f7f7f8; background-color: rgba(0, 0, 0, 0.9); }
 
 .listingblock > .content { position: relative; }
 
@@ -459,7 +461,7 @@ pre.pygments .lineno { border-right: 1px solid currentColor; opacity: 0.35; disp
 pre.pygments .lineno:before { content: ""; margin-right: -0.125em; }
 
 .quoteblock { margin: 0 1em 1.25em 1.5em; display: table; }
-.quoteblock > .title { margin-left: -1.5em; margin-bottom: 0.75em; }
+.quoteblock:not(.excerpt) > .title { margin-left: -1.5em; margin-bottom: 0.75em; }
 .quoteblock blockquote, .quoteblock p { color: rgba(0, 0, 0, 0.85); font-size: 1.15rem; line-height: 1.75; word-spacing: 0.1em; letter-spacing: 0; font-style: italic; text-align: justify; }
 .quoteblock blockquote { margin: 0; padding: 0; border: 0; }
 .quoteblock blockquote:before { content: "\201c"; float: left; font-size: 2.75em; font-weight: bold; line-height: 0.6em; margin-left: -0.6em; color: #7a2518; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); }
@@ -479,7 +481,8 @@ pre.pygments .lineno:before { content: ""; margin-right: -0.125em; }
 .quoteblock.abstract blockquote, .quoteblock.abstract p, .quoteblock.excerpt blockquote, .quoteblock.excerpt p, .quoteblock .quoteblock blockquote, .quoteblock .quoteblock p { line-height: 1.6; word-spacing: 0; }
 .quoteblock.abstract { margin: 0 1em 1.25em 1em; display: block; }
 .quoteblock.abstract > .title { margin: 0 0 0.375em 0; font-size: 1.15em; text-align: center; }
-.quoteblock.excerpt, .quoteblock .quoteblock { margin: 0 0 1.25em 0; padding: 0 0 0.25em 1em; border-left: 0.25em solid #dddddf; }
+.quoteblock.excerpt > blockquote, .quoteblock .quoteblock { padding: 0 0 0.25em 1em; border-left: 0.25em solid #dddddf; }
+.quoteblock.excerpt, .quoteblock .quoteblock { margin-left: 0; }
 .quoteblock.excerpt blockquote, .quoteblock.excerpt p, .quoteblock .quoteblock blockquote, .quoteblock .quoteblock p { color: inherit; font-size: 1.0625rem; }
 .quoteblock.excerpt .attribution, .quoteblock .quoteblock .attribution { color: inherit; text-align: left; margin-right: 0; }
 
@@ -487,7 +490,8 @@ table.tableblock { max-width: 100%; border-collapse: separate; }
 
 p.tableblock:last-child { margin-bottom: 0; }
 
-td.tableblock > .content { margin-bottom: -1.25em; }
+td.tableblock > .content { margin-bottom: 1.25em; }
+td.tableblock > .content > :last-child { margin-bottom: -1.25em; }
 
 table.tableblock, th.tableblock, td.tableblock { border: 0 solid #dedede; }
 
@@ -511,9 +515,7 @@ table.frame-sides { border-width: 0 1px; }
 
 table.frame-topbot, table.frame-ends { border-width: 1px 0; }
 
-table.stripes-all tr, table.stripes-odd tr:nth-of-type(odd) { background: #f8f8f7; }
-
-table.stripes-none tr, table.stripes-odd tr:nth-of-type(even) { background: none; }
+table.stripes-all tr, table.stripes-odd tr:nth-of-type(odd), table.stripes-even tr:nth-of-type(even), table.stripes-hover tr:hover { background: #f8f8f7; }
 
 th.halign-left, td.halign-left { text-align: left; }
 
@@ -536,8 +538,6 @@ tbody tr th, tbody tr th p, tfoot tr th, tfoot tr th p { color: rgba(0, 0, 0, 0.
 p.tableblock > code:only-child { background: none; padding: 0; }
 
 p.tableblock { font-size: 1em; }
-
-td > div.verse { white-space: pre; }
 
 ol { margin-left: 1.75em; }
 
@@ -709,7 +709,7 @@ a span.icon > .fa { cursor: inherit; }
 .admonitionblock td.icon .icon-caution:before { content: "\f06d"; color: #bf3400; }
 .admonitionblock td.icon .icon-important:before { content: "\f06a"; color: #bf0000; }
 
-.conum[data-value] { display: inline-block; color: #fff !important; background-color: rgba(0, 0, 0, 0.8); -webkit-border-radius: 100px; border-radius: 100px; text-align: center; font-size: 0.75em; width: 1.67em; height: 1.67em; line-height: 1.67em; font-family: "Open Sans", "DejaVu Sans", sans-serif; font-style: normal; font-weight: bold; }
+.conum[data-value] { display: inline-block; color: #fff !important; background-color: rgba(0, 0, 0, 0.8); -webkit-border-radius: 50%; border-radius: 50%; text-align: center; font-size: 0.75em; width: 1.67em; height: 1.67em; line-height: 1.67em; font-family: "Open Sans", "DejaVu Sans", sans-serif; font-style: normal; font-weight: bold; }
 .conum[data-value] * { color: #fff !important; }
 .conum[data-value] + b { display: none; }
 .conum[data-value]:after { content: attr(data-value); }
