@@ -39,10 +39,10 @@ public interface Metadata extends SlingModel {
     Field<ModuleType> moduleType();
 
     @Named("pant:datePublished")
-    Field<Date> datePublished();
+    Field<Calendar> datePublished();
     
     @Named("pant:dateUploaded")
-    Field<Date> dateUploaded();
+    Field<Calendar> dateUploaded();
 
     @Named(JcrConstants.JCR_LASTMODIFIED)
     Field<Calendar> dateModified();

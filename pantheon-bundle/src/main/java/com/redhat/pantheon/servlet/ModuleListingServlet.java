@@ -177,30 +177,22 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         m.put("name", resource.getName());        
         // TODO need to provide both released and draft to the api caller        
         
-        SimpleDateFormat draftTimeStamp,relTimeStamp, releaseTimeStamp;
-        if(draftMetadata.isPresent()){
-            draftTimeStamp = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-            if(draftMetadata.get().dateUploaded().get()==null){
-                m.put("pant:dateUploaded",draftTimeStamp.format(new Date()));
-            }else{
-                m.put("pant:dateUploaded",draftTimeStamp.format(draftMetadata.get().dateUploaded().get()));
-            }
-            
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+        
+        if(draftMetadata.isPresent() && draftMetadata.get().dateUploaded().get()!=null){                        
+            m.put("pant:dateUploaded",sdf.format(draftMetadata.get().dateUploaded().get().getTime()));
+        }else if(releasedMetadata.isPresent() && releasedMetadata.get().dateUploaded().get()!=null){
+            m.put("pant:dateUploaded",sdf.format(releasedMetadata.get().dateUploaded().get().getTime()));
         }else{
-            relTimeStamp = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-            m.put("pant:dateUploaded",relTimeStamp.format(releasedMetadata.get().dateUploaded().get()));
+            m.put("pant:dateUploaded","-");
         }
 
-        if(releasedMetadata.isPresent()){
-            releaseTimeStamp = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-            if(releasedMetadata.get().datePublished().get()==null){
-                m.put("pant:publishedDate",releaseTimeStamp.format(new Date()));
-            }else{
-                m.put("pant:publishedDate",releaseTimeStamp.format(releasedMetadata.get().datePublished().get()));
-            }            
+        if(releasedMetadata.isPresent() && releasedMetadata.get().datePublished().get()!=null){            
+            m.put("pant:publishedDate",sdf.format(releasedMetadata.get().datePublished().get().getTime()));            
         }else{
             m.put("pant:publishedDate","-");
         }
+
         // need to revise this when the data is available for moduleType
         m.put("moduleType","-");
         m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title().get() : releasedMetadata.get().title().get());

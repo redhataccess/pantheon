@@ -165,7 +165,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             metadata.description().set(description);
             Calendar now = Calendar.getInstance();
             metadata.dateModified().set(now);
-            metadata.dateUploaded().set(now.getTime());
+            metadata.dateUploaded().set(now);
             metadata.moduleType().set( determineModuleType(module) );
 
             resolver.commit();

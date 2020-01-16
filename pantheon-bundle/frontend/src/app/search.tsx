@@ -12,6 +12,7 @@ import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import { IAppState } from '@app/app'
 import { SearchFilter } from '@app/searchFilter';
 import SpinImage from '@app/images/spin.gif';
+import { Fields } from '@app/Constants';
 
 export interface ISearchState {
   alertOneVisible: boolean
@@ -180,10 +181,10 @@ class Search extends Component<IAppState, ISearchState> {
                             <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
                         </DataListCell>,      
                         <DataListCell key={"transient-source_" + key}>                          
-                          <span>{data["pant:publishedDate"]}</span>
+                          <span>{data[Fields.PANT_PUBLISHED_DATE]}</span>
                         </DataListCell>,
                         <DataListCell key={"transient-source-name_" + key}>                              
-                          <span>{data["pant:dateUploaded"]}</span>
+                          <span>{data[Fields.PANT_DATE_UPLOADED]}</span>
                         </DataListCell>,
                         <DataListCell key={"created_" + key}>
                           <span >{data.moduleType}</span>
