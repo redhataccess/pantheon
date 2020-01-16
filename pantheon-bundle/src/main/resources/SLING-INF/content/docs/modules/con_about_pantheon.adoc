@@ -1,24 +1,26 @@
 [id='about-pantheon_{context}']
 = About Pantheon
 
-Pantheon is a content-management system and publishing platform developed by Red Hat. You can use it to publish documents based on AsciiDoc source. After adding your modules to Pantheon, add metadata, preview modules using the look and feel of the Customer Portal, associate the module with a product, publish and unpublish the module.
+Pantheon is a content-management system and publishing platform developed by Red Hat.
+You can use it to publish documents based on AsciiDoc source.
+After adding your modules to Pantheon, add metadata, preview modules using the look and feel of the Customer Portal, associate the module with a product, publish, and unpublish the module.
 
 Pantheon provides:
 
-    A GUI for managing modules and assemblies, including the ability for authors to search for specific content and other workflow features that are more user-friendly than those currently available
-    Metadata editing to optimize content for search engines
-    A module library to enable content reuse
-    A visual preview of a module so you can see how it will appear on the customer portal
+* A GUI for managing modules and assemblies, including the ability for authors to search for specific content and other workflow features that are more user-friendly than those currently available
+* Metadata editing to optimize content for search engines
+* A module library to enable content reuse
+* A visual preview of a module so you can see how it will appear on the Customer Portal
 
 Pantheon does not:
 
-    Determine the appearance of content
-    Replace git as a source control system
+* Determine the appearance of content
+* Replace Git as a source control system
 
 .Pantheon authoring workflow
 
-    Write your content in modules.
-    Commit and push your modules to gitlab.
-    When you're ready to publish your modules, upload them to Pantheon.
-    Use Pantheon to add metadata and build a document based on modules.
-    Publish the document.
+. Write your content in modules.
+. Commit and push your modules to Gitlab or Github.
+. When you're ready to publish your modules, upload them to Pantheon.
+. Use Pantheon to add metadata and build a document based on modules.
+. Publish the document.
