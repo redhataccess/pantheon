@@ -559,7 +559,7 @@ class Versions extends Component<IProps, IState> {
             formData.append("productVersion", this.state.versionUUID)
             formData.append("documentUsecase", this.state.usecaseValue)
             formData.append("urlFragment", "/" + this.state.moduleUrl)
-            formData.append("searchKeywords", this.state.keywords)
+            formData.append("searchKeywords", this.state.keywords === undefined ? '' : this.state.keywords)
             // console.log("[metadataPath] ", this.state.metadataPath)
             fetch(this.state.metadataPath + '/metadata', {
                 body: formData,
