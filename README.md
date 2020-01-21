@@ -128,4 +128,4 @@ It might be possible to improve this technique. Suggestions are welcome.
 
 ### End user documentation
 
-The source for the end user documentation is stored in /pantheon-bundle/src/main/resources/SLING-INF/content/docs/ref_prerequisites.adoc.
+The source for the end user documentation is stored in `/pantheon-bundle/src/main/resources/SLING-INF/content/docs/`.
