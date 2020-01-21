@@ -31,11 +31,11 @@ class EventsTest {
         lenient().when(jobBuilder.properties(anyMap())).thenReturn(jobBuilder);
 
         // When
-        events.fireEvent(new ModuleVersionPublishedEvent("/a/odule/version/path"));
+        events.fireEvent(new ModuleVersionPublishedEvent("/a/odule/version/path"), 15);
 
         // Then
         verify(jobBuilder, times(1)).properties(anyMap());
-        verify(jobBuilder, times(1)).add();
+        verify(jobBuilder, times(1)).schedule();
         verify(jobManager, times(1)).createJob(eq(Events.EVENT_TOPIC_NAME));
     }
 }

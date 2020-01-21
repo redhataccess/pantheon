@@ -1,16 +1,17 @@
 package com.redhat.pantheon.extension;
 
-import org.apache.sling.event.jobs.Job;
+import static com.google.common.collect.Maps.newHashMap;
+
+import java.util.Date;
+import java.util.Map;
+
+import org.apache.sling.event.jobs.JobBuilder.ScheduleBuilder;
 import org.apache.sling.event.jobs.JobManager;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Deals with the publication of application events, which are the basis for extensions.
@@ -31,15 +32,19 @@ public class Events {
         this.jobManager = jobManager;
     }
 
-    public void fireEvent(Event evt) {
+    public void fireEvent(Event evt, int delayInsecs) {
+        final long delay = delayInsecs * 1000;
+        final Date fireDate = new Date();
+        fireDate.setTime(System.currentTimeMillis() + delay);
         Map<String, Object> props = newHashMap();
         props.put(Event.class.getName(), evt);
-        Job job = jobManager.createJob(EVENT_TOPIC_NAME)
+        ScheduleBuilder scheduleBuilder = jobManager.createJob(EVENT_TOPIC_NAME)
                 .properties(props)
-                .add();
+                .schedule();
+        scheduleBuilder.at(fireDate);
 
-        if(job == null) {
-            throw new RuntimeException("Something went wrong firing a " + evt.getClass().getName() + " event");
+        if(scheduleBuilder.add() == null) {
+            throw new RuntimeException("Something went wrong scheduling a " + evt.getClass().getName() + " event");
         }
     }
 }

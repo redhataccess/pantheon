@@ -64,7 +64,7 @@ public class UnpublishVersion extends AbstractPostOperation {
             Locale locale = getLocale(request);
             Module module = getModule(request);
             ModuleLocale moduleLocale = module.getModuleLocale(locale);
-            events.fireEvent(new ModuleVersionUnpublishedEvent(moduleLocale.getPath()));
+            events.fireEvent(new ModuleVersionUnpublishedEvent(moduleLocale.getPath()), 15);
         }
     }
 
