@@ -17,7 +17,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Locale;
