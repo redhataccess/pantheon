@@ -146,6 +146,8 @@ public class AsciidoctorService {
             AttributesBuilder atts = AttributesBuilder.attributes()
                     // show the title on the generated html
                     .attribute("showtitle")
+                    // we want to avoid the footer on the generated html
+                    .noFooter(true)
                     // link the css instead of embedding it
                     .linkCss(true)
                     // stylesheet reference
