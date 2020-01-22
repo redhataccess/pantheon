@@ -2,6 +2,65 @@
 
 exports[`User tests should render User component 1`] = `
 <Fragment>
+  <Modal
+    actions={
+      Array [
+        <Unknown
+          onClick={[Function]}
+        >
+          OK
+        </Unknown>,
+      ]
+    }
+    appendTo={<body />}
+    ariaDescribedById=""
+    className=""
+    hideTitle={false}
+    isFooterLeftAligned={false}
+    isLarge={false}
+    isOpen={false}
+    isSmall={false}
+    onClose={[Function]}
+    showClose={true}
+    title="Placeholder dialog"
+    width="60%"
+  >
+    This feature has not yet been implemented.
+  </Modal>
+  <Dropdown
+    dropdownItems={
+      Array [
+        <DropdownItem
+          onClick={[Function]}
+        >
+          Help
+        </DropdownItem>,
+        <DropdownItem
+          href="https://github.com/redhataccess/pantheon"
+          target="_blank"
+        >
+          Contribute to Pantheon
+        </DropdownItem>,
+      ]
+    }
+    isOpen={false}
+    isPlain={true}
+    onSelect={[Function]}
+    position="right"
+    toggle={
+      <DropdownToggle
+        iconComponent={null}
+        onToggle={[Function]}
+      >
+        <HelpIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </DropdownToggle>
+    }
+  />
   <Link
     onClick={[Function]}
     to=""

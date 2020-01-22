@@ -1,4 +1,4 @@
-@import url(http://red-hat-overpass-fonts.s3.amazonaws.com/overpass.css);
+@import url(https://overpass-30e2.kxcdn.com/overpass.css);
 /*! normalize.css v2.1.2 | MIT License | git.io/normalize */
 /* ========================================================================== HTML5 display definitions ========================================================================== */
 /** Correct `block` display not defined in IE 8/9. */
@@ -166,7 +166,13 @@ dl dd > p { margin: .5rem 0; }
 
 table { margin: 2rem 0; border: 1px solid #d2d2d2; font-size: 0.889rem; line-height: 1.5; }
 table caption { margin-top: 0.5rem; margin-bottom: 0.5rem; color: #585858; text-align: left; }
-table td, table th { padding: 0.5em 1rem; border: 1px solid #d2d2d2; text-align: left; vertical-align: top; }
+table td, table th { padding: 0.5em 1rem; border: 1px solid #d2d2d2; }
+table td.halign-left, table th.halign-left { text-align: left; }
+table td.halign-center, table th.halign-center { text-align: center; }
+table td.halign-right, table th.halign-right { text-align: right; }
+table td.valign-top, table th.valign-top { vertical-align: top; }
+table td.valign-middle, table th.valign-middle { vertical-align: middle; }
+table td.valign-bottom, table th.valign-bottom { vertical-align: bottom; }
 table thead td, table thead th { background: whitesmoke; font-weight: 600; }
 
 .rhdocs { padding: 2em; }
@@ -322,3 +328,5 @@ a .icon { cursor: inherit; }
 .admonitionblock .icon.icon-warning:before { content: "\f071"; color: #f0ab00; }
 .admonitionblock .icon.icon-caution:before { content: "\f071"; color: #ec7a08; }
 .admonitionblock .icon.icon-important:before { content: "\f06a"; color: #a30000; }
+
+.literalblock pre code, .listingblock pre code { color: inherit; text-shadow: none; white-space: inherit !important; line-height: inherit; font-family: inherit; }

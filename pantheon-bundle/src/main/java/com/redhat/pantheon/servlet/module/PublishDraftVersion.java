@@ -58,7 +58,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
             Locale locale = getLocale(request);
             Module module = getModule(request);
             ModuleLocale moduleLocale = module.getModuleLocale(locale);
-            events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.getPath()));
+            events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.getPath()), 15);
         }
     }
 

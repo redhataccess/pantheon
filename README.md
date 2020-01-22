@@ -112,6 +112,12 @@ cd pantheon/frontend
 yarn start
 ```
 
+NOTE: It will likely be necessary to increase your inotify limit to ensure that yarn is able to detect changes in every project file.
+If you are running into issues with yarn not automatically detecting saved changes, run the following command (its effects are permenent):
+```sh
+echo fs.inotify.max_user_watches=65535 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+```
+
 ```sh
 chromium-browser --disable-web-security --user-data-dir=/home/user/anywhere/chromeDev/ &
 ```

@@ -2,34 +2,30 @@ package com.redhat.pantheon.servlet;
 
 import com.google.common.base.Charsets;
 import com.redhat.pantheon.html.Html;
+import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
-
 import org.jetbrains.annotations.NotNull;
-
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.conf.GlobalConfig.CONTENT_TYPE;
+import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -54,6 +50,13 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
         })
 @SlingServletPaths(value = "/api/module")
 public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
+    public static final String PRODUCT_VERSION = "product_version";
+    public static final String PRODUCT_NAME = "product_name";
+    public static final String VANITY_URL_FRAGMENT = "vanity_url_fragment";
+    public static final String SEARCH_KEYWORDS = "search_keywords";
+    public static final String VIEW_URI = "view_uri";
+    public static final String PORTAL_URL = "PORTAL_URL";
+
     private final Logger log = LoggerFactory.getLogger(ModuleJsonServlet.class);
 
     @Override
@@ -121,15 +124,18 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         // Fields that are part of the spec and yet to be implemented
         moduleMap.put("context_url_fragment", "");
         moduleMap.put("context_id", "");
-        moduleMap.put("product_name", "");
-        moduleMap.put("product_version", "");
+        moduleMap.put(PRODUCT_NAME, "");
+        moduleMap.put(PRODUCT_VERSION, "");
+        moduleMap.put(VANITY_URL_FRAGMENT, "");
+        moduleMap.put(SEARCH_KEYWORDS, new String[] {});
+        moduleMap.put(VIEW_URI, "");
 
         // Process productVersion from metadata
         String productVersion = releasedMetadata.get().productVersion().get() != null ? releasedMetadata.get().productVersion().getReference().name().get() : "";
         if (!productVersion.isEmpty()) {
             try {
-                moduleMap.put("product_version", productVersion);
-                moduleMap.put("product_name", releasedMetadata.get().productVersion().getReference().getParent().getParent().getValueMap().get("name", String.class));
+                moduleMap.put(PRODUCT_VERSION, productVersion);
+                moduleMap.put(PRODUCT_NAME, releasedMetadata.get().productVersion().getReference().getParent().getParent().getValueMap().get("name", String.class));
             }  catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
@@ -138,12 +144,18 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         // Process url_fragment from metadata
         String urlFragment = releasedMetadata.get().urlFragment().get() != null ? releasedMetadata.get().urlFragment().get() : "";
         if (!urlFragment.isEmpty()) {
-            moduleMap.put("vanity_url_fragment", urlFragment);
+            moduleMap.put(VANITY_URL_FRAGMENT, urlFragment);
         }
 
         String searchKeywords = releasedMetadata.get().searchKeywords().get();
         if (searchKeywords != null && !searchKeywords.isEmpty()) {
-            moduleMap.put("search_keywords", searchKeywords.split(", *"));
+            moduleMap.put(SEARCH_KEYWORDS, searchKeywords.split(", *"));
+        }
+
+        // Process view_uri
+        if (System.getenv(PORTAL_URL) != null) {
+            String view_uri = System.getenv(PORTAL_URL) + "/topics/" + ServletUtils.toLanguageTag(locale) + "/" + module_uuid;
+            moduleMap.put(VIEW_URI, view_uri);
         }
 
         // Process view_uri

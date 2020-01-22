@@ -54,7 +54,7 @@ func cloneBranch(w http.ResponseWriter, r *http.Request) {
 		if branch == "" {
 			branch = "master"
 		}
-		directory := "./" + randomAlphaNumericString()
+		directory := randomAlphaNumericString()
 
 		//start a new goroutine (lightweight thread) to handle clone/push/cleanup
 		go gitClone(repository, branch, directory)
@@ -81,10 +81,10 @@ func getInfo(w http.ResponseWriter, r *http.Request) {
 
 func init() {
 	log.SetFlags(log.Lmicroseconds | log.Lshortfile)
-	flag.Parse()
 }
 
 func main() {
+	flag.Parse()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/clone", cloneBranch)
 	mux.HandleFunc("/info", getInfo)
