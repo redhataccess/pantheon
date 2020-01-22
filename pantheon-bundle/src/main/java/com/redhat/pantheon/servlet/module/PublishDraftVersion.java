@@ -91,7 +91,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
             versionToRelease.get()
                     .metadata().getOrCreate()
                     .datePublished().set(Calendar.getInstance());
-            changes.add(Modification.onModified(module.getPath())); 
+            changes.add(Modification.onModified(module.getPath()));
         }
     }
 }

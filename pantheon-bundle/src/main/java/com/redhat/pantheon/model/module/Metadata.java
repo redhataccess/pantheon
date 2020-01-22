@@ -8,7 +8,6 @@ import org.apache.jackrabbit.JcrConstants;
 
 import javax.inject.Named;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Models an instance of metadata for a module. Multiple metadata

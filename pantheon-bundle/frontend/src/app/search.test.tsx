@@ -21,185 +21,185 @@ describe('Search tests', () => {
     expect(button.exists()).toBe(true)
   })
 
-  // it('should render a DataList', () => {
-  //   const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
-  //   const dataList = wrapper.find(DataList)
-  //   expect(dataList.exists()).toBe(true)
-  // })
+  it('should render a DataList', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const dataList = wrapper.find(DataList)
+    expect(dataList.exists()).toBe(true)
+  })
 
-  // it('should render a TextInput', () => {
-  //   const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
-  //   const textInput = wrapper.find(TextInput)
-  //   expect(textInput.exists()).toBe(true)
-  // })
+  it('should render a TextInput', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const textInput = wrapper.find(TextInput)
+    expect(textInput.exists()).toBe(true)
+  })
 
-  // it('should render a BuildInfo component', () => {
-  //   const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
-  //   const buildInfo = wrapper.find(BuildInfo)
-  //   expect(buildInfo.exists()).toBe(true)
-  // })
+  it('should render a BuildInfo component', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const buildInfo = wrapper.find(BuildInfo)
+    expect(buildInfo.exists()).toBe(true)
+  })
 
-  // it('should render a level component', () => {
-  //   const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
-  //   const level = wrapper.find(Level)
-  //   expect(level.exists()).toBe(true)
-  // })
+  it('should render a level component', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const level = wrapper.find(Level)
+    expect(level.exists()).toBe(true)
+  })
 
-  // it('should render a Level component', () => {
-  //   const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
-  //   const level = wrapper.find(Level)
-  //   expect(level.exists()).toBe(true)
-  // })
+  it('should render a Level component', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const level = wrapper.find(Level)
+    expect(level.exists()).toBe(true)
+  })
 
-  // it('should render a levelItem component', () => {
-  //   const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
-  //   const levelItem = wrapper.find(LevelItem)
-  //   expect(levelItem.exists()).toBe(true)
-  // })
+  it('should render a levelItem component', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const levelItem = wrapper.find(LevelItem)
+    expect(levelItem.exists()).toBe(true)
+  })
 
-  // it('should not render a dangerAlert for null or positive search results', () => {
-  //   const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
-  //   const dangerAlert = wrapper.find(Alert)
-  //   expect(dangerAlert.exists()).toBe(false)
-  // })
+  it('should not render a dangerAlert for null or positive search results', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const dangerAlert = wrapper.find(Alert)
+    expect(dangerAlert.exists()).toBe(false)
+  })
 
-  // it('should handle state changes for displayLoadIcon', () => {
-  //   const wrapper = shallow(<Router><Search {...mockStateUser} /></Router>)
-  //   wrapper.setState({ 'displayLoadIcon': true })
-  //   expect(wrapper.state('displayLoadIcon')).toBe(true)
-  //   wrapper.setState({ 'displayLoadIcon': false })
-  //   expect(wrapper.state('displayLoadIcon')).toBe(false)
-  // })
+  it('should handle state changes for displayLoadIcon', () => {
+    const wrapper = shallow(<Router><Search {...mockStateUser} /></Router>)
+    wrapper.setState({ 'displayLoadIcon': true })
+    expect(wrapper.state('displayLoadIcon')).toBe(true)
+    wrapper.setState({ 'displayLoadIcon': false })
+    expect(wrapper.state('displayLoadIcon')).toBe(false)
+  })
 
-  // it('should handle state changes for isSearchException', () => {
-  //   const wrapper = shallow(<Router><Search {...mockStateUser} /></Router>)
-  //   wrapper.setState({ 'isSearchException': false })
-  //   expect(wrapper.state('isSearchException')).toBe(false)
-  //   wrapper.setState({ 'isSearchException': true })
-  //   expect(wrapper.state('isSearchException')).toBe(true)
-  // })
+  it('should handle state changes for isSearchException', () => {
+    const wrapper = shallow(<Router><Search {...mockStateUser} /></Router>)
+    wrapper.setState({ 'isSearchException': false })
+    expect(wrapper.state('isSearchException')).toBe(false)
+    wrapper.setState({ 'isSearchException': true })
+    expect(wrapper.state('isSearchException')).toBe(true)
+  })
 
-  // it('should handle state changes for empty results for search', () => {
-  //   const wrapper = shallow(<Router><Search {...mockStateUser} /></Router>)
-  //   wrapper.setState({ 'isEmptyResults': false })
-  //   expect(wrapper.state('isEmptyResults')).toBe(false)
-  //   wrapper.setState({ 'isEmptyResults': true })
-  //   expect(wrapper.state('isEmptyResults')).toBe(true)
-  // })
+  it('should handle state changes for empty results for search', () => {
+    const wrapper = shallow(<Router><Search {...mockStateUser} /></Router>)
+    wrapper.setState({ 'isEmptyResults': false })
+    expect(wrapper.state('isEmptyResults')).toBe(false)
+    wrapper.setState({ 'isEmptyResults': true })
+    expect(wrapper.state('isEmptyResults')).toBe(true)
+  })
 
-  // it('should render a level component', () => {
-  //   const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
-  //   const level = wrapper.find(Level)
-  //   expect(level.exists()).toBe(true)
-  // })
+  it('should render a level component', () => {
+    const wrapper = mount(<Router><Search {...mockStateUser} /></Router>)
+    const level = wrapper.find(Level)
+    expect(level.exists()).toBe(true)
+  })
 
 
-  // it('test getRows function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.getRows).toMatchSnapshot()
-  // })
+  it('test getRows function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.getRows).toMatchSnapshot()
+  })
 
-  // it('test buildSearchUrl function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.buildSearchUrl).toMatchSnapshot()
-  // })
+  it('test buildSearchUrl function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.buildSearchUrl).toMatchSnapshot()
+  })
 
-  // it('test hideAlertOne function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.hideAlertOne).toMatchSnapshot()
-  // })
+  it('test hideAlertOne function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.hideAlertOne).toMatchSnapshot()
+  })
 
-  // it('test confirmDeleteOperation function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.confirmDeleteOperation).toMatchSnapshot()
-  // })
+  it('test confirmDeleteOperation function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.confirmDeleteOperation).toMatchSnapshot()
+  })
 
-  // it('test cancelDeleteOperation function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.cancelDeleteOperation).toMatchSnapshot()
-  // })
+  it('test cancelDeleteOperation function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.cancelDeleteOperation).toMatchSnapshot()
+  })
 
-  // it('test sortByUploadTime function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.sortByUploadTime).toMatchSnapshot()
-  // })
+  it('test sortByUploadTime function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.sortByUploadTime).toMatchSnapshot()
+  })
 
-  // it('test sortByDescription function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.sortByDescription).toMatchSnapshot()
-  // })
+  it('test sortByDescription function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.sortByDescription).toMatchSnapshot()
+  })
 
-  // it('test sortByName function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.sortByName).toMatchSnapshot()
-  // })
+  it('test sortByName function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.sortByName).toMatchSnapshot()
+  })
 
-  // it('test dismissNotification function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.dismissNotification).toMatchSnapshot()
-  // })
+  it('test dismissNotification function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.dismissNotification).toMatchSnapshot()
+  })
 
-  // it('test doSearch function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.doSearch).toMatchSnapshot()
-  // })
+  it('test doSearch function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.doSearch).toMatchSnapshot()
+  })
 
-  // it('test newSearch function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.newSearch).toMatchSnapshot()
-  // })
+  it('test newSearch function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.newSearch).toMatchSnapshot()
+  })
 
-  // it('test delete function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.delete).toMatchSnapshot()
-  // })
+  it('test delete function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.delete).toMatchSnapshot()
+  })
 
-  // it('test handleDeleteCheckboxChange function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.handleDeleteCheckboxChange).toMatchSnapshot()
-  // })
+  it('test handleDeleteCheckboxChange function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.handleDeleteCheckboxChange).toMatchSnapshot()
+  })
 
-  // it('test handleSelectAll function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.handleSelectAll).toMatchSnapshot()
-  // })
+  it('test handleSelectAll function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.handleSelectAll).toMatchSnapshot()
+  })
 
-  // it('test setInput function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.setInput).toMatchSnapshot()
-  // })
+  it('test setInput function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.setInput).toMatchSnapshot()
+  })
 
-  // it('test fetchTimeout function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.fetchTimeout).toMatchSnapshot()
-  // })
+  it('test fetchTimeout function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.fetchTimeout).toMatchSnapshot()
+  })
 
-  // it('test changePerPageLimit function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.changePerPageLimit).toMatchSnapshot()
-  // })
+  it('test changePerPageLimit function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.changePerPageLimit).toMatchSnapshot()
+  })
 
-  // it('test buildTransientPathArray function', () => {
-  //   const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.buildTransientPathArray).toMatchSnapshot()
-  // })
+  it('test buildTransientPathArray function', () => {
+    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.buildTransientPathArray).toMatchSnapshot()
+  })
 
 })

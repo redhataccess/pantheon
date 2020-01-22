@@ -154,11 +154,7 @@ class Search extends Component<IAppState, ISearchState> {
                       </div></LevelItem>
                     <LevelItem />
                   </Level>
-
-                )}
-                
-                {console.log("res ui: ",this.state.results)}
-                
+                )}                            
                 {!this.state.displayLoadIcon && (this.state.results.map((data, key) => (
                   <DataListItemRow id="data-rows" key={key}>
                     {this.props.userAuthenticated && !this.state.isEmptyResults &&
@@ -180,13 +176,13 @@ class Search extends Component<IAppState, ISearchState> {
                           {!this.props.userAuthenticated &&
                             <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
                         </DataListCell>,      
-                        <DataListCell key={"transient-source_" + key}>                          
+                        <DataListCell key={"published-date_" + key}>                          
                           <span>{data[Fields.PANT_PUBLISHED_DATE]}</span>
                         </DataListCell>,
-                        <DataListCell key={"transient-source-name_" + key}>                              
+                        <DataListCell key={"date-uploaded_" + key}>                              
                           <span>{data[Fields.PANT_DATE_UPLOADED]}</span>
                         </DataListCell>,
-                        <DataListCell key={"created_" + key}>
+                        <DataListCell key={"module-type_" + key}>
                           <span >{data.moduleType}</span>
                         </DataListCell>
                       ]}
