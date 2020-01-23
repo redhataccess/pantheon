@@ -187,9 +187,11 @@ public class AsciidoctorService {
 
             String html = "";
             try {
+                log.info("asciidoctor content", asciidoctor);
                 html = asciidoctor.convert(
                         moduleVersion.content().get().asciidocContent().get(),
                         ob.get());
+                log.info("html content", html);
                 cacheContent(moduleVersion.content().get(), html);
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);
