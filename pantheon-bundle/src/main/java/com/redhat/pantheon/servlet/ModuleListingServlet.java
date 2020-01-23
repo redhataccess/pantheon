@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static java.util.stream.Collectors.toList;
@@ -77,42 +78,50 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             throw new RuntimeException(e);
         }
 
-        // Condition for module type
-        String moduleTypeCondition = "";
-        if(!Strings.isNullOrEmpty(type)) {
-            moduleTypeCondition = "AND (draft.[metadata/pant:moduleType] = '" + type + "' " +
-                    "OR release.[metadata/pant:moduleType] = '" + type + "') ";
+        StringBuilder queryBuilder = new StringBuilder()
+                .append("SELECT m.* from [pant:module] AS m ")
+                .append("LEFT OUTER JOIN [pant:moduleLocale] AS loc ON  ISCHILDNODE(loc, m) ")
+                .append("LEFT OUTER JOIN [pant:moduleVersion] AS draft ON  draft.[jcr:uuid] = loc.[draft] ")
+                .append("LEFT OUTER JOIN [pant:moduleVersion] AS release ON  release.[jcr:uuid] = loc.[released] ");
+
+        List<StringBuilder> queryFilters = newArrayListWithCapacity(3);
+
+        // only filter by text if provided
+        if (searchParam.length() > 0) {
+            StringBuilder textFilter = new StringBuilder()
+                    .append("(draft.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
+                    .append("OR draft.[metadata/jcr:description] LIKE '%" + searchParam + "%' ")
+                    .append("OR release.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
+                    .append("OR release.[metadata/jcr:description] LIKE '%" + searchParam + "%') ");
+            queryFilters.add(textFilter);
         }
 
-        // product version conditions
-        String productVersionCondition = "";
+        // product version filter
         if (productVersionIds != null && productVersionIds.length > 0) {
+            StringBuilder productVersionCondition = new StringBuilder();
             List<String> conditions = Arrays.stream(productVersionIds)
                     .map(id -> {
                         return "draft.[metadata/productVersion] = '" + id + "' " +
                                 "OR release.[metadata/productVersion] = '" + id + "'";
                     })
                     .collect(toList());
-            productVersionCondition = "AND (" + StringUtils.join(conditions, " OR ") + ") ";
+            productVersionCondition.append("(" + StringUtils.join(conditions, " OR ") + ") ");
+            queryFilters.add(productVersionCondition);
         }
 
-        // FIXME Searching by resourceType because in some cases, searching directly on the primaryType
-        // is not returning any results
-        StringBuilder queryBuilder = new StringBuilder()
-                .append("SELECT m.* from [nt:base] AS m ")
-                .append("LEFT OUTER JOIN [nt:base] AS loc ON  ISCHILDNODE(loc, m) ")
-                .append("LEFT OUTER JOIN [nt:base] AS draft ON  draft.[jcr:uuid] = loc.[draft] ")
-                .append("LEFT OUTER JOIN [nt:base] AS release ON  release.[jcr:uuid] = loc.[released] ")
-                .append("WHERE m.[jcr:primaryType] = 'pant:module' ")
-                .append("AND loc.[jcr:primaryType] = 'pant:moduleLocale' ")
-                .append("AND (draft.[jcr:primaryType] = 'pant:moduleVersion' OR draft.[jcr:primaryType] IS NULL) ")
-                .append("AND (release.[jcr:primaryType] = 'pant:moduleVersion' OR release.[jcr:primaryType] IS NULL) ")
-                .append("AND (draft.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
-                    .append("OR draft.[metadata/jcr:description] LIKE '%" + searchParam + "%' ")
-                    .append("OR release.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
-                    .append("OR release.[metadata/jcr:description] LIKE '%" + searchParam + "%') ")
-                .append(moduleTypeCondition)
-                .append(productVersionCondition);
+        // Module type filter
+        if(!Strings.isNullOrEmpty(type)) {
+            StringBuilder moduleTypeCondition = new StringBuilder()
+                    .append("(draft.[metadata/pant:moduleType] = '" + type + "' " +
+                            "OR release.[metadata/pant:moduleType] = '" + type + "') ");
+            queryFilters.add(moduleTypeCondition);
+        }
+
+        // join all the available conditions
+        if(queryFilters.size() > 0) {
+            queryBuilder.append(" WHERE ")
+                    .append(StringUtils.join(queryFilters, " AND "));
+        }
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
             queryBuilder.append(" ORDER BY coalesce(draft.[metadata/")
