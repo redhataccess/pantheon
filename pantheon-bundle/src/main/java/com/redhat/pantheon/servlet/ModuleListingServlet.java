@@ -84,7 +84,10 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                 .append("LEFT OUTER JOIN [pant:moduleVersion] AS draft ON  draft.[jcr:uuid] = loc.[draft] ")
                 .append("LEFT OUTER JOIN [pant:moduleVersion] AS release ON  release.[jcr:uuid] = loc.[released] ");
 
-        List<StringBuilder> queryFilters = newArrayListWithCapacity(3);
+        List<StringBuilder> queryFilters = newArrayListWithCapacity(4);
+
+        // filter by path
+        queryFilters.add(new StringBuilder("ISDESCENDANTNODE(m, '/content/repositories')"));
 
         // only filter by text if provided
         if (searchParam.length() > 0) {
