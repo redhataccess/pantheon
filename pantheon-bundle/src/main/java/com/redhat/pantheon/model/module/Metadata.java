@@ -39,7 +39,7 @@ public interface Metadata extends SlingModel {
 
     @Named("pant:datePublished")
     Field<Calendar> datePublished();
-
+    
     @Named("pant:dateUploaded")
     Field<Calendar> dateUploaded();
 
