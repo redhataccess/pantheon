@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +47,12 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
     private final Logger log = LoggerFactory.getLogger(ModuleListingServlet.class);
 
     @Override
+    protected String getQueryLanguage() {
+        // While XPATH is deprecated in JCR 2.0, it's still supported (and recommended) in apache oak
+        return Query.XPATH;
+    }
+
+    @Override
     protected String getQuery(SlingHttpServletRequest request) {
         String searchParam = paramValue(request, "search", "");
         String keyParam = paramValue(request, "key");
@@ -66,8 +73,10 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             keyParam = JcrConstants.JCR_LASTMODIFIED;
         }
 
-        if(!"desc".equals(directionParam)) {
-            directionParam = "asc";
+        if ("desc".equals(directionParam)) {
+            directionParam = "descending";
+        } else {
+            directionParam = "ascending";
         }
 
         // Add all product revisions resolved from product ids
@@ -79,23 +88,17 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         StringBuilder queryBuilder = new StringBuilder()
-                .append("SELECT m.* from [pant:module] AS m ")
-                .append("LEFT OUTER JOIN [pant:moduleLocale] AS loc ON  ISCHILDNODE(loc, m) ")
-                .append("LEFT OUTER JOIN [pant:moduleVersion] AS draft ON  draft.[jcr:uuid] = loc.[draft] ")
-                .append("LEFT OUTER JOIN [pant:moduleVersion] AS release ON  release.[jcr:uuid] = loc.[released] ");
+                .append("/jcr:root/content/(repositories | modules)//element(*, pant:module)");
 
         List<StringBuilder> queryFilters = newArrayListWithCapacity(4);
-
-        // filter by path
-        queryFilters.add(new StringBuilder("ISDESCENDANTNODE(m, '/content/repositories')"));
 
         // only filter by text if provided
         if (searchParam.length() > 0) {
             StringBuilder textFilter = new StringBuilder()
-                    .append("(draft.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
-                    .append("OR draft.[metadata/jcr:description] LIKE '%" + searchParam + "%' ")
-                    .append("OR release.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
-                    .append("OR release.[metadata/jcr:description] LIKE '%" + searchParam + "%') ");
+                    .append("(")
+                    .append("jcr:like(*/*/metadata/@jcr:title,'%" + searchParam + "%') ")
+                    .append("or jcr:like(*/*/metadata/@jcr:description,'%" + searchParam + "%')")
+                    .append(")");
             queryFilters.add(textFilter);
         }
 
@@ -104,35 +107,35 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             StringBuilder productVersionCondition = new StringBuilder();
             List<String> conditions = Arrays.stream(productVersionIds)
                     .map(id -> {
-                        return "draft.[metadata/productVersion] = '" + id + "' " +
-                                "OR release.[metadata/productVersion] = '" + id + "'";
+                        return "*/*/metadata/@productVersion = '" + id + "'";
                     })
                     .collect(toList());
-            productVersionCondition.append("(" + StringUtils.join(conditions, " OR ") + ") ");
+            productVersionCondition.append("(" + StringUtils.join(conditions, " or ") + ")");
             queryFilters.add(productVersionCondition);
         }
 
         // Module type filter
         if(!Strings.isNullOrEmpty(type)) {
             StringBuilder moduleTypeCondition = new StringBuilder()
-                    .append("(draft.[metadata/pant:moduleType] = '" + type + "' " +
-                            "OR release.[metadata/pant:moduleType] = '" + type + "') ");
+                    .append("*/*/metadata/@pant:moduleType = '" + type + "'");
             queryFilters.add(moduleTypeCondition);
         }
 
         // join all the available conditions
         if(queryFilters.size() > 0) {
-            queryBuilder.append(" WHERE ")
-                    .append(StringUtils.join(queryFilters, " AND "));
+            queryBuilder.append("[")
+                    .append(StringUtils.join(queryFilters, " and "))
+                    .append("]");
         }
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
-            queryBuilder.append(" ORDER BY coalesce(draft.[metadata/")
-                    .append(keyParam).append("],release.[metadata/")
-                    .append(keyParam).append("]) ")
+            queryBuilder.append(" order by */*/metadata/@")
+                    .append(keyParam)
+                    .append(" ")
                     .append(directionParam);
         }
 
+        log.info("Executing module query: " + queryBuilder.toString());
         return queryBuilder.toString();
     }
 
@@ -160,10 +163,9 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         productCondition = "AND (" + StringUtils.join(conditions, " OR ") + ") ";
 
         StringBuilder query = new StringBuilder()
-                .append("SELECT pv.* from [nt:base] AS pv ")
-                .append("INNER JOIN [nt:base] AS product ON ISDESCENDANTNODE(pv, product) ")
-                .append("WHERE pv.[jcr:primaryType] = 'pant:productVersion' ")
-                .append("AND product.[jcr:primaryType] = 'pant:product' ")
+                .append("SELECT pv.* from [pant:productVersion] AS pv ")
+                .append("INNER JOIN [pant:product] AS product ON ISDESCENDANTNODE(pv, product) ")
+                .append("WHERE ISDESCENDANTNODE(product, '/content/products') ")
                 .append(productCondition);
 
         // TODO Right now this queries for everything, complex queries with lots of products might not scale
