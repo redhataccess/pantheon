@@ -36,7 +36,6 @@ all file patterns are relative to the configuration file location.
 +
 * Any file matching a pattern in the modules section will show up in the search results.
 +
-* Although users are also able to specify title patterns, this is in anticipation of future functionality. Titles will not show up in search results currently.
 . Run the `Pantheon uploader` command
 +
 ----
