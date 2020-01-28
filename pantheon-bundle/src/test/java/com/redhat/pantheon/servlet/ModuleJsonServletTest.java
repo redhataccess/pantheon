@@ -68,22 +68,19 @@ class ModuleJsonServletTest {
     void resourceToMap() throws Exception {
         // Given
         slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1",
+                .resource("/content/repositories/repo/module/en_US/released",
                         "jcr:primaryType", "pant:moduleVersion");
         slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1/metadata",
+                .resource("/content/repositories/repo/module/en_US/released/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description");
         slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1/content/asciidoc",
+                .resource("/content/repositories/repo/module/en_US/released/content/asciidoc",
                         "jcr:primaryType", "nt:file");
         slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1/content/cachedHtml",
+                .resource("/content/repositories/repo/module/en_US/released/content/cachedHtml",
                         "jcr:data", testHTML,
                         "pant:hash", "2a0e2c43");
-        slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US").adaptTo(ModifiableValueMap.class)
-                .put("released", slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/1").getValueMap()
-                        .get("jcr:uuid"));
 
         registerMockAdapter(Module.class, slingContext);
         ModuleJsonServlet servlet = new ModuleJsonServlet();
@@ -124,11 +121,8 @@ class ModuleJsonServletTest {
     public void onlyRenderViewURIForPORTAL() throws RepositoryException {
         // Given
         slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1",
+                .resource("/content/repositories/repo/module/en_US/released",
                         "jcr:primaryType", "pant:moduleVersion");
-        slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US").adaptTo(ModifiableValueMap.class)
-        .put("released", slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/1").getValueMap()
-                .get("jcr:uuid"));
 
         registerMockAdapter(Module.class, slingContext);
         ModuleJsonServlet servlet = new ModuleJsonServlet();

@@ -64,9 +64,8 @@ class ModuleVersionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/1/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/1/metadata"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/draft"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/draft/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/draft/metadata"));
         assertNull(slingContext.resourceResolver().getResource("/new/proc_module/es_ES/released"));
 
         Module module =
@@ -75,7 +74,7 @@ class ModuleVersionUploadTest {
                         Module.class);
         assertEquals(ModuleType.PROCEDURE,
                 module.getModuleLocale(LocaleUtils.toLocale("es_ES"))
-                        .getVersion("1")
+                        .getVersion("draft")
                         .metadata().get()
                         .moduleType().get());
         assertEquals("This is the adoc content",
@@ -90,15 +89,12 @@ class ModuleVersionUploadTest {
         // Given
         slingContext.build()
                 // Released version
-                .resource("/new/module/es_ES/1",
+                .resource("/new/module/es_ES/released",
                         "jcr:primaryType", "pant:moduleVersion")
-                .resource("/new/module/es_ES/1/metadata")
-                .resource("/new/module/es_ES/1/content/asciidoc/jcr:content",
+                .resource("/new/module/es_ES/released/metadata")
+                .resource("/new/module/es_ES/released/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
                 .commit();
-        // set the draft and released 'pointers'
-        slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
-                .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/1").getValueMap().get("jcr:uuid"));
 
         lenient().when(
                 asciidoctorService.getModuleHtml(
@@ -118,10 +114,10 @@ class ModuleVersionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/metadata"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/released/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/released/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/draft/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/draft/metadata"));
 
         Module module =
                 SlingModels.getModel(slingContext.resourceResolver().getResource("/new/module"), Module.class);
@@ -139,24 +135,19 @@ class ModuleVersionUploadTest {
     void modifyDraftVersion() throws Exception {
         // Given
         slingContext.build()
-                .resource("/new/module/es_ES/1",
-                        "jcr:primaryType", "pant:moduleVersion") // released
-                .resource("/new/module/es_ES/2",
-                        "jcr:primaryType", "pant:moduleVersion") // draft
+                .resource("/new/module/es_ES/released",
+                        "jcr:primaryType", "pant:moduleVersion")
+                .resource("/new/module/es_ES/draft",
+                        "jcr:primaryType", "pant:moduleVersion")
                 // Draft version
-                .resource("/new/module/es_ES/2/metadata")
-                .resource("/new/module/es_ES/2/content/asciidoc/jcr:content",
+                .resource("/new/module/es_ES/draft/metadata")
+                .resource("/new/module/es_ES/draft/content/asciidoc/jcr:content",
                         "jcr:data", "This is the draft adoc content")
                 // Released version
-                .resource("/new/module/es_ES/1/metadata")
-                .resource("/new/module/es_ES/1/content/asciidoc/jcr:content",
+                .resource("/new/module/es_ES/released/metadata")
+                .resource("/new/module/es_ES/released/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
                 .commit();
-        // set the draft and released 'pointers'
-        slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
-                .put("draft", slingContext.resourceResolver().getResource("/new/module/es_ES/2").getValueMap().get("jcr:uuid"));
-        slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
-                .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/1").getValueMap().get("jcr:uuid"));
 
         lenient().when(
                 asciidoctorService.getModuleHtml(
@@ -176,10 +167,10 @@ class ModuleVersionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/metadata"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/draft/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/draft/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/released/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/released/metadata"));
 
         Module module =
                 SlingModels.getModel(slingContext.resourceResolver().getResource("/new/module"), Module.class);
@@ -197,26 +188,21 @@ class ModuleVersionUploadTest {
     void uploadIdenticalDraftVersion() throws Exception {
         // Given
         slingContext.build()
-                .resource("/new/module/es_ES/1",
-                        "jcr:primaryType", "pant:moduleVersion") // released
-                .resource("/new/module/es_ES/2",
-                        "jcr:primaryType", "pant:moduleVersion") // draft
+                .resource("/new/module/es_ES/released",
+                        "jcr:primaryType", "pant:moduleVersion")
+                .resource("/new/module/es_ES/draft",
+                        "jcr:primaryType", "pant:moduleVersion")
                 // Draft version
-                .resource("/new/module/es_ES/2/metadata")
-                .resource("/new/module/es_ES/2/content/asciidoc/jcr:content",
+                .resource("/new/module/es_ES/draft/metadata")
+                .resource("/new/module/es_ES/draft/content/asciidoc/jcr:content",
                         "jcr:data", "This is the draft adoc content")
-                .resource("/new/module/es_ES/2/content/cachedHtml",
+                .resource("/new/module/es_ES/draft/content/cachedHtml",
                         "jcr:data", "This is the draft html content")
                 // Released version
-                .resource("/new/module/es_ES/1/metadata")
-                .resource("/new/module/es_ES/1/content/asciidoc/jcr:content",
+                .resource("/new/module/es_ES/released/metadata")
+                .resource("/new/module/es_ES/released/content/asciidoc/jcr:content",
                         "jcr:data", "This is the released adoc content")
                 .commit();
-        // set the draft and released 'pointers'
-        slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
-                .put("draft", slingContext.resourceResolver().getResource("/new/module/es_ES/2").getValueMap().get("jcr:uuid"));
-        slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
-                .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/1").getValueMap().get("jcr:uuid"));
 
         lenient().when(
                 asciidoctorService.getModuleHtml(
@@ -236,10 +222,10 @@ class ModuleVersionUploadTest {
         upload.doRun(slingContext.request(), new HtmlResponse(), null);
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/2/metadata"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/content"));
-        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/1/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/draft/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/draft/metadata"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/released/content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/new/module/es_ES/released/metadata"));
 
         Module module =
                 SlingModels.getModel(slingContext.resourceResolver().getResource("/new/module"), Module.class);

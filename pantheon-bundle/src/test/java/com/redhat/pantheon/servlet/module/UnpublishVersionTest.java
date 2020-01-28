@@ -31,16 +31,14 @@ class UnpublishVersionTest {
     void doRun() throws Exception {
         // Given
         slingContext.create()
-                .resource("/module/en_US/1",
+                .resource("/module/en_US/released",
                         "jcr:primaryType", "pant:moduleVersion");
         slingContext.create()
-                .resource("/module/en_US/1/metadata",
+                .resource("/module/en_US/released/metadata",
                         "jcr:title", "A published title");
         slingContext.create()
-                .resource("/module/en_US/1/content/asciidoc/jcr:content",
+                .resource("/module/en_US/released/content/asciidoc/jcr:content",
                         "jcr:data", "Released content");
-        slingContext.resourceResolver().getResource("/module/en_US").adaptTo(ModifiableValueMap.class)
-                .put("released", slingContext.resourceResolver().getResource("/module/en_US/1").getValueMap().get("jcr:uuid"));
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
         Events events = mock(Events.class);

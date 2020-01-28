@@ -30,16 +30,14 @@ class PublishDraftVersionTest {
     void doRun() throws Exception {
         // Given
         slingContext.create()
-                .resource("/module/en_US/1",
+                .resource("/module/en_US/draft",
                         "jcr:primaryType", "pant:moduleVersion");
         slingContext.create()
-                .resource("/module/en_US/1/metadata",
+                .resource("/module/en_US/draft/metadata",
                         "jcr:title", "A draft title", "productVersion", "123456", "urlFragment", "/test");
         slingContext.create()
-                .resource("/module/en_US/1/content/asciidoc/jcr:content",
+                .resource("/module/en_US/draft/content/asciidoc/jcr:content",
                         "jcr:data", "The draft content");
-        slingContext.resourceResolver().getResource("/module/en_US").adaptTo(ModifiableValueMap.class)
-                .put("draft", slingContext.resourceResolver().getResource("/module/en_US/1").getValueMap().get("jcr:uuid"));
         registerMockAdapter(Module.class, slingContext);
         Events events = mock(Events.class);
         HtmlResponse postResponse = new HtmlResponse();
@@ -56,7 +54,7 @@ class PublishDraftVersionTest {
         assertEquals("/module", changes.get(0).getSource());
         assertEquals(HttpServletResponse.SC_OK, postResponse.getStatusCode());
         assertNotNull(slingContext.resourceResolver().getResource("/module/en_US/released"));
-        assertNotNull(slingContext.resourceResolver().getResource("/module/en_US/1/metadata/pant:datePublished"));
+        assertNotNull(slingContext.resourceResolver().getResource("/module/en_US/released/metadata/pant:datePublished"));
     }
 
     @Test

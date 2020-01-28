@@ -114,17 +114,16 @@ public class SlingModels {
      * in the jcr session, it will only work against JCR backed resources.
      * @param model The model object wrapping the resource to rename
      * @param newName The new name for the resource.
-     * @param <T>
-     * @return A new model wrapping the newly renamed resource
+     * @param modelType The type of model to be returned.
      * @throws RepositoryException If there is a problem renaming the model
      */
     public static <T extends SlingModel>
-    T rename(@Nonnull final T model, String newName) throws RepositoryException {
+    T rename(@Nonnull final T model, final String newName, final Class<T> modelType) throws RepositoryException {
         String newAbsPath = PathUtils.concat(model.getParent().getPath(), newName);
         ResourceResolver resourceResolver = model.getResourceResolver();
         resourceResolver.adaptTo(Session.class)
                 .move( model.getPath(), newAbsPath );
-        return getModel(resourceResolver.getResource(newAbsPath), (Class<T>)model.getClass());
+        return getModel(resourceResolver.getResource(newAbsPath), modelType);
     }
 
     /**

@@ -41,9 +41,9 @@ public interface ModuleLocale extends SlingModel {
         // Rename 'released' to the next sequence number
         String archivedVersionName = generateNextArchiveVersionName();
         try {
-            return SlingModels.rename(released().get(), archivedVersionName);
+            return SlingModels.rename(released().get(), archivedVersionName, ModuleVersion.class);
         } catch (RepositoryException e) {
-            throw new RuntimeException("Problem archiving draft version to '" + archivedVersionName + "'");
+            throw new RuntimeException("Problem archiving released version to '" + archivedVersionName + "'", e);
         }
     }
 
@@ -56,9 +56,9 @@ public interface ModuleLocale extends SlingModel {
         // Rename 'draft' to 'released'
         try {
             // TODO externalize this magic string
-            return SlingModels.rename(draft().get(), "released");
+            return SlingModels.rename(draft().get(), "released", ModuleVersion.class);
         } catch (RepositoryException e) {
-            throw new RuntimeException("Problem releasing draft version at '" + draft().get().getPath() + "'");
+            throw new RuntimeException("Problem releasing draft version at '" + draft().get().getPath() + "'", e);
         }
     }
 
@@ -72,15 +72,14 @@ public interface ModuleLocale extends SlingModel {
             // If there is no 'draft' version already, rename 'released' to 'draft'
             if(draft().get() == null) {
                 // TODO externalize this magic string
-                return SlingModels.rename(released().get(), "draft");
+                return SlingModels.rename(released().get(), "draft", ModuleVersion.class);
             }
             // Otherwise, simply archive it
             else {
-                String archivedVersionName = generateNextArchiveVersionName();
-                return SlingModels.rename(released().get(), archivedVersionName);
+                return archiveReleasedVersion();
             }
         } catch (RepositoryException e) {
-            throw new RuntimeException("Problem releasing draft version at '" + draft().get().getPath() + "'");
+            throw new RuntimeException("Problem rolling back released version", e);
         }
     }
 

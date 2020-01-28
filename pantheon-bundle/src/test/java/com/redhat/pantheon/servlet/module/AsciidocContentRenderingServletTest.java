@@ -24,14 +24,12 @@ class AsciidocContentRenderingServletTest {
     void doGet() throws Exception {
         // Given
         sc.build()
-                .resource("/module/en_US/1",
+                .resource("/module/en_US/draft",
                         "jcr:primaryType", "pant:moduleVersion")
-                .resource("/module/en_US/1/content/asciidoc/jcr:content",
+                .resource("/module/en_US/draft/content/asciidoc/jcr:content",
                         "jcr:data", "some asciidoc content")
                 .commit();
         registerMockAdapter(Module.class, sc);
-        sc.resourceResolver().getResource("/module/en_US").adaptTo(ModifiableValueMap.class)
-                .put("draft", sc.resourceResolver().getResource("/module/en_US/1").getValueMap().get("jcr:uuid"));
         AsciidocContentRenderingServlet servlet = new AsciidocContentRenderingServlet();
         Map<String, Object> params = Maps.newHashMap();
         params.put("draft", "true");

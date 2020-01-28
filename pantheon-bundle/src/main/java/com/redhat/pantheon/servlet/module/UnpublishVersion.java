@@ -78,9 +78,8 @@ public class UnpublishVersion extends AbstractPostOperation {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                     "The module is not released (published)");
         } else {
-            // Released revision is emptied out
             ModuleLocale moduleLocale = module.getModuleLocale(locale);
-            moduleLocale.archiveReleasedVersion();
+            moduleLocale.rollbackReleasedVersion();
             changes.add(Modification.onModified(module.getPath()));
         }
     }
