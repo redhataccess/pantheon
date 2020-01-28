@@ -3,6 +3,7 @@ package com.redhat.pantheon.servlet.module;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
+import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVersion;
@@ -85,10 +86,10 @@ public class PublishDraftVersion extends AbstractPostOperation {
         } else {
             // Draft becomes the new released version
             ModuleLocale moduleLocale = module.getModuleLocale(locale);
-            moduleLocale.released().set( moduleLocale.draft().get() );
-            moduleLocale.draft().set( null );
+            moduleLocale.archiveReleasedVersion();
+            ModuleVersion releasedVersion = moduleLocale.releaseDraftVersion();
             // set the published date on the released version
-            versionToRelease.get()
+            releasedVersion
                     .metadata().getOrCreate()
                     .datePublished().set(Calendar.getInstance());
             changes.add(Modification.onModified(module.getPath()));

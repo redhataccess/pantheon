@@ -2,12 +2,15 @@ package com.redhat.pantheon.model.api;
 
 import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
+import org.apache.jackrabbit.oak.commons.PathUtils;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
 
 import javax.annotation.Nonnull;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 
@@ -104,6 +107,24 @@ public class SlingModels {
         String parentPath = ResourceUtil.getParent(path);
         String resourceName = ResourceUtil.getName(path);
         return createModel(resourceResolver.resolve(parentPath),  resourceName, modelType);
+    }
+
+    /**
+     * Renames the resource represented by the given model. This method invokes a move operation
+     * in the jcr session, it will only work against JCR backed resources.
+     * @param model The model object wrapping the resource to rename
+     * @param newName The new name for the resource.
+     * @param <T>
+     * @return A new model wrapping the newly renamed resource
+     * @throws RepositoryException If there is a problem renaming the model
+     */
+    public static <T extends SlingModel>
+    T rename(@Nonnull final T model, String newName) throws RepositoryException {
+        String newAbsPath = PathUtils.concat(model.getParent().getPath(), newName);
+        ResourceResolver resourceResolver = model.getResourceResolver();
+        resourceResolver.adaptTo(Session.class)
+                .move( model.getPath(), newAbsPath );
+        return getModel(resourceResolver.getResource(newAbsPath), (Class<T>)model.getClass());
     }
 
     /**

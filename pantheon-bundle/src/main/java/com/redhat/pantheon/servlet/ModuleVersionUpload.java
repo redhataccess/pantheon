@@ -119,11 +119,9 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             // if there is no draft content, create it
             if( !draftVersion.isPresent() ) {
                 draftVersion = Optional.of(
-                        module.getOrCreateModuleLocale(localeObj)
-                        .createNextVersion());
-                module.getOrCreateModuleLocale(localeObj)
-                        .draft().set( draftVersion.get().uuid().get() );
-                //Need to copy the metadata from the released version, if it exists
+                    module.getOrCreateModuleLocale(localeObj)
+                        .draft().getOrCreate());
+                // Need to copy the metadata from the released version, if it exists
                 Optional<ModuleVersion> releasedVersion = module.getReleasedVersion(localeObj);
                 if (releasedVersion.isPresent()) {
                     Metadata releasedMeta = releasedVersion.get().metadata().get();

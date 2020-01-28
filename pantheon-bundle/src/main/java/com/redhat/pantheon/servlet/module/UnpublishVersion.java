@@ -4,8 +4,8 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
@@ -17,7 +17,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Locale;
@@ -81,15 +80,7 @@ public class UnpublishVersion extends AbstractPostOperation {
         } else {
             // Released revision is emptied out
             ModuleLocale moduleLocale = module.getModuleLocale(locale);
-            String unpublishedRevId = moduleLocale.released().get();
-            moduleLocale.released().set( null );
-
-            // if there is no draft version, set the recently unpublished one as draft
-            // it is guaranteed to be the latest one
-            if (!module.getDraftVersion(locale).isPresent()) {
-                moduleLocale.draft().set(unpublishedRevId);
-            }
-
+            moduleLocale.archiveReleasedVersion();
             changes.add(Modification.onModified(module.getPath()));
         }
     }

@@ -52,11 +52,7 @@ public interface Module extends SlingModel {
     default Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale) {
         ModuleLocale moduleLocale = getModuleLocale(locale);
         if(moduleLocale != null) {
-            try {
-                return ofNullable( moduleLocale.draft().getReference() );
-            } catch (RepositoryException e) {
-                throw new RuntimeException(e);
-            }
+            return ofNullable( moduleLocale.draft().get() );
         }
         return empty();
     }
@@ -64,11 +60,7 @@ public interface Module extends SlingModel {
     default Optional<ModuleVersion> getReleasedVersion(@Nonnull final Locale locale) {
         ModuleLocale moduleLocale = getModuleLocale(locale);
         if(moduleLocale != null) {
-            try {
-                return ofNullable( moduleLocale.released().getReference() );
-            } catch (RepositoryException e) {
-                throw new RuntimeException(e);
-            }
+            return ofNullable( moduleLocale.released().get() );
         }
         return empty();
     }
