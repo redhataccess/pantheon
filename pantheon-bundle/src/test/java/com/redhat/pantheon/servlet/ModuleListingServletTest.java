@@ -31,7 +31,7 @@ class ModuleListingServletTest {
 
         // Then
         // make sure queries don't throw exceptions when executed against the JCR repository
-        assertDoesNotThrow(() -> slingContext.resourceResolver().queryResources(query, Query.JCR_SQL2));
+        assertDoesNotThrow(() -> slingContext.resourceResolver().queryResources(query, Query.XPATH));
     }
 
     @Test
@@ -52,7 +52,7 @@ class ModuleListingServletTest {
 
         // Then
         // make sure queries don't throw exceptions when executed against the JCR repository
-        assertDoesNotThrow(() -> slingContext.resourceResolver().queryResources(query, Query.JCR_SQL2));
+        assertDoesNotThrow(() -> slingContext.resourceResolver().queryResources(query, Query.XPATH));
     }
 
     @Test

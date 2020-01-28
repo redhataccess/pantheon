@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -30,6 +31,7 @@ import java.util.Date;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static java.util.stream.Collectors.toList;
@@ -47,6 +49,12 @@ import static java.util.stream.Collectors.toList;
 public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
     private final Logger log = LoggerFactory.getLogger(ModuleListingServlet.class);
+
+    @Override
+    protected String getQueryLanguage() {
+        // While XPATH is deprecated in JCR 2.0, it's still supported (and recommended) in apache oak
+        return Query.XPATH;
+    }
 
     @Override
     protected String getQuery(SlingHttpServletRequest request) {
@@ -69,8 +77,10 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             keyParam = JcrConstants.JCR_LASTMODIFIED;
         }
 
-        if(!"desc".equals(directionParam)) {
-            directionParam = "asc";
+        if ("desc".equals(directionParam)) {
+            directionParam = "descending";
+        } else {
+            directionParam = "ascending";
         }
 
         // Add all product revisions resolved from product ids
@@ -81,50 +91,55 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             throw new RuntimeException(e);
         }
 
-        // Condition for module type
-        String moduleTypeCondition = "";
-        if(!Strings.isNullOrEmpty(type)) {
-            moduleTypeCondition = "AND (draft.[metadata/pant:moduleType] = '" + type + "' " +
-                    "OR release.[metadata/pant:moduleType] = '" + type + "') ";
+        StringBuilder queryBuilder = new StringBuilder()
+                .append("/jcr:root/content/(repositories | modules)//element(*, pant:module)");
+
+        List<StringBuilder> queryFilters = newArrayListWithCapacity(4);
+
+        // only filter by text if provided
+        if (searchParam.length() > 0) {
+            StringBuilder textFilter = new StringBuilder()
+                    .append("(")
+                    .append("jcr:like(*/*/metadata/@jcr:title,'%" + searchParam + "%') ")
+                    .append("or jcr:like(*/*/metadata/@jcr:description,'%" + searchParam + "%')")
+                    .append(")");
+            queryFilters.add(textFilter);
         }
 
-        // product version conditions
-        String productVersionCondition = "";
+        // product version filter
         if (productVersionIds != null && productVersionIds.length > 0) {
+            StringBuilder productVersionCondition = new StringBuilder();
             List<String> conditions = Arrays.stream(productVersionIds)
                     .map(id -> {
-                        return "draft.[metadata/productVersion] = '" + id + "' " +
-                                "OR release.[metadata/productVersion] = '" + id + "'";
+                        return "*/*/metadata/@productVersion = '" + id + "'";
                     })
                     .collect(toList());
-            productVersionCondition = "AND (" + StringUtils.join(conditions, " OR ") + ") ";
+            productVersionCondition.append("(" + StringUtils.join(conditions, " or ") + ")");
+            queryFilters.add(productVersionCondition);
         }
 
-        // FIXME Searching by resourceType because in some cases, searching directly on the primaryType
-        // is not returning any results
-        StringBuilder queryBuilder = new StringBuilder()
-                .append("SELECT m.* from [nt:base] AS m ")
-                .append("LEFT OUTER JOIN [nt:base] AS loc ON  ISCHILDNODE(loc, m) ")
-                .append("LEFT OUTER JOIN [nt:base] AS draft ON  draft.[jcr:uuid] = loc.[draft] ")
-                .append("LEFT OUTER JOIN [nt:base] AS release ON  release.[jcr:uuid] = loc.[released] ")
-                .append("WHERE m.[jcr:primaryType] = 'pant:module' ")
-                .append("AND loc.[jcr:primaryType] = 'pant:moduleLocale' ")
-                .append("AND (draft.[jcr:primaryType] = 'pant:moduleVersion' OR draft.[jcr:primaryType] IS NULL) ")
-                .append("AND (release.[jcr:primaryType] = 'pant:moduleVersion' OR release.[jcr:primaryType] IS NULL) ")
-                .append("AND (draft.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
-                    .append("OR draft.[metadata/jcr:description] LIKE '%" + searchParam + "%' ")
-                    .append("OR release.[metadata/jcr:title] LIKE '%" + searchParam + "%' ")
-                    .append("OR release.[metadata/jcr:description] LIKE '%" + searchParam + "%') ")
-                .append(moduleTypeCondition)
-                .append(productVersionCondition);
+        // Module type filter
+        if(!Strings.isNullOrEmpty(type)) {
+            StringBuilder moduleTypeCondition = new StringBuilder()
+                    .append("*/*/metadata/@pant:moduleType = '" + type + "'");
+            queryFilters.add(moduleTypeCondition);
+        }
+
+        // join all the available conditions
+        if(queryFilters.size() > 0) {
+            queryBuilder.append("[")
+                    .append(StringUtils.join(queryFilters, " and "))
+                    .append("]");
+        }
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
-            queryBuilder.append(" ORDER BY coalesce(draft.[metadata/")
-                    .append(keyParam).append("],release.[metadata/")
-                    .append(keyParam).append("]) ")
+            queryBuilder.append(" order by */*/metadata/@")
+                    .append(keyParam)
+                    .append(" ")
                     .append(directionParam);
         }
 
+        log.info("Executing module query: " + queryBuilder.toString());
         return queryBuilder.toString();
     }
 
@@ -152,10 +167,9 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         productCondition = "AND (" + StringUtils.join(conditions, " OR ") + ") ";
 
         StringBuilder query = new StringBuilder()
-                .append("SELECT pv.* from [nt:base] AS pv ")
-                .append("INNER JOIN [nt:base] AS product ON ISDESCENDANTNODE(pv, product) ")
-                .append("WHERE pv.[jcr:primaryType] = 'pant:productVersion' ")
-                .append("AND product.[jcr:primaryType] = 'pant:product' ")
+                .append("SELECT pv.* from [pant:productVersion] AS pv ")
+                .append("INNER JOIN [pant:product] AS product ON ISDESCENDANTNODE(pv, product) ")
+                .append("WHERE ISDESCENDANTNODE(product, '/content/products') ")
                 .append(productCondition);
 
         // TODO Right now this queries for everything, complex queries with lots of products might not scale
