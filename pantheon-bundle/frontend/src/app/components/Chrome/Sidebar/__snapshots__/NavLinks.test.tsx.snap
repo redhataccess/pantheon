@@ -6,6 +6,8 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
     ariaLeftScroll="Scroll left"
     ariaRightScroll="Scroll right"
     className=""
+    id="nav-primary-expandable"
+    onSelect={[Function]}
     variant="default"
   >
     <NavExpandable
@@ -13,15 +15,16 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
       data-testid="navLink_modules"
       groupId="grp-1"
       id=""
-      isActive={true}
+      isActive={false}
       isExpanded={true}
       srText=""
       title="Modules"
     >
       <NavItem
         groupId="grp-1"
-        isActive={true}
+        isActive={false}
         itemId="grp-1_itm-1"
+        onClick={[Function]}
       >
         <Link
           data-testid="navLink_search"
@@ -34,17 +37,7 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         groupId="grp-1"
         isActive={false}
         itemId="grp-1_itm-2"
-      >
-        <Link
-          to="/module"
-        >
-          New Module
-        </Link>
-      </NavItem>
-      <NavItem
-        groupId="grp-1"
-        isActive={false}
-        itemId="grp-1_itm-3"
+        onClick={[Function]}
       >
         <Link
           to="/git"
@@ -66,6 +59,7 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         groupId="grp-2"
         isActive={false}
         itemId="grp-2_itm-1"
+        onClick={[Function]}
       >
         <Link
           to="/products"
@@ -77,6 +71,7 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         groupId="grp-2"
         isActive={false}
         itemId="grp-2_itm-2"
+        onClick={[Function]}
       >
         <Link
           to="/product"
@@ -92,6 +87,10 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
 exports[`NavLinks tests test browserLink function 1`] = `undefined`;
 
 exports[`NavLinks tests test checkAuth function 1`] = `undefined`;
+
+exports[`NavLinks tests test handleItemOnclick function 1`] = `undefined`;
+
+exports[`NavLinks tests test onExpandableSelect function 1`] = `undefined`;
 
 exports[`NavLinks tests test render function 1`] = `[Function]`;
 
