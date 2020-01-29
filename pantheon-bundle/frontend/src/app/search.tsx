@@ -421,7 +421,10 @@ class Search extends Component<IAppState, ISearchState> {
   private buildSearchUrl() {
     let backend = "/modules.json?"
     backend += this.state.filterQuery
-    backend += "&offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
+    if (this.state.filterQuery.trim() !== "") {
+      backend += "&"
+    }
+    backend += "offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
     return backend
   }
 
