@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.redhat.pantheon.extension.events.ModuleVersionPublishStateEvent;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
+import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
@@ -122,7 +123,7 @@ public class HydraIntegration implements EventProcessingExtension {
             msg = "{\""
                     + ID_KEY + "\":" + "\"" + idValue +"\","
                     + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\"}";
-        } else {
+        } else if (ModuleVersionUnpublishedEvent.class.equals(event.getClass())){
             if (System.getenv(PORTAL_URL) != null) {
                 uriValue = System.getenv(PORTAL_URL) + "/topics/" + ServletUtils.toLanguageTag(DEFAULT_MODULE_LOCALE) + "/" + moduleUUID;
 
@@ -131,6 +132,8 @@ public class HydraIntegration implements EventProcessingExtension {
                     + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\","
                     + "\"" + URI_KEY + "\":" + "\"" + uriValue + "\"}";
             }
+        } else {
+            log.warn("[" + HydraIntegration.class.getSimpleName() + "] unhandled event type: " + event.getClass());
         }
         if (!msg.isEmpty()) {
             producer.send(session.createTextMessage(msg));
