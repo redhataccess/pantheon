@@ -5,6 +5,7 @@ import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 
+import javax.inject.Named;
 import javax.jcr.RepositoryException;
 
 import static com.google.common.collect.Streams.stream;
@@ -16,8 +17,13 @@ import static java.util.stream.Collectors.counting;
 @JcrPrimaryType("pant:moduleLocale")
 public interface ModuleLocale extends SlingModel {
 
+    public static final String RELEASED = "released";
+    public static final String DRAFT = "draft";
+
+    @Named(RELEASED)
     Child<ModuleVersion> released();
 
+    @Named(DRAFT)
     Child<ModuleVersion> draft();
 
     default ModuleVersion getVersion(String name) {
@@ -55,8 +61,7 @@ public interface ModuleLocale extends SlingModel {
 
         // Rename 'draft' to 'released'
         try {
-            // TODO externalize this magic string
-            return SlingModels.rename(draft().get(), "released", ModuleVersion.class);
+            return SlingModels.rename(draft().get(), RELEASED, ModuleVersion.class);
         } catch (RepositoryException e) {
             throw new RuntimeException("Problem releasing draft version at '" + draft().get().getPath() + "'", e);
         }
@@ -71,8 +76,7 @@ public interface ModuleLocale extends SlingModel {
         try {
             // If there is no 'draft' version already, rename 'released' to 'draft'
             if(draft().get() == null) {
-                // TODO externalize this magic string
-                return SlingModels.rename(released().get(), "draft", ModuleVersion.class);
+                return SlingModels.rename(released().get(), DRAFT, ModuleVersion.class);
             }
             // Otherwise, simply archive it
             else {
