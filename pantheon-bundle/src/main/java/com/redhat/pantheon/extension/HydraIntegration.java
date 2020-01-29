@@ -12,7 +12,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import com.redhat.pantheon.extension.events.ModuleVersionPublishStateEvent;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceUtil;
@@ -23,19 +22,28 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.redhat.pantheon.extension.events.ModuleVersionPublishStateEvent;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
+import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 
 /**
  * A Hydra message producer for Module post publish events.
  * 
+ * A sample message for publish event:
+ * {"id":"https://example.com/api/module?locale=en-us&module_id=fb8f7586-1b68-437c-94d9-bfc4f85866ed","event":"publish"}
+ *
+ * A sample message for unpublish event:
+ * {"id":"","event":"unpublish", "view_uri":"https://example.com/topics/en-us/fb8f7586-1b68-437c-94d9-bfc4f85866ed"}
+ *
  * @author Lisa Davidson
  */
 @Component(
         service = EventProcessingExtension.class
         )
-public class ModulePostPublishHydraIntegration implements EventProcessingExtension {
+public class HydraIntegration implements EventProcessingExtension {
     // Environment variables.
     private static String message_broker_hostname = "";
     private static String message_broker_port = "";
@@ -51,17 +59,19 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
     private static final String HYDRA_TOPIC = "VirtualTopic.eng.pantheon2.notifications";
     private static final String ID_KEY = "id";
     private static final String EVENT_KEY = "event";
+    private static final String URI_KEY = "view_uri";
     private static final String EVENT_PUBLISH_VALUE = "publish";
     private static final String EVENT_UNPUBLISH_VALUE = "unpublish";
     public static final Locale DEFAULT_MODULE_LOCALE = Locale.US;
+    public static final String PORTAL_URL = "PORTAL_URL";
 
     private SSLContext sslContext;
     private ServiceResourceResolverProvider serviceResourceResolverProvider;
-    private final Logger log = LoggerFactory.getLogger(ModulePostPublishHydraIntegration.class);
+    private final Logger log = LoggerFactory.getLogger(HydraIntegration.class);
 
 
     @Activate
-    public ModulePostPublishHydraIntegration(
+    public HydraIntegration(
             @Reference ServiceResourceResolverProvider serviceResourceResolverProvider) {
         this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
@@ -95,7 +105,7 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
         Connection connection = createConnectionFactory().createConnection();
         try {
             connection.start();
-            log.info("[" + ModulePostPublishHydraIntegration.class.getSimpleName() + "] connection started " );
+            log.info("[" + HydraIntegration.class.getSimpleName() + "] connection started " );
         } catch (JMSException ex) {
             log.info("Exception: " + ex);
         }
@@ -104,11 +114,33 @@ public class ModulePostPublishHydraIntegration implements EventProcessingExtensi
         MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
         String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
         String eventValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
-        String msg = "{\""
-                + ID_KEY + "\":" + "\"" + this.getPantheonHost() + PANTHEON_MODULE_API_PATH + moduleUUID +"\","
-                + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\"}";
-        producer.send(session.createTextMessage(msg));
-        log.info("[" + ModulePostPublishHydraIntegration.class.getSimpleName() + "] message sent: " + session.createTextMessage(msg) );
+        String idValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? this.getPantheonHost() + PANTHEON_MODULE_API_PATH
+                + moduleUUID : "";
+        String uriValue = "";
+        String msg = "";
+
+        if (ModuleVersionPublishedEvent.class.equals(event.getClass())) {
+            msg = "{\""
+                    + ID_KEY + "\":" + "\"" + idValue +"\","
+                    + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\"}";
+        } else if (ModuleVersionUnpublishedEvent.class.equals(event.getClass())){
+            if (System.getenv(PORTAL_URL) != null) {
+                uriValue = System.getenv(PORTAL_URL) + "/topics/" + ServletUtils.toLanguageTag(DEFAULT_MODULE_LOCALE) + "/" + moduleUUID;
+
+                msg = "{\""
+                    + ID_KEY + "\":" + "\"" + idValue +"\","
+                    + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\","
+                    + "\"" + URI_KEY + "\":" + "\"" + uriValue + "\"}";
+            }
+        } else {
+            log.warn("[" + HydraIntegration.class.getSimpleName() + "] unhandled event type: " + event.getClass());
+        }
+        if (!msg.isEmpty()) {
+            producer.send(session.createTextMessage(msg));
+            log.info("[" + HydraIntegration.class.getSimpleName() + "] message sent: " + session.createTextMessage(msg) );
+        } else {
+            log.info("[" + HydraIntegration.class.getSimpleName() + "] empty message!");
+        }
 
         connection.close();
     }
