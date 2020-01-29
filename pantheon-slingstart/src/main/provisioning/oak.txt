@@ -47,7 +47,7 @@
     org.apache.jackrabbit/oak-segment-tar/${oak.version}
 
 [artifacts startLevel=15 runModes=oak_mongo]
-    org.mongodb/mongo-java-driver/3.6.4
+    org.mongodb/mongo-java-driver/3.8.2
     com.h2database/h2-mvstore/1.4.194
 
 # start the Oak server instance after all components have been configured
