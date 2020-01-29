@@ -22,26 +22,6 @@ class ModuleTest {
     private final SlingContext slingContext = new SlingContext();
 
     @Test
-    void createNewVersion() throws Exception {
-        // Given
-        slingContext.build()
-                .resource("/content/module1")
-                .commit();
-        slingContext.registerAdapter(Resource.class, Node.class, mock(Node.class));
-        Module module =
-                SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module1"),
-                        Module.class);
-
-        // When
-        module.createModuleLocale(new Locale("es", "ES"))
-                .createNextVersion();
-        module.getResourceResolver().commit();
-
-        // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/content/module1/es_ES/1"));
-    }
-
-    @Test
     void getVersionByLocaleAndVersionName() throws Exception {
         // Given
         slingContext.build()

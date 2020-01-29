@@ -17,8 +17,8 @@ import static java.util.stream.Collectors.counting;
 @JcrPrimaryType("pant:moduleLocale")
 public interface ModuleLocale extends SlingModel {
 
-    public static final String RELEASED = "released";
-    public static final String DRAFT = "draft";
+    String RELEASED = "released";
+    String DRAFT = "draft";
 
     @Named(RELEASED)
     Child<ModuleVersion> released();
@@ -36,7 +36,7 @@ public interface ModuleLocale extends SlingModel {
 
     /**
      * Archives the latest released version. Renames the version to the next available archive name.
-     * @return The newly archived {@link ModuleVersion}
+     * @return The just-archived {@link ModuleVersion}
      */
     default ModuleVersion archiveReleasedVersion() {
         if(released().get() == null) {
@@ -53,6 +53,10 @@ public interface ModuleLocale extends SlingModel {
         }
     }
 
+    /**
+     * Releases the current draft version. This method will do nothing if there is no draft version.
+     * @return The just-released module version
+     */
     default ModuleVersion releaseDraftVersion() {
         if(draft().get() == null) {
             // nothing to do
@@ -67,6 +71,12 @@ public interface ModuleLocale extends SlingModel {
         }
     }
 
+    /**
+     * Pulls back the released module version. This method does nothing if there is no released
+     * module version. The released version will also be placed in draft state if there is no other
+     * draft version. Otherwise it will simply be archived.
+     * @return The module version which was just rolled back
+     */
     default ModuleVersion rollbackReleasedVersion() {
         if(released().get() == null) {
             // nothing to do
@@ -87,15 +97,10 @@ public interface ModuleLocale extends SlingModel {
         }
     }
 
-    default ModuleVersion createNextVersion() {
-        // Generate a new version name
-        return createChild(generateNextVersionName(), ModuleVersion.class);
-    }
-
-    default String generateNextVersionName() {
-        return "" + (stream(this.getChildren()).collect(counting()) + 1);
-    }
-
+    /**
+     * Generates the next archived version name to use in the module locale. Archived versions
+     * should be consecutive integers starting from 1.
+     */
     default String generateNextArchiveVersionName() {
         // Get a count of the number of already archived versions
         long archivedVersionCount = stream(this.getChildren()).collect(counting());
