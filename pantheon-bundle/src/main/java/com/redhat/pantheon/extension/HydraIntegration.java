@@ -117,22 +117,27 @@ public class HydraIntegration implements EventProcessingExtension {
                 + moduleUUID : "";
         String uriValue = "";
         String msg = "";
-        if (System.getenv(PORTAL_URL) != null) {
-            uriValue = System.getenv(PORTAL_URL) + "/topics/" + ServletUtils.toLanguageTag(DEFAULT_MODULE_LOCALE) + "/" + moduleUUID;
-        }
+
         if (ModuleVersionPublishedEvent.class.equals(event.getClass())) {
             msg = "{\""
                     + ID_KEY + "\":" + "\"" + idValue +"\","
                     + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\"}";
         } else {
-            msg = "{\""
+            if (System.getenv(PORTAL_URL) != null) {
+                uriValue = System.getenv(PORTAL_URL) + "/topics/" + ServletUtils.toLanguageTag(DEFAULT_MODULE_LOCALE) + "/" + moduleUUID;
+
+                msg = "{\""
                     + ID_KEY + "\":" + "\"" + idValue +"\","
                     + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\","
                     + "\"" + URI_KEY + "\":" + "\"" + uriValue + "\"}";
+            }
         }
-
-        producer.send(session.createTextMessage(msg));
-        log.info("[" + HydraIntegration.class.getSimpleName() + "] message sent: " + session.createTextMessage(msg) );
+        if (!msg.isEmpty()) {
+            producer.send(session.createTextMessage(msg));
+            log.info("[" + HydraIntegration.class.getSimpleName() + "] message sent: " + session.createTextMessage(msg) );
+        } else {
+            log.info("[" + HydraIntegration.class.getSimpleName() + "] empty message!");
+        }
 
         connection.close();
     }
