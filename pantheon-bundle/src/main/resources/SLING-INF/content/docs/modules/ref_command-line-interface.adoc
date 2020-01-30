@@ -2,7 +2,7 @@
 
 = Using the Command Line Interface
 
-Many of the operations available in the Pantheon user interface can also be performed using commands in the command line interface.
+Some operations available in the Pantheon user interface can also be performed using commands in the command line interface.
 
 .To use the `Pantheon uploader` via the command line interface
 
@@ -11,24 +11,29 @@ Many of the operations available in the Pantheon user interface can also be perf
 ----
 curl -S https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/setup.sh | sh -
 ----
-. Type ‘pantheon’ in the command line to confirm it was properly installed.
+. Type `pantheon` in the command line to confirm it was properly installed.
 
-. Navigate to a directory containing test modules
+. Navigate to a directory containing test modules.
 +
+[options="nowrap", subs="normal"]
 ----
-cd <PATH_TO_YOUR_FOLDER_WITH_MODULES>
+cd _PATH_TO_YOUR_FOLDER_WITH_MODULES_
 ----
-. Create the configuration file and edit as needed
+. Create the configuration file and edit as needed.
 +
 ----
 # pantheon --sample > pantheon2.yml
 # vim pantheon2.yml  (or open in your preferred editor)
 ----
-. Change the default values for ‘server’ and ‘repository’ as follows:
+. Change the default values for `server` and `repository` as follows:
 +
+[options="nowrap",subs="normal"]
+----
 server: link:http://pantheon2.int.us-west.aws.prod.paas.redhat.com[]
-+
-repository: <YOUR_KERBEROS_ID>
+
+repository: _YOUR_KERBEROS_ID_
+----
+
 . Add the desired file patterns for modules and resources in the file;
 all file patterns are relative to the configuration file location.
 +
@@ -38,8 +43,10 @@ all file patterns are relative to the configuration file location.
 +
 . Run the `Pantheon uploader` command
 +
+[options="nowrap", subs="normal"]
 ----
-pantheon push -u <YOUR_USER> -p <YOUR_PASSWORD>
+pantheon push -u _YOUR_USER_ -p _YOUR_PASSWORD_
 ----
-. Locate and preview your modules at -
-link:http://pantheon2.int.us-west.aws.prod.paas.redhat.com/pantheon/[]
+. Locate and preview your modules at
++
+link:http://pantheon2.int.us-west.aws.prod.paas.redhat.com/pantheon/[http://pantheon2.int.us-west.aws.prod.paas.redhat.com/pantheon]
