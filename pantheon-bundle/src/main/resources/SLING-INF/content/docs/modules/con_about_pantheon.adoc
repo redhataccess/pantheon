@@ -14,10 +14,10 @@ The following table describes features that Pantheon does and does not provide.
 
 .Pantheon Features
 |===
-|Pantheon provides |Pantheon does not provide
+|Pantheon provides: |Pantheon does not provide:
 
-a|* A GUI for managing modules and assemblies, including the ability for authors to search for specific content and other workflow features that are more user-friendly than those currently available,
-* Metadata editing to optimize content for search engines
+a|* A GUI for managing modules and assemblies, including the ability for authors to search for specific content and other workflow features that are more user-friendly than those currently available.
+* Metadata editing to optimize content for search engines.
 * A module library to enable content reuse.
 * A visual preview of a module so you can see how it will appear on the Customer Portal.
 
