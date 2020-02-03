@@ -166,8 +166,6 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             Calendar now = Calendar.getInstance();
             metadata.dateModified().set(now);
             metadata.dateUploaded().set(now);
-            metadata.moduleType().set( determineModuleType(module) );
-
             resolver.commit();
 
             if (generateHtml) {
@@ -176,6 +174,13 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                 asciidoctorService.getModuleHtml(draftVersion.get(), module, context, true);
             }
 
+            // Generate a module type based on the file name ONLY after asciidoc generation, so that the
+            // attribute-based logic takes precedence
+            if(metadata.moduleType().get() == null) {
+                metadata.moduleType().set(determineModuleType(module));
+            }
+
+            resolver.commit();
             response.setStatus(responseCode, "");
         } catch (Exception e) {
             throw new RepositoryException("Error uploading a module version", e);
