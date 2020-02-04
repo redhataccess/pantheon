@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { CopyIcon } from '@patternfly/react-icons';
 import { Level, LevelItem, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core'
 import {
     DataList, DataListItem, DataListItemRow, DataListItemCells,
@@ -6,7 +7,6 @@ import {
 } from '@patternfly/react-core'
 import { Versions } from '@app/versions'
 import { Fields } from '@app/Constants'
-import CopyImage from '@app/images/copy.png'
 
 class ModuleDisplay extends Component<any, any, any> {
 
@@ -71,7 +71,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.moduleUUID !== ""
                             && this.state.portalHost !== ""
-                            && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <img src={CopyImage} width="16px" height="16px" /></a></span>
+                            && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
                         }
 
                         <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>

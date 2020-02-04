@@ -48,7 +48,7 @@ describe('NavLinks tests', () => {
   it('should handle state changes for isLoggedIn', () => {
     const wrapper = shallow(<NavLinks {...mockStateUser} />)
     const navGroup1 = wrapper.find('[groupId="grp-1"]')
-    expect(navGroup1.length).toBe(4)
+    expect(navGroup1.length).toBe(3)
     const navGroup2 = wrapper.find('[groupId="grp-2"]')
     expect(navGroup2.length).toBe(3)
   })
@@ -87,6 +87,18 @@ describe('NavLinks tests', () => {
     const wrapper = renderer.create(<Router><NavLinks {...mockStateUser} /></Router>)
     const inst = wrapper.getInstance()
     expect(inst.checkAuth).toMatchSnapshot()
+  })
+
+  it('test onExpandableSelect function', () => {
+    const wrapper = renderer.create(<Router><NavLinks {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.onExpandableSelect).toMatchSnapshot()
+  })
+
+  it('test handleItemOnclick function', () => {
+    const wrapper = renderer.create(<Router><NavLinks {...mockStateUser} /></Router>)
+    const inst = wrapper.getInstance()
+    expect(inst.handleItemOnclick).toMatchSnapshot()
   })
 
   it('test Admin Panel links', () => {

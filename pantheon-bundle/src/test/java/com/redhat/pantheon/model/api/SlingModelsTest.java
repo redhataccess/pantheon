@@ -104,6 +104,28 @@ class SlingModelsTest {
     }
 
     @Test
+    void nullValueGetters() {
+        // Given
+        Calendar now = Calendar.getInstance();
+        String[] arrayValue = {"A", "B", "C"};
+        sc.build()
+                .resource("/test")
+                .commit();
+
+        // When
+        TestResource model = SlingModels.getModel(sc.resourceResolver(), "/test", TestResource.class);
+
+        // Then
+        assertNull(model.name().get());
+        assertNull(model.dateField().get());
+        assertNull(model.booleanField().get());
+        assertNull(model.intField().get());
+        assertNull(model.longField().get());
+        assertNull(model.stringArrayField().get());
+        assertNull(model.enumField().get());
+    }
+
+    @Test
     void getDeepField() throws Exception {
         // Given
         sc.build()
