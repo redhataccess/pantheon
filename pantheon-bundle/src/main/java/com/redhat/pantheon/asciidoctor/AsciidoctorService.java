@@ -6,6 +6,7 @@ import com.google.common.hash.Hashing;
 import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
+import com.redhat.pantheon.asciidoctor.extension.UuidPreProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
@@ -179,21 +180,30 @@ public class AsciidoctorService {
             asciidoctor.javaExtensionRegistry().includeProcessor(
                     new SlingResourceIncludeProcessor(base));
             asciidoctor.javaExtensionRegistry().postprocessor(
-                    new HtmlModulePostprocessor(base));
+                    new HtmlModulePostprocessor(base));            
 
             // add specific extensions for metadata regeneration
             if(regenMetadata) {
                 asciidoctor.javaExtensionRegistry().treeprocessor(
                         new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
-            }
+            }                       
 
             String html = "";
-            try {
-                log.info("asciidoctor content", asciidoctor);
+            try {                
+                String ascContent = moduleVersion.content().get().asciidocContent().get();                
+                
+                //Extracting link from the adoc using preprocessor        
+                asciidoctor.javaExtensionRegistry().preprocessor(
+                        new UuidPreProcessor());
                 html = asciidoctor.convert(
-                        moduleVersion.content().get().asciidocContent().get(),
+                        ascContent,
+                        OptionsBuilder.options().toFile(false));
+                
+                log.info("asciidoctor content: {}", html);
+
+                html = asciidoctor.convert(
+                        ascContent,
                         ob.get());
-                log.info("html content", html);
                 cacheContent(moduleVersion.content().get(), html);
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);

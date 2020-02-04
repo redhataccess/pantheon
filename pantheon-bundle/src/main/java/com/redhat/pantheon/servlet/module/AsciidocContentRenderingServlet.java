@@ -57,6 +57,7 @@ public class AsciidocContentRenderingServlet extends SlingSafeMethodsServlet {
         Optional<Content> content;
         if (draft) {
             content = module.getDraftContent(LocaleUtils.toLocale(locale));
+            log.info("asciidoctorservlet content");
         } else {
             content = module.getReleasedContent(LocaleUtils.toLocale(locale));
         }
