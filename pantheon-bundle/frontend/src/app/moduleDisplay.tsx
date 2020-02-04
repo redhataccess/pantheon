@@ -22,6 +22,7 @@ class ModuleDisplay extends Component<any, any, any> {
             moduleUUID: '',
             portalHost: '',
             productValue: "",
+            publishState: 'draft',
             releasePath: '',
             releaseUpdateDate: '',
             releaseVersion: '',
@@ -133,9 +134,11 @@ class ModuleDisplay extends Component<any, any, any> {
                         <Card>
                             <Versions
                                 modulePath={this.state.modulePath}
+                                // publishState={this.state.publishState}
                                 productInfo={this.state.productValue}
                                 versionModulePath={this.state.moduleTitle}
                                 updateDate={this.updateDate}
+                                onGetPublishState={this.getPublishState}
                                 onGetProduct={this.getProduct}
                                 onGetVersion={this.getVersion}
                             />
@@ -161,15 +164,24 @@ class ModuleDisplay extends Component<any, any, any> {
             releasePath: "/content" + data.location.pathname + ".preview"
         })
 
-        fetch(data.location.pathname + '.4.json')
+        console.log("[fetchModuleDetails] data.location.pathname: ", data.location.pathname)
+        fetch(data.location.pathname + '.harray.4.json')
             .then(response => response.json())
             .then(responseJSON => {
-                // console.log('fetch results:', responseJSON)
-                this.setState({
-                    moduleTitle: responseJSON.en_US["1"].metadata["jcr:title"],
-                    moduleType: responseJSON.en_US["1"].metadata["pant:moduleType"],
-
-                })
+                console.log('fetch results:', responseJSON)
+                const en_US = this.getHarrayChildNamed(responseJSON, 'en_US')
+                if (en_US.__children__[0].__name__ !== undefined){
+                    const nodeType = en_US.__children__[0].__name__
+                    const moduleVersion = this.getHarrayChildNamed(en_US, nodeType)
+                    const metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
+                    this.setState({
+                        moduleTitle: metadata["jcr:title"],
+                        moduleType: metadata["pant:moduleType"],
+                        publishState: nodeType
+                    })    
+                }
+                // const nodeType = responseJSON.en_US.released !== undefined ? "released" : "draft"
+                
             })
     }
 
@@ -181,13 +193,23 @@ class ModuleDisplay extends Component<any, any, any> {
         this.setState({ versionValue: version })
     }
 
+    private getPublishState = (publishState) => {
+        this.setState({ publishState })
+    }
+
     private getVersionUUID = (path) => {
-        path = "/content" + path + "/en_US/1/metadata.json"
+        path = "/content" + path + "/en_US.harray.3.json"
         fetch(path)
             .then(response => response.json())
             .then((responseJSON) => {
-                if (responseJSON.productVersion !== undefined) {
-                    this.getProductInitialLoad(responseJSON.productVersion)
+                // console.log("[getVersionUUID] responseJSON ", responseJSON)
+                if (responseJSON.__children__[0].__name__ !== undefined){
+                    const nodeType = responseJSON.__children__[0].__name__
+                    const moduleVersion = this.getHarrayChildNamed(responseJSON, nodeType)
+                    const metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
+                    if (metadata.productVersion !== undefined) {
+                        this.getProductInitialLoad(metadata.productVersion)
+                    }
                 }
             })
     }
@@ -242,6 +264,18 @@ class ModuleDisplay extends Component<any, any, any> {
                     })
                 }
             })
+    }
+
+    private getHarrayChildNamed = (object, name) => {
+        for (const childName in object.__children__) {
+            if (object.__children__.hasOwnProperty(childName)) { // Not sure what this does, but makes tslin happy
+                const child = object.__children__[childName]
+                if (child.__name__ === name) {
+                    return child
+                }
+            }
+        }
+        return ''
     }
 }
 

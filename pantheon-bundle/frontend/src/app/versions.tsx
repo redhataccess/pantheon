@@ -12,9 +12,11 @@ import { Redirect } from 'react-router-dom'
 
 export interface IProps {
     modulePath: string
+    // publishState: string
     productInfo: string
     versionModulePath: string
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => any
+    onGetPublishState: (publishState) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
@@ -388,19 +390,18 @@ class Versions extends Component<IProps, IState> {
                 .then(response => response.json())
                 .then(responseJSON => {
                     const en_US = this.getHarrayChildNamed(responseJSON, 'en_US')
-                    const releasedTag = en_US.released
-                    const draftTag = en_US.draft
                     const versionCount = en_US.__children__.length
                     for (let i = 0; i < versionCount; i++) {
                         const moduleVersion = en_US.__children__[i]
-                        if (moduleVersion['jcr:uuid'] === draftTag) {
+                        const publishState = en_US.__children__[i].__name__
+                        if (publishState === "draft") {
                             this.draft[0].version = 'Version ' + moduleVersion.__name__
                             this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
                             this.draft[0].updatedDate = this.draft[0].metadata['pant:dateUploaded'] !== undefined ? this.draft[0].metadata['pant:dateUploaded'] : ''
                             // this.props.modulePath starts with a slash
                             this.draft[0].path = '/content' + this.props.modulePath + '/en_US/' + moduleVersion.__name__
                         }
-                        if (moduleVersion['jcr:uuid'] === releasedTag) {
+                        if (publishState === "released") {
                             this.release[0].version = 'Version ' + moduleVersion.__name__
                             this.release[0].metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
                             this.release[0].updatedDate = this.release[0].metadata['pant:datePublished'] !== undefined ? this.release[0].metadata['pant:datePublished'] : ''
@@ -408,16 +409,22 @@ class Versions extends Component<IProps, IState> {
                             // this.props.modulePath starts with a slash
                             this.release[0].path = '/content' + this.props.modulePath + '/en_US/' + moduleVersion.__name__
                         }
-                        if (releasedTag === undefined) {
+                        if (publishState !== "released") {
                             this.release[0].updatedDate = '-'
+                        }
+                        if(this.draft) {
+                            console.log("[fetchVersions] draft ", this.draft)
+                        }
+                        if (this.release)
+                        {
+                            console.log("[fetchVersions] release ", this.release)
                         }
                         this.props.updateDate((this.draft[0].updatedDate !== '' ? this.draft[0].updatedDate : this.release[0].draftUploadDate), this.release[0].updatedDate, this.release[0].version, responseJSON['jcr:uuid'])
                     }
                     this.setState({
                             results: [this.draft, this.release],
-                            // tslint:disable-next-line: object-literal-sort-keys
-                            metadataPath: this.draft ? this.draft[0].path : this.release[0].path
                     })
+                    console.log("[fetchVersions] metadataPath: ", this.state.metadataPath)
                     this.getMetadata(this.state.metadataPath)
                 })
         }
@@ -458,7 +465,16 @@ class Versions extends Component<IProps, IState> {
                 }).then(response => {
                     if (response.status === 201 || response.status === 200) {
                         console.log(buttonText + ' works: ' + response.status)
+                        console.log("[changePublishState] modulePath: ", this.props.modulePath)
+                        console.log("[changePublishState] metadataPath: ", this.state.metadataPath)
                         this.setState({ publishAlertVisible: false, canChangePublishState: true })
+                        // update metadataPath
+                        if (buttonText === 'Publish') {
+                            this.setState({ metadataPath: '/content' + this.props.modulePath + '/en_US/released'})
+                        } else {
+                            this.setState({ metadataPath: '/content' + this.props.modulePath + '/en_US/draft'})
+                        }
+                        console.log("[changePublishState] metadataPath updated: ", this.state.metadataPath)
                     } else {
                         console.log(buttonText + ' failed ' + response.status)
                         this.setState({ publishAlertVisible: true })
@@ -538,7 +554,7 @@ class Versions extends Component<IProps, IState> {
             formData.append('documentUsecase', this.state.usecaseValue)
             formData.append('urlFragment', '/' + this.state.moduleUrl)
             formData.append('searchKeywords', this.state.keywords === undefined ? '' : this.state.keywords)
-            // console.log('[metadataPath] ', this.state.metadataPath)
+            console.log('[metadataPath] ', this.state.metadataPath)
             fetch(this.state.metadataPath + '/metadata', {
                 body: formData,
                 headers: hdrs,
@@ -654,6 +670,7 @@ class Versions extends Component<IProps, IState> {
 
     private getMetadata = (versionPath) => {
         if (versionPath.trim() !== '') {
+            console.log("[getMetadata] versionPath: ", versionPath)
             fetch(versionPath + '/metadata.json')
                 .then(response => response.json())
                 .then(metadataResults => {
@@ -668,6 +685,7 @@ class Versions extends Component<IProps, IState> {
                             }
                             this.setState({ moduleUrl: url })
                         }
+                        console.log("[getMetadata] metadataResults: ", metadataResults)
                         this.setState({
                             keywords: metadataResults.searchKeywords,
                             productVersion: { label: '', uuid: metadataResults.productVersion },
@@ -680,17 +698,20 @@ class Versions extends Component<IProps, IState> {
     }
 
     private getProductFromVersionUuid(versionUuid) {
-        fetch('/pantheon/internal/node.json?ancestors=2&uuid=' + versionUuid)
-            .then(response => response.json())
-            .then(responseJSON => {
-                this.setState({
-                    product: { label: responseJSON.ancestors[1].name, value: responseJSON.ancestors[1].__name__ },
-                    productVersion: { label: responseJSON.name, uuid: responseJSON['jcr:uuid'] }
+        console.log("[getProductFromVersionUuid] versionUuid: ", versionUuid)
+        if (versionUuid !== undefined && versionUuid.trim() !== '') {
+            fetch('/pantheon/internal/node.json?ancestors=2&uuid=' + versionUuid)
+                .then(response => response.json())
+                .then(responseJSON => {
+                    this.setState({
+                        product: { label: responseJSON.ancestors[1].name, value: responseJSON.ancestors[1].__name__ },
+                        productVersion: { label: responseJSON.name, uuid: responseJSON['jcr:uuid'] }
+                    })
+                    this.populateProductVersions(this.state.product.value)
+                    this.props.onGetProduct(this.state.product.label)
+                    this.props.onGetVersion(this.state.productVersion.label)
                 })
-                this.populateProductVersions(this.state.product.value)
-                this.props.onGetProduct(this.state.product.label)
-                this.props.onGetVersion(this.state.productVersion.label)
-        })
+        }
     }
 }
 
