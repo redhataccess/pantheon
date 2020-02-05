@@ -1,0 +1,14 @@
+[id="search-modules"]
+
+= How to search for Modules
+
+You can search for modules in Pantheon using the following tools:
+
+* A keyword search in the search bar.
+* Filtering the search by one or more of the available filter drop-down lists.
+** Product category
+** Product version number
+** Module type (Concept, Procedure, or Reference) 
+** Upload date
+
+The search results are presented in a table that displays the module title, whether it has been published or not, the date the draft was uploaded, and the module type.
