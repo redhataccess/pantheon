@@ -170,7 +170,7 @@ class ModuleDisplay extends Component<any, any, any> {
             .then(responseJSON => {
                 console.log('fetch results:', responseJSON)
                 const en_US = this.getHarrayChildNamed(responseJSON, 'en_US')
-                if (en_US.__children__[0].__name__ !== undefined){
+                if (en_US.__children__[0].__name__ !== undefined) {
                     const nodeType = en_US.__children__[0].__name__
                     const moduleVersion = this.getHarrayChildNamed(en_US, nodeType)
                     const metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
@@ -178,10 +178,10 @@ class ModuleDisplay extends Component<any, any, any> {
                         moduleTitle: metadata["jcr:title"],
                         moduleType: metadata["pant:moduleType"],
                         publishState: nodeType
-                    })    
+                    })
                 }
                 // const nodeType = responseJSON.en_US.released !== undefined ? "released" : "draft"
-                
+
             })
     }
 
@@ -203,7 +203,7 @@ class ModuleDisplay extends Component<any, any, any> {
             .then(response => response.json())
             .then((responseJSON) => {
                 // console.log("[getVersionUUID] responseJSON ", responseJSON)
-                if (responseJSON.__children__[0].__name__ !== undefined){
+                if (responseJSON.__children__[0].__name__ !== undefined) {
                     const nodeType = responseJSON.__children__[0].__name__
                     const moduleVersion = this.getHarrayChildNamed(responseJSON, nodeType)
                     const metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')

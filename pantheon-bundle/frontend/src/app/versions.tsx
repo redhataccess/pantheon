@@ -128,7 +128,7 @@ class Versions extends Component<IProps, IState> {
                         <li>Are you logged in as a publisher?</li>
                         <li>Does the module have all required metadata?</li>
                     </ul>
-          </Alert>
+                </Alert>
                 }
                 <Card>
                     <div>
@@ -325,15 +325,15 @@ class Versions extends Component<IProps, IState> {
                         >
                             <InputGroup>
                                 <FormSelect value={this.state.product.value} onChange={this.onChangeProduct} aria-label='FormSelect Product'>
-                                    <FormSelectOption label='Select a Product'/>
+                                    <FormSelectOption label='Select a Product' />
                                     {this.state.allProducts.map((option, key) => (
-                                        <FormSelectOption key={key} value={option.value} label={option.label}/>
+                                        <FormSelectOption key={key} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
                                 <FormSelect value={this.state.productVersion.uuid} onChange={this.onChangeVersion} aria-label='FormSelect Version' id='productVersion'>
-                                    <FormSelectOption label='Select a Version'/>
+                                    <FormSelectOption label='Select a Version' />
                                     {this.state.allProductVersions.map((option, key) => (
-                                        <FormSelectOption key={key} value={option['jcr:uuid']} label={option.name}/>
+                                        <FormSelectOption key={key} value={option['jcr:uuid']} label={option.name} />
                                     ))}
                                 </FormSelect>
                             </InputGroup>
@@ -412,19 +412,16 @@ class Versions extends Component<IProps, IState> {
                         if (publishState !== "released") {
                             this.release[0].updatedDate = '-'
                         }
-                        if(this.draft) {
-                            console.log("[fetchVersions] draft ", this.draft)
-                        }
-                        if (this.release)
-                        {
-                            console.log("[fetchVersions] release ", this.release)
-                        }
+
                         this.props.updateDate((this.draft[0].updatedDate !== '' ? this.draft[0].updatedDate : this.release[0].draftUploadDate), this.release[0].updatedDate, this.release[0].version, responseJSON['jcr:uuid'])
                     }
                     this.setState({
-                            results: [this.draft, this.release],
+                        results: [this.draft, this.release],
                     })
-                    console.log("[fetchVersions] metadataPath: ", this.state.metadataPath)
+
+                    if (this.state.metadataPath.trim() === '') {
+                        this.setState({ metadataPath: '/content' + this.props.modulePath + '/en_US/draft' })
+                    }
                     this.getMetadata(this.state.metadataPath)
                 })
         }
@@ -465,16 +462,14 @@ class Versions extends Component<IProps, IState> {
                 }).then(response => {
                     if (response.status === 201 || response.status === 200) {
                         console.log(buttonText + ' works: ' + response.status)
-                        console.log("[changePublishState] modulePath: ", this.props.modulePath)
-                        console.log("[changePublishState] metadataPath: ", this.state.metadataPath)
                         this.setState({ publishAlertVisible: false, canChangePublishState: true })
                         // update metadataPath
                         if (buttonText === 'Publish') {
-                            this.setState({ metadataPath: '/content' + this.props.modulePath + '/en_US/released'})
+                            this.setState({ metadataPath: '/content' + this.props.modulePath + '/en_US/released' })
                         } else {
-                            this.setState({ metadataPath: '/content' + this.props.modulePath + '/en_US/draft'})
+                            this.setState({ metadataPath: '/content' + this.props.modulePath + '/en_US/draft' })
                         }
-                        console.log("[changePublishState] metadataPath updated: ", this.state.metadataPath)
+                        // console.log("[changePublishState] metadataPath updated: ", this.state.metadataPath)
                     } else {
                         console.log(buttonText + ' failed ' + response.status)
                         this.setState({ publishAlertVisible: true })
@@ -554,7 +549,6 @@ class Versions extends Component<IProps, IState> {
             formData.append('documentUsecase', this.state.usecaseValue)
             formData.append('urlFragment', '/' + this.state.moduleUrl)
             formData.append('searchKeywords', this.state.keywords === undefined ? '' : this.state.keywords)
-            console.log('[metadataPath] ', this.state.metadataPath)
             fetch(this.state.metadataPath + '/metadata', {
                 body: formData,
                 headers: hdrs,
@@ -636,7 +630,7 @@ class Versions extends Component<IProps, IState> {
             })
             .then(responseJSON => {
                 for (const product of responseJSON.__children__) {
-                    products.push({ label: product.name, value: product.__name__})
+                    products.push({ label: product.name, value: product.__name__ })
                 }
                 this.setState({
                     allProducts: products
@@ -670,7 +664,6 @@ class Versions extends Component<IProps, IState> {
 
     private getMetadata = (versionPath) => {
         if (versionPath.trim() !== '') {
-            console.log("[getMetadata] versionPath: ", versionPath)
             fetch(versionPath + '/metadata.json')
                 .then(response => response.json())
                 .then(metadataResults => {
@@ -685,7 +678,6 @@ class Versions extends Component<IProps, IState> {
                             }
                             this.setState({ moduleUrl: url })
                         }
-                        console.log("[getMetadata] metadataResults: ", metadataResults)
                         this.setState({
                             keywords: metadataResults.searchKeywords,
                             productVersion: { label: '', uuid: metadataResults.productVersion },
