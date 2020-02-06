@@ -1,0 +1,13 @@
+include::../attributes.adoc[]
+[id='comparison-between-modules-and-DITA-topics_{context}']
+= Comparison between modules and DITA topics
+
+A module is similar to a topic in Darwin Information Typing Architecture (DITA) topic. A module differs from a DITA-topic in the following aspects:
+
+* Source language: Modules are written AsciiDoc, whereas DITA topics are written in xml.
+* Structure: Although both module and DITA-topic are structured, their structure differs.
+
+.Additional Resources
+* Topic-based authoring - link:http://dita-ot.sourceforge.net/doc/ot-userguide13/xhtml/faqs/topic_authoring.html[What is topic-based authoring?] 
+* AsciiDoc home page - link:http://asciidoc.org[AsciiDoc
+Text based document generation]
