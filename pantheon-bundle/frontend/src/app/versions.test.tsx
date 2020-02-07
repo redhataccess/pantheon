@@ -12,6 +12,7 @@ const anymatch = require('anymatch')
 const props = {
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
+    onGetPublishState: (publishState) => anymatch,
     onGetVersion: (versionValue) => anymatch,
     productInfo: "Red Hat Enterprise Linux",
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
@@ -291,6 +292,7 @@ describe('Versions tests', () => {
         const state: IProps = {
             modulePath: "somePath",
             onGetProduct: (productValue) => anymatch,
+            onGetPublishState: (publishState) => anymatch,
             onGetVersion: (versionValue) => anymatch,
             productInfo: "Red Hat Enterprise Linux",
             updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
