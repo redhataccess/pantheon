@@ -31,6 +31,6 @@ The following steps walk through the general flow of adding new content in Panth
 
 . Write your content as modular documentation, using modules and assemblies, as needed.
 . Commit and push your content to Gitlab or Github.
-. When you're ready to publish your content, upload it to Pantheon or import it to Pantheon from Github or Gitlab.
+. When you're ready to publish your content, import it to Pantheon from Github or Gitlab.
 . Use Pantheon to add metadata.
 . Publish the document.
