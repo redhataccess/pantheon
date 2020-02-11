@@ -280,8 +280,9 @@ def listdir_recursive(directory, allFiles):
 
 def readYamlGlob(config, keyword):
     globs = config[keyword] if config is not None and keyword in config else ()
-    for i, val in enumerate(globs):
-        globs[i] = val.replace('*', '[^/]+')
+    if globs is not None:
+        for i, val in enumerate(globs):
+            globs[i] = val.replace('*', '[^/]+')
     return globs
 
 
@@ -297,7 +298,7 @@ def processRegexMatches(files, globs, filetype):
         else:
             subpath = str(f)[len(args.directory) + 1:]
             logger.debug(' Evaluating ' + subpath)
-            for regex in globs:
+            for regex in globs or []:
                 if re.match(regex, subpath):
                     logger.debug(' -- match ' + filetype + ' ' + regex)
                     matches.append(f)
