@@ -193,6 +193,14 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
         
+        //logic for file name is present in ModuleVersionUpload.java
+        m.put("moduleType","-");
+        if(draftMetadata.isPresent() && draftMetadata.get().moduleType().get()!=null){
+            m.put("moduleType",draftMetadata.get().moduleType().get());
+        }else if(releasedMetadata.isPresent() && releasedMetadata.get().moduleType().get()!=null){
+            m.put("moduleType",releasedMetadata.get().moduleType().get());   
+        }
+
         if(draftMetadata.isPresent() && draftMetadata.get().dateUploaded().get()!=null){                        
             m.put("pant:dateUploaded",sdf.format(draftMetadata.get().dateUploaded().get().getTime()));
         }else if(releasedMetadata.isPresent() && releasedMetadata.get().dateUploaded().get()!=null){
@@ -206,9 +214,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }else{
             m.put("pant:publishedDate","-");
         }
-
-        // need to revise this when the data is available for moduleType
-        m.put("moduleType","-");
+        
         m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title().get() : releasedMetadata.get().title().get());
         m.put("jcr:description", draftMetadata.isPresent() ? draftMetadata.get().description().get() : releasedMetadata.get().description().get());
         // Assume the path is something like: /content/<something>/my/resource/path
