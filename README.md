@@ -6,29 +6,45 @@
 Pantheon 2 is a modular documentation management and publication system based on asciidoc
 and built on top of Apache sling.
 
-### Prerequsistes
-Podman
-Buildah
-Java
+* [Contributing to Pantheon](#contributing-to-pantheon)
+* [Installing Pantheon](#installing-pantheon)
+** [Prerequisites](#Prerequisites)
+** [Building the application](#building-the-application)
+** [Unit tests](#Unit-tests)
+** [Running the application](#Running-the-application)
+** [Live deploy of code](#Live-deploy-of-code)
+** [Using the application](#Using-the-application)
+** [Other use cases](#Other-use-cases)
+** [Developing the frontend code](#Developing-the-frontend-code)
+* [End user documentation](#End-user-documentation)
 
-### Build the application
-_(All commands from here on will be assumed to be ran from the project's root directory)_
+## Contributing to Pantheon
+
+## Installing Pantheon
+
+### Prerequisites
+* Podman
+* Buildah
+* Java
+
+### Building the application
+_(All commands from here on will be assumed to be run from the project's root directory)_
 
 ```sh
 ./mvnw clean install
 ```
 
-### Unit Tests
+### Unit tests
 
 ```sh
 ./mvnw test
 ```
 
-### Run the application
+### Running the application
 
 The best way to run Pantheon is to install [podman](https://podman.io).
 
-First, create a pod:
+. First, create a pod:
 
 ```sh
 podman pod create --name pantheon -p 8080 -p 5005
@@ -82,7 +98,6 @@ You can stop and start the pod as necessary with podman's pod command:
 podman pod stop pantheon
 podman pod start pantheon
 ```
-
 ### Other use cases...
 
 Run the container without Mongo, but this will result in the data being destroyed with the container.
@@ -100,7 +115,6 @@ podman ps
 ```
 podman exec -it PROCESS bash
 ```
-
 ### Developing the frontend code
 
 If making modifications that are entirely contained within the frontend, it is not necessary to use maven to rebuild and redeploy the package on every change.
