@@ -8,15 +8,15 @@ and built on top of Apache sling.
 
 * [Contributing to Pantheon](#contributing-to-pantheon)
 * [Installing Pantheon](#installing-pantheon)
-** [Prerequisites](#Prerequisites)
-** [Building the application](#building-the-application)
-** [Unit tests](#Unit-tests)
-** [Running the application](#Running-the-application)
-** [Live deploy of code](#Live-deploy-of-code)
-** [Using the application](#Using-the-application)
-** [Other use cases](#Other-use-cases)
-** [Developing the frontend code](#Developing-the-frontend-code)
-* [End user documentation](#End-user-documentation)
+ * [Prerequisites](#prerequisites)
+ * [Building the application](#building-the-application)
+ * [Unit tests](#unit-tests)
+ * [Running the application](#running-the-application)
+ * [Live deploy of code](#live-deploy-of-code)
+ * [Using the application](#using-the-application)
+ * [Other use cases](#other-use-cases)
+ * [Developing the frontend code](#developing-the-frontend-code)
+* [End user documentation](#end-user-documentation)
 
 ## Contributing to Pantheon
 
