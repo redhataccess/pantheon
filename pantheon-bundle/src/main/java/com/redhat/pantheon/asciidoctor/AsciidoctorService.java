@@ -146,6 +146,14 @@ public class AsciidoctorService {
             AttributesBuilder atts = AttributesBuilder.attributes()
                     // show the title on the generated html
                     .attribute("showtitle")
+                    // show pantheonproduct on the generated html
+                    .attribute("pantheonproduct")
+                    // show pantheonversion on the generated html
+                    .attribute("pantheonversion")
+                    // show pantheonupdateddate on generated html
+                    .attribute("pantheonupdateddate")
+                    // show pantheonpublisheddate on generated html
+                    .attribute("pantheonpublisheddate")
                     // we want to avoid the footer on the generated html
                     .noFooter(true)
                     // link the css instead of embedding it
