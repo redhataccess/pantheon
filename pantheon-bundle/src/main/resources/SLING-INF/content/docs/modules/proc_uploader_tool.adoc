@@ -1,0 +1,66 @@
+[id="uploader_tool"]
+
+= Uploading content with the Uploader tool
+
+Many of the operations available in the Pantheon user interface can also be performed using commands in the command line interface.
+
+Before you can use the uploader tool, you need to install the tool and make sure that the Pantheon2.yml configuration script is present.
+
+.To install the uploader tool:
+. Install the uploader script with `setup.sh`.
++
+[options="nowrap" subs="normal"]
+----
+curl -S https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/setup.sh | sh -
+----
+. Enter ‘pantheon’ to confirm it was properly installed.
++
+[options="nowrap" subs="normal"]
+----
+$ pantheon
+----
+
+The following output appears:
+[options="nowrap" subs="normal"]
+----
+usage: pantheon [-h] [--server SERVER] [--repository REPOSITORY] [--user USER]
+[--password PASSWORD] [--directory DIRECTORY] [--verbose]
+[--dry] [--sandbox] [--sample]
+push [push ...]
+pantheon: error: the following arguments are required: push
+----
+
+.To configure the repository as a content source for Pantheon:
+
+. Create the configuration file and edit as needed.
++
+[options="nowrap" subs="normal"]
+----
+$ pantheon --sample > pantheon2.yml
+$ vim pantheon2.yml  (or open in your preferred editor)
+----
+. Change the default values for ‘server’ and ‘repository’ as follows:
++
+[options="nowrap" subs="normal"]
+----
+server: http://pantheon2.int.us-west.aws.prod.paas.redhat.com[]
+repository: <UNIQUE_ID>
+----
+
+.To upload content using the Pantheon uploader tool:
+
+. Navigate to a directory containing modules.
++
+[options="nowrap" subs="normal"]
+----
+cd <PATH_TO_YOUR_FOLDER_WITH_MODULES>
+----
++
+. Run the `Pantheon` command
++
+[options="nowrap" subs="normal"]
+----
+pantheon push -u <YOUR_USER> -p <YOUR_PASSWORD>
+----
+. Locate and preview your modules at -
+link:http://pantheon2.int.us-west.aws.prod.paas.redhat.com/pantheon/[]
