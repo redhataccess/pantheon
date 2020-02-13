@@ -1,4 +1,39 @@
-@import url(https://overpass-30e2.kxcdn.com/overpass.css);
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-thin.eot");
+  /* IE9 Compat Modes */
+  src: url("https://overpass-30e2.kxcdn.com/overpass-thin.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-thin.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-thin.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-thin.ttf") format("truetype");
+  /* Safari, Android, iOS */
+  font-weight: 200; font-style: normal; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-thin-italic.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-thin-italic.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-thin-italic.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-thin-italic.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-thin-italic.ttf") format("truetype"); font-weight: 200; font-style: italic; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-extralight.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-extralight.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-extralight.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-extralight.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-extralight.ttf") format("truetype"); font-weight: 300; font-style: normal; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-extralight-italic.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-extralight-italic.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-extralight-italic.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-extralight-italic.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-extralight-italic.ttf") format("truetype"); font-weight: 300; font-style: italic; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-light.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-light.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-light.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-light.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-light.ttf") format("truetype"); font-weight: 400; font-style: normal; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-light-italic.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-light-italic.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-light-italic.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-light-italic.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-light-italic.ttf") format("truetype"); font-weight: 400; font-style: italic; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-regular.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-regular.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-regular.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-regular.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-regular.ttf") format("truetype"); font-weight: 500; font-style: normal; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-italic.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-italic.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-italic.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-italic.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-italic.ttf") format("truetype"); font-weight: 500; font-style: italic; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-semibold.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-semibold.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-semibold.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-semibold.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-semibold.ttf") format("truetype"); font-weight: 600; font-style: normal; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-semibold-italic.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-semibold-italic.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-semibold-italic.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-semibold-italic.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-semibold-italic.ttf") format("truetype"); font-weight: 600; font-style: italic; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-bold.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-bold.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-bold.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-bold.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-bold.ttf") format("truetype"); font-weight: 700; font-style: normal; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-bold-italic.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-bold-italic.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-bold-italic.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-bold-italic.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-bold-italic.ttf") format("truetype"); font-weight: 700; font-style: italic; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-extrabold.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-extrabold.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-extrabold.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-extrabold.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-extrabold.ttf") format("truetype"); font-weight: 800; font-style: normal; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-extrabold-italic.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-extrabold-italic.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-extrabold-italic.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-extrabold-italic.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-extrabold-italic.ttf") format("truetype"); font-weight: 800; font-style: italic; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-heavy.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-heavy.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-heavy.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-heavy.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-heavy.ttf") format("truetype"); font-weight: 900; font-style: normal; }
+
+@font-face { font-family: 'overpass'; src: url("https://overpass-30e2.kxcdn.com/overpass-heavy-italic.eot"); src: url("https://overpass-30e2.kxcdn.com/overpass-heavy-italic.eot?#iefix") format("embedded-opentype"), url("https://overpass-30e2.kxcdn.com/overpass-heavy-italic.woff2") format("woff2"), url("https://overpass-30e2.kxcdn.com/overpass-heavy-italic.woff") format("woff"), url("https://overpass-30e2.kxcdn.com/overpass-heavy-italic.ttf") format("truetype"); font-weight: 900; font-style: italic; }
+
 /*! normalize.css v2.1.2 | MIT License | git.io/normalize */
 /* ========================================================================== HTML5 display definitions ========================================================================== */
 /** Correct `block` display not defined in IE 8/9. */
@@ -176,7 +211,7 @@ table td.valign-bottom, table th.valign-bottom { vertical-align: bottom; }
 table thead td, table thead th { background: whitesmoke; font-weight: 600; }
 
 .rhdocs { padding: 2em; }
-@media (min-width: 768px) { .has-toc.toc-left .rhdocs { padding: 0; display: grid; grid-template-areas: "toc header" "toc main" "toc footer"; grid-template-columns: 14rem auto; grid-template-rows: auto; grid-column-gap: 2rem; align-items: start; }
+@media (min-width: 768px) { .has-toc.toc-left .rhdocs { padding: 0; display: grid; grid-template-areas: 'toc header' 'toc main' 'toc footer'; grid-template-columns: 14rem auto; grid-template-rows: auto; grid-column-gap: 2rem; align-items: start; }
   .has-toc.toc-left .rhdocs .rhdocs-header { padding: 2rem 2rem 0 0; grid-area: header; max-width: 65em; }
   .has-toc.toc-left .rhdocs .rhdocs-content { padding: 0 2rem 0 0; grid-area: main; max-width: 65em; }
   .has-toc.toc-left .rhdocs .rhdocs-footer { padding: 0 0 2rem 0; grid-area: footer; max-width: 65em; }
@@ -185,15 +220,23 @@ table thead td, table thead th { background: whitesmoke; font-weight: 600; }
 
 .rhdocs-header h1 { margin: 0; font-size: 3rem; line-height: 1.3; }
 
+.rhdocs-details { margin: 16px 0 48px; padding: 0; list-style: none; }
+
+.rh-docs-details-item { margin: 0 0 8px; font-size: 16px; line-height: 24 / 16; }
+
+.rhdocs-products { margin: 0 0 16px; font-size: 24px; line-height: 31 / 24; font-weight: bold; text-transform: uppercase; }
+
+.rhdocs-product-version { display: block; }
+
 .rhdocs-author-details { display: inline-block; margin: 0; color: #585858; }
 .rhdocs-author-details dt, .rhdocs-author-details dd { margin: 0; padding: 0; display: inline-block; }
-.rhdocs-author-details dd::before { display: inline-block; content: "("; }
-.rhdocs-author-details dd::after { display: inline-block; content: ")"; }
+.rhdocs-author-details dd::before { display: inline-block; content: '('; }
+.rhdocs-author-details dd::after { display: inline-block; content: ')'; }
 
 .rhdocs-revisions { display: inline-block; margin: 0; padding: 0; list-style: none; color: #585858; }
 .rhdocs-revisions li { display: inline-block; }
-.rhdocs-revisions li:not(:last-child)::after { display: inline-block; content: ", "; }
-.rhdocs-author-details + .rhdocs-revisions::before { display: inline-block; margin: 0 0.125rem; content: "\2014"; }
+.rhdocs-revisions li:not(:last-child)::after { display: inline-block; content: ', '; }
+.rhdocs-author-details + .rhdocs-revisions::before { display: inline-block; margin: 0 0.125rem; content: '\2014'; }
 
 .rhdocs-revnumber { text-transform: capitalize; }
 
@@ -250,7 +293,7 @@ table { table-layout: fixed; }
 
 .quoteblock blockquote { margin: 0; padding: 0; font-style: italic; }
 .quoteblock blockquote .content > :first-child { margin-top: 0; }
-.quoteblock blockquote .content > :first-child::before { display: block; margin-right: .5rem; float: left; content: "\201C"; color: #ee0000; font-size: 2.75rem; font-style: normal; line-height: 1.125em; }
+.quoteblock blockquote .content > :first-child::before { display: block; margin-right: .5rem; float: left; content: '\201C'; color: #ee0000; font-size: 2.75rem; font-style: normal; line-height: 1.125em; }
 
 .imageblock { margin: 1rem 0; }
 .imageblock .caption { display: block; margin: .5rem 0 0; font-size: 0.875rem; line-height: 1.5; color: #585858; }
@@ -283,15 +326,15 @@ table { table-layout: fixed; }
 /* PrismJS 1.15.0 Red Hat Theme */
 /**
  */
-code[class*="language-"], pre[class*="language-"] { text-align: left; white-space: pre-wrap; word-wrap: break-word; word-spacing: normal; word-break: break-all; -moz-tab-size: 4; -o-tab-size: 4; tab-size: 4; -webkit-hyphens: none; -moz-hyphens: none; -ms-hyphens: none; hyphens: none; }
+code[class*='language-'], pre[class*='language-'] { text-align: left; white-space: pre-wrap; word-wrap: break-word; word-spacing: normal; word-break: break-all; -moz-tab-size: 4; -o-tab-size: 4; tab-size: 4; -webkit-hyphens: none; -moz-hyphens: none; -ms-hyphens: none; hyphens: none; }
 
 /* Code blocks */
-pre[class*="language-"] { padding: 1em; margin: .5em 0; overflow: auto; }
+pre[class*='language-'] { padding: 1em; margin: .5em 0; overflow: auto; }
 
-:not(pre) > code[class*="language-"], pre[class*="language-"] { background: #252525; }
+:not(pre) > code[class*='language-'], pre[class*='language-'] { background: #252525; }
 
 /* Inline code */
-:not(pre) > code[class*="language-"] { padding: .1em; border-radius: .3em; white-space: normal; }
+:not(pre) > code[class*='language-'] { padding: .1em; border-radius: .3em; white-space: normal; }
 
 .token.comment, .token.block-comment, .token.prolog, .token.doctype, .token.cdata { color: #999; }
 
@@ -322,11 +365,11 @@ pre[class*="language-"] { padding: 1em; margin: .5em 0; overflow: auto; }
 .icon.fa { cursor: default; }
 a .icon { cursor: inherit; }
 
-.admonitionblock .icon[class^="fa icon-"] { font-size: 2.5em; cursor: default; }
-.admonitionblock .icon.icon-note:before { content: "\f05a"; color: #39a5dc; }
-.admonitionblock .icon.icon-tip:before { content: "\f0eb"; }
-.admonitionblock .icon.icon-warning:before { content: "\f071"; color: #f0ab00; }
-.admonitionblock .icon.icon-caution:before { content: "\f071"; color: #ec7a08; }
-.admonitionblock .icon.icon-important:before { content: "\f06a"; color: #a30000; }
+.admonitionblock .icon[class^='fa icon-'] { font-size: 2.5em; cursor: default; }
+.admonitionblock .icon.icon-note:before { content: '\f05a'; color: #39a5dc; }
+.admonitionblock .icon.icon-tip:before { content: '\f0eb'; }
+.admonitionblock .icon.icon-warning:before { content: '\f071'; color: #f0ab00; }
+.admonitionblock .icon.icon-caution:before { content: '\f071'; color: #ec7a08; }
+.admonitionblock .icon.icon-important:before { content: '\f06a'; color: #a30000; }
 
 .literalblock pre code, .listingblock pre code { color: inherit; text-shadow: none; white-space: inherit !important; line-height: inherit; font-family: inherit; }
