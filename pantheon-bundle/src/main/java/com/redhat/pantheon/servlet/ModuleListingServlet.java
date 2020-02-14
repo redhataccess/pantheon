@@ -194,11 +194,12 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
         
         //logic for file name is present in ModuleVersionUpload.java
-        m.put("moduleType","-");
         if(draftMetadata.isPresent() && draftMetadata.get().moduleType().get()!=null){
             m.put("moduleType",draftMetadata.get().moduleType().get());
         }else if(releasedMetadata.isPresent() && releasedMetadata.get().moduleType().get()!=null){
             m.put("moduleType",releasedMetadata.get().moduleType().get());   
+        }else{
+            m.put("moduleType","-");
         }
 
         if(draftMetadata.isPresent() && draftMetadata.get().dateUploaded().get()!=null){                        
