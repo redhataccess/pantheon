@@ -43,4 +43,12 @@ public interface ProductVersion extends SlingModel {
      * Represents the productVersion's name.
      */
     Field<String> name();
+
+    /**
+     * Get Product object from Version.
+     * @return Product
+     */
+    default Product getProduct() {
+        return getParent().getParent().adaptTo(Product.class);
+    }
 }
