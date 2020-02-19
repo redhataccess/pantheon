@@ -28,12 +28,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import com.ibm.icu.text.DateFormat;
 import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.extension.HydraIntegration;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
@@ -153,18 +151,21 @@ public class AsciidoctorService {
 
             // process product and version.
             ProductVersion productVersion = null;
-            productVersion = moduleVersion.metadata().map(Metadata::productVersion)
-                    .map(t -> {
-                        try {
-                            return t.getReference();
-                        } catch (RepositoryException e) {
-                            return null;
-                        }
-                    })
-                    .get();
+            if (moduleVersion.metadata().get().getValueMap().containsKey("productVersion")) {
+                productVersion = moduleVersion.metadata().map(Metadata::productVersion)
+                        .map(t -> {
+                            try {
+                                return t.getReference();
+                            } catch (RepositoryException e) {
+                                return null;
+                            }
+                        })
+                        .get();
+            }
+
             String productName = null;
             if (productVersion != null) {
-                productName = productVersion.getProduct().getValueMap().get("name").toString();
+                productName = productVersion.getProduct().name().get();
             }
             Calendar updatedDate = moduleVersion.metadata()
                     .map(Metadata::dateUploaded)
@@ -172,11 +173,13 @@ public class AsciidoctorService {
                     .get();
 
             Calendar publishedDate = null;
-            publishedDate = moduleVersion.metadata()
-                    .map(Metadata::datePublished)
-                    .map(Supplier::get)
-                    .get();
-            
+            if (moduleVersion.metadata().get().getValueMap().containsKey("datePublished")) {
+                publishedDate = moduleVersion.metadata()
+                        .map(Metadata::datePublished)
+                        .map(Supplier::get)
+                        .get();
+            }
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
             // build the attributes (default + those coming from http parameters)
             AttributesBuilder atts = AttributesBuilder.attributes()
