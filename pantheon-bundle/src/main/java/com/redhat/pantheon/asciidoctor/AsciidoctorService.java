@@ -166,27 +166,18 @@ public class AsciidoctorService {
             if (productVersion != null) {
                 productName = productVersion.getProduct().getValueMap().get("name").toString();
             }
-            log.info("[" + AsciidoctorService.class.getSimpleName() + "] productName: " + productName);
-            log.info("[" + AsciidoctorService.class.getSimpleName() + "] versionName: " + productVersion.getValueMap().get("name"));
             Calendar updatedDate = moduleVersion.metadata()
                     .map(Metadata::dateUploaded)
                     .map(Supplier::get)
                     .get();
 
             Calendar publishedDate = null;
-//            log.info("[" + AsciidoctorService.class.getSimpleName() + "] datePublished: " + moduleVersion.metadata().map(Metadata::datePublished));
-//            if (moduleVersion.metadata()
-//                    .map(Metadata::datePublished)
-//                    .map(Supplier::get)
-//                    .get() != null) {
-//                publishedDate = moduleVersion.metadata()
-//                          .map(Metadata::datePublished)
-//                          .map(Supplier::get)
-//                          .get();
-//            }
+            publishedDate = moduleVersion.metadata()
+                    .map(Metadata::datePublished)
+                    .map(Supplier::get)
+                    .get();
             
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
-            log.info("[" + AsciidoctorService.class.getSimpleName() + "] updatedDate: " + dateFormat.format(updatedDate.getTime()));
             // build the attributes (default + those coming from http parameters)
             AttributesBuilder atts = AttributesBuilder.attributes()
                     // show the title on the generated html
@@ -204,11 +195,10 @@ public class AsciidoctorService {
                     // stylesheet reference
                     .styleSheetName("/static/rhdocs.css");
 
-//            if (publishedDate != null) {
-//                log.info("[" + AsciidoctorService.class.getSimpleName() + "] publishedDate: " + dateFormat.format(publishedDate.getTime()));
-//                // show pantheonpublisheddate on generated html. Base the value from metadata.
-//                atts.attribute(":pantheonpublisheddate", dateFormat.format(publishedDate.getTime()));
-//            }
+            if (publishedDate != null) {
+                // show pantheonpublisheddate on generated html. Base the value from metadata.
+                atts.attribute("pantheonpublisheddate", dateFormat.format(publishedDate.getTime()));
+            }
 
             // Add the context as attributes to the generation process
             context.entrySet().stream().forEach(entry -> {
