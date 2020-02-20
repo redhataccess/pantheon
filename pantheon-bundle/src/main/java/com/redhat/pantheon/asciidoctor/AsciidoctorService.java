@@ -167,10 +167,13 @@ public class AsciidoctorService {
             if (productVersion != null) {
                 productName = productVersion.getProduct().name().get();
             }
-            Calendar updatedDate = moduleVersion.metadata()
-                    .map(Metadata::dateUploaded)
-                    .map(Supplier::get)
-                    .get();
+            Calendar updatedDate = null;
+            if (moduleVersion.metadata().get().getValueMap().containsKey("dateUploaded")) {
+                updatedDate = moduleVersion.metadata()
+                        .map(Metadata::dateUploaded)
+                        .map(Supplier::get)
+                        .get();
+            }
 
             Calendar publishedDate = null;
             if (moduleVersion.metadata().get().getValueMap().containsKey("datePublished")) {
@@ -189,14 +192,17 @@ public class AsciidoctorService {
                     .attribute("pantheonproduct", productName)
                     // show pantheonversion on the generated html. Base the value from metadata.
                     .attribute("pantheonversion", productVersion == null ? "" : productVersion.getValueMap().get("name"))
-                    // show pantheonupdateddate on generated html. Base the value from metadata.
-                    .attribute("pantheonupdateddate", dateFormat.format(updatedDate.getTime()))
                     // we want to avoid the footer on the generated html
                     .noFooter(true)
                     // link the css instead of embedding it
                     .linkCss(true)
                     // stylesheet reference
                     .styleSheetName("/static/rhdocs.css");
+
+            if (updatedDate != null) {
+                // show pantheonupdateddate on generated html. Base the value from metadata.
+                atts.attribute("pantheonupdateddate", dateFormat.format(updatedDate.getTime()));
+            }
 
             if (publishedDate != null) {
                 // show pantheonpublisheddate on generated html. Base the value from metadata.
