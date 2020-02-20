@@ -1,0 +1,46 @@
+//@import '../fonts/font-awesome';
+
+.icon {
+  &.fa {
+    cursor: default;
+  }
+
+  a & {
+    cursor: inherit;
+  }
+}
+
+.admonitionblock .icon {
+  &[class^='fa icon-'] {
+    font-size: 2.5em;
+    cursor: default;
+  }
+
+  &.icon-note:before {
+    content: '\f05a';
+    color: $color--border--info;
+  }
+
+  &.icon-tip:before {
+    content: '\f0eb';
+  }
+
+  &.icon-warning:before {
+    // @extend .fa-exclamation-triangle;
+    content: '\f071';
+    color: $color--border--warning;
+  }
+
+  &.icon-caution:before {
+    // @extend .fa-fire;
+    // content: '\f06d'; // fire?!
+    content: '\f071';
+    color: $color--border--caution;
+  }
+
+  &.icon-important:before {
+    // @extend .icon-exclamation-circle;
+    content: '\f06a';
+    color: $color--border--important;
+  }
+}
