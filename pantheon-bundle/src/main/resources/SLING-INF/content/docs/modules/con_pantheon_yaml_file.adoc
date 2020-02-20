@@ -1,20 +1,20 @@
-[id='con-pantheon-yaml-file_{context}']
+[id='pantheon-yaml-file_{context}']
 
 = The Pantheon configuration file
 
-In order to use a Git repository to import content to Pantheon, you need to create a configuration file in the root directory of your repository named `pantheon2.yml`. This yaml file indicates to Pantheon that it can interact with files in the repository.
+In order to use a Git repository to import content to Pantheon, you need to create a configuration file,  named `pantheon2.yml`, in the root directory of your repository. This yaml file indicates to Pantheon that it can interact with files in the repository.
 
 The configuration file enables the following:
 
 * Importing content from a Git repository into Pantheon
-* Uploading modules into Pantheon using the uploader tool
+* Uploading modules into Pantheon using the Uploader tool
 
 The configuration file defines the following:
 
 `server`:: The URL of the Pantheon server.
-`repository`:: A unique ID to reference the URL of the repository. You specify the actual URL of the repository when you synchronize the repository the first time.
+`repository`:: A unique ID that Pantheon uses to reference the URL of the repository. You specify the actual URL of the repository when you synchronize the repository the first time.
 `modules`:: Patterns for modules that will show up in the search results on Pantheon.
-`resources`:: Image files, legal information or other content that is not.
+`resources`:: Image files, legal information or other content that is not a complete module or assembly.
 
 You need to define the values for `server` and `repository`.
 
@@ -30,7 +30,9 @@ You need to define the values for `server` and `repository`.
 # modules:
 #  - '*.adoc'
 
-server: http://pantheon2.int.us-west.aws.prod.paas.redhat.com[]
+server: {server_url}
+# Example
+#server: http://pantheon.redhat.com[]
 repository: repo_id
 
 modules:
