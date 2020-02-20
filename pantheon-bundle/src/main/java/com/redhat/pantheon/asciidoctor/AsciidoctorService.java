@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toMap;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
@@ -167,21 +168,14 @@ public class AsciidoctorService {
             if (productVersion != null) {
                 productName = productVersion.getProduct().name().get();
             }
-            Calendar updatedDate = null;
-            if (moduleVersion.metadata().get().getValueMap().containsKey("dateUploaded")) {
-                updatedDate = moduleVersion.metadata()
-                        .map(Metadata::dateUploaded)
-                        .map(Supplier::get)
-                        .get();
-            }
 
-            Calendar publishedDate = null;
-            if (moduleVersion.metadata().get().getValueMap().containsKey("datePublished")) {
-                publishedDate = moduleVersion.metadata()
-                        .map(Metadata::datePublished)
-                        .map(Supplier::get)
-                        .get();
-            }
+            Optional<Calendar> updatedDate = moduleVersion.metadata()
+                    .map(Metadata::dateUploaded)
+                    .map(Supplier::get);
+
+            Optional<Calendar> publishedDate = moduleVersion.metadata()
+                    .map(Metadata::datePublished)
+                    .map(Supplier::get);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
             // build the attributes (default + those coming from http parameters)
@@ -199,14 +193,14 @@ public class AsciidoctorService {
                     // stylesheet reference
                     .styleSheetName("/static/rhdocs.css");
 
-            if (updatedDate != null) {
+            if(updatedDate.isPresent()) {
                 // show pantheonupdateddate on generated html. Base the value from metadata.
-                atts.attribute("pantheonupdateddate", dateFormat.format(updatedDate.getTime()));
+                atts.attribute("pantheonupdateddate",  dateFormat.format(updatedDate.get().getTime()));
             }
 
-            if (publishedDate != null) {
+            if (publishedDate.isPresent()) {
                 // show pantheonpublisheddate on generated html. Base the value from metadata.
-                atts.attribute("pantheonpublisheddate", dateFormat.format(publishedDate.getTime()));
+                atts.attribute("pantheonpublisheddate", dateFormat.format(publishedDate.get().getTime()));
             }
 
             // Add the context as attributes to the generation process
