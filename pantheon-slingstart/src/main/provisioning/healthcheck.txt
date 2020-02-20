@@ -54,23 +54,6 @@
       "javax.script.ScriptEngineManager",
     ]
 
-  org.apache.sling.hc.support.SlingRequestStatusHealthCheck-1
-    path=[
-        "index.html",
-        "index.html.json",
-        "apps/hc.tidy.json",
-        "some/non/existent/path:404",]
-    hc.name="Initial content is present"
-    hc.tags=["request", "sling"]
-    hc.mbean.name="InitialContentPresent"
-
-  org.apache.sling.junit.healthcheck.impl.JUnitHealthCheck-1
-    hc.name="JUnit Health Check Sample"
-    hc.tags=["junit"]
-    test.package.or.class="org.apache.sling.hc"
-    hc.mbean.name="JUnitHealthCheck"
-
-
   ## bundles
   
   org.apache.felix.hc.generalchecks.BundlesStartedCheck
