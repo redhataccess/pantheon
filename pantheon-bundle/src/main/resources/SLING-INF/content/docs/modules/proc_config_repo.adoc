@@ -1,4 +1,4 @@
-[id="config_repo_{context}"]
+[id="configuring-a-repository-as-a-content-source-for-pantheon_{context}"]
 
 = Configuring a repository as a content source for Pantheon
 

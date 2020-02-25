@@ -2,7 +2,7 @@
 
 = The Pantheon configuration file
 
-In order to use a Git repository to import content to Pantheon, you need to create a configuration file,  named `pantheon2.yml`, in the root directory of your repository. This yaml file indicates to Pantheon that it can interact with files in the repository.
+You need to create a configuration file, named `pantheon2.yml`, in the root directory of your repository, to enable a Git repository as a source that Pantheon can use to import content. This yaml file provides necessary information that Pantheon uses to interact with files in the repository.
 
 The configuration file enables the following:
 
