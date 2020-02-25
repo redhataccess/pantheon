@@ -12,6 +12,7 @@ import requests
 import yaml
 
 DEFAULT_SERVER = 'http://localhost:8080'
+# This check needs to be removed when we start forcing a REPOSITORY name.
 if 'PANTHEON_SERVER' in os.environ:
     DEFAULT_REPOSITORY = 'gitImport'
 else:
@@ -308,10 +309,7 @@ def processRegexMatches(files, globs, filetype):
         files.remove(f)
 
 
-if 'PANTHEON_SERVER' in os.environ:
-    server = os.environ['PANTHEON_SERVER']
-else:
-    server = resolveOption(args.server, 'server', DEFAULT_SERVER)
+server = resolveOption(args.server, 'server', DEFAULT_SERVER)
 
 repository = resolveOption(args.repository, 'repository', DEFAULT_REPOSITORY)
 mode = 'sandbox' if args.sandbox else 'repository'

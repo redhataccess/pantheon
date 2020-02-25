@@ -74,8 +74,8 @@ func TestPush2PantheonWithYML(t *testing.T) {
 	if strings.Contains(output, "pantheon2.yml was not found in the root of the repo, skipping upload.") {
 		t.Errorf("No pantheon2.yml was found, and no upload attempted.")
 	}
-	if !strings.Contains(output, "Credentials not found") {
-		t.Errorf("ENV UPLOADER_PASSWORD and UPLOADER_USER should always be not set during build.")
+	if !strings.Contains(output, "Environment variables not found") {
+		t.Errorf("ENV PANTHEON_SERVER, UPLOADER_PASSWORD and UPLOADER_USER should always be not set during build.")
 	}
 	cleanup(uploader)
 	cleanup(yml)
