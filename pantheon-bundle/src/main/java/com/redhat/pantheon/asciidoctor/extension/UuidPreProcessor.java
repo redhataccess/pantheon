@@ -27,11 +27,13 @@ public class UuidPreProcessor extends Preprocessor {   // (1)
         String uuid,newModulePath,addUUID;
 
         for (String line: lines) {
-            if(line.startsWith("//pantheon-id:")){
-                split = line.split(":");
-                uuid = split[1];
-                addUUID = ":"+uuid+",";
-                newModulePath = split[2].replace(",",addUUID);
+            //regex
+            if(line.startsWith("xref:")){
+                split = line.split(",pantheon-id=");
+                uuid = split[1].replace(split[1].substring(split[1].length()-1), "");
+                addUUID = ":" + uuid + "[";
+                split[0] = split[0].replace("[",addUUID);                
+                newModulePath = split[0] + "]";
                 newLines.add(newModulePath);
             }else {
                     newLines.add(line);
