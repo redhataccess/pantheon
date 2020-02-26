@@ -48,7 +48,6 @@ import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 public class HydraIntegration implements EventProcessingExtension {
     // Environment variables.
     private static String messageBrokerUrl = "";
-    private static String messageBrokePort = "";
     private static String messageBrokerUsername = "";
     private static String messageBrokerUserPass = "";
     private static String pantheonHost = "";
@@ -66,7 +65,6 @@ public class HydraIntegration implements EventProcessingExtension {
     public static final Locale DEFAULT_MODULE_LOCALE = Locale.US;
     public static final String PORTAL_URL = "PORTAL_URL";
 
-    private SSLContext sslContext;
     private ServiceResourceResolverProvider serviceResourceResolverProvider;
     private final Logger log = LoggerFactory.getLogger(HydraIntegration.class);
 
@@ -145,21 +143,6 @@ public class HydraIntegration implements EventProcessingExtension {
 
         connection.close();
     }
-
-    /**
-     * Broker port can be set as an environment variable
-     * @return message_broker_port. Default: '61612'
-     */
-    public String getMessageBrokerPort () {
-        if (System.getenv("HYDRA_PORT") != null) {
-            messageBrokePort = System.getenv("HYDRA_PORT");
-        } else {
-            log.info("HYDRA_PORT environment variable is not set");
-        }
-
-        return messageBrokePort;
-    }
-
 
     /**
      * Broker user can be set as an environment variable
@@ -241,9 +224,6 @@ public class HydraIntegration implements EventProcessingExtension {
         SslContext sContext = new SslContext(new KeyManager[0], trustAllCerts, new java.security.SecureRandom());
         SslContext.setCurrentSslContext(sContext);
         ActiveMQSslConnectionFactory factory = new ActiveMQSslConnectionFactory();
-
-//        factory.setBrokerURL("failover:(ssl://hydra-messaging-broker01.web.dev.ext.phx1.redhat.com:61617,"
-//                + "ssl://hydra-messaging-broker02.web.dev.ext.phx1.redhat.com:61617)");
 
         factory.setBrokerURL(messageBrokerUrl);
         factory.setUserName(this.getMesasgeBrokerUsername());
