@@ -16,7 +16,8 @@ const
     task,
     watch,
   } = require('gulp'),
-  gulpIf = require('gulp-if'),
+  // gulpIf = require('gulp-if'),
+  sourceMaps = require('gulp-sourcemaps'),
   sass = require('gulp-sass'),
   // sassGlobbing = require('gulp-sass-globbing'),
   sassLint = require('gulp-sass-lint'),
@@ -30,32 +31,35 @@ const
 const cssSource = 'scss/**/*.scss',
       cssOutput = '../../../src/main/resources/SLING-INF/content/static/';
 
-const isDev = process.env.NODE_ENV === 'dev';
+// const isDev = process.env.NODE_ENV === 'dev';
 
 /**
  * CSS Compilation
  */
 const compileCSS = () => {
   return src(cssSource)
-  // Lint first
-  .pipe(sassLint())
-  .pipe(sassLint.format())
-  // .pipe(gulpIf(!isDev, sassLint.failOnError()))
-  // Source Maps were consistently wrong :(
-  // .pipe(gulpIf(isDev, sourceMaps.init()))
-  .pipe(sass())
-  .pipe(
-    postCss([
-      pxToRem({
-        'propList': ['*',],
-      }),
-      autoprefixer(),
-    ])
-  )
-  // Minify if production build
-  .pipe(gulpIf(!isDev, postCss([cssNano(),])))
-  // .pipe(gulpIf(isDev, sourceMaps.write()))
-  .pipe(dest(cssOutput));
+    // Lint first
+    .pipe(sassLint())
+    .pipe(sassLint.format())
+    // Not sure this line is needed, leaving for now
+    // .pipe(gulpIf(!isDev, sassLint.failOnError()))
+    .pipe(sourceMaps.init())
+    .pipe(sass())
+    .pipe(
+      postCss([
+        pxToRem({
+          'propList': ['*',],
+        }),
+        autoprefixer(),
+      ])
+    )
+    // Write an unminified version with sourcemaps
+    // to this directory for dev
+    .pipe(sourceMaps.write())
+    .pipe(dest('./'))
+    // Minify for production build and put in prod location
+    .pipe(postCss([cssNano(),]))
+    .pipe(dest(cssOutput));
 };
 
 // const compileCSS = series(globScss, processScss);
