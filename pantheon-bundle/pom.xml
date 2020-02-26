@@ -284,11 +284,11 @@
             <version>64.2</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-client -->
-		<dependency>
-		    <groupId>org.apache.activemq</groupId>
-		    <artifactId>activemq-client</artifactId>
-		    <version>5.15.11</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>5.15.11</version>
+        </dependency>
 	    <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jms_1.1_spec</artifactId>
