@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet.module;
 
+import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
@@ -36,10 +38,13 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 public class PublishDraftVersion extends AbstractPostOperation {
 
     private Events events;
+    private AsciidoctorService asciidoctorService;
 
     @Activate
-    public PublishDraftVersion(@Reference Events events) {
+    public PublishDraftVersion(@Reference Events events,
+                               @Reference AsciidoctorService asciidoctorService) {
         this.events = events;
+        this.asciidoctorService = asciidoctorService;
     }
 
     private Module getModule(SlingHttpServletRequest request) {
@@ -58,6 +63,14 @@ public class PublishDraftVersion extends AbstractPostOperation {
             Locale locale = getLocale(request);
             Module module = getModule(request);
             ModuleLocale moduleLocale = module.getModuleLocale(locale);
+
+
+            //FIXME - this is a hack that needs to be removed when we have the attribute placeholder logic implemented
+            Optional<ModuleVersion> versionToRelease = getModule(request).getReleasedVersion(getLocale(request));
+            Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
+            asciidoctorService.getModuleHtml(versionToRelease.get(), module, context, true);
+
+
             events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.getPath()), 15);
         }
     }
