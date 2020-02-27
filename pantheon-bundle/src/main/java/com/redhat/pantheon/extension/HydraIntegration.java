@@ -79,8 +79,10 @@ public class HydraIntegration implements EventProcessingExtension {
      */
     public boolean canProcessEvent(Event event) {
         // Stop processEvent if broker properties are missing
-        if (System.getenv("HYDRA_HOST") == null || System.getenv("HYDRA_PORT") == null || System.getenv("HYDRA_SCHEME") == null
-                || System.getenv("HYDRA_USER") == null || System.getenv("HYDRA_USER_PASS") == null || System.getenv("PANTHEON_HOST") == null){
+        if (System.getenv("MESSAGE_BROKER_URL") == null 
+                || System.getenv("HYDRA_USER") == null 
+                || System.getenv("HYDRA_USER_PASS") == null 
+                || System.getenv("PANTHEON_HOST") == null){
             return false;
         }
 
