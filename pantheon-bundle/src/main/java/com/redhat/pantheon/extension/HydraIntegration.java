@@ -8,14 +8,15 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.net.ssl.SSLContext;
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.activemq.ActiveMQSslConnectionFactory;
+import org.apache.activemq.broker.SslContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceUtil;
-import org.fusesource.stomp.jms.StompJmsConnectionFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -45,12 +46,10 @@ import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
         )
 public class HydraIntegration implements EventProcessingExtension {
     // Environment variables.
-    private static String message_broker_hostname = "";
-    private static String message_broker_port = "";
-    private static String message_broker_scheme = "";
-    private static String message_broker_username = "";
-    private static String message_broker_user_pass = "";
-    private static String pantheon_host = "";
+    private static String messageBrokerUrl = "";
+    private static String messageBrokerUsername = "";
+    private static String messageBrokerUserPass = "";
+    private static String pantheonHost = "";
 
     //@TODO: externalize the variables
     private static final String PANTHEON_MODULE_API_PATH = "/api/module?locale=en-us&module_id=";
@@ -65,7 +64,6 @@ public class HydraIntegration implements EventProcessingExtension {
     public static final Locale DEFAULT_MODULE_LOCALE = Locale.US;
     public static final String PORTAL_URL = "PORTAL_URL";
 
-    private SSLContext sslContext;
     private ServiceResourceResolverProvider serviceResourceResolverProvider;
     private final Logger log = LoggerFactory.getLogger(HydraIntegration.class);
 
@@ -81,8 +79,10 @@ public class HydraIntegration implements EventProcessingExtension {
      */
     public boolean canProcessEvent(Event event) {
         // Stop processEvent if broker properties are missing
-        if (System.getenv("HYDRA_HOST") == null || System.getenv("HYDRA_PORT") == null || System.getenv("HYDRA_SCHEME") == null
-                || System.getenv("HYDRA_USER") == null || System.getenv("HYDRA_USER_PASS") == null || System.getenv("PANTHEON_HOST") == null){
+        if (System.getenv("MESSAGE_BROKER_URL") == null 
+                || System.getenv("HYDRA_USER") == null 
+                || System.getenv("HYDRA_USER_PASS") == null 
+                || System.getenv("PANTHEON_HOST") == null){
             return false;
         }
 
@@ -146,59 +146,17 @@ public class HydraIntegration implements EventProcessingExtension {
     }
 
     /**
-     * Broker hostname can be set as an environment variable
-     * @return message_broker_hostname.
-     */
-    public String getMessageBrokerHostname () {
-        if (System.getenv("HYDRA_HOST") != null){
-            message_broker_hostname = System.getenv("HYDRA_HOST");
-        } else {
-            log.info("HYDRA_HOST environment variable is not set");
-        }
-
-        return message_broker_hostname;
-    }
-
-    /**
-     * Broker port can be set as an environment variable
-     * @return message_broker_port. Default: '61612'
-     */
-    public String getMessageBrokerPort () {
-        if (System.getenv("HYDRA_PORT") != null) {
-            message_broker_port = System.getenv("HYDRA_PORT");
-        } else {
-            log.info("HYDRA_PORT environment variable is not set");
-        }
-
-        return message_broker_port;
-    }
-
-    /**
-     * Broker scheme can be set as an environment variable
-     * @return message_broker_scheme. Default: 'ssl'
-     */
-    public String getMessageBrokerScheme() {
-        if (System.getenv("HYDRA_SCHEME") != null) {
-            message_broker_scheme = System.getenv("HYDRA_SCHEME");
-        } else {
-            log.info("HYDRA_SCHEME environment variable is not set");
-        }
-
-        return message_broker_scheme;
-    }
-
-    /**
      * Broker user can be set as an environment variable
      * @return message_broker_username
      */
     public String getMesasgeBrokerUsername() {
         if (System.getenv("HYDRA_USER") != null) {
-            message_broker_username = System.getenv("HYDRA_USER");
+            messageBrokerUsername = System.getenv("HYDRA_USER");
         } else {
             log.info("HYDRA_USER environment variable is not set");
         }
 
-        return message_broker_username;
+        return messageBrokerUsername;
     }
 
     /**
@@ -207,12 +165,12 @@ public class HydraIntegration implements EventProcessingExtension {
      */
     public String getMesasgeBrokerUserPass() {
         if (System.getenv("HYDRA_USER_PASS") != null) {
-            message_broker_user_pass = System.getenv("HYDRA_USER_PASS");
+            messageBrokerUserPass = System.getenv("HYDRA_USER_PASS");
         } else {
             log.info("HYDRA_USER_PASS environment variable is not set");
         }
 
-        return message_broker_user_pass;
+        return messageBrokerUserPass;
     }
 
     /**
@@ -221,12 +179,26 @@ public class HydraIntegration implements EventProcessingExtension {
      */
     public String getPantheonHost() {
         if (System.getenv("PANTHEON_HOST") != null) {
-            pantheon_host = System.getenv("PANTHEON_HOST");
+            pantheonHost = System.getenv("PANTHEON_HOST");
         } else {
             log.info("PANTHEON_HOST environment variable is not set");
         }
 
-        return pantheon_host;
+        return pantheonHost;
+    }
+
+    /**
+     * Broker hostname can be set as an environment variable
+     * @return message_broker_hostname.
+     */
+    public String getMessageBrokerUrl () {
+        if (System.getenv("MESSAGE_BROKER_URL") != null){
+            messageBrokerUrl = System.getenv("MESSAGE_BROKER_URL");
+        } else {
+            log.info("MESSAGE_BROKER_URL environment variable is not set");
+        }
+
+        return messageBrokerUrl;
     }
 
     /**
@@ -249,17 +221,17 @@ public class HydraIntegration implements EventProcessingExtension {
                     }
                 }
         };
-        sslContext = SSLContext.getInstance(TLS_VERSION);
-        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
 
-        StompJmsConnectionFactory factory = new StompJmsConnectionFactory();
-        factory.setBrokerURI(this.getMessageBrokerScheme() + "://" + this.getMessageBrokerHostname() +":" + this.getMessageBrokerPort());
+        SslContext sContext = new SslContext(new KeyManager[0], trustAllCerts, new java.security.SecureRandom());
+        SslContext.setCurrentSslContext(sContext);
+        ActiveMQSslConnectionFactory factory = new ActiveMQSslConnectionFactory();
 
-        factory.setUsername(this.getMesasgeBrokerUsername());
+        factory.setBrokerURL(this.getMessageBrokerUrl());
+        factory.setUserName(this.getMesasgeBrokerUsername());
         factory.setPassword(decodedPass);
-        factory.setSslContext(sslContext);
-        factory.setForceAsyncSend(true);
-        factory.setDisconnectTimeout(5000);
+
+        factory.setUseAsyncSend(true);
+        factory.setConnectResponseTimeout(5000);
 
         return factory;
     }
