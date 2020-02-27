@@ -18,12 +18,11 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
@@ -66,9 +65,8 @@ public class PublishDraftVersion extends AbstractPostOperation {
 
 
             //FIXME - this is a hack that needs to be removed when we have the attribute placeholder logic implemented
-            Optional<ModuleVersion> versionToRelease = getModule(request).getReleasedVersion(getLocale(request));
-            Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
-            asciidoctorService.getModuleHtml(versionToRelease.get(), module, context, true);
+            Optional<ModuleVersion> versionToRelease = module.getReleasedVersion(locale);
+            asciidoctorService.getModuleHtml(versionToRelease.get(), module, new HashMap(), true);
 
 
             events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.getPath()), 15);
