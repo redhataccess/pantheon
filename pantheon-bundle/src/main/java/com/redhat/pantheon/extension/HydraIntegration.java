@@ -195,7 +195,7 @@ public class HydraIntegration implements EventProcessingExtension {
         if (System.getenv("MESSAGE_BROKER_URL") != null){
             messageBrokerUrl = System.getenv("MESSAGE_BROKER_URL");
         } else {
-            log.info("HYDRA_HOST environment variable is not set");
+            log.info("MESSAGE_BROKER_URL environment variable is not set");
         }
 
         return messageBrokerUrl;
@@ -226,7 +226,7 @@ public class HydraIntegration implements EventProcessingExtension {
         SslContext.setCurrentSslContext(sContext);
         ActiveMQSslConnectionFactory factory = new ActiveMQSslConnectionFactory();
 
-        factory.setBrokerURL(messageBrokerUrl);
+        factory.setBrokerURL(this.getMessageBrokerUrl());
         factory.setUserName(this.getMesasgeBrokerUsername());
         factory.setPassword(decodedPass);
 
