@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet.module;
 
+import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.resource.ModifiableValueMap;
@@ -12,6 +13,7 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -25,6 +27,10 @@ import static org.mockito.Mockito.mock;
 class PublishDraftVersionTest {
 
     SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
+
+    //FIXME - temporary
+    @Mock
+    AsciidoctorService asciidoctorService;
 
     @Test
     void doRun() throws Exception {
@@ -45,7 +51,9 @@ class PublishDraftVersionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
-        PublishDraftVersion operation = new PublishDraftVersion(events);
+
+        //FIXME - asciidoctorService parameter is temporary
+        PublishDraftVersion operation = new PublishDraftVersion(events, asciidoctorService);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);
@@ -71,7 +79,9 @@ class PublishDraftVersionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
-        PublishDraftVersion operation = new PublishDraftVersion(null);
+
+        //FIXME - asciidoctorService parameter is temporary
+        PublishDraftVersion operation = new PublishDraftVersion(null, asciidoctorService);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);
