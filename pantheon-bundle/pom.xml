@@ -69,7 +69,8 @@
                         <Sling-Initial-Content><![CDATA[
                             SLING-INF/root;overwrite:=false;overwriteProperties:=true;uninstall:=false;path:=/,
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
-                            SLING-INF/content;overwrite:=false;uninstall:=false;path:=/content,
+                            SLING-INF/content/docs;overwrite:=true;uninstall:=false;path:=/content/docs,
+                            SLING-INF/content/static;overwrite:=true;uninstall:=false;path:=/content/static,
                             SLING-INF/SPA;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/pantheon,
                             SLING-INF/users;overwrite:=false;uninstall:=false,
                             SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index,
