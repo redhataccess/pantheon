@@ -6,6 +6,7 @@ import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ObjectUtils.Null;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -63,15 +64,15 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String directionParam = paramValue(request, "direction");
         String[] productIds = request.getParameterValues("product");
         String[] productVersionIds = request.getParameterValues("productversion");
-        String type = paramValue(request, "type");
+        String type = paramValue(request, "type");        
 
-        if(!newArrayList("Title", "Published", "Module", "Updated" ).contains(keyParam)) {
+        if(keyParam==null || keyParam.contains("Uploaded")){
             keyParam = "pant:dateUploaded";
-        } else if (keyParam.contains("Title")) {
+        }else if (keyParam.contains("Title")) {
             keyParam = "jcr:title";
         } else if (keyParam.contains("Published")){
             keyParam = "pant:datePublished";
-        } else if (keyParam.contains("Module")){
+        } else if (keyParam.contains("Module")){            
             keyParam = "pant:moduleType";
         } else if (keyParam.contains("Updated")){
             keyParam = JcrConstants.JCR_LASTMODIFIED;
