@@ -99,7 +99,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             int responseCode = HttpServletResponse.SC_OK;
 
             // Try to find the module
-            ResourceResolver resolver = serviceResourceResolverProvider.getServiceResourceResolver();
+            ResourceResolver resolver = request.getResourceResolver();
             Resource moduleResource = resolver.getResource(path);
             Module module;
 
