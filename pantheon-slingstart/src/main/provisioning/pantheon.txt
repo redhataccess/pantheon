@@ -31,7 +31,7 @@
     end
 
     set ACL for pantheon-authors
-        allow jcr:write,jcr:nodeTypeManagement on /content/repositories
+        allow jcr:all on /content/repositories
         allow jcr:write,jcr:nodeTypeManagement on /content/modules
         allow jcr:write,jcr:nodeTypeManagement on /content/sandbox
         allow jcr:read on /conf/pantheon
@@ -47,7 +47,7 @@
     end
 
     set ACL for pantheon-publishers
-        allow jcr:write,jcr:nodeTypeManagement on /content/repositories
+        allow jcr:all on /content/repositories
         allow jcr:write,jcr:nodeTypeManagement on /content/modules
         allow jcr:write,jcr:nodeTypeManagement on /content/products
         allow jcr:write,jcr:nodeTypeManagement on /content/sandbox
