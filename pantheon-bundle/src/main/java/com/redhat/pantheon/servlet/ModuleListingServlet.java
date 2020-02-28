@@ -20,17 +20,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.text.SimpleDateFormat;
-import java.time.Year;
-import java.util.Date;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
@@ -63,15 +59,15 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String directionParam = paramValue(request, "direction");
         String[] productIds = request.getParameterValues("product");
         String[] productVersionIds = request.getParameterValues("productversion");
-        String type = paramValue(request, "type");
+        String type = paramValue(request, "type");        
 
-        if(!newArrayList("Title", "Published", "Module", "Updated" ).contains(keyParam)) {
+        if(keyParam==null || keyParam.contains("Uploaded")){
             keyParam = "pant:dateUploaded";
-        } else if (keyParam.contains("Title")) {
+        }else if (keyParam.contains("Title")) {
             keyParam = "jcr:title";
         } else if (keyParam.contains("Published")){
             keyParam = "pant:datePublished";
-        } else if (keyParam.contains("Module")){
+        } else if (keyParam.contains("Module")){            
             keyParam = "pant:moduleType";
         } else if (keyParam.contains("Updated")){
             keyParam = JcrConstants.JCR_LASTMODIFIED;
