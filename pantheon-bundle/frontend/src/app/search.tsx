@@ -425,6 +425,9 @@ class Search extends Component<IAppState, ISearchState> {
       backend += "&"
     }
     backend += "offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
+    if (!backend.includes("Uploaded") && !backend.includes('direction')) {
+      backend += "&key=Uploaded&direction=desc"
+    }
     return backend
   }
 
