@@ -394,22 +394,6 @@ class Search extends Component<IAppState, ISearchState> {
       })
   }
 
-
-  private formatDate(date: Date) {
-    // 2019/05/07 14:21:36
-    let dateStr = date.getFullYear().toString() + "/" +
-      (date.getMonth() + 1).toString() + "/" +
-      date.getDate().toString() + " " +
-      date.getHours().toString() + ":" +
-      date.getMinutes().toString() + ":" +
-      date.getSeconds().toString()
-
-    if (dateStr.includes("NaN")) {
-      dateStr = ""
-    }
-    return dateStr
-  };
-
   private dismissNotification = () => {
     this.setState({ isEmptyResults: false, isSearchException: false });
   };
