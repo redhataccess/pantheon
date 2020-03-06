@@ -55,9 +55,10 @@ func push2Pantheon(directory string) {
 		log.Print("Found pantheon2.yml in the root of the repo, uploading.")
 		var user = os.Getenv("UPLOADER_USER")
 		var password = os.Getenv("UPLOADER_PASSWORD")
-		args := []string{"pantheon.py", "push", "--user", user, "--password", password, "--directory", directory}
-		if user == "" || password == "" {
-			log.Print("Credentials not found, using uploader's default credentials.")
+		var server = os.Getenv("PANTHEON_SERVER")
+		args := []string{"pantheon.py", "push", "--user", user, "--password", password, "--directory", directory, "--server", server}
+		if user == "" || password == "" || server == "" {
+			log.Print("Environment variables not found, using uploader and pantheon.yml settings.")
 			args = []string{"pantheon.py", "push", "--directory", directory}
 		}
 		//Now call python

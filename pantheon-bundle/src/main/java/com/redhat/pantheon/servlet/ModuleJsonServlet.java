@@ -158,12 +158,6 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
             moduleMap.put(VIEW_URI, view_uri);
         }
 
-        // Process view_uri
-        if (System.getenv("PORTAL_URL") != null) {
-            String view_uri = System.getenv("PORTAL_URL") + "/topics/" + ServletUtils.toLanguageTag(locale) + "/" + module_uuid;
-            moduleMap.put("view_uri", view_uri);
-        }
-
         // remove unnecessary fields from the map
         moduleMap.remove("jcr:lastModified");
         moduleMap.remove("jcr:lastModifiedBy");

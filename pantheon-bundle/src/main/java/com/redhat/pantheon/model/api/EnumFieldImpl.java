@@ -26,6 +26,10 @@ public class EnumFieldImpl<T extends Enum> extends FieldImpl<T> {
 
     @Override
     public T get() {
-        return (T)Enum.valueOf(getType(), new FieldImpl<>(getName(), String.class, owner).get());
+        FieldImpl<String> fieldImpl = new FieldImpl<>(getName(), String.class, owner);
+        if(fieldImpl.get() == null) {
+            return null;
+        }
+        return (T)Enum.valueOf(getType(), fieldImpl.get());
     }
 }

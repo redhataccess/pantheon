@@ -99,7 +99,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             int responseCode = HttpServletResponse.SC_OK;
 
             // Try to find the module
-            ResourceResolver resolver = serviceResourceResolverProvider.getServiceResourceResolver();
+            ResourceResolver resolver = request.getResourceResolver();
             Resource moduleResource = resolver.getResource(path);
             Module module;
 
@@ -161,13 +161,14 @@ public class ModuleVersionUpload extends AbstractPostOperation {
 
             Metadata metadata = draftVersion.get()
                     .metadata().getOrCreate();
-            metadata.title().set(moduleName);
+            
+            if(metadata.title().get()==null){
+                metadata.title().set(moduleName);
+            }                    
             metadata.description().set(description);
             Calendar now = Calendar.getInstance();
             metadata.dateModified().set(now);
             metadata.dateUploaded().set(now);
-            metadata.moduleType().set( determineModuleType(module) );
-
             resolver.commit();
 
             if (generateHtml) {
@@ -176,6 +177,13 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                 asciidoctorService.getModuleHtml(draftVersion.get(), module, context, true);
             }
 
+            // Generate a module type based on the file name ONLY after asciidoc generation, so that the
+            // attribute-based logic takes precedence
+            if(metadata.moduleType().get() == null) {
+                metadata.moduleType().set(determineModuleType(module));
+            }
+
+            resolver.commit();
             response.setStatus(responseCode, "");
         } catch (Exception e) {
             throw new RepositoryException("Error uploading a module version", e);

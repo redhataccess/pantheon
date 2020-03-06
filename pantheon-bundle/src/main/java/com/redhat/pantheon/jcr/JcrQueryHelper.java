@@ -29,7 +29,31 @@ public class JcrQueryHelper {
     }
 
     /**
-     * A convenience method to run a query against the JCR Repository adding limit and offset values useful for
+     * A convenience method to run a query in any supported language against the JCR Repository,
+     * adding limit and offset values useful for pagination.
+     * @param query A full query in any supported query language. See {@link Query} for available languages.
+     * @param limit the number of results to return (for pagination)
+     * @param offset i.e. How many results to skip (for pagination)
+     * @param queryLanguage The query language to use.
+     * @return A stream of sling resources resulting from the query
+     * @throws RepositoryException
+     */
+    public Stream<Resource> query(String query, long limit, long offset, String queryLanguage)
+            throws RepositoryException {
+        Session session = resourceResolver.adaptTo(Session.class);
+
+        QueryManager queryManager = session.getWorkspace().getQueryManager();
+        Query queryObj = queryManager.createQuery(query, queryLanguage);
+        queryObj.setLimit(limit);
+        queryObj.setOffset(offset);
+        QueryResult result = queryObj.execute();
+
+        // Transform to sling resources
+        return transform(result);
+    }
+
+    /**
+     * A convenience method to run a JCR SQL2 query against the JCR Repository adding limit and offset values useful for
      * pagination.
      * @param query A full JCR SQL2 query
      * @param limit the number of results to return (for pagination)
@@ -39,16 +63,7 @@ public class JcrQueryHelper {
      */
     public Stream<Resource> query(String query, long limit, long offset)
             throws RepositoryException {
-        Session session = resourceResolver.adaptTo(Session.class);
-
-        QueryManager queryManager = session.getWorkspace().getQueryManager();
-        Query queryObj = queryManager.createQuery(query, Query.JCR_SQL2);
-        queryObj.setLimit(limit);
-        queryObj.setOffset(offset);
-        QueryResult result = queryObj.execute();
-
-        // Transform to sling resources
-        return transform(result);
+        return query(query, limit, offset, Query.JCR_SQL2);
     }
 
     /**

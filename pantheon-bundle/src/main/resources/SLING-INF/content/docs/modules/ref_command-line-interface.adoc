@@ -1,0 +1,45 @@
+[id="command-line-interface"]
+
+= Using the Command Line Interface
+
+Many of the operations available in the Pantheon user interface can also be performed using commands in the command line interface.
+
+.To use the `Pantheon uploader` via the command line interface
+
+. Install the uploader script via setup.sh
++
+----
+curl -S https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/setup.sh | sh -
+----
+. Type ‘pantheon’ in the command line to confirm it was properly installed.
+
+. Navigate to a directory containing test modules
++
+----
+cd <PATH_TO_YOUR_FOLDER_WITH_MODULES>
+----
+. Create the configuration file and edit as needed
++
+----
+# pantheon --sample > pantheon2.yml
+# vim pantheon2.yml  (or open in your preferred editor)
+----
+. Change the default values for ‘server’ and ‘repository’ as follows:
++
+server: link:http://pantheon2.int.us-west.aws.prod.paas.redhat.com[]
++
+repository: <YOUR_KERBEROS_ID>
+. Add the desired file patterns for modules and resources in the file;
+all file patterns are relative to the configuration file location.
++
+* Modules are pre-viewable files, while resources are files which are necessary to build individual modules.
++
+* Any file matching a pattern in the modules section will show up in the search results.
++
+. Run the `Pantheon uploader` command
++
+----
+pantheon push -u <YOUR_USER> -p <YOUR_PASSWORD>
+----
+. Locate and preview your modules at -
+link:http://pantheon2.int.us-west.aws.prod.paas.redhat.com/pantheon/[]
