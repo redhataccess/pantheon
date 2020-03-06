@@ -194,7 +194,7 @@ public class AsciidoctorService {
                 
                 //Extracting link from the adoc using preprocessor        
                 asciidoctor.javaExtensionRegistry().preprocessor(
-                        new UuidPreProcessor());
+                        new UuidPreProcessor(base));
                 html = asciidoctor.convert(
                         ascContent,
                         OptionsBuilder.options().toFile(false));
