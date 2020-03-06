@@ -67,7 +67,8 @@
                         <_metatypeannotations>*</_metatypeannotations>
                         <Sling-Nodetypes>SLING-INF/nodetypes/nodetypes.cnd</Sling-Nodetypes>
                         <Sling-Initial-Content><![CDATA[
-                            SLING-INF/root;overwrite:=false;overwriteProperties:=true;uninstall:=false;path:=/,
+                            SLING-INF/root/content.json;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content.json,
+                            SLING-INF/root/..json;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/..json,
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
                             SLING-INF/content/static;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/static,
                             SLING-INF/content/docs;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/docs,
