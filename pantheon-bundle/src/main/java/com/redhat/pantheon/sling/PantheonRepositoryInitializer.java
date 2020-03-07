@@ -52,23 +52,14 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
 
     private void setFrontEndRedirect() throws RepositoryException, PersistenceException {
         try (ResourceResolver resourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
-                resourceResolver.getResource("/")
-                        .adaptTo(ModifiableValueMap.class)
-                        .put("sling:resourceType", "sling:redirect");
-                resourceResolver.getResource("/")
-                        .adaptTo(ModifiableValueMap.class)
-                        .put("sling:target", "/pantheon");
-
                 resourceResolver.getResource("/content")
                         .adaptTo(ModifiableValueMap.class)
                         .put("sling:resourceType", "sling:redirect");
                 resourceResolver.getResource("/content")
                         .adaptTo(ModifiableValueMap.class)
                         .put("sling:target", "/pantheon");
-
                 resourceResolver.commit();
-                log.info("Setting /pantheon redirects on / & /content");
-
+                log.info("Setting /pantheon redirects on /content");
         }
     }
 
