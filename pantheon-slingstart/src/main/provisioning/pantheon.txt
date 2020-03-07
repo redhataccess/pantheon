@@ -1,7 +1,7 @@
 [feature name=pantheon]
 
 [artifacts startLevel=20]
-  com.redhat.pantheon/pantheon-bundle/1.0-SNAPSHOT
+  com.redhat.pantheon/pantheon-bundle/0.1.1
 
 [configurations]
 
