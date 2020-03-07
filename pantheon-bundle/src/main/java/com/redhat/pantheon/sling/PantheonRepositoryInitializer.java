@@ -59,7 +59,7 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
                         .adaptTo(ModifiableValueMap.class)
                         .put("sling:target", "/pantheon");
                 resourceResolver.commit();
-                log.info("Setting /pantheon redirects on /content");
+                log.info("Setting /pantheon redirect on /content");
         }
     }
 
