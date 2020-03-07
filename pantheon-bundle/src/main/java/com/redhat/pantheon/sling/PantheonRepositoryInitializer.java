@@ -32,6 +32,7 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
     public void processRepository(SlingRepository slingRepository) throws Exception {
         setSyncServiceUrl();
         setPortalUrl();
+        setFrontEndRedirect();
     }
 
     private void setSyncServiceUrl() throws RepositoryException, PersistenceException {
@@ -46,6 +47,28 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
             } else {
                 log.info("Environment Variable SYNC_SERVICE_URL is not set.");
             }
+        }
+    }
+
+    private void setFrontEndRedirect() throws RepositoryException, PersistenceException {
+        try (ResourceResolver resourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
+                resourceResolver.getResource("/")
+                        .adaptTo(ModifiableValueMap.class)
+                        .put("sling:resourceType", "sling:redirect");
+                resourceResolver.getResource("/")
+                        .adaptTo(ModifiableValueMap.class)
+                        .put("sling:target", "/pantheon");
+
+                resourceResolver.getResource("/content")
+                        .adaptTo(ModifiableValueMap.class)
+                        .put("sling:resourceType", "sling:redirect");
+                resourceResolver.getResource("/content")
+                        .adaptTo(ModifiableValueMap.class)
+                        .put("sling:target", "/pantheon");
+
+                resourceResolver.commit();
+                log.info("Setting /pantheon redirects on / & /content");
+
         }
     }
 
