@@ -349,14 +349,14 @@ class Versions extends Component<IProps, IState> {
                         </FormGroup>
                         <FormGroup
                             label='Vanity URL fragment'
-                            isRequired={true}
+                            isRequired={false}
                             fieldId='url-fragment'
                         >
                             <InputGroup>
                                 <InputGroupText id='slash' aria-label='/'>
                                     <span>/</span>
                                 </InputGroupText>
-                                <TextInput isRequired={true} id='url-fragment' type='text' placeholder='Enter URL' value={this.state.moduleUrl} onChange={this.handleURLInput} />
+                                <TextInput isRequired={false} id='url-fragment' type='text' placeholder='Enter URL' value={this.state.moduleUrl} onChange={this.handleURLInput} />
                             </InputGroup>
                         </FormGroup>
                         <FormGroup
@@ -524,7 +524,7 @@ class Versions extends Component<IProps, IState> {
         if (this.state.product.value === undefined || this.state.product.value === 'Select a Product' || this.state.product.value === ''
             || this.state.productVersion.uuid === undefined || this.state.productVersion.label === 'Select a Version' || this.state.productVersion.uuid === ''
             || this.state.usecaseValue === undefined || this.state.usecaseValue === 'Select Use Case' || this.state.usecaseValue === ''
-            || this.state.moduleUrl.trim() === '') {
+        ) {
 
             this.setState({ isMissingFields: true })
         } else {

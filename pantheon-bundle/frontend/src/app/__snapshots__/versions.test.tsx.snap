@@ -253,7 +253,7 @@ exports[`Versions tests should render Versions component 1`] = `
       </FormGroup>
       <FormGroup
         fieldId="url-fragment"
-        isRequired={true}
+        isRequired={false}
         label="Vanity URL fragment"
       >
         <InputGroup>
@@ -271,7 +271,7 @@ exports[`Versions tests should render Versions component 1`] = `
             id="url-fragment"
             isDisabled={false}
             isReadOnly={false}
-            isRequired={true}
+            isRequired={false}
             isValid={true}
             onChange={[Function]}
             placeholder="Enter URL"
