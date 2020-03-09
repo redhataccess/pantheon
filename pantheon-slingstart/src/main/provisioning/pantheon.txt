@@ -23,6 +23,7 @@
     create group pantheon-authors
     create group pantheon-publishers
     create service user pantheon
+    create user sync-service
 
     # Assign ACLs
     set ACL for pantheon
@@ -31,7 +32,7 @@
     end
 
     set ACL for pantheon-authors
-        allow jcr:all on /content/repositories
+        allow jcr:modifyProperties,jcr:read on /content/repositories
         allow jcr:write,jcr:nodeTypeManagement on /content/modules
         allow jcr:write,jcr:nodeTypeManagement on /content/sandbox
         allow jcr:read on /conf/pantheon
@@ -47,9 +48,13 @@
     end
 
     set ACL for pantheon-publishers
-        allow jcr:all on /content/repositories
+        allow jcr:removeNode,jcr:modifyProperties,jcr:read on /content/repositories
         allow jcr:write,jcr:nodeTypeManagement on /content/modules
         allow jcr:write,jcr:nodeTypeManagement on /content/products
         allow jcr:write,jcr:nodeTypeManagement on /content/sandbox
         allow jcr:read on /conf/pantheon
+    end
+
+    set ACL for sync-service
+        allow jcr:all on /content/repositories
     end
