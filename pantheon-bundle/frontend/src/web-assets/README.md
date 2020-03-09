@@ -9,13 +9,15 @@ Run:
 yarn install
 ```
 
-To build CSS for production, use:
+## Build CSS
+To build CSS use:
 ```shell
 yarn run build
 ```
 
-Builds the dev and prod versions of the CSS. Dev version is inside this folder `./rhdocs.css`, the prod version is in `GITROOT/pantheon-bundle/frontend/src/web-assets/rhdocs.css`.
+This builds the dev and prod versions of the CSS. Dev version is inside this folder `./rhdocs.css`, the prod version is in `GITROOT/pantheon-bundle/frontend/src/web-assets/rhdocs.css`.
 
+## Dev process
 To work on the Sass/CSS, use:
 ```shell
 yarn run watch
