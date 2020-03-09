@@ -23,7 +23,7 @@
     create group pantheon-authors
     create group pantheon-publishers
     create service user pantheon
-    create user sync-service
+    create user sync-service with password sync-service
 
     # Assign ACLs
     set ACL for pantheon
