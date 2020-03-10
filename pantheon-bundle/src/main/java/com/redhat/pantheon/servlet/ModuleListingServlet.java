@@ -59,7 +59,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String directionParam = paramValue(request, "direction");
         String[] productIds = request.getParameterValues("product");
         String[] productVersionIds = request.getParameterValues("productversion");
-        String type = paramValue(request, "type");        
+        String type = paramValue(request, "type");
+        String urlFragment = paramValue(request, "urlFragment");
 
         if(keyParam==null || keyParam.contains("Uploaded")){
             keyParam = "pant:dateUploaded";
@@ -118,6 +119,13 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         if(!Strings.isNullOrEmpty(type)) {
             StringBuilder moduleTypeCondition = new StringBuilder()
                     .append("*/*/metadata/@pant:moduleType = '" + type + "'");
+            queryFilters.add(moduleTypeCondition);
+        }
+
+        // urlFragment filter
+        if(!Strings.isNullOrEmpty(urlFragment)) {
+            StringBuilder moduleTypeCondition = new StringBuilder()
+                    .append("*/*/metadata/@urlFragment = '" + urlFragment + "'");
             queryFilters.add(moduleTypeCondition);
         }
 
@@ -223,7 +231,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         if (!"modules".equals(fragments[2])) {
             m.put("pant:transientSourceName", fragments[3]);
         }
-        
+        m.put("urlFragment", draftMetadata.isPresent() ? draftMetadata.get().urlFragment().get() : releasedMetadata.get().urlFragment().get());
         log.trace(m.toString());
         return m;
     }
