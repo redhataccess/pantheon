@@ -90,7 +90,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             if (resource == null) {
                 return null;
             }
-            if ("pant:symlink".equals(resource.getResourceType())) {
+            if ("pantheon/symlink".equals(resource.getResourceType())) {
                 resource = resolveWithSymlinks(resource.getValueMap().get("pant:target", String.class), resource.getParent());
             }
         }
