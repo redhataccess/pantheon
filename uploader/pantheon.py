@@ -243,8 +243,7 @@ def process_file(path, filetype):
                 _error('Absolute symlink paths are unsupported: ' + str(path) + ' -> ' + target)
             elif not args.dry:
                 symlinkData = {}
-                symlinkData['jcr:primaryType'] = 'nt:unstructured'
-                symlinkData['sling:resourceType'] = 'pant:symlink'
+                symlinkData['jcr:primaryType'] = 'pant:symlink'
                 symlinkData['pant:target'] = target
                 r = requests.post(url, headers=HEADERS, data=symlinkData, auth=(args.user, pw))
                 _print_response('symlink', path, r.status_code, r.reason)
