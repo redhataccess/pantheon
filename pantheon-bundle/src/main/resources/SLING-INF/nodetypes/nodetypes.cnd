@@ -57,7 +57,7 @@
 [pant:symlink] > nt:unstructured
     - sling:resourceType (string) = 'pantheon/symlink' mandatory autocreated
 
-[pant:bucket] > nt:unstructured
+[pant:bucket] > nt:unstructured, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/bucket' mandatory autocreated
 // Base type for titles
 //[pant:title] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
