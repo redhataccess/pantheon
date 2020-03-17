@@ -11,6 +11,7 @@ from os import path
 
 import requests
 import yaml
+from requests import Response
 
 DEFAULT_SERVER = 'http://localhost:8080'
 DEFAULT_USER = 'author'
@@ -44,7 +45,7 @@ def _info(message, colored=True):
     Print an info message on the console. Warning messages are cyan
     """
     if colored:
-        print('\033[96m{}\033[00m' .format(message))
+        print('\033[96m{}\033[00m'.format(message))
     else:
         print(message)
 
@@ -54,7 +55,7 @@ def _warn(message, colored=True):
     Print a warning message on the console. Warning messages are yellow
     """
     if colored:
-        print('\033[93m{}\033[00m' .format(message))
+        print('\033[93m{}\033[00m'.format(message))
     else:
         print(message)
 
@@ -64,7 +65,7 @@ def _error(message, colored=True):
     Print an error message on the console. Warning messages are red
     """
     if colored:
-        print('\033[91m{}\033[00m' .format(message))
+        print('\033[91m{}\033[00m'.format(message))
     else:
         print(message)
 
@@ -93,13 +94,25 @@ parser.add_argument('push', nargs='+', help='Type of operation, default push')
 parser.add_argument('--server', '-s', help='The Pantheon server to upload modules to, default ' + DEFAULT_SERVER)
 parser.add_argument('--repository', '-r', help='The name of the Pantheon repository')
 parser.add_argument('--attrFile', '-f', help='Path to the attribute File')
-parser.add_argument('--user', '-u', help='Username for authentication, default \'' + DEFAULT_USER + '\'', default=DEFAULT_USER)
-parser.add_argument('--password', '-p', help='Password for authentication, default \'' + DEFAULT_PASSWORD + '\'. If \'-\' is supplied, the script will prompt for the password.', default=DEFAULT_PASSWORD)
-parser.add_argument('--directory', '-d', help='Directory to upload, default is current working directory. (' + os.getcwd() + ')', default=os.getcwd())
-parser.add_argument('--verbose', '-v', help='Print information that may be helpful for debugging', action='store_const', const=True)
-parser.add_argument('--dry', '-D', help='Dry run; print information about what would be uploaded, but don\'t actually upload', action='store_const', const=True)
-parser.add_argument('--sandbox', '-b', help='Push to the user\'s personal sandbox. This parameter overrides --repository', action='store_const', const=True)
-parser.add_argument('--sample', '-S', help='Print a sample pantheon2.yml file to stdout (which you may want to redirect to a file).', action='version', version='''\
+parser.add_argument('--user', '-u', help='Username for authentication, default \'' + DEFAULT_USER + '\'',
+                    default=DEFAULT_USER)
+parser.add_argument('--password', '-p',
+                    help='Password for authentication, default \'' + DEFAULT_PASSWORD + '\'. If \'-\' is supplied, the script will prompt for the password.',
+                    default=DEFAULT_PASSWORD)
+parser.add_argument('--directory', '-d',
+                    help='Directory to upload, default is current working directory. (' + os.getcwd() + ')',
+                    default=os.getcwd())
+parser.add_argument('--verbose', '-v', help='Print information that may be helpful for debugging', action='store_const',
+                    const=True)
+parser.add_argument('--dry', '-D',
+                    help='Dry run; print information about what would be uploaded, but don\'t actually upload',
+                    action='store_const', const=True)
+parser.add_argument('--sandbox', '-b',
+                    help='Push to the user\'s personal sandbox. This parameter overrides --repository',
+                    action='store_const', const=True)
+parser.add_argument('--sample', '-S',
+                    help='Print a sample pantheon2.yml file to stdout (which you may want to redirect to a file).',
+                    action='version', version='''\
 # Config file for Pantheon v2 uploader
 ## server: Pantheon server URL
 ## repository: a unique name, which is visible in the user facing URL
@@ -143,7 +156,8 @@ if not os.path.exists(args.directory):
 try:
     config = yaml.safe_load(open(args.directory + '/' + CONFIG_FILE))
 except FileNotFoundError:
-    logger.warning('Could not find a valid config file(' + CONFIG_FILE + ') in this directory; all files will be treated as resource uploads.')
+    logger.warning(
+        'Could not find a valid config file(' + CONFIG_FILE + ') in this directory; all files will be treated as resource uploads.')
 logger.debug('config: %s', config)
 
 
@@ -183,6 +197,9 @@ def process_file(path, filetype):
 
     Returns:
     list: It returns a list with value of the API call status_code and reason
+    :param path:
+    :param filetype:
+    :return:
     """
     isModule = True if filetype == 'modules' else False
     isResource = True if filetype == 'resources' else False
@@ -265,6 +282,21 @@ def process_file(path, filetype):
     logger.debug('')
 
 
+def process_bucket(path):
+    content_root = 'sandbox' if args.sandbox else 'repositories'
+    url = server + '/content/' + content_root + '/' + repository
+
+    # Upload as a pant:bucket
+    logger.debug('url: %s', url)
+    data = {}
+    data['jcr:primaryType'] = 'pant:bucket'
+    data['standaloneAttributeFile'] = attributeFile
+    if not args.dry:
+        r: Response = requests.post(url, headers=HEADERS, data=data, auth=(args.user, pw))
+        _print_response('bucket', path, r.status_code, r.reason)
+    logger.debug('')
+
+
 def listdir_recursive(directory, allFiles):
     for name in os.listdir(directory):
         if name == 'pantheon2.yml' or name[0] == '.':
@@ -322,7 +354,7 @@ if args.sandbox:
 
 attributeFile = resolveOption(args.attrFile, 'attributeFile', '')
 
-if attributeFile and !(os.path.isfile(arg.attrFile.strip())):
+if attributeFile and not os.path.isfile(attributeFile.strip()):
     sys.exit('attributeFile: ' + attributeFile + ' does not exist.')
 
 # Check if server url path reachable
@@ -334,8 +366,10 @@ else:
 
 _info('Using server: ' + server)
 _info('Using ' + mode + ': ' + repository)
+_info('Using attributeFile: ' + attributeFile)
 print('--------------')
 
+process_bucket(repository)
 moduleGlobs = readYamlGlob(config, 'modules')
 resourceGlobs = readYamlGlob(config, 'resources')
 non_resource_files = []
