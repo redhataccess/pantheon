@@ -7,6 +7,7 @@ import os
 import re
 import sys
 from pathlib import PurePath
+from os import path
 
 import requests
 import yaml
@@ -91,6 +92,7 @@ Both this uploader and Pantheon 2 are ALPHA software and features may update or 
 parser.add_argument('push', nargs='+', help='Type of operation, default push')
 parser.add_argument('--server', '-s', help='The Pantheon server to upload modules to, default ' + DEFAULT_SERVER)
 parser.add_argument('--repository', '-r', help='The name of the Pantheon repository')
+parser.add_argument('--attrFile', '-f', help='Path to the attribute File')
 parser.add_argument('--user', '-u', help='Username for authentication, default \'' + DEFAULT_USER + '\'', default=DEFAULT_USER)
 parser.add_argument('--password', '-p', help='Password for authentication, default \'' + DEFAULT_PASSWORD + '\'. If \'-\' is supplied, the script will prompt for the password.', default=DEFAULT_PASSWORD)
 parser.add_argument('--directory', '-d', help='Directory to upload, default is current working directory. (' + os.getcwd() + ')', default=os.getcwd())
@@ -108,6 +110,7 @@ parser.add_argument('--sample', '-S', help='Print a sample pantheon2.yml file to
 
 server: http://localhost:8080
 repository: pantheonSampleRepo
+attributeFile: path/to/attribute.adoc
 
 modules:
  - master.adoc
@@ -316,6 +319,11 @@ if repository == "" and mode == 'repository':
 # override repository if sandbox is chosen (sandbox name is the user name)
 if args.sandbox:
     repository = args.user
+
+attributeFile = resolveOption(args.attrFile, 'attributeFile', '')
+
+if attributeFile and !(os.path.isfile(arg.attrFile.strip())):
+    sys.exit('attributeFile: ' + attributeFile + ' does not exist.')
 
 # Check if server url path reachable
 server = remove_trailing_slash(server)
