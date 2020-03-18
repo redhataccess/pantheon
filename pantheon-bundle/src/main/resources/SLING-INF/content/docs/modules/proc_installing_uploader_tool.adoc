@@ -8,7 +8,7 @@
 +
 [options="nowrap" subs="normal"]
 ----
-$ curl -S https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/setup.sh
+$ wget -S https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/setup.sh
 ----
 . Install the Uploader script by running `setup.sh`.
 +
