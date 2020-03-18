@@ -105,4 +105,43 @@ class AsciidoctorServiceTest {
         // Then
         assertTrue(generatedHtml.contains("This is cached content"));
     }
+
+    @Test
+    public void testGetModuleHtmlWithAttributeFileNotFound() throws IOException {
+        // Given
+        String asciidocContent = "== This is {product}";
+        slingContext.build()
+                .resource("/content/repositories/linux",
+                        "pant:attributeFile", "attr")
+
+                .resource("/content/repositories/linux/module/en_US/released/metadata",
+                        "jcr:title", "A draft title", "jcr:primaryType", "nt:unstructured", "pant:dateUploaded", "2020-02-12 19:20:01")
+
+                .resource("/content/repositories/linux/module/en_US/released/content")
+                .resource("asciidoc/jcr:content",
+                        "jcr:data", asciidocContent)
+                .commit();
+
+        Resource moduleResource = slingContext.resourceResolver().getResource("/content/repositories/linux/module");
+        ModuleVersion moduleVersion =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/linux/module/en_US/released"),
+                        ModuleVersion.class);
+        // adapter (mock)
+        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Content.class, slingContext);
+        registerMockAdapter(ModuleVersion.class, slingContext);
+        lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
+        lenient().when(asciidoctorPool.borrowObject())
+                .thenReturn(Asciidoctor.Factory.create());
+        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
+                .thenReturn(slingContext.resourceResolver());
+        AsciidoctorService asciidoctorService =
+                new AsciidoctorService(globalConfig, asciidoctorPool, serviceResourceResolverProvider);
+
+        // When
+        String generatedHtml = asciidoctorService.getModuleHtml(moduleVersion, moduleResource, newHashMap(), false);
+
+        // Then
+        assertTrue(generatedHtml.contains("Invalid include: /content/repositories/linux/attr"));
+    }
 }
