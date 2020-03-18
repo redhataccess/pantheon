@@ -8,4 +8,7 @@
 :ProductShortName: Pantheon
 :ProductNumber: 2
 
+// Publishing 
+:PublishingPortal: Customer Portal 
+
 :imagesdir: images

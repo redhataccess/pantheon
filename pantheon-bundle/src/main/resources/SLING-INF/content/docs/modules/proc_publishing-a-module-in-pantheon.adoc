@@ -1,0 +1,43 @@
+//include::../attributes.adoc[]
+[id="publishing-a-module-in-pantheon_{context}"]
+= Publishing a module in {ProductShortName}
+
+Publish a module in {ProductShortName} to the {PublishingPortal}.
+
+.Prerequisites
+
+* You are assigned the publisher role in {ProductShortName}.
+* You are logged in.
+* The module to be published has been imported to {ProductShortName}.
+
+.Procedure
+
+. Navigate to link:{LinkToSearchPage}[Search page].
+
+. Click the name of the module you want to publish.
++
+If you don't see the module listed, search for the modules using the search box.
+
+. In the list of module versions, click  *Publish* next to the version of the module you want to publish.
++
+Once published, the module can be accessed at the following URL:
++
+`https://__PRODUCT_URL__/__VANITY_URL_FRAGMENT__`
++
+where, __PRODUCT_URL__ is the URL for the product, and __VANITY_URL_FRAGMENT__ is the vanity URL fragment for the module.
+
+.Additional Resources
+* link:<LinkToHowToSearchModules>[How To Search Modules]
+
+////
+. In the list of module versions, click the three verical dots next to the version of the module you want to publish.
+
+. Click *Edit metadata* to add the following publishing details for the module:
++
+* *Product Name* - Select the Product and its Version that the module should be published for.
+* *Document use case* - Select the verb that best describes the module.
+* *Vanity URL fragment* - Enter a URL for the module.
+* *Search keywords* - Enter the words that, when searched by users, should bring up the module in the user's search. This is optional.
+
+* Click *Save*.
+////
