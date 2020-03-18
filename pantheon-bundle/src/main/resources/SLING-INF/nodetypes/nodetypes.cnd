@@ -57,6 +57,7 @@
 [pant:symlink] > nt:unstructured
     - sling:resourceType (string) = 'pantheon/symlink' mandatory autocreated
 
+// Defines a repository level node. The node type pant:bucket may contain a property for standaloneAttributeFile.
 [pant:bucket] > nt:unstructured, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/bucket' mandatory autocreated
 // Base type for titles

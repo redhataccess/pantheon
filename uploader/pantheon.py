@@ -197,9 +197,6 @@ def process_file(path, filetype):
 
     Returns:
     list: It returns a list with value of the API call status_code and reason
-    :param path:
-    :param filetype:
-    :return:
     """
     isModule = True if filetype == 'modules' else False
     isResource = True if filetype == 'resources' else False
