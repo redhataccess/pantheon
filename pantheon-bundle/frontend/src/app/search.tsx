@@ -67,7 +67,7 @@ class Search extends Component<IAppState, ISearchState> {
       pageLimit: 25,
       redirect: false,
       redirectLocation: '',
-      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false,"publishedDate": "-"}],
+      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false,"publishedDate": "-","pant:moduleType": "-"}],
       selectAllCheckValue: false,
       showDropdownOptions: true,
       sortKey: ''
@@ -183,7 +183,7 @@ class Search extends Component<IAppState, ISearchState> {
                           <span>{data[Fields.PANT_DATE_UPLOADED]}</span>
                         </DataListCell>,
                         <DataListCell key={"module-type_" + key}>
-                          <span >{data.moduleType}</span>
+                          <span >{data[Fields.PANT_MODULE_TYPE]}</span>
                         </DataListCell>
                       ]}
                     />
@@ -394,22 +394,6 @@ class Search extends Component<IAppState, ISearchState> {
       })
   }
 
-
-  private formatDate(date: Date) {
-    // 2019/05/07 14:21:36
-    let dateStr = date.getFullYear().toString() + "/" +
-      (date.getMonth() + 1).toString() + "/" +
-      date.getDate().toString() + " " +
-      date.getHours().toString() + ":" +
-      date.getMinutes().toString() + ":" +
-      date.getSeconds().toString()
-
-    if (dateStr.includes("NaN")) {
-      dateStr = ""
-    }
-    return dateStr
-  };
-
   private dismissNotification = () => {
     this.setState({ isEmptyResults: false, isSearchException: false });
   };
@@ -425,6 +409,9 @@ class Search extends Component<IAppState, ISearchState> {
       backend += "&"
     }
     backend += "offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
+    if (!backend.includes("Uploaded") && !backend.includes('direction')) {
+      backend += "&key=Uploaded&direction=desc"
+    }
     return backend
   }
 

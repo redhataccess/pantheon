@@ -1,17 +1,16 @@
 package com.redhat.pantheon.asciidoctor;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
-import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
-import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
-import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
-import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.module.Content;
-import com.redhat.pantheon.model.module.Metadata;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleVersion;
-import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import static java.util.stream.Collectors.toMap;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
+import javax.jcr.RepositoryException;
+
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
@@ -27,10 +26,19 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import java.util.Map;
-
-import static java.util.stream.Collectors.toMap;
+import com.google.common.base.Charsets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
+import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
+import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
+import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 
 /**
  * Business service class which provides Asciidoctor-related methods which work in conjunction with other
@@ -142,16 +150,58 @@ public class AsciidoctorService {
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
             moduleVersion = serviceResourceResolver.getResource(moduleVersion.getPath()).adaptTo(ModuleVersion.class);
 
+            // process product and version.
+            ProductVersion productVersion = null;
+            if (moduleVersion.metadata().get().getValueMap().containsKey("productVersion")) {
+                productVersion = moduleVersion.metadata().map(Metadata::productVersion)
+                        .map(t -> {
+                            try {
+                                return t.getReference();
+                            } catch (RepositoryException e) {
+                                return null;
+                            }
+                        })
+                        .get();
+            }
+
+            String productName = null;
+            if (productVersion != null) {
+                productName = productVersion.getProduct().name().get();
+            }
+
+            Optional<Calendar> updatedDate = moduleVersion.metadata()
+                    .map(Metadata::dateUploaded)
+                    .map(Supplier::get);
+
+            Optional<Calendar> publishedDate = moduleVersion.metadata()
+                    .map(Metadata::datePublished)
+                    .map(Supplier::get);
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
             // build the attributes (default + those coming from http parameters)
             AttributesBuilder atts = AttributesBuilder.attributes()
                     // show the title on the generated html
                     .attribute("showtitle")
+                    // show pantheonproduct on the generated html. Base the value from metadata.
+                    .attribute("pantheonproduct", productName)
+                    // show pantheonversion on the generated html. Base the value from metadata.
+                    .attribute("pantheonversion", productVersion == null ? "" : productVersion.getValueMap().get("name"))
                     // we want to avoid the footer on the generated html
                     .noFooter(true)
                     // link the css instead of embedding it
                     .linkCss(true)
                     // stylesheet reference
                     .styleSheetName("/static/rhdocs.css");
+
+            if(updatedDate.isPresent()) {
+                // show pantheonupdateddate on generated html. Base the value from metadata.
+                atts.attribute("pantheonupdateddate",  dateFormat.format(updatedDate.get().getTime()));
+            }
+
+            if (publishedDate.isPresent()) {
+                // show pantheonpublisheddate on generated html. Base the value from metadata.
+                atts.attribute("pantheonpublisheddate", dateFormat.format(publishedDate.get().getTime()));
+            }
 
             // Add the context as attributes to the generation process
             context.entrySet().stream().forEach(entry -> {

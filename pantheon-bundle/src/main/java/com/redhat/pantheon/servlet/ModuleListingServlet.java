@@ -20,17 +20,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.text.SimpleDateFormat;
-import java.time.Year;
-import java.util.Date;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
@@ -63,15 +59,15 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String directionParam = paramValue(request, "direction");
         String[] productIds = request.getParameterValues("product");
         String[] productVersionIds = request.getParameterValues("productversion");
-        String type = paramValue(request, "type");
+        String type = paramValue(request, "type");        
 
-        if(!newArrayList("Title", "Published", "Module", "Updated" ).contains(keyParam)) {
+        if(keyParam==null || keyParam.contains("Uploaded")){
             keyParam = "pant:dateUploaded";
-        } else if (keyParam.contains("Title")) {
+        }else if (keyParam.contains("Title")) {
             keyParam = "jcr:title";
         } else if (keyParam.contains("Published")){
             keyParam = "pant:datePublished";
-        } else if (keyParam.contains("Module")){
+        } else if (keyParam.contains("Module")){            
             keyParam = "pant:moduleType";
         } else if (keyParam.contains("Updated")){
             keyParam = JcrConstants.JCR_LASTMODIFIED;
@@ -193,6 +189,15 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
         
+        //logic for file name is present in ModuleVersionUpload.java
+        if(draftMetadata.isPresent() && draftMetadata.get().moduleType().get()!=null){
+            m.put("moduleType",draftMetadata.get().moduleType().get());
+        }else if(releasedMetadata.isPresent() && releasedMetadata.get().moduleType().get()!=null){
+            m.put("moduleType",releasedMetadata.get().moduleType().get());   
+        }else{
+            m.put("moduleType","-");
+        }
+
         if(draftMetadata.isPresent() && draftMetadata.get().dateUploaded().get()!=null){                        
             m.put("pant:dateUploaded",sdf.format(draftMetadata.get().dateUploaded().get().getTime()));
         }else if(releasedMetadata.isPresent() && releasedMetadata.get().dateUploaded().get()!=null){
@@ -206,9 +211,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }else{
             m.put("pant:publishedDate","-");
         }
-
-        // need to revise this when the data is available for moduleType
-        m.put("moduleType","-");
+        
         m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title().get() : releasedMetadata.get().title().get());
         m.put("jcr:description", draftMetadata.isPresent() ? draftMetadata.get().description().get() : releasedMetadata.get().description().get());
         // Assume the path is something like: /content/<something>/my/resource/path

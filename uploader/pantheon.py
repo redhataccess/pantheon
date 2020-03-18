@@ -12,10 +12,6 @@ import requests
 import yaml
 
 DEFAULT_SERVER = 'http://localhost:8080'
-if 'PANTHEON_SERVER' in os.environ:
-    DEFAULT_REPOSITORY = 'gitImport'
-else:
-    DEFAULT_REPOSITORY = getpass.getuser()
 DEFAULT_USER = 'author'
 DEFAULT_PASSWORD = base64.b64decode(b'YXV0aG9y').decode()
 CONFIG_FILE = 'pantheon2.yml'
@@ -94,7 +90,7 @@ Both this uploader and Pantheon 2 are ALPHA software and features may update or 
 ''')
 parser.add_argument('push', nargs='+', help='Type of operation, default push')
 parser.add_argument('--server', '-s', help='The Pantheon server to upload modules to, default ' + DEFAULT_SERVER)
-parser.add_argument('--repository', '-r', help='The name of the Pantheon repository, default is username_hostname (' + DEFAULT_REPOSITORY + ')')
+parser.add_argument('--repository', '-r', help='The name of the Pantheon repository')
 parser.add_argument('--user', '-u', help='Username for authentication, default \'' + DEFAULT_USER + '\'', default=DEFAULT_USER)
 parser.add_argument('--password', '-p', help='Password for authentication, default \'' + DEFAULT_PASSWORD + '\'. If \'-\' is supplied, the script will prompt for the password.', default=DEFAULT_PASSWORD)
 parser.add_argument('--directory', '-d', help='Directory to upload, default is current working directory. (' + os.getcwd() + ')', default=os.getcwd())
@@ -247,8 +243,7 @@ def process_file(path, filetype):
                 _error('Absolute symlink paths are unsupported: ' + str(path) + ' -> ' + target)
             elif not args.dry:
                 symlinkData = {}
-                symlinkData['jcr:primaryType'] = 'nt:unstructured'
-                symlinkData['sling:resourceType'] = 'pant:symlink'
+                symlinkData['jcr:primaryType'] = 'pant:symlink'
                 symlinkData['pant:target'] = target
                 r = requests.post(url, headers=HEADERS, data=symlinkData, auth=(args.user, pw))
                 _print_response('symlink', path, r.status_code, r.reason)
@@ -308,13 +303,15 @@ def processRegexMatches(files, globs, filetype):
         files.remove(f)
 
 
-if 'PANTHEON_SERVER' in os.environ:
-    server = os.environ['PANTHEON_SERVER']
-else:
-    server = resolveOption(args.server, 'server', DEFAULT_SERVER)
+server = resolveOption(args.server, 'server', DEFAULT_SERVER)
 
+DEFAULT_REPOSITORY = ""
 repository = resolveOption(args.repository, 'repository', DEFAULT_REPOSITORY)
 mode = 'sandbox' if args.sandbox else 'repository'
+
+# Enforce a repository being set in the pantheon.yml
+if repository == "" and mode == 'repository':
+    sys.exit('repository is not set')
 
 # override repository if sandbox is chosen (sandbox name is the user name)
 if args.sandbox:
