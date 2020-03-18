@@ -90,6 +90,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
         try {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
             String asciidocContent = ServletUtils.paramValue(request, "asciidoc");
+            asciidocContent = new String(asciidocContent.getBytes(request.getCharacterEncoding()), "utf-8");
             String path = request.getResource().getPath();
             String moduleName = ResourceUtil.getName(path);
             String description = ServletUtils.paramValue(request, "jcr:description", "");
