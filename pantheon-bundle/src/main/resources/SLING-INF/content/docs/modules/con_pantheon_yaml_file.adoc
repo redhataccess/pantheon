@@ -13,7 +13,7 @@ The configuration file defines the following:
 
 `server`:: The URL of the Pantheon server.
 `repository`:: A unique ID that Pantheon uses to reference the URL of the repository. You specify the actual URL of the repository when you synchronize the repository the first time.
-`modules`:: Patterns for modules that will show up in the search results on Pantheon.
+`modules`:: Patterns for modules that show up in the search results on Pantheon.
 `resources`:: Image files, legal information or other content that is not a complete module or assembly.
 
 You need to define the values for `server` and `repository`.
