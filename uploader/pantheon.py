@@ -286,8 +286,7 @@ def process_bucket(path):
     # Upload as a pant:bucket
     logger.debug('url: %s', url)
     data = {}
-    data['jcr:primaryType'] = 'pant:bucket'
-    data['standaloneAttributeFile'] = attributeFile
+    data['pant:AttributeFile'] = attributeFile
     if not args.dry:
         r: Response = requests.post(url, headers=HEADERS, data=data, auth=(args.user, pw))
         _print_response('bucket', path, r.status_code, r.reason)
