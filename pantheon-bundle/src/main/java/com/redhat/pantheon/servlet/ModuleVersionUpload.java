@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -90,7 +91,10 @@ public class ModuleVersionUpload extends AbstractPostOperation {
         try {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
             String asciidocContent = ServletUtils.paramValue(request, "asciidoc");
-            asciidocContent = new String(asciidocContent.getBytes(request.getCharacterEncoding()), "utf-8");
+            String encoding = request.getCharacterEncoding();
+            if (encoding != null) {
+                asciidocContent = new String(asciidocContent.getBytes(encoding), StandardCharsets.UTF_8);
+            }
             String path = request.getResource().getPath();
             String moduleName = ResourceUtil.getName(path);
             String description = ServletUtils.paramValue(request, "jcr:description", "");

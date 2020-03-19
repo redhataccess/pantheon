@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
@@ -83,6 +84,36 @@ class ModuleVersionUploadTest {
         );
         verify(asciidoctorService).getModuleHtml(
                 any(ModuleVersion.class), any(Resource.class), anyMap(), eq(true));
+    }
+
+    @Test
+    void createFirstVersionUnicodeFix() throws Exception {
+        // Given
+        lenient().when(
+                asciidoctorService.getModuleHtml(
+                        any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
+                .thenReturn("A generated html string");
+        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
+                .thenReturn(slingContext.resourceResolver());
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService, serviceResourceResolverProvider);
+        Map<String, Object> params = newHashMap();
+        params.put("locale", "es_ES");
+        params.put("asciidoc", "å\u008D\u0097äº¬é\u0098²ç\u0096«ç\u008E°å\u009Cº");
+        slingContext.request().setParameterMap(params);
+        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/new/proc_module"));
+        slingContext.request().setCharacterEncoding(StandardCharsets.ISO_8859_1.toString());
+
+        // when
+        upload.doRun(slingContext.request(), new HtmlResponse(), null);
+
+        // Then
+        Module module =
+                SlingModels.getModel(
+                        slingContext.resourceResolver().getResource("/new/proc_module"),
+                        Module.class);
+        assertEquals("南京防疫现场",
+                module.getDraftContent(LocaleUtils.toLocale("es_ES")).get().asciidocContent().get()
+        );
     }
 
     @Test
