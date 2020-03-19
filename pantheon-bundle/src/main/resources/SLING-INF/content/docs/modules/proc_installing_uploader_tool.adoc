@@ -1,0 +1,34 @@
+[id="installing-uploader-tool_{context}"]
+
+= Installing the Uploader tool
+
+.Procedure
+
+. Download the Uploader script.
++
+[options="nowrap" subs="normal"]
+----
+$ wget -S https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/setup.sh
+----
+. Install the Uploader script by running `setup.sh`.
++
+[options="nowrap" subs="normal"]
+----
+$ sh setup.sh
+----
+. Enter ‘pantheon’ to confirm it was properly installed.
++
+[options="nowrap" subs="normal"]
+----
+$ pantheon
+----
+
+The following output appears:
+[options="nowrap" subs="normal"]
+----
+usage: pantheon [-h] [--server SERVER] [--repository REPOSITORY] [--user USER]
+[--password PASSWORD] [--directory DIRECTORY] [--verbose]
+[--dry] [--sandbox] [--sample]
+push [push ...]
+pantheon: error: the following arguments are required: push
+----
