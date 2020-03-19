@@ -12,6 +12,7 @@ from os import path
 import requests
 import yaml
 from requests import Response
+from pprint import pprint
 
 DEFAULT_SERVER = 'http://localhost:8080'
 DEFAULT_USER = 'author'
@@ -155,6 +156,7 @@ if not os.path.exists(args.directory):
 
 try:
     config = yaml.safe_load(open(args.directory + '/' + CONFIG_FILE))
+    pprint(config)
 except FileNotFoundError:
     logger.warning(
         'Could not find a valid config file(' + CONFIG_FILE + ') in this directory; all files will be treated as resource uploads.')
@@ -283,10 +285,10 @@ def process_bucket(path):
     content_root = 'sandbox' if args.sandbox else 'repositories'
     url = server + '/content/' + content_root + '/' + repository
 
-    # Upload as a pant:bucket
+    # Specify attributeFile property
     logger.debug('url: %s', url)
     data = {}
-    data['pant:AttributeFile'] = attributeFile
+    data['pant:attributeFile'] = attributeFile
     if not args.dry:
         r: Response = requests.post(url, headers=HEADERS, data=data, auth=(args.user, pw))
         _print_response('bucket', path, r.status_code, r.reason)
@@ -306,9 +308,12 @@ def listdir_recursive(directory, allFiles):
 
 def readYamlGlob(config, keyword):
     globs = config[keyword] if config is not None and keyword in config else ()
+    logger.debug('keyword: $s', keyword)
+    logger.debug('config[keyword] $s', config[keyword])
     if globs is not None:
         for i, val in enumerate(globs):
             globs[i] = val.replace('*', '[^/]+')
+            logger.debug('key:val => $s : $s', i, val)
     return globs
 
 
@@ -365,7 +370,10 @@ _info('Using ' + mode + ': ' + repository)
 _info('Using attributeFile: ' + attributeFile)
 print('--------------')
 
-process_bucket(repository)
+if attributeFile:
+    process_bucket(repository)
+    process_file(attributeFile, 'resource')
+
 moduleGlobs = readYamlGlob(config, 'modules')
 resourceGlobs = readYamlGlob(config, 'resources')
 non_resource_files = []
@@ -373,6 +381,7 @@ logger.debug('moduleGlobs: %s', moduleGlobs)
 logger.debug('resourceGlobs: %s', resourceGlobs)
 logger.debug('args.directory: %s', args.directory)
 
+exit()
 # List all files in the directory
 allFiles = []
 listdir_recursive(args.directory, allFiles)
