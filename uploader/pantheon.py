@@ -7,12 +7,11 @@ import os
 import re
 import sys
 from pathlib import PurePath
-from os import path
 
 import requests
 import yaml
 from requests import Response
-
+from pprint import pprint
 DEFAULT_SERVER = 'http://localhost:8080'
 DEFAULT_USER = 'author'
 DEFAULT_PASSWORD = base64.b64decode(b'YXV0aG9y').decode()
@@ -93,7 +92,7 @@ Both this uploader and Pantheon 2 are ALPHA software and features may update or 
 parser.add_argument('push', nargs='+', help='Type of operation, default push')
 parser.add_argument('--server', '-s', help='The Pantheon server to upload modules to, default ' + DEFAULT_SERVER)
 parser.add_argument('--repository', '-r', help='The name of the Pantheon repository')
-parser.add_argument('--attrFile', '-f', help='Path to the attribute File')
+parser.add_argument('--attrFile', '-f', help='Path to the attribute File', dest='attrFile')
 parser.add_argument('--user', '-u', help='Username for authentication, default \'' + DEFAULT_USER + '\'',
                     default=DEFAULT_USER)
 parser.add_argument('--password', '-p',
@@ -122,17 +121,18 @@ parser.add_argument('--sample', '-S',
 #  - '*.adoc'
 
 server: http://localhost:8080
-repository: pantheonSampleRepo
-attributeFile: path/to/attribute.adoc
+repositories:
+  - name: pantheonSampleRepo
+    attributes: path/to/attribute.adoc
 
-modules:
- - master.adoc
- - modules/*.adoc
+    modules:
+      - master.adoc
+      - modules/*.adoc
 
-resources:
- - shared/legal.adoc
- - shared/foreword.adoc
- - resources/*
+    resources:
+      - shared/legal.adoc
+      - shared/foreword.adoc
+      - resources/*
 ''')
 args = parser.parse_args()
 
@@ -155,6 +155,7 @@ if not os.path.exists(args.directory):
 
 try:
     config = yaml.safe_load(open(args.directory + '/' + CONFIG_FILE))
+
 except FileNotFoundError:
     logger.warning(
         'Could not find a valid config file(' + CONFIG_FILE + ') in this directory; all files will be treated as resource uploads.')
@@ -192,7 +193,7 @@ def process_file(path, filetype):
     Processes the matched files and upload to pantheon through sling api call
 
     Paramters:
-    path (string): A file patch
+    path (string): A file path
     filetype (string): A type of file(assemblies [someday], modules or resources)
 
     Returns:
@@ -280,10 +281,15 @@ def process_file(path, filetype):
 
 
 def process_bucket(path):
+    """
+    Adds pant:attributeFile to the repository node.
+    Parameter:
+    path: string
+    """
     content_root = 'sandbox' if args.sandbox else 'repositories'
     url = server + '/content/' + content_root + '/' + repository
 
-    # Upload as a pant:bucket
+    # Specify attributeFile property
     logger.debug('url: %s', url)
     data = {}
     data['pant:attributeFile'] = attributeFile
@@ -306,9 +312,13 @@ def listdir_recursive(directory, allFiles):
 
 def readYamlGlob(config, keyword):
     globs = config[keyword] if config is not None and keyword in config else ()
+    logger.debug('keyword: $s', keyword)
+    logger.debug('config[keyword] $s', config[keyword])
     if globs is not None:
         for i, val in enumerate(globs):
             globs[i] = val.replace('*', '[^/]+')
+            logger.debug('key:val => $s : $s', i, val)
+
     return globs
 
 
@@ -335,24 +345,6 @@ def processRegexMatches(files, globs, filetype):
 
 
 server = resolveOption(args.server, 'server', DEFAULT_SERVER)
-
-DEFAULT_REPOSITORY = ""
-repository = resolveOption(args.repository, 'repository', DEFAULT_REPOSITORY)
-mode = 'sandbox' if args.sandbox else 'repository'
-
-# Enforce a repository being set in the pantheon.yml
-if repository == "" and mode == 'repository':
-    sys.exit('repository is not set')
-
-# override repository if sandbox is chosen (sandbox name is the user name)
-if args.sandbox:
-    repository = args.user
-
-attributeFile = resolveOption(args.attrFile, 'attributeFile', '')
-
-if attributeFile and not os.path.isfile(attributeFile.strip()):
-    sys.exit('attributeFile: ' + attributeFile + ' does not exist.')
-
 # Check if server url path reachable
 server = remove_trailing_slash(server)
 if exists(server + '/pantheon'):
@@ -361,29 +353,58 @@ else:
     sys.exit('server ' + server + ' is not reachable')
 
 _info('Using server: ' + server)
-_info('Using ' + mode + ': ' + repository)
-_info('Using attributeFile: ' + attributeFile)
-print('--------------')
 
-process_bucket(repository)
-moduleGlobs = readYamlGlob(config, 'modules')
-resourceGlobs = readYamlGlob(config, 'resources')
-non_resource_files = []
-logger.debug('moduleGlobs: %s', moduleGlobs)
-logger.debug('resourceGlobs: %s', resourceGlobs)
-logger.debug('args.directory: %s', args.directory)
+if len(config.keys()) > 0 and 'repositories' in config:
+    for repo_list in config['repositories']:
+        repository = resolveOption(args.repository, '', repo_list['name'])
+        # Enforce a repository being set in the pantheon.yml
+        if repository == "" and mode == 'repository':
+            sys.exit('repository is not set')
 
-# List all files in the directory
-allFiles = []
-listdir_recursive(args.directory, allFiles)
+        mode = 'sandbox' if args.sandbox else 'repository'
+        # override repository if sandbox is chosen (sandbox name is the user name)
+        if args.sandbox:
+            repository = args.user
 
-processRegexMatches(allFiles, resourceGlobs, 'resources')
-processRegexMatches(allFiles, moduleGlobs, 'modules')
+        if 'attributes' in repo_list:
+            attributeFile = resolveOption(args.attrFile, '', repo_list['attributes'])
+        else:
+            attributeFile = resolveOption(args.attrFile, '', '')
 
-leftoverFiles = len(allFiles)
-if leftoverFiles > 0:
-    _warn(f'{leftoverFiles} additional files detected but not uploaded. Only files specified in '
-          + CONFIG_FILE
-          + ' are handled for upload.')
+        if attributeFile and not os.path.isfile(attributeFile.strip()):
+            sys.exit('attributes: ' + attributeFile + ' does not exist.')
+
+        _info('Using ' + mode + ': ' + repository)
+        _info('Using attributes: ' + attributeFile)
+        print('--------------')
+
+        if attributeFile:
+            process_bucket(repository)
+
+        moduleGlobs = readYamlGlob(repo_list, 'modules')
+        resourceGlobs = readYamlGlob(repo_list, 'resources')
+        if attributeFile:
+            if resourceGlobs == None:
+                resourceGlobs = [attributeFile]
+            else:
+                resourceGlobs = resourceGlobs.append(attributeFile)
+        non_resource_files = []
+        logger.debug('moduleGlobs: %s', moduleGlobs)
+        logger.debug('resourceGlobs: %s', resourceGlobs)
+        logger.debug('args.directory: %s', args.directory)
+
+
+        # List all files in the directory
+        allFiles = []
+        listdir_recursive(args.directory, allFiles)
+
+        processRegexMatches(allFiles, resourceGlobs, 'resources')
+        processRegexMatches(allFiles, moduleGlobs, 'modules')
+
+        leftoverFiles = len(allFiles)
+        if leftoverFiles > 0:
+            _warn(f'{leftoverFiles} additional files detected but not uploaded. Only files specified in '
+                + CONFIG_FILE
+                + ' are handled for upload.')
 
 print('Finished!')
