@@ -150,6 +150,13 @@ public class AsciidoctorService {
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
             moduleVersion = serviceResourceResolver.getResource(moduleVersion.getPath()).adaptTo(ModuleVersion.class);
 
+            String attributeFile = "";
+            Resource workspace = moduleVersion.getWorkspace();
+            if (workspace != null && workspace.getValueMap().containsKey("pant:attributeFile")) {
+                attributeFile = workspace.getPath() + "/" + workspace.getValueMap().get("pant:attributeFile").toString();
+                log.info("The attributeFile is: " + attributeFile);
+            }
+
             // process product and version.
             ProductVersion productVersion = null;
             if (moduleVersion.metadata().get().getValueMap().containsKey("productVersion")) {
@@ -239,9 +246,12 @@ public class AsciidoctorService {
 
             String html = "";
             try {
-                html = asciidoctor.convert(
-                        moduleVersion.content().get().asciidocContent().get(),
-                        ob.get());
+                if (attributeFile.isEmpty()) {
+                    html = asciidoctor.convert(moduleVersion.content().get().asciidocContent().get(), ob.get());
+                } else {
+                    html = asciidoctor.convert("include::" + attributeFile + "[]" + "\n" +
+                            moduleVersion.content().get().asciidocContent().get(), ob.get());
+                }
                 cacheContent(moduleVersion.content().get(), html);
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);
