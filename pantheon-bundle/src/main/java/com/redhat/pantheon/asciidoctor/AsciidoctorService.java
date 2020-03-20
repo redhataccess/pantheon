@@ -152,13 +152,10 @@ public class AsciidoctorService {
 
             String attributeFile = "";
             Resource workspace = moduleVersion.getWorkspace();
-            System.out.println("workspace: " + workspace);
-            System.out.println("workspace.getValueMap().containsKey(\"pant:attributeFile\"): " + workspace.getValueMap().containsKey("pant:attributeFile"));
             if (workspace != null && workspace.getValueMap().containsKey("pant:attributeFile")) {
                 attributeFile = workspace.getPath() + "/" + workspace.getValueMap().get("pant:attributeFile").toString();
                 log.info("The attributeFile is: " + attributeFile);
             }
-            System.out.println("The attributeFile is: " + attributeFile);
 
             // process product and version.
             ProductVersion productVersion = null;
@@ -250,10 +247,8 @@ public class AsciidoctorService {
             String html = "";
             try {
                 if (attributeFile.isEmpty()) {
-                    System.out.println("no attrs file :(");
                     html = asciidoctor.convert(moduleVersion.content().get().asciidocContent().get(), ob.get());
                 } else {
-                    System.out.println("atts file yay!");
                     html = asciidoctor.convert("include::" + attributeFile + "[]" + "\n" +
                             moduleVersion.content().get().asciidocContent().get(), ob.get());
                 }

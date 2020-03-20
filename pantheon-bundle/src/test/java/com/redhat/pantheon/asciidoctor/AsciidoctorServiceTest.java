@@ -40,16 +40,20 @@ class AsciidoctorServiceTest {
         // Given
         String asciidocContent = "== This is a title \n\n And this is some text";
         slingContext.build()
-                .resource("/module/en_US/released/metadata",
+                .resource("/repoParent",
+                        "jcr:primaryType", "pant:workspace",
+                        "sling:resourceType", "pantheon/workspace"
+                        )
+                .resource("/repoParent/module/en_US/released/metadata",
                         "jcr:title", "A draft title", "jcr:primaryType", "nt:unstructured", "pant:dateUploaded", "2020-02-12 19:20:01")
-                .resource("/module/en_US/released/content")
+                .resource("/repoParent/module/en_US/released/content")
                     .resource("asciidoc/jcr:content",
                             "jcr:data", asciidocContent)
                 .commit();
 
-        Resource moduleResource = slingContext.resourceResolver().getResource("/module");
+        Resource moduleResource = slingContext.resourceResolver().getResource("/repoParent/module");
         ModuleVersion moduleVersion =
-                SlingModels.getModel(slingContext.resourceResolver().getResource("/module/en_US/released"),
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/repoParent/module/en_US/released"),
                         ModuleVersion.class);
         // adapter (mock)
         registerMockAdapter(Module.class, slingContext);
@@ -76,16 +80,20 @@ class AsciidoctorServiceTest {
 
         // Given
         slingContext.build()
-                .resource("/module/en_US/released/metadata")
-                .resource("/module/en_US/released/content/asciidoc/jcr:content",
+                .resource("/repoParent",
+                        "jcr:primaryType", "pant:workspace",
+                        "sling:resourceType", "pantheon/workspace"
+                )
+                .resource("/repoParent/module/en_US/released/metadata")
+                .resource("/repoParent/module/en_US/released/content/asciidoc/jcr:content",
                                             "jcr:data", "")
-                .resource("/module/en_US/released/content/cachedHtml",
+                .resource("/repoParent/module/en_US/released/content/cachedHtml",
                                             "jcr:data", "This is cached content",
                                             "pant:hash", "01000000")
                 .commit();
-        Resource resource = slingContext.resourceResolver().getResource("/module");
+        Resource resource = slingContext.resourceResolver().getResource("/repoParent/module");
         ModuleVersion moduleVersion =
-                SlingModels.getModel(slingContext.resourceResolver().getResource("/module/en_US/released"),
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/repoParent/module/en_US/released"),
                         ModuleVersion.class);
         // adapter (mock)
         registerMockAdapter(Module.class, slingContext);
@@ -112,7 +120,9 @@ class AsciidoctorServiceTest {
         String asciidocContent = "== This is {product}";
         slingContext.build()
                 .resource("/content/repositories/linux",
-                        "pant:attributeFile", "attr")
+                        "pant:attributeFile", "attr",
+                        "jcr:primaryType", "pant:workspace",
+                        "sling:resourceType", "pantheon/workspace")
 
                 .resource("/content/repositories/linux/module/en_US/released/metadata",
                         "jcr:title", "A draft title", "jcr:primaryType", "nt:unstructured", "pant:dateUploaded", "2020-02-12 19:20:01")
