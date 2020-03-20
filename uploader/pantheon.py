@@ -280,7 +280,7 @@ def process_file(path, filetype):
     logger.debug('')
 
 
-def process_bucket(path):
+def process_workspace(path):
     """
     Adds pant:attributeFile to the repository node.
     Parameter:
@@ -296,7 +296,7 @@ def process_bucket(path):
     data['pant:attributeFile'] = attributeFile
     if not args.dry:
         r: Response = requests.post(url, headers=HEADERS, data=data, auth=(args.user, pw))
-        _print_response('bucket', path, r.status_code, r.reason)
+        _print_response('workspace', path, r.status_code, r.reason)
     logger.debug('')
 
 
@@ -380,7 +380,7 @@ if len(config.keys()) > 0 and 'repositories' in config:
         print('--------------')
 
         if attributeFile:
-            process_bucket(repository)
+            process_workspace(repository)
 
         moduleGlobs = readYamlGlob(repo_list, 'modules')
         resourceGlobs = readYamlGlob(repo_list, 'resources')
