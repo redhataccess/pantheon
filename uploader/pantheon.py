@@ -292,6 +292,7 @@ def process_bucket(path):
     # Specify attributeFile property
     logger.debug('url: %s', url)
     data = {}
+    data['jcr:primaryType'] = 'pant:workspace'
     data['pant:attributeFile'] = attributeFile
     if not args.dry:
         r: Response = requests.post(url, headers=HEADERS, data=data, auth=(args.user, pw))
