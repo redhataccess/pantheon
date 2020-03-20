@@ -6,8 +6,10 @@ public interface WorkspaceChild extends SlingModel {
 
     default Resource getWorkspace() {
         Resource workspace = this.getParent();
-        while (workspace != null && !workspace.getResourceType().equals("pant:workspace")) {
+        System.out.println("Beginning workspace type: " + workspace.getResourceType());
+        while (workspace != null && !workspace.getResourceType().equals("pantheon/workspace")) {
             workspace = workspace.getParent();
+            System.out.println("New workspace type: " + workspace.getResourceType());
         }
         return workspace;
     }
