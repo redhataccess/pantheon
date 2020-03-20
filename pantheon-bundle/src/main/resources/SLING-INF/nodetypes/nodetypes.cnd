@@ -56,6 +56,9 @@
 
 [pant:symlink] > nt:unstructured
     - sling:resourceType (string) = 'pantheon/symlink' mandatory autocreated
+// Defines a repository level node. The node type pant:workspace may contain a property for pant:attributeFile.
+[pant:workspace] > nt:unstructured, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/workspace' mandatory autocreated
 
 // Base type for titles
 //[pant:title] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
