@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
@@ -14,7 +15,7 @@ import javax.inject.Named;
  * parent, but this is not validated.
  */
 @JcrPrimaryType("pant:moduleVersion")
-public interface ModuleVersion extends SlingModel {
+public interface ModuleVersion extends WorkspaceChild {
 
     @Named("jcr:uuid")
     Field<String> uuid();

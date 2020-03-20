@@ -151,17 +151,11 @@ public class AsciidoctorService {
             moduleVersion = serviceResourceResolver.getResource(moduleVersion.getPath()).adaptTo(ModuleVersion.class);
 
             String attributeFile = "";
-            Resource repository = moduleVersion.getParent();
-                while (repository != null && repository.getPath() != null && repository.getParent() != null
-                        && !repository.getParent().getPath().equals("/content/repositories")
-                        && !repository.getParent().getPath().equals("/content/sandbox")) {
-                    log.info("gettting parrent of: " + repository.getPath());
-                    repository = repository.getParent();
-                }
-                if (repository != null && repository.getValueMap().containsKey("pant:attributeFile")) {
-                    attributeFile = repository.getPath() + "/" + repository.getValueMap().get("pant:attributeFile").toString();
-                    log.info("The attributeFile is: " + attributeFile);
-                }
+            Resource workspace = moduleVersion.getWorkspace();
+            if (workspace != null && workspace.getValueMap().containsKey("pant:attributeFile")) {
+                attributeFile = workspace.getPath() + "/" + workspace.getValueMap().get("pant:attributeFile").toString();
+                log.info("The attributeFile is: " + attributeFile);
+            }
 
             // process product and version.
             ProductVersion productVersion = null;

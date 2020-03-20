@@ -4,6 +4,7 @@ import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.Reference;
 import com.redhat.pantheon.model.api.SlingModel;
+import com.redhat.pantheon.model.api.WorkspaceChild;
 import org.apache.jackrabbit.JcrConstants;
 
 import javax.inject.Named;
@@ -14,7 +15,7 @@ import java.util.Calendar;
  * instances may found on a given module representing different
  * versions of said metadata.
  */
-public interface Metadata extends SlingModel {
+public interface Metadata extends WorkspaceChild {
 
     @Named("jcr:title")
     Field<String> title();
