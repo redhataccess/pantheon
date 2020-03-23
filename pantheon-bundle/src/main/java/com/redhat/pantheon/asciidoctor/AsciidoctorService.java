@@ -151,13 +151,6 @@ public class AsciidoctorService {
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
             moduleVersion = serviceResourceResolver.getResource(moduleVersion.getPath()).adaptTo(ModuleVersion.class);
 
-            String attributeFile = "";
-            Resource workspace = moduleVersion.getWorkspace();
-            if (workspace != null && workspace.getValueMap().containsKey("pant:attributeFile")) {
-                attributeFile = workspace.getPath() + "/" + workspace.adaptTo(Workspace.class).attributeFile().get();
-                log.info("The attributeFile is: " + attributeFile);
-            }
-
             // process product and version.
             ProductVersion productVersion = null;
             if (moduleVersion.metadata().get().getValueMap().containsKey("productVersion")) {
@@ -245,14 +238,17 @@ public class AsciidoctorService {
                         new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
             }
 
+            String attributeFile = moduleVersion.getWorkspace().attributeFile().get();
             String html = "";
             try {
-                if (attributeFile.isEmpty()) {
-                    html = asciidoctor.convert(moduleVersion.content().get().asciidocContent().get(), ob.get());
-                } else {
-                    html = asciidoctor.convert("include::" + attributeFile + "[]" + "\n" +
-                            moduleVersion.content().get().asciidocContent().get(), ob.get());
+                StringBuilder content = new StringBuilder();
+                if (attributeFile != null && !attributeFile.isEmpty()) {
+                    content.append("include::")
+                            .append(attributeFile)
+                            .append("[]\n");
                 }
+                content.append(moduleVersion.content().get().asciidocContent().get());
+                html = asciidoctor.convert(content.toString(), ob.get());
                 cacheContent(moduleVersion.content().get(), html);
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);
