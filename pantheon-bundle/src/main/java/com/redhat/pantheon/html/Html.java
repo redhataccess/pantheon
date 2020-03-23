@@ -56,30 +56,6 @@ public class Html {
         };
     }
 
-    public static Function<Document, Document> dereferenceAllHyperlinks(ResourceResolver resolver) {
-        JcrQueryHelper qh = new JcrQueryHelper(resolver);
-        return document -> {
-            document.select("a")
-                    .forEach(hyperlink -> {
-                        hyperlink.childNodes().stream()
-                                .filter(child -> "#comment".equals(child.nodeName()))
-                                .map(child -> UUID_PATTERN.matcher(child.outerHtml()))
-                                .filter(matcher -> matcher.find())
-                                .map(matcher -> matcher.group())
-                                .forEach(uuid -> {
-                                    try {
-                                        qh.query("select * from [pant:module] as module WHERE module.[jcr:uuid] = '" + uuid + "'")
-                                                .findFirst()
-                                                .ifPresent(resource -> hyperlink.attr("href", resource.getPath() + ".preview"));
-                                    } catch (RepositoryException e) {
-                                        e.printStackTrace();
-                                    }
-                                });
-                    });
-            return document;
-        };
-    }
-
     /**
      * An extractor function which returns just the body content for the parsed html document.
      * @return An html extactor function.

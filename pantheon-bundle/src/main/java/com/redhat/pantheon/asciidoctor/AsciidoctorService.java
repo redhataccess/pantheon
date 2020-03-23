@@ -1,5 +1,18 @@
 package com.redhat.pantheon.asciidoctor;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
+import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
+import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
+import com.redhat.pantheon.asciidoctor.extension.UuidPreProcessor;
+import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import static java.util.stream.Collectors.toMap;
 
 import java.text.SimpleDateFormat;
@@ -26,19 +39,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
-import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
-import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
-import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
-import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.ProductVersion;
-import com.redhat.pantheon.model.module.Content;
-import com.redhat.pantheon.model.module.Metadata;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleVersion;
-import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+
 
 /**
  * Business service class which provides Asciidoctor-related methods which work in conjunction with other
@@ -229,18 +231,29 @@ public class AsciidoctorService {
             asciidoctor.javaExtensionRegistry().includeProcessor(
                     new SlingResourceIncludeProcessor(base));
             asciidoctor.javaExtensionRegistry().postprocessor(
-                    new HtmlModulePostprocessor(base));
+                    new HtmlModulePostprocessor(base));            
 
             // add specific extensions for metadata regeneration
             if(regenMetadata) {
                 asciidoctor.javaExtensionRegistry().treeprocessor(
                         new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
-            }
+            }                       
 
             String html = "";
-            try {
+            try {                
+                String ascContent = moduleVersion.content().get().asciidocContent().get();                
+                
+                //Extracting link from the adoc using preprocessor        
+                asciidoctor.javaExtensionRegistry().preprocessor(
+                        new UuidPreProcessor(base));
                 html = asciidoctor.convert(
-                        moduleVersion.content().get().asciidocContent().get(),
+                        ascContent,
+                        OptionsBuilder.options().toFile(false));
+                
+                log.info("asciidoctor content: {}", html);
+
+                html = asciidoctor.convert(
+                        ascContent,
                         ob.get());
                 cacheContent(moduleVersion.content().get(), html);
             } finally {
