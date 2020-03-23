@@ -154,7 +154,7 @@ public class AsciidoctorService {
             String attributeFile = "";
             Resource workspace = moduleVersion.getWorkspace();
             if (workspace != null && workspace.getValueMap().containsKey("pant:attributeFile")) {
-                attributeFile = workspace.getPath() + "/" + workspace.adaptTo(Workspace.class).attributeFile();
+                attributeFile = workspace.getPath() + "/" + workspace.adaptTo(Workspace.class).attributeFile().get();
                 log.info("The attributeFile is: " + attributeFile);
             }
 
