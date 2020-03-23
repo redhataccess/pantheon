@@ -60,6 +60,7 @@ class AsciidoctorServiceTest {
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(Content.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
+        registerMockAdapter(Workspace.class, slingContext);
         lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
         lenient().when(asciidoctorPool.borrowObject())
                 .thenReturn(Asciidoctor.Factory.create());
@@ -154,6 +155,6 @@ class AsciidoctorServiceTest {
         String generatedHtml = asciidoctorService.getModuleHtml(moduleVersion, moduleResource, newHashMap(), false);
 
         // Then
-        assertTrue(generatedHtml.contains("Invalid include: /content/repositories/linux/attr"));
+        assertTrue(generatedHtml.contains("Invalid include: attr"));
     }
 }
