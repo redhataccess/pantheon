@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
 
+import com.redhat.pantheon.model.workspace.Workspace;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
@@ -153,7 +154,7 @@ public class AsciidoctorService {
             String attributeFile = "";
             Resource workspace = moduleVersion.getWorkspace();
             if (workspace != null && workspace.getValueMap().containsKey("pant:attributeFile")) {
-                attributeFile = workspace.getPath() + "/" + workspace.getValueMap().get("pant:attributeFile").toString();
+                attributeFile = workspace.getPath() + "/" + workspace.adaptTo(Workspace.class).attributeFile().get();
                 log.info("The attributeFile is: " + attributeFile);
             }
 

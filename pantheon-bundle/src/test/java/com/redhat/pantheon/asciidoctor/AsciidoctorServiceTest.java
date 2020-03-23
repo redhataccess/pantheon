@@ -5,6 +5,7 @@ import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.model.workspace.Workspace;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -140,6 +141,7 @@ class AsciidoctorServiceTest {
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(Content.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
+        registerMockAdapter(Workspace.class, slingContext);
         lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
         lenient().when(asciidoctorPool.borrowObject())
                 .thenReturn(Asciidoctor.Factory.create());
