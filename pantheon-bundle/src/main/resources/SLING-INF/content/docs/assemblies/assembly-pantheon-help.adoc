@@ -1,0 +1,52 @@
+ifdef::context[:parent-context: {context}]
+
+include::../attributes.adoc[]
+
+[id="help"]
+= Help
+
+:context: assembly-pantheon-help
+
+Welcome to Pantheon help.
+
+This document describes the main concepts, requirements and, actions in Pantheon.
+
+include::modules/con_about_pantheon.adoc[leveloffset=+1]
+
+// Section 1
+== Modular documentation
+
+This section describes modular documentation.
+
+include::modules/con_what-is-a-module.adoc[leveloffset=+2]
+
+include::modules/con_comparison-between-modules-and-DITA-topics.adoc[leveloffset=+2]
+
+// Section 2
+include::modules/ref_prerequisites.adoc[leveloffset=+1]
+
+// Section 3
+== Concepts
+
+This section describes the main concepts required to understand and use Pantheon.
+
+// include::modules/<pending>
+
+// include::modules/<pending>
+
+include::modules/con_pantheon_yaml_file.adoc[leveloffset=+2]
+
+// Section 4
+== Components
+
+This section describes the main components of the Pantheon user interface and how to access them.
+
+include::modules/ref_pantheon-user-interface.adoc[leveloffset=+2]
+
+include::modules/proc_log-in-to-pantheon.adoc[leveloffset=+3]
+
+// include::<pending>
+
+
+ifdef::parent-context[:context: {parent-context}]
+ifndef::parent-context[:!context:]
