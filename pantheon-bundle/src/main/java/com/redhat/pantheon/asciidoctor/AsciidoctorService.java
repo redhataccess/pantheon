@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
 
+import com.redhat.pantheon.model.workspace.Workspace;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
@@ -237,11 +238,17 @@ public class AsciidoctorService {
                         new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
             }
 
+            String attributeFile = moduleVersion.getWorkspace().getPath() + '/' + moduleVersion.getWorkspace().attributeFile().get();
             String html = "";
             try {
-                html = asciidoctor.convert(
-                        moduleVersion.content().get().asciidocContent().get(),
-                        ob.get());
+                StringBuilder content = new StringBuilder();
+                if (attributeFile != null && !attributeFile.isEmpty()) {
+                    content.append("include::")
+                            .append(attributeFile)
+                            .append("[]\n");
+                }
+                content.append(moduleVersion.content().get().asciidocContent().get());
+                html = asciidoctor.convert(content.toString(), ob.get());
                 cacheContent(moduleVersion.content().get(), html);
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);

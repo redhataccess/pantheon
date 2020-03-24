@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import com.redhat.pantheon.model.api.SlingModel;
 
@@ -35,7 +36,7 @@ import static java.util.Optional.ofNullable;
  *                                   /metadata
  */
 @JcrPrimaryType("pant:module")
-public interface Module extends SlingModel {
+public interface Module extends WorkspaceChild {
 
     default ModuleLocale getModuleLocale(Locale locale) {
         return getChild(locale.toString(), ModuleLocale.class);
