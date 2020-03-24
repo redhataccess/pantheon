@@ -375,8 +375,6 @@ if len(config.keys()) > 0 and 'repositories' in config:
 
         if args.attrFile:
             if not os.path.isfile(args.directory + '/' + args.attrFile):
-                _info('args.direcotry: ' + args.directory)
-                _info('args.attrFile: ' + args.attrFile)
                 sys.exit('attributes: ' + args.directory + '/' + args.attrFile + ' does not exist.')
 
         elif attributeFile and not os.path.isfile(attributeFile.strip()):
