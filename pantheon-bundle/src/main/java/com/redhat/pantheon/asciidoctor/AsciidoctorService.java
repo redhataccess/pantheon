@@ -238,7 +238,7 @@ public class AsciidoctorService {
                         new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
             }
 
-            String attributeFile = moduleVersion.getWorkspace().attributeFile().get();
+            String attributeFile = moduleVersion.getWorkspace().getPath() + '/' + moduleVersion.getWorkspace().attributeFile().get();
             String html = "";
             try {
                 StringBuilder content = new StringBuilder();
