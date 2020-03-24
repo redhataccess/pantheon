@@ -293,7 +293,8 @@ def process_workspace(path):
     logger.debug('url: %s', url)
     data = {}
     data['jcr:primaryType'] = 'pant:workspace'
-    data['pant:attributeFile'] = attributeFile
+    if attributeFile:
+        data['pant:attributeFile'] = attributeFile
     if not args.dry:
         r: Response = requests.post(url, headers=HEADERS, data=data, auth=(args.user, pw))
         _print_response('workspace', path, r.status_code, r.reason)
@@ -372,15 +373,21 @@ if len(config.keys()) > 0 and 'repositories' in config:
         else:
             attributeFile = resolveOption(args.attrFile, '', '')
 
-        if attributeFile and not os.path.isfile(attributeFile.strip()):
+        if args.attrFile:
+            if not os.path.isfile(args.directory + '/' + args.attrFile):
+                _info('args.direcotry: ' + args.directory)
+                _info('args.attrFile: ' + args.attrFile)
+                sys.exit('attributes: ' + args.directory + '/' + args.attrFile + ' does not exist.')
+
+        elif attributeFile and not os.path.isfile(attributeFile.strip()):
             sys.exit('attributes: ' + attributeFile + ' does not exist.')
 
         _info('Using ' + mode + ': ' + repository)
         _info('Using attributes: ' + attributeFile)
         print('--------------')
 
-        if attributeFile:
-            process_workspace(repository)
+
+        process_workspace(repository)
 
         moduleGlobs = readYamlGlob(repo_list, 'modules')
         resourceGlobs = readYamlGlob(repo_list, 'resources')
