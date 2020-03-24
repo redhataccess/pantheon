@@ -155,6 +155,6 @@ class AsciidoctorServiceTest {
         String generatedHtml = asciidoctorService.getModuleHtml(moduleVersion, moduleResource, newHashMap(), false);
 
         // Then
-        assertTrue(generatedHtml.contains("Invalid include: attr"));
+        assertTrue(generatedHtml.contains("Invalid include: /content/repositories/linux/attr"));
     }
 }
