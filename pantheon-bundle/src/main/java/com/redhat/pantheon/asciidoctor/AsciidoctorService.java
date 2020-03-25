@@ -226,25 +226,28 @@ public class AsciidoctorService {
 
             long start = System.currentTimeMillis();
             Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
-            // extensions needed to generate a module's html
-            asciidoctor.javaExtensionRegistry().includeProcessor(
-                    new SlingResourceIncludeProcessor(base));
-            asciidoctor.javaExtensionRegistry().postprocessor(
-                    new HtmlModulePostprocessor(base));
-
-            // add specific extensions for metadata regeneration
-            if(regenMetadata) {
-                asciidoctor.javaExtensionRegistry().treeprocessor(
-                        new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
-            }
-
-            String attributeFile = moduleVersion.getWorkspace().getPath() + '/' + moduleVersion.getWorkspace().attributeFile().get();
             String html = "";
             try {
+                // extensions needed to generate a module's html
+                asciidoctor.javaExtensionRegistry().includeProcessor(
+                        new SlingResourceIncludeProcessor(base));
+                asciidoctor.javaExtensionRegistry().postprocessor(
+                        new HtmlModulePostprocessor(base));
+
+                // add specific extensions for metadata regeneration
+                if(regenMetadata) {
+                    asciidoctor.javaExtensionRegistry().treeprocessor(
+                            new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
+                }
+
+                String workspacePath = moduleVersion.getWorkspace().getPath();
+                String attributeFileRelPath =  moduleVersion.getWorkspace().attributeFile().get();
                 StringBuilder content = new StringBuilder();
-                if (attributeFile != null && !attributeFile.isEmpty()) {
+                if (attributeFileRelPath != null && !attributeFileRelPath.isEmpty()) {
                     content.append("include::")
-                            .append(attributeFile)
+                            .append(workspacePath)
+                            .append("/")
+                            .append(attributeFileRelPath)
                             .append("[]\n");
                 }
                 content.append(moduleVersion.content().get().asciidocContent().get());
