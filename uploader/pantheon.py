@@ -389,11 +389,12 @@ if len(config.keys()) > 0 and 'repositories' in config:
 
         moduleGlobs = readYamlGlob(repo_list, 'modules')
         resourceGlobs = readYamlGlob(repo_list, 'resources')
+
         if attributeFile:
             if resourceGlobs == None:
                 resourceGlobs = [attributeFile]
             else:
-                resourceGlobs = resourceGlobs.append(attributeFile)
+                resourceGlobs = resourceGlobs + [attributeFile]
         non_resource_files = []
         logger.debug('moduleGlobs: %s', moduleGlobs)
         logger.debug('resourceGlobs: %s', resourceGlobs)
