@@ -1,0 +1,20 @@
+include::../attributes.adoc[]
+[id='what-is-a-module_{context}']
+= What is a module
+
+A module, in modular documentation, is defined as topic-specific structured informational content written in the specified syntax, stored in a file, that can be published on its own and as a part of a larger document in {ProductShortName}.
+
+The following are the properties of a module:
+
+* Conforms to the module syntax.
+* Self-contained: A module contains all the necessary information about a topic required by a user to achieve a goal. The goal of a user can be to understand a concept, to perform a task, or to find reference information.
+* Standalone: A module does not require any surrounding text to be useful to the reader; a module is publishable on its own.
+* Pluggable: A module can be used unmodified as a part of a larger document.
+
+Types of modules defined in modular documentation:
+
+* Concept
+* Procedure
+* Reference
+
+// TBU Examples

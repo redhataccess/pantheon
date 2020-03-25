@@ -72,4 +72,25 @@ class PantheonRepositoryInitializerTest {
         // Then
         verify(resourceResolver, times(0)).getResource(any());
     }
+
+    @Test
+    void processContentRedirects() throws Exception {
+        // Given
+        ResourceResolver resourceResolver = mock(ResourceResolver.class);
+        Resource configNode = mock(Resource.class);
+        ModifiableValueMap mvm = mock(ModifiableValueMap.class);
+        when(resourceResolver.getResource(eq("/content"))).thenReturn(configNode);
+        when(configNode.adaptTo(ModifiableValueMap.class)).thenReturn(mvm);
+        when(serviceResourceResolverProvider.getServiceResourceResolver()).thenReturn(resourceResolver);
+        PantheonRepositoryInitializer pri = new PantheonRepositoryInitializer(serviceResourceResolverProvider);
+        // partial mock
+        pri = spy(pri);
+
+        // When
+        pri.processRepository(mock(SlingRepository.class));
+
+        // Then
+        verify(mvm).put(eq("sling:resourceType"), eq("sling:redirect"));
+        verify(mvm).put(eq("sling:target"), eq("/pantheon"));
+    }
 }

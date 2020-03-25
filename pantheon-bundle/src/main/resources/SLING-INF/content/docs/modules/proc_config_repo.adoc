@@ -1,0 +1,30 @@
+[id="configuring-a-repository-as-a-content-source-for-pantheon_{context}"]
+
+= Configuring a repository as a content source for Pantheon
+
+.Procedure
+
+. In a text editor, paste the content of the sample configuration file in xref:pantheon-yaml-file_{context}[] into a new text file. Name the file [filename]`pantheon2.yml`. This file is the Pantheon configuration file for your repository.
+
+. Replace the default value for ‘server’ with the URL you receive from a Pantheon administrator.
++
+[options="nowrap" subs="normal"]
+----
+server: http://pantheon.example.com[]
+repository: <UNIQUE_ID>
+----
+. Replace the default value for ‘repository’ with a unique ID, not a URL:
++
+[options="nowrap" subs="normal"]
+----
+repository: <UNIQUE_ID>
+----
++
+[NOTE]
+====
+You specify the actual URL of the repository when you synchronize the repository the first time.
+====
+
+. Add the configuration file to the root directory of the repository.
+
+You can now import content from the repository into Pantheon.

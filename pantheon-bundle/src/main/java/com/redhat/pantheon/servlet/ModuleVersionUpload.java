@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -90,6 +91,10 @@ public class ModuleVersionUpload extends AbstractPostOperation {
         try {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
             String asciidocContent = ServletUtils.paramValue(request, "asciidoc");
+            String encoding = request.getCharacterEncoding();
+            if (encoding != null) {
+                asciidocContent = new String(asciidocContent.getBytes(encoding), StandardCharsets.UTF_8);
+            }
             String path = request.getResource().getPath();
             String moduleName = ResourceUtil.getName(path);
             String description = ServletUtils.paramValue(request, "jcr:description", "");
@@ -99,7 +104,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             int responseCode = HttpServletResponse.SC_OK;
 
             // Try to find the module
-            ResourceResolver resolver = serviceResourceResolverProvider.getServiceResourceResolver();
+            ResourceResolver resolver = request.getResourceResolver();
             Resource moduleResource = resolver.getResource(path);
             Module module;
 
@@ -161,7 +166,10 @@ public class ModuleVersionUpload extends AbstractPostOperation {
 
             Metadata metadata = draftVersion.get()
                     .metadata().getOrCreate();
-            metadata.title().set(moduleName);
+            
+            if(metadata.title().get()==null){
+                metadata.title().set(moduleName);
+            }                    
             metadata.description().set(description);
             Calendar now = Calendar.getInstance();
             metadata.dateModified().set(now);

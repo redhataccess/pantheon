@@ -1,0 +1,39 @@
+include::../attributes.adoc[]
+[id='comparison-between-modules-and-DITA-topics_{context}']
+= Comparison between modules and DITA topics
+
+A module is similar to a topic in Darwin Information Typing Architecture (DITA) topic. 
+
+A module differs from a DITA-topic in the following aspects:
+
+* Source language
++ 
+Modules are written AsciiDoc, whereas DITA topics are written in xml.
+
+* Structure
++
+Following is the comparison between the structure of a DITA topic and a module.
++ 
+[options="header",cols="1,1"]
+|===
+|DITA Topic   |Module 
+//----------------------
+a|
+* Title
+* Short description or abstract
+* Prolog
+* Body
+* Related links
+* Nested topics 
+a|
+* Heading
+* Body (the body depends on module type)
+* Additional Resources  
+|===
++
+The most important distinction is that modules cannot be nested like DITA topics.
+
+.Additional Resources
+* DITA Topics - link:https://docs.oasis-open.org/dita/v1.0/archspec/topics.htmll[What are topics?] 
+* AsciiDoc home page - link:http://asciidoc.org[AsciiDoc
+Text based document generation]

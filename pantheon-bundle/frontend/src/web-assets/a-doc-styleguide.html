@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]>
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<![endif]-->
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta content="Asciidoctor 2.0.10" name="generator">
+<meta content="Wes Ruvalcaba" name="author">
+<title>A Styleguide of all A Doc expressions possible</title>
+<link href="rhdocs.css" rel="stylesheet" />
+</head>
+<body class="article" id="a-doc-styleguide">
+<article class="rhdocs" id="rhdocs">
+<header class="rhdocs-header" id="rhdocs-header">
+<h1>A Styleguide of all A Doc expressions possible</h1>
+<ul class="rhdocs-details">
+<li class="rh-docs-details-item rhdocs-products">
+<span class="rhdocs-product-name">ASCII Doc Styleguide</span>
+<span class="rhdocs-product-version">2.0</span>
+</li>
+<li class="rh-docs-details-item rhdocs-updated-date">Updated 01 February 2020</li>
+<li class="rh-docs-details-item rhdocs-published-date">Published 10 February 2020</li>
+</ul>
+</header>
+<main class="rhdocs-content" id="rhdocs-content">
+<!-- / Do the HTML part -->
+<section class="sect1">
+<h2 id="_attributes">Attributes</h2>
+<div class="sectionbody">
+<p>Author is Wes Ruvalcaba</p>
+<p>Version is {revision}</p>
+<p>My name is Alex Efros</p>
+<p>Escaped: {qwe} and {qwe}</p>
+</div>
+</section>
+<!-- / Do the HTML part -->
+<section class="sect1">
+<h2 id="_headers">Headers</h2>
+<div class="sectionbody">
+
+</div>
+</section>
+<!-- / Do the HTML part -->
+<section class="sect1">
+<h2 id="_level_1">Level 1</h2>
+<div class="sectionbody">
+<p>Text.</p>
+<!-- / Do the HTML part -->
+<section class="sect2">
+<h3 id="_level_2">Level 2</h3>
+<p>Text.</p>
+<!-- / Do the HTML part -->
+<section class="sect3">
+<h4 id="_level_3">Level 3</h4>
+<p>Text.</p>
+<!-- / Do the HTML part -->
+<section class="sect4">
+<h5 id="_level_4">Level 4</h5>
+<p>Text.</p>
+</section>
+</section>
+</section>
+</div>
+</section>
+<!-- / Do the HTML part -->
+<section class="sect1">
+<h2 id="_paragraphs">Paragraphs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<strong class="heading">Optional Title</strong>
+<p>Usual paragraph.</p>
+</div>
+<div class="literalblock">
+<strong class="heading">Optional Title</strong>
+<div class="content">
+<pre>Literal paragraph.&#x000A; Must be indented.</pre>
+</div>
+</div>
+<div class="listingblock">
+<strong class="heading">Optional Title</strong>
+<div class="content">
+<pre class="highlight"><code class="language-perl" data-lang="perl">die 'connect: '.$dbh-&gt;errstr;</code></pre>
+</div>
+</div>
+<p>Not a code in next paragraph.</p>
+<div class="admonitionblock note">
+<strong class="title icon-title"></strong>
+<div class="content">
+<strong class="title">Optional Title</strong>
+This is an example
+      single-paragraph note.
+</div>
+</div>
+<div class="admonitionblock note">
+<strong class="title icon-title"></strong>
+<div class="content">
+<strong class="title">Optional Title</strong>
+This is an example
+single-paragraph note.
+</div>
+</div>
+<div class="admonitionblock tip">
+<strong class="title icon-title"></strong>
+<div class="content">
+Tip.
+</div>
+</div>
+<div class="admonitionblock important">
+<strong class="title icon-title"></strong>
+<div class="content">
+Important.
+</div>
+</div>
+<div class="admonitionblock warning">
+<strong class="title icon-title"></strong>
+<div class="content">
+Warning.
+</div>
+</div>
+<div class="admonitionblock caution">
+<strong class="title icon-title"></strong>
+<div class="content">
+Caution.
+</div>
+</div>
+</div>
+</section>
+<!-- / Do the HTML part -->
+<section class="sect1">
+<h2 id="_blocks">Blocks</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<strong class="heading">Optional Title</strong>
+<div class="content">
+<pre>*Listing* Block&#x000A;&#x000A;Use: code or file listings</pre>
+</div>
+</div>
+<div class="listingblock">
+<strong class="heading">Optional Title</strong>
+<div class="content">
+<pre class="highlight"><code class="language-perl" data-lang="perl"># *Source* block&#x000A;# Use: highlight code listings&#x000A;# (require `source-highlight` or `pygmentize`)&#x000A;use DBI;&#x000A;my $dbh = DBI-&gt;connect('...',$u,$p)&#x000A;    or die ""connect: $dbh-&gt;errstr"";</code></pre>
+</div>
+</div>
+<aside class="sidebarblock">
+<strong class="heading">Optional Title</strong>
+<div class="content">
+<p><strong>Sidebar</strong> Block</p>
+<p>Use: sidebar notes :)</p>
+</div>
+</aside>
+<div class="exampleblock">
+<strong class="heading">Example 1. Optional Title</strong>
+<div class="content">
+<p><strong>Example</strong> Block</p>
+<p>Use: examples :)</p>
+<p>Default caption "Example:"
+can be changed using</p>
+<div class="literalblock">
+<div class="content">
+<pre>[caption="Custom: "]</pre>
+</div>
+</div>
+<p>before example block.</p>
+</div>
+</div>
+<div class="admonitionblock note">
+<strong class="title icon-title"></strong>
+<div class="content">
+<strong class="title">Optional Title</strong>
+<p><strong>NOTE</strong> Block</p>
+<p>Use: multi-paragraph notes.</p>
+</div>
+</div>
+<p>This comment won&#8217;t print 👇</p>
+<p>See, nothing there 👆</p>
+<div class="literalblock">
+<strong class="heading">Optional Title</strong>
+<div class="content">
+<pre>....&#x000A;*Literal* Block</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Use: workaround when literal&#x000A;paragraph (indented) like&#x000A;  1. First.&#x000A;  2. Second.&#x000A;incorrectly processed as list.&#x000A;....</pre>
+</div>
+</div>
+<div class="quoteblock">
+<strong class="heading">Optional Title</strong>
+<blockquote>
+<div class="content"><p><strong>Quote</strong> Block</p>
+<p>Use: cite somebody</p></div>
+<footer class="attribution">
+&#8212;
+<cite>
+<span class="attribution">cite author</span><span class="comma">, </span><span class="citetitle">cite source</span>
+</cite>
+</footer>
+</blockquote>
+</div>
+</div>
+</section>
+<!-- / Do the HTML part -->
+<section class="sect1">
+<h2 id="_text">Text</h2>
+<div class="sectionbody">
+<p>forced<br>
+line break</p>
+<p>normal, <em>italic</em>, <strong>bold</strong>, mono.</p>
+<p>``double quoted'', `single quoted'.</p>
+<p>normal, <sup>super</sup>, <sub>sub</sub>."</p>
+<p>Command: <code>ls -al</code></p>
+<p>mono *bold*</p>
+<p><code>passthru <strong>bold</strong></code></p>
+<p>Path: '/some/filez.txt', '.b'</p>
+<p><span class="red">red text</span> <span class="yellow-background">on yellow</span>
+<span class="big">large</span> <strong class="red yellow-background big">all bold</strong></p>
+<p>Chars: n<em>i</em><strong>b</strong>m<span class="red">r</span></p>
+<p>&#169; &#174; &#8482;&#8201;&#8212;&#8201;&#8230;&#8203; &#8594; &#8592; &#8658; &#8656; &#182;</p>
+<hr>
+<p>Escaped:
+_italic_, _italic_,
+t__e__st, t__e__st,
+<b>bold</b>, &lt;b&gt;normal&lt;/b&gt;
+&amp;#182;
+`not single quoted'
+\`\`not double quoted''</p>
+</div>
+</section>
+<!-- / Do the HTML part -->
+<section class="sect1">
+<h2 id="_macros_links_images_include">Macros: links, images &amp; include</h2>
+<div class="sectionbody">
+<p>If you’ll need to use space in url/path you should replace it with %20.</p>
+<p>Paragraph or block 1.</p>
+<p><a></a>
+Paragraph or block 2.</p>
+<p><a href="#anchor-1">[anchor-1]</a>,
+<a href="#anchor-1">First anchor</a>,
+<a href="#anchor-2">[anchor-2]</a>,
+<a href="#anchor-2">Second anchor</a>.</p>
+<p><a href="asciidoc">This document</a>
+<a class="bare" href="asciidoc.html">asciidoc.html</a>
+<a href="/index.html">This site root</a></p>
+<p>First home
+<span class="image"><img alt="home" src="images/icons/home.png"></span>
+, second home
+<span class="image"><img alt="Alt text" src="images/icons/home.png"></span>
+.</p>
+<figure class="imageblock">
+<div class="content">
+<img alt="home" src="https://powerman.name/doc/images/icons/home.png">
+</div>
+<figcaption class="caption">Figure 1. Block image</figcaption>
+</figure>
+<figure class="imageblock">
+<div class="content">
+<img alt="Alt text" src="https://powerman.name/doc/images/icons/home.png">
+</div>
+</figure>
+<div class="paragraph">
+<strong class="heading">Thumbnail linked to full image</strong>
+<p><span class="image"><a class="image" href="https://powerman.name/images/font/640-screen2.gif">
+<img alt="My screenshot" src="https://powerman.name/images/font/640-screen2.gif" width="128">
+</a></span></p>
+</div>
+<p>"This is example how files
+can be included.
+It&#8217;s commented because
+there no such files. :)</p>
+</div>
+</section>
+<!-- / Do the HTML part -->
+<section class="sect1">
+<h2 id="_lists">Lists</h2>
+<div class="sectionbody">
+<div class="ulist">
+<strong class="heading" id="ulist_heading_0">Bulleted</strong>
+<ul aria-labelledby="ulist_heading_0">
+<li>
+<p>bullet</p>
+</li>
+<li>
+<p>bullet</p>
+<ul>
+<li>
+<p>bullet</p>
+</li>
+<li>
+<p>bullet</p>
+</li>
+</ul>
+</li>
+<li>
+<p>bullet</p>
+<ul>
+<li>
+<p>bullet</p>
+</li>
+<li>
+<p>bullet</p>
+<ul>
+<li>
+<p>bullet</p>
+</li>
+<li>
+<p>bullet</p>
+<ul>
+<li>
+<p>bullet</p>
+</li>
+<li>
+<p>bullet</p>
+<ul>
+<li>
+<p>bullet</p>
+</li>
+<li>
+<p>bullet</p>
+</li>
+</ul>
+</li>
+<li>
+<p>bullet</p>
+</li>
+</ul>
+</li>
+<li>
+<p>bullet</p>
+</li>
+</ul>
+</li>
+<li>
+<p>bullet</p>
+</li>
+</ul>
+</li>
+<li>
+<p>bullet"
+".Bulleted 2</p>
+<ul>
+<li>
+<p>bullet</p>
+</li>
+</ul>
+</li>
+<li>
+<p>bullet</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<strong class="heading" id="olist_heading_1">Ordered</strong>
+<ol aria-labelledby="olist_heading_1" class="arabic">
+<li>
+<p>number</p>
+</li>
+<li>
+<p>number</p>
+<ol class="loweralpha" type="a">
+<li>
+<p>letter</p>
+</li>
+<li>
+<p>letter</p>
+</li>
+</ol>
+</li>
+<li>
+<p>number</p>
+<ol class="loweralpha" type="a">
+<li>
+<p>loweralpha</p>
+</li>
+<li>
+<p>loweralpha</p>
+<ol class="lowerroman" type="i">
+<li>
+<p>lowerroman</p>
+</li>
+<li>
+<p>lowerroman</p>
+<ol class="upperalpha" type="A">
+<li>
+<p>upperalpha</p>
+</li>
+<li>
+<p>upperalpha</p>
+<ol class="upperroman" type="I">
+<li>
+<p>upperroman</p>
+</li>
+<li>
+<p>upperroman</p>
+</li>
+</ol>
+</li>
+<li>
+<p>upperalpha</p>
+</li>
+</ol>
+</li>
+<li>
+<p>lowerroman</p>
+</li>
+</ol>
+</li>
+<li>
+<p>loweralpha</p>
+</li>
+</ol>
+</li>
+<li>
+<p>number</p>
+</li>
+</ol>
+</div>
+<div class="olist loweralpha">
+<strong class="heading" id="olist_heading_7">Ordered 2</strong>
+<ol aria-labelledby="olist_heading_7" class="loweralpha">
+<li>
+<p>letter</p>
+</li>
+<li>
+<p>letter</p>
+<ol class="loweralpha" type="a">
+<li>
+<p>letter2</p>
+</li>
+<li>
+<p>letter2</p>
+<ol class="arabic">
+<li>
+<p>number</p>
+</li>
+<li>
+<p>number</p>
+<ol class="arabic">
+<li>
+<p>number2</p>
+</li>
+<li>
+<p>number2</p>
+</li>
+<li>
+<p>number2</p>
+</li>
+<li>
+<p>number2</p>
+</li>
+</ol>
+</li>
+<li>
+<p>number</p>
+</li>
+</ol>
+</li>
+<li>
+<p>letter2</p>
+</li>
+</ol>
+</li>
+<li>
+<p>letter</p>
+</li>
+</ol>
+</div>
+<div class="dlist">
+<strong class="heading">Labeled</strong>
+<dl>
+<dt>Term 1</dt>
+<dd>
+Definition 1
+</dd>
+<dt>Term 2</dt>
+<dd>
+Definition 2
+<dl>
+<dt>Term 2.1</dt>
+<dd>
+Definition 2.1
+</dd>
+<dt>Term 2.2</dt>
+<dd>
+Definition 2.2
+</dd>
+</dl>
+</dd>
+<dt>Term 3</dt>
+<dd>
+Definition 3
+</dd>
+<dt>Term 4</dt>
+<dd>
+Definition 4
+<dl>
+<dt>Term 4.1</dt>
+<dd>
+Definition 4.1
+</dd>
+<dt>Term 4.2</dt>
+<dd>
+Definition 4.2
+<dl>
+<dt>Term 4.2.1</dt>
+<dd>
+Definition 4.2.1
+</dd>
+<dt>Term 4.2.2</dt>
+<dd>
+Definition 4.2.2
+</dd>
+</dl>
+</dd>
+<dt>Term 4.3</dt>
+<dd>
+Definition 4.3
+</dd>
+</dl>
+</dd>
+<dt>Term 5</dt>
+<dd>
+Definition 5
+</dd>
+</dl>
+</div>
+<div class="dlist">
+<strong class="heading">Labeled 2</strong>
+<dl>
+<dt>Term 1</dt>
+<dd>
+Definition 1
+<dl>
+<dt>Term 1.1</dt>
+<dd>
+Definition 1.1
+</dd>
+</dl>
+</dd>
+</dl>
+</div>
+<div class="hdlist horizontal">
+<strong class="heading">Labeled horizontal</strong>
+<dl class="list-struct">
+<dt>Term 1</dt>
+<dd>
+Definition 1
+</dd>
+<dt>Term 2</dt>
+<dd>
+Definition 2
+</dd>
+</dl>
+</div>
+<dl class="list-struct">
+<dt>Term 2.1</dt>
+<dd>
+Definition 2.1
+</dd>
+<dt>Term 2.2</dt>
+<dd>
+Definition 2.2
+<dl>
+<dt>Term 3</dt>
+<dd>
+Definition 3
+</dd>
+<dt>Term 4</dt>
+<dd>
+Definition 4
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="list-struct">
+<dt>Term 4.1</dt>
+<dd>
+Definition 4.1
+</dd>
+<dt>Term 4.2</dt>
+<dd>
+Definition 4.2
+</dd>
+</dl>
+<dl class="list-struct">
+<dt>Term 4.2.1</dt>
+<dd>
+Definition 4.2.1
+</dd>
+<dt>Term 4.2.2</dt>
+<dd>
+Definition 4.2.2
+<dl>
+<dt>Term 4.3</dt>
+<dd>
+Definition 4.3
+<dl>
+<dt>Term 5</dt>
+<dd>
+Definition 5
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="qlist qanda">
+<strong class="heading" id="dlist_heading_14">Q&amp;A</strong>
+<ol aria-labelledby="dlist_heading_14">
+<li>
+<dl>
+<dt>Question 1</dt>
+<dd>
+Answer 1
+</dd>
+</dl>
+</li>
+<li>
+<dl>
+<dt>Question 2</dt>
+<dd>
+Answer 2
+</dd>
+</dl>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<strong class="heading" id="ulist_heading_10">Indent is optional</strong>
+<ul aria-labelledby="ulist_heading_10">
+<li>
+<p>bullet</p>
+<ul>
+<li>
+<p>another bullet</p>
+<ol class="arabic">
+<li>
+<p>number</p>
+<ol class="arabic">
+<li>
+<p>again number</p>
+<ol class="loweralpha">
+<li>
+<p>letter</p>
+<ol class="loweralpha" type="a">
+<li>
+<p>again letter</p>
+</li>
+<li>
+<p>letter</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>number</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>bullet</p>
+</li>
+</ul>
+</li>
+<li>
+<p>bullet</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<strong class="heading" id="olist_heading_15">Break two lists</strong>
+<ol aria-labelledby="olist_heading_15" class="arabic">
+<li>
+<p>number</p>
+</li>
+<li>
+<p>number</p>
+</li>
+</ol>
+</div>
+<p>Independent paragraph break list.</p>
+<ol class="arabic">
+<li>
+<p>number</p>
+</li>
+</ol>
+<div class="olist arabic">
+<strong class="heading" id="olist_heading_17">Header break list too</strong>
+<ol aria-labelledby="olist_heading_17" class="arabic">
+<li>
+<p>number</p>
+</li>
+</ol>
+</div>
+<div class="openblock">
+<div class="content">
+<ol class="arabic">
+<li>
+<p>List block define list boundary too</p>
+</li>
+<li>
+<p>number</p>
+</li>
+<li>
+<p>number</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="openblock">
+<div class="content">
+<ol class="arabic">
+<li>
+<p>number</p>
+</li>
+<li>
+<p>number</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="ulist">
+<strong class="heading" id="ulist_heading_19">Continuation</strong>
+<ul aria-labelledby="ulist_heading_19">
+<li>
+<p>bullet
+continuation</p>
+<ol class="arabic">
+<li>
+<p>number
+continuation</p>
+<ul>
+<li>
+<p>bullet</p>
+<div class="literalblock">
+<div class="content">
+<pre>literal continuation</pre>
+</div>
+</div>
+<ol class="loweralpha" type="a">
+<li>
+<p>letter</p>
+<p>Non-literal continuation.</p>
+<div class="listingblock">
+<div class="content">
+<pre>any block can be&#x000A;&#x000A;included in list</pre>
+</div>
+</div>
+<p>Last continuation.</p>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<strong class="heading" id="ulist_heading_21">List block allow sublist inclusion</strong>
+<ul aria-labelledby="ulist_heading_21">
+<li>
+<p>bullet</p>
+<ul>
+<li>
+<p>bullet</p>
+<div class="openblock">
+<div class="content">
+<ul>
+<li>
+<p>bullet</p>
+<ul>
+<li>
+<p>bullet</p>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</li>
+<li>
+<p>bullet</p>
+</li>
+</ul>
+</li>
+<li>
+<p>bullet</p>
+<ol class="arabic">
+<li>
+<p>number</p>
+<ol class="loweralpha" type="a">
+<li>
+<p>letter</p>
+<div class="openblock">
+<div class="content">
+<ol class="arabic">
+<li>
+<p>number</p>
+<ol class="loweralpha" type="a">
+<li>
+<p>letter</p>
+</li>
+</ol>
+</li>
+</ol>
+</div>
+</div>
+</li>
+<li>
+<p>letter</p>
+</li>
+</ol>
+</li>
+<li>
+<p>number</p>
+</li>
+</ol>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- / Do the HTML part -->
+<section class="sect1">
+<h2 id="_tables">Tables</h2>
+<div class="sectionbody">
+<dl>
+<dt>You can fill table from CSV file using include</dt>
+<dd>
+macros inside table.
+</dd>
+</dl>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. An example table</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+  <th class="tableblock halign-left valign-top" id="table1_th_col_1" scope="col">Col 1</th>
+  <th class="tableblock halign-left valign-top" id="table1_th_col_2" scope="col">Col 2</th>
+  <th class="tableblock halign-left valign-top" id="table1_th_col_3" scope="col">Col 3</th>
+</tr>
+</thead>
+<tfoot>
+<tr>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_1"><p class="tableblock">6</p></td>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_2"><p class="tableblock">Three items</p></td>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_3"><p class="tableblock">d</p></td>
+</tr>
+</tfoot>
+<tbody>
+<tr>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_1"><p class="tableblock">1</p></td>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_2"><p class="tableblock">Item 1</p></td>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_3"><p class="tableblock">a</p></td>
+</tr>
+<tr>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_1"><p class="tableblock">2</p></td>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_2"><p class="tableblock">Item 2</p></td>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_3"><p class="tableblock">b</p></td>
+</tr>
+<tr>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_1"><p class="tableblock">3</p></td>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_2"><p class="tableblock">Item 3</p></td>
+  <td class="tableblock halign-left valign-top" headers="table1_th_col_3"><p class="tableblock">c</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-topbot grid-none" style="width: 60%;">
+<caption class="title">Table 2. CSV data, 15% each column</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+</tr>
+<tr>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">a</p></td>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">b</p></td>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">c</p></td>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">d</p></td>
+</tr>
+<tr>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">A</p></td>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">B</p></td>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">C</p></td>
+  <td class="tableblock halign-left valign-top"><p class="tableblock">D</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-rows spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+  <th class="tableblock halign-center valign-top" id="table3_th_id" scope="col">ID</th>
+  <th class="tableblock halign-left valign-top" id="table3_th_fname" scope="col">FName</th>
+  <th class="tableblock halign-left valign-top" id="table3_th_lname" scope="col">LName</th>
+  <th class="tableblock halign-left valign-top" id="table3_th_address" scope="col">Address</th>
+  <th class="tableblock halign-right valign-top" id="table3_th_phone" scope="col">Phone</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td class="tableblock halign-center valign-top" headers="table3_th_id"><p class="tableblock">1</p></td>
+  <td class="tableblock halign-left valign-top" headers="table3_th_fname"><p class="tableblock">Vasya</p></td>
+  <td class="tableblock halign-left valign-top" headers="table3_th_lname"><p class="tableblock"><strong>Pupkin</strong></p></td>
+  <td class="tableblock halign-left valign-top" headers="table3_th_address"><p class="tableblock">London</p></td>
+  <td class="tableblock halign-right valign-top" headers="table3_th_phone"><p class="tableblock"><code>+123</code></p></td>
+</tr>
+<tr>
+  <td class="tableblock halign-center valign-top" headers="table3_th_id"><p class="tableblock">2</p></td>
+  <td class="tableblock halign-left valign-top" headers="table3_th_fname"><p class="tableblock">X</p></td>
+  <td class="tableblock halign-left valign-top" headers="table3_th_lname"><p class="tableblock"><strong>Y</strong></p></td>
+  <td class="tableblock halign-left valign-top" headers="table3_th_address"><p class="tableblock">A,B</p></td>
+  <td class="tableblock halign-right valign-top" headers="table3_th_phone"><p class="tableblock"><code>45678</code></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 3. Multiline cells, row/col span</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+  <th class="tableblock halign-left valign-top" id="table4_th_date" scope="col">Date</th>
+  <th class="tableblock halign-left valign-top" id="table4_th_duration" scope="col">Duration</th>
+  <th class="tableblock halign-left valign-top" id="table4_th_avg_hr" scope="col">Avg HR</th>
+  <th class="tableblock halign-left valign-top" id="table4_th_notes" scope="col">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td class="tableblock halign-left valign-top" headers="table4_th_date"><p class="tableblock">22-Aug-08</p></td>
+  <td class="tableblock halign-center valign-middle" headers="table4_th_duration" rowspan="2"><p class="tableblock">10:24</p></td>
+  <td class="tableblock halign-left valign-top" headers="table4_th_avg_hr"><p class="tableblock">157</p></td>
+  <td class="tableblock halign-left valign-top" headers="table4_th_notes"><p class="tableblock">Worked out MSHR (max sustainable
+  heart rate) by going hard
+  for this interval.</p></td>
+</tr>
+<tr>
+  <td class="tableblock halign-left valign-top" headers="table4_th_date"><p class="tableblock">22-Aug-08</p></td>
+  <td class="tableblock halign-left valign-top" headers="table4_th_duration"><p class="tableblock">152</p></td>
+  <td class="tableblock halign-left valign-top" headers="table4_th_avg_hr"><p class="tableblock">Back-to-back with previous interval.</p></td>
+</tr>
+<tr>
+  <td class="tableblock halign-left valign-top" headers="table4_th_date"><p class="tableblock">24-Aug-08</p></td>
+  <td class="tableblock halign-center valign-top" colspan="3" headers="table4_th_duration"><p class="tableblock">none</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<footer class="rhdocs-footer" id="rhdocs-footer">
+<div class="rhdocs-footer-text" id="rhdocs-footer-text">
+Last updated 2020-02-18 23:11:23 UTC
+</div>
+</footer>
+</article>
+</body>
+</html>

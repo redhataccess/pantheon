@@ -1,0 +1,669 @@
+// Base
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.rhdocs {
+  font-size: $font-size--base;
+  line-height: $line-height--base;
+  font-family: $font-family--base;
+  color: $color--text;
+  tab-size: 4;
+}
+
+img,
+object,
+svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+hr {
+  clear: both;
+  margin: 1rem 0;
+  height: 0;
+  border: 0;
+  border-top: 1px solid $color--border;
+}
+
+// UI / Links
+a {
+  color: $color--link;
+
+  &:hover,
+  &:focus {
+    color: darken($color--link, 20%);
+  }
+}
+
+
+// Basic Typography
+p {
+  margin: 1rem 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 2rem 0 1rem;
+  font-weight: 500;
+}
+
+h1 {
+  font-size: $heading--1;
+  line-height: $line-height--lg;
+}
+
+h2 {
+  font-size: $heading--2;
+  line-height: $line-height--lg;
+}
+
+h3 {
+  font-size: $heading--3;
+  line-height: $line-height--lg;
+}
+
+h4 {
+  font-size: $heading--4;
+  line-height: $line-height--base;
+}
+
+h5 {
+  font-size: $heading--5;
+  line-height: $line-height--base;
+  font-weight: 700;
+}
+
+h6 {
+  font-size: $heading--6;
+  line-height: $line-height--base;
+  font-weight: 700;
+}
+
+.heading {
+  margin: 1rem 0 0;
+  font-size: $heading--block;
+  line-height: $line-height--base;
+  text-transform: $heading--block--transform;
+  font-style: $heading--block--style;
+  font-weight: $heading--block--weight;
+  color: $color--brand-primary-darker;
+
+  + p,
+  + .content > *:first-child {
+    margin-top: 0;
+  }
+}
+
+// Lists
+ul,
+ol {
+  margin: 1rem 0;
+  padding: 0 0 0 1.5rem;
+
+  > li {
+    margin: 0;
+    padding: 0;
+
+    > p {
+      margin: 0.5rem 0;
+    }
+
+    > ul,
+    > ol {
+      margin: 0;
+    }
+
+  }
+}
+
+dl {
+  margin: 1rem 0;
+
+  dt {
+    margin: 0.5rem 0;
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0.5rem 0 0.5rem 1rem;
+
+    > p {
+      margin: 0.5rem 0;
+    }
+  }
+}
+
+// Tables
+table {
+  margin: 2rem 0;
+  border: 1px solid $color--table--border;
+  border-collapse: collapse;
+  font-size: $font-size--md;
+  line-height: $line-height--base;
+  table-layout: fixed;
+
+  caption {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: $color--text--subtle;
+    text-align: left;
+  }
+
+  td,
+  th {
+    padding: 0.5em 1rem;
+    border: 1px solid $color--table--border;
+    // text-align: left;
+    // vertical-align: top;
+
+    &.halign-left {
+      text-align: left;
+    }
+
+    &.halign-center {
+      text-align: center;
+    }
+
+    &.halign-right {
+      text-align: right;
+    }
+
+    &.valign-top {
+      vertical-align: top;
+    }
+
+    &.valign-middle {
+      vertical-align: middle;
+    }
+
+    &.valign-bottom {
+      vertical-align: bottom;
+    }
+  }
+
+  thead {
+    td,
+    th {
+      background: $color--table--th--bg;
+      font-weight: 600;
+    }
+  }
+}
+
+
+// Article
+.rhdocs { // sass-lint:disable-line no-mergeable-selectors
+  padding: 2em;
+  // max-width: 65em; // Optimal line-length for best legibility.
+
+  .has-toc.toc-left & {
+    @media (min-width: 768px) {
+      padding: 0;
+      // max-width: none;
+      display: grid;
+      // sass-lint:disable indentation
+      grid-template-areas:
+        'toc header'
+        'toc main'
+        'toc footer';
+      // sass-lint:enable indentation
+      grid-template-columns: 14rem auto;
+      grid-template-rows: auto;
+      grid-column-gap: 2rem;
+      align-items: start;
+
+      .rhdocs-header {
+        padding: 2rem 2rem 0 0;
+        grid-area: header;
+        max-width: 65em;
+      }
+
+      .rhdocs-content {
+        padding: 0 2rem 0 0;
+        grid-area: main;
+        max-width: 65em;
+      }
+
+      .rhdocs-footer {
+        padding: 0 0 2rem;
+        grid-area: footer;
+        max-width: 65em;
+      }
+
+      .rhdocs-toc {
+        grid-area: toc;
+        margin: 0;
+      }
+    }
+
+    @media (min-width: 992px) {
+      grid-template-columns: 20rem auto;
+    }
+  }
+}
+
+// Header
+.rhdocs-header {
+  h1 {
+    margin: 0;
+    font-size: $heading--xxl;
+    line-height: $line-height--lg;
+  }
+}
+
+.rhdocs-details {
+  margin: 16px 0 48px;
+  padding: 0;
+  list-style: none;
+}
+
+.rh-docs-details-item {
+  margin: 0 0 8px;
+  font-size: 16px;
+  line-height: 24 / 16; // Getting unitless line-height
+}
+
+.rhdocs-products {
+  margin: 0 0 16px;
+  font-size: 24px;
+  line-height: 31 / 24; // Getting unitless lineheight
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+// .rhdocs-product-name {}
+
+.rhdocs-product-version {
+  display: block;
+}
+
+.rhdocs-author-details {
+  display: inline-block;
+  margin: 0;
+  color: $color--text--subtle;
+
+  dt,
+  dd {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+  }
+
+  dd {
+    &::before {
+      display: inline-block;
+      content: '(';
+    }
+
+    &::after {
+      display: inline-block;
+      content: ')';
+    }
+  }
+}
+
+.rhdocs-revisions {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: $color--text--subtle;
+
+  li {
+    display: inline-block;
+
+    &:not(:last-child)::after {
+      display: inline-block;
+      content: ', ';
+    }
+  }
+
+  .rhdocs-author-details + & {
+    &::before {
+      display: inline-block;
+      margin: 0 0.125rem;
+      content: '\2014';
+    }
+  }
+}
+
+.rhdocs-revnumber {
+  text-transform: capitalize;
+}
+
+// TOC
+.rhdocs-toc {
+  margin: 1rem 0 2rem;
+  padding: 1rem;
+  background: #f2f2f2;
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+
+  .rhdocs-toctitle {
+    margin-top: 0;
+    font-size: $heading--toc;
+    text-transform: $heading--toc--transform;
+    line-height: $line-height--base;
+    font-weight: $heading--toc--weight;
+  }
+
+  ol {
+    padding-left: 0;
+    counter-reset: item;
+
+    li {
+      display: table;
+      margin: 0.5rem 0;
+
+      &::before {
+        display: table-cell;
+        padding-right: 0.25rem;
+        content: counters(item, '.') '.';
+        counter-increment: item;
+      }
+    }
+  }
+}
+
+// Preamble
+.preamble {
+  margin: 2rem 0;
+  font-size: $font-size--lead;
+  line-height: $line-height--base;
+
+  .sidebarblock,
+  .admonitionblock {
+    font-size: 1rem;
+  }
+}
+
+// Sections
+section {
+  &.sect1 {
+    margin: 2rem 0 1rem;
+
+    // & + .sect1 {}
+  }
+}
+
+// Admonitions
+.admonitionblock {
+  margin: 2rem 0;
+  padding: 1rem;
+  border: 1px solid $color--border;
+  border-left: 4px solid $color--text;
+
+  &.has-icon {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: flex-start;
+
+    .icon {
+      margin-right: 1rem;
+      font-size: 1.5rem;
+    }
+  }
+
+  // &.tip {}
+
+  &.note {
+    color: $color--text--info;
+    border-left-color: $color--border--info;
+  }
+
+  &.caution {
+    color: $color--text--caution;
+    border-left-color: $color--border--caution;
+  }
+
+  &.warning {
+    color: $color--text--warning;
+    border-left-color: $color--border--warning;
+  }
+
+  &.important {
+    color: $color--text--important;
+    border-left-color: $color--border--important;
+  }
+
+  .content {
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Literal Blocks & Listing Blocks
+pre {
+  font-family: $font-family--code;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-spacing: normal;
+  word-break: break-all;
+  // overflow-wrap: break-word;
+  font-size: $font-size--monospace;
+  line-height: $line-height--base;
+}
+
+:not(pre) > code {
+  padding: 0.25em 0.5em;
+  font-family: $font-family--code;
+  background: $color--bg--code-inline;
+  color: $color--text--code-inline;
+  font-size: $font-size--monospace;
+  line-height: $line-height--base;
+}
+
+.colist {
+  ol {
+    margin: 1rem 0 2rem;
+    padding: 0;
+    list-style: none;
+
+    li {
+      margin: 0.5rem 0;
+      padding-left: 2rem;
+
+      .colist-num {
+        float: left;
+        margin-left: -2rem;
+      }
+    }
+  }
+}
+
+.colist-num {
+  user-select: none;
+}
+
+.conum {
+  position: relative;
+  top: -0.125em;
+  display: inline-block;
+  padding: 0;
+  background: $color--brand-primary-dark;
+  color: #fff;
+  border-radius: 50%;
+  font-family: $font-family--base;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-style: normal;
+  text-align: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  line-height: 1.35rem; // For some reason, with Overpass, this looks better.
+  vertical-align: middle;
+}
+
+.literalblock,
+.listingblock {
+  margin: 1rem 0;
+
+  pre {
+    padding: 1rem;
+    background: $color--bg--code-block;
+    color: $color--text--code-block;
+    font-family: $font-family--code;
+    font-size: $font-size--monospace;
+    line-height: $line-height--base;
+  }
+}
+
+// Verse Blocks
+.verseblock,
+.quoteblock {
+  margin: 1rem 0;
+  padding: 1rem 1rem 1rem 2rem;
+  border-left: 4px solid $color--border;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  .content {
+    font-family: $font-family--base;
+    font-size: $font-size--lead;
+    line-height: $line-height--base;
+  }
+
+  .attribution {
+    font-size: $font-size--sm;
+    line-height: $line-height--base;
+    font-style: italic;
+    text-transform: uppercase;
+    font-weight: 600;
+
+    .citetitle {
+      color: $color--text--subtle;
+    }
+
+    cite {
+      font-size: 1em;
+    }
+  }
+
+  @include pullleft();
+  @include pullright();
+}
+
+.quoteblock {
+  blockquote {
+    margin: 0;
+    padding: 0;
+    font-style: italic;
+
+    .content {
+      > :first-child {
+        margin-top: 0;
+
+        &::before {
+          display: block;
+          margin-right: 0.5rem;
+          float: left;
+          content: '\201C';
+          color: $color--brand-primary;
+          font-size: 2.75rem;
+          font-style: normal;
+          line-height: 1.125em;
+        }
+      }
+    }
+  }
+}
+
+// Image Blocks & Figures
+.imageblock {
+  margin: 1rem 0;
+
+  .caption {
+    display: block;
+    margin: 0.5rem 0 0;
+    font-size: $font-size--sm;
+    line-height: $line-height--base;
+    color: $color--text--subtle;
+  }
+
+  @include pullleft();
+  @include pullright();
+  @include interrupter();
+
+}
+
+
+// Footnotes & Footer
+.rhdocs-footnotes {
+  margin: 3rem 0 1rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid $color--border;
+
+  > ol {
+    margin: 0;
+    padding: 0 0 0 1.5rem;
+
+    @supports (counter-reset: footnotenum) {
+      padding: 0;
+      list-style: none;
+      counter-reset: footnotenum;
+
+      > li {
+        counter-increment: footnotenum;
+
+        &::before {
+          display: inline-block;
+          content: '[' counter(footnotenum) ']';
+          margin-right: 0.25rem;
+          color: $color--text--subtle;
+        }
+      }
+    }
+
+    // > li {
+    //   > a {
+    //   }
+    // }
+  }
+}
+
+.rhdocs-footer {
+  margin: 3rem 0 0;
+  padding: 1rem;
+  background: $color--bg--footer;
+  color: $color--text--footer;
+  font-size: $font-size--sm;
+  line-height: $line-height--base;
+}
+
+// Utility Classes from Asciidoctor
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.stretch {
+  width: 100%;
+}
+
+// Utility Classes
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

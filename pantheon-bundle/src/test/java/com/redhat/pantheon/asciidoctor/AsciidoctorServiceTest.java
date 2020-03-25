@@ -5,6 +5,7 @@ import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.model.workspace.Workspace;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -40,20 +41,26 @@ class AsciidoctorServiceTest {
         // Given
         String asciidocContent = "== This is a title \n\n And this is some text";
         slingContext.build()
-                .resource("/module/locales/en_US/released/metadata")
-                .resource("/module/locales/en_US/released/content")
+                .resource("/repoParent",
+                        "jcr:primaryType", "pant:workspace",
+                        "sling:resourceType", "pantheon/workspace"
+                        )
+                .resource("/repoParent/module/en_US/released/metadata",
+                        "jcr:title", "A draft title", "jcr:primaryType", "nt:unstructured", "pant:dateUploaded", "2020-02-12 19:20:01")
+                .resource("/repoParent/module/en_US/released/content")
                     .resource("asciidoc/jcr:content",
                             "jcr:data", asciidocContent)
                 .commit();
 
-        Resource moduleResource = slingContext.resourceResolver().getResource("/module");
+        Resource moduleResource = slingContext.resourceResolver().getResource("/repoParent/module");
         ModuleVersion moduleVersion =
-                SlingModels.getModel(slingContext.resourceResolver().getResource("/module/locales/en_US/released"),
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/repoParent/module/en_US/released"),
                         ModuleVersion.class);
         // adapter (mock)
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(Content.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
+        registerMockAdapter(Workspace.class, slingContext);
         lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
         lenient().when(asciidoctorPool.borrowObject())
                 .thenReturn(Asciidoctor.Factory.create());
@@ -75,16 +82,20 @@ class AsciidoctorServiceTest {
 
         // Given
         slingContext.build()
-                .resource("/module/locales/en_US/released/metadata")
-                .resource("/module/locales/en_US/released/content/asciidoc/jcr:content",
+                .resource("/repoParent",
+                        "jcr:primaryType", "pant:workspace",
+                        "sling:resourceType", "pantheon/workspace"
+                )
+                .resource("/repoParent/module/en_US/released/metadata")
+                .resource("/repoParent/module/en_US/released/content/asciidoc/jcr:content",
                                             "jcr:data", "")
-                .resource("/module/locales/en_US/released/content/cachedHtml",
+                .resource("/repoParent/module/en_US/released/content/cachedHtml",
                                             "jcr:data", "This is cached content",
                                             "pant:hash", "01000000")
                 .commit();
-        Resource resource = slingContext.resourceResolver().getResource("/module");
+        Resource resource = slingContext.resourceResolver().getResource("/repoParent/module");
         ModuleVersion moduleVersion =
-                SlingModels.getModel(slingContext.resourceResolver().getResource("/module/locales/en_US/released"),
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/repoParent/module/en_US/released"),
                         ModuleVersion.class);
         // adapter (mock)
         registerMockAdapter(Module.class, slingContext);
@@ -103,5 +114,47 @@ class AsciidoctorServiceTest {
 
         // Then
         assertTrue(generatedHtml.contains("This is cached content"));
+    }
+
+    @Test
+    public void testGetModuleHtmlWithAttributeFileNotFound() throws IOException {
+        // Given
+        String asciidocContent = "== This is {product}";
+        slingContext.build()
+                .resource("/content/repositories/linux",
+                        "pant:attributeFile", "attr",
+                        "jcr:primaryType", "pant:workspace",
+                        "sling:resourceType", "pantheon/workspace")
+
+                .resource("/content/repositories/linux/module/en_US/released/metadata",
+                        "jcr:title", "A draft title", "jcr:primaryType", "nt:unstructured", "pant:dateUploaded", "2020-02-12 19:20:01")
+
+                .resource("/content/repositories/linux/module/en_US/released/content")
+                .resource("asciidoc/jcr:content",
+                        "jcr:data", asciidocContent)
+                .commit();
+
+        Resource moduleResource = slingContext.resourceResolver().getResource("/content/repositories/linux/module");
+        ModuleVersion moduleVersion =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/linux/module/en_US/released"),
+                        ModuleVersion.class);
+        // adapter (mock)
+        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Content.class, slingContext);
+        registerMockAdapter(ModuleVersion.class, slingContext);
+        registerMockAdapter(Workspace.class, slingContext);
+        lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
+        lenient().when(asciidoctorPool.borrowObject())
+                .thenReturn(Asciidoctor.Factory.create());
+        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
+                .thenReturn(slingContext.resourceResolver());
+        AsciidoctorService asciidoctorService =
+                new AsciidoctorService(globalConfig, asciidoctorPool, serviceResourceResolverProvider);
+
+        // When
+        String generatedHtml = asciidoctorService.getModuleHtml(moduleVersion, moduleResource, newHashMap(), false);
+
+        // Then
+        assertTrue(generatedHtml.contains("Invalid include: /content/repositories/linux/attr"));
     }
 }

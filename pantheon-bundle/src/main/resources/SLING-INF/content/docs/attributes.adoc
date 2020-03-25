@@ -7,5 +7,6 @@
 :ProductName: Pantheon
 :ProductShortName: Pantheon
 :ProductNumber: 2
+:ProductUrl: http://pantheon2.int.us-west.aws.prod.paas.redhat.com[]
 
 :imagesdir: images
