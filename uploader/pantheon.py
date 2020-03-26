@@ -376,9 +376,13 @@ if len(config.keys()) > 0 and 'repositories' in config:
         if args.attrFile:
             if not os.path.isfile(args.directory + '/' + args.attrFile):
                 sys.exit('attributes: ' + args.directory + '/' + args.attrFile + ' does not exist.')
-
-        elif attributeFile and not os.path.isfile(attributeFile.strip()):
-            sys.exit('attributes: ' + attributeFile + ' does not exist.')
+        elif attributeFile:
+            if args.directory:
+                if not os.path.isfile(args.directory + '/' + attributeFile.strip()):
+                    sys.exit('attributes2: ' + args.directory + '/' + attributeFile + ' does not exist.')
+            else:
+                if not os.path.isfile(attributeFile.strip()):
+                    sys.exit('attributes3: ' + attributeFile + ' does not exist.')
 
         _info('Using ' + mode + ': ' + repository)
         _info('Using attributes: ' + attributeFile)
