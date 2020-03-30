@@ -7,16 +7,14 @@ include::../attributes.adoc[]
 
 :context: assembly-pantheon-help
 
-Welcome to Pantheon help.
+Welcome to {ProductShortName} help.
 
-This document describes the main concepts, requirements and, actions in Pantheon.
+This document describes the main concepts, requirements, and actions in {ProductShortName}.
 
 include::modules/con_about_pantheon.adoc[leveloffset=+1]
 
 // Section 1
 == Modular documentation
-
-This section describes modular documentation.
 
 include::modules/con_what-is-a-module.adoc[leveloffset=+2]
 
@@ -26,9 +24,7 @@ include::modules/con_comparison-between-modules-and-DITA-topics.adoc[leveloffset
 include::modules/ref_prerequisites.adoc[leveloffset=+1]
 
 // Section 3
-== Concepts
-
-This section describes the main concepts required to understand and use Pantheon.
+== {ProductShortName} Concepts
 
 // include::modules/<pending>
 
@@ -39,7 +35,7 @@ include::modules/con_pantheon_yaml_file.adoc[leveloffset=+2]
 // Section 4
 == Components
 
-This section describes the main components of the Pantheon user interface and how to access them.
+This section describes the main components of the {ProductShortName} user interface and how to access them.
 
 include::modules/ref_pantheon-user-interface.adoc[leveloffset=+2]
 
