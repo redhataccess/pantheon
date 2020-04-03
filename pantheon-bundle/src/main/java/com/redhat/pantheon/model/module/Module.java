@@ -2,7 +2,6 @@ package com.redhat.pantheon.model.module;
 
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
-import com.redhat.pantheon.model.api.SlingModel;
 
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
@@ -101,6 +100,10 @@ public interface Module extends WorkspaceChild {
                 .map(moduleVersion -> moduleVersion.metadata().get());
     }
 
+    default Optional<Status> getAcknowledgementStatus(final Locale locale) {
+        return getReleasedVersion(locale)
+                .map(moduleVersion -> moduleVersion.status().get());
+    }
     /**
      * @param locale The locale to fetch the content instance for.
      * @return The draft metadata for a given locale
