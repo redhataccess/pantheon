@@ -32,13 +32,13 @@ import static com.redhat.pantheon.servlet.ServletUtils.writeAsJson;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
- * Get operation to render a Released Module's related module list in JSON format.
+ * Get operation to render a Released Module's related assembly list in JSON format.
  * Only two parameters are expected in the Get request:
  * 1. locale - Optional; indicates the locale that the module content is in, defaulted to en-US
  * 2. module_id - indicates the uuid string which uniquely identifies a module
  *
- * The url to GET a request from the server is /api/module/related
- * Example: <server_url>/api/module/related?locale=en-us&module_id=xyz
+ * The url to GET a request from the server is /api/module/assemblies
+ * Example: <server_url>/api/module/assemblies?locale=en-us&module_id=xyz
  * The said url is accessible outside of the system without any authentication.
  *
  * @author Ben Radey
@@ -46,13 +46,13 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 @Component(
         service = Servlet.class,
         property = {
-                Constants.SERVICE_DESCRIPTION + "=Servlet to facilitate GET operation which accepts locale and module uuid to output module relationships",
+                Constants.SERVICE_DESCRIPTION + "=Servlet to facilitate GET operation which accepts locale and module uuid to output module assemblies",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
-@SlingServletPaths(value = "/api/module/related")
-public class RelatedModuleServlet extends SlingSafeMethodsServlet {
+@SlingServletPaths(value = "/api/module/assemblies")
+public class IncludedInAssembliesServlet extends SlingSafeMethodsServlet {
 
-    private final Logger log = LoggerFactory.getLogger(RelatedModuleServlet.class);
+    private final Logger log = LoggerFactory.getLogger(IncludedInAssembliesServlet.class);
 
     @Override
     protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) throws ServletException, IOException {
@@ -74,18 +74,18 @@ public class RelatedModuleServlet extends SlingSafeMethodsServlet {
 
             resultStream = queryHelper.query("select * from [pant:module] as module", 3, 0);
 
-            List<Map> related = new ArrayList<>();
+            List<Map> assemblies = new ArrayList<>();
             resultStream.map(r -> r.adaptTo(Module.class))
                     .forEach(module -> {
                             Map<String, String> m = new HashMap<>();
                             m.put("title", module.getModuleLocale(locale).getVersion("1").metadata().get().title().get());
-                            m.put("url", "https://www.redhat.com/moduleplaceholder");
+                            m.put("url", "https://www.redhat.com/assemblyplaceholder");
                             m.put("uuid", module.uuid().get());
-                        related.add(m);
+                        assemblies.add(m);
             });
 
             Map result = new HashMap();
-            result.put("related", related);
+            result.put("assemblies", assemblies);
 
             writeAsJson(response, result);
         } catch (RepositoryException e) {
