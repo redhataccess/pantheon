@@ -1,10 +1,11 @@
-package com.redhat.pantheon.servlet;
+package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleType;
+import com.redhat.pantheon.servlet.module.ModuleVersionUpload;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.resource.ModifiableValueMap;

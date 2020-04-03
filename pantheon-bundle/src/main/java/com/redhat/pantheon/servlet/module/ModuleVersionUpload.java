@@ -1,4 +1,4 @@
-package com.redhat.pantheon.servlet;
+package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
@@ -9,6 +9,7 @@ import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleType;
+import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -19,7 +20,6 @@ import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
-import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

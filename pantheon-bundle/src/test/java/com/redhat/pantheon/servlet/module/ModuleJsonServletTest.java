@@ -1,4 +1,4 @@
-package com.redhat.pantheon.servlet;
+package com.redhat.pantheon.servlet.module;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
@@ -14,6 +14,8 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 
+import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.servlet.module.ModuleJsonServlet;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;

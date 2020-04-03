@@ -1,4 +1,4 @@
-package com.redhat.pantheon.servlet;
+package com.redhat.pantheon.servlet.module;
 
 import com.google.common.base.Charsets;
 import com.redhat.pantheon.html.Html;
@@ -8,6 +8,8 @@ import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
+import com.redhat.pantheon.servlet.ServletUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
@@ -64,14 +66,12 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
 
     @Override
     protected String getQuery(SlingHttpServletRequest request) {
-
         // Get the query parameter(s)
         String uuidParam = paramValue(request, "module_id", "");
 
-        StringBuilder query = new StringBuilder("select * from [pant:module]")
-                .append(" as module WHERE ")
-                // look for a specific uuid for module
-                .append("module.[jcr:uuid] = '" + uuidParam + "'");
+        StringBuilder query = new StringBuilder("select * from [pant:module] as module WHERE module.[jcr:uuid] = '")
+                .append(uuidParam)
+                .append("'");
         return query.toString();
     }
 
@@ -137,9 +137,8 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         // Making these arrays - in the future, we will have multi-product, so get the API right the first time
         moduleMap.put(PRODUCT_NAME, new String[] {});
         moduleMap.put(PRODUCT_VERSION, new String[] {});
-        Reference<ProductVersion> pvr = releasedMetadata.get().productVersion();
-        if (pvr != null) {
-            ProductVersion pv = pvr.getReference();
+        ProductVersion pv = releasedMetadata.get().productVersion().getReference();
+        if (pv != null) {
             moduleMap.put(PRODUCT_VERSION, new String[] { pv.name().get() });
             moduleMap.put(PRODUCT_NAME, new String[] { pv.getProduct().name().get() });
         }
