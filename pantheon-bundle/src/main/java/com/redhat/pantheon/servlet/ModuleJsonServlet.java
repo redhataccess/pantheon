@@ -2,6 +2,8 @@ package com.redhat.pantheon.servlet;
 
 import com.google.common.base.Charsets;
 import com.redhat.pantheon.html.Html;
+import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.api.Reference;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -124,21 +127,21 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         // Fields that are part of the spec and yet to be implemented
         moduleMap.put("context_url_fragment", "");
         moduleMap.put("context_id", "");
-        moduleMap.put(PRODUCT_NAME, "");
-        moduleMap.put(PRODUCT_VERSION, "");
+
+
         moduleMap.put(VANITY_URL_FRAGMENT, "");
         moduleMap.put(SEARCH_KEYWORDS, new String[] {});
         moduleMap.put(VIEW_URI, "");
 
         // Process productVersion from metadata
-        String productVersion = releasedMetadata.get().productVersion().get() != null ? releasedMetadata.get().productVersion().getReference().name().get() : "";
-        if (!productVersion.isEmpty()) {
-            try {
-                moduleMap.put(PRODUCT_VERSION, productVersion);
-                moduleMap.put(PRODUCT_NAME, releasedMetadata.get().productVersion().getReference().getParent().getParent().getValueMap().get("name", String.class));
-            }  catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
+        // Making these arrays - in the future, we will have multi-product, so get the API right the first time
+        moduleMap.put(PRODUCT_NAME, new String[] {});
+        moduleMap.put(PRODUCT_VERSION, new String[] {});
+        Reference<ProductVersion> pvr = releasedMetadata.get().productVersion();
+        if (pvr != null) {
+            ProductVersion pv = pvr.getReference();
+            moduleMap.put(PRODUCT_VERSION, new String[] { pv.name().get() });
+            moduleMap.put(PRODUCT_NAME, new String[] { pv.getProduct().name().get() });
         }
 
         // Process url_fragment from metadata
