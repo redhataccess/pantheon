@@ -23,8 +23,10 @@ import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -57,6 +59,7 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     public static final String PRODUCT_VERSION = "product_version";
     public static final String PRODUCT_NAME = "product_name";
+    public static final String PRODUCT_LINK = "product_link";
     public static final String VANITY_URL_FRAGMENT = "vanity_url_fragment";
     public static final String SEARCH_KEYWORDS = "search_keywords";
     public static final String VIEW_URI = "view_uri";
@@ -135,12 +138,15 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Process productVersion from metadata
         // Making these arrays - in the future, we will have multi-product, so get the API right the first time
-        moduleMap.put(PRODUCT_NAME, new String[] {});
-        moduleMap.put(PRODUCT_VERSION, new String[] {});
+        List<Map> productList = new ArrayList<>();
+        moduleMap.put("products", productList);
         ProductVersion pv = releasedMetadata.get().productVersion().getReference();
         if (pv != null) {
-            moduleMap.put(PRODUCT_VERSION, new String[] { pv.name().get() });
-            moduleMap.put(PRODUCT_NAME, new String[] { pv.getProduct().name().get() });
+            Map<String, String> productMap = new HashMap<>();
+            productList.add(productMap);
+            productMap.put(PRODUCT_VERSION, pv.name().get());
+            productMap.put(PRODUCT_NAME, pv.getProduct().name().get());
+            productMap.put(PRODUCT_LINK, "https://www.redhat.com/productlinkplaceholder");
         }
 
         // Process url_fragment from metadata

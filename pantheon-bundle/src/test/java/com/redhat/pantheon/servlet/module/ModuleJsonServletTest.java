@@ -102,12 +102,11 @@ class ModuleJsonServletTest {
         assertTrue(map.containsKey("message"));
         assertTrue(map.containsKey("module"));
         assertTrue(moduleMap.containsKey("module_uuid"));
-        assertTrue(moduleMap.containsKey("product_version"));
+        assertTrue(moduleMap.containsKey("products"));
         assertTrue(moduleMap.containsKey("description"));
         assertTrue(moduleMap.containsKey("locale"));
         assertTrue(moduleMap.containsKey("title"));
         assertTrue(moduleMap.containsKey("body"));
-        assertTrue(moduleMap.containsKey("product_name"));
         assertTrue(moduleMap.containsKey("content_type"));
         assertTrue(moduleMap.containsKey("date_modified"));
         assertTrue(moduleMap.containsKey("date_published"));
