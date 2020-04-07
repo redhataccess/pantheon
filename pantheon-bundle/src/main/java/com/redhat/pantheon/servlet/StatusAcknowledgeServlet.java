@@ -41,7 +41,7 @@ import static org.apache.sling.query.SlingQuery.$;
 @Component(
         service = Servlet.class,
         property = {
-                Constants.SERVICE_DESCRIPTION +"=Servlet which accepts acknowledgement and status for a published Module",
+                Constants.SERVICE_DESCRIPTION +"=Servlet which accepts acknowledgement and status for publish and unpublish actions for a  Module",
                 "sling.servlet.methods=" + HttpConstants.METHOD_POST,
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         }

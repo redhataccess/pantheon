@@ -30,7 +30,7 @@ public class StatusAcknowledgementServletTest {
     public void setUp(){
         slingContext.create()
                 .resource("/content/repositories/repo/module",
-                        "jcr:primaryType", "pant:module", "pant:hash","3815bd73-3d57-41d5-9300-9726fdd0f4b7");
+                        "jcr:primaryType", "pant:module");
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US",
                         "jcr:primaryType", "pant:moduleLocale");
@@ -46,8 +46,7 @@ public class StatusAcknowledgementServletTest {
                         "jcr:content", testHTML);
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/1/content/cachedHtml",
-                        "jcr:data", testHTML,
-                        "pant:hash", "3815bd73-3d57-41d5-9300-9726fdd0f4b7");
+                        "jcr:data", testHTML);
 
         slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US").adaptTo(ModifiableValueMap.class)
                 .put("released", slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/1").getValueMap()
@@ -103,7 +102,7 @@ public class StatusAcknowledgementServletTest {
 
         slingContext.create()
                 .resource("/content/repositories/repo/module1",
-                        "jcr:primaryType", "pant:module", "pant:hash","3815bd73-3d57-41d5-9300-9726fdd0f4b7");
+                        "jcr:primaryType", "pant:module");
         slingContext.create()
                 .resource("/content/repositories/repo/module1/es_ES",
                         "jcr:primaryType", "pant:moduleLocale");
@@ -119,8 +118,7 @@ public class StatusAcknowledgementServletTest {
                         "jcr:content", testHTML);
         slingContext.create()
                 .resource("/content/repositories/repo/module1/es_ES/1/content/cachedHtml",
-                        "jcr:data", testHTML,
-                        "pant:hash", "3815bd73-3d57-41d5-9300-9726fdd0f4b7");
+                        "jcr:data", testHTML);
 
         slingContext.resourceResolver().getResource("/content/repositories/repo/module1/es_ES").adaptTo(ModifiableValueMap.class)
                 .put("released", slingContext.resourceResolver().getResource("/content/repositories/repo/module1/es_ES/1").getValueMap()
