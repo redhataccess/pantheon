@@ -1,10 +1,12 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import com.redhat.pantheon.model.api.SlingModel;
 
 import javax.annotation.Nonnull;
+import javax.inject.Named;
 import javax.jcr.RepositoryException;
 import java.util.Locale;
 import java.util.Optional;
@@ -37,6 +39,9 @@ import static java.util.Optional.ofNullable;
  */
 @JcrPrimaryType("pant:module")
 public interface Module extends WorkspaceChild {
+
+    @Named("jcr:uuid")
+    Field<String> uuid();
 
     default ModuleLocale getModuleLocale(Locale locale) {
         return getChild(locale.toString(), ModuleLocale.class);
