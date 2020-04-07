@@ -2,14 +2,14 @@
 
 = Uploading content with the Uploader tool
 
-The Pantheon Uploader tool provides many Pantheon operations in the command line interface.
+The {ProductShortName} Uploader tool provides many {ProductShortName} operations in the command line interface.
 
 .Prerequisites
 
-* The repository is configured as a content source for Pantheon.
+* The repository is configured as a content source for {ProductShortName}.
 * The Uploader tool is installed.
 
-.To upload content using the Pantheon uploader tool, complete these steps:
+.To upload content using the {ProductShortName} uploader tool, complete these steps:
 
 . Navigate to a directory containing modules.
 +
@@ -18,7 +18,7 @@ The Pantheon Uploader tool provides many Pantheon operations in the command line
 cd <PATH_TO_DIR_WITH_MODULES>
 ----
 +
-. Run the `Pantheon` command
+. Run the `pantheon` command
 +
 [options="nowrap" subs="normal"]
 ----
