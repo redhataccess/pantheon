@@ -3,16 +3,13 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.model.Acknowledgment;
 import com.redhat.pantheon.model.module.AckStatus;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.helper.TransformToPojo;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.HttpConstants;
-import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
-import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
@@ -22,9 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.Servlet;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -48,13 +43,16 @@ import static org.apache.sling.query.SlingQuery.$;
         }
 )
 @SlingServletPaths(value = "/api/status")
-public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
+public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Acknowledgement> {
     private final Logger logger = LoggerFactory.getLogger(StatusAcknowledgeServlet.class);
-    @Override
-    protected void doPost(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) throws ServletException, IOException {
 
         Acknowledgment acknowledgement = getAcknowledgementData(request);
+    public StatusAcknowledgeServlet() {
+        super(Acknowledgement.class);
+    }
 
+    @Override
+    protected void processPost(SlingHttpServletRequest request, SlingHttpServletResponse response, Acknowledgement acknowledgement) throws Exception {
         if(isObjectNullOrEmpty(acknowledgement)){
             getLogger().error("The request did not provide all the fiields "+acknowledgement.toString());
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "All the fields are required");
