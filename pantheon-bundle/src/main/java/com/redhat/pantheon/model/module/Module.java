@@ -105,7 +105,7 @@ public interface Module extends WorkspaceChild {
                 .map(moduleVersion -> moduleVersion.metadata().get());
     }
 
-    default Optional<Status> getAcknowledgementStatus(final Locale locale) {
+    default Optional<DocumentStatus> getAcknowledgementStatus(final Locale locale) {
         return getReleasedVersion(locale)
                 .map(moduleVersion -> moduleVersion.status().get());
     }

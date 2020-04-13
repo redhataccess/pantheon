@@ -67,5 +67,5 @@
     end
 
     set ACL for status-user
-        allow jcr:write on /content/repositories/*/status
+        allow jcr:write on /content/repositories restriction(rep:ntNames,pant:documentStatus)
     end

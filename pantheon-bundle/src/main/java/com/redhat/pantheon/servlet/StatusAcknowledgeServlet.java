@@ -1,8 +1,8 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.model.Acknowledgement;
+import com.redhat.pantheon.model.module.DocumentStatus;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.Status;
 import com.redhat.pantheon.helper.TransformToPojo;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -120,7 +120,7 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
 
     private void createStatusNode(Resource moduleLocale, Module module, Acknowledgement acknowledgement) throws PersistenceException {
         Locale locale = LocaleUtils.toLocale(moduleLocale.getName());
-        Status status = module.getReleasedVersion(locale).get().status().getOrCreate();
+        DocumentStatus status = module.getReleasedVersion(locale).get().status().getOrCreate();
         status.status().set(acknowledgement.getStatus());
         status.message().set(acknowledgement.getMessage());
         status.sender().set(acknowledgement.getSender());
