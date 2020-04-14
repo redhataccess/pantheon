@@ -22,6 +22,9 @@ public interface AckStatus extends WorkspaceChild {
     @Named("pant:sender")
     Field<String> sender();
     
+    @Named("jcr:lastModifiedBy")
+    Field<String> lastModifiedBy();
+
     @Named(JcrConstants.JCR_LASTMODIFIED)
     Field<Calendar> dateModified();
 }
