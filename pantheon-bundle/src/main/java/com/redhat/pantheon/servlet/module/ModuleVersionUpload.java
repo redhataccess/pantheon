@@ -5,7 +5,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.FileResource.JcrContent;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Content;
-import com.redhat.pantheon.model.module.DocumentStatus;
+import com.redhat.pantheon.model.module.AckStatus;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
@@ -176,8 +176,8 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             metadata.dateModified().set(now);
             metadata.dateUploaded().set(now);
 
-            DocumentStatus status = draftVersion.get()
-                .status().getOrCreate();
+            AckStatus status = draftVersion.get()
+                .ackStatus().getOrCreate();
             status.dateModified().set(now);
             resolver.commit();
 

@@ -15,7 +15,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
     "message",
     "sender"
 })
-public class Acknowledgement {
+public class Acknowledgment {
 
     @JsonProperty("id")
     private String id;
@@ -46,7 +46,7 @@ public class Acknowledgement {
         this.id = id;
     }
 
-    public Acknowledgement withId(String id) {
+    public Acknowledgment withId(String id) {
         this.id = id;
         return this;
     }
@@ -71,7 +71,7 @@ public class Acknowledgement {
         this.status = status;
     }
 
-    public Acknowledgement withStatus(String status) {
+    public Acknowledgment withStatus(String status) {
         this.status = status;
         return this;
     }
@@ -96,7 +96,7 @@ public class Acknowledgement {
         this.message = message;
     }
 
-    public Acknowledgement withMessage(String message) {
+    public Acknowledgment withMessage(String message) {
         this.message = message;
         return this;
     }
@@ -121,7 +121,7 @@ public class Acknowledgement {
         this.sender = sender;
     }
 
-    public Acknowledgement withSender(String sender) {
+    public Acknowledgment withSender(String sender) {
         this.sender = sender;
         return this;
     }
@@ -141,10 +141,10 @@ public class Acknowledgement {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Acknowledgement) == false) {
+        if ((other instanceof Acknowledgment) == false) {
             return false;
         }
-        Acknowledgement rhs = ((Acknowledgement) other);
+        Acknowledgment rhs = ((Acknowledgment) other);
         return new EqualsBuilder().append(id, rhs.id).append(status, rhs.status).append(message, rhs.message).append(sender, rhs.sender).isEquals();
     }
 

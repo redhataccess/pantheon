@@ -10,8 +10,8 @@ import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 
-@JcrPrimaryType("pant:documentStatus")
-public interface DocumentStatus extends WorkspaceChild {
+@JcrPrimaryType("pant:acknowledgment")
+public interface AckStatus extends WorkspaceChild {
     
     @Named("pant:message")
     Field<String> message();
