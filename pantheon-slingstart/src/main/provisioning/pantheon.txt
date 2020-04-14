@@ -24,6 +24,7 @@
     create group pantheon-publishers
     create service user pantheon
     create user sync-service with password sync-service
+    create user status-user with password status-user
 
     # Assign ACLs
     set ACL for pantheon
@@ -63,4 +64,8 @@
 
     set ACL for sync-service
         allow jcr:all on /content/repositories
+    end
+
+    set ACL for status-user
+        allow jcr:write on /content/repositories restriction(rep:ntNames,pant:acknowledgment)
     end

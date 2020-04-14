@@ -23,5 +23,5 @@ public interface ModuleVersion extends WorkspaceChild {
     Child<Content> content();
 
     Child<Metadata> metadata();
-    Child<Status> status();
+    Child<AckStatus> ackStatus();
 }
