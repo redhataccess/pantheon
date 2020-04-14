@@ -4,6 +4,8 @@ import com.redhat.pantheon.helper.TransformToPojo;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +23,7 @@ import java.io.IOException;
  */
 public class AbstractJsonPostOrPutServlet<T> extends SlingAllMethodsServlet {
 
+    private static final Logger log = LoggerFactory.getLogger(AbstractJsonPostOrPutServlet.class);
     private final Class<T> jsonType;
 
     public AbstractJsonPostOrPutServlet(Class<T> jsonType) {
@@ -36,6 +39,7 @@ public class AbstractJsonPostOrPutServlet<T> extends SlingAllMethodsServlet {
         try {
             processPost(request, response, jsonPayload);
         } catch (Exception e) {
+            log.error("Error processing POST operation", e);
             throw new ServletException(e);
         }
     }
@@ -49,6 +53,7 @@ public class AbstractJsonPostOrPutServlet<T> extends SlingAllMethodsServlet {
         try {
             processPut(request, response, jsonPayload);
         } catch (Exception e) {
+            log.error("Error processing PUT operation", e);
             throw new ServletException(e);
         }
     }
