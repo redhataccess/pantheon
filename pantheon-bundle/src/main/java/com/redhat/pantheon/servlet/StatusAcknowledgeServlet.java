@@ -1,8 +1,8 @@
 package com.redhat.pantheon.servlet;
 
-import com.redhat.pantheon.model.Acknowledgement;
+import com.redhat.pantheon.model.Acknowledgment;
+import com.redhat.pantheon.model.module.AckStatus;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.Status;
 import com.redhat.pantheon.helper.TransformToPojo;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -52,7 +52,7 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
     @Override
     protected void doPost(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) throws ServletException, IOException {
 
-        Acknowledgement acknowledgement = getAcknowledgementData(request);
+        Acknowledgment acknowledgement = getAcknowledgementData(request);
 
         if(isObjectNullOrEmpty(acknowledgement)){
             getLogger().error("The request did not provide all the fiields "+acknowledgement.toString());
@@ -82,7 +82,7 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
      * @param acknowledgement the acknowledement object containing request data
      * @return true if not all fields have data else return false
      */
-    private boolean isObjectNullOrEmpty(Acknowledgement acknowledgement) {
+    private boolean isObjectNullOrEmpty(Acknowledgment acknowledgement) {
         return null == acknowledgement ||
                 Stream.of(acknowledgement.getId(), acknowledgement.getMessage(),
                         acknowledgement.getSender(),acknowledgement.getStatus())
@@ -97,7 +97,7 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
      * @param moduleLocale list of locales in the module
      * @throws PersistenceException signals that request data could not be saved
      */
-    private void processAcknowledgementRequest(Acknowledgement acknowledgement, Module module,
+    private void processAcknowledgementRequest(Acknowledgment acknowledgement, Module module,
                                                List<Resource> moduleLocale) throws PersistenceException {
 
         for (Resource locale : moduleLocale) {
@@ -113,14 +113,14 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
         return moduleLocale.stream().anyMatch(ml -> ml.getName().equalsIgnoreCase(locale));
     }
 
-    private Acknowledgement getAcknowledgementData(@NotNull SlingHttpServletRequest request) throws IOException {
+    private Acknowledgment getAcknowledgementData(@NotNull SlingHttpServletRequest request) throws IOException {
         TransformToPojo transformToPojo = new TransformToPojo();
-        return transformToPojo.fromJson(Acknowledgement.class, request.getReader());
+        return transformToPojo.fromJson(Acknowledgment.class, request.getReader());
     }
 
-    private void createStatusNode(Resource moduleLocale, Module module, Acknowledgement acknowledgement) throws PersistenceException {
+    private void createStatusNode(Resource moduleLocale, Module module, Acknowledgment acknowledgement) throws PersistenceException {
         Locale locale = LocaleUtils.toLocale(moduleLocale.getName());
-        Status status = createStatusNode(module, locale);
+        AckStatus status = createStatusNode(module, locale);
         status.status().set(acknowledgement.getStatus());
         status.message().set(acknowledgement.getMessage());
         status.sender().set(acknowledgement.getSender());
@@ -134,11 +134,11 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
      * @param locale
      * @return
      */
-    private Status createStatusNode(Module module, Locale locale) {
+    private AckStatus createStatusNode(Module module, Locale locale) {
         if(module.getReleasedVersion(locale).isPresent()){
-            return module.getReleasedVersion(locale).get().status().getOrCreate();
+            return module.getReleasedVersion(locale).get().ackStatus().getOrCreate();
         }
-        return module.getDraftVersion(locale).get().status().getOrCreate();
+        return module.getDraftVersion(locale).get().ackStatus().getOrCreate();
     }
 
     /**

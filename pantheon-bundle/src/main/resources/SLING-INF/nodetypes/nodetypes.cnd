@@ -61,6 +61,9 @@
 [pant:workspace] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/workspace' mandatory autocreated
 
+[pant:acknowledgment] > nt:unstructured, sling:Resource, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/acknowledgment' mandatory autocreated
+
 // Base type for titles
 //[pant:title] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
 //	- sling:resourceType (string) = 'pantheon/title' mandatory autocreated

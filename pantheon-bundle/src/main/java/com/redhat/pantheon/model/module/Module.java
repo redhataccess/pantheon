@@ -105,14 +105,10 @@ public interface Module extends WorkspaceChild {
                 .map(moduleVersion -> moduleVersion.metadata().get());
     }
 
-    /**
-     *
-     * @param locale the locale to fetch the status content
-     * @return the  status data for a released version for a given locale
-     */
-    default Optional<Status> getReleasedAcknowledgementStatus(final Locale locale) {
+
+    default Optional<AckStatus> getAcknowledgementStatus(final Locale locale) {
         return getReleasedVersion(locale)
-                .map(moduleVersion -> moduleVersion.status().get());
+                .map(moduleVersion -> moduleVersion.ackStatus().get());
     }
 
     /**
@@ -120,9 +116,9 @@ public interface Module extends WorkspaceChild {
      * @param locale the locale to fetch the status content
      * @return the  status data for a draft version for a given locale
      */
-    default Optional<Status> getDraftAcknowledgementStatus(final Locale locale) {
+    default Optional<AckStatus> getDraftAcknowledgementStatus(final Locale locale) {
         return getDraftVersion(locale)
-                .map(moduleVersion -> moduleVersion.status().get());
+                .map(moduleVersion -> moduleVersion.ackStatus().get());
     }
     /**
      * @param locale The locale to fetch the content instance for.

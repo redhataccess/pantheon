@@ -72,12 +72,12 @@ public class StatusAcknowledgementServletTest {
                 SlingModels.getModel(
                         slingContext.resourceResolver().getResource("/content/repositories/repo/module"),
                         Module.class);
-        assertNotNull(module.getReleasedVersion(LocaleUtils.toLocale("en_US")).get().status().get());
+        assertNotNull(module.getReleasedVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get());
         assertEquals("received", module.getReleasedVersion(LocaleUtils.toLocale("en_US"))
-                .get().status()
+                .get().ackStatus()
                 .get().status().get());
-        assertEquals("from hydra", module.getReleasedVersion(LocaleUtils.toLocale("en_US")).get().status().get().message().get());
-        assertEquals("hydra", module.getReleasedVersion(LocaleUtils.toLocale("en_US")).get().status().get().sender().get());
+        assertEquals("from hydra", module.getReleasedVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get().message().get());
+        assertEquals("hydra", module.getReleasedVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get().sender().get());
     }
 
     @Test
@@ -182,11 +182,11 @@ public class StatusAcknowledgementServletTest {
                 SlingModels.getModel(
                         slingContext.resourceResolver().getResource("/content/repositories/repo/module1"),
                         Module.class);
-        assertNotNull(module.getDraftVersion(LocaleUtils.toLocale("en_US")).get().status().get());
+        assertNotNull(module.getDraftVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get());
         assertEquals("received", module.getDraftVersion(LocaleUtils.toLocale("en_US"))
-                .get().status()
+                .get().ackStatus()
                 .get().status().get());
-        assertEquals("from hydra", module.getDraftVersion(LocaleUtils.toLocale("en_US")).get().status().get().message().get());
-        assertEquals("hydra", module.getDraftVersion(LocaleUtils.toLocale("en_US")).get().status().get().sender().get());
+        assertEquals("from hydra", module.getDraftVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get().message().get());
+        assertEquals("hydra", module.getDraftVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get().sender().get());
     }
 }
