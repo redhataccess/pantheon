@@ -124,7 +124,7 @@ public interface Module extends WorkspaceChild {
         return getDraftVersion(locale)
                 .map(moduleVersion -> moduleVersion.ackStatus().get());
     }
-    }
+
     /**
      * @param locale The locale to fetch the content instance for.
      * @return The draft metadata for a given locale
