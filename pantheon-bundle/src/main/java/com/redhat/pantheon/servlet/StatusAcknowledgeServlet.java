@@ -121,7 +121,7 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
 
     private void createStatusNode(Resource moduleLocale, Module module, Acknowledgment acknowledgement, String lastModifiedBy) throws PersistenceException {
         Locale locale = LocaleUtils.toLocale(moduleLocale.getName());
-        AckStatus status = module.getReleasedVersion(locale).get().ackStatus().getOrCreate();
+        AckStatus status = createStatusNode(module, locale);
         status.status().set(acknowledgement.getStatus());
         status.message().set(acknowledgement.getMessage());
         status.sender().set(acknowledgement.getSender());
@@ -130,6 +130,20 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
         // update lastModifiedBy
         status.lastModifiedBy().set(lastModifiedBy);
         status.getResourceResolver().commit();
+    }
+
+    /**
+     * Creates or retrives status node based on whether a published version exists.
+     * If a published version exists, either create a new status node if it does not exist
+     * @param module
+     * @param locale
+     * @return
+     */
+    private AckStatus createStatusNode(Module module, Locale locale) {
+        if(module.getReleasedVersion(locale).isPresent()){
+            return module.getReleasedVersion(locale).get().ackStatus().getOrCreate();
+        }
+        return module.getDraftVersion(locale).get().ackStatus().getOrCreate();
     }
 
     /**
