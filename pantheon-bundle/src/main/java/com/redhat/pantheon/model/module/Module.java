@@ -105,7 +105,7 @@ public interface Module extends WorkspaceChild {
                 .map(moduleVersion -> moduleVersion.metadata().get());
     }
 
-    /**
+  /**
      *
      * @param locale the locale to fetch the acknowledgment status content
      * @return the  status data for a released version for a given locale
@@ -123,6 +123,7 @@ public interface Module extends WorkspaceChild {
     default Optional<AckStatus> getDraftAcknowledgementStatus(final Locale locale) {
         return getDraftVersion(locale)
                 .map(moduleVersion -> moduleVersion.ackStatus().get());
+    }
     }
     /**
      * @param locale The locale to fetch the content instance for.
