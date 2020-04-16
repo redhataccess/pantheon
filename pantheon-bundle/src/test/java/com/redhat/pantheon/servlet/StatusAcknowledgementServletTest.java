@@ -55,6 +55,9 @@ public class StatusAcknowledgementServletTest {
                         "jcr:title", "A title",
                         "jcr:description", "A description");
         slingContext.create()
+        .resource("/content/repositories/repo/module/en_US/1/ackStatus",
+                "jcr:lastModifiedBy", "test");
+        slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/1/content/asciidoc",
                         "jcr:content", testHTML);
         slingContext.create()
@@ -77,7 +80,7 @@ public class StatusAcknowledgementServletTest {
                 .get("jcr:uuid")
                 .toString();
         // set current resource
-//        request.setResource(slingContext.resourceResolver().getResource("/content/repositories/repo/module"));
+        request.setResource(slingContext.resourceResolver().getResource("/content/repositories/repo/module"));
         // set method
         request.setMethod(HttpConstants.METHOD_POST);
         request.setServerName("www.example.com");
