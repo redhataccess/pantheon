@@ -77,7 +77,8 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             log.warn("Could not find include for {}", target);
         }
 
-        reader.push_include(content, target, target, 1, attributes);
+        String includedFilePath = includeResource != null ? includeResource.getPath() : target;
+        reader.push_include(content, includedFilePath, includedFilePath, 1, attributes);
     }
 
     private Resource resolveWithSymlinks(String path, Resource pathParent) {
