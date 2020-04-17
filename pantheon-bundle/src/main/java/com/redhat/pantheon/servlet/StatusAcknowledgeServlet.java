@@ -21,8 +21,8 @@ import javax.jcr.Session;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Calendar;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -70,7 +70,7 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Locale other than en_US is not supported");
                 return;
             }
-            processAcknowledgementRequest(acknowledgment, module, moduleLocale);
+            processAcknowledgementRequest(acknowledgment, module, moduleLocale, request.getUserPrincipal().getName());
 
         } catch (RepositoryException|PersistenceException e) {
             getLogger().error("The request could not be processed because of error="+e.getMessage(), e);
