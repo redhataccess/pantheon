@@ -25,6 +25,7 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -69,7 +70,7 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Locale other than en_US is not supported");
                 return;
             }
-            processAcknowledgementRequest(acknowledgement, module, moduleLocale);
+            processAcknowledgementRequest(acknowledgement, module, moduleLocale, request.getUserPrincipal().getName());
 
         } catch (RepositoryException|PersistenceException e) {
             getLogger().error("The request could not be processed because of error="+e.getMessage(), e);
@@ -98,12 +99,12 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
      * @throws PersistenceException signals that request data could not be saved
      */
     private void processAcknowledgementRequest(Acknowledgment acknowledgement, Module module,
-                                               List<Resource> moduleLocale) throws PersistenceException {
+                                               List<Resource> moduleLocale, String lastModifiedBy) throws PersistenceException {
 
         for (Resource locale : moduleLocale) {
             //defensive programming: double check that only for en_US locale the status node is created
             if(locale.getName().equalsIgnoreCase("en_US")) {
-                createStatusNode(locale, module, acknowledgement);
+                createStatusNode(locale, module, acknowledgement, lastModifiedBy);
                 break;
             }
         }
@@ -118,12 +119,16 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
         return transformToPojo.fromJson(Acknowledgment.class, request.getReader());
     }
 
-    private void createStatusNode(Resource moduleLocale, Module module, Acknowledgment acknowledgement) throws PersistenceException {
+    private void createStatusNode(Resource moduleLocale, Module module, Acknowledgment acknowledgement, String lastModifiedBy) throws PersistenceException {
         Locale locale = LocaleUtils.toLocale(moduleLocale.getName());
         AckStatus status = createStatusNode(module, locale);
         status.status().set(acknowledgement.getStatus());
         status.message().set(acknowledgement.getMessage());
         status.sender().set(acknowledgement.getSender());
+        Calendar now = Calendar.getInstance();
+        status.dateModified().set(now);
+        // update lastModifiedBy
+        status.lastModifiedBy().set(lastModifiedBy);
         status.getResourceResolver().commit();
     }
 
