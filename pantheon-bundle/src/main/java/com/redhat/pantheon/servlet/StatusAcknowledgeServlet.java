@@ -3,16 +3,13 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.model.Acknowledgment;
 import com.redhat.pantheon.model.module.AckStatus;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.helper.TransformToPojo;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.HttpConstants;
-import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
-import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
@@ -34,7 +31,7 @@ import java.util.stream.Stream;
 import static org.apache.sling.query.SlingQuery.$;
 
 /**
- * Simple servlet that saves the status acknowledgement send by
+ * Simple servlet that saves the status acknowledgement sent by
  * an endsystem to a status node
  *
  * @author A.P.Rajshekhar
@@ -48,29 +45,32 @@ import static org.apache.sling.query.SlingQuery.$;
         }
 )
 @SlingServletPaths(value = "/api/status")
-public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
+public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Acknowledgment> {
     private final Logger logger = LoggerFactory.getLogger(StatusAcknowledgeServlet.class);
+
+    public StatusAcknowledgeServlet() {
+        super(Acknowledgment.class);
+    }
+
     @Override
-    protected void doPost(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) throws ServletException, IOException {
-
-        Acknowledgment acknowledgement = getAcknowledgementData(request);
-
-        if(isObjectNullOrEmpty(acknowledgement)){
-            getLogger().error("The request did not provide all the fiields "+acknowledgement.toString());
+    protected void processPost(SlingHttpServletRequest request, SlingHttpServletResponse response, Acknowledgment acknowledgment)
+            throws ServletException, IOException {
+        if(isObjectNullOrEmpty(acknowledgment)){
+            getLogger().error("The request did not provide all the fiields "+acknowledgment.toString());
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "All the fields are required");
             return;
         }
         try {
-            Resource resource = getResourceByUuid(acknowledgement.getId(), request);
+            Resource resource = getResourceByUuid(acknowledgment.getId(), request);
             Module module =  resource.adaptTo(Module.class);
             List<Resource> moduleLocale =  $(module).find("pant:moduleLocale").asList();
 
             if(!hasLocale(moduleLocale, "en_US")){
-                getLogger().error("The module with id="+acknowledgement.getId()+" does not have en_US locale");
+                getLogger().error("The module with id="+acknowledgment.getId()+" does not have en_US locale");
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Locale other than en_US is not supported");
                 return;
             }
-            processAcknowledgementRequest(acknowledgement, module, moduleLocale, request.getUserPrincipal().getName());
+            processAcknowledgementRequest(acknowledgment, module, moduleLocale, request.getUserPrincipal().getName());
 
         } catch (RepositoryException|PersistenceException e) {
             getLogger().error("The request could not be processed because of error="+e.getMessage(), e);
@@ -112,11 +112,6 @@ public class StatusAcknowledgeServlet extends SlingAllMethodsServlet {
 
     private boolean hasLocale(List<Resource> moduleLocale, String locale) {
         return moduleLocale.stream().anyMatch(ml -> ml.getName().equalsIgnoreCase(locale));
-    }
-
-    private Acknowledgment getAcknowledgementData(@NotNull SlingHttpServletRequest request) throws IOException {
-        TransformToPojo transformToPojo = new TransformToPojo();
-        return transformToPojo.fromJson(Acknowledgment.class, request.getReader());
     }
 
     private void createStatusNode(Resource moduleLocale, Module module, Acknowledgment acknowledgement, String lastModifiedBy) throws PersistenceException {
