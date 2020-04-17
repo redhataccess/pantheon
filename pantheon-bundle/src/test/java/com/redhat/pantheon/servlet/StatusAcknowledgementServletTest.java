@@ -63,10 +63,13 @@ public class StatusAcknowledgementServletTest {
                 .toString();
 
         Charset utf8 = Charset.forName("UTF-8");
+
         String data = "{\"id\":\""+resourceUuid+"\",\"status\": \"received\",\"sender\":\"hydra\",\"message\":\"from hydra\"}";
-        slingContext.request().setContent(data.getBytes(utf8));
+        //slingContext.request().setContent(data.getBytes(utf8));
+        MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
+        mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
         StatusAcknowledgeServlet statusAcknowledgeServlet = new StatusAcknowledgeServlet();
-        statusAcknowledgeServlet.doPost(slingContext.request(), slingContext.response());
+        statusAcknowledgeServlet.doPost(mockSlingHttpServletRequest, slingContext.response());
         Assertions.assertEquals(200, slingContext.response().getStatus(), "Status should be 200");
         Module module =
                 SlingModels.getModel(
@@ -91,9 +94,10 @@ public class StatusAcknowledgementServletTest {
 
         Charset utf8 = Charset.forName("UTF-8");
         String data = "{\"id\":\"" + resourceUuid + "\",\"status\": \"received\",\"sender\":\"hydra\"}";
-        slingContext.request().setContent(data.getBytes(utf8));
+        MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
+        mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
         StatusAcknowledgeServlet statusAcknowledgeServlet = new StatusAcknowledgeServlet();
-        statusAcknowledgeServlet.doPost(slingContext.request(), slingContext.response());
+        statusAcknowledgeServlet.doPost(mockSlingHttpServletRequest, slingContext.response());
         Assertions.assertEquals( 400, slingContext.response().getStatus(), "Status should be 400");
     }
 
@@ -132,9 +136,10 @@ public class StatusAcknowledgementServletTest {
 
         Charset utf8 = Charset.forName("UTF-8");
         String data = "{\"id\":\""+resourceUuid+"\",\"status\": \"received\",\"sender\":\"hydra\",\"message\":\"from hydra\"}";
-        slingContext.request().setContent(data.getBytes(utf8));
+        MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
+        mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
         StatusAcknowledgeServlet statusAcknowledgeServlet = new StatusAcknowledgeServlet();
-        statusAcknowledgeServlet.doPost(slingContext.request(), slingContext.response());
+        statusAcknowledgeServlet.doPost(mockSlingHttpServletRequest, slingContext.response());
         Assertions.assertEquals(400, slingContext.response().getStatus(), "Status should be 400");
 
     }
@@ -174,9 +179,10 @@ public class StatusAcknowledgementServletTest {
 
         Charset utf8 = Charset.forName("UTF-8");
         String data = "{\"id\":\""+resourceUuid+"\",\"status\": \"received\",\"sender\":\"hydra\",\"message\":\"from hydra\"}";
-        slingContext.request().setContent(data.getBytes(utf8));
+        MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
+        mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
         StatusAcknowledgeServlet statusAcknowledgeServlet = new StatusAcknowledgeServlet();
-        statusAcknowledgeServlet.doPost(slingContext.request(), slingContext.response());
+        statusAcknowledgeServlet.doPost(mockSlingHttpServletRequest, slingContext.response());
         Assertions.assertEquals(200, slingContext.response().getStatus(), "Status should be 200");
         Module module =
                 SlingModels.getModel(
