@@ -15,6 +15,8 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
@@ -24,6 +26,7 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Optional;
+import java.util.StringTokenizer;
 
 /**
  * @author Carlos Munoz
@@ -36,6 +39,8 @@ import java.util.Optional;
         })
 @SlingServletPaths(value = "/api/assembly")
 public class AssemblyPageRenderingServlet extends SlingSafeMethodsServlet {
+
+    private static final String SPLIT_TAG = "\\<\\!\\-\\-pantheon\\-module\\-start\\-\\-\\>";
 
     @Override
     protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) throws ServletException, IOException {
@@ -56,12 +61,9 @@ public class AssemblyPageRenderingServlet extends SlingSafeMethodsServlet {
             ModuleVersion version = versionOpt.orElse( assembly.getDraftVersion(GlobalConfig.DEFAULT_MODULE_LOCALE).get() );
             String fullHtmlContent = version.content().get().cachedHtml().get().data().get();
             // Now split it into the right page
-            String pageHtml = Html.parse(Charsets.UTF_8.name())
-                    .andThen(Document::body)
-                    .andThen(element -> element.select("section.sect1"))
-                    .andThen(elements -> elements.listIterator(pageNum.intValue()-1).next())
-                    .andThen(element -> element.outerHtml())
-                    .apply(fullHtmlContent);
+            String pageHtml =
+                    //new TopSectionSplittingStrategy().split(fullHtmlContent, pageNum.intValue());
+                    new CustomTagBasedSplittingStrategy().split(fullHtmlContent, pageNum.intValue());
 
             // Render the page as html
             response.setContentType("text/html");
@@ -69,6 +71,44 @@ public class AssemblyPageRenderingServlet extends SlingSafeMethodsServlet {
             w.write(pageHtml);
         } catch (RepositoryException e) {
             throw new ServletException(e);
+        }
+    }
+
+    private interface HtmlSplittingStrategy {
+        String split(String html, int page);
+    }
+
+    private class TopSectionSplittingStrategy implements HtmlSplittingStrategy {
+
+        @Override
+        public String split(String html, int pageNum) {
+            return Html.parse(Charsets.UTF_8.name())
+                    .andThen(Document::body)
+                    .andThen(element -> element.select("section.sect1"))
+                    .andThen(elements -> elements.listIterator(pageNum-1).next())
+                    .andThen(element -> element.outerHtml())
+                    .apply(html);
+        }
+    }
+
+    private class CustomTagBasedSplittingStrategy implements HtmlSplittingStrategy {
+
+        @Override
+        public String split(String html, int page) {
+            // extract just the body
+            String fullBodyHtml = Html.parse(Charsets.UTF_8.name())
+                    .andThen(Document::body)
+                    .andThen(Element::html)
+                    .apply(html);
+
+            // TODO this is very rudimentary, the system could do a more scalable split and could also
+            // TODO cache the pages after generation
+            String[] pages = fullBodyHtml.split(SPLIT_TAG);
+
+            // Send the html through Jsoup again so it's cleaned up
+            return Html.parse(Charsets.UTF_8.name())
+                    .andThen(Document::outerHtml)
+                    .apply(pages[page-1]);
         }
     }
 }
