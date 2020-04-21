@@ -57,7 +57,6 @@ const compileCSS = () => {
     // to this directory for dev
     .pipe(sourceMaps.write())
     .pipe(dest('./'))
-    // Minify for production build and put in prod location
     .pipe(postCss([cssNano(),]))
     .pipe(dest(cssOutput));
 };
