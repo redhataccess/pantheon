@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet;
 
+import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 
+import static com.google.common.collect.ImmutableMap.builder;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static com.redhat.pantheon.util.TestUtils.setReferenceValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -86,7 +88,10 @@ public class AsciidocRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
+        Map<String, Object> params = ImmutableMap.<String, Object>builder()
+                .put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"})
+                .build();
+        slingContext.request().setParameterMap(params);
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
@@ -124,8 +129,11 @@ public class AsciidocRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
+        Map<String, Object> params = ImmutableMap.<String, Object>builder()
+                .put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"})
+                .put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"})
+                .build();
+        slingContext.request().setParameterMap(params);
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))
@@ -163,10 +171,13 @@ public class AsciidocRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
-        slingContext.request().getParameterMap().put("ctx_arg", new String[]{"value"});
-        slingContext.request().getParameterMap().put("non_ctx_arg", new String[]{"unaccepted"});
+        Map<String, Object> params = ImmutableMap.<String, Object>builder()
+                .put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"})
+                .put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"})
+                .put("ctx_arg", new String[]{"value"})
+                .put("non_ctx_arg", new String[]{"unaccepted"})
+                .build();
+        slingContext.request().setParameterMap(params);
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean()))

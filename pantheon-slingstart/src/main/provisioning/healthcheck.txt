@@ -34,16 +34,15 @@
     
   ## servlet
     
-  org.apache.felix.hc.core.impl.servlet.HealthCheckExecutorServlet
+  org.apache.felix.hc.core.impl.servlet.HealthCheckExecutorServlet-default
     servletPath="/system/health"
-
 
   ## systemalive checks
 
   org.apache.felix.hc.generalchecks.FrameworkStartCheck
     hc.tags=["systemalive"]
     targetStartLevel=I"30"
-
+    
   org.apache.felix.hc.generalchecks.ServicesCheck
     hc.tags=["systemalive"]
     services.list=[
@@ -54,11 +53,12 @@
       "javax.script.ScriptEngineManager",
     ]
 
+
   ## bundles
   
   org.apache.felix.hc.generalchecks.BundlesStartedCheck
     hc.tags=["bundles"]
-
+    
   ## system resources
   
   org.apache.felix.hc.generalchecks.ThreadUsageCheck
@@ -93,4 +93,3 @@
     includeExecutionResult=B"false"
     autoDisableFilter=B"true"
     avoid404DuringStartup=B"true"
-
