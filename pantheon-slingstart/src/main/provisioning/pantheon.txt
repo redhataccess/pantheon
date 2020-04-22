@@ -67,5 +67,10 @@
     end
 
     set ACL for pantheon-statusProvider
-        allow jcr:write on /content/repositories restriction(rep:ntNames,pant:acknowledgment)
+        allow rep:write on /content/repositories restriction(rep:glob,*)
+
+        deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,nt:resource)
+        deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:symlink)
+        deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:moduleLocale)
+        deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:moduleVersion)
     end
