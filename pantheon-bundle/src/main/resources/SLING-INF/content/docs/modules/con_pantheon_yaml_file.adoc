@@ -12,9 +12,12 @@ The configuration file enables the following:
 The configuration file defines the following:
 
 `server`:: The URL of the {ProductShortName} server.
-`repository`:: A unique ID that {ProductShortName} uses to reference the URL of the repository. You specify the actual URL of the repository when you synchronize the repository the first time.
+`repositories`:: a multi-valued structure with the following child members:
++
+`name`:: A unique ID that {ProductShortName} uses to reference the URL of the repository. You specify the actual URL of the repository when you synchronize the repository the first time.
 `modules`:: Patterns for modules that show up in the search results on {ProductShortName}.
 `resources`:: Image files, legal information or other content that is not a complete module or assembly.
+`attributes`:: a path to the repository-wide attributes file that your documents may depend on.
 
 You need to define the values for `server` and `repository`.
 
@@ -23,8 +26,6 @@ You need to define the values for `server` and `repository`.
 // [options="nowrap" subs="normal"]
 ----
 # Config file for {ProductShortName}
-## server: {ProductShortName} server URL
-## repository: a unique name, which is visible in the user facing URL
 
 ## Note: Due to yaml syntax, any filepaths that start with a wildcard must be surrounded in quotes like so:
 # modules:
@@ -32,15 +33,17 @@ You need to define the values for `server` and `repository`.
 
 server: {server_url}
 # Example
-#server: http://{ProductShortName}.redhat.com[]
-repository: repo_id
+# server: http://{ProductShortName}.redhat.com[]
+repositories:
+  - name: repo_id
+    attributes: path/to/attribute.adoc
 
-modules:
- - master.adoc
- - modules/*.adoc
+    modules:
+      - master.adoc
+      - modules/*.adoc
 
-resources:
- - shared/legal.adoc
- - shared/foreword.adoc
- - resources/*
+    resources:
+      - shared/legal.adoc
+      - shared/foreword.adoc
+      - resources/*
 ----
