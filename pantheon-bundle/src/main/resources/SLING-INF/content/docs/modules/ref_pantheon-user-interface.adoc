@@ -1,5 +1,5 @@
-[id='pantheon-user-interface']
-= Pantheon user interface
+[id='pantheon-user-interface_\{context}']
+= {ProductShortName} user interface
 
 
 The user interface is organized with a main work area, an upper toolbar with `Help` and `Log In` buttons, a show/hide button for displaying the sidebar, and a tabbed sidebar with the following tabs:
@@ -15,12 +15,3 @@ The user interface is organized with a main work area, an upper toolbar with `He
 ** `Product Listing` - Lists the available product titles. A drop down menu allows viewing product details.
 ** `New Product` - Use this tab to create a new product title.
 *** Enter a product name and description in the provided fields and click `Save`.
-
-//* `Admin panel` (admin user only??) -
-// Is this for Admin level users only??
-// TBD - will this section be visible to users in the final product?
-//** 'Sling Welcome' - Displays the Sling management portal entry page.
-// Why do we need the Sling site welcome page??
-//** 'Content Browser' - Displays the local Sling resource management screen.
-//** 'Web Console' - Displays the `Apache Sling Web Console
-//Bundles` management screen.
