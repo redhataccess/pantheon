@@ -1,4 +1,4 @@
-[id='pantheon-user-interface_\{context}']
+[id='pantheon-user-interface_{context}']
 = {ProductShortName} user interface
 
 
