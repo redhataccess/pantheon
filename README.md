@@ -67,8 +67,8 @@ When your work is ready to be reviewed and merged, create a pull request.
 1. From the repository page in GitHub, click **New pull request**.
 1. Select your working branch from the compare list.
 1. Add `WIP` to the title of the pull request.
-1. Add the **Awaiting technical review** label to the pull request.
-1. In the pull request comment field, enter `@redhataccess/pantheon-developers Please review for technical completeness and accuracy.`.
+1. Add the **awaiting tech review** label to the pull request.
+1. In the pull request comment field, enter `@redhataccess/pantheon-developers Please review for technical completeness and accuracy`.
 1. Click **Create new pull request**.
 
 The developers review the pull request for technical accuracy and team members review the pull request for clarity and consistency and compliance with departmental standards.
@@ -77,7 +77,7 @@ The developers review the pull request for technical accuracy and team members r
 
 Both the technical review and peer review processes take place in pull requests in GitHub.
 
-After creating and labeling a pull request as outlined above, the developers review the pull request and add comments regarding technical accuracy. Writers receive a notification that comments have been added via email, and when all comments have been addressed, the developers change the label from **Awaiting technical review** to **Technical review passed**.
+After creating and labeling a pull request as outlined above, the developers review the pull request and add comments regarding technical accuracy. Writers receive a notification that comments have been added via email, and when all comments have been addressed, the developers change the label from **awaiting tech review** to **tech review passed**.
 
 When technical review is complete, writers click the **Request review** gear icon and select the name of a team member to request peer review. Writers receive a notification that comments have been added via email, and when all comments have been addressed, the reviewer clicks **Review changes > Approve** from the **Files changed** tab of the pull request to approve the changes and the pull request.
 
