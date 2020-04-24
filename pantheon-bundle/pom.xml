@@ -82,6 +82,8 @@
                             !org.apache.tools.ant,!org.joda.convert,!org.objectweb.asm,!sun.misc,
                             !javax.ejb,
                             !javax.jmdns,
+                            !com.google.appengine.api,
+                            !com.google.apphosting.api,
                             !org.apache.commons.net.ftp,*
                         </Import-Package>
                         <!-- Embed the necessary dependencies -->

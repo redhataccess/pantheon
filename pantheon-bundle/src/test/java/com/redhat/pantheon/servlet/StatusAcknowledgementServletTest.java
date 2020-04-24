@@ -2,6 +2,8 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.validation.events.ValidationsCompleteNotifierService;
+import com.redhat.pantheon.validation.validators.NotNullValidator;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -69,6 +71,8 @@ public class StatusAcknowledgementServletTest {
         MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
         mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
         StatusAcknowledgeServlet statusAcknowledgeServlet = new StatusAcknowledgeServlet();
+        statusAcknowledgeServlet.setNotNullValidator(new NotNullValidator());
+        statusAcknowledgeServlet.setValidationsCompleteNotifierService(new ValidationsCompleteNotifierService());
         statusAcknowledgeServlet.doPost(mockSlingHttpServletRequest, slingContext.response());
         Assertions.assertEquals(200, slingContext.response().getStatus(), "Status should be 200");
         Module module =
@@ -97,6 +101,8 @@ public class StatusAcknowledgementServletTest {
         MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
         mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
         StatusAcknowledgeServlet statusAcknowledgeServlet = new StatusAcknowledgeServlet();
+        statusAcknowledgeServlet.setNotNullValidator(new NotNullValidator());
+        statusAcknowledgeServlet.setValidationsCompleteNotifierService(new ValidationsCompleteNotifierService());
         statusAcknowledgeServlet.doPost(mockSlingHttpServletRequest, slingContext.response());
         Assertions.assertEquals( 400, slingContext.response().getStatus(), "Status should be 400");
     }
@@ -139,6 +145,8 @@ public class StatusAcknowledgementServletTest {
         MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
         mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
         StatusAcknowledgeServlet statusAcknowledgeServlet = new StatusAcknowledgeServlet();
+        statusAcknowledgeServlet.setNotNullValidator(new NotNullValidator());
+        statusAcknowledgeServlet.setValidationsCompleteNotifierService(new ValidationsCompleteNotifierService());
         statusAcknowledgeServlet.doPost(mockSlingHttpServletRequest, slingContext.response());
         Assertions.assertEquals(400, slingContext.response().getStatus(), "Status should be 400");
 
@@ -182,6 +190,8 @@ public class StatusAcknowledgementServletTest {
         MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
         mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
         StatusAcknowledgeServlet statusAcknowledgeServlet = new StatusAcknowledgeServlet();
+        statusAcknowledgeServlet.setNotNullValidator(new NotNullValidator());
+        statusAcknowledgeServlet.setValidationsCompleteNotifierService(new ValidationsCompleteNotifierService());
         statusAcknowledgeServlet.doPost(mockSlingHttpServletRequest, slingContext.response());
         Assertions.assertEquals(200, slingContext.response().getStatus(), "Status should be 200");
         Module module =
