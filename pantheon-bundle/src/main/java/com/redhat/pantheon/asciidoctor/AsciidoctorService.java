@@ -181,13 +181,13 @@ public class AsciidoctorService {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
 
             String workspacePath = moduleVersion.getWorkspace().getPath();
-            String attributeFileRelPath =  moduleVersion.getWorkspace().attributeFile().get();
+            String attributeFileRelPath = moduleVersion.getWorkspace().attributeFile().get();
             // build the attributes (default + those coming from http parameters)
             AttributesBuilder atts = AttributesBuilder.attributes()
                     // show the title on the generated html
                     .attribute("showtitle")
                     // provide attribute file as argument to ASCIIDOCTOR for building doc.
-                    .attribute("attsFile", workspacePath.concat( "/"+ attributeFileRelPath))
+                    .attribute("attsFile", workspacePath + "/"+ attributeFileRelPath)
                     // show pantheonproduct on the generated html. Base the value from metadata.
                     .attribute("pantheonproduct", productName)
                     // show pantheonversion on the generated html. Base the value from metadata.
