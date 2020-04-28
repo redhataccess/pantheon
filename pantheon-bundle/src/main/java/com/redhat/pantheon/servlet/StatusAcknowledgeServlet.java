@@ -4,10 +4,6 @@ import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.model.Acknowledgment;
 import com.redhat.pantheon.model.module.AckStatus;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.validation.events.SelectedValidationsService;
-import com.redhat.pantheon.validation.events.ValidationTrigger;
-import com.redhat.pantheon.validation.events.ValidationsCompleteNotifierService;
-import com.redhat.pantheon.validation.model.ValidationClientDetails;
 import com.redhat.pantheon.validation.validators.NotNullValidator;
 import java.io.IOException;
 import java.util.Calendar;
@@ -55,12 +51,7 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
     //the injection can be done via CTOR, setter or field. For sample validator, I have used field injection
     @Reference
     private NotNullValidator notNullValidator;
-    @Reference
-    private ValidationsCompleteNotifierService validationsCompleteNotifierService;
-    @Reference
-    private SelectedValidationsService selectedValidationsService;
-    @Reference
-    private Events events;
+
 
     public StatusAcknowledgeServlet() {
         super(Acknowledgment.class);
@@ -109,25 +100,7 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
         getNotNullValidator().setObjectsToValidate(Stream.of(acknowledgement.getId(), acknowledgement.getMessage(),
                 acknowledgement.getSender(), acknowledgement.getStatus())
                 .collect(Collectors.toList()));
-        //using event for the same
-        eventBasedValidation(acknowledgement);
         return getNotNullValidator().validate().hasViolations();
-    }
-
-    private void eventBasedValidation(Acknowledgment acknowledgement) {
-        //using event for the same
-        NotNullValidator notNullValidator = new NotNullValidator(Stream.of(acknowledgement.getId(), acknowledgement.getMessage(),
-                acknowledgement.getSender(), acknowledgement.getStatus())
-                .collect(Collectors.toList()));
-        //for unit test case
-        if (null != events) {
-            validationsCompleteNotifierService.registerValidationsCompleteListener(
-                    combinedViolations -> getLogger().info(combinedViolations.getAll().toString())
-            );
-            selectedValidationsService.setValidators(Stream.of(notNullValidator).collect(Collectors.toList()));
-            selectedValidationsService.setValidationClientDetails(new ValidationClientDetails("StatusAck"));
-            events.fireEvent(new ValidationTrigger("NotNullValidator", "StatusAck"), 100);
-        }
     }
 
     /**
@@ -217,11 +190,5 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
         this.notNullValidator = notNullValidator;
     }
 
-    public ValidationsCompleteNotifierService getValidationsCompleteNotifierService() {
-        return validationsCompleteNotifierService;
-    }
 
-    public void setValidationsCompleteNotifierService(ValidationsCompleteNotifierService validationsCompleteNotifierService) {
-        this.validationsCompleteNotifierService = validationsCompleteNotifierService;
-    }
 }
