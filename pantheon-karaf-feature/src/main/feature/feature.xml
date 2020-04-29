@@ -17,9 +17,17 @@
     specific language governing permissions and limitations
     under the License.
 -->
-<features name="pantheon" xmlns="http://karaf.apache.org/xmlns/features/v1.5.0">
+<features name="pantheon-features" xmlns="http://karaf.apache.org/xmlns/features/v1.5.0">
+    <repository>mvn:org.apache.sling/org.apache.sling.karaf-features/0.1.1-SNAPSHOT/xml/features</repository>
     <!-- Pantheon -->
     <feature name="pantheon-bundle" version="${project.version}">
+        <feature>sling-models</feature>
+        <feature>sling-models-jacksonexporter</feature>
+        <feature>sling-scripting-htl</feature>
+        <feature>sling-discovery-oak</feature>
+        <feature>sling-quickstart-oak-mongo</feature>
+        <feature>sling-starter-content</feature>
+
         <config name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-com.redhat.pantheon">
             user.mapping=[\
             "com.redhat.pantheon\=pantheon"\
