@@ -29,6 +29,8 @@
     <modules>
         <module>pantheon-bundle</module>
         <module>pantheon-slingstart</module>
+        <module>pantheon-karaf-feature</module>
+        <module>pantheon-karaf-dist</module>
     </modules>
 
 </project>
