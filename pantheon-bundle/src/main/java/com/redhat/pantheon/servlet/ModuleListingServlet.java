@@ -55,28 +55,28 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
     @Override
     protected String getQuery(SlingHttpServletRequest request) {
         String searchParam = paramValue(request, "search", "");
-        String keyParam = paramValue(request, "key");
-        String directionParam = paramValue(request, "direction");
+        String[] keyParam = paramValue(request, "key");
+        String[] directionParam = paramValue(request, "direction");
         String[] productIds = request.getParameterValues("product");
         String[] productVersionIds = request.getParameterValues("productversion");
-        String type = paramValue(request, "type");        
+        String[] type = paramValue(request, "type");
 
-        if(keyParam==null || keyParam.contains("Uploaded")){
-            keyParam = "pant:dateUploaded";
-        }else if (keyParam.contains("Title")) {
-            keyParam = "jcr:title";
-        } else if (keyParam.contains("Published")){
-            keyParam = "pant:datePublished";
-        } else if (keyParam.contains("Module")){            
-            keyParam = "pant:moduleType";
-        } else if (keyParam.contains("Updated")){
-            keyParam = JcrConstants.JCR_LASTMODIFIED;
+        if(keyParam[0]==null || keyParam[0].contains("Uploaded")){
+            keyParam[0] = "pant:dateUploaded";
+        }else if (keyParam[0].contains("Title")) {
+            keyParam[0] = "jcr:title";
+        } else if (keyParam[0].contains("Published")){
+            keyParam[0] = "pant:datePublished";
+        } else if (keyParam[0].contains("Module")){
+            keyParam[0] = "pant:moduleType";
+        } else if (keyParam[0].contains("Updated")){
+            keyParam[0] = JcrConstants.JCR_LASTMODIFIED;
         }
 
         if ("desc".equals(directionParam)) {
-            directionParam = "descending";
+            directionParam[0] = "descending";
         } else {
-            directionParam = "ascending";
+            directionParam[0] = "ascending";
         }
 
         // Add all product revisions resolved from product ids
@@ -115,7 +115,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         // Module type filter
-        if(!Strings.isNullOrEmpty(type)) {
+        if(!Strings.isNullOrEmpty(type[0])) {
             StringBuilder moduleTypeCondition = new StringBuilder()
                     .append("*/*/metadata/@pant:moduleType = '" + type + "'");
             queryFilters.add(moduleTypeCondition);
@@ -128,7 +128,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                     .append("]");
         }
 
-        if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
+        if(!isNullOrEmpty(keyParam[0]) && !isNullOrEmpty(directionParam[0])) {
             queryBuilder.append(" order by */*/metadata/@")
                     .append(keyParam)
                     .append(" ")

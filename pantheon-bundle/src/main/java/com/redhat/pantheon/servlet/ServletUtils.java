@@ -27,6 +27,24 @@ public final class ServletUtils {
      * @param defaultValue
      * @return
      */
+    public static @Nullable String[] paramValue(final HttpServletRequest request, final String paramName,
+                      final String[] defaultValue) {
+        String[] paramVal = defaultValue;
+        String[] requestParamVal = request.getParameterValues(paramName);
+
+        if(requestParamVal[0] != null) {
+            paramVal = requestParamVal;
+        }
+        return paramVal;
+    }
+
+    /**
+     * Returns a string servlet request parameter, or the provided default value if the parameter was not present.
+     * @param request
+     * @param paramName
+     * @param defaultValue
+     * @return
+     */
     public static @Nullable String paramValue(final HttpServletRequest request, final String paramName,
                       final String defaultValue) {
         String paramVal = defaultValue;
@@ -45,8 +63,8 @@ public final class ServletUtils {
      * @return
      */
     public static @Nullable
-    String paramValue(final HttpServletRequest request, final String paramName) {
-        return paramValue(request, paramName, null);
+    String[] paramValue(final HttpServletRequest request, final String paramName) {
+        return paramValue(request, paramName, new String[1]);
     }
 
     /**

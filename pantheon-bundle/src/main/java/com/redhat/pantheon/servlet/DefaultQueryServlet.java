@@ -58,19 +58,19 @@ public class DefaultQueryServlet extends AbstractJsonQueryServlet {
     protected String getQuery(SlingHttpServletRequest request) {
         // Get the query parameter(s)
         String nodeType = paramValue(request, "nodeType","nt:base");
-        String where = paramValue(request, "where");
-        String orderBy = paramValue(request, "orderBy");
+        String[] where = paramValue(request, "where");
+        String[] orderBy = paramValue(request, "orderBy");
 
         StringBuilder query = new StringBuilder("select * from ")
                 .append("[").append(nodeType).append("]")
                 .append(" as node ")
                 .append(" where ISDESCENDANTNODE(\"" + request.getResource().getPath() + "\") ");
 
-        if (where != null) {
-            query.append(" AND (").append(where).append(") ");
+        if (where[0] != null) {
+            query.append(" AND (").append(where[0]).append(") ");
         }
-        if (orderBy != null && !orderBy.isEmpty()) {
-            query.append(" order by ").append(orderBy);
+        if (orderBy[0] != null && !orderBy[0].isEmpty()) {
+            query.append(" order by ").append(orderBy[0]);
         }
 
         return query.toString();

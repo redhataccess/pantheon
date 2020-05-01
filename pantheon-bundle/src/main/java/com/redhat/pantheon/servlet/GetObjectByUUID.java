@@ -58,12 +58,12 @@ public class GetObjectByUUID extends SlingSafeMethodsServlet {
             throws ServletException, IOException {
         this.request = request;
 
-        String uuid = paramValue(request, PARAM_UUID);
+        String[] uuid = paramValue(request, PARAM_UUID);
         Long depth = paramValueAsLong(request, PARAM_DEPTH, 0L);
         Long ancestors = paramValueAsLong(request, PARAM_ANCESTORS, 0L);
-        String dereference = paramValue(request, PARAM_DEREFERENCE);
+        String[] dereference = paramValue(request, PARAM_DEREFERENCE);
 
-        if(isNullOrEmpty(uuid)) {
+        if(isNullOrEmpty(uuid[0])) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter '" + PARAM_UUID + "' must be provided");
             return;
         }
@@ -76,16 +76,16 @@ public class GetObjectByUUID extends SlingSafeMethodsServlet {
             return;
         }
         Map<String, Set<String>> dereferenceMap = new HashMap<>();
-        if (!isNullOrEmpty(dereference)) {
+        if (!isNullOrEmpty(dereference[0])) {
             try {
-                dereferenceMap.putAll(buildDereferenceMap(dereference));
+                dereferenceMap.putAll(buildDereferenceMap(dereference[0]));
             } catch (Exception e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter '" + PARAM_DEREFERENCE + "' must follow the pattern [resourceTypeA:]propertyA,[resourceTypeB:]propertyB,etc...");
             }
         }
 
         try {
-            Resource foundResource = getResourceByUuid(uuid);
+            Resource foundResource = getResourceByUuid(uuid[0]);
             Map<String, Object> payload = resourceToMapRecursive(foundResource, depth, dereferenceMap);
             Resource ancestor = foundResource;
             List<Map> ancestorList = new ArrayList<>();

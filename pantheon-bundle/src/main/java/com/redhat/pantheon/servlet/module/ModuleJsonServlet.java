@@ -70,7 +70,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     @Override
     protected String getQuery(SlingHttpServletRequest request) {
         // Get the query parameter(s)
-        String uuidParam = paramValue(request, "module_id", "");
+        String[] uuidParam = paramValue(request, "module_id", new String[1]);
 
         StringBuilder query = new StringBuilder("select * from [pant:module] as module WHERE module.[jcr:uuid] = '")
                 .append(uuidParam)

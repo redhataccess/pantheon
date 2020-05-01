@@ -393,6 +393,7 @@ if len(config.keys()) > 0 and 'repositories' in config:
 
         moduleGlobs = readYamlGlob(repo_list, 'modules')
         resourceGlobs = readYamlGlob(repo_list, 'resources')
+        attrGlobs = readYamlGlob(repo_list, 'attsFile')
 
         if attributeFile:
             if resourceGlobs == None:
