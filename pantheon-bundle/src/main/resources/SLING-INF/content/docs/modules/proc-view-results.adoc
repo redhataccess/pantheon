@@ -1,0 +1,10 @@
+[id='view-results']
+
+.Viewing search results
+The search results are presented in a table organized into columns with the following headings:
+
+* `Title` - the module title
+* `Published` - the publication status, `Published` or `Not published`
+* `Draft uploaded` - the date the draft was uploaded
+* `Module Type` - the module type, `Concept`, `Procedure`, or `Reference`
+* A sorting button allows you to quickly change the sorting order of search results from A-Z to Z-A.

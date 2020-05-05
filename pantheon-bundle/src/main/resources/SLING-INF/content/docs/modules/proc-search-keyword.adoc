@@ -1,0 +1,6 @@
+[id='search-keyword']
+
+.To perform a keyword or free text search:
+. In the search bar at top right, enter a free text phrase or keywords.
+. You can add Boolean operators to the keywords to refine the search.
+. Press `Enter` or click the search icon  to initiate the search.
