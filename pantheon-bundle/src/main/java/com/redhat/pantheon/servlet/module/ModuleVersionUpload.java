@@ -122,6 +122,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
 
             Locale localeObj = LocaleUtils.toLocale(locale);
             Optional<ModuleVersion> draftVersion = module.getDraftVersion(localeObj);
+
             // if there is no draft content, create it
             if( !draftVersion.isPresent() ) {
                 draftVersion = Optional.of(
@@ -141,13 +142,19 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                         }
                     }
                 }
+            }else{
+                if(null != draftVersion.get().hash().get() && draftVersion.get().hash().get().equals(ServletUtils.getHash(asciidocContent))) {
+                    return;
+                }
             }
 
+            draftVersion.get().hash().set(ServletUtils.getHash(asciidocContent));
             // modify only the draft content/metadata
             JcrContent jcrContent = draftVersion.get()
                     .content().getOrCreate()
                     .asciidoc().getOrCreate()
                     .jcrContent().getOrCreate();
+
             boolean generateHtml = false;
             String jcrData = jcrContent.jcrData().get();
 
@@ -162,8 +169,10 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                             .isPresent()) {
                 generateHtml = true;
             }
+
             jcrContent.jcrData().set(asciidocContent);
             jcrContent.mimeType().set("text/x-asciidoc");
+
 
             Metadata metadata = draftVersion.get()
                     .metadata().getOrCreate();
