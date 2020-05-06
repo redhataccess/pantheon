@@ -27,6 +27,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.servlets.annotations.SlingServletFilter;
+import org.apache.sling.servlets.annotations.SlingServletFilterScope;
+import org.osgi.service.component.annotations.Component;
 //import org.apache.felix.scr.annotations.Component;
 //import org.apache.felix.scr.annotations.Properties;
 //import org.apache.felix.scr.annotations.Property;
@@ -49,22 +54,30 @@ import org.slf4j.LoggerFactory;
  *     @Property(name="service.ranking", intValue=1)
  * })
  */
-//@SlingFilter(order=1, description="A Simple Filter")
-//@Property(name="service.vendor", value="The Apache Software Foundation")
+@Component
+@SlingServletFilter(scope = {SlingServletFilterScope.REQUEST},
+                    methods = {"GET","HEAD"})
 public class SimpleFilter implements Filter {
     
+    public static final String DOMAIN_ALLOWED = ".redhat.com";
     private final Logger log = LoggerFactory.getLogger(SimpleFilter.class);
 
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+    public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain) throws IOException,
             ServletException {
-        log.info("filter invoked - start");
+        final SlingHttpServletRequest request = (SlingHttpServletRequest)req;
+        final SlingHttpServletResponse response = (SlingHttpServletResponse)res;
+        String origin = request.getHeader("Origin");
+        if (origin != null) {
+            if (origin.contains(DOMAIN_ALLOWED)) {
+                 response.addHeader("Access-control-Allow-Origin", origin);
+                 response.addHeader("Access-control-Allow-Methods", "GET, HEAD, OPTIONS");
+            }
+        }
         chain.doFilter(request, response);
-        log.info("filter invoked - end");
     }
-
     public void destroy() {
     }
 
