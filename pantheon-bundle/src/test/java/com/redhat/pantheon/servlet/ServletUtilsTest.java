@@ -190,4 +190,19 @@ class ServletUtilsTest {
         assertEquals("ja-jp", ServletUtils.toLanguageTag(Locale.JAPAN));
         assertEquals("es", ServletUtils.toLanguageTag(new Locale("es")));
     }
+
+    @Test
+    void getHash() {
+        // Given
+        final String input = "Valid Hash";
+        String hash = ServletUtils.getHash(input);
+        assertEquals("59484ec883ab80b160c240003a250bb0cc03008d734103ce3226297936b116b689cfd335faea804602fcb02e074afc9779a8bff6675ddf4c5184bdc0c9368d84", hash);
+    }
+
+    @Test
+    void getInvalidHash() {
+        // Given
+        final String input = null;
+        assertThrows(RuntimeException.class, () -> ServletUtils.getHash(input));
+    }
 }

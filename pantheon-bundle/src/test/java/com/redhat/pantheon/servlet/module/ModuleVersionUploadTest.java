@@ -255,7 +255,7 @@ class ModuleVersionUploadTest {
                 any(ModuleVersion.class), any(Resource.class), anyMap(), eq(true));
     }
 
-    @Test
+        @Test
     void uploadIdenticalDraftVersion() throws Exception {
         // Given
         slingContext.build()
@@ -279,6 +279,11 @@ class ModuleVersionUploadTest {
                 .put("draft", slingContext.resourceResolver().getResource("/new/module/es_ES/2").getValueMap().get("jcr:uuid"));
         slingContext.resourceResolver().getResource("/new/module/es_ES").adaptTo(ModifiableValueMap.class)
                 .put("released", slingContext.resourceResolver().getResource("/new/module/es_ES/1").getValueMap().get("jcr:uuid"));
+
+        slingContext.resourceResolver().getResource("/new/module/es_ES/1").adaptTo(ModifiableValueMap.class)
+                .put("pant:hash", "59484ec883ab80b160c240003a250bb0cc03008d734103ce3226297936b116b689cfd335faea804602fcb02e074afc9779a8bff6675ddf4c5184bdc0c9368d84");
+        slingContext.resourceResolver().getResource("/new/module/es_ES/2").adaptTo(ModifiableValueMap.class)
+                .put("pant:hash", "59484ec883ab80b160c240003a250bb0cc03008d734103ce3226297936b116b689cfd335faea804602fcb02e074afc9779a8bff6675ddf4c5184bdc0c9368d84");
 
         lenient().when(
                 asciidoctorService.getModuleHtml(
