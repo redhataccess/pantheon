@@ -71,7 +71,7 @@ When your work is ready to be reviewed and merged, create a pull request.
 1. In the pull request comment field, enter `@redhataccess/pantheon-developers Please review for technical completeness and accuracy`.
 1. Click **Create new pull request**.
 
-The developers review the pull request for technical accuracy and team members review the pull request for clarity and consistency and compliance with departmental standards.
+For code pull requests, one or more developers review the pull request. For documentation pull requests, the developers review the pull request for technical accuracy and documentation team members review the pull request for clarity and consistency and compliance with necesary standards.
 
 ### The review process
 
@@ -79,7 +79,7 @@ Both the technical review and peer review processes take place in pull requests 
 
 After creating and labeling a pull request as outlined above, the developers review the pull request and add comments regarding technical accuracy. Writers receive a notification that comments have been added via email, and when all comments have been addressed, the developers change the label from **awaiting tech review** to **tech review passed**.
 
-When technical review is complete, writers click the **Request review** gear icon and select the name of a team member to request peer review. Writers receive a notification that comments have been added via email, and when all comments have been addressed, the reviewer clicks **Review changes > Approve** from the **Files changed** tab of the pull request to approve the changes and the pull request.
+When technical review is complete, writers click the **Reviewers** gear icon and select the name of a team member to request peer review. Writers receive a notification that comments have been added via email, and when all comments have been addressed, the reviewer clicks **Review changes > Approve** from the **Files changed** tab of the pull request to approve the changes and the pull request.
 
 ### Merging a pull request
 
@@ -114,29 +114,23 @@ _(All commands from here on will be assumed to be run from the project's root di
 
 The best way to run Pantheon is to install [podman](https://podman.io).
 
-. First, create a pod:
-
+1. First, create a pod:  
 ```sh
 podman pod create --name pantheon -p 8080 -p 5005
 ```
-
 This will create a `pantheon` pod with ports 8080 (for web access) and 5005 (for
 remote Java debugging) open.
 
-Run a mongo database container in the pod.
-
+1. Run a mongo database container in the pod.
 ```sh
 podman run --pod pantheon --name slingmongo -d mongo
 ```
-
-Build the pantheon docker image
-
+1. Build the pantheon docker image
 ```sh
 buildah bud --layers -f container/Dockerfile -t pantheon-app .
 ```
 
-Run the sling container pod in the pod.
-
+1. Run the sling container pod in the pod.
 ```sh
 podman run --pod pantheon -d -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://localhost:27017' --name pantheon-app pantheon-app
 ```
