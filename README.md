@@ -71,7 +71,7 @@ When your work is ready to be reviewed and merged, create a pull request.
 1. In the pull request comment field, enter `@redhataccess/pantheon-developers Please review for technical completeness and accuracy`.
 1. Click **Create new pull request**.
 
-For code pull requests, one or more developers review the pull request. For documentation pull requests, the developers review the pull request for technical accuracy and documentation team members review the pull request for clarity and consistency and compliance with necesary standards.
+For code pull requests, one or more developers review the pull request. For documentation pull requests, the developers review the pull request for technical accuracy and documentation team members review the pull request for clarity and consistency and compliance with necessary standards.
 
 ### The review process
 
