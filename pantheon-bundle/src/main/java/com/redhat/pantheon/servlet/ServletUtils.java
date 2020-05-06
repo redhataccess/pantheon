@@ -198,17 +198,12 @@ public final class ServletUtils {
             // Convert message digest into hex value
             String hashtext = no.toString(16);
 
-            // Add preceding 0s to make it 32 bit
-            while (hashtext.length() < 32) {
-                hashtext = "0" + hashtext;
-            }
-
             // return the HashText
             return hashtext;
         }
 
         // For specifying wrong message digest algorithms
-        catch (NoSuchAlgorithmException e) {
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
