@@ -255,7 +255,7 @@ class ModuleVersionUploadTest {
                 any(ModuleVersion.class), any(Resource.class), anyMap(), eq(true));
     }
 
-        @Test
+    @Test
     void uploadIdenticalDraftVersion() throws Exception {
         // Given
         slingContext.build()
@@ -322,7 +322,7 @@ class ModuleVersionUploadTest {
         verify(asciidoctorService, never()).getModuleHtml(
                 any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean());
     }
-        @Test
+    @Test
     void uploadIdenticalDraftVersionWithDifferentHash() throws Exception {
         // Given
         slingContext.build()
@@ -388,7 +388,9 @@ class ModuleVersionUploadTest {
         );
         verify(asciidoctorService, never()).getModuleHtml(
                 any(ModuleVersion.class), any(Resource.class), anyMap(), anyBoolean());
-    }        @Test
+    }
+
+    @Test
     void uploadIdenticalDraftVersionWithNoHash() throws Exception {
         // Given
         slingContext.build()
