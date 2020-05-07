@@ -69,5 +69,7 @@ public class CorsEnablingFilterTest {
 
         // Verify that chain.doFilter() was called
         verify(chain).doFilter(request, response);
+        verify(response).addHeader("Access-control-Allow-Origin", "https://www.redhat.com");
+        verify(response).addHeader("Access-control-Allow-Methods", "GET, HEAD, OPTIONS");
     }
 }
