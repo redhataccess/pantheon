@@ -2,21 +2,15 @@ package com.redhat.pantheon.servlet;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
 import java.io.PrintWriter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 
-import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.testing.mock.sling.MockSling;
@@ -58,13 +52,13 @@ public class CorsEnablingFilterTest {
 
         // simulate query string
         request.setQueryString("locale=en-us&module_id=123-456-789");
-        
+
         // set current resource
         request.setResource(resourceResolver.getResource("/api/module"));
-        
+
         // set method
         request.setMethod(HttpConstants.METHOD_GET);
-        
+
         // set headers
         request.addHeader("Origin", "https://www.redhat.com");
 
