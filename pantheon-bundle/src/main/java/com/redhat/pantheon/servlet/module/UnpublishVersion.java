@@ -5,7 +5,7 @@ import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
-import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.ModuleVariant;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
@@ -63,7 +63,7 @@ public class UnpublishVersion extends AbstractPostOperation {
             // call the extension point
             Locale locale = getLocale(request);
             Module module = getModule(request);
-            ModuleLocale moduleLocale = module.getModuleLocale(locale);
+            ModuleVariant moduleLocale = module.getModuleLocale(locale);
             events.fireEvent(new ModuleVersionUnpublishedEvent(moduleLocale.getPath()), 15);
         }
     }
@@ -80,7 +80,7 @@ public class UnpublishVersion extends AbstractPostOperation {
                     "The module is not released (published)");
         } else {
             // Released revision is emptied out
-            ModuleLocale moduleLocale = module.getModuleLocale(locale);
+            ModuleVariant moduleLocale = module.getModuleLocale(locale);
             String unpublishedRevId = moduleLocale.released().get();
             moduleLocale.released().set( null );
 

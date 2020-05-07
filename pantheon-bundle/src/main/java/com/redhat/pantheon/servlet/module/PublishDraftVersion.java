@@ -5,7 +5,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.servlets.post.AbstractPostOperation;
@@ -61,7 +61,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
             // call the extension point
             Locale locale = getLocale(request);
             Module module = getModule(request);
-            ModuleLocale moduleLocale = module.getModuleLocale(locale);
+            ModuleVariant moduleLocale = module.getModuleLocale(locale);
 
 
             //FIXME - this is a hack that needs to be removed when we have the attribute placeholder logic implemented
@@ -95,7 +95,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
                     "The version to be released doesn't have urlFragment metadata");
         } else {
             // Draft becomes the new released version
-            ModuleLocale moduleLocale = module.getModuleLocale(locale);
+            ModuleVariant moduleLocale = module.getModuleLocale(locale);
             moduleLocale.released().set( moduleLocale.draft().get() );
             moduleLocale.draft().set( null );
             // set the published date on the released version

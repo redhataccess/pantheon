@@ -20,21 +20,23 @@ import static java.util.Optional.ofNullable;
  *
  * A module's structure in the JCR tree is as follows:
  * .../modulename
- *                       /en-US
- *                             /4
- *                                   /content
- *                                           /asciidoc
- *                                           /cachedHtml
- *                                   /metadata
- *                             /3
- *                                   /content
- *                                   /metadata
- *                             /2 (older - just for historical purposes)
- *                                   /content
- *                                   /metadata
- *                             /1
- *                                   /content
- *                                   /metadata
+ *      en-US
+ *              source
+ *                      draft (as a file)
+ *                              jcr:content
+ *                      released (as a file)
+ *                              jcr:content
+ *              variants
+ *                      VARIANT NAME (variants) //default value: DEFAULT
+ *                              attrs file: /attributes/RHEL-7-atts.adoc
+ *                              draft
+ *                                      cachedHtml
+ *                                      metadata
+ *                                      ackStatus
+ *                              released
+ *                                      cachedHtml
+ *                                      metadata
+ *                                      ackStatus
  */
 @JcrPrimaryType("pant:module")
 public interface Module extends WorkspaceChild {
@@ -42,23 +44,23 @@ public interface Module extends WorkspaceChild {
     @Named("jcr:uuid")
     Field<String> uuid();
 
-    default ModuleLocale getModuleLocale(Locale locale) {
-        return getChild(locale.toString(), ModuleLocale.class);
+    default ModuleVariant getModuleLocale(Locale locale) {
+        return getChild(locale.toString(), ModuleVariant.class);
     }
 
-    default ModuleLocale getOrCreateModuleLocale(Locale locale) {
-        return getOrCreateChild(locale.toString(), ModuleLocale.class);
+    default ModuleVariant getOrCreateModuleLocale(Locale locale) {
+        return getOrCreateChild(locale.toString(), ModuleVariant.class);
     }
 
-    default ModuleLocale createModuleLocale(Locale locale) {
-        return createChild(locale.toString(), ModuleLocale.class);
+    default ModuleVariant createModuleLocale(Locale locale) {
+        return createChild(locale.toString(), ModuleVariant.class);
     }
 
     default Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale) {
-        ModuleLocale moduleLocale = getModuleLocale(locale);
+        ModuleVariant moduleLocale = getModuleLocale(locale);
         if(moduleLocale != null) {
             try {
-                return ofNullable( moduleLocale.draft().getReference() );
+                return ofNullable( moduleLocale.draft() );
             } catch (RepositoryException e) {
                 throw new RuntimeException(e);
             }
@@ -67,10 +69,10 @@ public interface Module extends WorkspaceChild {
     }
 
     default Optional<ModuleVersion> getReleasedVersion(@Nonnull final Locale locale) {
-        ModuleLocale moduleLocale = getModuleLocale(locale);
+        ModuleVariant moduleLocale = getModuleLocale(locale);
         if(moduleLocale != null) {
             try {
-                return ofNullable( moduleLocale.released().getReference() );
+                return ofNullable( moduleLocale.released() );
             } catch (RepositoryException e) {
                 throw new RuntimeException(e);
             }
@@ -82,18 +84,18 @@ public interface Module extends WorkspaceChild {
      * @param locale The locale to fetch the content instance for.
      * @return The released content for a given locale
      */
-    default Optional<Content> getReleasedContent(final Locale locale) {
+    default Optional<CachedHtml> getReleasedContent(final Locale locale) {
         return getReleasedVersion(locale)
-                .map(moduleVersion -> moduleVersion.content().get());
+                .map(moduleVersion -> moduleVersion.cachedHtml().get());
     }
 
     /**
      * @param locale The locale to fetch the content instance for.
      * @return The draft content for a given locale
      */
-    default Optional<Content> getDraftContent(final Locale locale) {
+    default Optional<CachedHtml> getDraftContent(final Locale locale) {
         return getDraftVersion(locale)
-                .map(moduleVersion -> moduleVersion.content().get());
+                .map(moduleVersion -> moduleVersion.cachedHtml().get());
     }
 
     /**

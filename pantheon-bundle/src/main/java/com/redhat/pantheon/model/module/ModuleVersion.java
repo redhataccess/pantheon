@@ -20,8 +20,9 @@ public interface ModuleVersion extends WorkspaceChild {
     @Named("jcr:uuid")
     Field<String> uuid();
 
-    Child<Content> content();
+    Child<CachedHtml> cachedHtml();
 
     Child<Metadata> metadata();
+
     Child<AckStatus> ackStatus();
 }

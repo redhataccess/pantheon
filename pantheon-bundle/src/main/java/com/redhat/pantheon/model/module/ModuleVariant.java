@@ -9,13 +9,10 @@ import static com.google.common.collect.Streams.stream;
 import static java.util.stream.Collectors.counting;
 
 /**
- * A specific module locale node which houses asciidoc source and variants
+ * A specific module variant node which houses all the versions for a specific language in the module.
  */
 @JcrPrimaryType("pant:moduleVariant")
-public interface ModuleLocale extends WorkspaceChild {
-
-
-
+public interface ModuleVariant extends WorkspaceChild {
 
     default ModuleVersion getVersion(String name) {
         return getChild(name, ModuleVersion.class);
