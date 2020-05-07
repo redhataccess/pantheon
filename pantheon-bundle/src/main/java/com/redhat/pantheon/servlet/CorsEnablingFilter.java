@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
     })
 @SlingServletFilter(scope = {SlingServletFilterScope.REQUEST},
                     pattern = "/api/.*",
-                    methods = {"GET","HEAD", "OPTIONS"})
+                    methods = {"GET","HEAD","OPTIONS"})
 public class CorsEnablingFilter implements Filter {
     
     public static final String DOMAIN_ALLOWED = ".redhat.com";
