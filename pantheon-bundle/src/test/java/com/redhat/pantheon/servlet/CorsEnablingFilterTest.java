@@ -62,9 +62,6 @@ public class CorsEnablingFilterTest {
         // set headers
         request.addHeader("Origin", "https://www.redhat.com");
 
-        // Mock out the respone's PrintWriter
-        when(response.getWriter()).thenReturn(mock(PrintWriter.class));
-
         CorsEnablingFilter filter = new CorsEnablingFilter();
 
         // Execute the method with the mocks we want to test
@@ -72,9 +69,5 @@ public class CorsEnablingFilterTest {
 
         // Verify that chain.doFilter() was called
         verify(chain).doFilter(request, response);
-
-        // Verify that a string were written to the response
-        // (This filter writes HTML comments above and below the chain.doFilter(..)
-        verify(response.getWriter(), times(1)).write(anyString());
     }
 }
