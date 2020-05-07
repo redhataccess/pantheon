@@ -13,6 +13,29 @@ import static java.util.stream.Collectors.counting;
  */
 @JcrPrimaryType("pant:moduleVariant")
 public interface ModuleVariant extends WorkspaceChild {
+    default ModuleVersion getVersion(String name) {
+        return getChild(name, ModuleVersion.class);
+    }
 
+    default ModuleVersion getOrCreateVersion(String name) {
+        return getOrCreateChild(name, ModuleVersion.class);
+    }
+
+    default ModuleVersion createNextVersion() {
+        // Generate a new version name
+        return createChild(generateNextVersionName(), ModuleVersion.class);
+    }
+
+    default String generateNextVersionName() {
+        return "draft";
+    }
+
+    default ModuleVersion draft() {
+        return getChild("draft", ModuleVersion.class);
+    }
+
+    default ModuleVersion released() {
+        return getChild("released", ModuleVersion.class);
+    };
 
 }
