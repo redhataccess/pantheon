@@ -1,17 +1,21 @@
 package com.redhat.pantheon.asciidoctor;
 
-import static java.util.stream.Collectors.toMap;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.jcr.RepositoryException;
-
-import com.redhat.pantheon.model.workspace.Workspace;
+import com.google.common.base.Charsets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
+import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
+import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
+import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
@@ -27,19 +31,17 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
-import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
-import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
-import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
-import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.model.ProductVersion;
-import com.redhat.pantheon.model.module.Content;
-import com.redhat.pantheon.model.module.Metadata;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleVersion;
-import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import javax.annotation.Nonnull;
+import javax.jcr.RepositoryException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Business service class which provides Asciidoctor-related methods which work in conjunction with other
@@ -96,22 +98,57 @@ public class AsciidoctorService {
      *                   the context into account
      * @return The module's html representation based on its current asciidoc content
      */
-    public String getModuleHtml(@Nonnull ModuleVersion moduleVersion,
-                                @Nonnull Resource base,
+//    public String getModuleHtml(@Nonnull ModuleVersion moduleVersion,
+//                                @Nonnull Resource base,
+//                                Map<String, Object> context,
+//                                boolean forceRegen) {
+//
+//        Content content = moduleVersion.content().get();
+//        Metadata metadata = moduleVersion.metadata().get();
+//        String html;
+//        // If regeneration is forced, the content doesn't exist yet, or it needs generation because the original
+//        // asciidoc has changed,
+//        // then generate and save it
+//        if( forceRegen || content.cachedHtml().get() == null || !generatedContentHashMatches(content) ) {
+//            html = buildModule(base.adaptTo(Module.class), moduleVersion, context, true);
+//        } else {
+//            html = content.cachedHtml().get()
+//                    .data().get();
+//        }
+//
+//        return html;
+//    }
+
+    public String getModuleHtml(@Nonnull Module module,
+                                @Nonnull Locale locale,
+                                @Nonnull String variantName,
+                                boolean draft,
                                 Map<String, Object> context,
                                 boolean forceRegen) {
 
-        Content content = moduleVersion.content().get();
-        Metadata metadata = moduleVersion.metadata().get();
+        ModuleLocale moduleLocale = module.getModuleLocale(locale);
+        Optional<ModuleVersion> moduleVersion = moduleLocale.variants()
+                .map(variantsFolder -> variantsFolder.getVariant(variantName))
+                .map(Optional::get)
+                .map(variant -> draft ? variant.draft() : variant.released())
+                .map(Supplier::get);
+        Optional<FileResource> sourceFile = moduleLocale.source()
+                .map(sourceFolder -> draft ? sourceFolder.draft() : sourceFolder.released())
+                .map(Supplier::get);
+
         String html;
         // If regeneration is forced, the content doesn't exist yet, or it needs generation because the original
         // asciidoc has changed,
         // then generate and save it
-        if( forceRegen || content.cachedHtml().get() == null || !generatedContentHashMatches(content) ) {
-            html = buildModule(base.adaptTo(Module.class), moduleVersion, context, true);
+        // TODO To keep things simple, regeneration will not happen automatically when the source of the module
+        // has changed. This can be added later
+        if( forceRegen || moduleVersion.get().cachedHtml().get() == null ) {
+            html = buildModule(module, moduleVersion.get(), sourceFile.get(), context, true);
         } else {
-            html = content.cachedHtml().get()
-                    .data().get();
+            html = moduleVersion.get()
+                    .cachedHtml().get()
+                    .jcrContent().get()
+                    .jcrData().get();
         }
 
         return html;
@@ -144,8 +181,8 @@ public class AsciidoctorService {
      * @param regenMetadata If true, metadata will be extracted from the content and repopulated into the JCR module.
      * @return The generated html string.
      */
-    private String buildModule(Module base, ModuleVersion moduleVersion, Map<String, Object> context,
-                               final boolean regenMetadata) {
+    private String buildModule(Module base, ModuleVersion moduleVersion, FileResource sourceContent,
+                               Map<String, Object> context, final boolean regenMetadata) {
 
         // Use a service-level resource resolver to build the module as it will require write access to the resources
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
@@ -170,9 +207,7 @@ public class AsciidoctorService {
                 productName = productVersion.getProduct().name().get();
             }
 
-            Optional<Calendar> updatedDate = moduleVersion.metadata()
-                    .map(Metadata::dateUploaded)
-                    .map(Supplier::get);
+            Calendar updatedDate = sourceContent.created().get();
 
             Optional<Calendar> publishedDate = moduleVersion.metadata()
                     .map(Metadata::datePublished)
@@ -181,13 +216,19 @@ public class AsciidoctorService {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
 
             String workspacePath = moduleVersion.getWorkspace().getPath();
-            String attributeFileRelPath = moduleVersion.getWorkspace().attributeFile().get();
+            String variantName = moduleVersion.getParentVariant().getName();
+            Optional<String> attributesFilePath = base.getWorkspace().moduleVariantDefinitions()
+                    .map(v -> v.getVariant(variantName))
+                    .map(Optional::get)
+                    .map(ModuleVariantDefinition::attributesFilePath)
+                    .map(Supplier::get);
+
             // build the attributes (default + those coming from http parameters)
             AttributesBuilder atts = AttributesBuilder.attributes()
                     // show the title on the generated html
                     .attribute("showtitle")
                     // provide attribute file as argument to ASCIIDOCTOR for building doc.
-                    .attribute("attsFile", workspacePath + "/"+ attributeFileRelPath)
+                    .attribute("attsFile", workspacePath + "/" + attributesFilePath.orElse(""))
                     // show pantheonproduct on the generated html. Base the value from metadata.
                     .attribute("pantheonproduct", productName)
                     // show pantheonversion on the generated html. Base the value from metadata.
@@ -199,9 +240,9 @@ public class AsciidoctorService {
                     // stylesheet reference
                     .styleSheetName("/static/rhdocs.css");
 
-            if(updatedDate.isPresent()) {
+            if(updatedDate != null) {
                 // show pantheonupdateddate on generated html. Base the value from metadata.
-                atts.attribute("pantheonupdateddate",  dateFormat.format(updatedDate.get().getTime()));
+                atts.attribute("pantheonupdateddate",  dateFormat.format(updatedDate.getTime()));
             }
 
             if (publishedDate.isPresent()) {
@@ -246,14 +287,14 @@ public class AsciidoctorService {
                 }
 
                 StringBuilder content = new StringBuilder();
-                if (attributeFileRelPath != null && !attributeFileRelPath.isEmpty()) {
+                if (!isNullOrEmpty(attributesFilePath.get())) {
                     content.append("include::")
                             .append("{attsFile}")
                             .append("[]\n");
                 }
-                content.append(moduleVersion.content().get().asciidocContent().get());
+                content.append(sourceContent.jcrContent().get().jcrData().get());
                 html = asciidoctor.convert(content.toString(), ob.get());
-                cacheContent(moduleVersion.content().get(), html);
+                cacheContent(moduleVersion, html);
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);
             }
@@ -273,14 +314,17 @@ public class AsciidoctorService {
      * @param content The module's content instance on which to cache the content.
      * @param html The html that was generated
      */
-    private void cacheContent(final Content content, final String html) {
-        String asciidoc = content.asciidocContent().get();
-        content.cachedHtml().getOrCreate()
-                .hash().set(
-                    hash(asciidoc).toString()
-                );
-        content.cachedHtml().getOrCreate()
-                .data().set(html);
+    private void cacheContent(final ModuleVersion version, final String html) {
+//        String asciidoc = content.asciidocContent().get();
+        version.cachedHtml().getOrCreate()
+                .jcrContent().getOrCreate()
+                .jcrData().set(html);
+//        content.cachedHtml().getOrCreate()
+//                .hash().set(
+//                    hash(asciidoc).toString()
+//                );
+//        content.cachedHtml().getOrCreate()
+//                .data().set(html);
     }
 
     /*

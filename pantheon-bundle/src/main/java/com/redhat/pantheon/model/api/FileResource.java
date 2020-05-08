@@ -9,7 +9,7 @@ import javax.inject.Named;
  * adheres to the node structure expected by Sling and JCR.
  */
 @JcrPrimaryType("nt:file")
-public interface FileResource extends SlingModel {
+public interface FileResource extends SlingModel, MixCreated {
 
     @Named("jcr:content")
     Child<JcrContent> jcrContent();

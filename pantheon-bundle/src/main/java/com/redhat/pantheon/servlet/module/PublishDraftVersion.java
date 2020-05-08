@@ -5,6 +5,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 
 @Component(
@@ -54,6 +56,10 @@ public class PublishDraftVersion extends AbstractPostOperation {
         return paramValueAsLocale(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE);
     }
 
+    private String getVariant(SlingHttpServletRequest request) {
+        return paramValue(request, "variant", ModuleVariant.DEFAULT_VARIANT_NAME);
+    }
+
     @Override
     public void run(SlingHttpServletRequest request, PostResponse response, SlingPostProcessor[] processors) {
         super.run(request, response, processors);
@@ -61,13 +67,13 @@ public class PublishDraftVersion extends AbstractPostOperation {
             // call the extension point
             Locale locale = getLocale(request);
             Module module = getModule(request);
-            ModuleVariant moduleLocale = module.getModuleLocale(locale);
+            String variant = getVariant(request);
+            ModuleLocale moduleLocale = module.getModuleLocale(locale);
 
 
             //FIXME - this is a hack that needs to be removed when we have the attribute placeholder logic implemented
-            Optional<ModuleVersion> versionToRelease = module.getReleasedVersion(locale);
+            Optional<ModuleVersion> versionToRelease = module.getReleasedVersion(locale, variant);
             asciidoctorService.getModuleHtml(versionToRelease.get(), module, new HashMap(), true);
-
 
             events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.getPath()), 15);
         }
@@ -77,9 +83,10 @@ public class PublishDraftVersion extends AbstractPostOperation {
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) {
         Locale locale = getLocale(request);
         Module module = getModule(request);
+        String variant = getVariant(request);
 
         // Get the draft version, there should be one
-        Optional<ModuleVersion> versionToRelease = module.getDraftVersion(locale);
+        Optional<ModuleVersion> versionToRelease = module.getDraftVersion(locale, variant);
         if( !versionToRelease.isPresent() ) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                     "The module doesn't have a draft version to be released");
@@ -95,13 +102,17 @@ public class PublishDraftVersion extends AbstractPostOperation {
                     "The version to be released doesn't have urlFragment metadata");
         } else {
             // Draft becomes the new released version
-            ModuleVariant moduleLocale = module.getModuleLocale(locale);
-            moduleLocale.released().set( moduleLocale.draft().get() );
-            moduleLocale.draft().set( null );
+            ModuleLocale moduleLocale = module.getModuleLocale(locale);
+            moduleLocale.variants()
+                    .map(variantsFolder -> variantsFolder.getVariant(variant))
+                    .map(Optional::get)
+                    .ifPresent(ModuleVariant::releaseDraft);
+//            moduleLocale.released().set( moduleLocale.draft().get() );
+//            moduleLocale.draft().set( null );
             // set the published date on the released version
-            versionToRelease.get()
-                    .metadata().getOrCreate()
-                    .datePublished().set(Calendar.getInstance());
+//            versionToRelease.get()
+//                    .metadata().getOrCreate()
+//                    .datePublished().set(Calendar.getInstance());
             changes.add(Modification.onModified(module.getPath()));
         }
     }

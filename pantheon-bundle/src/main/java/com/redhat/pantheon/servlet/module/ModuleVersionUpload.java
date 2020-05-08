@@ -2,14 +2,18 @@ package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.FileResource.JcrContent;
+import com.redhat.pantheon.model.api.Folder;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.AckStatus;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleType;
+import com.redhat.pantheon.model.workspace.Workspace;
 import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
@@ -29,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -92,13 +97,22 @@ public class ModuleVersionUpload extends AbstractPostOperation {
         try {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
             String asciidocContent = ServletUtils.paramValue(request, "asciidoc");
+            String ws = ServletUtils.paramValue(request, "ws");
+
+            if( ws == null ) {
+                // TODO This will return a 500. Find a way to return something nicer
+                throw new ServletException("Workspace parameter must be provided");
+            }
+
             String encoding = request.getCharacterEncoding();
             if (encoding != null) {
                 asciidocContent = new String(asciidocContent.getBytes(encoding), StandardCharsets.UTF_8);
             }
+
+            // This should be the path relative to the root of the git file system
             String path = request.getResource().getPath();
             String moduleName = ResourceUtil.getName(path);
-            String description = ServletUtils.paramValue(request, "jcr:description", "");
+//            String description = ServletUtils.paramValue(request, "jcr:description", "");
 
             log.debug("Pushing new module version at: " + path + " with locale: " + locale);
             log.trace("and content: " + asciidocContent);
@@ -106,7 +120,17 @@ public class ModuleVersionUpload extends AbstractPostOperation {
 
             // Try to find the module
             ResourceResolver resolver = request.getResourceResolver();
-            Resource moduleResource = resolver.getResource(path);
+
+            /*
+             * /path/to/module.adoc
+             * /content/repositories/<<ws>>/entities/path/to/module.adoc
+             */
+            Workspace workspace = SlingModels.getModel(resolver, "/content/repositories/" + ws, Workspace.class);
+            Folder moduleParent = workspace.entities().getOrCreate()
+                    .createSubPath(path);
+            Resource moduleResource =
+                    request.getResourceResolver().move(path, moduleParent.getPath());
+
             Module module;
 
             if(moduleResource == null) {
@@ -121,77 +145,86 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             }
 
             Locale localeObj = LocaleUtils.toLocale(locale);
-            Optional<ModuleVersion> draftVersion = module.getDraftVersion(localeObj);
+            ModuleLocale moduleLocale = module.getOrCreateModuleLocale(localeObj);
+            FileResource draftSrc = moduleLocale.source().getOrCreate()
+                    .draft().getOrCreate();
+
+//            Optional<ModuleVersion> draftVersion = module.getDraftVersion(localeObj);
             // if there is no draft content, create it
-            if( !draftVersion.isPresent() ) {
-                draftVersion = Optional.of(
-                        module.getOrCreateModuleLocale(localeObj)
-                        .createNextVersion());
-                module.getOrCreateModuleLocale(localeObj)
-                        .draft().set( draftVersion.get().uuid().get() );
-                //Need to copy the metadata from the released version, if it exists
-                Optional<ModuleVersion> releasedVersion = module.getReleasedVersion(localeObj);
-                if (releasedVersion.isPresent()) {
-                    Metadata releasedMeta = releasedVersion.get().metadata().get();
-                    Metadata draftMeta = draftVersion.get().metadata().getOrCreate();
-
-                    for (Map.Entry<String, Object> e : releasedMeta.getValueMap().entrySet()) {
-                        if (!EXCLUDES.contains(e.getKey())) {
-                            draftMeta.setProperty(e.getKey(), e.getValue());
-                        }
-                    }
-                }
-            }
-
-            // modify only the draft content/metadata
-            JcrContent jcrContent = draftVersion.get()
-                    .content().getOrCreate()
-                    .asciidoc().getOrCreate()
-                    .jcrContent().getOrCreate();
-            boolean generateHtml = false;
-            String jcrData = jcrContent.jcrData().get();
+//            if( !draftVersion.isPresent() ) {
+//                draftVersion = Optional.of(
+//                        module.getOrCreateModuleLocale(localeObj)
+//                        .createNextVersion());
+//                module.getOrCreateModuleLocale(localeObj)
+//                        .draft().set( draftVersion.get().uuid().get() );
+                // Need to copy the metadata from the released version, if it exists
+//                Optional<ModuleVersion> releasedVersion = module.getReleasedVersion(localeObj);
+//                if (releasedVersion.isPresent()) {
+//                    Metadata releasedMeta = releasedVersion.get().metadata().get();
+//                    Metadata draftMeta = draftVersion.get().metadata().getOrCreate();
+//
+//                    for (Map.Entry<String, Object> e : releasedMeta.getValueMap().entrySet()) {
+//                        if (!EXCLUDES.contains(e.getKey())) {
+//                            draftMeta.setProperty(e.getKey(), e.getValue());
+//                        }
+//                    }
+//                }
+//            }
+//
+             // modify only the draft content/metadata
+//            JcrContent jcrContent = draftVersion.get()
+//                    .content().getOrCreate()
+//                    .asciidoc().getOrCreate()
+//                    .jcrContent().getOrCreate();
+//            boolean generateHtml = false;
+//            String jcrData = jcrContent.jcrData().get();
 
             // Html is generated if:
             // a. the draft content has changed as part of this upload
             // b. a draft hasn't already been built before
-            if ((jcrData != null && !jcrData.equals(asciidocContent))
-                    || !draftVersion.map(ModuleVersion::content)
-                            .map(Supplier::get)
-                            .map(Content::cachedHtml)
-                            .map(Supplier::get)
-                            .isPresent()) {
-                generateHtml = true;
-            }
-            jcrContent.jcrData().set(asciidocContent);
-            jcrContent.mimeType().set("text/x-asciidoc");
+//            if ((jcrData != null && !jcrData.equals(asciidocContent))
+//                    || !draftVersion.map(ModuleVersion::content)
+//                            .map(Supplier::get)
+//                            .map(Content::cachedHtml)
+//                            .map(Supplier::get)
+//                            .isPresent()) {
+//                generateHtml = true;
+//            }
 
-            Metadata metadata = draftVersion.get()
-                    .metadata().getOrCreate();
+            draftSrc.jcrContent().getOrCreate()
+                    .jcrData().set(asciidocContent);
+            draftSrc.jcrContent().getOrCreate()
+                    .mimeType().set("text/x-asciidoc");
+
+//            Metadata metadata = draftVersion.get()
+//                    .metadata().getOrCreate();
             
-            if(metadata.title().get()==null){
-                metadata.title().set(moduleName);
-            }                    
-            metadata.description().set(description);
+//            if(metadata.title().get()==null){
+//                metadata.title().set(moduleName);
+//            }
+//            metadata.description().set(description);
             Calendar now = Calendar.getInstance();
-            metadata.dateModified().set(now);
-            metadata.dateUploaded().set(now);
+//            metadata.dateModified().set(now);
+//            metadata.dateUploaded().set(now);
 
-            AckStatus status = draftVersion.get()
-                .ackStatus().getOrCreate();
-            status.dateModified().set(now);
+//            AckStatus status = draftVersion.get()
+//                .ackStatus().getOrCreate();
+//            status.dateModified().set(now);
             resolver.commit();
 
-            if (generateHtml) {
-                Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
+            // TODO Html can no longer be generated on upload since there might be too many variants
+//            if (generateHtml) {
+//                Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
                 // drop the html on the floor, this is just to cache the results
-                asciidoctorService.getModuleHtml(draftVersion.get(), module, context, true);
-            }
+//                asciidoctorService.getModuleHtml(draftVersion.get(), module, context, true);
+//            }
 
+            // TODO This will need to be re-thought since metadata now lies on the variant
             // Generate a module type based on the file name ONLY after asciidoc generation, so that the
             // attribute-based logic takes precedence
-            if(metadata.moduleType().get() == null) {
-                metadata.moduleType().set(determineModuleType(module));
-            }
+//            if(metadata.moduleType().get() == null) {
+//                metadata.moduleType().set(determineModuleType(module));
+//            }
 
             resolver.commit();
             response.setStatus(responseCode, "");

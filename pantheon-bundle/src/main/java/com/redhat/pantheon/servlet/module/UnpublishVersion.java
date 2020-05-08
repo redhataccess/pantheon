@@ -4,7 +4,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.servlets.post.AbstractPostOperation;
@@ -17,12 +17,13 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Supplier;
 
+import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 
 /**
@@ -56,6 +57,10 @@ public class UnpublishVersion extends AbstractPostOperation {
         return paramValueAsLocale(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE);
     }
 
+    private String getVariant(SlingHttpServletRequest request) {
+        return paramValue(request, "variant", ModuleVariant.DEFAULT_VARIANT_NAME);
+    }
+
     @Override
     public void run(SlingHttpServletRequest request, PostResponse response, SlingPostProcessor[] processors) {
         super.run(request, response, processors);
@@ -63,7 +68,8 @@ public class UnpublishVersion extends AbstractPostOperation {
             // call the extension point
             Locale locale = getLocale(request);
             Module module = getModule(request);
-            ModuleVariant moduleLocale = module.getModuleLocale(locale);
+            ModuleLocale moduleLocale = module.getModuleLocale(locale);
+            // TODO We need to change the event so that the right variant is processed
             events.fireEvent(new ModuleVersionUnpublishedEvent(moduleLocale.getPath()), 15);
         }
     }
@@ -72,23 +78,25 @@ public class UnpublishVersion extends AbstractPostOperation {
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) {
         Locale locale = getLocale(request);
         Module module = getModule(request);
+        String variant = getVariant(request);
 
         // Get the released version, there should be one
-        Optional<ModuleVersion> versionToUnpublish = module.getReleasedVersion(locale);
-        if( !versionToUnpublish.isPresent() ) {
+        ModuleLocale moduleLocale = module.getModuleLocale(locale);
+
+        boolean foundVariant = moduleLocale.variants()
+                .map(variantsFolder -> variantsFolder.getVariant(variant))
+                .map(Optional::get)
+                .map(ModuleVariant::released)
+                .map(Supplier::get)
+                .isPresent();
+        if(!foundVariant) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                     "The module is not released (published)");
         } else {
-            // Released revision is emptied out
-            ModuleVariant moduleLocale = module.getModuleLocale(locale);
-            String unpublishedRevId = moduleLocale.released().get();
-            moduleLocale.released().set( null );
-
-            // if there is no draft version, set the recently unpublished one as draft
-            // it is guaranteed to be the latest one
-            if (!module.getDraftVersion(locale).isPresent()) {
-                moduleLocale.draft().set(unpublishedRevId);
-            }
+            moduleLocale.variants()
+                    .map(variantsFolder -> variantsFolder.getVariant(variant))
+                    .map(Optional::get)
+                    .ifPresent(ModuleVariant::revertReleased);
 
             changes.add(Modification.onModified(module.getPath()));
         }

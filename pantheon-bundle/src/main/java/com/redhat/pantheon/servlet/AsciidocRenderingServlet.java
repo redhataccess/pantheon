@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
+import static com.redhat.pantheon.model.module.ModuleVariant.DEFAULT_VARIANT_NAME;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
 import static java.util.stream.Collectors.toMap;
@@ -55,6 +57,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     static final String PARAM_RERENDER = "rerender";
     static final String PARAM_DRAFT = "draft";
     static final String PARAM_LOCALE = "locale";
+    static final String PARAM_VARIANT = "variant";
 
     private AsciidoctorService asciidoctorService;
 
@@ -69,6 +72,8 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             SlingHttpServletResponse response) throws ServletException, IOException {
         String locale = paramValue(request, PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
         boolean draft = paramValueAsBoolean(request, PARAM_DRAFT);
+        boolean reRender = paramValueAsBoolean(request, PARAM_RERENDER);
+        String variantName = paramValue(request, PARAM_VARIANT, DEFAULT_VARIANT_NAME);
 
         Module module = request.getResource().adaptTo(Module.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
@@ -76,15 +81,16 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         Optional<ModuleVersion> moduleVersion;
 
         if(draft) {
-            moduleVersion = module.getDraftVersion(localeObj);
+            moduleVersion = module.getDraftVersion(localeObj, variantName);
         } else {
-            moduleVersion = module.getReleasedVersion(localeObj);
+            moduleVersion = module.getReleasedVersion(localeObj, variantName);
         }
 
 
         if(!moduleVersion.isPresent()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, (draft ? "Draft " : "Released ")
-                    + "content version not found for module at " + request.getResource().getPath());
+                    + "content version not found for " + variantName +  " module variant at "
+                    + request.getResource().getPath());
         }
         else {
             // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
@@ -93,7 +99,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
 
             // only allow forced rerendering if this is a draft version. Released and historical revs are written in stone.
             String html = asciidoctorService.getModuleHtml(
-                    moduleVersion.get(), module, context, draft && paramValueAsBoolean(request, PARAM_RERENDER));
+                    module, localeObj, variantName, draft, context, reRender && draft);
 
             response.setContentType("text/html");
             Writer w = response.getWriter();

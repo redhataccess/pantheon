@@ -1,5 +1,7 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import com.redhat.pantheon.model.api.Child;
@@ -20,9 +22,15 @@ public interface ModuleVersion extends WorkspaceChild {
     @Named("jcr:uuid")
     Field<String> uuid();
 
-    Child<CachedHtml> cachedHtml();
+    @Named("cached_html")
+    Child<FileResource> cachedHtml();
 
     Child<Metadata> metadata();
 
+    @Named("ack_status")
     Child<AckStatus> ackStatus();
+
+    default ModuleVariant getParentVariant() {
+        return SlingModels.getModel(getParent(), ModuleVariant.class);
+    }
 }
