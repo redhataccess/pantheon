@@ -7,6 +7,9 @@ import com.redhat.pantheon.model.api.Reference;
 import com.redhat.pantheon.model.api.SlingModel;
 import org.apache.sling.api.resource.PersistenceException;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import static com.google.common.collect.Streams.stream;
 import static java.util.stream.Collectors.counting;
 
@@ -54,8 +57,10 @@ public interface ModuleVariant extends WorkspaceChild {
                 getResourceResolver().delete(released().get());
             }
             // promote draft to released
-            getResourceResolver().move(draft().get().getPath(), this.getPath() + "/released");
-        } catch (PersistenceException e) {
+            // (This uses the JCR API)
+            getResourceResolver().adaptTo(Session.class)
+                    .move(draft().get().getPath(), this.getPath() + "/released");
+        } catch (PersistenceException | RepositoryException e) {
             throw new RuntimeException(e);
         }
     }
