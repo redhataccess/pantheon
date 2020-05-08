@@ -2,6 +2,7 @@ package com.redhat.pantheon.util.function;
 
 import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Utilities for functional programming and handling of functional interfaces.
@@ -36,6 +37,8 @@ public class FunctionalUtils {
      * A binary operator which helps reduce a stream to its last element only.
      * Should help to run something like:
      * stream.reduce(toLastElement())
+     *
+     * @see com.google.common.collect.Streams#findLast(Stream) for an alternative
      */
     public static <T> BinaryOperator<T> toLastElement() {
         return (T o1, T o2) -> o2;
