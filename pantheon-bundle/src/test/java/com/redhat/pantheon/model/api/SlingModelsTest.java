@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.api;
 
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -290,6 +291,34 @@ class SlingModelsTest {
                 .map(Grandchild::number)
                 .map(Supplier::get)
                 .orElse(10L));
+    }
+
+    @Test
+    void test() throws Exception{
+        // Given
+        sc.build()
+                .resource("/test/mod/draft",
+                        "test", "123")
+                .commit();
+
+        // When
+        TestResource draft = SlingModels.getModel(sc.resourceResolver().getResource("/test/mod/draft"), TestResource.class);
+//        Resource released = sc.resourceResolver().copy(draft.getPath(), "/test/mod/released");
+
+        Resource newCopy = sc.resourceResolver().create(draft.getParent(), "released", draft.getValueMap());
+        draft.getChildren().forEach(resource -> {
+            try {
+                sc.resourceResolver().copy(resource.getPath(), newCopy.getPath());
+            } catch (PersistenceException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        Resource released = sc.resourceResolver().getResource("/test/mod/released");
+
+        assertEquals("/test/mod/released", released.getPath());
+        assertEquals(draft.getValueMap().get("test"), released.getValueMap().get("test"));
+        assertNotNull(sc.resourceResolver().getResource("/test/mod/draft"));
+        assertNotNull(sc.resourceResolver().getResource("/test/mod/released"));
     }
 
     interface TestResource extends SlingModel {

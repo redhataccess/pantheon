@@ -1,35 +1,36 @@
 package com.redhat.pantheon.servlet;
 
-import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.model.Acknowledgment;
 import com.redhat.pantheon.model.module.AckStatus;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.validation.validators.NotNullValidator;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.HttpConstants;
-import static org.apache.sling.query.SlingQuery.$;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.apache.sling.query.SlingQuery.$;
 
 /**
  * Simple servlet that saves the status acknowledgement sent by an endsystem to a status node
@@ -75,7 +76,10 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Locale other than en_US is not supported");
                 return;
             }
-            processAcknowledgementRequest(acknowledgment, module, moduleLocale, request.getUserPrincipal().getName());
+            // TODO The empty string below needs to contain the variant name. Either the ID needs to now point
+            //  to a specific Module version (within a variant), or the variant needs to be passed in the request
+            processAcknowledgementRequest(acknowledgment, module, moduleLocale, "",
+                    request.getUserPrincipal().getName());
 
         } catch (RepositoryException | PersistenceException e) {
             getLogger().error("The request could not be processed because of error=" + e.getMessage(), e);
@@ -113,12 +117,12 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
      * @throws PersistenceException signals that request data could not be saved
      */
     private void processAcknowledgementRequest(Acknowledgment acknowledgement, Module module,
-            List<Resource> moduleLocale, String lastModifiedBy) throws PersistenceException {
+            List<Resource> moduleLocale, String variantName, String lastModifiedBy) throws PersistenceException {
 
         for (Resource locale : moduleLocale) {
             //defensive programming: double check that only for en_US locale the status node is created
             if (locale.getName().equalsIgnoreCase("en_US")) {
-                createStatusNode(locale, module, acknowledgement, lastModifiedBy);
+                createStatusNode(locale, module, variantName, acknowledgement, lastModifiedBy);
                 break;
             }
         }
@@ -128,9 +132,10 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
         return moduleLocale.stream().anyMatch(ml -> ml.getName().equalsIgnoreCase(locale));
     }
 
-    private void createStatusNode(Resource moduleLocale, Module module, Acknowledgment acknowledgement, String lastModifiedBy) throws PersistenceException {
+    private void createStatusNode(Resource moduleLocale, Module module, String variantName,
+                                  Acknowledgment acknowledgement, String lastModifiedBy) throws PersistenceException {
         Locale locale = LocaleUtils.toLocale(moduleLocale.getName());
-        AckStatus status = createStatusNode(module, locale);
+        AckStatus status = createStatusNode(module, locale, variantName);
         status.status().set(acknowledgement.getStatus());
         status.message().set(acknowledgement.getMessage());
         status.sender().set(acknowledgement.getSender());
@@ -149,11 +154,11 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
      * @param locale
      * @return
      */
-    private AckStatus createStatusNode(Module module, Locale locale) {
-        if (module.getReleasedVersion(locale).isPresent()) {
-            return module.getReleasedVersion(locale).get().ackStatus().getOrCreate();
+    private AckStatus createStatusNode(Module module, Locale locale, String variantName) {
+        if (module.getReleasedVersion(locale, variantName).isPresent()) {
+            return module.getReleasedVersion(locale, variantName).get().ackStatus().getOrCreate();
         }
-        return module.getDraftVersion(locale).get().ackStatus().getOrCreate();
+        return module.getDraftVersion(locale, variantName).get().ackStatus().getOrCreate();
     }
 
     /**

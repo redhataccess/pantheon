@@ -1,6 +1,6 @@
 package com.redhat.pantheon.servlet.module;
 
-import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.http.entity.ContentType;
@@ -20,6 +20,7 @@ import java.io.Writer;
 import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
+import static com.redhat.pantheon.model.module.ModuleVariant.DEFAULT_VARIANT_NAME;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
@@ -45,8 +46,8 @@ public class AsciidocContentRenderingServlet extends SlingSafeMethodsServlet {
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
         String locale = paramValue(request, "locale", DEFAULT_MODULE_LOCALE.toString());
-        // TODO right now, only allow draft and released content
         boolean draft = paramValueAsBoolean(request, "draft");
+        String variant = paramValue(request, "variant", DEFAULT_VARIANT_NAME);
 
         Resource resource = request.getResource();
         Module module = resource.adaptTo(Module.class);
@@ -54,16 +55,16 @@ public class AsciidocContentRenderingServlet extends SlingSafeMethodsServlet {
         response.setContentType("html");
         Writer w = response.getWriter();
 
-        Optional<Content> content;
+        Optional<FileResource> content;
         if (draft) {
-            content = module.getDraftContent(LocaleUtils.toLocale(locale));
+            content = module.getDraftContent(LocaleUtils.toLocale(locale), variant);
         } else {
-            content = module.getReleasedContent(LocaleUtils.toLocale(locale));
+            content = module.getReleasedContent(LocaleUtils.toLocale(locale), variant);
         }
 
         if(content.isPresent()) {
             response.setContentType(ContentType.TEXT_PLAIN.toString());
-            w.write(content.get().asciidocContent().get());
+            w.write(content.get().jcrContent().get().jcrData().get());
         } else {
             response.sendError(SC_NOT_FOUND, "Requested content not found for locale " + locale.toString()
                     + " and in state " + (draft ? "'draft'" : "released"));

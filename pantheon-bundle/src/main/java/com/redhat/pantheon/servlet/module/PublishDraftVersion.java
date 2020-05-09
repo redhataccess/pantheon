@@ -70,11 +70,8 @@ public class PublishDraftVersion extends AbstractPostOperation {
             String variant = getVariant(request);
             ModuleLocale moduleLocale = module.getModuleLocale(locale);
 
-
-            //FIXME - this is a hack that needs to be removed when we have the attribute placeholder logic implemented
-            Optional<ModuleVersion> versionToRelease = module.getReleasedVersion(locale, variant);
-            asciidoctorService.getModuleHtml(versionToRelease.get(), module, new HashMap(), true);
-
+            // Regenerate the module once more
+            asciidoctorService.getModuleHtml(module, locale, variant, false, new HashMap(), true);
             events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.getPath()), 15);
         }
     }
