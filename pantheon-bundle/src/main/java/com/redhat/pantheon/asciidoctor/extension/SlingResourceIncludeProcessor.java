@@ -6,7 +6,6 @@ import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.SourceContent;
-import com.redhat.pantheon.util.function.FunctionalUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.asciidoctor.ast.Document;
@@ -18,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static com.redhat.pantheon.util.function.FunctionalUtils.unwrapChild;
 import static java.util.Optional.ofNullable;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
@@ -69,9 +67,12 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
                 // TODO, right now only default locale and latest (draft) version of the module are used
                 content = ofNullable(module.getModuleLocale(GlobalConfig.DEFAULT_MODULE_LOCALE))
-                        .map(unwrapChild(ModuleLocale::source))
-                        .map(unwrapChild(SourceContent::draft))
-                        .map(unwrapChild(FileResource::jcrContent))
+                        .map(ModuleLocale::source)
+                        .map(Supplier::get)
+                        .map(SourceContent::draft)
+                        .map(Supplier::get)
+                        .map(FileResource::jcrContent)
+                        .map(Supplier::get)
                         .map(FileResource.JcrContent::jcrData)
                         .map(Supplier::get)
                         .get();
