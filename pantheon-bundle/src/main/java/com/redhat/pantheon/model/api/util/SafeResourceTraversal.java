@@ -36,11 +36,11 @@ public class SafeResourceTraversal<T extends SlingModel> implements Supplier<T> 
     /**
      * Starts a safe traversal.
      * @param model The {@link SlingModel} to traverse.
-     * @param <U>
+     * @param <M> The Sling Model type to start the traversal
      * @return A traversal object starting from the given {@link SlingModel}. If the model
      * is null, traversals will still conclude but will always yield null results.
      */
-    public static final <U extends SlingModel> SafeResourceTraversal<U> start(@Nullable U model) {
+    public static final <M extends SlingModel> SafeResourceTraversal<M> start(@Nullable M model) {
         return new SafeResourceTraversal<>(model);
     }
 
@@ -62,13 +62,13 @@ public class SafeResourceTraversal<T extends SlingModel> implements Supplier<T> 
      * Traverses to a field in the current traversed node. This represents and end
      * to the traversal as there is nothing to traverse from a field.
      * @param fieldAccessor A function that returns a {@link Field} from the current resource.
-     * @param <P>
+     * @param <F> The type of the field to access
      * @return An optional containing the value of the field. If the field is not present, or if
      * any of the intermediary nodes in the traversal was not present, this optional is empty.
      */
-    public <P> Optional<P> field(Function<? super T, Field<P>> fieldAccessor) {
+    public <F> Optional<F> field(Function<? super T, Field<F>> fieldAccessor) {
         if(currentResource.isPresent()) {
-            Field<P> field = fieldAccessor.apply(currentResource.get());
+            Field<F> field = fieldAccessor.apply(currentResource.get());
             return ofNullable(field.get());
         }
         return Optional.empty();
