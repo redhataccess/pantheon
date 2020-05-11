@@ -3,10 +3,12 @@ package com.redhat.pantheon.servlet.module;
 import com.google.common.base.Charsets;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.Reference;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
 import com.redhat.pantheon.servlet.ServletUtils;
@@ -31,8 +33,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.redhat.pantheon.conf.GlobalConfig.CONTENT_TYPE;
-import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
+import static com.redhat.pantheon.conf.GlobalConfig.*;
+import static com.redhat.pantheon.model.module.ModuleVariant.DEFAULT_VARIANT_NAME;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -44,7 +46,7 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
  * 2. module_id - indicates the uuid string which uniquely identifies a module
  *
  * The url to GET a request from the server is /api/module
- * Example: <server_url>/api/module?locale=en-us&module_id=xyz
+ * Example: <server_url>/api/module?locale=en-us&module_id=xyz&variant=abc
  * The said url is accessible outside of the system without any authentication.
  *
  * @author Ankit Gadgil
@@ -55,6 +57,7 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
                 Constants.SERVICE_DESCRIPTION + "=Servlet to facilitate GET operation which accepts locale and module uuid to output module data",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
+// /api/module.json?module_id=${moduleUuid}&locale=${localeId}&variant=${variantName}";
 @SlingServletPaths(value = "/api/module")
 public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     public static final String PRODUCT_VERSION = "product_version";
@@ -81,8 +84,9 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     @Override
     protected boolean isValidResource(@Nonnull SlingHttpServletRequest request, @Nonnull Resource resource) {
         Locale locale = paramValueAsLocale(request, "locale", DEFAULT_MODULE_LOCALE);
+        String variantName = paramValue(request, "variant", DEFAULT_VARIANT_NAME);
         Module module = resource.adaptTo(Module.class);
-        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(locale);
+        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(locale, variantName);
         return releasedRevision.isPresent();
     }
 
@@ -92,9 +96,10 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         Module module = resource.adaptTo(Module.class);
 
         Locale locale = paramValueAsLocale(request, "locale", DEFAULT_MODULE_LOCALE);
-        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(locale);
-        Optional<Content> releasedContent = module.getReleasedContent(locale);
-        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(locale);
+        String variantName = paramValue(request, "variant", DEFAULT_VARIANT_NAME);
+        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(locale, variantName);
+        Optional<FileResource> releasedContent = module.getReleasedContent(locale, variantName);
+        Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(locale, variantName);
 
         Map<String, Object> moduleMap = super.resourceToMap(request, resource);
         Map<String, Object> moduleDetails = new HashMap<>();
@@ -113,7 +118,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleMap.put("status", "published");
 
         // Assume the path is something like: /content/<something>/my/resource/path
-        moduleMap.put("module_url_fragment", resourcePath.substring("/content/repositories/".length(), resourcePath.length()));
+        moduleMap.put("module_url_fragment", resourcePath.substring("/content/repositories/".length()));
 
         // Striping out the jcr: from key name
         String module_uuid = (String) moduleMap.remove("jcr:uuid");
@@ -125,16 +130,12 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
                         .andThen(Html.getBody())
-                        .apply(releasedContent.get().cachedHtml().get().data().get()));
+                        .apply(releasedContent.get().jcrContent().get().jcrData().get()));
 
         // Fields that are part of the spec and yet to be implemented
+        // TODO Should either of these be the variant name?
         moduleMap.put("context_url_fragment", "");
         moduleMap.put("context_id", "");
-
-
-        moduleMap.put(VANITY_URL_FRAGMENT, "");
-        moduleMap.put(SEARCH_KEYWORDS, new String[] {});
-        moduleMap.put(VIEW_URI, "");
 
         // Process productVersion from metadata
         // Making these arrays - in the future, we will have multi-product, so get the API right the first time
@@ -154,16 +155,25 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         if (!urlFragment.isEmpty()) {
             moduleMap.put(VANITY_URL_FRAGMENT, urlFragment);
         }
+        else {
+            moduleMap.put(VANITY_URL_FRAGMENT, "");
+        }
 
         String searchKeywords = releasedMetadata.get().searchKeywords().get();
         if (searchKeywords != null && !searchKeywords.isEmpty()) {
             moduleMap.put(SEARCH_KEYWORDS, searchKeywords.split(", *"));
+        }
+        else {
+            moduleMap.put(SEARCH_KEYWORDS, new String[] {});
         }
 
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
             String view_uri = System.getenv(PORTAL_URL) + "/topics/" + ServletUtils.toLanguageTag(locale) + "/" + module_uuid;
             moduleMap.put(VIEW_URI, view_uri);
+        }
+        else {
+            moduleMap.put(VIEW_URI, "");
         }
 
         // remove unnecessary fields from the map
