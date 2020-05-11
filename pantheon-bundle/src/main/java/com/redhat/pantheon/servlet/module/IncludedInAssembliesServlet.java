@@ -78,7 +78,12 @@ public class IncludedInAssembliesServlet extends SlingSafeMethodsServlet {
             resultStream.map(r -> r.adaptTo(Module.class))
                     .forEach(module -> {
                             Map<String, String> m = new HashMap<>();
-                            m.put("title", module.getModuleLocale(locale).getVersion("1").metadata().get().title().get());
+                            m.put("title", module.getModuleLocale(locale)
+                                    .variants().get()
+                                    .defaultVariant().get()
+                                    .released().get()
+                                    .metadata().get()
+                                    .title().get());
                             m.put("url", "https://www.redhat.com/assemblyplaceholder");
                             m.put("uuid", module.uuid().get());
                         assemblies.add(m);
