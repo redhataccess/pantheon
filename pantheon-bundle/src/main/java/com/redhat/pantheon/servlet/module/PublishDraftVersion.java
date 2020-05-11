@@ -5,7 +5,6 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -20,7 +19,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -68,11 +66,14 @@ public class PublishDraftVersion extends AbstractPostOperation {
             Locale locale = getLocale(request);
             Module module = getModule(request);
             String variant = getVariant(request);
-            ModuleLocale moduleLocale = module.getModuleLocale(locale);
+            ModuleVersion moduleVersion = module.getModuleLocale(locale)
+                    .variants().get()
+                    .getVariant(variant).get()
+                    .released().get();
 
             // Regenerate the module once more
             asciidoctorService.getModuleHtml(module, locale, variant, false, new HashMap(), true);
-            events.fireEvent(new ModuleVersionPublishedEvent(moduleLocale.getPath()), 15);
+            events.fireEvent(new ModuleVersionPublishedEvent(moduleVersion), 15);
         }
     }
 
@@ -99,8 +100,8 @@ public class PublishDraftVersion extends AbstractPostOperation {
                     "The version to be released doesn't have urlFragment metadata");
         } else {
             // Draft becomes the new released version
-            ModuleLocale moduleLocale = module.getModuleLocale(locale);
-            moduleLocale.variants()
+            module.getModuleLocale(locale)
+                    .variants()
                     .map(variantsFolder -> variantsFolder.getVariant(variant))
                     .map(Optional::get)
                     .ifPresent(ModuleVariant::releaseDraft);

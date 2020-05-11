@@ -4,8 +4,8 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
@@ -68,9 +67,14 @@ public class UnpublishVersion extends AbstractPostOperation {
             // call the extension point
             Locale locale = getLocale(request);
             Module module = getModule(request);
-            ModuleLocale moduleLocale = module.getModuleLocale(locale);
+            String variant = getVariant(request);
+            ModuleVersion moduleVersion = module.getModuleLocale(locale)
+                    .variants().get()
+                    .getVariant(variant).get()
+                    .released().get();
+
             // TODO We need to change the event so that the right variant is processed
-            events.fireEvent(new ModuleVersionUnpublishedEvent(moduleLocale.getPath()), 15);
+            events.fireEvent(new ModuleVersionUnpublishedEvent(moduleVersion), 15);
         }
     }
 
@@ -81,22 +85,19 @@ public class UnpublishVersion extends AbstractPostOperation {
         String variant = getVariant(request);
 
         // Get the released version, there should be one
-        ModuleLocale moduleLocale = module.getModuleLocale(locale);
+        Optional<ModuleVersion> foundVariant = module.findVersion()
+                .withLocale(locale)
+                .withVariant(variant)
+                .released()
+                .get();
 
-        boolean foundVariant = moduleLocale.variants()
-                .map(variantsFolder -> variantsFolder.getVariant(variant))
-                .map(Optional::get)
-                .map(ModuleVariant::released)
-                .map(Supplier::get)
-                .isPresent();
-        if(!foundVariant) {
+        if(!foundVariant.isPresent()) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                     "The module is not released (published)");
         } else {
-            moduleLocale.variants()
-                    .map(variantsFolder -> variantsFolder.getVariant(variant))
-                    .map(Optional::get)
-                    .ifPresent(ModuleVariant::revertReleased);
+            foundVariant.get()
+                    .getParent()
+                    .revertReleased();
 
             changes.add(Modification.onModified(module.getPath()));
         }
