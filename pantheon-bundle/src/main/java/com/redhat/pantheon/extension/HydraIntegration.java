@@ -241,9 +241,9 @@ public class HydraIntegration implements EventProcessingExtension {
     private String buildModuleVersionUri(ModuleVersion moduleVersion) {
         StringSubstitutor strSubs = new StringSubstitutor();
         HashMap values = Maps.newHashMap();
-        values.put("moduleUuid", moduleVersion.getParentVariant().getParentLocale().getParentModule().uuid().get());
-        values.put("localeId", moduleVersion.getParentVariant().getParentLocale().getName());
-        values.put("variantName", moduleVersion.getParentVariant().getName());
+        values.put("moduleUuid", moduleVersion.getParent().getParent().getParent().getParent().uuid().get());
+        values.put("localeId", moduleVersion.getParent().getParent().getParent().getName());
+        values.put("variantName", moduleVersion.getParent().getName());
 
         String replacedUri = strSubs.replace(PANTHEON_MODULE_VERSION_API_PATH);
         return this.getPantheonHost() + replacedUri;
@@ -254,7 +254,7 @@ public class HydraIntegration implements EventProcessingExtension {
         final String uriTemplate = System.getenv(PORTAL_URL) + "/topics/${localeId}/${moduleUuid}${variantSuffix}";
         StringSubstitutor strSubs = new StringSubstitutor();
 
-        String variantSuffix = "/" + moduleVersion.getParentVariant().getName();
+        String variantSuffix = "/" + moduleVersion.getParent().getName();
         if(DEFAULT_VARIANT_NAME.equals(variantSuffix)) {
             variantSuffix = "";
         }
@@ -263,9 +263,9 @@ public class HydraIntegration implements EventProcessingExtension {
         // TODO Clean this up, lots of locale transformations to make sure this aligns
         values.put("localeId", toLanguageTag(
                 ULocale.createCanonical(
-                        moduleVersion.getParentVariant().getParentLocale().getName())
+                        moduleVersion.getParent().getParent().getParent().getName())
                         .toLocale()));
-        values.put("moduleUuid", moduleVersion.getParentVariant().getParentLocale().getParentModule().uuid().get());
+        values.put("moduleUuid", moduleVersion.getParent().getParent().getParent().getParent().uuid().get());
         values.put("variantSuffix", variantSuffix);
 
         return strSubs.replace(uriTemplate);

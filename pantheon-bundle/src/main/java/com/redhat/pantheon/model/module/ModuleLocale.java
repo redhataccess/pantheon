@@ -1,7 +1,6 @@
 package com.redhat.pantheon.model.module;
 
 import com.redhat.pantheon.model.api.Child;
-import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 
@@ -17,7 +16,6 @@ public interface ModuleLocale extends WorkspaceChild {
 
     Child<Variants> variants();
 
-    default Module getParentModule() {
-        return SlingModels.getModel(this.getParent(), Module.class);
-    }
+    @Override
+    Module getParent();
 }

@@ -69,6 +69,15 @@ public class ChildImpl<T extends SlingModel> implements Child<T> {
     }
 
     /**
+     * Indicates if the child exists.
+     * @return True, if the child exists. False otherwise.
+     */
+    @Override
+    public boolean isPresent() {
+        return get() != null;
+    }
+
+    /**
      * Provides a null-safe way to operate on the value of the child, and return an
      * {@link Optional} with the result of the operation. This allowes the caller to
      * continue to operapate in a null-safe fashion.

@@ -27,6 +27,9 @@ public interface ModuleVariant extends WorkspaceChild {
 
     Child<ModuleVersion> released();
 
+    @Override
+    Variants getParent();
+
     // Since we are not storing historical versions anymore, the only needed ones are draft and released
     /*default ModuleVersion getVersion(String name) {
         return getChild(name, ModuleVersion.class);

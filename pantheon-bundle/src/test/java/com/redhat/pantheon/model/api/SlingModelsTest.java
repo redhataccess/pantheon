@@ -294,31 +294,44 @@ class SlingModelsTest {
     }
 
     @Test
-    void test() throws Exception{
+    void overrideParentTest() {
         // Given
         sc.build()
-                .resource("/test/mod/draft",
-                        "test", "123")
+                .resource("/test/child")
                 .commit();
 
         // When
-        TestResource draft = SlingModels.getModel(sc.resourceResolver().getResource("/test/mod/draft"), TestResource.class);
-//        Resource released = sc.resourceResolver().copy(draft.getPath(), "/test/mod/released");
+        ChildResource child = SlingModels.getModel(sc.resourceResolver().getResource("/test/child"), ChildResource.class);
 
-        Resource newCopy = sc.resourceResolver().create(draft.getParent(), "released", draft.getValueMap());
-        draft.getChildren().forEach(resource -> {
-            try {
-                sc.resourceResolver().copy(resource.getPath(), newCopy.getPath());
-            } catch (PersistenceException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        Resource released = sc.resourceResolver().getResource("/test/mod/released");
+        // Then
+        assertNotNull(child.getParent());
+        assertEquals("test", child.getParent().getName());
+    }
 
-        assertEquals("/test/mod/released", released.getPath());
-        assertEquals(draft.getValueMap().get("test"), released.getValueMap().get("test"));
-        assertNotNull(sc.resourceResolver().getResource("/test/mod/draft"));
-        assertNotNull(sc.resourceResolver().getResource("/test/mod/released"));
+    /*
+     * Ensure the original Resource#getParent method still works.
+     */
+    @Test
+    void baseParentAccessorStillWorks() {
+        // Given
+        sc.build()
+                .resource("/test")
+                .commit();
+
+        // When
+        TestResource model = SlingModels.getModel(sc.resourceResolver().getResource("/test"), TestResource.class);
+
+        // Then
+        assertNotNull(model.getParent());
+    }
+
+    @Test
+    void rootParentReturnsNull() {
+        // When
+        ChildResource model = SlingModels.getModel(sc.resourceResolver().getResource("/"), ChildResource.class);
+
+        // Then
+        assertNull(model.getParent());
     }
 
     interface TestResource extends SlingModel {
@@ -346,6 +359,9 @@ class SlingModelsTest {
     interface ChildResource extends SlingModel {
 
         Child<Grandchild> grandchild();
+
+        @Override
+        TestResource getParent();
     }
 
     interface Grandchild extends SlingModel {

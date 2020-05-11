@@ -9,6 +9,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 
+import static com.redhat.pantheon.model.api.SlingModels.getModel;
+
 /**
  * A specialized {@link ResourceDecorator} extension which also acts as an {@link InvocationHandler}
  * to provide additional methods in {@link SlingModel} interfaces. It provides all the existing
@@ -67,6 +69,10 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
             Class referenceType = extractParameterizedReturnType(method);
             return new ReferenceFieldImpl(referenceName, referenceType, this);
         }
+        // methods overriding the 'getParent' method with specific types
+        else if( overridesParentAccessor(method) ) {
+            return getModel(getParent(), (Class<? extends SlingModel>) method.getReturnType());
+        }
         // by default pass to the calling object
         // If the method isn't defined, there will be an exception
         return method.invoke(this, args);
@@ -86,6 +92,12 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
 
     private static boolean isReferenceAccessor(Method method) {
         return method.getReturnType().equals(Reference.class) && method.getParameters().length == 0;
+    }
+
+    private static boolean overridesParentAccessor(Method method) {
+        return SlingModel.class.isAssignableFrom(method.getReturnType())
+                && "getParent".equals(method.getName())
+                && method.getParameters().length == 0;
     }
 
     private static String extractFieldName(Method method) {
