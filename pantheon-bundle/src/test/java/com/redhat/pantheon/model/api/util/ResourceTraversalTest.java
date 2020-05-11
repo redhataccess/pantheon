@@ -9,7 +9,7 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static com.redhat.pantheon.model.api.util.SafeResourceTraversal.start;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.start;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @author Carlos Munoz
  */
 @ExtendWith({SlingContextExtension.class})
-class SafeResourceTraversalTest {
+class ResourceTraversalTest {
 
     SlingContext sc = new SlingContext();
 

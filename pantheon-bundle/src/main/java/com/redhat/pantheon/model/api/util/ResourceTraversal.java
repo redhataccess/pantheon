@@ -17,19 +17,19 @@ import static java.util.Optional.ofNullable;
  * child nodes, or properties. If any of the intermediary nodes is not present, the whole traversal
  * will still conclude, with a final result of null.<br/>
  * <br/>
- * To use it, invoke the {@link SafeResourceTraversal#start(SlingModel)} method with a
+ * To use it, invoke the {@link ResourceTraversal#start(SlingModel)} method with a
  * model to be traversed. From there on, the whole structure may be traversed all the
- * way down to specific fields.
+ * way down to specific fields using the provided methods.
  *
  * @author Carlos Munoz
  */
-public class SafeResourceTraversal<T extends SlingModel> implements Supplier<T> {
+public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
 
-    private static final SafeResourceTraversal<?> EMPTY = new SafeResourceTraversal<>(null);
+    private static final ResourceTraversal<?> EMPTY = new ResourceTraversal<>(null);
 
     private final Optional<T> currentResource;
 
-    private SafeResourceTraversal(T resource) {
+    private ResourceTraversal(T resource) {
         this.currentResource = ofNullable(resource);
     }
 
@@ -40,8 +40,8 @@ public class SafeResourceTraversal<T extends SlingModel> implements Supplier<T> 
      * @return A traversal object starting from the given {@link SlingModel}. If the model
      * is null, traversals will still conclude but will always yield null results.
      */
-    public static final <M extends SlingModel> SafeResourceTraversal<M> start(@Nullable M model) {
-        return new SafeResourceTraversal<>(model);
+    public static final <M extends SlingModel> ResourceTraversal<M> start(@Nullable M model) {
+        return new ResourceTraversal<>(model);
     }
 
     /**
@@ -50,12 +50,12 @@ public class SafeResourceTraversal<T extends SlingModel> implements Supplier<T> 
      * @param <U>
      * @return A resource traversal at the child accessed via the child accessor.
      */
-    public <U extends SlingModel> SafeResourceTraversal<U> traverse(Function<? super T, Child<U>> childAccessor) {
+    public <U extends SlingModel> ResourceTraversal<U> traverse(Function<? super T, Child<U>> childAccessor) {
         if(currentResource.isPresent()) {
             Child<U> nextTraversalChild = childAccessor.apply(currentResource.get());
-            return new SafeResourceTraversal<>(nextTraversalChild.get());
+            return new ResourceTraversal<>(nextTraversalChild.get());
         }
-        return (SafeResourceTraversal<U>) EMPTY;
+        return (ResourceTraversal<U>) EMPTY;
     }
 
     /**
@@ -72,6 +72,21 @@ public class SafeResourceTraversal<T extends SlingModel> implements Supplier<T> 
             return ofNullable(field.get());
         }
         return Optional.empty();
+    }
+
+    /**
+     * Maps the currently traversed resource to a different type. Keep in mind this method
+     * does not necessarily offer a null-safe way to traverse. It does offer a custom way to
+     * traverse the resources which may, for example, skip levels.
+     * @param mapper A function to map the currently traversed resource into another one.
+     * @param <U>
+     * @return The next step in the traversal as indicated by the provided mapper function.
+     */
+    public <U extends SlingModel> ResourceTraversal<U> map(Function<? super T, U> mapper) {
+        if(currentResource.isPresent()) {
+            return new ResourceTraversal<>(mapper.apply(currentResource.get()));
+        }
+        return (ResourceTraversal<U>) EMPTY;
     }
 
     /**
