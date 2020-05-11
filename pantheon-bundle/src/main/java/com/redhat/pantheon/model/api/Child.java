@@ -40,6 +40,9 @@ public interface Child<T extends SlingModel> extends Supplier<T> {
      * @return An optional indicating the result of the operation. If the operation
      * returns null, or if the value of this child was not present in the first place,
      * this returns an empty Optional
+     * @deprecated Use {@link com.redhat.pantheon.model.api.util.SafeResourceTraversal#start(SlingModel)}
+     * for safe resource traversals
      */
+    @Deprecated
     <R> Optional<R> map(Function<? super T, ? extends R> func);
 }
