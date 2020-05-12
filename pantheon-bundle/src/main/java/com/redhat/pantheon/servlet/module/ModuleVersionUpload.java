@@ -17,6 +17,7 @@ import com.redhat.pantheon.model.workspace.Workspace;
 import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.jackrabbit.oak.commons.PathUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -127,21 +128,14 @@ public class ModuleVersionUpload extends AbstractPostOperation {
              */
             Workspace workspace = SlingModels.getModel(resolver, "/content/repositories/" + ws, Workspace.class);
             Folder moduleParent = workspace.entities().getOrCreate()
-                    .createSubPath(path);
-            Resource moduleResource =
-                    request.getResourceResolver().move(path, moduleParent.getPath());
+                    .createSubPath(PathUtils.getParentPath(path));
 
-            Module module;
+            Module module = SlingModels.getModel(resolver, PathUtils.concat(moduleParent.getPath(), moduleName), Module.class);
 
-            if(moduleResource == null) {
+            if(module == null) {
                 module =
-                        SlingModels.createModel(
-                                resolver,
-                                path,
-                                Module.class);
+                    SlingModels.createModel(moduleParent, PathUtils.getName(path), Module.class);
                 responseCode = HttpServletResponse.SC_CREATED;
-            } else {
-                module = moduleResource.adaptTo(Module.class);
             }
 
             Locale localeObj = LocaleUtils.toLocale(locale);
