@@ -216,7 +216,7 @@ public class AsciidoctorService {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
 
             String workspacePath = moduleVersion.getWorkspace().getPath();
-            String variantName = moduleVersion.getParentVariant().getName();
+            String variantName = moduleVersion.getParent().getName();
             Optional<String> attributesFilePath = base.getWorkspace().moduleVariantDefinitions()
                     .map(v -> v.getVariant(variantName))
                     .map(Optional::get)
