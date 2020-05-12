@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model;
 
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.resource.Resource;
@@ -34,11 +35,14 @@ class ModuleTest {
 
         // When
         module.createModuleLocale(new Locale("es", "ES"))
-                .createNextVersion();
+                .source()
+                .getOrCreate()
+                .draft()
+                .getOrCreate();
         module.getResourceResolver().commit();
 
         // Then
-        assertNotNull(slingContext.resourceResolver().getResource("/content/module1/es_ES/1"));
+        assertNotNull(slingContext.resourceResolver().getResource("/content/module1/es_ES/source/draft"));
     }
 
     @Test
@@ -46,17 +50,17 @@ class ModuleTest {
         // Given
         slingContext.build()
                 // module 1, en_US
-                .resource("/content/module1/en_US/1")
-                .resource("/content/module1/en_US/2")
+                .resource("/content/module1/en_US/source/released")
+                .resource("/content/module1/en_US/source/draft")
                 // module 1, es_ES
-                .resource("/content/module1/es_ES/1")
-                .resource("/content/module1/es_ES/2")
+                .resource("/content/module1/es_ES/source/released")
+                .resource("/content/module1/es_ES/source/draft")
                 // module 2, en_US
-                .resource("/content/module2/en_US/1")
-                .resource("/content/module2/en_US/2")
+                .resource("/content/module2/en_US/source/released")
+                .resource("/content/module2/en_US/source/draft")
                 // module 2, es_ES
-                .resource("/content/module2/es_ES/1")
-                .resource("/content/module2/es_ES/2")
+                .resource("/content/module2/es_ES/source/released")
+                .resource("/content/module2/es_ES/source/draft")
                 .commit();
         slingContext.registerAdapter(Resource.class, Node.class, mock(Node.class));
 
@@ -68,26 +72,26 @@ class ModuleTest {
 
         // Then
         assertNotNull(
-                module1.getModuleLocale(new Locale("en", "US")).getVersion("1"));
+                module1.getModuleLocale(new Locale("en", "US")).source().getOrCreate().getChild("released", FileResource.class));
         assertNotNull(
-                module1.getModuleLocale(new Locale("en", "US")).getVersion("2"));
+                module1.getModuleLocale(new Locale("en", "US")).source().getOrCreate().getChild("draft", FileResource.class));
         assertNotNull(
-                module1.getModuleLocale(new Locale("es", "ES")).getVersion("1"));
+                module1.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().getChild("released", FileResource.class));
         assertNotNull(
-                module1.getModuleLocale(new Locale("es", "ES")).getVersion("2"));
+                module1.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().getChild("draft", FileResource.class));
         assertNotNull(
-                module2.getModuleLocale(new Locale("en", "US")).getVersion("1"));
+                module2.getModuleLocale(new Locale("en", "US")).source().getOrCreate().getChild("released", FileResource.class));
         assertNotNull(
-                module2.getModuleLocale(new Locale("en", "US")).getVersion("2"));
+                module2.getModuleLocale(new Locale("en", "US")).source().getOrCreate().getChild("draft", FileResource.class));
         assertNotNull(
-                module2.getModuleLocale(new Locale("es", "ES")).getVersion("1"));
+                module2.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().getChild("released", FileResource.class));
         assertNotNull(
-                module2.getModuleLocale(new Locale("es", "ES")).getVersion("2"));
+                module2.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().getChild("draft", FileResource.class));
 
         assertNull(
                 module1.getModuleLocale(Locale.SIMPLIFIED_CHINESE));
         assertNull(
-                module1.getModuleLocale(new Locale("es", "ES")).getVersion("abc"));
+                module1.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().getChild("abc", FileResource.class));
     }
 
 }
