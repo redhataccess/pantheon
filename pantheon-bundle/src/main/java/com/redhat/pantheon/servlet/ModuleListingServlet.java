@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -178,8 +179,16 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
     @Override
     protected Map<String, Object> resourceToMap(Resource resource) {
         Module module = resource.adaptTo(Module.class);
-        Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE);
-        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE);
+
+        String variantName = module.getModuleLocale(DEFAULT_MODULE_LOCALE)
+            .variants()
+            .get()
+            .getVariants()
+            .findFirst()
+            .get()
+            .getName();
+        Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE, variantName);
+        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);
 
         // TODO Need some DTOs to convert to maps
         Map<String, Object> m = super.resourceToMap(resource);
