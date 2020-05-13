@@ -8,6 +8,11 @@ import re
 import sys
 from pathlib import PurePath
 
+from multiprocessing.dummy import Pool
+from subprocess import PIPE,Popen
+from time import sleep, time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 import requests
 import yaml
 from requests import Response
@@ -188,7 +193,7 @@ def remove_trailing_slash(path):
     return path
 
 
-def process_file(path, filetype):
+def process_file(paths, filetype):
     """
     Processes the matched files and upload to pantheon through sling api call
 
@@ -204,79 +209,76 @@ def process_file(path, filetype):
     content_root = 'sandbox' if args.sandbox else 'repositories'
     url = server + '/content/' + content_root + '/' + repository
 
-    path = PurePath(path)
-    base_name = path.stem
+#    path = PurePath(path)
+ #   base_name = path.stem
 
-    ppath = path
-    hiddenFolder = False
-    while not ppath == PurePath(args.directory):
-        logger.debug('ppath: %s', str(ppath.stem))
-        if ppath.stem[0] == '.':
-            hiddenFolder = True
-            break
-        ppath = ppath.parent
-    if hiddenFolder:
-        logger.debug('Skipping %s because it is hidden.', str(path))
-        logger.debug('')
-        return
+  #  ppath = path
+  #   hiddenFolder = False
+  #   while not ppath == PurePath(args.directory):
+  #       logger.debug('ppath: %s', str(ppath.stem))
+  #       if ppath.stem[0] == '.':
+  #           hiddenFolder = True
+  #           break
+  #       ppath = ppath.parent
+  #   if hiddenFolder:
+  #       logger.debug('Skipping %s because it is hidden.', str(path))
+  #       logger.debug('')
+  #       return
 
     # parent directory
-    parent_dir_str = str(path.parent.relative_to(args.directory))
-    if parent_dir_str == '.':
-        parent_dir_str = ''
-    logger.debug('parent_dir_str: %s', parent_dir_str)
+    # parent_dir_str = str(path.parent.relative_to(args.directory))
+    # if parent_dir_str == '.':
+    #     parent_dir_str = ''
+    # logger.debug('parent_dir_str: %s', parent_dir_str)
     # file becomes a/file/name (no extension)
+    #
+    # if parent_dir_str:
+    #     url += '/' + parent_dir_str
 
-    if parent_dir_str:
-        url += '/' + parent_dir_str
-
-    logger.debug('base name: %s', base_name)
+    # logger.debug('base name: %s', base_name)
 
     # Asciidoc content (treat as a module)
     if isModule:
-        url += '/' + path.name
+        url += '/' + str(paths)[16:91]
         logger.debug('url: %s', url)
         jcr_primary_type = 'pant:module'
-        data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type='nt:file')
+        data = _generate_data(jcr_primary_type, str(paths)[16:91], str(paths)[16:91], asccidoc_type='nt:file')
         # This is needed to add a new module version, otherwise it won't be handled
         data[':operation'] = 'pant:newModuleVersion'
-        files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
-
-        # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
-        # It is text/x-asciidoc. Here's why:
-        # https://tools.ietf.org/html/rfc2045#section-6.3
-        # Paraphrased: "If it's not an IANA standard, use the 'x-' prefix."
-        # Here's the list of standards; text/asciidoc isn't in it.
-        # https://www.iana.org/assignments/media-types/media-types.xhtml#text
-
+        if attributeFile:
+            data['pant:attributeFile'] = attributeFile
+        files = []
+        for f in paths:
+            files.append(('asciidoc', (str(f), open(str(f), 'rb'), 'text/x-asciidoc')))
         if not args.dry:
             r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
-            _print_response('module', path, r.status_code, r.reason)
+            _print_response('module', paths, r.status_code, r.reason)
     elif isResource:
-        if os.path.islink(path):
-            target = str(os.readlink(path))
-            url += '/' + path.name
-            logger.debug('url: %s', url)
-            if target[0] == '/':
-                _error('Absolute symlink paths are unsupported: ' + str(path) + ' -> ' + target)
-            elif not args.dry:
-                symlinkData = {}
-                symlinkData['jcr:primaryType'] = 'pant:symlink'
-                symlinkData['pant:target'] = target
-                r = requests.post(url, headers=HEADERS, data=symlinkData, auth=(args.user, pw))
-                _print_response('symlink', path, r.status_code, r.reason)
+        for path in paths:
+            if os.path.islink(path):
+                target = str(os.readlink(path))
+                url += '/' + path
+                logger.debug('url: %s', url)
+                if target[0] == '/':
+                    _error('Absolute symlink paths are unsupported: ' + str(path) + ' -> ' + target)
+                elif not args.dry:
+                    symlinkData = {}
+                    symlinkData['jcr:primaryType'] = 'pant:symlink'
+                    symlinkData['pant:target'] = target
+                    r = requests.post(url, headers=HEADERS, data=symlinkData, auth=(args.user, pw))
+                    _print_response('symlink', path, r.status_code, r.reason)
 
-        else:
-            # determine the file content type, for some common ones
-            file_type = None
-            if path.suffix in ['.adoc', '.asciidoc']:
-                file_type = 'text/x-asciidoc'
-            # Upload as a regular file(nt:file)
-            logger.debug('url: %s', url)
-            files = {path.name: (path.name, open(path, 'rb'), file_type)}
-            if not args.dry:
-                r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
-                _print_response('resource', path, r.status_code, r.reason)
+            else:
+                # determine the file content type, for some common ones
+                file_type = None
+                if path.suffix in ['.adoc', '.asciidoc']:
+                    file_type = 'text/x-asciidoc'
+                # Upload as a regular file(nt:file)
+                logger.debug('url: %s', url)
+                value = {path.name: (path.name, open(path, 'rb'), file_type)}
+                if not args.dry:
+                    r = requests.post(url, headers=HEADERS, files=value, auth=(args.user, pw))
+                    _print_response('resource', path, r.status_code, r.reason)
     logger.debug('')
 
 
@@ -323,16 +325,31 @@ def readYamlGlob(config, keyword):
 
     return globs
 
+def concurrent(f, filetype,max_worker=1):
+    futures = []
+
+    tick = time()
+    with ThreadPoolExecutor(max_workers=max_worker) as executor:
+        futures.append(executor.submit(process_file, f, filetype))  # Two seconds sleep
+
+        for future in as_completed(futures):
+            if future.result() is not None:
+               print("")
+
+    print('Total elapsed time by {} workers:'.format(max_worker), time()-tick)
+
 
 def processRegexMatches(files, globs, filetype):
     matches = []
     logger.debug(' === ' + filetype)
+    pool = Pool(len(files))
     for f in files:
         if os.path.islink(f):
             logger.debug(f)
             logger.debug(' -- is symlink')
             matches.append(f)
-            process_file(f, filetype)
+            # executor.submit(process_file, f, filetype)
+            # pool.apply_async(process_file, args=(f, filetype,))
         else:
             subpath = str(f)[len(args.directory) + 1:]
             logger.debug(' Evaluating ' + subpath)
@@ -340,11 +357,21 @@ def processRegexMatches(files, globs, filetype):
                 if re.match(regex, subpath):
                     logger.debug(' -- match ' + filetype + ' ' + regex)
                     matches.append(f)
-                    process_file(f, filetype)
+                    # concurrent(f, filetype, 5)
+                    # pool.apply_async(process_file, args=(f, filetype,))
+                    # process_file(f, filetype)
                     break  # necessary because the same file could potentially match more than 1 wildcard
+
+
+    # executor.submit(process_file, f, filetype)
+    process_file(matches, filetype)
+    pool.close()
+    pool.join()
     for f in matches:
         files.remove(f)
 
+
+executor = ThreadPoolExecutor(max_workers=5)
 
 server = resolveOption(args.server, 'server', DEFAULT_SERVER)
 # Check if server url path reachable
@@ -376,6 +403,7 @@ if len(config.keys()) > 0 and 'repositories' in config:
         if args.attrFile:
             if not os.path.isfile(args.directory + '/' + args.attrFile):
                 sys.exit('attributes: ' + args.directory + '/' + args.attrFile + ' does not exist.')
+
         elif attributeFile:
             if args.directory:
                 if not os.path.isfile(args.directory + '/' + attributeFile.strip()):
@@ -393,7 +421,6 @@ if len(config.keys()) > 0 and 'repositories' in config:
 
         moduleGlobs = readYamlGlob(repo_list, 'modules')
         resourceGlobs = readYamlGlob(repo_list, 'resources')
-        attrGlobs = readYamlGlob(repo_list, 'attsFile')
 
         if attributeFile:
             if resourceGlobs == None:
@@ -416,7 +443,7 @@ if len(config.keys()) > 0 and 'repositories' in config:
         leftoverFiles = len(allFiles)
         if leftoverFiles > 0:
             _warn(f'{leftoverFiles} additional files detected but not uploaded. Only files specified in '
-                + CONFIG_FILE
-                + ' are handled for upload.')
+                  + CONFIG_FILE
+                  + ' are handled for upload.')
 
 print('Finished!')
