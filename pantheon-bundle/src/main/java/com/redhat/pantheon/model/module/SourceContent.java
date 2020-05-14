@@ -10,6 +10,6 @@ import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
  */
 @JcrPrimaryType("sling:Folder")
 public interface SourceContent extends Folder {
-    Child<FileResource> draft();
-    Child<FileResource> released();
+    Child<HashableFileResource> draft();
+    Child<HashableFileResource> released();
 }
