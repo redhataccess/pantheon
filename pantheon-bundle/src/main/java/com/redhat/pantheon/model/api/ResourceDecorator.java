@@ -21,6 +21,7 @@ import static com.redhat.pantheon.model.api.SlingModels.getModel;
 public class ResourceDecorator implements SlingModel {
 
     static final String DEFAULT_PRIMARY_TYPE = "nt:unstructured";
+    static final String[] DEFAULT_MIXINS = new String[]{};
 
     private final Resource wrapped;
 

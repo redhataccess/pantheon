@@ -1,5 +1,8 @@
 package com.redhat.pantheon.servlet.module;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.FileResource;
@@ -8,6 +11,7 @@ import com.redhat.pantheon.model.api.Folder;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.AckStatus;
+import com.redhat.pantheon.model.module.HashableFileResource;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
@@ -50,10 +54,11 @@ import java.util.function.Supplier;
 
 /**
  * Post operation to add a new Module version to the system.
- * Only thre parameters are expected in the post request:
+ * The expected parameters in the post request are:
  * 1. locale - Optional; indicates the locale that the module content is in
  * 2. :operation - This value must be 'pant:newModuleVersion'
  * 3. asciidoc - The file upload (multipart) containing the asciidoc content file for the new module version.
+ * 4. ws - The name of the workspace where to place the uploaded module
  *
  * The url to POST a request to the server is the path of the new or existing module to host the content.
  * If there is no content for said url, the module is created and a single version along with it.
@@ -70,27 +75,6 @@ import java.util.function.Supplier;
 public class ModuleVersionUpload extends AbstractPostOperation {
 
     private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
-    private static final Set<String> EXCLUDES = Collections.unmodifiableSet(
-            new HashSet<>(
-                    Arrays.asList(
-                            "jcr:description",
-                            "jcr:lastModified",
-                            "jcr:primaryType",
-                            "jcr:title",
-                            "pant:dateUploaded",
-                            "pant:datePublished"
-                    )));
-
-    private AsciidoctorService asciidoctorService;
-    private ServiceResourceResolverProvider serviceResourceResolverProvider;
-
-    @Activate
-    public ModuleVersionUpload(
-            @Reference AsciidoctorService asciidoctorService,
-            @Reference ServiceResourceResolverProvider serviceResourceResolverProvider) {
-        this.asciidoctorService = asciidoctorService;
-        this.serviceResourceResolverProvider = serviceResourceResolverProvider;
-    }
 
     @Override
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
@@ -113,7 +97,6 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             // This should be the path relative to the root of the git file system
             String path = request.getResource().getPath();
             String moduleName = ResourceUtil.getName(path);
-//            String description = ServletUtils.paramValue(request, "jcr:description", "");
 
             log.debug("Pushing new module version at: " + path + " with locale: " + locale);
             log.trace("and content: " + asciidocContent);
@@ -140,85 +123,29 @@ public class ModuleVersionUpload extends AbstractPostOperation {
 
             Locale localeObj = LocaleUtils.toLocale(locale);
             ModuleLocale moduleLocale = module.getOrCreateModuleLocale(localeObj);
-            FileResource draftSrc = moduleLocale.source().getOrCreate()
+            HashableFileResource draftSrc = moduleLocale.source().getOrCreate()
                     .draft().getOrCreate();
 
-//            Optional<ModuleVersion> draftVersion = module.getDraftVersion(localeObj);
-            // if there is no draft content, create it
-//            if( !draftVersion.isPresent() ) {
-//                draftVersion = Optional.of(
-//                        module.getOrCreateModuleLocale(localeObj)
-//                        .createNextVersion());
-//                module.getOrCreateModuleLocale(localeObj)
-//                        .draft().set( draftVersion.get().uuid().get() );
-                // Need to copy the metadata from the released version, if it exists
-//                Optional<ModuleVersion> releasedVersion = module.getReleasedVersion(localeObj);
-//                if (releasedVersion.isPresent()) {
-//                    Metadata releasedMeta = releasedVersion.get().metadata().get();
-//                    Metadata draftMeta = draftVersion.get().metadata().getOrCreate();
-//
-//                    for (Map.Entry<String, Object> e : releasedMeta.getValueMap().entrySet()) {
-//                        if (!EXCLUDES.contains(e.getKey())) {
-//                            draftMeta.setProperty(e.getKey(), e.getValue());
-//                        }
-//                    }
-//                }
-//            }
-//
-             // modify only the draft content/metadata
-//            JcrContent jcrContent = draftVersion.get()
-//                    .content().getOrCreate()
-//                    .asciidoc().getOrCreate()
-//                    .jcrContent().getOrCreate();
-//            boolean generateHtml = false;
-//            String jcrData = jcrContent.jcrData().get();
+            // Check if the content is the same as what is hashed already
+            HashCode incomingSrcHash = hash(asciidocContent);
+            String storedSrcHash = draftSrc.hash().get();
+            // If the source content is the same, don't update it
+            if(incomingSrcHash.toString().equals( storedSrcHash )) {
+                responseCode = HttpServletResponse.SC_NOT_MODIFIED;
+            } else {
+                draftSrc.jcrContent().getOrCreate()
+                        .jcrData().set(asciidocContent);
+                draftSrc.jcrContent().getOrCreate()
+                        .mimeType().set("text/x-asciidoc");
 
-            // Html is generated if:
-            // a. the draft content has changed as part of this upload
-            // b. a draft hasn't already been built before
-//            if ((jcrData != null && !jcrData.equals(asciidocContent))
-//                    || !draftVersion.map(ModuleVersion::content)
-//                            .map(Supplier::get)
-//                            .map(Content::cachedHtml)
-//                            .map(Supplier::get)
-//                            .isPresent()) {
-//                generateHtml = true;
-//            }
-
-            draftSrc.jcrContent().getOrCreate()
-                    .jcrData().set(asciidocContent);
-            draftSrc.jcrContent().getOrCreate()
-                    .mimeType().set("text/x-asciidoc");
-
-//            Metadata metadata = draftVersion.get()
-//                    .metadata().getOrCreate();
-            
-//            if(metadata.title().get()==null){
-//                metadata.title().set(moduleName);
-//            }
-//            metadata.description().set(description);
-            Calendar now = Calendar.getInstance();
-//            metadata.dateModified().set(now);
-//            metadata.dateUploaded().set(now);
-
-//            AckStatus status = draftVersion.get()
-//                .ackStatus().getOrCreate();
-//            status.dateModified().set(now);
-            resolver.commit();
-
-            // TODO Html can no longer be generated on upload since there might be too many variants
-//            if (generateHtml) {
-//                Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
-                // drop the html on the floor, this is just to cache the results
-//                asciidoctorService.getModuleHtml(draftVersion.get(), module, context, true);
-//            }
-
-            // TODO This will need to be re-thought since metadata now lies on the variant
-            // Generate a module type based on the file name ONLY after asciidoc generation, so that the
-            // attribute-based logic takes precedence
-//            if(metadata.moduleType().get() == null) {
-//                metadata.moduleType().set(determineModuleType(module));
-//            }
+                // TODO Html can no longer be generated on upload since there might be too many variants
+                // TODO This will need to be re-thought since metadata now lies on the variant
+                // Generate a module type based on the file name ONLY after asciidoc generation, so that the
+                // attribute-based logic takes precedence
+                // if(metadata.moduleType().get() == null) {
+                //    metadata.moduleType().set(determineModuleType(module));
+                //}
+            }
 
             resolver.commit();
             response.setStatus(responseCode, "");
@@ -247,5 +174,13 @@ public class ModuleVersionUpload extends AbstractPostOperation {
         else {
             return null;
         }
+    }
+
+    /*
+     * calculates a hash for a string
+     * TODO This should probably be moved elsewhere
+     */
+    private HashCode hash(String str) {
+        return Hashing.adler32().hashString(str == null ? "" : str, Charsets.UTF_8);
     }
 }
