@@ -39,9 +39,8 @@ class ModuleVersionUploadTest {
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the adoc content");
-        params.put("ws", "test_workspace");
         slingContext.request().setParameterMap(params);
-        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/new/proc_module"));
+        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/proc_module"));
         HtmlResponse response = new HtmlResponse();
 
         // when
@@ -76,9 +75,8 @@ class ModuleVersionUploadTest {
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.SIMPLIFIED_CHINESE.toString());
         params.put("asciidoc", "å\u008D\u0097äº¬é\u0098²ç\u0096«ç\u008E°å\u009Cº");
-        params.put("ws", "test_workspace");
         slingContext.request().setParameterMap(params);
-        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/new/proc_module"));
+        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/proc_module"));
         slingContext.request().setCharacterEncoding(StandardCharsets.ISO_8859_1.toString());
         HtmlResponse response = new HtmlResponse();
 
@@ -93,7 +91,8 @@ class ModuleVersionUploadTest {
                         slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module"),
                         Module.class);
         assertEquals("南京防疫现场",
-                module.getModuleLocale(Locale.SIMPLIFIED_CHINESE)
+                module
+                        .moduleLocale(Locale.SIMPLIFIED_CHINESE).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()
@@ -112,9 +111,8 @@ class ModuleVersionUploadTest {
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.SIMPLIFIED_CHINESE.toString());
         params.put("asciidoc", "南京防疫现场");
-        params.put("ws", "test_workspace");
         slingContext.request().setParameterMap(params);
-        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/new/proc_module"));
+        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/proc_module"));
         slingContext.request().setCharacterEncoding(StandardCharsets.UTF_8.toString());
         HtmlResponse response = new HtmlResponse();
 
@@ -129,7 +127,8 @@ class ModuleVersionUploadTest {
                         slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module"),
                         Module.class);
         assertEquals("南京防疫现场",
-                module.getModuleLocale(Locale.SIMPLIFIED_CHINESE)
+                module
+                        .moduleLocale(Locale.SIMPLIFIED_CHINESE).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()
@@ -153,10 +152,9 @@ class ModuleVersionUploadTest {
         Map<String, Object> params = newHashMap();
         params.put("locale", "en_US");
         params.put("asciidoc", "Draft asciidoc content");
-        params.put("ws", "test_workspace");
         registerMockAdapter(Module.class, slingContext);
         slingContext.request().setParameterMap(params);
-        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/new/module"));
+        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/module"));
         HtmlResponse response = new HtmlResponse();
 
         // when
@@ -172,14 +170,16 @@ class ModuleVersionUploadTest {
         Module module =
                 SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
         assertEquals("Draft asciidoc content",
-                module.getModuleLocale(Locale.US)
+                module
+                        .moduleLocale(Locale.US).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()
                         .jcrData().get()
         );
         assertEquals("This is the released adoc content",
-                module.getModuleLocale(Locale.US)
+                module
+                        .moduleLocale(Locale.US).get()
                         .source().get()
                         .released().get()
                         .jcrContent().get()
@@ -204,10 +204,9 @@ class ModuleVersionUploadTest {
         Map<String, Object> params = newHashMap();
         params.put("locale", "en_US");
         params.put("asciidoc", "Revised asciidoc content");
-        params.put("ws", "test_workspace");
         registerMockAdapter(Module.class, slingContext);
         slingContext.request().setParameterMap(params);
-        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/new/module"));
+        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/module"));
         HtmlResponse response = new HtmlResponse();
 
         // when
@@ -223,14 +222,16 @@ class ModuleVersionUploadTest {
         Module module =
                 SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
         assertEquals("Revised asciidoc content",
-                module.getModuleLocale(Locale.US)
+                module
+                        .moduleLocale(Locale.US).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()
                         .jcrData().get()
         );
         assertEquals("This is the released adoc content",
-                module.getModuleLocale(Locale.US)
+                module
+                        .moduleLocale(Locale.US).get()
                         .source().get()
                         .released().get()
                         .jcrContent().get()
@@ -261,10 +262,9 @@ class ModuleVersionUploadTest {
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.US);
         params.put("asciidoc", "This is the draft adoc content");
-        params.put("ws", "test_workspace");
         registerMockAdapter(Module.class, slingContext);
         slingContext.request().setParameterMap(params);
-        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/new/module"));
+        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/module"));
         HtmlResponse response = new HtmlResponse();
 
         // when
@@ -280,14 +280,16 @@ class ModuleVersionUploadTest {
         Module module =
                 SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
         assertEquals("This is the draft adoc content",
-                module.getModuleLocale(Locale.US)
+                module
+                        .moduleLocale(Locale.US).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()
                         .jcrData().get()
         );
         assertEquals("This is the released adoc content",
-                module.getModuleLocale(Locale.US)
+                module
+                        .moduleLocale(Locale.US).get()
                         .source().get()
                         .released().get()
                         .jcrContent().get()
