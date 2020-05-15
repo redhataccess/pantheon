@@ -28,8 +28,8 @@ public interface Variants extends OrderedFolder {
         return child(name, ModuleVariant.class).get();
     }
 
-    default Optional<ModuleVariant> getVariant(String name) {
-        return Optional.ofNullable(child(name, ModuleVariant.class).get());
+    default Child<ModuleVariant> variant(String name) {
+        return child(name, ModuleVariant.class);
     }
 
     @Override

@@ -12,6 +12,8 @@ import org.apache.sling.api.resource.Resource;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import java.util.Calendar;
+
 import static com.google.common.collect.Streams.stream;
 import static java.util.stream.Collectors.counting;
 
@@ -65,6 +67,9 @@ public interface ModuleVariant extends WorkspaceChild {
             // (This uses the JCR API)
             getResourceResolver().adaptTo(Session.class)
                     .move(draft().get().getPath(), this.getPath() + "/released");
+            released().get()
+                    .metadata().get()
+                    .datePublished().set(Calendar.getInstance());
         } catch (PersistenceException | RepositoryException e) {
             throw new RuntimeException(e);
         }
