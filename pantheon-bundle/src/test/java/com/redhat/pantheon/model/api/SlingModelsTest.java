@@ -168,8 +168,8 @@ class SlingModelsTest {
 
         // When
         TestResource model = SlingModels.getModel(sc.resourceResolver(), "/test", TestResource.class);
-        ChildResource child = model.getChild("child", ChildResource.class);
-        Grandchild grandchild = child.getChild("grandchild", Grandchild.class);
+        ChildResource child = model.child("child", ChildResource.class).get();
+        Grandchild grandchild = child.child("grandchild", Grandchild.class).get();
 
         // Then
         assertNotNull(child);

@@ -47,7 +47,7 @@ public interface Module extends WorkspaceChild {
      * @deprecated use {@link Module#moduleLocale(Locale)} instead.
      */
     default ModuleLocale getModuleLocale(Locale locale) {
-        return getChild(locale.toString(), ModuleLocale.class);
+        return child(locale.toString(), ModuleLocale.class).get();
     }
 
     default Child<ModuleLocale> moduleLocale(Locale locale) {

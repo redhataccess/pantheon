@@ -35,11 +35,6 @@ public class ResourceDecorator implements SlingModel {
     }
 
     @Override
-    public <T extends SlingModel> T getChild(String name, Class<T> type) {
-        return getModel(getChild(name), type);
-    }
-
-    @Override
     public <T extends SlingModel> Child<T> child(String name, Class<T> type) {
         return new ChildImpl<>(name, type, this);
     }
@@ -49,7 +44,7 @@ public class ResourceDecorator implements SlingModel {
         if(wrapped.getChild(name) == null) {
             return createChild(name, type);
         }
-        return getChild(name, type);
+        return child(name, type).get();
     }
 
     @Override

@@ -13,8 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.jcr.Node;
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
@@ -72,26 +71,26 @@ class ModuleTest {
 
         // Then
         assertNotNull(
-                module1.getModuleLocale(new Locale("en", "US")).source().getOrCreate().getChild("released", FileResource.class));
+                module1.getModuleLocale(new Locale("en", "US")).source().getOrCreate().child("released", FileResource.class).get());
         assertNotNull(
-                module1.getModuleLocale(new Locale("en", "US")).source().getOrCreate().getChild("draft", FileResource.class));
+                module1.getModuleLocale(new Locale("en", "US")).source().getOrCreate().child("draft", FileResource.class).get());
         assertNotNull(
-                module1.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().getChild("released", FileResource.class));
+                module1.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().child("released", FileResource.class).get());
         assertNotNull(
-                module1.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().getChild("draft", FileResource.class));
+                module1.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().child("draft", FileResource.class).get());
         assertNotNull(
-                module2.getModuleLocale(new Locale("en", "US")).source().getOrCreate().getChild("released", FileResource.class));
+                module2.getModuleLocale(new Locale("en", "US")).source().getOrCreate().child("released", FileResource.class).get());
         assertNotNull(
-                module2.getModuleLocale(new Locale("en", "US")).source().getOrCreate().getChild("draft", FileResource.class));
+                module2.getModuleLocale(new Locale("en", "US")).source().getOrCreate().child("draft", FileResource.class).get());
         assertNotNull(
-                module2.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().getChild("released", FileResource.class));
+                module2.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().child("released", FileResource.class).get());
         assertNotNull(
-                module2.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().getChild("draft", FileResource.class));
+                module2.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().child("draft", FileResource.class).get());
 
         assertNull(
                 module1.getModuleLocale(Locale.SIMPLIFIED_CHINESE));
-        assertNull(
-                module1.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().getChild("abc", FileResource.class));
+        assertFalse(
+                module1.getModuleLocale(new Locale("es", "ES")).source().getOrCreate().child("abc", FileResource.class).isPresent());
     }
 
 }

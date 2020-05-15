@@ -21,17 +21,6 @@ public interface SlingModel extends Resource {
     <T extends SlingModel> T createChild(String name, Class<T> modelType);
 
     /**
-     * Returns a child resource
-     * @param name The child's name
-     * @param type The type of {@link SlingModel} to interpret it as
-     * @param <T>
-     * @return The child resource or null if one doesn't exist by the given name
-     * @deprecated Use {@link SlingModel#child(String, Class)} instead.
-     */
-    @Deprecated
-    <T extends SlingModel> T getChild(String name, Class<T> type);
-
-    /**
      * Returns a {@link Child} of this resource.
      * @param name The name of the child
      * @param type The model type for this child
