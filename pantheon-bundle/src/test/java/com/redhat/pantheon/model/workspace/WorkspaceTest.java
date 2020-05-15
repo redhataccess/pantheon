@@ -31,8 +31,8 @@ class WorkspaceTest {
         // Then
         assertNotNull(ws.entities().get());
         assertNotNull(ws.moduleVariantDefinitions().get());
-        assertEquals("sling:OrderedFolder", ws.moduleVariantDefinitions().get().getProperty("jcr:primaryType", String.class));
-        assertEquals("sling:Folder", ws.entities().get().getProperty("jcr:primaryType", String.class));
+        assertEquals("sling:OrderedFolder", ws.moduleVariantDefinitions().get().field("jcr:primaryType", String.class).get());
+        assertEquals("sling:Folder", ws.entities().get().field("jcr:primaryType", String.class).get());
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
+import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.api.SlingModels;
@@ -10,6 +11,7 @@ import org.asciidoctor.ast.Document;
 import org.asciidoctor.extension.PreprocessorReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
@@ -52,7 +54,10 @@ public class SlingResourceIncludeProcessorTest {
         when(reader.getFile()).thenReturn("");
 
         SlingModel model = mock(SlingModel.class);
-        when(model.getProperty(JCR_PRIMARYTYPE, String.class)).thenReturn("nt:file");
+        Field<String> jcrPrimaryType = mock(Field.class);
+
+        when(jcrPrimaryType.get()).thenReturn("nt:file");
+        when(model.field(JCR_PRIMARYTYPE, String.class)).thenReturn(jcrPrimaryType);
         when(model.adaptTo(FileResource.class)).thenReturn(SlingModels.getModel(
                 slingContext.resourceResolver().getResource("/realLocation/testFile"), FileResource.class));
 

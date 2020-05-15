@@ -60,17 +60,6 @@ public interface SlingModel extends Resource {
     <T> Field<T> field(String name, Class<T> type);
 
     /**
-     * Returns a resource's property
-     * @param name The name of the property
-     * @param type The type into which to cast the property value
-     * @param <T>
-     * @return The property's value, or null if no such property exists
-     * @deprecated Use {@link SlingModel#field(String, Class)} instead.
-     */
-    @Deprecated
-    <T> T getProperty(String name, Class<T> type);
-
-    /**
      * Sets a resource's property. This is a convenience method. Be aware that the underlying
      * implementation might throw an exception if the resource is not modifiable, or if the type
      * of value is not recognized

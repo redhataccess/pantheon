@@ -58,11 +58,6 @@ public class ResourceDecorator implements SlingModel {
     }
 
     @Override
-    public <T> T getProperty(String name, Class<T> type) {
-        return wrapped.getValueMap().get(name, type);
-    }
-
-    @Override
     public void setProperty(String name, Object value) {
         wrapped.adaptTo(ModifiableValueMap.class).put(name, value);
     }

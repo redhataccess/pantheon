@@ -62,7 +62,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             SlingModel includedResourceAsModel = includeResource.adaptTo(SlingModel.class);
 
             // Included resource might be a plain file or another module
-            if( includedResourceAsModel.getProperty(JCR_PRIMARYTYPE, String.class).equals("pant:module") ) {
+            if( includedResourceAsModel.field(JCR_PRIMARYTYPE, String.class).get().equals("pant:module") ) {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
                 // TODO, right now only default locale and latest (draft) version of the module are used
                 content = start(module)
