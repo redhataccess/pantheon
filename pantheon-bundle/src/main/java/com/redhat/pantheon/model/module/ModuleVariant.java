@@ -16,6 +16,7 @@ import javax.jcr.Session;
 import java.util.Calendar;
 
 import static com.google.common.collect.Streams.stream;
+import static com.redhat.pantheon.jcr.JcrResources.rename;
 import static java.util.stream.Collectors.counting;
 
 /**
@@ -64,11 +65,7 @@ public interface ModuleVariant extends WorkspaceChild {
             if( released().get() != null ) {
                 getResourceResolver().delete(released().get());
             }
-            // promote draft to released
-            // (This uses the JCR API)
-            // TODO: move this to JcrResources class
-            getResourceResolver().adaptTo(Session.class)
-                    .move(draft().get().getPath(), this.getPath() + "/released");
+            rename(draft().get(), "released");
             released().get()
                     .metadata().get()
                     .datePublished().set(Calendar.getInstance());
@@ -86,7 +83,7 @@ public interface ModuleVariant extends WorkspaceChild {
             // if there is no draft version, set the recently unpublished one as draft
             // it is guaranteed to be the latest one
             if(draft().get() == null) {
-                JcrResources.rename(released().get(), "draft");
+                rename(released().get(), "draft");
             } else {
                 // released + draft
                 released().get().delete();
