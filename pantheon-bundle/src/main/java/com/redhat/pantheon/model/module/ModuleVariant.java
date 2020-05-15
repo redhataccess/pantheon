@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.jcr.JcrResources;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.WorkspaceChild;
@@ -65,6 +66,7 @@ public interface ModuleVariant extends WorkspaceChild {
             }
             // promote draft to released
             // (This uses the JCR API)
+            // TODO: move this to JcrResources class
             getResourceResolver().adaptTo(Session.class)
                     .move(draft().get().getPath(), this.getPath() + "/released");
             released().get()
@@ -84,23 +86,14 @@ public interface ModuleVariant extends WorkspaceChild {
             // if there is no draft version, set the recently unpublished one as draft
             // it is guaranteed to be the latest one
             if(draft().get() == null) {
-                // FIXME This is a rundimentary "clone" operation since neither Sling nor JCR
-                // offer an elegant, straightforward way to do this
-                // 1. Create the draft revision as a clone of the released one
-                Resource newDraft = getResourceResolver().create(released().get().getParent(), "draft", released().get().getValueMap());
-                // 2. Copy all the children from the released one into draft
-                released().get().getChildren().forEach(child -> {
-                    try {
-                        getResourceResolver().copy(child.getPath(), newDraft.getPath());
-                    } catch (PersistenceException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-                getResourceResolver().copy(released().get().getPath(), this.getPath() + "/draft");
+                JcrResources.rename(released().get(), "draft");
+            } else {
+                // released + draft
+                released().get().delete();
             }
 
-            // Released revision is emptied out
-            getResourceResolver().delete(released().get());
+        } catch (RepositoryException e) {
+            throw new RuntimeException(e);
         } catch (PersistenceException e) {
             throw new RuntimeException(e);
         }
