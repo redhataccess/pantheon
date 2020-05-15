@@ -26,16 +26,38 @@ public interface SlingModel extends Resource {
      * @param type The type of {@link SlingModel} to interpret it as
      * @param <T>
      * @return The child resource or null if one doesn't exist by the given name
+     * @deprecated Use {@link SlingModel#child(String, Class)} instead.
      */
+    @Deprecated
     <T extends SlingModel> T getChild(String name, Class<T> type);
+
+    /**
+     * Returns a {@link Child} of this resource.
+     * @param name The name of the child
+     * @param type The model type for this child
+     * @param <T>
+     * @return The child object
+     */
+    <T extends SlingModel> Child<T> child(String name, Class<T> type);
 
     /**
      * Returns a child resource, creating it if it doesn't exist.
      * @param name The child's name
      * @return The found or created child resource
      * @throws PersistenceException If there is a problem creating the new child resource
+     * @deprecated Use {@link SlingModel#child(String, Class)}.getOrCreate() instead.
      */
+    @Deprecated
     <T extends SlingModel> T getOrCreateChild(String name, Class<T> type);
+
+    /**
+     * Returns a resource's {@link Field}
+     * @param name The name of the field
+     * @param type The type of the field
+     * @param <T>
+     * @return The {@link Field} object.
+     */
+    <T> Field<T> field(String name, Class<T> type);
 
     /**
      * Returns a resource's property
@@ -43,7 +65,9 @@ public interface SlingModel extends Resource {
      * @param type The type into which to cast the property value
      * @param <T>
      * @return The property's value, or null if no such property exists
+     * @deprecated Use {@link SlingModel#field(String, Class)} instead.
      */
+    @Deprecated
     <T> T getProperty(String name, Class<T> type);
 
     /**
@@ -52,7 +76,9 @@ public interface SlingModel extends Resource {
      * of value is not recognized
      * @param name The name of the property
      * @param value The value to set
+     * @deprecated Use {@link SlingModel#field(String, Class)}.set(T) instead.
      */
+    @Deprecated
     void setProperty(String name, Object value);
 
     /**

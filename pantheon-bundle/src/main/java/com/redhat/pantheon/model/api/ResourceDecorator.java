@@ -40,11 +40,21 @@ public class ResourceDecorator implements SlingModel {
     }
 
     @Override
+    public <T extends SlingModel> Child<T> child(String name, Class<T> type) {
+        return new ChildImpl<>(name, type, this);
+    }
+
+    @Override
     public <T extends SlingModel> T getOrCreateChild(String name, Class<T> type) {
         if(wrapped.getChild(name) == null) {
             return createChild(name, type);
         }
         return getChild(name, type);
+    }
+
+    @Override
+    public <T> Field<T> field(String name, Class<T> type) {
+        return new FieldImpl<>(name, type, this);
     }
 
     @Override

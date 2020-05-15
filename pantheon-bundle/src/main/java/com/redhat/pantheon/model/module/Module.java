@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.WorkspaceChild;
@@ -41,8 +42,16 @@ public interface Module extends WorkspaceChild {
     @Named("jcr:uuid")
     Field<String> uuid();
 
+    @Deprecated
+    /**
+     * @deprecated use {@link Module#moduleLocale(Locale)} instead.
+     */
     default ModuleLocale getModuleLocale(Locale locale) {
         return getChild(locale.toString(), ModuleLocale.class);
+    }
+
+    default Child<ModuleLocale> moduleLocale(Locale locale) {
+        return child(locale.toString(), ModuleLocale.class);
     }
 
     default ModuleLocale getOrCreateModuleLocale(Locale locale) {
