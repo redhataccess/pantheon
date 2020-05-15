@@ -85,11 +85,7 @@ public class UnpublishVersion extends AbstractPostOperation {
         String variant = getVariant(request);
 
         // Get the released version, there should be one
-        Optional<ModuleVersion> foundVariant = module.findVersion()
-                .withLocale(locale)
-                .withVariant(variant)
-                .released()
-                .get();
+        Optional<ModuleVersion> foundVariant = module.getReleasedVersion(locale, variant);
 
         if(!foundVariant.isPresent()) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,

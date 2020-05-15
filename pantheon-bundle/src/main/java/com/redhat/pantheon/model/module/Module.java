@@ -5,11 +5,14 @@ import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
+import com.redhat.pantheon.model.api.util.ResourceTraversal;
 
 import javax.annotation.Nonnull;
 import javax.inject.Named;
 import java.util.Locale;
 import java.util.Optional;
+
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.start;
 
 /**
  * The definition of a Module resource in the system.
@@ -62,30 +65,24 @@ public interface Module extends WorkspaceChild {
         return child(locale.toString(), ModuleLocale.class).create();
     }
 
-    @Deprecated
-    /** @see Module#findVersion() for a better alternative */
     default Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale,
                                                     @Nonnull final String variantName) {
-        return findVersion()
-                .withLocale(locale)
-                .withVariant(variantName)
-                .inDraft()
-                .get();
+        return start(this)
+                .traverse(m -> moduleLocale(locale))
+                .traverse(ModuleLocale::variants)
+                .traverse(variants -> variants.variant(variantName))
+                .traverse(ModuleVariant::draft)
+                .getAsOptional();
     }
 
-    @Deprecated
-    /** @see Module#findVersion() for a better alternative */
     default Optional<ModuleVersion> getReleasedVersion(@Nonnull final Locale locale,
                                                     @Nonnull final String variantName) {
-        return findVersion()
-                .withLocale(locale)
-                .withVariant(variantName)
-                .released()
-                .get();
-    }
-
-    default ModuleVersionFinder findVersion() {
-        return ModuleVersionFinder.forModule(this);
+        return start(this)
+                .traverse(m -> moduleLocale(locale))
+                .traverse(ModuleLocale::variants)
+                .traverse(variants -> variants.variant(variantName))
+                .traverse(ModuleVariant::released)
+                .getAsOptional();
     }
 
     /**
@@ -95,12 +92,13 @@ public interface Module extends WorkspaceChild {
      */
     default Optional<FileResource> getReleasedContent(final Locale locale,
                                                       @Nonnull final String variantName) {
-        return findVersion()
-                .withLocale(locale)
-                .withVariant(variantName)
-                .released()
-                .get()
-                .map(moduleVersion -> moduleVersion.cachedHtml().get());
+        return start(this)
+                .traverse(m -> moduleLocale(locale))
+                .traverse(ModuleLocale::variants)
+                .traverse(variants -> variants.variant(variantName))
+                .traverse(ModuleVariant::released)
+                .traverse(ModuleVersion::cachedHtml)
+                .getAsOptional();
     }
 
     /**
@@ -110,12 +108,13 @@ public interface Module extends WorkspaceChild {
      */
     default Optional<FileResource> getDraftContent(final Locale locale,
                                                  @Nonnull final String variantName) {
-        return findVersion()
-                .withLocale(locale)
-                .withVariant(variantName)
-                .inDraft()
-                .get()
-                .map(moduleVersion -> moduleVersion.cachedHtml().get());
+        return start(this)
+                .traverse(m -> moduleLocale(locale))
+                .traverse(ModuleLocale::variants)
+                .traverse(variants -> variants.variant(variantName))
+                .traverse(ModuleVariant::draft)
+                .traverse(ModuleVersion::cachedHtml)
+                .getAsOptional();
     }
 
     /**
@@ -125,12 +124,13 @@ public interface Module extends WorkspaceChild {
      */
     default Optional<Metadata> getReleasedMetadata(final Locale locale,
                                                    @Nonnull final String variantName) {
-        return findVersion()
-                .withLocale(locale)
-                .withVariant(variantName)
-                .released()
-                .get()
-                .map(moduleVersion -> moduleVersion.metadata().get());
+        return start(this)
+                .traverse(m -> moduleLocale(locale))
+                .traverse(ModuleLocale::variants)
+                .traverse(variants -> variants.variant(variantName))
+                .traverse(ModuleVariant::released)
+                .traverse(ModuleVersion::metadata)
+                .getAsOptional();
     }
 
   /**
@@ -141,12 +141,13 @@ public interface Module extends WorkspaceChild {
     */
     default Optional<AckStatus> getAcknowledgementStatus(final Locale locale,
                                                          @Nonnull final String variantName) {
-        return findVersion()
-                .withLocale(locale)
-                .withVariant(variantName)
-                .released()
-                .get()
-                .map(moduleVersion -> moduleVersion.ackStatus().get());
+        return start(this)
+                .traverse(m -> moduleLocale(locale))
+                .traverse(ModuleLocale::variants)
+                .traverse(variants -> variants.variant(variantName))
+                .traverse(ModuleVariant::released)
+                .traverse(ModuleVersion::ackStatus)
+                .getAsOptional();
     }
 
     /**
@@ -157,12 +158,13 @@ public interface Module extends WorkspaceChild {
      */
     default Optional<AckStatus> getDraftAcknowledgementStatus(final Locale locale,
                                                               @Nonnull final String variantName) {
-        return findVersion()
-                .withLocale(locale)
-                .withVariant(variantName)
-                .inDraft()
-                .get()
-                .map(moduleVersion -> moduleVersion.ackStatus().get());
+        return start(this)
+                .traverse(m -> moduleLocale(locale))
+                .traverse(ModuleLocale::variants)
+                .traverse(variants -> variants.variant(variantName))
+                .traverse(ModuleVariant::draft)
+                .traverse(ModuleVersion::ackStatus)
+                .getAsOptional();
     }
 
     /**
@@ -172,11 +174,12 @@ public interface Module extends WorkspaceChild {
      */
     default Optional<Metadata> getDraftMetadata(final Locale locale,
                                                 @Nonnull final String variantName) {
-        return findVersion()
-                .withLocale(locale)
-                .withVariant(variantName)
-                .inDraft()
-                .get()
-                .map(moduleVersion -> moduleVersion.metadata().get());
+        return start(this)
+                .traverse(m -> moduleLocale(locale))
+                .traverse(ModuleLocale::variants)
+                .traverse(variants -> variants.variant(variantName))
+                .traverse(ModuleVariant::draft)
+                .traverse(ModuleVersion::metadata)
+                .getAsOptional();
     }
 }

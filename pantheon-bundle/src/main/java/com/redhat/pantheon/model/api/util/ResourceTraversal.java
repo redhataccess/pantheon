@@ -98,6 +98,13 @@ public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
     }
 
     /**
+     * @return The current resource in the traversal as an optional.
+     */
+    public Optional<T> getAsOptional() {
+        return currentResource;
+    }
+
+    /**
      * @return True, if the current resource in the traversal exists, false otherwise.
      */
     public boolean isPresent() {
