@@ -62,7 +62,7 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
     protected void processPost(SlingHttpServletRequest request, SlingHttpServletResponse response, Acknowledgment acknowledgment)
             throws ServletException, IOException {
         if (isObjectNullOrEmpty(acknowledgment)) {
-            getLogger().error("The request did not provide all the fiields " + acknowledgment.toString());
+            getLogger().error("The request did not provide all the fields " + acknowledgment.toString());
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "All the fields are required");
             return;
         }
@@ -78,7 +78,7 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
             }
             // TODO The empty string below needs to contain the variant name. Either the ID needs to now point
             //  to a specific Module version (within a variant), or the variant needs to be passed in the request
-            processAcknowledgementRequest(acknowledgment, module, moduleLocale, "",
+            processAcknowledgementRequest(acknowledgment, module, moduleLocale, acknowledgment.getVariant(),
                     request.getUserPrincipal().getName());
 
         } catch (RepositoryException | PersistenceException e) {
@@ -114,6 +114,8 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
      * @param acknowledgement request data
      * @param module module corresponding to the UUID in the request data
      * @param moduleLocale list of locales in the module
+     * @param variantName
+     * @param lastModifiedBy
      * @throws PersistenceException signals that request data could not be saved
      */
     private void processAcknowledgementRequest(Acknowledgment acknowledgement, Module module,
@@ -147,11 +149,12 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
     }
 
     /**
-     * Creates or retrives status node based on whether a published version exists. If a published version exists,
+     * Creates or retrieves status node based on whether a published version exists. If a published version exists,
      * either create a new status node if it does not exist
      *
      * @param module
      * @param locale
+     * @param variantName
      * @return
      */
     private AckStatus createStatusNode(Module module, Locale locale, String variantName) {
