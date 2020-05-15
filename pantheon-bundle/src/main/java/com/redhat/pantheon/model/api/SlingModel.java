@@ -60,17 +60,6 @@ public interface SlingModel extends Resource {
     <T> Field<T> field(String name, Class<T> type);
 
     /**
-     * Sets a resource's property. This is a convenience method. Be aware that the underlying
-     * implementation might throw an exception if the resource is not modifiable, or if the type
-     * of value is not recognized
-     * @param name The name of the property
-     * @param value The value to set
-     * @deprecated Use {@link SlingModel#field(String, Class)}.set(T) instead.
-     */
-    @Deprecated
-    void setProperty(String name, Object value);
-
-    /**
      * Deletes this resource from the repository.
      * @throws PersistenceException If there was a problem deleting the node, such as a failed constraing validation
      */

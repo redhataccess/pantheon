@@ -58,11 +58,6 @@ public class ResourceDecorator implements SlingModel {
     }
 
     @Override
-    public void setProperty(String name, Object value) {
-        wrapped.adaptTo(ModifiableValueMap.class).put(name, value);
-    }
-
-    @Override
     public void delete() throws PersistenceException {
         wrapped.getResourceResolver().delete(this);
     }
