@@ -118,7 +118,7 @@ class AsciidoctorServiceTest {
         assertTrue(generatedHtml.contains("This is cached content"));
     }
 
-    // We no longer handle attributeFile property on pant:workspace node
+    // TODO We no longer handle attributeFile property on pant:workspace node
 //    @Test
 //    public void testGetModuleHtmlWithAttributeFileNotFound() throws IOException {
 //        // Given
