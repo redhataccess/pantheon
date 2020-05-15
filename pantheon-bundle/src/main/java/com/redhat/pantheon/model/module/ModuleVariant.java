@@ -43,7 +43,7 @@ public interface ModuleVariant extends WorkspaceChild {
     // TODO Not sure we need this
     default ModuleVersion createNextVersion() {
         // Generate a new version name
-        return createChild(generateNextVersionName(), ModuleVersion.class);
+        return child(generateNextVersionName(), ModuleVersion.class).create();
     }
 
     // TODO Not sure we need this

@@ -149,13 +149,13 @@ class SlingModelsTest {
 
         // When
         TestResource model = SlingModels.getModel(sc.resourceResolver(), "/test", TestResource.class);
-        ChildResource child = model.createChild("child", ChildResource.class);
-        Grandchild grandchild = child.createChild("grandchild", Grandchild.class);
+        ChildResource child = model.child("child", ChildResource.class).create();
+        Grandchild grandchild = child.child("grandchild", Grandchild.class).create();
 
         // Then
         assertNotNull(child);
         assertNotNull(grandchild);
-        assertThrows(RuntimeException.class, () -> model.createChild("child", ChildResource.class),
+        assertThrows(RuntimeException.class, () -> model.child("child", ChildResource.class).create(),
                 "Same child cannot be created twice");
     }
 

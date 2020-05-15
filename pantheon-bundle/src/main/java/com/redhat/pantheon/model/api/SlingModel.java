@@ -12,15 +12,6 @@ import org.apache.sling.api.resource.Resource;
 public interface SlingModel extends Resource {
 
     /**
-     * Creates a child resource given a name and a set of initial properties
-     * @param name The child's name
-     * @param modelType The {@link SlingModel} type to create the child as.
-     * @return The newly created child resource
-     * @throws PersistenceException If there is a problem creating the child resource
-     */
-    <T extends SlingModel> T createChild(String name, Class<T> modelType);
-
-    /**
      * Returns a {@link Child} of this resource.
      * @param name The name of the child
      * @param type The model type for this child

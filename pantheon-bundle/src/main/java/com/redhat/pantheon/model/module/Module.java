@@ -59,7 +59,7 @@ public interface Module extends WorkspaceChild {
     }
 
     default ModuleLocale createModuleLocale(Locale locale) {
-        return createChild(locale.toString(), ModuleLocale.class);
+        return child(locale.toString(), ModuleLocale.class).create();
     }
 
     @Deprecated
