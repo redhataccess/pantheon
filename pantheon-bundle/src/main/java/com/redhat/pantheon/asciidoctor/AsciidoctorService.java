@@ -128,8 +128,8 @@ public class AsciidoctorService {
 
         ModuleLocale moduleLocale = module.getModuleLocale(locale);
         Optional<ModuleVersion> moduleVersion = moduleLocale.variants()
-                .map(variantsFolder -> variantsFolder.getVariant(variantName))
-                .map(Optional::get)
+                .map(variantsFolder -> variantsFolder.variant(variantName))
+                .map(Supplier::get)
                 .map(variant -> draft ? variant.draft() : variant.released())
                 .map(Supplier::get);
         Optional<FileResource> sourceFile = moduleLocale.source()

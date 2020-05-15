@@ -58,16 +58,14 @@ class ModuleListingServletTest {
     @Test
     void resourceToMap() {
         // Given
-        slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleVersion");
-        slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1/metadata",
+        slingContext.build()
+                .resource("/content/repositories/repo",
+                        "jcr:primaryType", "pant:workspace")
+                .resource("/content/repositories/repo/module",
+                        "jcr:primaryType", "pant:module")
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description");
-        slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US").adaptTo(ModifiableValueMap.class)
-                .put("draft", slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/1").getValueMap()
-                        .get("jcr:uuid"));
         registerMockAdapter(Module.class, slingContext);
         ModuleListingServlet servlet = new ModuleListingServlet();
 

@@ -1,6 +1,5 @@
 package com.redhat.pantheon.model.api;
 
-import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
@@ -8,9 +7,6 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 
 import java.util.Iterator;
-
-import static com.redhat.pantheon.model.api.SlingModels.createModel;
-import static com.redhat.pantheon.model.api.SlingModels.getModel;
 
 /**
  * A decorator for Sling's {@link org.apache.sling.api.resource.Resource} objects. It adds convenience methods
@@ -30,31 +26,13 @@ public class ResourceDecorator implements SlingModel {
     }
 
     @Override
-    public <T extends SlingModel> T createChild(final String name, Class<T> modelType) {
-        return createModel(wrapped, name, modelType);
+    public <T extends SlingModel> Child<T> child(String name, Class<T> type) {
+        return new ChildImpl<>(name, type, this);
     }
 
     @Override
-    public <T extends SlingModel> T getChild(String name, Class<T> type) {
-        return getModel(getChild(name), type);
-    }
-
-    @Override
-    public <T extends SlingModel> T getOrCreateChild(String name, Class<T> type) {
-        if(wrapped.getChild(name) == null) {
-            return createChild(name, type);
-        }
-        return getChild(name, type);
-    }
-
-    @Override
-    public <T> T getProperty(String name, Class<T> type) {
-        return wrapped.getValueMap().get(name, type);
-    }
-
-    @Override
-    public void setProperty(String name, Object value) {
-        wrapped.adaptTo(ModifiableValueMap.class).put(name, value);
+    public <T> Field<T> field(String name, Class<T> type) {
+        return new FieldImpl<>(name, type, this);
     }
 
     @Override

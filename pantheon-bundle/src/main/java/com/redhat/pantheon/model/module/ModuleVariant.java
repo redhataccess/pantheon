@@ -12,6 +12,8 @@ import org.apache.sling.api.resource.Resource;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import java.util.Calendar;
+
 import static com.google.common.collect.Streams.stream;
 import static java.util.stream.Collectors.counting;
 
@@ -37,13 +39,13 @@ public interface ModuleVariant extends WorkspaceChild {
 
     // TODO Not sure we need this
     default ModuleVersion getOrCreateVersion(String name) {
-        return getOrCreateChild(name, ModuleVersion.class);
+        return child(name, ModuleVersion.class).get();
     }
 
     // TODO Not sure we need this
     default ModuleVersion createNextVersion() {
         // Generate a new version name
-        return createChild(generateNextVersionName(), ModuleVersion.class);
+        return child(generateNextVersionName(), ModuleVersion.class).create();
     }
 
     // TODO Not sure we need this
@@ -65,6 +67,9 @@ public interface ModuleVariant extends WorkspaceChild {
             // (This uses the JCR API)
             getResourceResolver().adaptTo(Session.class)
                     .move(draft().get().getPath(), this.getPath() + "/released");
+            released().get()
+                    .metadata().get()
+                    .datePublished().set(Calendar.getInstance());
         } catch (PersistenceException | RepositoryException e) {
             throw new RuntimeException(e);
         }

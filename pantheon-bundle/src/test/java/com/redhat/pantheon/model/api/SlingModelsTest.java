@@ -1,6 +1,5 @@
 package com.redhat.pantheon.model.api;
 
-import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -150,13 +149,13 @@ class SlingModelsTest {
 
         // When
         TestResource model = SlingModels.getModel(sc.resourceResolver(), "/test", TestResource.class);
-        ChildResource child = model.createChild("child", ChildResource.class);
-        Grandchild grandchild = child.createChild("grandchild", Grandchild.class);
+        ChildResource child = model.child("child", ChildResource.class).create();
+        Grandchild grandchild = child.child("grandchild", Grandchild.class).create();
 
         // Then
         assertNotNull(child);
         assertNotNull(grandchild);
-        assertThrows(RuntimeException.class, () -> model.createChild("child", ChildResource.class),
+        assertThrows(RuntimeException.class, () -> model.child("child", ChildResource.class).create(),
                 "Same child cannot be created twice");
     }
 
@@ -169,8 +168,8 @@ class SlingModelsTest {
 
         // When
         TestResource model = SlingModels.getModel(sc.resourceResolver(), "/test", TestResource.class);
-        ChildResource child = model.getChild("child", ChildResource.class);
-        Grandchild grandchild = child.getChild("grandchild", Grandchild.class);
+        ChildResource child = model.child("child", ChildResource.class).get();
+        Grandchild grandchild = child.child("grandchild", Grandchild.class).get();
 
         // Then
         assertNotNull(child);

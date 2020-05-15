@@ -70,7 +70,7 @@ public class UnpublishVersion extends AbstractPostOperation {
             String variant = getVariant(request);
             ModuleVersion moduleVersion = module.getModuleLocale(locale)
                     .variants().get()
-                    .getVariant(variant).get()
+                    .variant(variant).get()
                     .released().get();
 
             // TODO We need to change the event so that the right variant is processed

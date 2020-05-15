@@ -4,7 +4,9 @@ import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
+import com.redhat.pantheon.model.api.util.ResourceTraversal;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.start;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 
@@ -68,7 +71,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
             String variant = getVariant(request);
             ModuleVersion moduleVersion = module.getModuleLocale(locale)
                     .variants().get()
-                    .getVariant(variant).get()
+                    .variant(variant).get()
                     .released().get();
 
             // Regenerate the module once more
@@ -100,17 +103,12 @@ public class PublishDraftVersion extends AbstractPostOperation {
                     "The version to be released doesn't have urlFragment metadata");
         } else {
             // Draft becomes the new released version
-            module.getModuleLocale(locale)
-                    .variants()
-                    .map(variantsFolder -> variantsFolder.getVariant(variant))
-                    .map(Optional::get)
-                    .ifPresent(ModuleVariant::releaseDraft);
-//            moduleLocale.released().set( moduleLocale.draft().get() );
-//            moduleLocale.draft().set( null );
-            // set the published date on the released version
-//            versionToRelease.get()
-//                    .metadata().getOrCreate()
-//                    .datePublished().set(Calendar.getInstance());
+            ModuleVariant moduleVariant = start(module)
+                    .traverse(m -> module.moduleLocale(locale))
+                    .traverse(ModuleLocale::variants)
+                    .traverse(variants -> variants.variant(variant))
+                    .get();
+            moduleVariant.releaseDraft();
             changes.add(Modification.onModified(module.getPath()));
         }
     }

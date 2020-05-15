@@ -1,11 +1,14 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.api.util.ResourceTraversal;
+
 import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.start;
 import static com.redhat.pantheon.model.module.ModuleVariant.DEFAULT_VARIANT_NAME;
 import static java.util.Optional.*;
 
@@ -115,11 +118,12 @@ public class ModuleVersionFinder {
      * @return The {@link ModuleVersion} which matches the given parameters.
      */
     public Optional<ModuleVersion> get() {
-        return ofNullable( module.getModuleLocale(locale.get()) )
-                .map(ModuleLocale::variants)
-                .map(Supplier::get)
-                .map(variants -> variants.getChild(variantName.get(), ModuleVariant.class))
-                .map(moduleVariant -> draft ? moduleVariant.draft() : moduleVariant.released())
-                .map(Supplier::get);
+        ResourceTraversal<ModuleVersion> traversal = start(module)
+                .traverse(m -> m.moduleLocale(locale.get()))
+                .traverse(ModuleLocale::variants)
+                .traverse(variants -> variants.child(variantName.get(), ModuleVariant.class))
+                .traverse(moduleVariant -> draft ? moduleVariant.draft() : moduleVariant.released());
+
+        return traversal.isPresent() ? of(traversal.get()) : empty();
     }
 }

@@ -25,11 +25,11 @@ public interface Variants extends OrderedFolder {
     }
 
     default ModuleVariant getOrCreateVariant(String name) {
-        return getOrCreateChild(name, ModuleVariant.class);
+        return child(name, ModuleVariant.class).get();
     }
 
-    default Optional<ModuleVariant> getVariant(String name) {
-        return Optional.ofNullable(getChild(name, ModuleVariant.class));
+    default Child<ModuleVariant> variant(String name) {
+        return child(name, ModuleVariant.class);
     }
 
     @Override
