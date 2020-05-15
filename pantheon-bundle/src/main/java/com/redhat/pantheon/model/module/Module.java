@@ -55,7 +55,7 @@ public interface Module extends WorkspaceChild {
     }
 
     default ModuleLocale getOrCreateModuleLocale(Locale locale) {
-        return getOrCreateChild(locale.toString(), ModuleLocale.class);
+        return child(locale.toString(), ModuleLocale.class).get();
     }
 
     default ModuleLocale createModuleLocale(Locale locale) {

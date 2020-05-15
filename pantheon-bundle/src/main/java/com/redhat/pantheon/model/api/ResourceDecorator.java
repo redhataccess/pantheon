@@ -1,6 +1,5 @@
 package com.redhat.pantheon.model.api;
 
-import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
@@ -8,9 +7,6 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 
 import java.util.Iterator;
-
-import static com.redhat.pantheon.model.api.SlingModels.createModel;
-import static com.redhat.pantheon.model.api.SlingModels.getModel;
 
 /**
  * A decorator for Sling's {@link org.apache.sling.api.resource.Resource} objects. It adds convenience methods
@@ -32,14 +28,6 @@ public class ResourceDecorator implements SlingModel {
     @Override
     public <T extends SlingModel> Child<T> child(String name, Class<T> type) {
         return new ChildImpl<>(name, type, this);
-    }
-
-    @Override
-    public <T extends SlingModel> T getOrCreateChild(String name, Class<T> type) {
-        if(wrapped.getChild(name) == null) {
-            return child(name, type).create();
-        }
-        return child(name, type).get();
     }
 
     @Override

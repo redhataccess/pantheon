@@ -21,16 +21,6 @@ public interface SlingModel extends Resource {
     <T extends SlingModel> Child<T> child(String name, Class<T> type);
 
     /**
-     * Returns a child resource, creating it if it doesn't exist.
-     * @param name The child's name
-     * @return The found or created child resource
-     * @throws PersistenceException If there is a problem creating the new child resource
-     * @deprecated Use {@link SlingModel#child(String, Class)}.getOrCreate() instead.
-     */
-    @Deprecated
-    <T extends SlingModel> T getOrCreateChild(String name, Class<T> type);
-
-    /**
      * Returns a resource's {@link Field}
      * @param name The name of the field
      * @param type The type of the field

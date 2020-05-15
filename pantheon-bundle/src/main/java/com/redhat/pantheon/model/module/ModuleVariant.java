@@ -37,7 +37,7 @@ public interface ModuleVariant extends WorkspaceChild {
 
     // TODO Not sure we need this
     default ModuleVersion getOrCreateVersion(String name) {
-        return getOrCreateChild(name, ModuleVersion.class);
+        return child(name, ModuleVersion.class).get();
     }
 
     // TODO Not sure we need this
