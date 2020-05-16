@@ -61,10 +61,20 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             // Included resource might be a plain file or another module
             if( includedResourceAsModel.getProperty(JCR_PRIMARYTYPE, String.class).equals("pant:module") ) {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
+                StringBuilder moduleContent = new StringBuilder()
+                        .append("\n")
+                        .append("pass:[<!--pantheon-module-start-->]")
+                        .append("\n");
                 // TODO, right now only default locale and latest (draft) version of the module are used
-                content = module.getDraftContent(GlobalConfig.DEFAULT_MODULE_LOCALE)
+                moduleContent.append(
+                        module.getDraftContent(GlobalConfig.DEFAULT_MODULE_LOCALE)
                             .get()
-                            .asciidocContent().get();
+                            .asciidocContent().get()
+                )
+                .append("\n")
+                .append("pass:[<!--pantheon-module-end-->]");
+
+                content = moduleContent.toString();
             } else {
                 // It's a plain file
                 // TODO Resources (assets) will be versioned too, and module versions will have a record of their
@@ -77,7 +87,8 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             log.warn("Could not find include for {}", target);
         }
 
-        reader.push_include(content, target, target, 1, attributes);
+        String includedFilePath = includeResource != null ? includeResource.getPath() : target;
+        reader.push_include(content, includedFilePath, includedFilePath, 1, attributes);
     }
 
     private Resource resolveWithSymlinks(String path, Resource pathParent) {

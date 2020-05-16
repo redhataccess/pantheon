@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -26,6 +28,18 @@ public class JcrQueryHelper {
 
     public JcrQueryHelper(ResourceResolver resourceResolver) {
         this.resourceResolver = resourceResolver;
+    }
+
+    public Resource findById(String id) throws RepositoryException {
+        Session session = resourceResolver.adaptTo(Session.class);
+        Node node;
+        try {
+            node = session.getNodeByIdentifier(id);
+        } catch (ItemNotFoundException infe) {
+            return null;
+        }
+        // Transform to a sling resource
+        return resourceResolver.getResource(node.getPath());
     }
 
     /**
