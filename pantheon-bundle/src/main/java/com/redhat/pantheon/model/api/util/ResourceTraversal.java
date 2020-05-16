@@ -75,21 +75,6 @@ public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
     }
 
     /**
-     * Maps the currently traversed resource to a different type. Keep in mind this method
-     * does not necessarily offer a null-safe way to traverse. It does offer a custom way to
-     * traverse the resources which may, for example, skip levels.
-     * @param mapper A function to map the currently traversed resource into another one.
-     * @param <U>
-     * @return The next step in the traversal as indicated by the provided mapper function.
-     */
-    public <U extends SlingModel> ResourceTraversal<U> map(Function<? super T, U> mapper) {
-        if(currentResource.isPresent()) {
-            return new ResourceTraversal<>(mapper.apply(currentResource.get()));
-        }
-        return (ResourceTraversal<U>) EMPTY;
-    }
-
-    /**
      * @return The current resource in the traversal. May be null if the resource does not exist.
      */
     @Override

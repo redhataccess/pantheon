@@ -66,7 +66,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
                 // TODO, right now only default locale and latest (draft) version of the module are used
                 content = start(module)
-                        .map(module1 -> module.getModuleLocale(GlobalConfig.DEFAULT_MODULE_LOCALE))
+                        .traverse(module1 -> module.moduleLocale(GlobalConfig.DEFAULT_MODULE_LOCALE))
                         .traverse(ModuleLocale::source)
                         .traverse(SourceContent::draft)
                         .traverse(FileResource::jcrContent)
