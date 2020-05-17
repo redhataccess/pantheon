@@ -9,28 +9,32 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *  This is a sample validator that
- *  <p>
- *      <ol>Provides logic to check passed object is null or not </ol>
- *      <ol>Accepts the data via setter when injected</ol>
- *      <ol>Accepts the data via constructor instantiated normally</ol>
- *      <ol>Returns its unique name via getName()</ol>
- *      <ol>Returns the constraint violations via {@see Violations} instance</ol>
- *  </p>
+ * This is a sample validator that
+ * <p>
+ * <ol>Provides logic to check passed object is null or not </ol>
+ * <ol>Accepts the data via setter when injected</ol>
+ * <ol>Accepts the data via constructor instantiated normally</ol>
+ * <ol>Returns its unique name via getName()</ol>
+ * <ol>Returns the constraint violations via {@see Violations} instance</ol>
+ * </p>
  */
-@Component( service = NotNullValidator.class,
+@Component(service = NotNullValidator.class,
         property = {
-            Constants.SERVICE_DESCRIPTION + "=Provides validation services",
-            Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
+                Constants.SERVICE_DESCRIPTION + "=Provides validation services",
+                Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         }
 )
 public class NotNullValidator implements Validator {
 
     private List<Object> objectsToValidate;
-   public NotNullValidator(){}
+
+    public NotNullValidator() {
+    }
+
     public NotNullValidator(List<Object> objectsToValidate) {
         this.objectsToValidate = objectsToValidate;
     }
+
     @Override
     public Violations validate() {
         return checkIfNull(new Violations());
