@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/redhataccess/pantheon.png)](https://travis-ci.org/redhataccess/pantheon)
 [![Code Coverage](https://codecov.io/gh/redhataccess/pantheon/branch/master/graph/badge.svg)](https://codecov.io/github/redhataccess/pantheon?branch=master)
 
-Pantheon 2 is a modular documentation management and publication system based on Asciidoc
+Pantheon 2 is a modular documentation management and publication system based on AsciiDoc
 and built on top of Apache Sling.
 
 * [Contributing to Pantheon](#contributing-to-pantheon)
@@ -71,7 +71,7 @@ When your work is ready to be reviewed and merged, create a pull request.
 1. In the pull request comment field, enter `@redhataccess/pantheon-developers Please review for technical completeness and accuracy`.
 1. Click **Create new pull request**.
 
-For code pull requests, one or more developers review the pull request. For documentation pull requests, the developers review the pull request for technical accuracy and documentation team members review the pull request for clarity and consistency and compliance with necessary standards.
+For code pull requests, one or more developers review the pull request. For documentation pull requests, the developers review the pull request for technical accuracy and documentation team members review the pull request for clarity, consistency, and compliance with necessary standards.
 
 ### The review process
 
@@ -121,16 +121,16 @@ podman pod create --name pantheon -p 8080 -p 5005
 This will create a `pantheon` pod with ports 8080 (for web access) and 5005 (for
 remote Java debugging) open.
 
-1. Run a mongo database container in the pod.
+1. Run a Mongo database container in the pod.
 ```sh
 podman run --pod pantheon --name slingmongo -d mongo
 ```
-1. Build the pantheon docker image
+1. Build the Pantheon Docker-formatted container image.
 ```sh
 buildah bud --layers -f container/Dockerfile -t pantheon-app .
 ```
 
-1. Run the sling container pod in the pod.
+1. Run the Sling container pod in the pod.
 ```sh
 podman run --pod pantheon -d -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://localhost:27017' --name pantheon-app pantheon-app
 ```
@@ -154,7 +154,7 @@ be previewed and modified.
 
 Head to http://localhost:8080/pantheon for the application's entry point.
 
-For sling's management UI, you can head to http://localhost:8080/starter/index.html
+For Sling's management UI, you can head to http://localhost:8080/starter/index.html
 
 You can stop and start the pod as necessary with podman's pod command:
 
