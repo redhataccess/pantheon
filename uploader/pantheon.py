@@ -2,6 +2,7 @@
 import argparse
 import base64
 import getpass
+import json
 import logging
 import os
 import re
@@ -282,22 +283,46 @@ def process_file(path, filetype):
 
 def process_workspace(path):
     """
-    Adds pant:attributeFile to the repository node.
+    Set up module_variants for the repository.
     Parameter:
     path: string
     """
     content_root = 'sandbox' if args.sandbox else 'repositories'
     url = server + '/content/' + content_root + '/' + repository
 
-    # Specify attributeFile property
+    # Populate payload
     logger.debug('url: %s', url)
     data = {}
     data['jcr:primaryType'] = 'pant:workspace'
-    if attributeFile:
-        data['pant:attributeFile'] = attributeFile
+    # Process variants. variants is a list of dictionaries
+    data['module_variants'] = variants
+    num_variants = len(variants)
+    module_variants = {}
+    for variant in variants:
+        # Each variant is of type dictionary
+        module_variants['jcr:primaryType'] = 'sling:folder'
+        module_variants = variant
+        for key, value in variant.items():
+            print(key, value)
+            # TODO: sanitize name to replace special char with underscore
+            # TODO: assign DEFAULT to name if variants is not specified in config
+            # TODO: check at least one variant is canonical
+        variant_name = variant['name']
+        module_variants[variant_name] = variant
+
+    data['module_variants'] = module_variants
+    workspace = {}
+    workspace[repository] = data
+    payload = {}
+    payload[':content'] = workspace
+    payload[':contentType'] = 'json'
+    payload[':operation'] = 'import'
+    #json_data = json.dumps(payload[':content'])
+    print(payload)
     if not args.dry:
-        r: Response = requests.post(url, headers=HEADERS, data=data, auth=(args.user, pw))
+        r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
         _print_response('workspace', path, r.status_code, r.reason)
+
     logger.debug('')
 
 
@@ -356,66 +381,86 @@ else:
 
 _info('Using server: ' + server)
 
-if len(config.keys()) > 0 and 'repositories' in config:
-    for repo_list in config['repositories']:
-        repository = resolveOption(args.repository, '', repo_list['name'])
-        # Enforce a repository being set in the pantheon.yml
-        if repository == "" and mode == 'repository':
-            sys.exit('repository is not set')
 
-        mode = 'sandbox' if args.sandbox else 'repository'
-        # override repository if sandbox is chosen (sandbox name is the user name)
-        if args.sandbox:
-            repository = args.user
+def process_variants(variants):
+    num_variants = len(variants)
+    logger.info("Number of variants %s ", format(num_variants))
+    for variant in variants:
+        for key, value in variant.items():
+            print(key, value)
 
-        if 'attributes' in repo_list:
-            attributeFile = resolveOption(args.attrFile, '', repo_list['attributes'])
+    return variants
+
+
+if len(config.keys()) > 0 and 'repository' in config:
+    # for repo_list in config['repositories']:
+    repository = resolveOption(args.repository, '', config['repository'])
+    # Enforce a repository being set in the pantheon.yml
+    if repository == "" and mode == 'repository':
+          sys.exit('repository is not set')
+
+    mode = 'sandbox' if args.sandbox else 'repository'
+    # override repository if sandbox is chosen (sandbox name is the user name)
+    if args.sandbox:
+        repository = args.user
+
+    if 'variants' in config:
+        variants = config['variants']
+    else:
+        variants = []
+
+    if variants:
+        process_variants(variants)
+    print('[%s]' % ', '.join(map(str, variants)))
+
+    # if 'attributes' in repo_list:
+    #     attributeFile = resolveOption(args.attrFile, '', repo_list['attributes'])
+    # else:
+    #     attributeFile = resolveOption(args.attrFile, '', '')
+
+    # if args.attrFile:
+    #     if not os.path.isfile(args.directory + '/' + args.attrFile):
+    #         sys.exit('attributes: ' + args.directory + '/' + args.attrFile + ' does not exist.')
+    # elif attributeFile:
+    #     if args.directory:
+    #         if not os.path.isfile(args.directory + '/' + attributeFile.strip()):
+    #             sys.exit('attributes2: ' + args.directory + '/' + attributeFile + ' does not exist.')
+    #     else:
+    #         if not os.path.isfile(attributeFile.strip()):
+    #             sys.exit('attributes3: ' + attributeFile + ' does not exist.')
+
+    _info('Using ' + mode + ': ' + repository)
+    # _info('Using attributes: ' + attributeFile)
+    print('--------------')
+
+
+    process_workspace(repository)
+    sys.exit("END OF DEBUGGING variants ");
+    moduleGlobs = readYamlGlob(repo_list, 'modules')
+    resourceGlobs = readYamlGlob(repo_list, 'resources')
+
+    if attributeFile:
+        if resourceGlobs == None:
+            resourceGlobs = [attributeFile]
         else:
-            attributeFile = resolveOption(args.attrFile, '', '')
-
-        if args.attrFile:
-            if not os.path.isfile(args.directory + '/' + args.attrFile):
-                sys.exit('attributes: ' + args.directory + '/' + args.attrFile + ' does not exist.')
-        elif attributeFile:
-            if args.directory:
-                if not os.path.isfile(args.directory + '/' + attributeFile.strip()):
-                    sys.exit('attributes2: ' + args.directory + '/' + attributeFile + ' does not exist.')
-            else:
-                if not os.path.isfile(attributeFile.strip()):
-                    sys.exit('attributes3: ' + attributeFile + ' does not exist.')
-
-        _info('Using ' + mode + ': ' + repository)
-        _info('Using attributes: ' + attributeFile)
-        print('--------------')
+            resourceGlobs = resourceGlobs + [attributeFile]
+    non_resource_files = []
+    logger.debug('moduleGlobs: %s', moduleGlobs)
+    logger.debug('resourceGlobs: %s', resourceGlobs)
+    logger.debug('args.directory: %s', args.directory)
 
 
-        process_workspace(repository)
+    # List all files in the directory
+    allFiles = []
+    listdir_recursive(args.directory, allFiles)
 
-        moduleGlobs = readYamlGlob(repo_list, 'modules')
-        resourceGlobs = readYamlGlob(repo_list, 'resources')
+    processRegexMatches(allFiles, resourceGlobs, 'resources')
+    processRegexMatches(allFiles, moduleGlobs, 'modules')
 
-        if attributeFile:
-            if resourceGlobs == None:
-                resourceGlobs = [attributeFile]
-            else:
-                resourceGlobs = resourceGlobs + [attributeFile]
-        non_resource_files = []
-        logger.debug('moduleGlobs: %s', moduleGlobs)
-        logger.debug('resourceGlobs: %s', resourceGlobs)
-        logger.debug('args.directory: %s', args.directory)
-
-
-        # List all files in the directory
-        allFiles = []
-        listdir_recursive(args.directory, allFiles)
-
-        processRegexMatches(allFiles, resourceGlobs, 'resources')
-        processRegexMatches(allFiles, moduleGlobs, 'modules')
-
-        leftoverFiles = len(allFiles)
-        if leftoverFiles > 0:
-            _warn(f'{leftoverFiles} additional files detected but not uploaded. Only files specified in '
-                + CONFIG_FILE
-                + ' are handled for upload.')
+    leftoverFiles = len(allFiles)
+    if leftoverFiles > 0:
+        _warn(f'{leftoverFiles} additional files detected but not uploaded. Only files specified in '
+            + CONFIG_FILE
+            + ' are handled for upload.')
 
 print('Finished!')
