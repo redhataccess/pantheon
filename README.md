@@ -13,7 +13,7 @@ Clone and build _https://github.com/apache/sling-org-apache-sling-karaf-configs.
 ### Environment Variables
 **Project Root Directory**
 
-The build script provided in _scripts_ directory makes use of _PANTHEON_CODEBASE_ environmet variable. Set this variable in your .bashrc or .bash_profile script. _PANTHEON_CODBASE_ should point to the project's root directory.
+The build script provided in _scripts_ directory makes use of _PANTHEON_CODEBASE_ environmet variable. Set this variable in your .bashrc or .bash_profile script. _PANTHEON_CODEBASE_ should point to the project's root directory.
 
 **Sling and MongoDB**
 The scripts folder contains _pantheon_karaf.exports_ file. It contains the values required for patheon karaf distribution. If you are running MongoDB on a different port then
