@@ -122,15 +122,19 @@ parser.add_argument('--sample', '-S',
 #  - '*.adoc'
 
 server: http://localhost:8080
-repositories:
-  - name: pantheonSampleRepo
-    attributes: path/to/attribute.adoc
+repository: pantheonSampleRepo
+variants:
+    - path: path/to/attribute.adoc
+      name: my_name
+      canonical: true
+    - path: path/to/attribute2.adoc
+      name: my_name2
 
-    modules:
+modules:
       - master.adoc
       - modules/*.adoc
 
-    resources:
+resources:
       - shared/legal.adoc
       - shared/foreword.adoc
       - resources/*
@@ -381,17 +385,6 @@ else:
 
 _info('Using server: ' + server)
 
-
-def process_variants(variants):
-    num_variants = len(variants)
-    logger.info("Number of variants %s ", format(num_variants))
-    for variant in variants:
-        for key, value in variant.items():
-            print(key, value)
-
-    return variants
-
-
 if len(config.keys()) > 0 and 'repository' in config:
     # for repo_list in config['repositories']:
     repository = resolveOption(args.repository, '', config['repository'])
@@ -409,28 +402,9 @@ if len(config.keys()) > 0 and 'repository' in config:
     else:
         variants = []
 
-    if variants:
-        process_variants(variants)
     print('[%s]' % ', '.join(map(str, variants)))
 
-    # if 'attributes' in repo_list:
-    #     attributeFile = resolveOption(args.attrFile, '', repo_list['attributes'])
-    # else:
-    #     attributeFile = resolveOption(args.attrFile, '', '')
-
-    # if args.attrFile:
-    #     if not os.path.isfile(args.directory + '/' + args.attrFile):
-    #         sys.exit('attributes: ' + args.directory + '/' + args.attrFile + ' does not exist.')
-    # elif attributeFile:
-    #     if args.directory:
-    #         if not os.path.isfile(args.directory + '/' + attributeFile.strip()):
-    #             sys.exit('attributes2: ' + args.directory + '/' + attributeFile + ' does not exist.')
-    #     else:
-    #         if not os.path.isfile(attributeFile.strip()):
-    #             sys.exit('attributes3: ' + attributeFile + ' does not exist.')
-
     _info('Using ' + mode + ': ' + repository)
-    # _info('Using attributes: ' + attributeFile)
     print('--------------')
 
 
