@@ -29,7 +29,7 @@ class App extends Component<any, IAppState> {
     self.fetch = (input: RequestInfo, init?: RequestInit | undefined) => {
       let newInput = input.toString()
       if (window.location.host.startsWith('localhost') && input.toString().startsWith('/')) {
-        newInput = 'http://localhost:8080' + input.toString()
+        newInput = 'http://localhost:8181' + input.toString()
       }
       console.log('Development fetch', input, '=>', newInput)
       return realFetch(newInput, init)

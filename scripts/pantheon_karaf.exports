@@ -1,0 +1,3 @@
+export MONGO_DB_REPLICA="mongodb://localhost:27017"
+export MONGO_DB="sling"
+export REPOSITORY="sling/repository"

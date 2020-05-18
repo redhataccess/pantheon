@@ -7,99 +7,46 @@ Pantheon 2 is a modular documentation management and publication system based on
 and built on top of Apache sling.
 
 ### Prerequsistes
-Podman
-Buildah
 Java
+
+Clone and build _https://github.com/apache/sling-org-apache-sling-karaf-configs.git_. This is required because sling-karaf-configs is not available on any of the maven repositories.
+### Environment Variables
+**Project Root Directory**
+
+The build script provided in _scripts_ directory makes use of _PANTHEON_CODEBASE_ environmet variable. Set this variable in your .bashrc or .bash_profile script. _PANTHEON_CODBASE_ should point to the project's root directory.
+
+**Sling and MongoDB**
+The scripts folder contains _pantheon_karaf.exports_ file. It contains the values required for patheon karaf distribution. If you are running MongoDB on a different port then
+- Make a copy of _pantheon_karaf.exports_ file 
+- Place it in _.pantheon_ directory under your home directory
+- Update the _MONGO_DB_REPLICA_ variable
 
 ### Build the application
 _(All commands from here on will be assumed to be ran from the project's root directory)_
 
 ```sh
-./mvnw clean install
+sh scripts/deploy_local.sh
 ```
-
-### Unit Tests
-
-```sh
-./mvnw test
-```
-
-### Run the application
-
-The best way to run Pantheon is to install [podman](https://podman.io).
-
-First, create a pod:
-
-```sh
-podman pod create --name pantheon -p 8080 -p 5005
-```
-
-This will create a `pantheon` pod with ports 8080 (for web access) and 5005 (for
-remote Java debugging) open.
-
-Run a mongo database container in the pod.
-
-```sh
-podman run --pod pantheon --name slingmongo -d mongo
-```
-
-Build the pantheon docker image
-
-```sh
-buildah bud --layers -f container/Dockerfile -t pantheon-app .
-```
-
-Run the sling container pod in the pod.
-
-```sh
-podman run --pod pantheon -d -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://localhost:27017' --name pantheon-app pantheon-app
-```
-
-The Sling launchpad can be accessed at `http://localhost:8080` and you can log in to
-it using the `admin/admin` username password combo.
-
-### Live deploy of code
-
-This is useful when developing the application.
-To deploy the code live to a running application, all you have to do is
-
-```sh
-./mvnw clean package sling:install -pl pantheon-bundle
-```
-
-This will install the code in this project on the running Sling instance, where it can
-be previewed and modified.
-
+The _deploy_local_ script will:
+- Run maven build that creates the pantheon karaf distribution
+- Extract the archive to _$PANTHEON_CODEBASE/pantheon-karaf-dist/target_. The distribution is being extracted to target, currently, because a fresh distribution is needed for changes in the pantheon-bundle codebase. In the future, that may change and accordingly script will also change.
+- Start Karaf, and drop you into the karaf shell
 ### Using the application
 
-Head to http://localhost:8080/pantheon for the application's entry point.
+Head to http://localhost:8181/pantheon for the application's entry point.
 
-For sling's management UI, you can head to http://localhost:8080/starter/index.html
+For sling's management UI, you can head to http://localhost:8181/starter/index.html
 
-You can stop and start the pod as necessary with podman's pod command:
-
-```sh
-podman pod stop pantheon
-podman pod start pantheon
-```
+**Note:** If you plan to use git import UI locally, please follow the instructions in README under tools/git2pantheon. Also you will need to set the credentials of the user that would be used by git2pantheon to push the repository. It can be done by using environment variables (for both podman based and non-podman based).
 
 ### Other use cases...
 
-Run the container without Mongo, but this will result in the data being destroyed with the container.
-```sh
-podman run --rm -p 8080:8080  YOURTAG
-```
 
-Open a terminal inside the container and debug
-
-get the container process
-```
-podman ps
-```
-
-```
-podman exec -it PROCESS bash
-```
+**Debug using Karaf shell**
+- To view logs: log:display
+- To view exceptions: log:exception-display
+- To list all bundles and view their status: bundle:list
+- Find out why a bundle is in waiting state: diag _[bundle-id]_
 
 ### Developing the frontend code
 

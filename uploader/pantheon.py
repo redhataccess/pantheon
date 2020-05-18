@@ -314,12 +314,12 @@ def listdir_recursive(directory, allFiles):
 
 def readYamlGlob(config, keyword):
     globs = config[keyword] if config is not None and keyword in config else ()
-    logger.debug('keyword: $s', keyword)
-    logger.debug('config[keyword] $s', config[keyword])
+    # logger.debug('keyword: $s', keyword)
+    # logger.debug('config[keyword] $s', config[keyword])
     if globs is not None:
         for i, val in enumerate(globs):
             globs[i] = val.replace('*', '[^/]+')
-            logger.debug('key:val => $s : $s', i, val)
+            # logger.debug('key:val => $s : $s', i, val)
 
     return globs
 

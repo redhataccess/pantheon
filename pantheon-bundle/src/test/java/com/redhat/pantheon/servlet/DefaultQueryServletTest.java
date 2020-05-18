@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import org.apache.sling.resourcebuilder.api.ResourceBuilder;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.ServletException;
 import java.util.Iterator;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -63,7 +65,10 @@ public class DefaultQueryServletTest {
     public void testSortedQuery() throws Exception {
         // Given
         slingContext.request().setResource(slingContext.resourceResolver().getResource("/content/test"));
-        slingContext.request().getParameterMap().put("orderBy", new String[]{"name desc"});
+        Map<String, Object> params = ImmutableMap.<String, Object>builder()
+                .put("orderBy", new String[]{"name desc"})
+                .build();
+        slingContext.request().setParameterMap(params);
 
         // When
         servlet.doGet(slingContext.request(), slingContext.response());
@@ -85,7 +90,10 @@ public class DefaultQueryServletTest {
     public void testFilteredQuery() throws Exception {
         // Given
         slingContext.request().setResource(slingContext.resourceResolver().getResource("/content/test"));
-        slingContext.request().getParameterMap().put("where", new String[]{"number < 5"});
+        Map<String, Object> params = ImmutableMap.<String, Object>builder()
+                .put("where", new String[]{"number < 5"})
+                .build();
+        slingContext.request().setParameterMap(params);
 
         // When
         servlet.doGet(slingContext.request(), slingContext.response());
@@ -105,7 +113,10 @@ public class DefaultQueryServletTest {
     public void testPagedQuery() throws Exception {
         // Given
         slingContext.request().setResource(slingContext.resourceResolver().getResource("/content/test"));
-        slingContext.request().getParameterMap().put("limit", new String[]{"5"});
+        Map<String, Object> params = ImmutableMap.<String, Object>builder()
+                .put("limit", new String[]{"5"})
+                .build();
+        slingContext.request().setParameterMap(params);
 
         // When
         servlet.doGet(slingContext.request(), slingContext.response());
@@ -122,9 +133,11 @@ public class DefaultQueryServletTest {
     public void testPagedQueryFollowup() throws Exception {
         // Given
         slingContext.request().setResource(slingContext.resourceResolver().getResource("/content/test"));
-        slingContext.request().getParameterMap().put("limit", new String[]{"5"});
-        slingContext.request().getParameterMap().put("offset", new String[]{"5"});
-
+        Map<String, Object> params = ImmutableMap.<String, Object>builder()
+                .put("limit", new String[]{"5"})
+                .put("offset", new String[]{"5"})
+                .build();
+        slingContext.request().setParameterMap(params);
 
         // When
         servlet.doGet(slingContext.request(), slingContext.response());
@@ -147,7 +160,10 @@ public class DefaultQueryServletTest {
             .commit();
 
         slingContext.request().setResource(slingContext.resourceResolver().getResource("/content/test"));
-        slingContext.request().getParameterMap().put("nodeType", new String[]{"pant:module"});
+        Map<String, Object> params = ImmutableMap.<String, Object>builder()
+                .put("nodeType", new String[]{"pant:module"})
+                .build();
+        slingContext.request().setParameterMap(params);
 
         // When
         servlet.doGet(slingContext.request(), slingContext.response());
