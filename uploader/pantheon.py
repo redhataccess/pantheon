@@ -299,35 +299,52 @@ def process_workspace(path):
     data = {}
     data['jcr:primaryType'] = 'pant:workspace'
     # Process variants. variants is a list of dictionaries
-    data['module_variants'] = variants
+    # data['module_variants'] = variants
     num_variants = len(variants)
     module_variants = {}
+    canon = False
+    for variant in variants:
+        if 'canonical' in variant:
+            print("can present")
+            canon = True
+    if len(variants) > 1 and  not canon :
+        sys.exit('Canonical attribute missing, Should be present in case multiple variants')
     for variant in variants:
         # Each variant is of type dictionary
-        module_variants['jcr:primaryType'] = 'sling:folder'
-        module_variants = variant
+        # module_variants['jcr:primaryType'] = 'sling:folder'
+        # module_variants = variant
+        module_variants = {}
         for key, value in variant.items():
-            print(key, value)
-            # TODO: sanitize name to replace special char with underscore
-            # TODO: assign DEFAULT to name if variants is not specified in config
-            # TODO: check at least one variant is canonical
-        variant_name = variant['name']
-        module_variants[variant_name] = variant
+            if key == 'name':
+                module_variants['pant:name'] = re.sub('\W+', '_', value)
+            else:
+                module_variants[key] = value
 
-    data['module_variants'] = module_variants
-    workspace = {}
-    workspace[repository] = data
-    payload = {}
-    payload[':content'] = workspace
-    payload[':contentType'] = 'json'
-    payload[':operation'] = 'import'
-    #json_data = json.dumps(payload[':content'])
-    print(payload)
-    if not args.dry:
-        r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
-        _print_response('workspace', path, r.status_code, r.reason)
 
-    logger.debug('')
+        if module_variants['pant:name'] == '':
+            module_variants['pant:name'] = 'DEFAULT'
+
+        # module_variants[variant['value']] = variant
+        # TODO: sanitize name to replace special char with underscore
+        # TODO: assign DEFAULT to name if variants is not specified in config
+        # TODO: check at least one variant is canonical
+        # variant_name = variant['name']
+
+        data[module_variants['pant:name']] = module_variants
+        workspace = {}
+        workspace['module_variants'] = data
+        workspace['jcr:primaryType'] = 'sling:folder'
+        payload = {}
+        payload[':content'] = json.dumps(workspace)  #'{"sample":"test"}'
+        payload[':contentType'] = 'json'
+        payload[':operation'] = 'import'
+        #json_data = json.dumps(payload[':content'])
+        print(payload)
+        if not args.dry:
+            r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
+            _print_response('workspace', path, r.status_code, r.reason)
+
+        logger.debug('')
 
 
 def listdir_recursive(directory, allFiles):
