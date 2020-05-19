@@ -331,9 +331,12 @@ def process_workspace(path):
         # variant_name = variant['name']
 
         data[module_variants['pant:name']] = module_variants
+        entities = {}
+        entities['jcr:primaryType'] = 'sling:Folder'
         workspace = {}
         workspace['module_variants'] = data
-        workspace['jcr:primaryType'] = 'sling:folder'
+        workspace['jcr:primaryType'] = 'sling:Folder'
+        workspace['entities'] = entities
         payload = {}
         payload[':content'] = json.dumps(workspace)  #'{"sample":"test"}'
         payload[':contentType'] = 'json'
@@ -426,15 +429,9 @@ if len(config.keys()) > 0 and 'repository' in config:
 
 
     process_workspace(repository)
-    sys.exit("END OF DEBUGGING variants ");
-    moduleGlobs = readYamlGlob(repo_list, 'modules')
-    resourceGlobs = readYamlGlob(repo_list, 'resources')
+    moduleGlobs = readYamlGlob(config, 'modules')
+    resourceGlobs = readYamlGlob(config, 'resources')
 
-    if attributeFile:
-        if resourceGlobs == None:
-            resourceGlobs = [attributeFile]
-        else:
-            resourceGlobs = resourceGlobs + [attributeFile]
     non_resource_files = []
     logger.debug('moduleGlobs: %s', moduleGlobs)
     logger.debug('resourceGlobs: %s', resourceGlobs)
