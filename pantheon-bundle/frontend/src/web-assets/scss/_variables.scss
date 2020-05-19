@@ -1,39 +1,39 @@
 // Base Rhythm
 $base-rhythm:                 18px;
 $font-size--base:             $base-rhythm;
-$spacing--base:               1rem;
+$spacing--base:               16px;
 
-$font-family--base:           'Overpass', Arial, sans-serif;
+$font-family--base:           RedHatText, Overpass, 'Helvetica Neue', Arial, sans-serif;
 $font-family--code:           'Consolas', monospace;
 
 // XXL & XL for main titles
-$heading--xxl:                3rem;
+$heading--xxl:                48px;
 $heading--xl:                 2.5rem;
 // Base heading levels
-$heading--1:                  2.25rem;
-$heading--2:                  1.75rem;
-$heading--3:                  1.5rem;
-$heading--4:                  1.25rem;
-$heading--5:                  1rem;
-$heading--6:                  1rem;
+$heading--1:                  36px;
+$heading--2:                  28px;
+$heading--3:                  24px;
+$heading--4:                  20px;
+$heading--5:                  16px;
+$heading--6:                  16px;
 
 // Other headings & font sizes
-$heading--toc:                1.25rem;
+$heading--toc:                20px;
 $heading--toc--transform:     none;
 $heading--toc--style:         normal;
 $heading--toc--weight:        600;
-$heading--section:            1.25rem;
+$heading--section:            20px;
 $heading--section--transform: uppercase;
 $heading--section--style:     normal;
 $heading--section--weight:    600;
-$heading--block:              1rem;
+$heading--block:              16px;
 $heading--block--transform:   normal;
 $heading--block--style:       normal;
 $heading--block--weight:      700;
-$font-size--lead:             1.25rem; // Used preamble and lead paragraphs
-$font-size--sm:               0.875rem; // ~14px from 18px
-$font-size--md:               0.889rem; // 16px from 18px
-$font-size--monospace:        0.889rem; // 0.938em; // 0.825rem; // Used 'em' so it shrinks inside tables too.
+$font-size--lead:             20px; // Used preamble and lead paragraphs
+$font-size--sm:               14px;
+$font-size--md:               16px;
+$font-size--monospace:        14px;
 
 // Line heights
 $line-height--lg:            1.3;
