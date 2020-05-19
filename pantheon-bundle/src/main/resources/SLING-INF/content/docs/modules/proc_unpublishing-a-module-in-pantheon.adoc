@@ -15,7 +15,7 @@ Unpublish a module in {ProductShortName} from the Customer Portal.
 
 . Click the name of the module you want to unpublish.
 +
-If you don't see the module listed, search for the modules using the search box.
+If you do not see the module listed, search for the modules using the search box.
 
 . Click *Unpublish* next to the version of the module you want to unpublish.
 +
