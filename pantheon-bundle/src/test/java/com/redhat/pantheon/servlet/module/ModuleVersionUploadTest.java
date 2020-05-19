@@ -56,7 +56,7 @@ class ModuleVersionUploadTest {
                         slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module"),
                         Module.class);
         assertEquals("This is the adoc content",
-                module.getModuleLocale(LocaleUtils.toLocale("es_ES"))
+                module.moduleLocale(LocaleUtils.toLocale("es_ES")).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()

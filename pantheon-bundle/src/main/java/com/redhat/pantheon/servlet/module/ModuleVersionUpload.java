@@ -86,7 +86,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             }
 
             Locale localeObj = LocaleUtils.toLocale(locale);
-            ModuleLocale moduleLocale = module.getOrCreateModuleLocale(localeObj);
+            ModuleLocale moduleLocale = module.moduleLocale(localeObj).getOrCreate();
             HashableFileResource draftSrc = moduleLocale
                     .source().getOrCreate()
                     .draft().getOrCreate();

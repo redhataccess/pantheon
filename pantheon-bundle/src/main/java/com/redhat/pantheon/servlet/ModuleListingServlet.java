@@ -180,7 +180,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
     protected Map<String, Object> resourceToMap(Resource resource) {
         Module module = resource.adaptTo(Module.class);
 
-        String variantName = module.getModuleLocale(DEFAULT_MODULE_LOCALE)
+        String variantName = module.moduleLocale(DEFAULT_MODULE_LOCALE)
+            .get()
             .variants()
             .get()
             .getVariants()
