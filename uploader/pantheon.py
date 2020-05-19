@@ -207,7 +207,7 @@ def process_file(path, filetype):
     isModule = True if filetype == 'modules' else False
     isResource = True if filetype == 'resources' else False
     content_root = 'sandbox' if args.sandbox else 'repositories'
-    url = server + '/content/' + content_root + '/' + repository
+    url = server + '/content/' + content_root + '/' + repository + '/entities'
 
     path = PurePath(path)
     base_name = path.stem
@@ -296,58 +296,46 @@ def process_workspace(path):
 
     # Populate payload
     logger.debug('url: %s', url)
-    data = {}
-    data['jcr:primaryType'] = 'pant:workspace'
+    workspace = {}
+    workspace['jcr:primaryType'] = 'pant:workspace'
     # Process variants. variants is a list of dictionaries
-    # data['module_variants'] = variants
-    num_variants = len(variants)
+
     module_variants = {}
+    data = {}
     canon = False
-    for variant in variants:
-        if 'canonical' in variant:
-            print("can present")
-            canon = True
-    if len(variants) > 1 and  not canon :
-        sys.exit('Canonical attribute missing, Should be present in case multiple variants')
-    for variant in variants:
-        # Each variant is of type dictionary
-        # module_variants['jcr:primaryType'] = 'sling:folder'
-        # module_variants = variant
-        module_variants = {}
-        for key, value in variant.items():
-            if key == 'name':
-                module_variants['pant:name'] = re.sub('\W+', '_', value)
-            else:
+    # TODO: check at least one variant is canonical
+    if variants:
+        for variant in variants:
+            if 'canonical' in variant:
+                print("can present")
+                canon = True
+        if len(variants) > 1 and  not canon :
+            sys.exit('Canonical attribute missing, Should be present in case multiple variants')
+
+        for variant in variants:
+            # Each variant is of type dictionary
+            for key, value in variant.items():
                 module_variants[key] = value
+    else:
+        data = {'DEFAULT': {}}
+    if 'name' in module_variants:
+        data[module_variants['name']] = module_variants
 
+    payload = {}
+    payload[':content'] = json.dumps(data)  #'{"sample":"test"}'
+    payload[':contentType'] = 'json'
+    payload[':operation'] = 'import'
 
-        if module_variants['pant:name'] == '':
-            module_variants['pant:name'] = 'DEFAULT'
-
-        # module_variants[variant['value']] = variant
-        # TODO: sanitize name to replace special char with underscore
-        # TODO: assign DEFAULT to name if variants is not specified in config
-        # TODO: check at least one variant is canonical
-        # variant_name = variant['name']
-
-        data[module_variants['pant:name']] = module_variants
-        entities = {}
-        entities['jcr:primaryType'] = 'sling:Folder'
-        workspace = {}
-        workspace['module_variants'] = data
-        workspace['jcr:primaryType'] = 'sling:Folder'
-        workspace['entities'] = entities
-        payload = {}
-        payload[':content'] = json.dumps(workspace)  #'{"sample":"test"}'
-        payload[':contentType'] = 'json'
-        payload[':operation'] = 'import'
-        #json_data = json.dumps(payload[':content'])
-        print(payload)
-        if not args.dry:
+    # print(payload)
+    if not args.dry:
+        r: Response = requests.post(url, headers=HEADERS, data=workspace, auth=(args.user, pw))
+        _print_response('workspace', path, r.status_code, r.reason)
+        if r.status_code == 200 or r.status_code == 201:
+            url = url + '/' + 'module_variants'
             r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
-            _print_response('workspace', path, r.status_code, r.reason)
+            _print_response('module_variants', path, r.status_code, r.reason)
 
-        logger.debug('')
+    logger.debug('')
 
 
 def listdir_recursive(directory, allFiles):
@@ -421,8 +409,6 @@ if len(config.keys()) > 0 and 'repository' in config:
         variants = config['variants']
     else:
         variants = []
-
-    print('[%s]' % ', '.join(map(str, variants)))
 
     _info('Using ' + mode + ': ' + repository)
     print('--------------')
