@@ -45,14 +45,6 @@ public interface Module extends WorkspaceChild {
     @Named("jcr:uuid")
     Field<String> uuid();
 
-    @Deprecated
-    /**
-     * @deprecated use {@link Module#moduleLocale(Locale)} instead.
-     */
-    default ModuleLocale getModuleLocale(Locale locale) {
-        return child(locale.toString(), ModuleLocale.class).get();
-    }
-
     default Child<ModuleLocale> moduleLocale(Locale locale) {
         return child(locale.toString(), ModuleLocale.class);
     }

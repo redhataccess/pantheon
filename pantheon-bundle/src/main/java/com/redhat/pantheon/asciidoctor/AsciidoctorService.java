@@ -10,6 +10,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.module.HashableFileResource;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
@@ -18,7 +19,6 @@ import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.AttributesBuilder;
@@ -41,6 +41,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.start;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -126,15 +127,19 @@ public class AsciidoctorService {
                                 Map<String, Object> context,
                                 boolean forceRegen) {
 
-        ModuleLocale moduleLocale = module.getModuleLocale(locale);
-        Optional<ModuleVersion> moduleVersion = moduleLocale.variants()
-                .map(variantsFolder -> variantsFolder.variant(variantName))
-                .map(Supplier::get)
-                .map(variant -> draft ? variant.draft() : variant.released())
-                .map(Supplier::get);
-        Optional<FileResource> sourceFile = moduleLocale.source()
-                .map(sourceFolder -> draft ? sourceFolder.draft() : sourceFolder.released())
-                .map(Supplier::get);
+        Optional<ModuleVersion> moduleVersion =
+                start(module)
+                .traverse(m -> m.moduleLocale(locale))
+                .traverse(ModuleLocale::variants)
+                .traverse(variants -> variants.variant(variantName))
+                .traverse(v -> draft ? v.draft() : v.released())
+                .getAsOptional();
+        Optional<HashableFileResource> sourceFile =
+                start(module)
+                .traverse(m -> m.moduleLocale(locale))
+                .traverse(ModuleLocale::source)
+                .traverse(sourceContent -> draft ? sourceContent.draft() : sourceContent.released())
+                .getAsOptional();
 
         String html;
         // If regeneration is forced, the content doesn't exist yet, or it needs generation because the original

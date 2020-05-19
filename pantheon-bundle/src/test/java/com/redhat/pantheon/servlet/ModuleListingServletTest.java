@@ -1,5 +1,7 @@
 package com.redhat.pantheon.servlet;
 
+import com.redhat.pantheon.helper.TransformToPojo;
+import com.redhat.pantheon.model.QueryResultPage;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -9,12 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith({SlingContextExtension.class})
 class ModuleListingServletTest {
@@ -78,5 +80,30 @@ class ModuleListingServletTest {
         assertTrue(map.containsKey("pant:transientPath"));
         assertTrue(map.containsKey("pant:transientSource"));
         assertTrue(map.containsKey("pant:transientSource"));
+    }
+
+    @Test
+    void basicQuery() throws Exception {
+        // Given
+        slingContext.build()
+                .resource("/content/repositories/repo",
+                        "jcr:primaryType", "pant:workspace")
+                .resource("/content/repositories/repo/module",
+                        "jcr:primaryType", "pant:module")
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/metadata",
+                        "jcr:title", "A title",
+                        "jcr:description", "A description")
+                .commit();
+        registerMockAdapter(Module.class, slingContext);
+        ModuleListingServlet servlet = new ModuleListingServlet();
+
+        // When
+        servlet.doGet(slingContext.request(), slingContext.response());
+
+        // Then
+        // parse the result to a QueryResultPage
+        System.out.println(slingContext.response().getOutputAsString());
+
+//        assertEquals(1, qrp.getResults().size());
     }
 }

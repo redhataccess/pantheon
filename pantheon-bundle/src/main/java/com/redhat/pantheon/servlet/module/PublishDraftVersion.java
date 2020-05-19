@@ -69,7 +69,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
             Locale locale = getLocale(request);
             Module module = getModule(request);
             String variant = getVariant(request);
-            ModuleVersion moduleVersion = module.getModuleLocale(locale)
+            ModuleVersion moduleVersion = module.moduleLocale(locale).get()
                     .variants().get()
                     .variant(variant).get()
                     .released().get();
