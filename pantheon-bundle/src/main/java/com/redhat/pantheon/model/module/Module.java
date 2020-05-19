@@ -49,10 +49,6 @@ public interface Module extends WorkspaceChild {
         return child(locale.toString(), ModuleLocale.class);
     }
 
-    default ModuleLocale createModuleLocale(Locale locale) {
-        return child(locale.toString(), ModuleLocale.class).create();
-    }
-
     default Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale,
                                                     @Nonnull final String variantName) {
         return start(this)

@@ -33,7 +33,7 @@ class ModuleTest {
                         Module.class);
 
         // When
-        module.createModuleLocale(new Locale("es", "ES"))
+        module.moduleLocale(new Locale("es", "ES")).create()
                 .source()
                 .getOrCreate()
                 .draft()
