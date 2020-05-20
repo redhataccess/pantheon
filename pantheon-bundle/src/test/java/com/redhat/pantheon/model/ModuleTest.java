@@ -88,7 +88,7 @@ class ModuleTest {
                 module2.moduleLocale(new Locale("es", "ES")).get().source().getOrCreate().child("draft", FileResource.class).get());
 
         assertNull(
-                module1.moduleLocale(Locale.SIMPLIFIED_CHINESE));
+                module1.moduleLocale(Locale.SIMPLIFIED_CHINESE).get());
         assertFalse(
                 module1.moduleLocale(new Locale("es", "ES")).get().source().getOrCreate().child("abc", FileResource.class).isPresent());
     }
