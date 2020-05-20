@@ -34,14 +34,18 @@ public class AsciidocRenderingServletTest {
     public void testGenerateHtmlFromAsciidoc() throws Exception {
         // Given
         slingContext.build()
-                .resource("/module",
-                        "jcr:primaryType", "pant:module")
-                .resource("/module/en_US/variants/DEFAULT/released/cachedHtml/jcr:content",
+                .resource("/repo",
+                        "jcr:primaryType", "pant:workspace",
+                        "sling:resourceType", "pantheon/workspace"
+                )
+                .resource("/repo/entities/module/en_US/source/released/jcr:content",
+                        "jcr:data", "Some source content (irrelevant)")
+                .resource("/repo/entities/module/en_US/variants/DEFAULT/released/metadata")
+                .resource("/repo/entities/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
                         "jcr:data", "A generated html string")
-                .resource("/module/en_US/variants/DEFAULT/released/metadata")
                 .commit();
         registerMockAdapter(Module.class, slingContext);
-        Resource resource = slingContext.resourceResolver().getResource("/module");
+        Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
         lenient().when(
                 asciidoctorService.getModuleHtml(
@@ -79,14 +83,18 @@ public class AsciidocRenderingServletTest {
 
         // Given
         slingContext.build()
-                .resource("/module",
-                        "jcr:primaryType", "pant:module")
-                .resource("/module/en_US/variants/DEFAULT/draft/cachedHtml/jcr:content",
+                .resource("/repo",
+                        "jcr:primaryType", "pant:workspace",
+                        "sling:resourceType", "pantheon/workspace"
+                )
+                .resource("/repo/entities/module/en_US/source/draft/jcr:content",
+                        "jcr:data", "Some source content (irrelevant)")
+                .resource("/repo/entities/module/en_US/variants/DEFAULT/draft/metadata")
+                .resource("/repo/entities/module/en_US/variants/DEFAULT/draft/cached_html/jcr:content",
                         "jcr:data", "A generated html string")
-                .resource("/module/en_US/variants/DEFAULT/draft/metadata")
                 .commit();
         registerMockAdapter(Module.class, slingContext);
-        Resource resource = slingContext.resourceResolver().getResource("/module");
+        Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
         slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
         slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
@@ -126,14 +134,18 @@ public class AsciidocRenderingServletTest {
 
         // Given
         slingContext.build()
-                .resource("/module",
-                        "jcr:primaryType", "pant:module")
-                .resource("/module/en_US/variants/variant1/draft/cachedHtml/jcr:content",
+                .resource("/repo",
+                        "jcr:primaryType", "pant:workspace",
+                        "sling:resourceType", "pantheon/workspace"
+                )
+                .resource("/repo/entities/module/en_US/source/draft/jcr:content",
+                        "jcr:data", "Some source content (irrelevant)")
+                .resource("/repo/entities/module/en_US/variants/variant1/draft/metadata")
+                .resource("/repo/entities/module/en_US/variants/variant1/draft/cached_html/jcr:content",
                         "jcr:data", "A generated html string")
-                .resource("/module/en_US/variants/variant1/draft/metadata")
                 .commit();
         registerMockAdapter(Module.class, slingContext);
-        Resource resource = slingContext.resourceResolver().getResource("/module");
+        Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
         slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
         slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});

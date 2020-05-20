@@ -8,8 +8,14 @@ import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.ProductVersion;
-import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.module.*;
+import com.redhat.pantheon.model.api.util.ResourceTraversal;
+import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.module.HashableFileResource;
+import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.jackrabbit.oak.commons.PathUtils;
@@ -33,11 +39,9 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
-import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -104,28 +108,20 @@ public class AsciidoctorService {
                                 Map<String, Object> context,
                                 boolean forceRegen) {
 
-        Optional<HashableFileResource> sourceFile =
-                traverseFrom(module)
-                        .toChild(m -> m.moduleLocale(locale))
-                        .toChild(ModuleLocale::source)
-                        .toChild(sourceContent -> draft ? sourceContent.draft() : sourceContent.released())
-                        .getAsOptional();
+        ResourceTraversal<ModuleVariant> traversal = module.moduleLocale(locale)
+                .traverse()
+                .toChild(ModuleLocale::variants)
+                .toChild(variants -> variants.variant(variantName));
 
-        if (!sourceFile.isPresent()) {
-            throw new RuntimeException("source file for locale " + locale + " module " + module.getPath() + " variant "
-                    + variantName + " draft " + draft);
-        }
-
-
-        ModuleVariant moduleVariant = module.moduleLocale(locale).getOrCreate()
-                .variants().getOrCreate()
-                .variant(variantName).getOrCreate();
-
-        ModuleVersion moduleVersion;
+        Optional<ModuleVersion> moduleVersion;
         if (draft) {
-            moduleVersion = moduleVariant.draft().getOrCreate();
+            moduleVersion =
+                    traversal.toChild(ModuleVariant::draft)
+                        .getAsOptional();
         } else {
-            moduleVersion = moduleVariant.released().getOrCreate();
+            moduleVersion =
+                    traversal.toChild(ModuleVariant::released)
+                        .getAsOptional();
         }
 
         String html;
@@ -134,10 +130,11 @@ public class AsciidoctorService {
         // then generate and save it
         // TODO To keep things simple, regeneration will not happen automatically when the source of the module
         //  has changed. This can be added later
-        if( forceRegen || moduleVersion.cachedHtml().get() == null ) {
-            html = buildModule(module, locale, variantName, draft, sourceFile.get(), context, true);
+        if( forceRegen
+                || (moduleVersion.isPresent() && moduleVersion.get().cachedHtml().get() == null) ) {
+            html = buildModule(module, locale, variantName, draft, context, true);
         } else {
-            html = moduleVersion
+            html = moduleVersion.get()
                     .cachedHtml().get()
                     .jcrContent().get()
                     .jcrData().get();
@@ -173,37 +170,58 @@ public class AsciidoctorService {
      * @param regenMetadata If true, metadata will be extracted from the content and repopulated into the JCR module.
      * @return The generated html string.
      */
-    private String buildModule(Module base, FileResource sourceContent,
+    private String buildModule(Module base, Locale locale, String variantName, boolean isDraft,
                                Map<String, Object> context, final boolean regenMetadata) {
+
+        Optional<HashableFileResource> sourceFile =
+                traverseFrom(base)
+                        .toChild(m -> m.moduleLocale(locale))
+                        .toChild(ModuleLocale::source)
+                        .toChild(sourceContent -> isDraft ? sourceContent.draft() : sourceContent.released())
+                        .getAsOptional();
+
+        if (!sourceFile.isPresent()) {
+            throw new RuntimeException("Cannot find source content for module: " + base.getPath() + ", locale: " + locale
+                    + ",variant: " + variantName + ", draft: " + isDraft);
+        }
 
         // Use a service-level resource resolver to build the module as it will require write access to the resources
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
+
+            ModuleVariant moduleVariant = base.moduleLocale(locale).getOrCreate()
+                    .variants().getOrCreate()
+                    .variant(variantName).getOrCreate();
+
+            ModuleVersion moduleVersion;
+            if (isDraft) {
+                moduleVersion = moduleVariant.draft().getOrCreate();
+            } else {
+                moduleVersion = moduleVariant.released().getOrCreate();
+            }
+
             moduleVersion = serviceResourceResolver.getResource(moduleVersion.getPath()).adaptTo(ModuleVersion.class);
 
             // process product and version.
-            Optional<ProductVersion> productVersion = empty();
-            if (moduleVersion.metadata().get().getValueMap().containsKey("productVersion")) {
-                productVersion = moduleVersion.metadata()
+            Optional<ProductVersion> productVersion =
+                    moduleVersion.metadata()
                         .traverse()
                         .toRef(Metadata::productVersion)
                         .getAsOptional();
-            }
 
             String productName = null;
             if (productVersion.isPresent()) {
                 productName = productVersion.get().getProduct().name().get();
             }
 
-            Calendar updatedDate = sourceContent.created().get();
+            Calendar updatedDate = sourceFile.get().created().get();
 
             Optional<Calendar> publishedDate = moduleVersion.metadata()
-                    .map(Metadata::datePublished)
-                    .map(Supplier::get);
+                    .traverse()
+                    .toField(Metadata::datePublished);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
 
-            String entitiesPath = moduleVersion.getWorkspace().entities().get().getPath();
-            String variantName = moduleVersion.getParent().getName();
+            String entitiesPath = base.getWorkspace().entities().get().getPath();
             Optional<String> attributesFilePath =
                     base.getWorkspace().moduleVariantDefinitions()
                     .traverse()
@@ -286,7 +304,9 @@ public class AsciidoctorService {
                             .append("{attsFile}")
                             .append("[]\n");
                 }
-                content.append(sourceContent.jcrContent().get().jcrData().get());
+                content.append(sourceFile.get()
+                        .jcrContent().get()
+                        .jcrData().get());
                 html = asciidoctor.convert(content.toString(), ob.get());
                 cacheContent(moduleVersion, html);
             } finally {
@@ -320,5 +340,10 @@ public class AsciidoctorService {
      */
     private HashCode hash(String str) {
         return Hashing.adler32().hashString(str == null ? "" : str, Charsets.UTF_8);
+    }
+
+    private class BuildModuleResults {
+        String generatedHtml;
+
     }
 }
