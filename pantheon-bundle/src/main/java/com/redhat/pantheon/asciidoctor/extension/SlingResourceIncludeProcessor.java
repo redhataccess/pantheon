@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.start;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
 public class SlingResourceIncludeProcessor extends IncludeProcessor {
@@ -65,7 +65,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             if( includedResourceAsModel.field(JCR_PRIMARYTYPE, String.class).get().equals("pant:module") ) {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
                 // TODO, right now only default locale and latest (draft) version of the module are used
-                content = start(module)
+                content = traverseFrom(module)
                         .traverse(module1 -> module.moduleLocale(GlobalConfig.DEFAULT_MODULE_LOCALE))
                         .traverse(ModuleLocale::source)
                         .traverse(SourceContent::draft)

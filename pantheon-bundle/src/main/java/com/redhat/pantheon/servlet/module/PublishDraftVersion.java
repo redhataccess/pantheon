@@ -4,7 +4,6 @@ import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
-import com.redhat.pantheon.model.api.util.ResourceTraversal;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVariant;
@@ -26,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.start;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 
@@ -103,7 +102,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
                     "The version to be released doesn't have urlFragment metadata");
         } else {
             // Draft becomes the new released version
-            ModuleVariant moduleVariant = start(module)
+            ModuleVariant moduleVariant = traverseFrom(module)
                     .traverse(m -> module.moduleLocale(locale))
                     .traverse(ModuleLocale::variants)
                     .traverse(variants -> variants.variant(variant))

@@ -93,7 +93,7 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
                     + request.getResource().getPath());
         }
         else {
-            // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
+            // collect a list of parameter that traverseFrom with 'ctx_' as those will be used as asciidoctorj
             // parameters
             Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
 

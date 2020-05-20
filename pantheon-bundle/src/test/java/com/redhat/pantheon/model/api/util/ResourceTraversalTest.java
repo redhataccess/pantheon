@@ -9,7 +9,7 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.start;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -33,7 +33,7 @@ class ResourceTraversalTest {
         // When
 
         // Then
-        assertEquals("A NAME", start(startModel)
+        assertEquals("A NAME", traverseFrom(startModel)
                 .traverse(Level1::level2)
                 .traverse(Level2::level3)
                 .field(Level3::name)
@@ -51,14 +51,14 @@ class ResourceTraversalTest {
         // When
 
         // Then
-        assertFalse(start(startModel)
+        assertFalse(traverseFrom(startModel)
                 .traverse(Level1::level2)
                 .isPresent());
-        assertFalse(start(startModel)
+        assertFalse(traverseFrom(startModel)
                 .traverse(Level1::level2)
                 .traverse(Level2::level3)
                 .isPresent());
-        assertFalse(start(startModel)
+        assertFalse(traverseFrom(startModel)
                 .traverse(Level1::level2)
                 .traverse(Level2::level3)
                 .field(Level3::name)

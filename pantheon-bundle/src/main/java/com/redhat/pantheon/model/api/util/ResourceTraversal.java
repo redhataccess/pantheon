@@ -2,9 +2,11 @@ package com.redhat.pantheon.model.api.util;
 
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
+import com.redhat.pantheon.model.api.Reference;
 import com.redhat.pantheon.model.api.SlingModel;
 
 import javax.annotation.Nullable;
+import javax.jcr.RepositoryException;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -17,7 +19,7 @@ import static java.util.Optional.ofNullable;
  * child nodes, or properties. If any of the intermediary nodes is not present, the whole traversal
  * will still conclude, with a final result of null.<br/>
  * <br/>
- * To use it, invoke the {@link ResourceTraversal#start(SlingModel)} method with a
+ * To use it, invoke the {@link ResourceTraversal#traverseFrom(SlingModel)} method with a
  * model to be traversed. From there on, the whole structure may be traversed all the
  * way down to specific fields using the provided methods.
  *
@@ -34,13 +36,13 @@ public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
     }
 
     /**
-     * Starts a safe traversal.
+     * Starts a resource tree traversal.
      * @param model The {@link SlingModel} to traverse.
-     * @param <M> The Sling Model type to start the traversal
+     * @param <M> The Sling Model type for the current resource in the traversal
      * @return A traversal object starting from the given {@link SlingModel}. If the model
      * is null, traversals will still conclude but will always yield null results.
      */
-    public static final <M extends SlingModel> ResourceTraversal<M> start(@Nullable M model) {
+    public static final <M extends SlingModel> ResourceTraversal<M> traverseFrom(@Nullable M model) {
         return new ResourceTraversal<>(model);
     }
 
@@ -75,11 +77,35 @@ public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
     }
 
     /**
+     * Traverses through a {@link Reference} to the referenced sling model. Since traversals are
+     * null-safe, if the referenced resource is not found, then the traversal will fail silently.
+     * @param referenceAccessor A function that returns a {@link Reference} from the current resource.
+     * @param <R> The target referenced model type
+     * @return A traversal object at the referenced object.
+     * @see ResourceTraversal#field(Function) for simple access to the reference value.
+     */
+    public <R extends SlingModel> ResourceTraversal<R> traverseRef(
+            Function<? super T, Reference<R>> referenceAccessor) {
+        if(currentResource.isPresent()) {
+            Reference<R> reference = referenceAccessor.apply(currentResource.get());
+            try {
+                return new ResourceTraversal<>(reference.getReference());
+            }
+            catch (RepositoryException e) {
+                // This happens when the reference is not found
+                // TODO Right now this just falls through and returns an empty traversal,
+                //  but we might need to log an entry
+            }
+        }
+        return (ResourceTraversal<R>) EMPTY;
+    }
+
+    /**
      * @return The current resource in the traversal. May be null if the resource does not exist.
      */
     @Override
     public T get() {
-        return currentResource.get();
+        return currentResource.orElse(null);
     }
 
     /**

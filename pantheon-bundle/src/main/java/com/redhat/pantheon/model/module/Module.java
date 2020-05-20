@@ -5,14 +5,13 @@ import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
-import com.redhat.pantheon.model.api.util.ResourceTraversal;
 
 import javax.annotation.Nonnull;
 import javax.inject.Named;
 import java.util.Locale;
 import java.util.Optional;
 
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.start;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 
 /**
  * The definition of a Module resource in the system.
@@ -51,7 +50,7 @@ public interface Module extends WorkspaceChild {
 
     default Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale,
                                                     @Nonnull final String variantName) {
-        return start(this)
+        return traverseFrom(this)
                 .traverse(m -> moduleLocale(locale))
                 .traverse(ModuleLocale::variants)
                 .traverse(variants -> variants.variant(variantName))
@@ -61,7 +60,7 @@ public interface Module extends WorkspaceChild {
 
     default Optional<ModuleVersion> getReleasedVersion(@Nonnull final Locale locale,
                                                     @Nonnull final String variantName) {
-        return start(this)
+        return traverseFrom(this)
                 .traverse(m -> moduleLocale(locale))
                 .traverse(ModuleLocale::variants)
                 .traverse(variants -> variants.variant(variantName))
@@ -76,7 +75,7 @@ public interface Module extends WorkspaceChild {
      */
     default Optional<FileResource> getReleasedContent(final Locale locale,
                                                       @Nonnull final String variantName) {
-        return start(this)
+        return traverseFrom(this)
                 .traverse(m -> moduleLocale(locale))
                 .traverse(ModuleLocale::variants)
                 .traverse(variants -> variants.variant(variantName))
@@ -92,7 +91,7 @@ public interface Module extends WorkspaceChild {
      */
     default Optional<FileResource> getDraftContent(final Locale locale,
                                                  @Nonnull final String variantName) {
-        return start(this)
+        return traverseFrom(this)
                 .traverse(m -> moduleLocale(locale))
                 .traverse(ModuleLocale::variants)
                 .traverse(variants -> variants.variant(variantName))
@@ -108,7 +107,7 @@ public interface Module extends WorkspaceChild {
      */
     default Optional<Metadata> getReleasedMetadata(final Locale locale,
                                                    @Nonnull final String variantName) {
-        return start(this)
+        return traverseFrom(this)
                 .traverse(m -> moduleLocale(locale))
                 .traverse(ModuleLocale::variants)
                 .traverse(variants -> variants.variant(variantName))
@@ -125,7 +124,7 @@ public interface Module extends WorkspaceChild {
     */
     default Optional<AckStatus> getAcknowledgementStatus(final Locale locale,
                                                          @Nonnull final String variantName) {
-        return start(this)
+        return traverseFrom(this)
                 .traverse(m -> moduleLocale(locale))
                 .traverse(ModuleLocale::variants)
                 .traverse(variants -> variants.variant(variantName))
@@ -142,7 +141,7 @@ public interface Module extends WorkspaceChild {
      */
     default Optional<AckStatus> getDraftAcknowledgementStatus(final Locale locale,
                                                               @Nonnull final String variantName) {
-        return start(this)
+        return traverseFrom(this)
                 .traverse(m -> moduleLocale(locale))
                 .traverse(ModuleLocale::variants)
                 .traverse(variants -> variants.variant(variantName))
@@ -158,7 +157,7 @@ public interface Module extends WorkspaceChild {
      */
     default Optional<Metadata> getDraftMetadata(final Locale locale,
                                                 @Nonnull final String variantName) {
-        return start(this)
+        return traverseFrom(this)
                 .traverse(m -> moduleLocale(locale))
                 .traverse(ModuleLocale::variants)
                 .traverse(variants -> variants.variant(variantName))

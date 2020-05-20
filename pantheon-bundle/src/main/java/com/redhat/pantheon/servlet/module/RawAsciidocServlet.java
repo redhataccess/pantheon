@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.start;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
@@ -61,14 +61,14 @@ public class RawAsciidocServlet extends SlingSafeMethodsServlet {
 
         Optional<String> content;
         if (draft) {
-            content = start(module)
+            content = traverseFrom(module)
                     .traverse(m -> m.moduleLocale(locale))
                     .traverse(ModuleLocale::source)
                     .traverse(SourceContent::draft)
                     .traverse(FileResource::jcrContent)
                     .field(FileResource.JcrContent::jcrData);
         } else {
-            content = start(module)
+            content = traverseFrom(module)
                     .traverse(m -> m.moduleLocale(locale))
                     .traverse(ModuleLocale::source)
                     .traverse(SourceContent::released)

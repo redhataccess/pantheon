@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.jcr.RepositoryException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -41,7 +40,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.start;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
+import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -91,35 +91,16 @@ public class AsciidoctorService {
     /**
      * Returns a module's html representation. If the module has not been built before, or if it is explicitly requested,
      * it is fully built. Otherwise a cached copy of the html is returned.
-     * @param moduleVersion The module version to generate content for
-     * @param base The resource base (probably at the module level) to find included artifacts
+     * @param module The module for which to get the html representation
+     * @param locale The module locale
+     * @param variantName The name of the module variant
+     * @param draft True if generating the draft version of the module. False if generating the released version.
      * @param context any necessary context (attributes and their values) necessary to generate the html
      * @param forceRegen when true, the html content is always re-generated; the cached content is ignored
      *                   This parameter is useful when passing context, as the cached content does not take
      *                   the context into account
      * @return The module's html representation based on its current asciidoc content
      */
-//    public String getModuleHtml(@Nonnull ModuleVersion moduleVersion,
-//                                @Nonnull Resource base,
-//                                Map<String, Object> context,
-//                                boolean forceRegen) {
-//
-//        Content content = moduleVersion.content().get();
-//        Metadata metadata = moduleVersion.metadata().get();
-//        String html;
-//        // If regeneration is forced, the content doesn't exist yet, or it needs generation because the original
-//        // asciidoc has changed,
-//        // then generate and save it
-//        if( forceRegen || content.cachedHtml().get() == null || !generatedContentHashMatches(content) ) {
-//            html = buildModule(base.adaptTo(Module.class), moduleVersion, context, true);
-//        } else {
-//            html = content.cachedHtml().get()
-//                    .data().get();
-//        }
-//
-//        return html;
-//    }
-
     public String getModuleHtml(@Nonnull Module module,
                                 @Nonnull Locale locale,
                                 @Nonnull String variantName,
@@ -128,14 +109,14 @@ public class AsciidoctorService {
                                 boolean forceRegen) {
 
         Optional<ModuleVersion> moduleVersion =
-                start(module)
+                traverseFrom(module)
                 .traverse(m -> m.moduleLocale(locale))
                 .traverse(ModuleLocale::variants)
                 .traverse(variants -> variants.variant(variantName))
                 .traverse(v -> draft ? v.draft() : v.released())
                 .getAsOptional();
         Optional<HashableFileResource> sourceFile =
-                start(module)
+                traverseFrom(module)
                 .traverse(m -> m.moduleLocale(locale))
                 .traverse(ModuleLocale::source)
                 .traverse(sourceContent -> draft ? sourceContent.draft() : sourceContent.released())
@@ -165,7 +146,7 @@ public class AsciidoctorService {
      * @return A Map object with all context parameters as keypairs, minus the "ctx_" prefix
      */
     public static Map<String, Object> buildContextFromRequest(SlingHttpServletRequest request) {
-        // collect a list of parameter that start with 'ctx_' as those will be used as asciidoctorj
+        // collect a list of parameter that traverseFrom with 'ctx_' as those will be used as asciidoctorj
         // parameters
         Map<String, Object> context = request.getRequestParameterList().stream().filter(
                 p -> p.getName().toLowerCase().startsWith("ctx_")
@@ -194,22 +175,17 @@ public class AsciidoctorService {
             moduleVersion = serviceResourceResolver.getResource(moduleVersion.getPath()).adaptTo(ModuleVersion.class);
 
             // process product and version.
-            ProductVersion productVersion = null;
+            Optional<ProductVersion> productVersion = empty();
             if (moduleVersion.metadata().get().getValueMap().containsKey("productVersion")) {
-                productVersion = moduleVersion.metadata().map(Metadata::productVersion)
-                        .map(t -> {
-                            try {
-                                return t.getReference();
-                            } catch (RepositoryException e) {
-                                return null;
-                            }
-                        })
-                        .get();
+                productVersion = moduleVersion.metadata()
+                        .traverse()
+                        .traverseRef(Metadata::productVersion)
+                        .getAsOptional();
             }
 
             String productName = null;
-            if (productVersion != null) {
-                productName = productVersion.getProduct().name().get();
+            if (productVersion.isPresent()) {
+                productName = productVersion.get().getProduct().name().get();
             }
 
             Calendar updatedDate = sourceContent.created().get();
@@ -237,7 +213,7 @@ public class AsciidoctorService {
                     // show pantheonproduct on the generated html. Base the value from metadata.
                     .attribute("pantheonproduct", productName)
                     // show pantheonversion on the generated html. Base the value from metadata.
-                    .attribute("pantheonversion", productVersion == null ? "" : productVersion.getValueMap().get("name"))
+                    .attribute("pantheonversion", productVersion.isPresent() ? productVersion.get().name().get() : "")
                     // we want to avoid the footer on the generated html
                     .noFooter(true)
                     // link the css instead of embedding it
@@ -316,20 +292,13 @@ public class AsciidoctorService {
      * Stores (cache) the generated html content into the provided module for later retrieval. This method assumes
      * that the generated html is a result of the transformation of the Module's asciidoc content; but it will not
      * check this assertion.
-     * @param content The module's content instance on which to cache the content.
+     * @param version The specific module version for which to cache the html
      * @param html The html that was generated
      */
     private void cacheContent(final ModuleVersion version, final String html) {
-//        String asciidoc = content.asciidocContent().get();
         version.cachedHtml().getOrCreate()
                 .jcrContent().getOrCreate()
                 .jcrData().set(html);
-//        content.cachedHtml().getOrCreate()
-//                .hash().set(
-//                    hash(asciidoc).toString()
-//                );
-//        content.cachedHtml().getOrCreate()
-//                .data().set(html);
     }
 
     /*
