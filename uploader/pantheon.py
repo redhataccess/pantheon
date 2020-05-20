@@ -13,6 +13,7 @@ import requests
 import yaml
 from requests import Response
 from pprint import pprint
+
 DEFAULT_SERVER = 'http://localhost:8080'
 DEFAULT_USER = 'author'
 DEFAULT_PASSWORD = base64.b64decode(b'YXV0aG9y').decode()
@@ -309,7 +310,7 @@ def process_workspace(path):
             if 'canonical' in variant:
                 print("can present")
                 canon = True
-        if len(variants) > 1 and  not canon :
+        if len(variants) > 1 and not canon:
             sys.exit('Canonical attribute missing, Should be present in case multiple variants')
 
         for variant in variants:
@@ -322,7 +323,7 @@ def process_workspace(path):
         data[module_variants['name']] = module_variants
 
     payload = {}
-    payload[':content'] = json.dumps(data)  #'{"sample":"test"}'
+    payload[':content'] = json.dumps(data)  # '{"sample":"test"}'
     payload[':contentType'] = 'json'
     payload[':operation'] = 'import'
 
@@ -383,6 +384,16 @@ def processRegexMatches(files, globs, filetype):
         files.remove(f)
 
 
+def process_attributes_as_resources(variants):
+    resources = []
+    for variant in variants:
+        # Each variant is of type dictionary
+        for key, value in variant.items():
+            if key == 'path':
+                resources.append(value)
+    return resources
+
+
 server = resolveOption(args.server, 'server', DEFAULT_SERVER)
 # Check if server url path reachable
 server = remove_trailing_slash(server)
@@ -398,7 +409,7 @@ if len(config.keys()) > 0 and 'repository' in config:
     repository = resolveOption(args.repository, '', config['repository'])
     # Enforce a repository being set in the pantheon.yml
     if repository == "" and mode == 'repository':
-          sys.exit('repository is not set')
+        sys.exit('repository is not set')
 
     mode = 'sandbox' if args.sandbox else 'repository'
     # override repository if sandbox is chosen (sandbox name is the user name)
@@ -413,16 +424,22 @@ if len(config.keys()) > 0 and 'repository' in config:
     _info('Using ' + mode + ': ' + repository)
     print('--------------')
 
-
     process_workspace(repository)
+    attribute_files = []
+    if variants:
+        attribute_files = process_attributes_as_resources(variants)
+
     moduleGlobs = readYamlGlob(config, 'modules')
     resourceGlobs = readYamlGlob(config, 'resources')
-
+    if attribute_files:
+        if resourceGlobs is None:
+            resourceGlobs = attribute_files
+        else:
+            resourceGlobs = resourceGlobs + attribute_files
     non_resource_files = []
     logger.debug('moduleGlobs: %s', moduleGlobs)
     logger.debug('resourceGlobs: %s', resourceGlobs)
     logger.debug('args.directory: %s', args.directory)
-
 
     # List all files in the directory
     allFiles = []
@@ -434,7 +451,7 @@ if len(config.keys()) > 0 and 'repository' in config:
     leftoverFiles = len(allFiles)
     if leftoverFiles > 0:
         _warn(f'{leftoverFiles} additional files detected but not uploaded. Only files specified in '
-            + CONFIG_FILE
-            + ' are handled for upload.')
+              + CONFIG_FILE
+              + ' are handled for upload.')
 
 print('Finished!')
