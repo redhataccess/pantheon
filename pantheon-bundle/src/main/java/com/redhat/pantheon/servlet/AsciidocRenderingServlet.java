@@ -1,9 +1,9 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleVariant;
-import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.module.*;
+import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -78,18 +78,26 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
         Module module = request.getResource().adaptTo(Module.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
 
-        Optional<ModuleVersion> moduleVersion;
+        Optional<HashableFileResource> moduleVariantSource;
 
         if(draft) {
-            moduleVersion = module.getDraftVersion(localeObj, variantName);
+            moduleVariantSource = module.moduleLocale(localeObj)
+                .traverse()
+                .toChild(ModuleLocale::source)
+                .toChild(SourceContent::draft)
+                .getAsOptional();
         } else {
-            moduleVersion = module.getReleasedVersion(localeObj, variantName);
+            moduleVariantSource = module.moduleLocale(localeObj)
+                    .traverse()
+                    .toChild(ModuleLocale::source)
+                    .toChild(SourceContent::released)
+                    .getAsOptional();
         }
 
 
-        if(!moduleVersion.isPresent()) {
+        if(!moduleVariantSource.isPresent()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, (draft ? "Draft " : "Released ")
-                    + "content version not found for " + variantName +  " module variant at "
+                    + "source content not found for " + variantName +  " module variant at "
                     + request.getResource().getPath());
         }
         else {

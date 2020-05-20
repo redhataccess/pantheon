@@ -51,7 +51,7 @@ public interface Module extends WorkspaceChild {
     default Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale,
                                                     @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> moduleLocale(locale))
+                .toChild(m -> m.moduleLocale(locale))
                 .toChild(ModuleLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(ModuleVariant::draft)
@@ -61,7 +61,7 @@ public interface Module extends WorkspaceChild {
     default Optional<ModuleVersion> getReleasedVersion(@Nonnull final Locale locale,
                                                     @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> moduleLocale(locale))
+                .toChild(m -> m.moduleLocale(locale))
                 .toChild(ModuleLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(ModuleVariant::released)
@@ -76,7 +76,7 @@ public interface Module extends WorkspaceChild {
     default Optional<FileResource> getReleasedContent(final Locale locale,
                                                       @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> moduleLocale(locale))
+                .toChild(m -> m.moduleLocale(locale))
                 .toChild(ModuleLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(ModuleVariant::released)
@@ -92,7 +92,7 @@ public interface Module extends WorkspaceChild {
     default Optional<FileResource> getDraftContent(final Locale locale,
                                                  @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> moduleLocale(locale))
+                .toChild(m -> m.moduleLocale(locale))
                 .toChild(ModuleLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(ModuleVariant::draft)
@@ -108,7 +108,7 @@ public interface Module extends WorkspaceChild {
     default Optional<Metadata> getReleasedMetadata(final Locale locale,
                                                    @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> moduleLocale(locale))
+                .toChild(m -> m.moduleLocale(locale))
                 .toChild(ModuleLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(ModuleVariant::released)
@@ -125,7 +125,7 @@ public interface Module extends WorkspaceChild {
     default Optional<AckStatus> getAcknowledgementStatus(final Locale locale,
                                                          @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> moduleLocale(locale))
+                .toChild(m -> m.moduleLocale(locale))
                 .toChild(ModuleLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(ModuleVariant::released)
@@ -142,7 +142,7 @@ public interface Module extends WorkspaceChild {
     default Optional<AckStatus> getDraftAcknowledgementStatus(final Locale locale,
                                                               @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> moduleLocale(locale))
+                .toChild(m -> m.moduleLocale(locale))
                 .toChild(ModuleLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(ModuleVariant::draft)
@@ -158,7 +158,7 @@ public interface Module extends WorkspaceChild {
     default Optional<Metadata> getDraftMetadata(final Locale locale,
                                                 @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> moduleLocale(locale))
+                .toChild(m -> m.moduleLocale(locale))
                 .toChild(ModuleLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(ModuleVariant::draft)

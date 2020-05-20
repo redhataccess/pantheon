@@ -9,12 +9,7 @@ import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.module.Content;
-import com.redhat.pantheon.model.module.HashableFileResource;
-import com.redhat.pantheon.model.module.Metadata;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleLocale;
-import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.jackrabbit.oak.commons.PathUtils;
@@ -109,19 +104,29 @@ public class AsciidoctorService {
                                 Map<String, Object> context,
                                 boolean forceRegen) {
 
-        Optional<ModuleVersion> moduleVersion =
-                traverseFrom(module)
-                .toChild(m -> m.moduleLocale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(v -> draft ? v.draft() : v.released())
-                .getAsOptional();
         Optional<HashableFileResource> sourceFile =
                 traverseFrom(module)
-                .toChild(m -> m.moduleLocale(locale))
-                .toChild(ModuleLocale::source)
-                .toChild(sourceContent -> draft ? sourceContent.draft() : sourceContent.released())
-                .getAsOptional();
+                        .toChild(m -> m.moduleLocale(locale))
+                        .toChild(ModuleLocale::source)
+                        .toChild(sourceContent -> draft ? sourceContent.draft() : sourceContent.released())
+                        .getAsOptional();
+
+        if (!sourceFile.isPresent()) {
+            throw new RuntimeException("source file for locale " + locale + " module " + module.getPath() + " variant "
+                    + variantName + " draft " + draft);
+        }
+
+
+        ModuleVariant moduleVariant = module.moduleLocale(locale).getOrCreate()
+                .variants().getOrCreate()
+                .variant(variantName).getOrCreate();
+
+        ModuleVersion moduleVersion;
+        if (draft) {
+            moduleVersion = moduleVariant.draft().getOrCreate();
+        } else {
+            moduleVersion = moduleVariant.released().getOrCreate();
+        }
 
         String html;
         // If regeneration is forced, the content doesn't exist yet, or it needs generation because the original
@@ -129,10 +134,10 @@ public class AsciidoctorService {
         // then generate and save it
         // TODO To keep things simple, regeneration will not happen automatically when the source of the module
         //  has changed. This can be added later
-        if( forceRegen || moduleVersion.get().cachedHtml().get() == null ) {
-            html = buildModule(module, moduleVersion.get(), sourceFile.get(), context, true);
+        if( forceRegen || moduleVersion.cachedHtml().get() == null ) {
+            html = buildModule(module, locale, variantName, draft, sourceFile.get(), context, true);
         } else {
-            html = moduleVersion.get()
+            html = moduleVersion
                     .cachedHtml().get()
                     .jcrContent().get()
                     .jcrData().get();
@@ -168,7 +173,7 @@ public class AsciidoctorService {
      * @param regenMetadata If true, metadata will be extracted from the content and repopulated into the JCR module.
      * @return The generated html string.
      */
-    private String buildModule(Module base, ModuleVersion moduleVersion, FileResource sourceContent,
+    private String buildModule(Module base, FileResource sourceContent,
                                Map<String, Object> context, final boolean regenMetadata) {
 
         // Use a service-level resource resolver to build the module as it will require write access to the resources
