@@ -1,14 +1,12 @@
 package com.redhat.pantheon.model.workspace;
 
 import com.redhat.pantheon.model.api.Child;
-import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.Folder;
 import com.redhat.pantheon.model.api.OrderedFolder;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 
 import javax.inject.Named;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -18,10 +16,6 @@ import java.util.stream.Stream;
  */
 @JcrPrimaryType("pant:workspace")
 public interface Workspace extends SlingModel {
-
-    @Deprecated // TODO remove this as part of the new JCR structure changes
-    @Named("pant:attributeFile")
-    Field<String> attributeFile();
 
     @Named("module_variants")
     Child<ModuleVariantDefinitionFolder> moduleVariantDefinitions();
@@ -36,10 +30,8 @@ public interface Workspace extends SlingModel {
             return this.as(ModuleVariantDefinition.class);
         }
 
-        default Optional<ModuleVariantDefinition> getVariant(String name) {
-            return getVariants()
-                    .filter(mvd -> name.equals(mvd.name().get()))
-                    .findFirst();
+        default Child<ModuleVariantDefinition> variant(String name) {
+            return child(name, ModuleVariantDefinition.class);
         }
     }
 }

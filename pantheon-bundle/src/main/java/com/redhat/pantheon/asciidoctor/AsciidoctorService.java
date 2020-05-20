@@ -17,6 +17,7 @@ import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import org.apache.jackrabbit.oak.commons.PathUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -127,7 +128,7 @@ public class AsciidoctorService {
         // asciidoc has changed,
         // then generate and save it
         // TODO To keep things simple, regeneration will not happen automatically when the source of the module
-        // has changed. This can be added later
+        //  has changed. This can be added later
         if( forceRegen || moduleVersion.get().cachedHtml().get() == null ) {
             html = buildModule(module, moduleVersion.get(), sourceFile.get(), context, true);
         } else {
@@ -196,20 +197,18 @@ public class AsciidoctorService {
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
 
-            String workspacePath = moduleVersion.getWorkspace().getPath();
+            String entitiesPath = moduleVersion.getWorkspace().entities().get().getPath();
             String variantName = moduleVersion.getParent().getName();
-            Optional<String> attributesFilePath = base.getWorkspace().moduleVariantDefinitions()
-                    .map(v -> v.getVariant(variantName))
-                    .map(Optional::get)
-                    .map(ModuleVariantDefinition::attributesFilePath)
-                    .map(Supplier::get);
+            Optional<String> attributesFilePath =
+                    base.getWorkspace().moduleVariantDefinitions()
+                    .traverse()
+                    .traverse(vdf -> vdf.variant(variantName))
+                    .field(ModuleVariantDefinition::attributesFilePath);
 
             // build the attributes (default + those coming from http parameters)
             AttributesBuilder atts = AttributesBuilder.attributes()
                     // show the title on the generated html
                     .attribute("showtitle")
-                    // provide attribute file as argument to ASCIIDOCTOR for building doc.
-                    .attribute("attsFile", workspacePath + "/" + attributesFilePath.orElse(""))
                     // show pantheonproduct on the generated html. Base the value from metadata.
                     .attribute("pantheonproduct", productName)
                     // show pantheonversion on the generated html. Base the value from metadata.
@@ -220,6 +219,15 @@ public class AsciidoctorService {
                     .linkCss(true)
                     // stylesheet reference
                     .styleSheetName("/static/rhdocs.css");
+
+            if(attributesFilePath.isPresent()) {
+                // provide attribute file as argument to ASCIIDOCTOR for building doc.
+                if( PathUtils.isAbsolute(attributesFilePath.get()) ) {
+                    // remove the starting slash
+                    attributesFilePath = attributesFilePath.map(p -> p.substring(1));
+                }
+                atts.attribute("attsFile", PathUtils.concat(entitiesPath, attributesFilePath.get()));
+            }
 
             if(updatedDate != null) {
                 // show pantheonupdateddate on generated html. Base the value from metadata.
@@ -268,7 +276,7 @@ public class AsciidoctorService {
                 }
 
                 StringBuilder content = new StringBuilder();
-                if (!isNullOrEmpty(attributesFilePath.get())) {
+                if (attributesFilePath.isPresent() && !isNullOrEmpty(attributesFilePath.get())) {
                     content.append("include::")
                             .append("{attsFile}")
                             .append("[]\n");

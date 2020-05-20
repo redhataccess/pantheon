@@ -118,46 +118,49 @@ class AsciidoctorServiceTest {
         assertTrue(generatedHtml.contains("This is cached content"));
     }
 
-    // TODO We no longer handle attributeFile property on pant:workspace node
-//    @Test
-//    public void testGetModuleHtmlWithAttributeFileNotFound() throws IOException {
-//        // Given
-//        String asciidocContent = "== This is {product}";
-//        slingContext.build()
-//                .resource("/content/repositories/linux",
-//                        "pant:attributeFile", "attr",
-//                        "jcr:primaryType", "pant:workspace",
-//                        "sling:resourceType", "pantheon/workspace")
-//                .resource("/content/repositories/linux/entities/module/en_US/source/released/jcr:content",
-//                         "jcr:data", asciidocContent)
-//                .resource("/content/repositories/linux/entities/module/en_US/variants/test/released/metadata",
-//                        "jcr:title", "A draft title", "jcr:primaryType", "nt:unstructured", "pant:dateUploaded", "2020-02-12 19:20:01")
-//
-//                .resource("/content/repositories/linux/entities/module/en_US/variants/test/released/cached_html/jcr:content",
-//                        "jcr:data", asciidocContent)
-//                .commit();
-//
-//        Module module =
-//                SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/linux/entities/module"),
-//                        Module.class);
-//
-//        // adapter (mock)
-//        registerMockAdapter(Module.class, slingContext);
-//        registerMockAdapter(Content.class, slingContext);
-//        registerMockAdapter(ModuleVersion.class, slingContext);
-//        registerMockAdapter(Workspace.class, slingContext);
-//        lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
-//        lenient().when(asciidoctorPool.borrowObject())
-//                .thenReturn(Asciidoctor.Factory.create());
-//        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
-//                .thenReturn(slingContext.resourceResolver());
-//        AsciidoctorService asciidoctorService =
-//                new AsciidoctorService(globalConfig, asciidoctorPool, serviceResourceResolverProvider);
-//
-//        // When
-//        String generatedHtml = asciidoctorService.getModuleHtml(module, new Locale("en", "US"), "test", false, newHashMap(), false);
-//
-//        // Then
-//        assertTrue(generatedHtml.contains("Invalid include: /content/repositories/linux/attr"));
-//    }
+    @Test
+    public void testGetModuleHtmlWithAttributeFileNotFound() throws IOException {
+        // Given
+        String asciidocContent = "== This is {product}";
+        slingContext.build()
+                .resource("/content/repositories/linux",
+                        "jcr:primaryType", "pant:workspace",
+                        // see WorkspaceChild#getWorkspace
+                        "sling:resourceType", "pantheon/workspace")
+                .resource("/content/repositories/linux/module_variants/fedora",
+                        "pant:attributesFilePath", "/my/atts.adoc",
+                        "pant:canonical", true)
+                .resource("/content/repositories/linux/entities/module",
+                        "jcr:primaryType", "pant:module")
+                .resource("/content/repositories/linux/entities/module/en_US/source/draft/jcr:content",
+                         "jcr:data", asciidocContent)
+                .resource("/content/repositories/linux/entities/module/en_US/variants/fedora/draft/metadata",
+                        "jcr:title", "A draft title",
+                        "jcr:primaryType", "nt:unstructured",
+                        "pant:dateUploaded", "2020-02-12 19:20:01")
+                .commit();
+
+        Module module =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/linux/entities/module"),
+                        Module.class);
+
+        // adapter (mock)
+        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Content.class, slingContext);
+        registerMockAdapter(ModuleVersion.class, slingContext);
+        registerMockAdapter(Workspace.class, slingContext);
+        lenient().when(globalConfig.getTemplateDirectory()).thenReturn(Optional.empty());
+        lenient().when(asciidoctorPool.borrowObject())
+                .thenReturn(Asciidoctor.Factory.create());
+        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
+                .thenReturn(slingContext.resourceResolver());
+        AsciidoctorService asciidoctorService =
+                new AsciidoctorService(globalConfig, asciidoctorPool, serviceResourceResolverProvider);
+
+        // When
+        String generatedHtml = asciidoctorService.getModuleHtml(module, new Locale("en", "US"), "fedora", true, newHashMap(), false);
+
+        // Then
+        assertTrue(generatedHtml.contains("Invalid include: /content/repositories/linux/entities/my/atts.adoc"));
+    }
 }
