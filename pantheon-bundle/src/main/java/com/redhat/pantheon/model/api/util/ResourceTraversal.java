@@ -52,7 +52,7 @@ public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
      * @param <U>
      * @return A resource traversal at the child accessed via the child accessor.
      */
-    public <U extends SlingModel> ResourceTraversal<U> traverse(Function<? super T, Child<U>> childAccessor) {
+    public <U extends SlingModel> ResourceTraversal<U> toChild(Function<? super T, Child<U>> childAccessor) {
         if(currentResource.isPresent()) {
             Child<U> nextTraversalChild = childAccessor.apply(currentResource.get());
             return new ResourceTraversal<>(nextTraversalChild.get());
@@ -68,7 +68,7 @@ public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
      * @return An optional containing the value of the field. If the field is not present, or if
      * any of the intermediary nodes in the traversal was not present, this optional is empty.
      */
-    public <F> Optional<F> field(Function<? super T, Field<F>> fieldAccessor) {
+    public <F> Optional<F> toField(Function<? super T, Field<F>> fieldAccessor) {
         if(currentResource.isPresent()) {
             Field<F> field = fieldAccessor.apply(currentResource.get());
             return ofNullable(field.get());
@@ -78,13 +78,13 @@ public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
 
     /**
      * Traverses through a {@link Reference} to the referenced sling model. Since traversals are
-     * null-safe, if the referenced resource is not found, then the traversal will fail silently.
+     * null-safe; if the referenced resource is not found, then the traversal will fail silently.
      * @param referenceAccessor A function that returns a {@link Reference} from the current resource.
      * @param <R> The target referenced model type
      * @return A traversal object at the referenced object.
-     * @see ResourceTraversal#field(Function) for simple access to the reference value.
+     * @see ResourceTraversal#toField(Function) for simple access to the reference value.
      */
-    public <R extends SlingModel> ResourceTraversal<R> traverseRef(
+    public <R extends SlingModel> ResourceTraversal<R> toRef(
             Function<? super T, Reference<R>> referenceAccessor) {
         if(currentResource.isPresent()) {
             Reference<R> reference = referenceAccessor.apply(currentResource.get());

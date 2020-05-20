@@ -103,9 +103,9 @@ public class PublishDraftVersion extends AbstractPostOperation {
         } else {
             // Draft becomes the new released version
             ModuleVariant moduleVariant = traverseFrom(module)
-                    .traverse(m -> module.moduleLocale(locale))
-                    .traverse(ModuleLocale::variants)
-                    .traverse(variants -> variants.variant(variant))
+                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(ModuleLocale::variants)
+                    .toChild(variants -> variants.variant(variant))
                     .get();
             moduleVariant.releaseDraft();
             changes.add(Modification.onModified(module.getPath()));

@@ -51,20 +51,20 @@ public interface Module extends WorkspaceChild {
     default Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale,
                                                     @Nonnull final String variantName) {
         return traverseFrom(this)
-                .traverse(m -> moduleLocale(locale))
-                .traverse(ModuleLocale::variants)
-                .traverse(variants -> variants.variant(variantName))
-                .traverse(ModuleVariant::draft)
+                .toChild(m -> moduleLocale(locale))
+                .toChild(ModuleLocale::variants)
+                .toChild(variants -> variants.variant(variantName))
+                .toChild(ModuleVariant::draft)
                 .getAsOptional();
     }
 
     default Optional<ModuleVersion> getReleasedVersion(@Nonnull final Locale locale,
                                                     @Nonnull final String variantName) {
         return traverseFrom(this)
-                .traverse(m -> moduleLocale(locale))
-                .traverse(ModuleLocale::variants)
-                .traverse(variants -> variants.variant(variantName))
-                .traverse(ModuleVariant::released)
+                .toChild(m -> moduleLocale(locale))
+                .toChild(ModuleLocale::variants)
+                .toChild(variants -> variants.variant(variantName))
+                .toChild(ModuleVariant::released)
                 .getAsOptional();
     }
 
@@ -76,11 +76,11 @@ public interface Module extends WorkspaceChild {
     default Optional<FileResource> getReleasedContent(final Locale locale,
                                                       @Nonnull final String variantName) {
         return traverseFrom(this)
-                .traverse(m -> moduleLocale(locale))
-                .traverse(ModuleLocale::variants)
-                .traverse(variants -> variants.variant(variantName))
-                .traverse(ModuleVariant::released)
-                .traverse(ModuleVersion::cachedHtml)
+                .toChild(m -> moduleLocale(locale))
+                .toChild(ModuleLocale::variants)
+                .toChild(variants -> variants.variant(variantName))
+                .toChild(ModuleVariant::released)
+                .toChild(ModuleVersion::cachedHtml)
                 .getAsOptional();
     }
 
@@ -92,11 +92,11 @@ public interface Module extends WorkspaceChild {
     default Optional<FileResource> getDraftContent(final Locale locale,
                                                  @Nonnull final String variantName) {
         return traverseFrom(this)
-                .traverse(m -> moduleLocale(locale))
-                .traverse(ModuleLocale::variants)
-                .traverse(variants -> variants.variant(variantName))
-                .traverse(ModuleVariant::draft)
-                .traverse(ModuleVersion::cachedHtml)
+                .toChild(m -> moduleLocale(locale))
+                .toChild(ModuleLocale::variants)
+                .toChild(variants -> variants.variant(variantName))
+                .toChild(ModuleVariant::draft)
+                .toChild(ModuleVersion::cachedHtml)
                 .getAsOptional();
     }
 
@@ -108,11 +108,11 @@ public interface Module extends WorkspaceChild {
     default Optional<Metadata> getReleasedMetadata(final Locale locale,
                                                    @Nonnull final String variantName) {
         return traverseFrom(this)
-                .traverse(m -> moduleLocale(locale))
-                .traverse(ModuleLocale::variants)
-                .traverse(variants -> variants.variant(variantName))
-                .traverse(ModuleVariant::released)
-                .traverse(ModuleVersion::metadata)
+                .toChild(m -> moduleLocale(locale))
+                .toChild(ModuleLocale::variants)
+                .toChild(variants -> variants.variant(variantName))
+                .toChild(ModuleVariant::released)
+                .toChild(ModuleVersion::metadata)
                 .getAsOptional();
     }
 
@@ -125,11 +125,11 @@ public interface Module extends WorkspaceChild {
     default Optional<AckStatus> getAcknowledgementStatus(final Locale locale,
                                                          @Nonnull final String variantName) {
         return traverseFrom(this)
-                .traverse(m -> moduleLocale(locale))
-                .traverse(ModuleLocale::variants)
-                .traverse(variants -> variants.variant(variantName))
-                .traverse(ModuleVariant::released)
-                .traverse(ModuleVersion::ackStatus)
+                .toChild(m -> moduleLocale(locale))
+                .toChild(ModuleLocale::variants)
+                .toChild(variants -> variants.variant(variantName))
+                .toChild(ModuleVariant::released)
+                .toChild(ModuleVersion::ackStatus)
                 .getAsOptional();
     }
 
@@ -142,11 +142,11 @@ public interface Module extends WorkspaceChild {
     default Optional<AckStatus> getDraftAcknowledgementStatus(final Locale locale,
                                                               @Nonnull final String variantName) {
         return traverseFrom(this)
-                .traverse(m -> moduleLocale(locale))
-                .traverse(ModuleLocale::variants)
-                .traverse(variants -> variants.variant(variantName))
-                .traverse(ModuleVariant::draft)
-                .traverse(ModuleVersion::ackStatus)
+                .toChild(m -> moduleLocale(locale))
+                .toChild(ModuleLocale::variants)
+                .toChild(variants -> variants.variant(variantName))
+                .toChild(ModuleVariant::draft)
+                .toChild(ModuleVersion::ackStatus)
                 .getAsOptional();
     }
 
@@ -158,11 +158,11 @@ public interface Module extends WorkspaceChild {
     default Optional<Metadata> getDraftMetadata(final Locale locale,
                                                 @Nonnull final String variantName) {
         return traverseFrom(this)
-                .traverse(m -> moduleLocale(locale))
-                .traverse(ModuleLocale::variants)
-                .traverse(variants -> variants.variant(variantName))
-                .traverse(ModuleVariant::draft)
-                .traverse(ModuleVersion::metadata)
+                .toChild(m -> moduleLocale(locale))
+                .toChild(ModuleLocale::variants)
+                .toChild(variants -> variants.variant(variantName))
+                .toChild(ModuleVariant::draft)
+                .toChild(ModuleVersion::metadata)
                 .getAsOptional();
     }
 }

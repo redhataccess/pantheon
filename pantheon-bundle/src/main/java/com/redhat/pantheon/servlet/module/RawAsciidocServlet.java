@@ -62,18 +62,18 @@ public class RawAsciidocServlet extends SlingSafeMethodsServlet {
         Optional<String> content;
         if (draft) {
             content = traverseFrom(module)
-                    .traverse(m -> m.moduleLocale(locale))
-                    .traverse(ModuleLocale::source)
-                    .traverse(SourceContent::draft)
-                    .traverse(FileResource::jcrContent)
-                    .field(FileResource.JcrContent::jcrData);
+                    .toChild(m -> m.moduleLocale(locale))
+                    .toChild(ModuleLocale::source)
+                    .toChild(SourceContent::draft)
+                    .toChild(FileResource::jcrContent)
+                    .toField(FileResource.JcrContent::jcrData);
         } else {
             content = traverseFrom(module)
-                    .traverse(m -> m.moduleLocale(locale))
-                    .traverse(ModuleLocale::source)
-                    .traverse(SourceContent::released)
-                    .traverse(FileResource::jcrContent)
-                    .field(FileResource.JcrContent::jcrData);
+                    .toChild(m -> m.moduleLocale(locale))
+                    .toChild(ModuleLocale::source)
+                    .toChild(SourceContent::released)
+                    .toChild(FileResource::jcrContent)
+                    .toField(FileResource.JcrContent::jcrData);
         }
 
         if(content.isPresent()) {

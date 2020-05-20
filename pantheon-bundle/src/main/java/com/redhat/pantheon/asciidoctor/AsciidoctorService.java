@@ -111,16 +111,16 @@ public class AsciidoctorService {
 
         Optional<ModuleVersion> moduleVersion =
                 traverseFrom(module)
-                .traverse(m -> m.moduleLocale(locale))
-                .traverse(ModuleLocale::variants)
-                .traverse(variants -> variants.variant(variantName))
-                .traverse(v -> draft ? v.draft() : v.released())
+                .toChild(m -> m.moduleLocale(locale))
+                .toChild(ModuleLocale::variants)
+                .toChild(variants -> variants.variant(variantName))
+                .toChild(v -> draft ? v.draft() : v.released())
                 .getAsOptional();
         Optional<HashableFileResource> sourceFile =
                 traverseFrom(module)
-                .traverse(m -> m.moduleLocale(locale))
-                .traverse(ModuleLocale::source)
-                .traverse(sourceContent -> draft ? sourceContent.draft() : sourceContent.released())
+                .toChild(m -> m.moduleLocale(locale))
+                .toChild(ModuleLocale::source)
+                .toChild(sourceContent -> draft ? sourceContent.draft() : sourceContent.released())
                 .getAsOptional();
 
         String html;
@@ -180,7 +180,7 @@ public class AsciidoctorService {
             if (moduleVersion.metadata().get().getValueMap().containsKey("productVersion")) {
                 productVersion = moduleVersion.metadata()
                         .traverse()
-                        .traverseRef(Metadata::productVersion)
+                        .toRef(Metadata::productVersion)
                         .getAsOptional();
             }
 
@@ -202,8 +202,8 @@ public class AsciidoctorService {
             Optional<String> attributesFilePath =
                     base.getWorkspace().moduleVariantDefinitions()
                     .traverse()
-                    .traverse(vdf -> vdf.variant(variantName))
-                    .field(ModuleVariantDefinition::attributesFilePath);
+                    .toChild(vdf -> vdf.variant(variantName))
+                    .toField(ModuleVariantDefinition::attributesFilePath);
 
             // build the attributes (default + those coming from http parameters)
             AttributesBuilder atts = AttributesBuilder.attributes()
