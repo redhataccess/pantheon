@@ -8,6 +8,8 @@ import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.util.ResourceTraversal;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.HashableFileResource;
@@ -73,22 +75,6 @@ public class AsciidoctorService {
     }
 
     /**
-     * Indicates if the generated html content for a Module matches the stored hash.
-     * This method serves as an indicator of whether the asciidoc content has been updated
-     * and hence the resulting html needs to be re-generated.
-     * @param content the module content
-     * @return true if the generated html content was generated from the Module's asciidoc
-     * content. False otherwise.
-     */
-    private boolean generatedContentHashMatches(Content content) {
-        String srcContent = content.asciidocContent().get();
-        String existingHash = content.cachedHtml().get()
-                .hash().get();
-
-        return hash(srcContent).toString().equals(existingHash);
-    }
-
-    /**
      * Returns a module's html representation. If the module has not been built before, or if it is explicitly requested,
      * it is fully built. Otherwise a cached copy of the html is returned.
      * @param module The module for which to get the html representation
@@ -131,7 +117,8 @@ public class AsciidoctorService {
         // TODO To keep things simple, regeneration will not happen automatically when the source of the module
         //  has changed. This can be added later
         if( forceRegen
-                || (moduleVersion.isPresent() && moduleVersion.get().cachedHtml().get() == null) ) {
+                || !moduleVersion.isPresent()
+                || moduleVersion.get().cachedHtml().get() == null ) {
             html = buildModule(module, locale, variantName, draft, context, true);
         } else {
             html = moduleVersion.get()
@@ -165,12 +152,14 @@ public class AsciidoctorService {
      * Builds a module. This means generating the html code for the module at one of its revisions.
      * @param base The base module. This should be the same module that the moduleVersion belongs to, but the code
      *             won't check this. The module will only be used as a base for resolving included resources and images.
-     * @param moduleVersion The actual module version that is being generated. It should have its asciidoc content present.
+     * @param locale The locale to build
+     * @param variantName The variant name to generate. If unknown, provide {@link ModuleVariant#DEFAULT_VARIANT_NAME}.
+     * @param isDraft True if aiming to generate the draft version of the module. False, to generate the released version.
      * @param context Any asciidoc attributes necessary to inject into the generation process
      * @param regenMetadata If true, metadata will be extracted from the content and repopulated into the JCR module.
      * @return The generated html string.
      */
-    private String buildModule(Module base, Locale locale, String variantName, boolean isDraft,
+    private String buildModule(@Nonnull Module base, @Nonnull Locale locale, @Nonnull String variantName, boolean isDraft,
                                Map<String, Object> context, final boolean regenMetadata) {
 
         Optional<HashableFileResource> sourceFile =
@@ -188,7 +177,8 @@ public class AsciidoctorService {
         // Use a service-level resource resolver to build the module as it will require write access to the resources
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
 
-            ModuleVariant moduleVariant = base.moduleLocale(locale).getOrCreate()
+            Module serviceModule = SlingModels.getModel(serviceResourceResolver, base.getPath(), Module.class);
+            ModuleVariant moduleVariant = serviceModule.moduleLocale(locale).getOrCreate()
                     .variants().getOrCreate()
                     .variant(variantName).getOrCreate();
 
@@ -198,8 +188,6 @@ public class AsciidoctorService {
             } else {
                 moduleVersion = moduleVariant.released().getOrCreate();
             }
-
-            moduleVersion = serviceResourceResolver.getResource(moduleVersion.getPath()).adaptTo(ModuleVersion.class);
 
             // process product and version.
             Optional<ProductVersion> productVersion =
@@ -329,21 +317,9 @@ public class AsciidoctorService {
      * @param html The html that was generated
      */
     private void cacheContent(final ModuleVersion version, final String html) {
-        version.cachedHtml().getOrCreate()
-                .jcrContent().getOrCreate()
-                .jcrData().set(html);
-    }
-
-    /*
-     * calculates a hash for a string
-     * TODO This should probably be moved elsewhere
-     */
-    private HashCode hash(String str) {
-        return Hashing.adler32().hashString(str == null ? "" : str, Charsets.UTF_8);
-    }
-
-    private class BuildModuleResults {
-        String generatedHtml;
-
+        FileResource.JcrContent cachedHtmlFile = version.cachedHtml().getOrCreate()
+                .jcrContent().getOrCreate();
+        cachedHtmlFile.jcrData().set(html);
+        cachedHtmlFile.mimeType().set("text/html");
     }
 }
