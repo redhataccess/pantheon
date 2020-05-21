@@ -269,91 +269,33 @@ See these sections in the Asciidoctor User Manual for more information and examp
 * {pass-ref}[Passthrough Macros]
 ****
 
+= Sample Headings
+'''
 
-.Article doctype
-----
+= Heading level 1 Paradigm shift seed round research & development ramen mass market
 
-== Level 1 Section
+This is an example paragraph, investor startup focus seed round advisor iPhone venture equity marketing series A financing branding. Value proposition influencer termsheet ownership buyer. Paradigm shift seed round research & development ramen mass market product management ecosystem low hanging fruit assets. Low hanging fruit launch party niche market graphical user interface ecosystem freemium. Handshake gamification burn rate business-to-consumer market release rockstar.
 
-=== Level 2 Section
+== Heading level 2 Paradigm shift seed round research & development ramen mass market
 
-==== Level 3 Section
+This is an example paragraph, investor startup focus seed round advisor iPhone venture equity marketing series A financing branding. Value proposition influencer termsheet ownership buyer. Paradigm shift seed round research & development ramen mass market product management ecosystem low hanging fruit assets. Low hanging fruit launch party niche market graphical user interface ecosystem freemium. Handshake gamification burn rate business-to-consumer market release rockstar.
 
-===== Level 4 Section
+=== Heading level 3 Paradigm shift seed round research & development ramen mass market
 
-====== Level 5 Section
+This is an example paragraph, investor startup focus seed round advisor iPhone venture equity marketing series A financing branding. Value proposition influencer termsheet ownership buyer. Paradigm shift seed round research & development ramen mass market product management ecosystem low hanging fruit assets. Low hanging fruit launch party niche market graphical user interface ecosystem freemium. Handshake gamification burn rate business-to-consumer market release rockstar.
 
-== Another Level 1 Section
-----
+==== Heading level 4 Paradigm shift seed round research & development ramen mass market
 
-[.result]
-====
-// float is required to create plain headers
-[float]
-= Document Title (Level 0)
+This is an example paragraph, investor startup focus seed round advisor iPhone venture equity marketing series A financing branding. Value proposition influencer termsheet ownership buyer. Paradigm shift seed round research & development ramen mass market product management ecosystem low hanging fruit assets. Low hanging fruit launch party niche market graphical user interface ecosystem freemium. Handshake gamification burn rate business-to-consumer market release rockstar.
 
-[float]
-== Section Level 1
+===== Heading level 5 Paradigm shift seed round research & development ramen mass market
 
-[float]
-=== Section Level 2
+This is an example paragraph, investor startup focus seed round advisor iPhone venture equity marketing series A financing branding. Value proposition influencer termsheet ownership buyer. Paradigm shift seed round research & development ramen mass market product management ecosystem low hanging fruit assets. Low hanging fruit launch party niche market graphical user interface ecosystem freemium. Handshake gamification burn rate business-to-consumer market release rockstar.
 
-[float]
-==== Section Level 3
+====== Heading level 6 Paradigm shift seed round research & development ramen mass market
 
-[float]
-===== Section Level 4
+This is an example paragraph, investor startup focus seed round advisor iPhone venture equity marketing series A financing branding. Value proposition influencer termsheet ownership buyer. Paradigm shift seed round research & development ramen mass market product management ecosystem low hanging fruit assets. Low hanging fruit launch party niche market graphical user interface ecosystem freemium. Handshake gamification burn rate business-to-consumer market release rockstar.
 
-[float]
-====== Section Level 5
-====
-
-WARNING: When using the article doctype (the default), you can only have one level-0 section title (i.e., the document title) and it must be in the document header.
-
-NOTE: The number of equal signs matches the heading level in the HTML output.
-For example, _Section Level 1_ becomes an `<h2>` heading.
-
-.Book doctype
-----
-= Document Title (Level 0)
-
-== Section Level 1
-
-=== Section Level 2
-
-==== Section Level 3
-
-===== Section Level 4
-
-====== Section Level 5
-
-= Section Level 0
-----
-
-[.result]
-====
-// float is required to create plain headers
-[float]
-= Document Title (Level 0)
-
-[float]
-== Section Level 1
-
-[float]
-=== Section Level 2
-
-[float]
-==== Section Level 3
-
-[float]
-===== Section Level 4
-
-[float]
-====== Section Level 5
-
-[float]
-= Section Level 0
-====
 
 ////
 IMPORTANT: There are two other ways to define a section title.

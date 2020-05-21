@@ -48,15 +48,6 @@
   }
 }
 
-// Header
-.rhdocs-header {
-  h1 {
-    margin: 0;
-    font-size: $heading--xxl;
-    line-height: $line-height--lg;
-  }
-}
-
 .rhdocs-details {
   margin: 16px 0 48px;
   padding: 0;
@@ -186,12 +177,8 @@
 }
 
 // Sections
-section {
-  &.sect1 {
-    margin: 2rem 0 1rem;
-
-    // & + .sect1 {}
-  }
+.sect1 {
+  margin: 2rem 0 1rem;
 }
 
 // Admonitions
@@ -211,8 +198,6 @@ section {
       font-size: 1.5rem;
     }
   }
-
-  // &.tip {}
 
   &.note {
     color: $color--text--info;
@@ -245,26 +230,7 @@ section {
   }
 }
 
-// Literal Blocks & Listing Blocks
-pre {
-  font-family: $font-family--code;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  word-spacing: normal;
-  word-break: break-all;
-  // overflow-wrap: break-word;
-  font-size: $font-size--monospace;
-  line-height: $line-height--base;
-}
 
-:not(pre) > code {
-  padding: 0.25em 0.5em;
-  font-family: $font-family--code;
-  background: $color--bg--code-inline;
-  color: $color--text--code-inline;
-  font-size: $font-size--monospace;
-  line-height: $line-height--base;
-}
 
 .colist {
   ol {
@@ -428,11 +394,6 @@ pre {
         }
       }
     }
-
-    // > li {
-    //   > a {
-    //   }
-    // }
   }
 }
 
