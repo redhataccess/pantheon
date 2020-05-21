@@ -7,6 +7,7 @@ import {
 } from '@patternfly/react-core'
 import { Versions } from '@app/versions'
 import { Fields } from '@app/Constants'
+import { continueStatement } from '@babel/types';
 
 class ModuleDisplay extends Component<any, any, any> {
 
@@ -26,6 +27,7 @@ class ModuleDisplay extends Component<any, any, any> {
             releaseUpdateDate: '',
             releaseVersion: '',
             results: {},
+            variant: 'DEFAULT',
             versionValue: ""
         }
     }
@@ -35,6 +37,7 @@ class ModuleDisplay extends Component<any, any, any> {
         this.getVersionUUID(this.props.location.pathname)
 
         this.getPortalUrl()
+        this.getVariantParam()
     }
 
     public render() {
@@ -135,6 +138,7 @@ class ModuleDisplay extends Component<any, any, any> {
                                 modulePath={this.state.modulePath}
                                 productInfo={this.state.productValue}
                                 versionModulePath={this.state.moduleTitle}
+                                variant={this.state.variant}
                                 updateDate={this.updateDate}
                                 onGetProduct={this.getProduct}
                                 onGetVersion={this.getVersion}
@@ -164,10 +168,11 @@ class ModuleDisplay extends Component<any, any, any> {
         fetch(data.location.pathname + '.4.json')
             .then(response => response.json())
             .then(responseJSON => {
-                // console.log('fetch results:', responseJSON)
+                console.log('fetch results:', responseJSON)
                 this.setState({
-                    moduleTitle: responseJSON.en_US["1"].metadata["jcr:title"],
-                    moduleType: responseJSON.en_US["1"].metadata["pant:moduleType"],
+                    // TODO: new JCR Structure
+                    // moduleTitle: responseJSON.en_US["1"].metadata["jcr:title"],
+                    // moduleType: responseJSON.en_US["1"].metadata["pant:moduleType"],
 
                 })
             })
@@ -182,12 +187,31 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     private getVersionUUID = (path) => {
-        path = "/content" + path + "/en_US/1/metadata.json"
+        // path = "/content" + path + "/en_US/1/metadata.json"
+        path = "/content" + path + "/en_US/variants.harray.3.json"
         fetch(path)
             .then(response => response.json())
             .then((responseJSON) => {
-                if (responseJSON.productVersion !== undefined) {
-                    this.getProductInitialLoad(responseJSON.productVersion)
+                for (const variant of responseJSON.__children__) {
+                    if (!variant.__children__) {
+                        continue
+                    }
+                    for (const variantChild of variant.__children__) {
+                        console.log("[moduleDisplay] variantChild => ", variantChild)
+                        if(! variantChild.__children__) {
+                            continue
+                        }
+                        for (const offspring of variantChild.__children__) {
+                            console.log("[moduleDisplay] metadata => ", offspring)
+                            if (offspring.__name__ === 'metadata') {
+                                console.log("[moduleDisplay] offspring => ", offspring)
+                                if (offspring[Fields.PANT_PRODUCT_VERSION_REF] !== undefined) {
+                                    console.log("[moduleDisplay] productVersion FOUND ", offspring[Fields.PANT_PRODUCT_VERSION_REF])
+                                    this.getProductInitialLoad(offspring[Fields.PANT_PRODUCT_VERSION_REF])
+                                }
+                            }
+                        }
+                    }
                 }
             })
     }
@@ -242,6 +266,14 @@ class ModuleDisplay extends Component<any, any, any> {
                     })
                 }
             })
+    }
+
+    private getVariantParam() {
+        const query = new URLSearchParams(this.props.location.search);
+        const variantParam = query.get('variant')
+        if (variantParam) {
+            this.setState({variant: variantParam})
+        }
     }
 }
 

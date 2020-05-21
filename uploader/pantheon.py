@@ -314,13 +314,18 @@ def process_workspace(path):
             sys.exit('Canonical attribute missing, Should be present in case multiple variants')
 
         for variant in variants:
-            # Each variant is of type dictionary
+            # Each variant is of type dictionary. Rename the keys to match ModuleVariantDefinition
             for key, value in variant.items():
-                module_variants[key] = value
+                if key.lower() == 'name':
+                    module_variants['pant:name'] = value
+                if key.lower() == 'path':
+                    module_variants['pant:attributesFilePath'] = value
+                if key.lower() == 'canonical':
+                    module_variants['pant:canonical'] = value
     else:
         data = {'DEFAULT': {}}
-    if 'name' in module_variants:
-        data[module_variants['name']] = module_variants
+    if 'pant:name' in module_variants:
+        data[module_variants['pant:name']] = module_variants
 
     payload = {}
     payload[':content'] = json.dumps(data)  # '{"sample":"test"}'
