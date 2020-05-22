@@ -18,4 +18,4 @@ If you do not see the module listed, search for the modules using the search box
 
 . Click *Preview* next to the version of the module you want to preview.
 +
-If the module is already published to the Customer Protal, you will see *View* instead of *Preview*.
+If the module is already published to the Customer Portal, you will see *View* instead of *Preview*.
