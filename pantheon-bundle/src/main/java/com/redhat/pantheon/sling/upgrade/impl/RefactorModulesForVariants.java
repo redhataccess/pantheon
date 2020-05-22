@@ -94,6 +94,9 @@ public class RefactorModulesForVariants implements RepositoryUpgrade {
                 Node draftSourceNode = sourceNode.addNode("draft", "nt:file");
                 draftSourceNode.addMixin("pant:hashable");
 
+                // add a draft variant node
+                defaultVariantNode.addNode("draft", "pant:moduleVersion");
+
                 // copy over the content
                 Node jcrContentNode = draftSourceNode.addNode("jcr:content", "nt:resource");
                 jcrContentNode.setProperty("jcr:mimeType", "text/x-asciidoc");
@@ -116,6 +119,9 @@ public class RefactorModulesForVariants implements RepositoryUpgrade {
                 // add a released source node
                 Node releasedSourceNode = sourceNode.addNode("released", "nt:file");
                 releasedSourceNode.addMixin("pant:hashable");
+
+                // add a released variant node
+                defaultVariantNode.addNode("released", "pant:moduleVersion");
 
                 // copy over the content
                 Node jcrContentNode = releasedSourceNode.addNode("jcr:content", "nt:resource");
