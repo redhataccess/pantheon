@@ -80,7 +80,7 @@ public class RefactorModulesForVariants implements RepositoryUpgrade {
             Node variantsNode = localeNode.addNode("variants", "sling:OrderedFolder");
 
             // create the default variant
-            variantsNode.addNode("DEFAULT", "pant:moduleVariant");
+            Node defaultVariantNode = variantsNode.addNode("DEFAULT", "pant:moduleVariant");
 
             if(draftVersionNode != null) {
                 // Get the source content
@@ -98,6 +98,11 @@ public class RefactorModulesForVariants implements RepositoryUpgrade {
                 Node jcrContentNode = draftSourceNode.addNode("jcr:content", "nt:resource");
                 jcrContentNode.setProperty("jcr:mimeType", "text/x-asciidoc");
                 jcrContentNode.setProperty("jcr:data", sourceContent);
+
+                // move over the ackStatus node to ack_status
+                moduleNode.getSession().move(
+                        draftVersionNode.getPath() + "/ackStatus",
+                        defaultVariantNode.getPath() + "/draft/ack_status");
             }
 
             if(releasedVersionNode != null) {
@@ -108,14 +113,19 @@ public class RefactorModulesForVariants implements RepositoryUpgrade {
                         .getProperty("jcr:data")
                         .getString();
 
-                // add a draft source node
-                Node draftSourceNode = sourceNode.addNode("released", "nt:file");
-                draftSourceNode.addMixin("pant:hashable");
+                // add a released source node
+                Node releasedSourceNode = sourceNode.addNode("released", "nt:file");
+                releasedSourceNode.addMixin("pant:hashable");
 
                 // copy over the content
-                Node jcrContentNode = draftSourceNode.addNode("jcr:content", "nt:resource");
+                Node jcrContentNode = releasedSourceNode.addNode("jcr:content", "nt:resource");
                 jcrContentNode.setProperty("jcr:mimeType", "text/x-asciidoc");
                 jcrContentNode.setProperty("jcr:data", sourceContent);
+
+                // move over the ackStatus node to ack_status
+                moduleNode.getSession().move(
+                        releasedVersionNode.getPath() + "/ackStatus",
+                        defaultVariantNode.getPath() + "/released/ack_status");
             }
 
             // cleanup nodes and properties which are no longer needed
