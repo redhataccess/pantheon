@@ -110,7 +110,7 @@ public class RefactorModulesForVariants implements RepositoryUpgrade {
 
             if(releasedVersionNode != null) {
                 // Get the source content
-                String sourceContent = draftVersionNode.getNode("content")
+                String sourceContent = releasedVersionNode.getNode("content")
                         .getNode("asciidoc")
                         .getNode("jcr:content")
                         .getProperty("jcr:data")
