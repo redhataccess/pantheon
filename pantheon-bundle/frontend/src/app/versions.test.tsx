@@ -6,6 +6,7 @@ import { mount, shallow } from 'enzyme'
 import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Dropdown, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput, DropdownItem, Title, Alert, AlertActionCloseButton, DataListContent, KebabToggle } from '@patternfly/react-core'
 import renderer from 'react-test-renderer'
 import sinon from 'sinon'
+import { any } from 'prop-types';
 
 const anymatch = require('anymatch')
 
@@ -15,6 +16,7 @@ const props = {
     onGetVersion: (versionValue) => anymatch,
     productInfo: "Red Hat Enterprise Linux",
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
+    variant: "test",
     versionModulePath: "/modules/test/en_US/1"
 }
 
@@ -294,6 +296,7 @@ describe('Versions tests', () => {
             onGetVersion: (versionValue) => anymatch,
             productInfo: "Red Hat Enterprise Linux",
             updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
+            variant: "DEFAULT",
             versionModulePath: "versionPath"
         }
         state.updateDate("-", "-", 1, "1234")

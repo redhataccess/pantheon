@@ -77,14 +77,15 @@ public class AsciidoctorService {
     /**
      * Returns a module's html representation. If the module has not been built before, or if it is explicitly requested,
      * it is fully built. Otherwise a cached copy of the html is returned.
-     * @param module The module for which to get the html representation
-     * @param locale The module locale
+     *
+     * @param module      The module for which to get the html representation
+     * @param locale      The module locale
      * @param variantName The name of the module variant
-     * @param draft True if generating the draft version of the module. False if generating the released version.
-     * @param context any necessary context (attributes and their values) necessary to generate the html
-     * @param forceRegen when true, the html content is always re-generated; the cached content is ignored
-     *                   This parameter is useful when passing context, as the cached content does not take
-     *                   the context into account
+     * @param draft       True if generating the draft version of the module. False if generating the released version.
+     * @param context     any necessary context (attributes and their values) necessary to generate the html
+     * @param forceRegen  when true, the html content is always re-generated; the cached content is ignored
+     *                    This parameter is useful when passing context, as the cached content does not take
+     *                    the context into account
      * @return The module's html representation based on its current asciidoc content
      */
     public String getModuleHtml(@Nonnull Module module,
@@ -103,11 +104,11 @@ public class AsciidoctorService {
         if (draft) {
             moduleVersion =
                     traversal.toChild(ModuleVariant::draft)
-                        .getAsOptional();
+                            .getAsOptional();
         } else {
             moduleVersion =
                     traversal.toChild(ModuleVariant::released)
-                        .getAsOptional();
+                            .getAsOptional();
         }
 
         String html;
@@ -116,9 +117,9 @@ public class AsciidoctorService {
         // then generate and save it
         // TODO To keep things simple, regeneration will not happen automatically when the source of the module
         //  has changed. This can be added later
-        if( forceRegen
+        if (forceRegen
                 || !moduleVersion.isPresent()
-                || moduleVersion.get().cachedHtml().get() == null ) {
+                || moduleVersion.get().cachedHtml().get() == null) {
             html = buildModule(module, locale, variantName, draft, context, true);
         } else {
             html = moduleVersion.get()
@@ -132,6 +133,7 @@ public class AsciidoctorService {
 
     /**
      * Builds a context Map that is initially populated from request parameters which are prefixed with "ctx_".
+     *
      * @param request The http request provided by Sling
      * @return A Map object with all context parameters as keypairs, minus the "ctx_" prefix
      */
@@ -150,12 +152,13 @@ public class AsciidoctorService {
 
     /**
      * Builds a module. This means generating the html code for the module at one of its revisions.
-     * @param base The base module. This should be the same module that the moduleVersion belongs to, but the code
-     *             won't check this. The module will only be used as a base for resolving included resources and images.
-     * @param locale The locale to build
-     * @param variantName The variant name to generate. If unknown, provide {@link ModuleVariant#DEFAULT_VARIANT_NAME}.
-     * @param isDraft True if aiming to generate the draft version of the module. False, to generate the released version.
-     * @param context Any asciidoc attributes necessary to inject into the generation process
+     *
+     * @param base          The base module. This should be the same module that the moduleVersion belongs to, but the code
+     *                      won't check this. The module will only be used as a base for resolving included resources and images.
+     * @param locale        The locale to build
+     * @param variantName   The variant name to generate. If unknown, provide {@link ModuleVariant#DEFAULT_VARIANT_NAME}.
+     * @param isDraft       True if aiming to generate the draft version of the module. False, to generate the released version.
+     * @param context       Any asciidoc attributes necessary to inject into the generation process
      * @param regenMetadata If true, metadata will be extracted from the content and repopulated into the JCR module.
      * @return The generated html string.
      */
@@ -192,9 +195,9 @@ public class AsciidoctorService {
             // process product and version.
             Optional<ProductVersion> productVersion =
                     moduleVersion.metadata()
-                        .traverse()
-                        .toRef(Metadata::productVersion)
-                        .getAsOptional();
+                            .traverse()
+                            .toRef(Metadata::productVersion)
+                            .getAsOptional();
 
             String productName = null;
             if (productVersion.isPresent()) {
@@ -212,9 +215,9 @@ public class AsciidoctorService {
             String entitiesPath = base.getWorkspace().entities().get().getPath();
             Optional<String> attributesFilePath =
                     base.getWorkspace().moduleVariantDefinitions()
-                    .traverse()
-                    .toChild(vdf -> vdf.variant(variantName))
-                    .toField(ModuleVariantDefinition::attributesFilePath);
+                            .traverse()
+                            .toChild(vdf -> vdf.variant(variantName))
+                            .toField(ModuleVariantDefinition::attributesFilePath);
 
             // build the attributes (default + those coming from http parameters)
             AttributesBuilder atts = AttributesBuilder.attributes()
@@ -231,18 +234,18 @@ public class AsciidoctorService {
                     // stylesheet reference
                     .styleSheetName("/static/rhdocs.css");
 
-            if(attributesFilePath.isPresent()) {
+            if (attributesFilePath.isPresent()) {
                 // provide attribute file as argument to ASCIIDOCTOR for building doc.
-                if( PathUtils.isAbsolute(attributesFilePath.get()) ) {
+                if (PathUtils.isAbsolute(attributesFilePath.get())) {
                     // remove the starting slash
                     attributesFilePath = attributesFilePath.map(p -> p.substring(1));
                 }
                 atts.attribute("attsFile", PathUtils.concat(entitiesPath, attributesFilePath.get()));
             }
 
-            if(updatedDate != null) {
+            if (updatedDate != null) {
                 // show pantheonupdateddate on generated html. Base the value from metadata.
-                atts.attribute("pantheonupdateddate",  dateFormat.format(updatedDate.getTime()));
+                atts.attribute("pantheonupdateddate", dateFormat.format(updatedDate.getTime()));
             }
 
             if (publishedDate.isPresent()) {
@@ -281,7 +284,7 @@ public class AsciidoctorService {
                         new HtmlModulePostprocessor(base));
 
                 // add specific extensions for metadata regeneration
-                if(regenMetadata) {
+                if (regenMetadata) {
                     asciidoctor.javaExtensionRegistry().treeprocessor(
                             new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
                 }
@@ -313,8 +316,9 @@ public class AsciidoctorService {
      * Stores (cache) the generated html content into the provided module for later retrieval. This method assumes
      * that the generated html is a result of the transformation of the Module's asciidoc content; but it will not
      * check this assertion.
+     *
      * @param version The specific module version for which to cache the html
-     * @param html The html that was generated
+     * @param html    The html that was generated
      */
     private void cacheContent(final ModuleVersion version, final String html) {
         FileResource.JcrContent cachedHtmlFile = version.cachedHtml().getOrCreate()

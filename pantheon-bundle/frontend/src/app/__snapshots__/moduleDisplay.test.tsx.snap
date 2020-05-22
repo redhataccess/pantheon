@@ -138,6 +138,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
           onGetVersion={[Function]}
           productInfo=""
           updateDate={[Function]}
+          variant="DEFAULT"
           versionModulePath=""
         />
       </Card>
