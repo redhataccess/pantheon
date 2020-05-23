@@ -322,6 +322,8 @@ def process_workspace(path):
                     module_variants['pant:attributesFilePath'] = value
                 if key.lower() == 'canonical':
                     module_variants['pant:canonical'] = value
+            if 'pant:canonical' not in module_variants:
+                module_variants['pant:canonical'] = 'true'
             if 'pant:name' in module_variants:
                 data[module_variants['pant:name']] = module_variants
             createVariant(data, path, url)
@@ -329,7 +331,7 @@ def process_workspace(path):
     else:
         data = {'DEFAULT': {}}
         createVariant(data, path, url)
-        
+
 def createVariant(data, path, url):
     payload = {}
     payload[':content'] = json.dumps(data)  # '{"sample":"test"}'
