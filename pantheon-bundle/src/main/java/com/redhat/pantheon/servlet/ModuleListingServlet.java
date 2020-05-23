@@ -180,14 +180,12 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
     protected Map<String, Object> resourceToMap(Resource resource) {
         Module module = resource.adaptTo(Module.class);
 
-        String variantName = module.moduleLocale(DEFAULT_MODULE_LOCALE)
-            .get()
-            .variants()
-            .get()
-            .getVariants()
-            .findFirst()
-            .get()
-            .getName();
+        String variantName = module.getWorkspace()
+                .moduleVariantDefinitions().get()
+                .getVariants()
+                .findFirst().get()
+                .getName();
+
         Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE, variantName);
         Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);
 
@@ -221,9 +219,23 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }else{
             m.put("pant:publishedDate","-");
         }
-        
-        m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title().get() : releasedMetadata.get().title().get());
-        m.put("jcr:description", draftMetadata.isPresent() ? draftMetadata.get().description().get() : releasedMetadata.get().description().get());
+
+        if(draftMetadata.isPresent() && draftMetadata.get().title().get()!=null){
+            m.put("jcr:title",draftMetadata.get().title().get());
+        }else if(releasedMetadata.isPresent() && releasedMetadata.get().title().get()!=null){
+            m.put("jcr:title",releasedMetadata.get().title().get());
+        }else{
+            m.put("jcr:title","-");
+        }
+
+        if(draftMetadata.isPresent() && draftMetadata.get().description().get()!=null){
+            m.put("jcr:description",draftMetadata.get().description().get());
+        }else if(releasedMetadata.isPresent() && releasedMetadata.get().description().get()!=null){
+            m.put("jcr:description",releasedMetadata.get().description().get());
+        }else{
+            m.put("jcr:description","-");
+        }
+
         // Assume the path is something like: /content/<something>/my/resource/path
         m.put("pant:transientPath", resourcePath.substring("/content/".length()));
         // Example path: /content/repositories/ben_2019-04-11_16-15-15/shared/attributes.module.adoc

@@ -29,7 +29,7 @@
     # Assign ACLs
     set ACL for pantheon
         allow jcr:all on /content restriction(rep:glob,*)
-        allow jcr:read,jcr:write on /conf/pantheon
+        allow jcr:all on /conf/pantheon
     end
 
     set ACL for pantheon-authors
