@@ -301,7 +301,6 @@ def process_workspace(path):
     workspace['jcr:primaryType'] = 'pant:workspace'
     # Process variants. variants is a list of dictionaries
 
-    module_variants = {}
     data = {}
     canon = False
     # TODO: check at least one variant is canonical
@@ -315,6 +314,7 @@ def process_workspace(path):
 
         for variant in variants:
             # Each variant is of type dictionary. Rename the keys to match ModuleVariantDefinition
+            module_variants = {}
             for key, value in variant.items():
                 if key.lower() == 'name':
                     module_variants['pant:name'] = value
@@ -322,25 +322,27 @@ def process_workspace(path):
                     module_variants['pant:attributesFilePath'] = value
                 if key.lower() == 'canonical':
                     module_variants['pant:canonical'] = value
+            if 'pant:name' in module_variants:
+                data[module_variants['pant:name']] = module_variants
+            createVariant(data, path, url)
+
     else:
         data = {'DEFAULT': {}}
-    if 'pant:name' in module_variants:
-        data[module_variants['pant:name']] = module_variants
-
+        createVariant(data, path, url)
+        
+def createVariant(data, path, url):
     payload = {}
     payload[':content'] = json.dumps(data)  # '{"sample":"test"}'
     payload[':contentType'] = 'json'
     payload[':operation'] = 'import'
-
     # print(payload)
     if not args.dry:
-        r: Response = requests.post(url, headers=HEADERS, data=workspace, auth=(args.user, pw))
-        _print_response('workspace', path, r.status_code, r.reason)
-        if r.status_code == 200 or r.status_code == 201:
-            url = url + '/' + 'module_variants'
-            r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
-            _print_response('module_variants', path, r.status_code, r.reason)
-
+        # r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
+        # _print_response('workspace', path, r.status_code, r.reason)
+        # if r.status_code == 200 or r.status_code == 201:
+        url = url + '/' + 'module_variants'
+        r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
+        _print_response('module_variants', path, r.status_code, r.reason)
     logger.debug('')
 
 
@@ -425,7 +427,16 @@ if len(config.keys()) > 0 and 'repository' in config:
         variants = config['variants']
     else:
         variants = []
-
+    # if 'resources' in config:
+    #     resources = config['resources']
+    # else:
+    #     resources = []
+    #
+    # if 'modules' in config:
+    #     modules = config['modules']
+    # else:
+    #     sys.exit('Modules defination missing, please correct pantheon.yml')
+    #
     _info('Using ' + mode + ': ' + repository)
     print('--------------')
 
