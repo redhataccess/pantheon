@@ -1,4 +1,4 @@
-[id='search-keyword']
+[id='search-keyword_{context}']
 
 .To perform a keyword or free text search:
 . In the search bar at top right, enter a free text phrase or keywords.

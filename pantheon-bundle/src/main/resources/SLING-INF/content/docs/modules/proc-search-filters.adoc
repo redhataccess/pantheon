@@ -1,4 +1,4 @@
-[id='search-filters']
+[id='search-filters_{context}']
 
 .To add filters to the search, use any combination of the following:
 * Select a Product name from the `Select a Product` drop down menu.

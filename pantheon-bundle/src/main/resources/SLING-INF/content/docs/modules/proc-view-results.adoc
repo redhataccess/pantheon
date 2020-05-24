@@ -1,4 +1,4 @@
-[id='view-results']
+[id='view-results_{context}']
 
 .Viewing search results
 The search results are presented in a table organized into columns with the following headings:
