@@ -1,4 +1,4 @@
-[id="command-line-interface"]
+[id="command-line-interface_{context}"]
 
 = Using the Command Line Interface
 
