@@ -55,18 +55,7 @@ exports[`Search tests should render default Search component 1`] = `
                       className="sp-prop-nosort"
                       id="span-name"
                     >
-                      Name
-                    </span>
-                  </DataListCell>,
-                  <DataListCell
-                    width={2}
-                  >
-                    <span
-                      aria-label="column description"
-                      className="sp-prop-nosort"
-                      id="span-description"
-                    >
-                      Description
+                      Title
                     </span>
                   </DataListCell>,
                   <DataListCell>
@@ -74,7 +63,7 @@ exports[`Search tests should render default Search component 1`] = `
                       className="sp-prop-nosort"
                       id="span-source-type"
                     >
-                      Source Type
+                      Published
                     </span>
                   </DataListCell>,
                   <DataListCell>
@@ -82,7 +71,7 @@ exports[`Search tests should render default Search component 1`] = `
                       className="sp-prop-nosort"
                       id="span-source-name"
                     >
-                      Source Name
+                      Draft Uploaded
                     </span>
                   </DataListCell>,
                   <DataListCell>
@@ -91,7 +80,7 @@ exports[`Search tests should render default Search component 1`] = `
                       className="sp-prop-nosort"
                       id="span-upload-time"
                     >
-                      Upload Time
+                      Module Type
                     </span>
                   </DataListCell>,
                 ]

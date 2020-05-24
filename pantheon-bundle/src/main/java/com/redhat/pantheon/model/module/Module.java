@@ -1,9 +1,11 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.api.Field;
+import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
-import com.redhat.pantheon.model.api.SlingModel;
 
 import javax.annotation.Nonnull;
+import javax.inject.Named;
 import javax.jcr.RepositoryException;
 import java.util.Locale;
 import java.util.Optional;
@@ -35,7 +37,10 @@ import static java.util.Optional.ofNullable;
  *                                   /metadata
  */
 @JcrPrimaryType("pant:module")
-public interface Module extends SlingModel {
+public interface Module extends WorkspaceChild {
+
+    @Named("jcr:uuid")
+    Field<String> uuid();
 
     default ModuleLocale getModuleLocale(Locale locale) {
         return getChild(locale.toString(), ModuleLocale.class);
@@ -98,6 +103,26 @@ public interface Module extends SlingModel {
     default Optional<Metadata> getReleasedMetadata(final Locale locale) {
         return getReleasedVersion(locale)
                 .map(moduleVersion -> moduleVersion.metadata().get());
+    }
+
+  /**
+     *
+     * @param locale the locale to fetch the acknowledgment status content
+     * @return the  status data for a released version for a given locale
+     */
+    default Optional<AckStatus> getAcknowledgementStatus(final Locale locale) {
+        return getReleasedVersion(locale)
+                .map(moduleVersion -> moduleVersion.ackStatus().get());
+    }
+
+    /**
+     *
+     * @param locale the locale to fetch the status content
+     * @return the  status data for a draft version for a given locale
+     */
+    default Optional<AckStatus> getDraftAcknowledgementStatus(final Locale locale) {
+        return getDraftVersion(locale)
+                .map(moduleVersion -> moduleVersion.ackStatus().get());
     }
 
     /**

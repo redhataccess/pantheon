@@ -22,7 +22,9 @@
     # Create the sling users
     create group pantheon-authors
     create group pantheon-publishers
+    create group pantheon-statusProvider
     create service user pantheon
+    create user sync-service with password sync-service
 
     # Assign ACLs
     set ACL for pantheon
@@ -31,7 +33,7 @@
     end
 
     set ACL for pantheon-authors
-        allow jcr:write,jcr:nodeTypeManagement on /content/repositories
+        allow jcr:modifyProperties,jcr:read on /content/repositories
         allow jcr:write,jcr:nodeTypeManagement on /content/modules
         allow jcr:write,jcr:nodeTypeManagement on /content/sandbox
         allow jcr:read on /conf/pantheon
@@ -44,12 +46,26 @@
         deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:moduleLocale)
         deny jcr:modifyProperties on /content/modules restriction(rep:ntNames,pant:moduleLocale)
         deny jcr:modifyProperties on /content/sandbox restriction(rep:ntNames,pant:moduleLocale)
+
+        deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,nt:resource)
+        deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:symlink)
     end
 
     set ACL for pantheon-publishers
-        allow jcr:write,jcr:nodeTypeManagement on /content/repositories
+        allow jcr:removeNode,jcr:modifyProperties,jcr:read on /content/repositories
         allow jcr:write,jcr:nodeTypeManagement on /content/modules
         allow jcr:write,jcr:nodeTypeManagement on /content/products
         allow jcr:write,jcr:nodeTypeManagement on /content/sandbox
         allow jcr:read on /conf/pantheon
+
+        deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,nt:resource)
+        deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:symlink)
+    end
+
+    set ACL for sync-service
+        allow jcr:all on /content/repositories
+    end
+
+    set ACL for pantheon-statusProvider
+        allow jcr:write on /content/repositories restriction(rep:ntNames,pant:acknowledgment)
     end

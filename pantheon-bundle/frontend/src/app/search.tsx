@@ -12,6 +12,7 @@ import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import { IAppState } from '@app/app'
 import { SearchFilter } from '@app/searchFilter';
 import SpinImage from '@app/images/spin.gif';
+import { Fields } from '@app/Constants';
 
 export interface ISearchState {
   alertOneVisible: boolean
@@ -42,6 +43,7 @@ export interface ISearchState {
 class Search extends Component<IAppState, ISearchState> {
   public static KEY_CHECKEDITEM: string = "checkedItem"
   public static KEY_TRANSIENTPATH: string = "pant:transientPath"
+  public published = "-"
 
   constructor(props) {
     super(props);
@@ -65,7 +67,7 @@ class Search extends Component<IAppState, ISearchState> {
       pageLimit: 25,
       redirect: false,
       redirectLocation: '',
-      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false }],
+      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false,"publishedDate": "-","pant:moduleType": "-"}],
       selectAllCheckValue: false,
       showDropdownOptions: true,
       sortKey: ''
@@ -75,7 +77,6 @@ class Search extends Component<IAppState, ISearchState> {
   public componentDidMount() {
     this.doSearch()
   }
-
 
   public render() {
     const { isEmptyResults } = this.state;
@@ -118,19 +119,16 @@ class Search extends Component<IAppState, ISearchState> {
                   <DataListItemCells
                     dataListCells={[
                       <DataListCell width={2} key="title">
-                        <span className="sp-prop-nosort" id="span-name" aria-label="column name">Name</span>
-                      </DataListCell>,
-                      <DataListCell width={2} key="description">
-                        <span className="sp-prop-nosort" id="span-description" aria-label="column description">Description</span>
+                        <span className="sp-prop-nosort" id="span-name" aria-label="column name">Title</span>
                       </DataListCell>,
                       <DataListCell key="resource source">
-                        <span className="sp-prop-nosort" id="span-source-type">Source Type</span>
+                        <span className="sp-prop-nosort" id="span-source-type">Published</span>
                       </DataListCell>,
                       <DataListCell key="source name">
-                        <span className="sp-prop-nosort" id="span-source-name">Source Name</span>
+                        <span className="sp-prop-nosort" id="span-source-name">Draft Uploaded</span>
                       </DataListCell>,
                       <DataListCell key="upload time">
-                        <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">Upload Time</span>
+                        <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">Module Type</span>
                       </DataListCell>,
                     ]}
                   />
@@ -156,8 +154,7 @@ class Search extends Component<IAppState, ISearchState> {
                       </div></LevelItem>
                     <LevelItem />
                   </Level>
-
-                )}
+                )}                            
                 {!this.state.displayLoadIcon && (this.state.results.map((data, key) => (
                   <DataListItemRow id="data-rows" key={key}>
                     {this.props.userAuthenticated && !this.state.isEmptyResults &&
@@ -170,8 +167,7 @@ class Search extends Component<IAppState, ISearchState> {
                         name={data[Search.KEY_TRANSIENTPATH]}
                         onChange={this.handleDeleteCheckboxChange}
                         key={'checked_' + key}
-                      />}
-
+                      />}                                   
                     <DataListItemCells key={"cells_" + key}
                       dataListCells={[
                         <DataListCell key={"title_" + key} width={2}>
@@ -179,18 +175,15 @@ class Search extends Component<IAppState, ISearchState> {
                             <Link to={data['pant:transientPath']} key={"link_" + key}>{data["jcr:title"]}</Link>}
                           {!this.props.userAuthenticated &&
                             <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
+                        </DataListCell>,      
+                        <DataListCell key={"published-date_" + key}>                          
+                          <span>{data[Fields.PANT_PUBLISHED_DATE]}</span>
                         </DataListCell>,
-                        <DataListCell key={"description_" + key} width={2}>
-                          <span>{data["jcr:description"]}</span>
+                        <DataListCell key={"date-uploaded_" + key}>                              
+                          <span>{data[Fields.PANT_DATE_UPLOADED]}</span>
                         </DataListCell>,
-                        <DataListCell key={"transient-source_" + key}>
-                          <span>{data["pant:transientSource"]}</span>
-                        </DataListCell>,
-                        <DataListCell key={"transient-source-name_" + key}>
-                          <span>{data["pant:transientSourceName"]}</span>
-                        </DataListCell>,
-                        <DataListCell key={"created_" + key}>
-                          <span >{this.formatDate(new Date(data["pant:dateUploaded"]))}</span>
+                        <DataListCell key={"module-type_" + key}>
+                          <span >{data[Fields.PANT_MODULE_TYPE]}</span>
                         </DataListCell>
                       ]}
                     />
@@ -305,7 +298,7 @@ class Search extends Component<IAppState, ISearchState> {
       </React.Fragment>
     );
   }
-
+  
   private handleSelectAll = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
     const newResults: any[] = []
     this.state.results.map(dataitem => {
@@ -373,20 +366,22 @@ class Search extends Component<IAppState, ISearchState> {
     this.setState({ displayLoadIcon: true })
     fetch(this.buildSearchUrl())
       .then(response => response.json())
-      .then(responseJSON => this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 }))
-      .then(() => {
+      .then(responseJSON => {
+        this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })
+      })
+      .then(() => {        
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
             displayLoadIcon: false,
             isEmptyResults: true,
             selectAllCheckValue: false
           })
-        } else {
+        } else {          
           this.setState({
             displayLoadIcon: false,
-            isEmptyResults: false,
+            isEmptyResults: false,            
             selectAllCheckValue: false,
-          })
+          })          
         }
       })
       .catch(error => {
@@ -399,22 +394,6 @@ class Search extends Component<IAppState, ISearchState> {
       })
   }
 
-
-  private formatDate(date: Date) {
-    // 2019/05/07 14:21:36
-    let dateStr = date.getFullYear().toString() + "/" +
-      (date.getMonth() + 1).toString() + "/" +
-      date.getDate().toString() + " " +
-      date.getHours().toString() + ":" +
-      date.getMinutes().toString() + ":" +
-      date.getSeconds().toString()
-
-    if (dateStr.includes("NaN")) {
-      dateStr = ""
-    }
-    return dateStr
-  };
-
   private dismissNotification = () => {
     this.setState({ isEmptyResults: false, isSearchException: false });
   };
@@ -426,7 +405,13 @@ class Search extends Component<IAppState, ISearchState> {
   private buildSearchUrl() {
     let backend = "/modules.json?"
     backend += this.state.filterQuery
-    backend += "&offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
+    if (this.state.filterQuery.trim() !== "") {
+      backend += "&"
+    }
+    backend += "offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
+    if (!backend.includes("Uploaded") && !backend.includes('direction')) {
+      backend += "&key=Uploaded&direction=desc"
+    }
     return backend
   }
 
@@ -474,6 +459,7 @@ class Search extends Component<IAppState, ISearchState> {
     })
     return tPaths
   }
+
 }
 
 export { Search }

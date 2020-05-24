@@ -1,6 +1,5 @@
 package com.redhat.pantheon.servlet;
 
-import com.google.common.collect.Maps;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.QueryResultPage;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -10,6 +9,7 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.List;
@@ -38,6 +38,14 @@ public abstract class AbstractJsonQueryServlet extends SlingSafeMethodsServlet {
 
     /** Parameter name for the start offset of the result set */
     protected static final String PARAM_OFFSET = "offset";
+
+    /**
+     * Returns the query language to use when executing the query.
+     * @return The query language to use. This defaults to JCR-SQL2.
+     */
+    protected String getQueryLanguage() {
+        return Query.JCR_SQL2;
+    }
 
     /**
      * Returns the query to execute. The query may be modified depending on the provided
@@ -69,7 +77,7 @@ public abstract class AbstractJsonQueryServlet extends SlingSafeMethodsServlet {
         JcrQueryHelper queryHelper = new JcrQueryHelper(request.getResourceResolver());
         try {
             // do limit+1 to know if there is a next page
-            Stream<Resource> results = queryHelper.query(getQuery(request), limit+1, offset);
+            Stream<Resource> results = queryHelper.query(getQuery(request), limit+1, offset, getQueryLanguage());
             List<Map<String, Object>> resultList = results.map(this::resourceToMap)
                     .collect(Collectors.toList());
             boolean hasNextPage = false;

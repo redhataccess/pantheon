@@ -80,10 +80,10 @@ public abstract class AbstractJsonSingleQueryServlet extends SlingSafeMethodsSer
                     writeAsJson(response, resourceToMap(request, firstResource.get()));
                 }
                 else {
-                    response.sendError(SC_NOT_FOUND, " Requested resource was invalid.");
+                    response.sendError(SC_NOT_FOUND, "Requested resource was invalid.");
                 }
             } else {
-                response.sendError(SC_NOT_FOUND, " Requested content not found.");
+                response.sendError(SC_NOT_FOUND, "Requested content not found.");
             }
 
         } catch (RepositoryException e) {

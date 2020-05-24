@@ -40,7 +40,7 @@ public class SlingResourceIncludeProcessorTest {
                 .resource("/realLocation/testFile/jcr:content",
                         JCR_DATA, "some included content")
                 .resource("/symlink",
-                        "sling:resourceType", "pant:symlink",
+                        "sling:resourceType", "pantheon/symlink",
                         "pant:target", "realLocation")
                 .commit();
 

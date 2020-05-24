@@ -1,11 +1,15 @@
-package com.redhat.pantheon.servlet;
+package com.redhat.pantheon.servlet.module;
 
 import com.google.common.base.Charsets;
 import com.redhat.pantheon.html.Html;
+import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.api.Reference;
 import com.redhat.pantheon.model.module.Content;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
+import com.redhat.pantheon.servlet.ServletUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
@@ -18,8 +22,11 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -52,6 +59,7 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
     public static final String PRODUCT_VERSION = "product_version";
     public static final String PRODUCT_NAME = "product_name";
+    public static final String PRODUCT_LINK = "product_link";
     public static final String VANITY_URL_FRAGMENT = "vanity_url_fragment";
     public static final String SEARCH_KEYWORDS = "search_keywords";
     public static final String VIEW_URI = "view_uri";
@@ -61,14 +69,12 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
 
     @Override
     protected String getQuery(SlingHttpServletRequest request) {
-
         // Get the query parameter(s)
         String uuidParam = paramValue(request, "module_id", "");
 
-        StringBuilder query = new StringBuilder("select * from [pant:module]")
-                .append(" as module WHERE ")
-                // look for a specific uuid for module
-                .append("module.[jcr:uuid] = '" + uuidParam + "'");
+        StringBuilder query = new StringBuilder("select * from [pant:module] as module WHERE module.[jcr:uuid] = '")
+                .append(uuidParam)
+                .append("'");
         return query.toString();
     }
 
@@ -124,21 +130,23 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         // Fields that are part of the spec and yet to be implemented
         moduleMap.put("context_url_fragment", "");
         moduleMap.put("context_id", "");
-        moduleMap.put(PRODUCT_NAME, "");
-        moduleMap.put(PRODUCT_VERSION, "");
+
+
         moduleMap.put(VANITY_URL_FRAGMENT, "");
         moduleMap.put(SEARCH_KEYWORDS, new String[] {});
         moduleMap.put(VIEW_URI, "");
 
         // Process productVersion from metadata
-        String productVersion = releasedMetadata.get().productVersion().get() != null ? releasedMetadata.get().productVersion().getReference().name().get() : "";
-        if (!productVersion.isEmpty()) {
-            try {
-                moduleMap.put(PRODUCT_VERSION, productVersion);
-                moduleMap.put(PRODUCT_NAME, releasedMetadata.get().productVersion().getReference().getParent().getParent().getValueMap().get("name", String.class));
-            }  catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
+        // Making these arrays - in the future, we will have multi-product, so get the API right the first time
+        List<Map> productList = new ArrayList<>();
+        moduleMap.put("products", productList);
+        ProductVersion pv = releasedMetadata.get().productVersion().getReference();
+        if (pv != null) {
+            Map<String, String> productMap = new HashMap<>();
+            productList.add(productMap);
+            productMap.put(PRODUCT_VERSION, pv.name().get());
+            productMap.put(PRODUCT_NAME, pv.getProduct().name().get());
+            productMap.put(PRODUCT_LINK, "https://www.redhat.com/productlinkplaceholder");
         }
 
         // Process url_fragment from metadata

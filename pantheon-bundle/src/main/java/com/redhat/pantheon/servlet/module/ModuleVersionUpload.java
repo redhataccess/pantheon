@@ -1,14 +1,16 @@
-package com.redhat.pantheon.servlet;
+package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.FileResource.JcrContent;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.module.AckStatus;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.model.module.ModuleType;
+import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -19,7 +21,6 @@ import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
-import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -90,6 +92,10 @@ public class ModuleVersionUpload extends AbstractPostOperation {
         try {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
             String asciidocContent = ServletUtils.paramValue(request, "asciidoc");
+            String encoding = request.getCharacterEncoding();
+            if (encoding != null) {
+                asciidocContent = new String(asciidocContent.getBytes(encoding), StandardCharsets.UTF_8);
+            }
             String path = request.getResource().getPath();
             String moduleName = ResourceUtil.getName(path);
             String description = ServletUtils.paramValue(request, "jcr:description", "");
@@ -99,7 +105,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             int responseCode = HttpServletResponse.SC_OK;
 
             // Try to find the module
-            ResourceResolver resolver = serviceResourceResolverProvider.getServiceResourceResolver();
+            ResourceResolver resolver = request.getResourceResolver();
             Resource moduleResource = resolver.getResource(path);
             Module module;
 
@@ -116,6 +122,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
 
             Locale localeObj = LocaleUtils.toLocale(locale);
             Optional<ModuleVersion> draftVersion = module.getDraftVersion(localeObj);
+
             // if there is no draft content, create it
             if( !draftVersion.isPresent() ) {
                 draftVersion = Optional.of(
@@ -135,13 +142,19 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                         }
                     }
                 }
+            }else{
+                if(null != draftVersion.get().hash().get() && draftVersion.get().hash().get().equals(ServletUtils.getHash(asciidocContent))) {
+                    return;
+                }
             }
 
+            draftVersion.get().hash().set(ServletUtils.getHash(asciidocContent));
             // modify only the draft content/metadata
             JcrContent jcrContent = draftVersion.get()
                     .content().getOrCreate()
                     .asciidoc().getOrCreate()
                     .jcrContent().getOrCreate();
+
             boolean generateHtml = false;
             String jcrData = jcrContent.jcrData().get();
 
@@ -156,18 +169,25 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                             .isPresent()) {
                 generateHtml = true;
             }
+
             jcrContent.jcrData().set(asciidocContent);
             jcrContent.mimeType().set("text/x-asciidoc");
 
+
             Metadata metadata = draftVersion.get()
                     .metadata().getOrCreate();
-            metadata.title().set(moduleName);
+            
+            if(metadata.title().get()==null){
+                metadata.title().set(moduleName);
+            }                    
             metadata.description().set(description);
             Calendar now = Calendar.getInstance();
             metadata.dateModified().set(now);
             metadata.dateUploaded().set(now);
-            metadata.moduleType().set( determineModuleType(module) );
 
+            AckStatus status = draftVersion.get()
+                .ackStatus().getOrCreate();
+            status.dateModified().set(now);
             resolver.commit();
 
             if (generateHtml) {
@@ -176,6 +196,13 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                 asciidoctorService.getModuleHtml(draftVersion.get(), module, context, true);
             }
 
+            // Generate a module type based on the file name ONLY after asciidoc generation, so that the
+            // attribute-based logic takes precedence
+            if(metadata.moduleType().get() == null) {
+                metadata.moduleType().set(determineModuleType(module));
+            }
+
+            resolver.commit();
             response.setStatus(responseCode, "");
         } catch (Exception e) {
             throw new RepositoryException("Error uploading a module version", e);

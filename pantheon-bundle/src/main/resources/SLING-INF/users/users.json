@@ -2,7 +2,9 @@
   "security:principals": [
     { "name": "demo", "password": "demo" },
     { "name": "author", "password": "author" },
+    { "name": "status-user", "password": "status-user" },
     { "name": "pantheon-authors", "isgroup": true, "members": ["author"] },
-    { "name": "pantheon-publishers", "isgroup": true, "members": ["demo"] }
+    { "name": "pantheon-publishers", "isgroup": true, "members": ["demo"] },
+    { "name": "pantheon-statusProvider", "isgroup": true, "members": ["status-user"] }
   ]
 }

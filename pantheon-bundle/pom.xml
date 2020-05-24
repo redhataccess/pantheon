@@ -67,12 +67,11 @@
                         <_metatypeannotations>*</_metatypeannotations>
                         <Sling-Nodetypes>SLING-INF/nodetypes/nodetypes.cnd</Sling-Nodetypes>
                         <Sling-Initial-Content><![CDATA[
-                            SLING-INF/root;overwrite:=false;overwriteProperties:=true;uninstall:=false;path:=/,
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
-                            SLING-INF/content;overwrite:=false;uninstall:=false;path:=/content,
+                            SLING-INF/content/static;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/static,
+                            SLING-INF/content/docs;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/docs,
                             SLING-INF/SPA;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/pantheon,
                             SLING-INF/users;overwrite:=false;uninstall:=false,
-                            SLING-INF/oak:index;overwrite:=true;uninstall:=true;path:=/oak:index,
                         ]]></Sling-Initial-Content>
                         <Sling-Model-Packages>
                             com.redhat.pantheon.model,
@@ -81,8 +80,9 @@
                         <Import-Package>
                             !jnr.a64asm,!jnr.x86asm,!org.apache.bsf,!org.apache.bsf.util,
                             !org.apache.tools.ant,!org.joda.convert,!org.objectweb.asm,!sun.misc,
-                            !org.apache.activemq.apollo.filter,
-                            !org.apache.activemq.apollo.selector,*
+                            !javax.ejb,
+                            !javax.jmdns,
+                            !org.apache.commons.net.ftp,*
                         </Import-Package>
                         <!-- Embed the necessary dependencies -->
                         <!-- The `inline=true` is important, don't remove it unless you want cryptic problems such as servlets that suddenly stop resolving without explanation -->
@@ -282,11 +282,16 @@
             <artifactId>icu4j</artifactId>
             <version>64.2</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.fusesource.stompjms/stompjms-client -->
+        <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-client -->
         <dependency>
-            <groupId>org.fusesource.stompjms</groupId>
-            <artifactId>stompjms-client</artifactId>
-            <version>1.19</version>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>5.15.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.query</artifactId>
+            <version>3.0.0</version>
         </dependency>
 	    <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -461,7 +466,12 @@
             <version>4.5.6</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.8.1</version>
+            <groupId>org.apache.commons</groupId>
+            <scope>provided</scope>
+        </dependency>
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
