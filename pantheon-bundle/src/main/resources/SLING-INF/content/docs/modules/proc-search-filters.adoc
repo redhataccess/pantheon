@@ -1,7 +1,6 @@
 [id='search-filters_{context}']
 
 .Procedure
-
 .To add filters to the search, use any combination of the following:
 * Select a Product name from the `Select a Product` drop down menu.
 * Select a version number from the `Select a Version` drop down menu.
