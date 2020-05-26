@@ -326,25 +326,25 @@ def process_workspace(path):
                 module_variants['pant:canonical'] = 'true'
             if 'pant:name' in module_variants:
                 data[module_variants['pant:name']] = module_variants
-            createVariant(data, path, url)
+            createVariant(data, path, url, workspace)
 
     else:
         data = {'DEFAULT': {}}
-        createVariant(data, path, url)
+        createVariant(data, path, url, workspace)
 
-def createVariant(data, path, url):
+def createVariant(data, path, url, workspace):
     payload = {}
     payload[':content'] = json.dumps(data)  # '{"sample":"test"}'
     payload[':contentType'] = 'json'
     payload[':operation'] = 'import'
     # print(payload)
     if not args.dry:
-        # r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
-        # _print_response('workspace', path, r.status_code, r.reason)
-        # if r.status_code == 200 or r.status_code == 201:
-        url = url + '/' + 'module_variants'
-        r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
-        _print_response('module_variants', path, r.status_code, r.reason)
+        r: Response = requests.post(url, headers=HEADERS, data=workspace, auth=(args.user, pw))
+        _print_response('workspace', path, r.status_code, r.reason)
+        if r.status_code == 200 or r.status_code == 201:
+            url = url + '/' + 'module_variants'
+            r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
+            _print_response('module_variants', path, r.status_code, r.reason)
     logger.debug('')
 
 
