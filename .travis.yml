@@ -3,7 +3,8 @@ matrix:
     - language: java
       jdk: openjdk8
       install: true
-      script: ./mvnw clean install
+      # build specific modules and only log errors
+      script: ./mvnw clean install -q -pl pantheon-bundle,pantheon-karaf-feature,pantheon-karaf-dist 
       after_success:
       # Move the code coverage results to codecov
       - bash <(curl -s https://codecov.io/bash) -cF java
