@@ -171,10 +171,14 @@ class Search extends Component<IAppState, ISearchState> {
                     <DataListItemCells key={"cells_" + key}
                       dataListCells={[
                         <DataListCell key={"title_" + key} width={2}>
-                          {this.props.userAuthenticated &&
+                          {this.props.userAuthenticated && data["jcr:title"] !== '-' &&
                             <Link to={data['pant:transientPath']} key={"link_" + key}>{data["jcr:title"]}</Link>}
-                          {!this.props.userAuthenticated &&
+                          {this.props.userAuthenticated && data["pant:transientPath"] &&
+                            <Link to={data['pant:transientPath']} key={"link_" + key}>{data["pant:transientPath"]}</Link>}
+                          {!this.props.userAuthenticated && data["jcr:title"] !== '-' &&
                             <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
+                          {!this.props.userAuthenticated && data["pant:transientPath"] &&
+                            <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["pant:transientPath"]}</a>}
                         </DataListCell>,      
                         <DataListCell key={"published-date_" + key}>                          
                           <span>{data[Fields.PANT_PUBLISHED_DATE]}</span>
