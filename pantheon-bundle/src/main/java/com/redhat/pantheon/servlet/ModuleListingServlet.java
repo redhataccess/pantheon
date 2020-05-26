@@ -41,7 +41,7 @@ import static java.util.stream.Collectors.toList;
                 Constants.SERVICE_DESCRIPTION + "=Servlet which provides initial module listing and search functionality",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
-@SlingServletPaths(value = "/modules.json")
+@SlingServletPaths(value = "/pantheon/internal/modules.json")
 public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
     private final Logger log = LoggerFactory.getLogger(ModuleListingServlet.class);
@@ -245,7 +245,9 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("pant:transientSourceName", fragments[3]);
         }
 
-        m.put("variant", variantName);
+        if (variantName.length() > 0 ) {
+            m.put("variant", variantName);
+        }
 
         log.trace(m.toString());
         return m;

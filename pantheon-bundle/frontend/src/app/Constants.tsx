@@ -1,6 +1,7 @@
 export class Fields {
     public static JCR_DESCRIPTION = 'jcr:description'
     public static JCR_PRIMARYTYPE = 'jcr:primaryType'
+    public static JCR_TITLE = 'jcr:title'
     public static JCR_UUID = 'jcr:uuid'
     public static PANT_MODULE_TYPE = 'moduleType'
     public static NAME = 'name'

@@ -407,7 +407,7 @@ class Search extends Component<IAppState, ISearchState> {
   };
 
   private buildSearchUrl() {
-    let backend = "/modules.json?"
+    let backend = "/pantheon/internal/modules.json?"
     backend += this.state.filterQuery
     if (this.state.filterQuery.trim() !== "") {
       backend += "&"

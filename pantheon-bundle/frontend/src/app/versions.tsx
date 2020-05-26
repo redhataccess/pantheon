@@ -129,7 +129,7 @@ class Versions extends Component<IProps, IState> {
                         <li>Are you logged in as a publisher?</li>
                         <li>Does the module have all required metadata?</li>
                     </ul>
-          </Alert>
+                </Alert>
                 }
                 <Card>
                     <div>
@@ -326,15 +326,15 @@ class Versions extends Component<IProps, IState> {
                         >
                             <InputGroup>
                                 <FormSelect value={this.state.product.value} onChange={this.onChangeProduct} aria-label='FormSelect Product'>
-                                    <FormSelectOption label='Select a Product'/>
+                                    <FormSelectOption label='Select a Product' />
                                     {this.state.allProducts.map((option, key) => (
-                                        <FormSelectOption key={key} value={option.value} label={option.label}/>
+                                        <FormSelectOption key={key} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
                                 <FormSelect value={this.state.productVersion.uuid} onChange={this.onChangeVersion} aria-label='FormSelect Version' id='productVersion'>
-                                    <FormSelectOption label='Select a Version'/>
+                                    <FormSelectOption label='Select a Version' />
                                     {this.state.allProductVersions.map((option, key) => (
-                                        <FormSelectOption key={key} value={option['jcr:uuid']} label={option.name}/>
+                                        <FormSelectOption key={key} value={option['jcr:uuid']} label={option.name} />
                                     ))}
                                 </FormSelect>
                             </InputGroup>
@@ -392,12 +392,21 @@ class Versions extends Component<IProps, IState> {
                 .then(response => response.json())
                 .then(responseJSON => {
                     const en_US = this.getHarrayChildNamed(responseJSON, 'en_US')
+                    const source = this.getHarrayChildNamed(en_US, 'source')
                     const variants = this.getHarrayChildNamed(en_US, 'variants')
-                    // console.log("[versions] variants => ", variants)
-                    // console.log("[versions] variant props => ", this.props.variant)
+                    console.log("[versions] variants => ", variants)
+                    console.log("[versions] source => ", source)
                     const firstVariant = this.getHarrayChildNamed(variants, this.props.variant)
-                    // console.log("[versions] firstVariant => ", firstVariant)
-
+                    console.log("[versions] firstVariant => ", firstVariant)
+                    // process draftUpdateDate from source/draft
+                    let draftDate = ''
+                    if (source !== 'undefined' && source.__name__ === 'source') {
+                        for (const draft of source.__children__) {
+                            if (draft.__name__ === 'draft') {
+                                draftDate = draft["jcr:created"]
+                            }
+                        }
+                    }
                     const versionCount = firstVariant.__children__.length
                     for (let i = 0; i < versionCount; i++) {
                         const moduleVersion = firstVariant.__children__[i]
@@ -422,12 +431,12 @@ class Versions extends Component<IProps, IState> {
                         if (!variantReleased) {
                             this.release[0].updatedDate = '-'
                         }
-                        this.props.updateDate((this.draft[0].updatedDate !== '' ? this.draft[0].updatedDate : this.release[0].draftUploadDate), this.release[0].updatedDate, this.release[0].version, responseJSON['jcr:uuid'])
+                        this.props.updateDate((draftDate !== '' ? draftDate : ''), this.release[0].updatedDate, this.release[0].version, responseJSON['jcr:uuid'])
                     }
                     this.setState({
-                            results: [this.draft, this.release],
-                            // tslint:disable-next-line: object-literal-sort-keys
-                            metadataPath: this.draft ? this.draft[0].path : this.release[0].path
+                        results: [this.draft, this.release],
+                        // tslint:disable-next-line: object-literal-sort-keys
+                        metadataPath: this.draft ? this.draft[0].path : this.release[0].path
                     })
                     this.getMetadata(this.state.metadataPath)
                 })
@@ -509,7 +518,7 @@ class Versions extends Component<IProps, IState> {
         if (buttonText === 'Preview') {
             docPath = '/content' + this.props.modulePath + '.preview?draft=true&variant=' + this.props.variant
         } else {
-            docPath = '/content' + this.props.modulePath + '.preview'
+            docPath = '/content' + this.props.modulePath + '.preview?variant=' + this.props.variant
         }
         // console.log('Preview path: ', docPath)
         return window.open(docPath)
@@ -631,7 +640,7 @@ class Versions extends Component<IProps, IState> {
             })
             .then(responseJSON => {
                 for (const product of responseJSON.__children__) {
-                    products.push({ label: product.name, value: product.__name__})
+                    products.push({ label: product.name, value: product.__name__ })
                 }
                 this.setState({
                     allProducts: products
@@ -701,7 +710,7 @@ class Versions extends Component<IProps, IState> {
                 this.populateProductVersions(this.state.product.value)
                 this.props.onGetProduct(this.state.product.label)
                 this.props.onGetVersion(this.state.productVersion.label)
-        })
+            })
     }
 }
 
