@@ -30,7 +30,6 @@
         <module>pantheon-bundle</module>
         <module>pantheon-karaf-feature</module>
         <module>pantheon-karaf-dist</module>
-        <module>sling-org-apache-sling-karaf-distribution</module>
     </modules>
 
 </project>
