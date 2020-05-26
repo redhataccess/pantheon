@@ -9,7 +9,6 @@ matrix:
 
       install:
         - curl -o $HOME/.m2/settings.xml     https://raw.githubusercontent.com/aprajshekhar/maven-settings/master/settings.xml
-        - mvn dependency:go-offline
       # build specific modules and only log errors
       script: ./mvnw clean install -q -pl pantheon-bundle,pantheon-karaf-feature,pantheon-karaf-dist 
       after_success:
