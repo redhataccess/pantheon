@@ -1,0 +1,3 @@
+[submodule "sling-org-apache-sling-karaf-distribution"]
+	path = sling-org-apache-sling-karaf-distribution
+	url = https://github.com/apache/sling-org-apache-sling-karaf-distribution.git

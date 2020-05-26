@@ -10,7 +10,7 @@ matrix:
       install:
         - curl -o $HOME/.m2/settings.xml     https://raw.githubusercontent.com/aprajshekhar/maven-settings/master/settings.xml
       # build specific modules and only log errors
-      script: ./mvnw clean install -q -pl pantheon-bundle,pantheon-karaf-feature,pantheon-karaf-dist 
+      script: ./mvnw clean install -q -pl sling-org-apache-sling-karaf-distribution,pantheon-bundle,pantheon-karaf-feature,pantheon-karaf-dist
       after_success:
       # Move the code coverage results to codecov
       - bash <(curl -s https://codecov.io/bash) -cF java
