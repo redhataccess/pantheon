@@ -6,8 +6,9 @@
 Pantheon 2 is a modular documentation management and publication system based on asciidoc
 and built on top of Apache sling.
 
+
 ### Prerequsistes
-Java
+ Java
 
 Clone and build _https://github.com/apache/sling-org-apache-sling-karaf-configs.git_. This is required because sling-karaf-configs is not available on any of the maven repositories.
 ### Environment Variables
