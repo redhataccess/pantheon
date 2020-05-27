@@ -2,15 +2,19 @@ matrix:
   include:
     - language: java
       jdk: openjdk8
-      install: true
-      script: ./mvnw clean install
+
+      cache:
+        directories:
+          - $HOME/.m2
+
+      install:
+        - curl -o $HOME/.m2/settings.xml     https://raw.githubusercontent.com/aprajshekhar/maven-settings/master/settings.xml
+      # build specific modules and only log errors
+      script: ./mvnw clean  install -q  -e -pl  pantheon-bundle,pantheon-karaf-feature,pantheon-karaf-dist
       after_success:
       # Move the code coverage results to codecov
       - bash <(curl -s https://codecov.io/bash) -cF java
       - bash <(curl -s https://codecov.io/bash) -cF javascript
-      cache:
-        directories:
-        - $HOME/.m2
 
     - language: go
       sudo: false

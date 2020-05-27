@@ -31,14 +31,8 @@
   <artifactId>pantheon-karaf-feature</artifactId>
   <packaging>feature</packaging>
 
-  <name>Apache Sling - Karaf Features</name>
-  <description>Apache Sling Features for provisioning with Apache Karaf</description>
-
-  <scm>
-    <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-karaf-features.git</connection>
-    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-karaf-features.git</developerConnection>
-    <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-karaf-features.git</url>
-  </scm>
+  <name>Pantheon - Karaf Features</name>
+  <description>Pantheon Features for provisioning with Apache Karaf</description>
 
   <build>
     <plugins>
@@ -60,11 +54,35 @@
   </build>
 
   <dependencies>
+    <!-- The apache.org.sling.karaf-configs dependency needs to be built 
+    Using jitpack.io for the same
+    -->
     <dependency>
-      <groupId>org.apache.sling</groupId>
-      <artifactId>org.apache.sling.karaf-configs</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
-    </dependency>
+	    <groupId>com.github.apache</groupId>
+	    <artifactId>sling-org-apache-sling-karaf-configs</artifactId>
+	    <version>master-SNAPSHOT</version>
+	</dependency>
   </dependencies>
-
+<repositories>
+  <!-- The repository for karf-configs -->
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
+  <!-- The repository for maven-karaf-plugin -->
+  <repository>
+    <id>maven2-central-repository</id>
+    <name>Maven2 central Repository</name>
+    <url>https://repo1.maven.org/maven2</url>
+    <layout>default</layout>
+    <releases>
+        <enabled>true</enabled>
+        <updatePolicy>daily</updatePolicy>
+    </releases>
+    <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>daily</updatePolicy>
+    </snapshots>
+</repository>
+</repositories>
 </project>
