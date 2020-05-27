@@ -64,7 +64,7 @@ class PublishDraftVersionTest {
         assertEquals(HttpServletResponse.SC_OK, postResponse.getStatusCode());
         assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/released"));
         assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/metadata/pant:datePublished"));
-        assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/draft/jcr:content"));
+        assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/released/jcr:content"));
     }
 
     @Test

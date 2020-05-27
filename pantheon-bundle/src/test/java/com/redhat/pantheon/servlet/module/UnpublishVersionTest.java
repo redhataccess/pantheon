@@ -39,6 +39,9 @@ class UnpublishVersionTest {
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
                         "jcr:data", "Released content");
+        slingContext.create()
+                .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
+                        "jcr:data", "Released content");
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
         Events events = mock(Events.class);
@@ -74,8 +77,14 @@ class UnpublishVersionTest {
                 .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
                         "jcr:data", "Released content");
         slingContext.create()
-        .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/cached_html/jcr:content",
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/cached_html/jcr:content",
                 "jcr:data", "Draft content");
+        slingContext.create()
+                .resource("/content/repositories/repo/module/en_US/source/draft/jcr:content",
+                "jcr:data", "Draft content");
+        slingContext.create()
+                .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
+                        "jcr:data", "Released content");
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
         Events events = mock(Events.class);

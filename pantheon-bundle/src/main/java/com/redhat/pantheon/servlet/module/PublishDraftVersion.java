@@ -4,27 +4,26 @@ import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.servlets.post.AbstractPostOperation;
-import org.apache.sling.servlets.post.Modification;
-import org.apache.sling.servlets.post.PostOperation;
-import org.apache.sling.servlets.post.PostResponse;
-import org.apache.sling.servlets.post.SlingPostProcessor;
+import org.apache.sling.servlets.post.*;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static com.redhat.pantheon.jcr.JcrResources.rename;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
@@ -109,6 +108,19 @@ public class PublishDraftVersion extends AbstractPostOperation {
                     .get();
             moduleVariant.releaseDraft();
             changes.add(Modification.onModified(module.getPath()));
+            // source/draft becomes source/released
+            FileResource draftSource = traverseFrom(module)
+                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(ModuleLocale::source)
+                    .toChild(sourceContent -> sourceContent.draft())
+                    .get();
+            if (draftSource != null) {
+                try {
+                    rename(draftSource, "released");
+                } catch (RepositoryException e) {
+                    throw new RuntimeException("Cannot find source/draft: " + draftSource.getPath());
+                }
+            }
         }
     }
 }
