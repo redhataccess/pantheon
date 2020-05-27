@@ -302,16 +302,24 @@ def process_workspace(path):
     # Process variants. variants is a list of dictionaries
 
     data = {}
-    canon = False
-    # TODO: check at least one variant is canonical
+    listVariant = []
+    isCanon = False
     if variants:
         for variant in variants:
-            if 'canonical' in variant:
-                print("can present")
-                canon = True
-        if len(variants) > 1 and not canon:
+            if 'canonical' in variant and variant['canonical'] is not None:
+                listVariant.append(variant['canonical'])
+        for value in listVariant:
+            if type(value) == bool:
+                if (not value ):
+                    continue
+                elif(not isCanon and value ):
+                    isCanon = True
+                else:
+                    sys.exit('Multiple Canonical attribute present, Only one variant can be Cannonical')
+            else:
+                sys.exit('Canonical Attribute takes only boolean values.')
+        if len(variants) > 1 and not isCanon:
             sys.exit('Canonical attribute missing, Should be present in case multiple variants')
-
         for variant in variants:
             # Each variant is of type dictionary. Rename the keys to match ModuleVariantDefinition
             module_variants = {}
@@ -326,11 +334,11 @@ def process_workspace(path):
                 module_variants['pant:canonical'] = 'true'
             if 'pant:name' in module_variants:
                 data[module_variants['pant:name']] = module_variants
-            createVariant(data, path, url, workspace)
+            # createVariant(data, path, url, workspace, isCanon)
 
     else:
         data = {'DEFAULT': {}}
-        createVariant(data, path, url, workspace)
+    createVariant(data, path, url, workspace)
 
 def createVariant(data, path, url, workspace):
     payload = {}
@@ -344,7 +352,7 @@ def createVariant(data, path, url, workspace):
         if r.status_code == 200 or r.status_code == 201:
             url = url + '/' + 'module_variants'
             r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
-            _print_response('module_variants', path, r.status_code, r.reason)
+            _print_response('module_variants', list(data.keys()), r.status_code, r.reason)
     logger.debug('')
 
 
@@ -429,16 +437,6 @@ if len(config.keys()) > 0 and 'repository' in config:
         variants = config['variants']
     else:
         variants = []
-    # if 'resources' in config:
-    #     resources = config['resources']
-    # else:
-    #     resources = []
-    #
-    # if 'modules' in config:
-    #     modules = config['modules']
-    # else:
-    #     sys.exit('Modules defination missing, please correct pantheon.yml')
-    #
     _info('Using ' + mode + ': ' + repository)
     print('--------------')
 
