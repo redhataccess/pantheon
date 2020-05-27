@@ -2,8 +2,10 @@ package com.redhat.pantheon.servlet;
 
 import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
+import com.redhat.pantheon.model.module.HashableFileResource;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleLocale;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -29,6 +31,7 @@ import java.util.stream.Stream;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static java.util.stream.Collectors.toList;
 
@@ -96,8 +99,9 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         if (searchParam.length() > 0) {
             StringBuilder textFilter = new StringBuilder()
                     .append("(")
-                    .append("jcr:like(*/*/metadata/@jcr:title,'%" + searchParam + "%') ")
-                    .append("or jcr:like(*/*/metadata/@jcr:description,'%" + searchParam + "%')")
+                    .append("jcr:like(*/*/*/*/metadata/@jcr:title,'%" + searchParam + "%') ")
+                    .append("or jcr:like(*/*/*/*/metadata/@jcr:description,'%" + searchParam + "%')")
+                    .append("or jcr:like(*/*/*/*/cached_html/jcr:content/@jcr:data,'%" + searchParam + "%')")
                     .append(")");
             queryFilters.add(textFilter);
         }
@@ -187,6 +191,12 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
         Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE, variantName);
         Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);
+        Optional<HashableFileResource> sourceFile =
+                traverseFrom(module)
+                        .toChild(m -> m.moduleLocale(DEFAULT_MODULE_LOCALE))
+                        .toChild(ModuleLocale::source)
+                        .toChild(sourceContent -> sourceContent.draft().isPresent() ? sourceContent.draft() : sourceContent.released())
+                        .getAsOptional();
 
         // TODO Need some DTOs to convert to maps
         Map<String, Object> m = super.resourceToMap(resource);
@@ -205,8 +215,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("moduleType","-");
         }
 
-        if(draftMetadata.isPresent() && draftMetadata.get().dateUploaded().get()!=null){                        
-            m.put("pant:dateUploaded",sdf.format(draftMetadata.get().dateUploaded().get().getTime()));
+        if(sourceFile.isPresent() && sourceFile.get().created().get() != null){
+            m.put("pant:dateUploaded", sdf.format(sourceFile.get().created().get().getTime()));
         }else if(releasedMetadata.isPresent() && releasedMetadata.get().dateUploaded().get()!=null){
             m.put("pant:dateUploaded",sdf.format(releasedMetadata.get().dateUploaded().get().getTime()));
         }else{
@@ -245,7 +255,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("pant:transientSourceName", fragments[3]);
         }
 
-        if (variantName.length() > 0 ) {
+        if (!variantName.isEmpty()) {
             m.put("variant", variantName);
         }
 
