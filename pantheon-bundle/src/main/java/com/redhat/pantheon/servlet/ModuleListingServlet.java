@@ -111,7 +111,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             StringBuilder productVersionCondition = new StringBuilder();
             List<String> conditions = Arrays.stream(productVersionIds)
                     .map(id -> {
-                        return "*/*/metadata/@productVersion = '" + id + "'";
+                        return "*/*/*/*/metadata/@productVersion = '" + id + "'";
                     })
                     .collect(toList());
             productVersionCondition.append("(" + StringUtils.join(conditions, " or ") + ")");
@@ -121,7 +121,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         // Module type filter
         if(!Strings.isNullOrEmpty(type)) {
             StringBuilder moduleTypeCondition = new StringBuilder()
-                    .append("*/*/metadata/@pant:moduleType = '" + type + "'");
+                    .append("*/*/*/*/metadata/@pant:moduleType = '" + type + "'");
             queryFilters.add(moduleTypeCondition);
         }
 
@@ -133,7 +133,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
-            queryBuilder.append(" order by */*/metadata/@")
+            queryBuilder.append(" order by */*/*/*/metadata/@")
                     .append(keyParam)
                     .append(" ")
                     .append(directionParam);

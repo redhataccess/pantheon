@@ -79,7 +79,6 @@ class Versions extends Component<IProps, IState> {
                 { value: '', label: 'Select Use Case', disabled: false }
             ],
             usecaseValue: '',
-            // variant: 'DEFAULT'
         }
     }
 
@@ -387,7 +386,7 @@ class Versions extends Component<IProps, IState> {
             // fetchpath needs to start from modulePath instead of modulePath/en_US.
             // We need extact the module uuid for customer portal url to the module.
             const fetchpath = '/content' + this.props.modulePath + '.harray.5.json'
-            console.log("[versions] fetchpath => ", fetchpath)
+            console.log("[versions] fetchVersion: fetchpath => ", fetchpath)
             fetch(fetchpath)
                 .then(response => response.json())
                 .then(responseJSON => {
@@ -415,7 +414,8 @@ class Versions extends Component<IProps, IState> {
                         if (moduleVersion.__name__ === 'draft') {
                             this.draft[0].version = 'Version ' + moduleVersion.__name__
                             this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
-                            this.draft[0].updatedDate = this.draft[0].metadata['pant:dateUploaded'] !== undefined ? this.draft[0].metadata['pant:dateUploaded'] : ''
+                            // get created date from source/draft
+                            this.draft[0].updatedDate = draftDate !== undefined ? draftDate : ''
                             // this.props.modulePath starts with a slash
                             this.draft[0].path = '/content' + this.props.modulePath + '/en_US/variants/' + firstVariant.__name__ + '/' + moduleVersion.__name__
                         }
@@ -423,7 +423,8 @@ class Versions extends Component<IProps, IState> {
                             this.release[0].version = 'Version ' + moduleVersion.__name__
                             this.release[0].metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
                             this.release[0].updatedDate = this.release[0].metadata['pant:datePublished'] !== undefined ? this.release[0].metadata['pant:datePublished'] : ''
-                            this.release[0].draftUploadDate = this.release[0].metadata['pant:dateUploaded'] !== undefined ? this.release[0].metadata['pant:dateUploaded'] : ''
+                            // get created date from source/draft
+                            this.release[0].draftUploadDate = draftDate !== undefined ? draftDate : ''
                             // this.props.modulePath starts with a slash
                             this.release[0].path = '/content' + this.props.modulePath + '/en_US/variants/' + firstVariant.__name__ + '/' + moduleVersion.__name__
                             variantReleased = true
@@ -436,8 +437,14 @@ class Versions extends Component<IProps, IState> {
                     this.setState({
                         results: [this.draft, this.release],
                         // tslint:disable-next-line: object-literal-sort-keys
-                        metadataPath: this.draft ? this.draft[0].path : this.release[0].path
+                        // metadataPath: this.draft ? this.draft[0].path : this.release[0].path
                     })
+                    if (this.draft && this.draft[0].path.length > 0) {
+                        this.setState({metadataPath: this.draft[0].path})
+                    } else if (this.release && this.release[0].path.length > 0){
+                        this.setState({metadataPath: this.release[0].path})
+                    }
+                    console.log("[versions] set metadatapath to => ", this.state.metadataPath)
                     this.getMetadata(this.state.metadataPath)
                 })
         }
@@ -472,6 +479,8 @@ class Versions extends Component<IProps, IState> {
                     // console.log('Unpublished file path:', this.props.modulePath);
                     this.release[0].version = '';
                 }
+                formData.append('locale', 'en_US')
+                formData.append('variant', this.props.variant)
                 fetch('/content' + this.props.modulePath, {
                     body: formData,
                     method: 'post'
@@ -558,7 +567,7 @@ class Versions extends Component<IProps, IState> {
             formData.append('documentUsecase', this.state.usecaseValue)
             formData.append('urlFragment', '/' + this.state.moduleUrl)
             formData.append('searchKeywords', this.state.keywords === undefined ? '' : this.state.keywords)
-            // console.log('[metadataPath] ', this.state.metadataPath)
+            console.log('[metadataPath] ', this.state.metadataPath)
             fetch(this.state.metadataPath + '/metadata', {
                 body: formData,
                 headers: hdrs,
