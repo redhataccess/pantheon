@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -20,12 +19,12 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.servlet.Servlet;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
-import java.text.SimpleDateFormat;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
@@ -42,7 +41,7 @@ import static java.util.stream.Collectors.toList;
                 Constants.SERVICE_DESCRIPTION + "=Servlet which provides initial module listing and search functionality",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
-@SlingServletPaths(value = "/modules.json")
+@SlingServletPaths(value = "/pantheon/internal/modules.json")
 public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
     private final Logger log = LoggerFactory.getLogger(ModuleListingServlet.class);
@@ -245,7 +244,11 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         if (!"modules".equals(fragments[2])) {
             m.put("pant:transientSourceName", fragments[3]);
         }
-        
+
+        if (variantName.length() > 0 ) {
+            m.put("variant", variantName);
+        }
+
         log.trace(m.toString());
         return m;
     }

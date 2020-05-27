@@ -3,6 +3,7 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.helper.TransformToPojo;
 import com.redhat.pantheon.model.QueryResultPage;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.workspace.Workspace;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -63,22 +64,24 @@ class ModuleListingServletTest {
         slingContext.build()
                 .resource("/content/repositories/repo",
                         "jcr:primaryType", "pant:workspace")
-                .resource("/content/repositories/repo/module",
+                .resource("/content/repositories/repo/module_variants/DEFAULT",
+                        "jcr:primaryType", "sling:OrderedFolder")
+                .resource("/content/repositories/repo/entities/module",
                         "jcr:primaryType", "pant:module")
-                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/metadata",
+                .resource("/content/repositories/repo/entities/module/en_US/variants/DEFAULT/draft/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description");
         registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Workspace.class, slingContext);
         ModuleListingServlet servlet = new ModuleListingServlet();
 
         // When
         Map<String, Object> map = servlet.resourceToMap(
-                slingContext.resourceResolver().getResource("/content/repositories/repo/module"));
+                slingContext.resourceResolver().getResource("/content/repositories/repo/entities/module"));
 
         // Then
         assertTrue(map.containsKey("name"));
         assertTrue(map.containsKey("pant:transientPath"));
-        assertTrue(map.containsKey("pant:transientSource"));
         assertTrue(map.containsKey("pant:transientSource"));
     }
 
@@ -88,13 +91,20 @@ class ModuleListingServletTest {
         slingContext.build()
                 .resource("/content/repositories/repo",
                         "jcr:primaryType", "pant:workspace")
-                .resource("/content/repositories/repo/module",
+                .resource("/content/repositories/repo/module_variants/DEFAULT",
+                            "jcr:primaryType", "sling:OrderedFolder")
+                .resource("/content/repositories/repo/entities/module.adoc",
                         "jcr:primaryType", "pant:module")
-                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/metadata",
+                .resource("/content/repositories/repo/entities/module.adoc/en_US/variants/DEFAULT/draft/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description")
                 .commit();
         registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Workspace.class, slingContext);
+        Map params = newHashMap();
+        params.put("offset", 0);
+        params.put("limit",  25);
+        slingContext.request().setParameterMap(params);
         ModuleListingServlet servlet = new ModuleListingServlet();
 
         // When
