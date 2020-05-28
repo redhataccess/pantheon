@@ -400,9 +400,11 @@ class Versions extends Component<IProps, IState> {
                     // process draftUpdateDate from source/draft
                     let draftDate = ''
                     if (source !== 'undefined' && source.__name__ === 'source') {
-                        for (const draft of source.__children__) {
-                            if (draft.__name__ === 'draft') {
-                                draftDate = draft["jcr:created"]
+                        for (const childNode of source.__children__) {
+                            if (childNode.__name__ === 'draft') {
+                                draftDate = childNode["jcr:created"]
+                            } else if (childNode.__name === 'released') {
+                                draftDate = childNode["jcr:created"]
                             }
                         }
                     }
@@ -702,7 +704,9 @@ class Versions extends Component<IProps, IState> {
                             productVersion: { label: '', uuid: metadataResults.productVersion },
                             usecaseValue: metadataResults.documentUsecase
                         })
-                        this.getProductFromVersionUuid(metadataResults.productVersion)
+                        if (metadataResults.productVersion !== 'undefined') {
+                            this.getProductFromVersionUuid(metadataResults.productVersion)
+                        }
                     }
                 })
         }

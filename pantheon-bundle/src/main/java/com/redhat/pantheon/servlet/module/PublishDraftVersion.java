@@ -5,11 +5,9 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleLocale;
-import com.redhat.pantheon.model.module.ModuleVariant;
-import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.model.module.*;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.servlets.post.*;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
@@ -114,7 +112,20 @@ public class PublishDraftVersion extends AbstractPostOperation {
                     .toChild(ModuleLocale::source)
                     .toChild(sourceContent -> sourceContent.draft())
                     .get();
+            // Check for released version
+            Optional<HashableFileResource> releasedSource = traverseFrom(module)
+                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(ModuleLocale::source)
+                    .toChild(sourceContent -> sourceContent.released())
+                    .getAsOptional();
             if (draftSource != null) {
+                if (releasedSource.isPresent()) {
+                    try {
+                        releasedSource.get().delete();
+                    } catch (PersistenceException e) {
+                        throw new RuntimeException("Failed to remove source/released: " + releasedSource.get().getPath());
+                    }
+                }
                 try {
                     rename(draftSource, "released");
                 } catch (RepositoryException e) {
