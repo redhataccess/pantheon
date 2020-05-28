@@ -386,24 +386,21 @@ class Versions extends Component<IProps, IState> {
             // fetchpath needs to start from modulePath instead of modulePath/en_US.
             // We need extact the module uuid for customer portal url to the module.
             const fetchpath = '/content' + this.props.modulePath + '.harray.5.json'
-            console.log("[versions] fetchVersion: fetchpath => ", fetchpath)
             fetch(fetchpath)
                 .then(response => response.json())
                 .then(responseJSON => {
                     const en_US = this.getHarrayChildNamed(responseJSON, 'en_US')
                     const source = this.getHarrayChildNamed(en_US, 'source')
                     const variants = this.getHarrayChildNamed(en_US, 'variants')
-                    console.log("[versions] variants => ", variants)
-                    console.log("[versions] source => ", source)
+
                     const firstVariant = this.getHarrayChildNamed(variants, this.props.variant)
-                    console.log("[versions] firstVariant => ", firstVariant)
                     // process draftUpdateDate from source/draft
                     let draftDate = ''
                     if (source !== 'undefined' && source.__name__ === 'source') {
                         for (const childNode of source.__children__) {
                             if (childNode.__name__ === 'draft') {
                                 draftDate = childNode["jcr:created"]
-                            } else if (childNode.__name === 'released') {
+                            } else if (childNode.__name__ === 'released') {
                                 draftDate = childNode["jcr:created"]
                             }
                         }
@@ -412,7 +409,7 @@ class Versions extends Component<IProps, IState> {
                     for (let i = 0; i < versionCount; i++) {
                         const moduleVersion = firstVariant.__children__[i]
                         let variantReleased = false
-                        console.log("[versions] moduleVersion => ", moduleVersion)
+                        // console.log("[versions] moduleVersion => ", moduleVersion)
                         if (moduleVersion.__name__ === 'draft') {
                             this.draft[0].version = 'Version ' + moduleVersion.__name__
                             this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
@@ -438,15 +435,13 @@ class Versions extends Component<IProps, IState> {
                     }
                     this.setState({
                         results: [this.draft, this.release],
-                        // tslint:disable-next-line: object-literal-sort-keys
-                        // metadataPath: this.draft ? this.draft[0].path : this.release[0].path
                     })
-                    if (this.draft && this.draft[0].path.length > 0) {
-                        this.setState({metadataPath: this.draft[0].path})
-                    } else if (this.release && this.release[0].path.length > 0){
-                        this.setState({metadataPath: this.release[0].path})
+
+                    if (this.draft && this.draft[0].version.length > 0) {
+                        this.setState({ metadataPath: this.draft[0].path })
+                    } else if (this.release && this.release[0].version.length > 0) {
+                        this.setState({ metadataPath: this.release[0].path })
                     }
-                    console.log("[versions] set metadatapath to => ", this.state.metadataPath)
                     this.getMetadata(this.state.metadataPath)
                 })
         }
@@ -569,7 +564,7 @@ class Versions extends Component<IProps, IState> {
             formData.append('documentUsecase', this.state.usecaseValue)
             formData.append('urlFragment', '/' + this.state.moduleUrl)
             formData.append('searchKeywords', this.state.keywords === undefined ? '' : this.state.keywords)
-            console.log('[metadataPath] ', this.state.metadataPath)
+
             fetch(this.state.metadataPath + '/metadata', {
                 body: formData,
                 headers: hdrs,

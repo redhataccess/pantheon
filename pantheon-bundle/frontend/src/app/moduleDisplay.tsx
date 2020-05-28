@@ -87,6 +87,7 @@ class ModuleDisplay extends Component<any, any, any> {
                             <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
                         </LevelItem>
                     </Level>
+                    <br />
                     <div>
                         <DataList aria-label="single action data list">
                             <DataListItem aria-labelledby="simple-item1">
@@ -159,7 +160,7 @@ class ModuleDisplay extends Component<any, any, any> {
     private generateDraftHtml = (pathname: any) => {
         const docPath = '/content' + pathname + '.preview?draft=true&variant=' + this.state.variant
 
-        console.log('Preview path: ', docPath)
+        // console.log('Preview path: ', docPath)
         return window.open(docPath)
     }
 
@@ -181,37 +182,37 @@ class ModuleDisplay extends Component<any, any, any> {
         fetch(data.location.pathname + '/en_US.harray.4.json')
             .then(response => response.json())
             .then(responseJSON => {
-                console.log('fetch results:', responseJSON)
+                // console.log('fetch results:', responseJSON)
                 // TODO: refactor for loops
                 for (const sourceVariant of responseJSON.__children__) {
                     if (!sourceVariant.__children__) {
                         continue
                     }
                     for (const myChild of sourceVariant.__children__) {
-                        console.log("[moduleDisplay] myChild => ", myChild)
+
                         if (!myChild.__children__) {
                             continue
                         }
                         if (myChild.__name__ === 'draft') {
-                            console.log("[moduleDisplay] draftUpdateDate => ", myChild["jcr:created"])
-                            this.setState({ draftUpdateDate: myChild["jcr:created"]})
+
+                            this.setState({ draftUpdateDate: myChild["jcr:created"] })
                         }
                         for (const myGrandchild of myChild.__children__) {
                             if (!myGrandchild.__children__) {
                                 continue
                             }
-                            console.log("[moduleDisplay] myGrandchild => ", myGrandchild)
+
                             for (const offspring of myGrandchild.__children__) {
                                 if (offspring.__name__ === 'metadata') {
-                                    console.log("[moduleDisplay] offspring => ", offspring)
+
                                     if (offspring[Fields.JCR_TITLE] !== undefined) {
-                                        console.log("[moduleDisplay] productVersion FOUND ", offspring[Fields.JCR_TITLE])
+
                                         this.setState({
                                             moduleTitle: offspring[Fields.JCR_TITLE],
                                         })
                                     }
                                     if (offspring[Fields.PANT_MODULE_TYPE] !== undefined) {
-                                        console.log("[moduleDisplay] ModuleType ", offspring[Fields.PANT_MODULE_TYPE])
+
                                         this.setState({
                                             moduleType: offspring[Fields.PANT_MODULE_TYPE],
 
@@ -246,7 +247,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         continue
                     }
                     for (const localeChild of locale.__children__) {
-                        console.log("[moduleDisplay] localeChild => ", localeChild)
+
                         if (!localeChild.__children__) {
                             continue
                         }
@@ -254,12 +255,12 @@ class ModuleDisplay extends Component<any, any, any> {
                             if (!variant.__children__) {
                                 continue
                             }
-                            console.log("[moduleDisplay] variant => ", variant)
+
                             for (const offspring of variant.__children__) {
                                 if (offspring.__name__ === 'metadata') {
-                                    console.log("[moduleDisplay] offspring => ", offspring)
+
                                     if (offspring[Fields.PANT_PRODUCT_VERSION_REF] !== undefined) {
-                                        console.log("[moduleDisplay] productVersion FOUND ", offspring[Fields.PANT_PRODUCT_VERSION_REF])
+
                                         this.getProductInitialLoad(offspring[Fields.PANT_PRODUCT_VERSION_REF])
                                     }
                                 }
