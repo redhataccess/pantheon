@@ -302,24 +302,8 @@ def process_workspace(path):
     # Process variants. variants is a list of dictionaries
 
     data = {}
-    listVariant = []
-    isCanon = False
     if variants:
-        for variant in variants:
-            if 'canonical' in variant and variant['canonical'] is not None:
-                listVariant.append(variant['canonical'])
-        for value in listVariant:
-            if type(value) == bool:
-                if (not value ):
-                    continue
-                elif(not isCanon and value ):
-                    isCanon = True
-                else:
-                    sys.exit('Multiple Canonical attribute present, Only one variant can be Cannonical')
-            else:
-                sys.exit('Canonical Attribute takes only boolean values.')
-        if len(variants) > 1 and not isCanon:
-            sys.exit('Canonical attribute missing, Should be present in case multiple variants')
+        validateVariants()
         for variant in variants:
             # Each variant is of type dictionary. Rename the keys to match ModuleVariantDefinition
             module_variants = {}
@@ -339,6 +323,36 @@ def process_workspace(path):
     else:
         data = {'DEFAULT': {}}
     createVariant(data, path, url, workspace)
+
+
+"""
+Method to validate variants attributes
+"""
+def validateVariants():
+    isCanon = False
+    isCannonicalList = []
+    variantNameList = []
+    variantPathList = []
+    for variant in variants:
+        if 'name' not in variant or variant['name'] is None:  # name is mandatory for variant, throw errors in case of missing
+            sys.exit("Variant (name) missing, please correct variant name ")
+        if 'path' not in variant or  variant['path'] is None:  # path is mandatory for variant, throw errors in case of missing
+            sys.exit("Variant (path) missing, please correct variant path ")
+        if 'canonical' in variant and variant['canonical'] is not None:
+            isCannonicalList.append(variant['canonical'])
+    for value in isCannonicalList:
+        if type(value) == bool:
+            if (not value):
+                continue
+            elif (not isCanon and value):
+                isCanon = True
+            else:
+                sys.exit('Multiple Canonical attribute present, Only one variant can be Cannonical')
+        else:
+            sys.exit('Canonical Attribute takes only boolean values.')
+    if len(variants) > 1 and not isCanon:
+        sys.exit('Canonical attribute missing, Should be present in case multiple variants')
+
 
 def createVariant(data, path, url, workspace):
     payload = {}
