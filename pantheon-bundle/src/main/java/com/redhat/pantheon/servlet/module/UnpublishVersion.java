@@ -74,7 +74,7 @@ public class UnpublishVersion extends AbstractPostOperation {
             ModuleVersion moduleVersion = module.moduleLocale(locale).get()
                     .variants().get()
                     .variant(variant).get()
-                    .released().get();
+                    .draft().get();
 
             // TODO We need to change the event so that the right variant is processed
             events.fireEvent(new ModuleVersionUnpublishedEvent(moduleVersion), 15);
