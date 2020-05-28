@@ -36,22 +36,26 @@ public class IntroduceModuleVariantRepositories implements RepositoryUpgrade {
     public void executeUpgrade(ResourceResolver resourceResolver) throws Exception {
 
         Session session = resourceResolver.adaptTo(Session.class);
-        log.info("Starting " + this.getClass().getName() + " repository upgrade");
 
         // Process all workspaces
         Query query = session.getWorkspace().getQueryManager().createQuery("select * from [pant:workspace]", Query.JCR_SQL2);
         QueryResult qResults = query.execute();
 
         RowIterator rows = qResults.getRows();
+        int upgradedCount = 0;
         while (rows.hasNext()) {
             Row row = rows.nextRow();
             Node workspaceNode = row.getNode();
             refactorWorkspaceNode(workspaceNode);
+            upgradedCount++;
         }
+
+        log.info("Upgraded " + upgradedCount + " workspaces");
     }
 
     private void refactorWorkspaceNode(Node workspaceNode) throws RepositoryException {
-        Node variantsNode = workspaceNode.addNode("variants", "sling:OrderedFolder");
+        log.debug("Refactoring workspace: " + workspaceNode.getName());
+        Node variantsNode = workspaceNode.addNode("module_variants", "sling:OrderedFolder");
         Node defaultVariantNode = variantsNode.addNode("DEFAULT");
         defaultVariantNode.setProperty("pant:canonical", true);
 
@@ -69,7 +73,7 @@ public class IntroduceModuleVariantRepositories implements RepositoryUpgrade {
             Node workspaceChildNode = workspaceChildIterator.nextNode();
 
             if(!workspaceChildNode.getName().equals("entities")
-                    && !workspaceChildNode.getName().equals("variants")) {
+                    && !workspaceChildNode.getName().equals("module_variants")) {
                 workspaceNode.getSession().move(
                         workspaceChildNode.getPath(),
                         entitiesNode.getPath() + "/" + workspaceChildNode.getName());

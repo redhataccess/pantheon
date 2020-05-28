@@ -35,7 +35,6 @@ public class RefactorModulesForVariants implements RepositoryUpgrade {
     @Override
     public void executeUpgrade(ResourceResolver resourceResolver) throws Exception {
         Session session = resourceResolver.adaptTo(Session.class);
-        log.info("Starting " + this.getClass().getName() + " repository upgrade");
 
         // Process all workspaces
         Query query = session.getWorkspace().getQueryManager().createQuery("select * from [pant:workspace]", Query.JCR_SQL2);
@@ -46,11 +45,15 @@ public class RefactorModulesForVariants implements RepositoryUpgrade {
         qResults = query.execute();
 
         RowIterator rows = qResults.getRows();
+        int upgradedCount = 0;
         while (rows.hasNext()) {
             Row row = rows.nextRow();
             Node moduleNode = row.getNode();
             refactorModuleNode(moduleNode);
+            upgradedCount++;
         }
+
+        log.info("Upgraded " + upgradedCount + " modules");
     }
 
     private void refactorModuleNode(Node moduleNode) throws RepositoryException {

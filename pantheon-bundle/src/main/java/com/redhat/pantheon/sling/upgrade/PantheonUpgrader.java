@@ -73,6 +73,9 @@ public class PantheonUpgrader implements SlingRepositoryInitializer {
                     recordSuccessfulUpgrade(resourceResolver, upgrade);
                     resourceResolver.commit();
                 }
+                else {
+                    log.debug("Skipping already executed upgrade: " + upgrade.getId());
+                }
             } catch (Exception ex) {
                 log.error("Error running repository upgrade: " + upgrade.getClass().getName(), ex);
                 break;
