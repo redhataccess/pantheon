@@ -23,6 +23,9 @@ public interface ModuleVersion extends WorkspaceChild {
     @Named("jcr:uuid")
     Field<String> uuid();
 
+    @Named("pant:hash")
+    Field<String> hash();
+
     @Named("cached_html")
     Child<FileResource> cachedHtml();
 
