@@ -60,6 +60,7 @@ class UnpublishVersionTest {
         assertEquals(HttpServletResponse.SC_OK, postResponse.getStatusCode());
         assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/released"));
         assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft"));
+        assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/released"));
 
     }
 
@@ -103,6 +104,8 @@ class UnpublishVersionTest {
         assertEquals(HttpServletResponse.SC_OK, postResponse.getStatusCode());
         assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/released"));
         assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft"));
+        assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/released"));
+        assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/draft"));
 
     }
 
@@ -126,5 +129,8 @@ class UnpublishVersionTest {
         // Then
         assertTrue(changes.size() == 0);
         assertEquals(HttpServletResponse.SC_PRECONDITION_FAILED, postResponse.getStatusCode());
+        assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/released"));
+        assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/released"));
+
     }
 }
