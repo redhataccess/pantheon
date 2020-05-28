@@ -42,6 +42,9 @@
 [pant:module] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/module' mandatory autocreated
 
+[pant:moduleVariant] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/moduleVariant' mandatory autocreated
+    
 [pant:moduleLocale] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/moduleLocale' mandatory autocreated
 
@@ -60,9 +63,14 @@
 // Defines a repository level node. The node type pant:workspace may contain a property for pant:attributeFile.
 [pant:workspace] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/workspace' mandatory autocreated
+    + module_variants(sling:OrderedFolder) = sling:OrderedFolder autocreated
+    + entities (sling:Folder) = sling:Folder autocreated
 
 [pant:acknowledgment] > nt:unstructured, sling:Resource, mix:lastModified
     - sling:resourceType (string) = 'pantheon/acknowledgment' mandatory autocreated
+
+[pant:hashable] mixin
+    - pant:hash (string)
 
 // Base type for titles
 //[pant:title] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified

@@ -1,9 +1,11 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.SourceContent;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.asciidoctor.ast.Document;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
 public class SlingResourceIncludeProcessor extends IncludeProcessor {
@@ -59,16 +62,18 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             SlingModel includedResourceAsModel = includeResource.adaptTo(SlingModel.class);
 
             // Included resource might be a plain file or another module
-            if( includedResourceAsModel.getProperty(JCR_PRIMARYTYPE, String.class).equals("pant:module") ) {
+            if( includedResourceAsModel.field(JCR_PRIMARYTYPE, String.class).get().equals("pant:module") ) {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
                 // TODO, right now only default locale and latest (draft) version of the module are used
-                content = module.getDraftContent(GlobalConfig.DEFAULT_MODULE_LOCALE)
-                            .get()
-                            .asciidocContent().get();
+                content = traverseFrom(module)
+                        .toChild(module1 -> module.moduleLocale(GlobalConfig.DEFAULT_MODULE_LOCALE))
+                        .toChild(ModuleLocale::source)
+                        .toChild(SourceContent::draft)
+                        .toChild(FileResource::jcrContent)
+                        .toField(FileResource.JcrContent::jcrData)
+                        .get();
             } else {
                 // It's a plain file
-                // TODO Resources (assets) will be versioned too, and module versions will have a record of their
-                // TODO specific asset version, so this extension will need to fetch the correct one
                 FileResource file = includedResourceAsModel.adaptTo(FileResource.class);
                 content = file.jcrContent().get()
                         .jcrData().get();

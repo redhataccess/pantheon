@@ -1,6 +1,7 @@
 package com.redhat.pantheon.model.api;
 
 import com.google.common.collect.ImmutableMap;
+import com.redhat.pantheon.model.api.annotation.JcrMixins;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
@@ -11,6 +12,7 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
 /**
@@ -74,12 +76,15 @@ public class SlingModels {
 
         try {
             // initial properties
-            Map<String, Object> initialProps = new ImmutableMap.Builder<String, Object>()
-                    .put(JCR_PRIMARYTYPE, getJcrPrimaryType(modelType))
-                    .build();
+            ImmutableMap.Builder<String, Object> propsBuilder = new ImmutableMap.Builder<String, Object>()
+                    .put(JCR_PRIMARYTYPE, getJcrPrimaryType(modelType));
+            String[] jcrMixinTypes = getJcrMixinTypes(modelType);
+            if(jcrMixinTypes.length > 0) {
+                propsBuilder.put(JCR_MIXINTYPES, jcrMixinTypes);
+            }
             // create the resource
             Resource childResource = parent.getResourceResolver().
-                    create(parent, childName, initialProps);
+                    create(parent, childName, propsBuilder.build());
             // create the model
             T model = getModel(childResource, modelType);
             return model;
@@ -118,5 +123,14 @@ public class SlingModels {
             return primaryType.value();
         }
         return ResourceDecorator.DEFAULT_PRIMARY_TYPE;
+    }
+
+    @Nonnull
+    private static final String[] getJcrMixinTypes(Class<? extends SlingModel> resourceType) {
+        JcrMixins mixins = resourceType.getAnnotation(JcrMixins.class);
+        if(mixins != null) {
+            return mixins.value();
+        }
+        return ResourceDecorator.DEFAULT_MIXINS;
     }
 }

@@ -11,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "id",
+    "variant",
     "status",
     "message",
     "sender"
@@ -19,6 +20,8 @@ public class Acknowledgment {
 
     @JsonProperty("id")
     private String id;
+    @JsonProperty("variant")
+    private String variant;
     @JsonProperty("status")
     private String status;
     @JsonProperty("message")
@@ -49,6 +52,16 @@ public class Acknowledgment {
     public Acknowledgment withId(String id) {
         this.id = id;
         return this;
+    }
+
+    /**
+     *
+     * @return
+     *     The variantName
+     */
+    @JsonProperty("variant")
+    public String getVariant() {
+        return variant;
     }
 
     /**

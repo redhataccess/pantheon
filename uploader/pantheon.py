@@ -2,6 +2,7 @@
 import argparse
 import base64
 import getpass
+import json
 import logging
 import os
 import re
@@ -12,6 +13,7 @@ import requests
 import yaml
 from requests import Response
 from pprint import pprint
+
 DEFAULT_SERVER = 'http://localhost:8080'
 DEFAULT_USER = 'author'
 DEFAULT_PASSWORD = base64.b64decode(b'YXV0aG9y').decode()
@@ -121,15 +123,19 @@ parser.add_argument('--sample', '-S',
 #  - '*.adoc'
 
 server: http://localhost:8080
-repositories:
-  - name: pantheonSampleRepo
-    attributes: path/to/attribute.adoc
+repository: pantheonSampleRepo
+variants:
+    - path: path/to/attribute.adoc
+      name: my_name
+      canonical: true
+    - path: path/to/attribute2.adoc
+      name: my_name2
 
-    modules:
+modules:
       - master.adoc
       - modules/*.adoc
 
-    resources:
+resources:
       - shared/legal.adoc
       - shared/foreword.adoc
       - resources/*
@@ -202,7 +208,7 @@ def process_file(path, filetype):
     isModule = True if filetype == 'modules' else False
     isResource = True if filetype == 'resources' else False
     content_root = 'sandbox' if args.sandbox else 'repositories'
-    url = server + '/content/' + content_root + '/' + repository
+    url = server + '/content/' + content_root + '/' + repository + '/entities'
 
     path = PurePath(path)
     base_name = path.stem
@@ -282,22 +288,85 @@ def process_file(path, filetype):
 
 def process_workspace(path):
     """
-    Adds pant:attributeFile to the repository node.
+    Set up module_variants for the repository.
     Parameter:
     path: string
     """
     content_root = 'sandbox' if args.sandbox else 'repositories'
     url = server + '/content/' + content_root + '/' + repository
 
-    # Specify attributeFile property
+    # Populate payload
     logger.debug('url: %s', url)
+    workspace = {}
+    workspace['jcr:primaryType'] = 'pant:workspace'
+    # Process variants. variants is a list of dictionaries
+
     data = {}
-    data['jcr:primaryType'] = 'pant:workspace'
-    if attributeFile:
-        data['pant:attributeFile'] = attributeFile
+    if variants:
+        validateVariants()
+        for variant in variants:
+            # Each variant is of type dictionary. Rename the keys to match ModuleVariantDefinition
+            module_variants = {}
+            for key, value in variant.items():
+                if key.lower() == 'name':
+                    module_variants['pant:name'] = value
+                if key.lower() == 'path':
+                    module_variants['pant:attributesFilePath'] = value
+                if key.lower() == 'canonical':
+                    module_variants['pant:canonical'] = value
+            if 'pant:canonical' not in module_variants:
+                module_variants['pant:canonical'] = 'true'
+            if 'pant:name' in module_variants:
+                data[module_variants['pant:name']] = module_variants
+            # createVariant(data, path, url, workspace, isCanon)
+
+    else:
+        data = {'DEFAULT': {}}
+    createVariant(data, path, url, workspace)
+
+
+"""
+Method to validate variants attributes
+"""
+def validateVariants():
+    isCanon = False
+    isCannonicalList = []
+    variantNameList = []
+    variantPathList = []
+    for variant in variants:
+        if 'name' not in variant or variant['name'] is None:  # name is mandatory for variant, throw errors in case of missing
+            sys.exit("Variant (name) missing, please correct variant name ")
+        if 'path' not in variant or  variant['path'] is None:  # path is mandatory for variant, throw errors in case of missing
+            sys.exit("Variant (path) missing, please correct variant path ")
+        if 'canonical' in variant and variant['canonical'] is not None:
+            isCannonicalList.append(variant['canonical'])
+    for value in isCannonicalList:
+        if type(value) == bool:
+            if (not value):
+                continue
+            elif (not isCanon and value):
+                isCanon = True
+            else:
+                sys.exit('Multiple Canonical attribute present, Only one variant can be Cannonical')
+        else:
+            sys.exit('Canonical Attribute takes only boolean values.')
+    if len(variants) > 1 and not isCanon:
+        sys.exit('Canonical attribute missing, Should be present in case multiple variants')
+
+
+def createVariant(data, path, url, workspace):
+    payload = {}
+    payload[':content'] = json.dumps(data)  # '{"sample":"test"}'
+    payload[':contentType'] = 'json'
+    payload[':operation'] = 'import'
+    # print(payload)
     if not args.dry:
-        r: Response = requests.post(url, headers=HEADERS, data=data, auth=(args.user, pw))
+        r: Response = requests.post(url, headers=HEADERS, data=workspace, auth=(args.user, pw))
         _print_response('workspace', path, r.status_code, r.reason)
+        if r.status_code == 200 or r.status_code == 201:
+            url = url + '/' + 'module_variants'
+            r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
+            _print_response('module_variants', list(data.keys()), r.status_code, r.reason)
     logger.debug('')
 
 
@@ -346,6 +415,16 @@ def processRegexMatches(files, globs, filetype):
         files.remove(f)
 
 
+def process_attributes_as_resources(variants):
+    resources = []
+    for variant in variants:
+        # Each variant is of type dictionary
+        for key, value in variant.items():
+            if key == 'path':
+                resources.append(value)
+    return resources
+
+
 server = resolveOption(args.server, 'server', DEFAULT_SERVER)
 # Check if server url path reachable
 server = remove_trailing_slash(server)
@@ -356,66 +435,53 @@ else:
 
 _info('Using server: ' + server)
 
-if len(config.keys()) > 0 and 'repositories' in config:
-    for repo_list in config['repositories']:
-        repository = resolveOption(args.repository, '', repo_list['name'])
-        # Enforce a repository being set in the pantheon.yml
-        if repository == "" and mode == 'repository':
-            sys.exit('repository is not set')
+if len(config.keys()) > 0 and 'repository' in config:
+    # for repo_list in config['repositories']:
+    repository = resolveOption(args.repository, '', config['repository'])
+    # Enforce a repository being set in the pantheon.yml
+    if repository == "" and mode == 'repository':
+        sys.exit('repository is not set')
 
-        mode = 'sandbox' if args.sandbox else 'repository'
-        # override repository if sandbox is chosen (sandbox name is the user name)
-        if args.sandbox:
-            repository = args.user
+    mode = 'sandbox' if args.sandbox else 'repository'
+    # override repository if sandbox is chosen (sandbox name is the user name)
+    if args.sandbox:
+        repository = args.user
 
-        if 'attributes' in repo_list:
-            attributeFile = resolveOption(args.attrFile, '', repo_list['attributes'])
+    if 'variants' in config:
+        variants = config['variants']
+    else:
+        variants = []
+    _info('Using ' + mode + ': ' + repository)
+    print('--------------')
+
+    process_workspace(repository)
+    attribute_files = []
+    if variants:
+        attribute_files = process_attributes_as_resources(variants)
+
+    moduleGlobs = readYamlGlob(config, 'modules')
+    resourceGlobs = readYamlGlob(config, 'resources')
+    if attribute_files:
+        if resourceGlobs is None:
+            resourceGlobs = attribute_files
         else:
-            attributeFile = resolveOption(args.attrFile, '', '')
+            resourceGlobs = resourceGlobs + attribute_files
+    non_resource_files = []
+    logger.debug('moduleGlobs: %s', moduleGlobs)
+    logger.debug('resourceGlobs: %s', resourceGlobs)
+    logger.debug('args.directory: %s', args.directory)
 
-        if args.attrFile:
-            if not os.path.isfile(args.directory + '/' + args.attrFile):
-                sys.exit('attributes: ' + args.directory + '/' + args.attrFile + ' does not exist.')
-        elif attributeFile:
-            if args.directory:
-                if not os.path.isfile(args.directory + '/' + attributeFile.strip()):
-                    sys.exit('attributes2: ' + args.directory + '/' + attributeFile + ' does not exist.')
-            else:
-                if not os.path.isfile(attributeFile.strip()):
-                    sys.exit('attributes3: ' + attributeFile + ' does not exist.')
+    # List all files in the directory
+    allFiles = []
+    listdir_recursive(args.directory, allFiles)
 
-        _info('Using ' + mode + ': ' + repository)
-        _info('Using attributes: ' + attributeFile)
-        print('--------------')
+    processRegexMatches(allFiles, resourceGlobs, 'resources')
+    processRegexMatches(allFiles, moduleGlobs, 'modules')
 
-
-        process_workspace(repository)
-
-        moduleGlobs = readYamlGlob(repo_list, 'modules')
-        resourceGlobs = readYamlGlob(repo_list, 'resources')
-
-        if attributeFile:
-            if resourceGlobs == None:
-                resourceGlobs = [attributeFile]
-            else:
-                resourceGlobs = resourceGlobs + [attributeFile]
-        non_resource_files = []
-        logger.debug('moduleGlobs: %s', moduleGlobs)
-        logger.debug('resourceGlobs: %s', resourceGlobs)
-        logger.debug('args.directory: %s', args.directory)
-
-
-        # List all files in the directory
-        allFiles = []
-        listdir_recursive(args.directory, allFiles)
-
-        processRegexMatches(allFiles, resourceGlobs, 'resources')
-        processRegexMatches(allFiles, moduleGlobs, 'modules')
-
-        leftoverFiles = len(allFiles)
-        if leftoverFiles > 0:
-            _warn(f'{leftoverFiles} additional files detected but not uploaded. Only files specified in '
-                + CONFIG_FILE
-                + ' are handled for upload.')
+    leftoverFiles = len(allFiles)
+    if leftoverFiles > 0:
+        _warn(f'{leftoverFiles} additional files detected but not uploaded. Only files specified in '
+              + CONFIG_FILE
+              + ' are handled for upload.')
 
 print('Finished!')

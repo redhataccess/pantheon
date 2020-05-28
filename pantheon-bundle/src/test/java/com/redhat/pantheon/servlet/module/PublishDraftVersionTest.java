@@ -35,22 +35,21 @@ class PublishDraftVersionTest {
     @Test
     void doRun() throws Exception {
         // Given
-        slingContext.create()
-                .resource("/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleVersion");
-        slingContext.create()
-                .resource("/module/en_US/1/metadata",
-                        "jcr:title", "A draft title", "productVersion", "123456", "urlFragment", "/test");
-        slingContext.create()
-                .resource("/module/en_US/1/content/asciidoc/jcr:content",
-                        "jcr:data", "The draft content");
-        slingContext.resourceResolver().getResource("/module/en_US").adaptTo(ModifiableValueMap.class)
-                .put("draft", slingContext.resourceResolver().getResource("/module/en_US/1").getValueMap().get("jcr:uuid"));
+        slingContext.build()
+                .resource("/content/repositories/repo/module",
+                        "jcr:primaryType", "pant:module")
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/metadata",
+                        "jcr:title", "A draft title",
+                        "productVersion", "123456",
+                        "urlFragment", "/test")
+                .resource("/content/repositories/repo/module/en_US/source/draft/jcr:content",
+                        "jcr:data", "The draft content")
+                .commit();
         registerMockAdapter(Module.class, slingContext);
         Events events = mock(Events.class);
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
-        slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
+        slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
 
         //FIXME - asciidoctorService parameter is temporary
         PublishDraftVersion operation = new PublishDraftVersion(events, asciidoctorService);
@@ -61,10 +60,12 @@ class PublishDraftVersionTest {
         // Then
         assertEquals(1, changes.size());
         assertEquals(ModificationType.MODIFY, changes.get(0).getType());
-        assertEquals("/module", changes.get(0).getSource());
+        assertEquals("/content/repositories/repo/module", changes.get(0).getSource());
         assertEquals(HttpServletResponse.SC_OK, postResponse.getStatusCode());
-        assertNotNull(slingContext.resourceResolver().getResource("/module/en_US/released"));
-        assertNotNull(slingContext.resourceResolver().getResource("/module/en_US/1/metadata/pant:datePublished"));
+        assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/released"));
+        assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/metadata/pant:datePublished"));
+        assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/released/jcr:content"));
+        assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/draft/jcr:content"));
     }
 
     @Test
@@ -72,13 +73,19 @@ class PublishDraftVersionTest {
     void doRunNoDraftVersion() throws Exception {
         // Given
         slingContext.build()
-                .resource("/module/locales/en_US/released/metadata")
-                .resource("/module/locales/en_US/released/content/asciidoc/jcr:content")
+                .resource("/content/repositories/repo/module",
+                        "jcr:primaryType", "pant:module")
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/metadata",
+                        "jcr:title", "A released title",
+                        "productVersion", "123456",
+                        "urlFragment", "/test")
+                .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
+                        "jcr:data", "The released content")
                 .commit();
         registerMockAdapter(Module.class, slingContext);
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
-        slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
+        slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
 
         //FIXME - asciidoctorService parameter is temporary
         PublishDraftVersion operation = new PublishDraftVersion(null, asciidoctorService);

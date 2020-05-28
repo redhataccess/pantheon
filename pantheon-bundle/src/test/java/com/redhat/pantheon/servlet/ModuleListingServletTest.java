@@ -1,6 +1,9 @@
 package com.redhat.pantheon.servlet;
 
+import com.redhat.pantheon.helper.TransformToPojo;
+import com.redhat.pantheon.model.QueryResultPage;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.workspace.Workspace;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -9,12 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith({SlingContextExtension.class})
 class ModuleListingServletTest {
@@ -58,27 +61,59 @@ class ModuleListingServletTest {
     @Test
     void resourceToMap() {
         // Given
-        slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleVersion");
-        slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1/metadata",
+        slingContext.build()
+                .resource("/content/repositories/repo",
+                        "jcr:primaryType", "pant:workspace")
+                .resource("/content/repositories/repo/module_variants/DEFAULT",
+                        "jcr:primaryType", "sling:OrderedFolder")
+                .resource("/content/repositories/repo/entities/module",
+                        "jcr:primaryType", "pant:module")
+                .resource("/content/repositories/repo/entities/module/en_US/variants/DEFAULT/draft/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description");
-        slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US").adaptTo(ModifiableValueMap.class)
-                .put("draft", slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/1").getValueMap()
-                        .get("jcr:uuid"));
         registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Workspace.class, slingContext);
         ModuleListingServlet servlet = new ModuleListingServlet();
 
         // When
         Map<String, Object> map = servlet.resourceToMap(
-                slingContext.resourceResolver().getResource("/content/repositories/repo/module"));
+                slingContext.resourceResolver().getResource("/content/repositories/repo/entities/module"));
 
         // Then
         assertTrue(map.containsKey("name"));
         assertTrue(map.containsKey("pant:transientPath"));
         assertTrue(map.containsKey("pant:transientSource"));
-        assertTrue(map.containsKey("pant:transientSource"));
+    }
+
+    @Test
+    void basicQuery() throws Exception {
+        // Given
+        slingContext.build()
+                .resource("/content/repositories/repo",
+                        "jcr:primaryType", "pant:workspace")
+                .resource("/content/repositories/repo/module_variants/DEFAULT",
+                            "jcr:primaryType", "sling:OrderedFolder")
+                .resource("/content/repositories/repo/entities/module.adoc",
+                        "jcr:primaryType", "pant:module")
+                .resource("/content/repositories/repo/entities/module.adoc/en_US/variants/DEFAULT/draft/metadata",
+                        "jcr:title", "A title",
+                        "jcr:description", "A description")
+                .commit();
+        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Workspace.class, slingContext);
+        Map params = newHashMap();
+        params.put("offset", 0);
+        params.put("limit",  25);
+        slingContext.request().setParameterMap(params);
+        ModuleListingServlet servlet = new ModuleListingServlet();
+
+        // When
+        servlet.doGet(slingContext.request(), slingContext.response());
+
+        // Then
+        // parse the result to a QueryResultPage
+        System.out.println(slingContext.response().getOutputAsString());
+
+//        assertEquals(1, qrp.getResults().size());
     }
 }

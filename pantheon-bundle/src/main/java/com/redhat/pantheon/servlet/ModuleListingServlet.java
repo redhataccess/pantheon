@@ -2,8 +2,10 @@ package com.redhat.pantheon.servlet;
 
 import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
+import com.redhat.pantheon.model.module.HashableFileResource;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleLocale;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -19,16 +21,17 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.servlet.Servlet;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
-import java.text.SimpleDateFormat;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static java.util.stream.Collectors.toList;
 
@@ -41,7 +44,7 @@ import static java.util.stream.Collectors.toList;
                 Constants.SERVICE_DESCRIPTION + "=Servlet which provides initial module listing and search functionality",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
-@SlingServletPaths(value = "/modules.json")
+@SlingServletPaths(value = "/pantheon/internal/modules.json")
 public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
     private final Logger log = LoggerFactory.getLogger(ModuleListingServlet.class);
@@ -96,8 +99,9 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         if (searchParam.length() > 0) {
             StringBuilder textFilter = new StringBuilder()
                     .append("(")
-                    .append("jcr:like(*/*/metadata/@jcr:title,'%" + searchParam + "%') ")
-                    .append("or jcr:like(*/*/metadata/@jcr:description,'%" + searchParam + "%')")
+                    .append("jcr:like(*/*/*/*/metadata/@jcr:title,'%" + searchParam + "%') ")
+                    .append("or jcr:like(*/*/*/*/metadata/@jcr:description,'%" + searchParam + "%')")
+                    .append("or jcr:like(*/*/*/*/cached_html/jcr:content/@jcr:data,'%" + searchParam + "%')")
                     .append(")");
             queryFilters.add(textFilter);
         }
@@ -107,7 +111,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             StringBuilder productVersionCondition = new StringBuilder();
             List<String> conditions = Arrays.stream(productVersionIds)
                     .map(id -> {
-                        return "*/*/metadata/@productVersion = '" + id + "'";
+                        return "*/*/*/*/metadata/@productVersion = '" + id + "'";
                     })
                     .collect(toList());
             productVersionCondition.append("(" + StringUtils.join(conditions, " or ") + ")");
@@ -117,7 +121,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         // Module type filter
         if(!Strings.isNullOrEmpty(type)) {
             StringBuilder moduleTypeCondition = new StringBuilder()
-                    .append("*/*/metadata/@pant:moduleType = '" + type + "'");
+                    .append("*/*/*/*/metadata/@pant:moduleType = '" + type + "'");
             queryFilters.add(moduleTypeCondition);
         }
 
@@ -129,7 +133,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
-            queryBuilder.append(" order by */*/metadata/@")
+            queryBuilder.append(" order by */*/*/*/metadata/@")
                     .append(keyParam)
                     .append(" ")
                     .append(directionParam);
@@ -178,8 +182,21 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
     @Override
     protected Map<String, Object> resourceToMap(Resource resource) {
         Module module = resource.adaptTo(Module.class);
-        Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE);
-        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE);
+
+        String variantName = module.getWorkspace()
+                .moduleVariantDefinitions().get()
+                .getVariants()
+                .findFirst().get()
+                .getName();
+
+        Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE, variantName);
+        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);
+        Optional<HashableFileResource> sourceFile =
+                traverseFrom(module)
+                        .toChild(m -> m.moduleLocale(DEFAULT_MODULE_LOCALE))
+                        .toChild(ModuleLocale::source)
+                        .toChild(sourceContent -> sourceContent.draft().isPresent() ? sourceContent.draft() : sourceContent.released())
+                        .getAsOptional();
 
         // TODO Need some DTOs to convert to maps
         Map<String, Object> m = super.resourceToMap(resource);
@@ -198,8 +215,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("moduleType","-");
         }
 
-        if(draftMetadata.isPresent() && draftMetadata.get().dateUploaded().get()!=null){                        
-            m.put("pant:dateUploaded",sdf.format(draftMetadata.get().dateUploaded().get().getTime()));
+        if(sourceFile.isPresent() && sourceFile.get().created().get() != null){
+            m.put("pant:dateUploaded", sdf.format(sourceFile.get().created().get().getTime()));
         }else if(releasedMetadata.isPresent() && releasedMetadata.get().dateUploaded().get()!=null){
             m.put("pant:dateUploaded",sdf.format(releasedMetadata.get().dateUploaded().get().getTime()));
         }else{
@@ -211,9 +228,23 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }else{
             m.put("pant:publishedDate","-");
         }
-        
-        m.put("jcr:title", draftMetadata.isPresent() ? draftMetadata.get().title().get() : releasedMetadata.get().title().get());
-        m.put("jcr:description", draftMetadata.isPresent() ? draftMetadata.get().description().get() : releasedMetadata.get().description().get());
+
+        if(draftMetadata.isPresent() && draftMetadata.get().title().get()!=null){
+            m.put("jcr:title",draftMetadata.get().title().get());
+        }else if(releasedMetadata.isPresent() && releasedMetadata.get().title().get()!=null){
+            m.put("jcr:title",releasedMetadata.get().title().get());
+        }else{
+            m.put("jcr:title","-");
+        }
+
+        if(draftMetadata.isPresent() && draftMetadata.get().description().get()!=null){
+            m.put("jcr:description",draftMetadata.get().description().get());
+        }else if(releasedMetadata.isPresent() && releasedMetadata.get().description().get()!=null){
+            m.put("jcr:description",releasedMetadata.get().description().get());
+        }else{
+            m.put("jcr:description","-");
+        }
+
         // Assume the path is something like: /content/<something>/my/resource/path
         m.put("pant:transientPath", resourcePath.substring("/content/".length()));
         // Example path: /content/repositories/ben_2019-04-11_16-15-15/shared/attributes.module.adoc
@@ -223,7 +254,11 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         if (!"modules".equals(fragments[2])) {
             m.put("pant:transientSourceName", fragments[3]);
         }
-        
+
+        if (!variantName.isEmpty()) {
+            m.put("variant", variantName);
+        }
+
         log.trace(m.toString());
         return m;
     }
