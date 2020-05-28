@@ -3,10 +3,10 @@ package com.redhat.pantheon.servlet.module;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleVariant;
-import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.module.*;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
@@ -17,11 +17,14 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static com.redhat.pantheon.jcr.JcrResources.rename;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 
@@ -96,6 +99,32 @@ public class UnpublishVersion extends AbstractPostOperation {
                     .revertReleased();
 
             changes.add(Modification.onModified(module.getPath()));
+            // Change source/released to source/draft
+            Optional<HashableFileResource> draftSource = traverseFrom(module)
+                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(ModuleLocale::source)
+                    .toChild(sourceContent -> sourceContent.draft())
+                    .getAsOptional();
+            FileResource releasedSource = traverseFrom(module)
+                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(ModuleLocale::source)
+                    .toChild(sourceContent -> sourceContent.released())
+                    .get();
+            if (draftSource.isPresent()) {
+                // Delete released
+                try {
+                    releasedSource.delete();
+                } catch (PersistenceException e) {
+                    throw new RuntimeException("Failed to delete source/released: " + releasedSource.getPath());
+                }
+
+            } else {
+                try {
+                    rename(releasedSource, "draft");
+                } catch (RepositoryException e) {
+                    throw new RuntimeException("Cannot rename source/released to source/draft: " + releasedSource.getPath());
+                }
+            }
         }
     }
 }

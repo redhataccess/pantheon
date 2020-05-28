@@ -39,6 +39,9 @@ class UnpublishVersionTest {
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
                         "jcr:data", "Released content");
+        slingContext.create()
+                .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
+                        "jcr:data", "Released content");
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
         Events events = mock(Events.class);
@@ -57,6 +60,7 @@ class UnpublishVersionTest {
         assertEquals(HttpServletResponse.SC_OK, postResponse.getStatusCode());
         assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/released"));
         assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft"));
+        assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/released"));
 
     }
 
@@ -74,8 +78,14 @@ class UnpublishVersionTest {
                 .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
                         "jcr:data", "Released content");
         slingContext.create()
-        .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/cached_html/jcr:content",
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/cached_html/jcr:content",
                 "jcr:data", "Draft content");
+        slingContext.create()
+                .resource("/content/repositories/repo/module/en_US/source/draft/jcr:content",
+                "jcr:data", "Draft content");
+        slingContext.create()
+                .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
+                        "jcr:data", "Released content");
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
         Events events = mock(Events.class);
@@ -94,6 +104,8 @@ class UnpublishVersionTest {
         assertEquals(HttpServletResponse.SC_OK, postResponse.getStatusCode());
         assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/released"));
         assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft"));
+        assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/released"));
+        assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/draft"));
 
     }
 
@@ -117,5 +129,8 @@ class UnpublishVersionTest {
         // Then
         assertTrue(changes.size() == 0);
         assertEquals(HttpServletResponse.SC_PRECONDITION_FAILED, postResponse.getStatusCode());
+        assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT/released"));
+        assertNull(slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/source/released"));
+
     }
 }
