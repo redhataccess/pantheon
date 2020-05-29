@@ -39,10 +39,10 @@ import static com.redhat.pantheon.servlet.ServletUtils.toLanguageTag;
  * A Hydra message producer for Module post publish events.
  * 
  * A sample message for publish event:
- * {"id":"https://example.com/api/module?locale=en-us&module_id=fb8f7586-1b68-437c-94d9-bfc4f85866ed","event":"publish"}
+ * {"id":"https://example.com/api/module?locale=en-us&module_id=fb8f7586-1b68-437c-94d9-bfc4f85866ed&variant=DEFAULT","event":"publish"}
  *
  * A sample message for unpublish event:
- * {"id":"","event":"unpublish", "view_uri":"https://example.com/topics/en-us/fb8f7586-1b68-437c-94d9-bfc4f85866ed"}
+ * {"id":"","event":"unpublish", "view_uri":"https://example.com/topics/en-us/fb8f7586-1b68-437c-94d9-bfc4f85866ed?variant=DEFAULT"}
  *
  * @author Lisa Davidson
  */
@@ -113,7 +113,7 @@ public class HydraIntegration implements EventProcessingExtension {
 
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
-//        String moduleVersionUUID = moduleVersion.uuid().get();
+
         String eventValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
         String idValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? buildModuleVersionUri(moduleVersion) : "";
         String uriValue = "";

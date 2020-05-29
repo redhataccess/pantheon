@@ -66,7 +66,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.moduleUUID !== ""
                             && this.state.portalHost !== ""
-                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID + '?variant=' + this.state.variant} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                         }
 
                         <span>&emsp;&emsp;</span>
@@ -299,7 +299,7 @@ class ModuleDisplay extends Component<any, any, any> {
     private copyToClipboard = () => {
         const textField = document.createElement('textarea')
         if (this.state.moduleUUID.trim() !== '') {
-            textField.value = this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID
+            textField.value = this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID + '?variant=' + this.state.variant
             document.body.appendChild(textField)
             textField.select()
             document.execCommand('copy')

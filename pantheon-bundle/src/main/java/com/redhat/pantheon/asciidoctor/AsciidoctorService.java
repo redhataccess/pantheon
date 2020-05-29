@@ -11,13 +11,7 @@ import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.util.ResourceTraversal;
-import com.redhat.pantheon.model.module.Content;
-import com.redhat.pantheon.model.module.HashableFileResource;
-import com.redhat.pantheon.model.module.Metadata;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleLocale;
-import com.redhat.pantheon.model.module.ModuleVariant;
-import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.jackrabbit.oak.commons.PathUtils;
@@ -300,6 +294,9 @@ public class AsciidoctorService {
                         .jcrData().get());
                 html = asciidoctor.convert(content.toString(), ob.get());
                 cacheContent(moduleVersion, html);
+
+                // ack_status
+                moduleVersion.ackStatus().getOrCreate();
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);
             }
