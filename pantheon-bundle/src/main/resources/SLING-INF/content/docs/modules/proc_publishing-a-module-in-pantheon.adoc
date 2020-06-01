@@ -9,6 +9,7 @@ Publish a module in {ProductShortName} to the {PublishingPortal}.
 * You are assigned the publisher role in {ProductShortName}.
 * You are logged in.
 * The module to be published has been imported to {ProductShortName}.
+* The metadata required for publishing has been applied to the module.
 
 .Procedure
 
