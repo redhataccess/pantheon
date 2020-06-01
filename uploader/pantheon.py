@@ -12,7 +12,8 @@ from pathlib import PurePath
 import requests
 import yaml
 from requests import Response
-from pprint import pprint
+from datetime import datetime
+
 
 DEFAULT_SERVER = 'http://localhost:8080'
 DEFAULT_USER = 'author'
@@ -299,14 +300,17 @@ def process_workspace(path):
     logger.debug('url: %s', url)
     workspace = {}
     workspace['jcr:primaryType'] = 'pant:workspace'
+    workspace['jcr:lastModified'] = datetime.now().strftime("%Y-%m-%dT%H:%m:%S") #SimpleDateFormat:yyyy-MM-dd'T'HH:mm:ss
     # Process variants. variants is a list of dictionaries
 
     data = {}
+    cannonicalPresent = False
     if variants:
         validateVariants()
         for variant in variants:
             # Each variant is of type dictionary. Rename the keys to match ModuleVariantDefinition
             module_variants = {}
+            module_variants['pant:canonical'] = 'false'
             for key, value in variant.items():
                 if key.lower() == 'name':
                     module_variants['pant:name'] = value
@@ -314,7 +318,8 @@ def process_workspace(path):
                     module_variants['pant:attributesFilePath'] = value
                 if key.lower() == 'canonical':
                     module_variants['pant:canonical'] = value
-            if 'pant:canonical' not in module_variants:
+                    cannonicalPresent = 'true'
+            if len(variants) == 1:
                 module_variants['pant:canonical'] = 'true'
             if 'pant:name' in module_variants:
                 data[module_variants['pant:name']] = module_variants
@@ -338,8 +343,11 @@ def validateVariants():
             sys.exit("Variant (name) missing, please correct variant name ")
         if 'path' not in variant or  variant['path'] is None:  # path is mandatory for variant, throw errors in case of missing
             sys.exit("Variant (path) missing, please correct variant path ")
-        if 'canonical' in variant and variant['canonical'] is not None:
-            isCannonicalList.append(variant['canonical'])
+        if 'canonical' in variant:
+            if variant['canonical'] is not None:
+                isCannonicalList.append(variant['canonical'])
+            else:
+                sys.exit("Cannonical (Value) missing, please correct Cannonical value for "+variant['name'])
     for value in isCannonicalList:
         if type(value) == bool:
             if (not value):
@@ -359,6 +367,7 @@ def createVariant(data, path, url, workspace):
     payload[':content'] = json.dumps(data)  # '{"sample":"test"}'
     payload[':contentType'] = 'json'
     payload[':operation'] = 'import'
+    payload[':replace'] = True
     # print(payload)
     if not args.dry:
         r: Response = requests.post(url, headers=HEADERS, data=workspace, auth=(args.user, pw))
@@ -483,5 +492,6 @@ if len(config.keys()) > 0 and 'repository' in config:
         _warn(f'{leftoverFiles} additional files detected but not uploaded. Only files specified in '
               + CONFIG_FILE
               + ' are handled for upload.')
-
+else:
+    sys.exit('Modules and resources not found, please check yaml syntax')
 print('Finished!')
