@@ -491,6 +491,7 @@ if len(config.keys()) > 0 and 'repository' in config:
         _warn(f'{leftoverFiles} additional files detected but not uploaded. Only files specified in '
               + CONFIG_FILE
               + ' are handled for upload.')
+
 else:
     sys.exit('Modules and resources not found, please check yaml syntax')
 print('Finished!')
