@@ -6,7 +6,7 @@ import org.apache.sling.models.annotations.Default;
 
 import javax.inject.Named;
 import java.util.Calendar;
-import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.ModuleVariant;
 
 /**
  * Represents a ProductVersion as a sling resource.

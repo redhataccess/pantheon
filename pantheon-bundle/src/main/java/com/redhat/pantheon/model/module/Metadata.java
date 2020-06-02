@@ -40,7 +40,8 @@ public interface Metadata extends WorkspaceChild {
 
     @Named("pant:datePublished")
     Field<Calendar> datePublished();
-    
+
+    @Deprecated
     @Named("pant:dateUploaded")
     Field<Calendar> dateUploaded();
 

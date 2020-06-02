@@ -1,5 +1,7 @@
 package com.redhat.pantheon.model.api;
 
+import com.redhat.pantheon.model.api.util.ResourceTraversal;
+
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -69,6 +71,15 @@ public class ChildImpl<T extends SlingModel> implements Child<T> {
     }
 
     /**
+     * Indicates if the child exists.
+     * @return True, if the child exists. False otherwise.
+     */
+    @Override
+    public boolean isPresent() {
+        return get() != null;
+    }
+
+    /**
      * Provides a null-safe way to operate on the value of the child, and return an
      * {@link Optional} with the result of the operation. This allowes the caller to
      * continue to operapate in a null-safe fashion.
@@ -77,7 +88,7 @@ public class ChildImpl<T extends SlingModel> implements Child<T> {
      * @return An optional indicating the result of the operation. If the operation
      * returns null, or if the value of this child was not present in the first place,
      * this returns an empty Optional
-     * @deprecated Use {@link com.redhat.pantheon.model.api.util.SafeResourceTraversal#start(SlingModel)}
+     * @deprecated Use {@link ResourceTraversal#traverseFrom(SlingModel)}
      * for safe resource traversals
      */
     @Deprecated

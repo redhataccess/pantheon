@@ -285,6 +285,11 @@
             <artifactId>icu4j</artifactId>
             <version>64.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.8</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-client -->
         <dependency>
             <groupId>org.apache.activemq</groupId>

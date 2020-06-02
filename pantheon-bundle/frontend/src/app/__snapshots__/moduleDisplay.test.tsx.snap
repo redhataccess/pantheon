@@ -44,6 +44,22 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
       </span>
     </div>
     <br />
+    <Level
+      gutter="md"
+    >
+      <LevelItem />
+      <LevelItem />
+      <LevelItem>
+        <Component
+          onClick={[Function]}
+          variant="primary"
+        >
+          Generate Draft Html
+        </Component>
+          
+      </LevelItem>
+    </Level>
+    <br />
     <div>
       <DataList
         aria-label="single action data list"
@@ -138,6 +154,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
           onGetVersion={[Function]}
           productInfo=""
           updateDate={[Function]}
+          variant={null}
           versionModulePath=""
         />
       </Card>

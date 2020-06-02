@@ -69,27 +69,21 @@ class ModuleJsonServletTest {
     @Test
     void resourceToMap() throws Exception {
         // Given
-        slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleVersion");
-        slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1/metadata",
+        slingContext.build()
+                .resource("/content/repositories/repo/module",
+                        "jcr:primaryType", "pant:module")
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/metadata",
                         "jcr:title", "A title",
-                        "jcr:description", "A description");
-        slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1/content/asciidoc",
-                        "jcr:primaryType", "nt:file");
-        slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1/content/cachedHtml",
-                        "jcr:data", testHTML,
-                        "pant:hash", "2a0e2c43");
-        slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US").adaptTo(ModifiableValueMap.class)
-                .put("released", slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/1").getValueMap()
-                        .get("jcr:uuid"));
+                        "jcr:description", "A description")
+                .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
+                        "jcr:data", "This is the source content")
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
+                        "jcr:data", testHTML)
+                .commit();
 
         registerMockAdapter(Module.class, slingContext);
         ModuleJsonServlet servlet = new ModuleJsonServlet();
-        slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
+        slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
 
         // When
         Map<String, Object> map = servlet.resourceToMap(
@@ -124,16 +118,21 @@ class ModuleJsonServletTest {
     @EnabledIf("null != systemEnvironment.get('PORTAL_URL')")
     public void onlyRenderViewURIForPORTAL() throws RepositoryException {
         // Given
-        slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1",
-                        "jcr:primaryType", "pant:moduleVersion");
-        slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US").adaptTo(ModifiableValueMap.class)
-        .put("released", slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/1").getValueMap()
-                .get("jcr:uuid"));
+        slingContext.build()
+                .resource("/content/repositories/repo/module",
+                        "jcr:primaryType", "pant:module")
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/metadata",
+                        "jcr:title", "A title",
+                        "jcr:description", "A description")
+                .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
+                        "jcr:data", "This is the source content")
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
+                        "jcr:data", testHTML)
+                .commit();
 
         registerMockAdapter(Module.class, slingContext);
         ModuleJsonServlet servlet = new ModuleJsonServlet();
-        slingContext.request().setResource( slingContext.resourceResolver().getResource("/module") );
+        slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
 
         // When
         Map<String, Object> map = servlet.resourceToMap(

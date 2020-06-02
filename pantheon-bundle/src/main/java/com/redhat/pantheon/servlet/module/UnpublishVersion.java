@@ -3,10 +3,19 @@ package com.redhat.pantheon.servlet.module;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleVersion;
-import com.redhat.pantheon.model.module.ModuleLocale;
+import static com.redhat.pantheon.jcr.JcrResources.rename;
+import com.redhat.pantheon.model.api.FileResource;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
+import com.redhat.pantheon.model.module.*;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
@@ -17,26 +26,18 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
-import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
-
 /**
- * API action which unpublishes the latest released version for a module, if there is one.
- * This means the "released" pointer is set to null, and the version should no longer be
- * accessible through the rendering API.
+ * API action which unpublishes the latest released version for a module, if there is one. This means the "released"
+ * pointer is set to null, and the version should no longer be accessible through the rendering API.
  *
  * @author Carlos Munoz
  */
 @Component(
         service = PostOperation.class,
         property = {
-                Constants.SERVICE_DESCRIPTION + "=Unpublishes the latest released version of a module",
-                Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
-                PostOperation.PROP_OPERATION_NAME + "=pant:unpublish"
+            Constants.SERVICE_DESCRIPTION + "=Unpublishes the latest released version of a module",
+            Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
+            PostOperation.PROP_OPERATION_NAME + "=pant:unpublish"
         })
 public class UnpublishVersion extends AbstractPostOperation {
 
@@ -55,6 +56,10 @@ public class UnpublishVersion extends AbstractPostOperation {
         return paramValueAsLocale(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE);
     }
 
+    private String getVariant(SlingHttpServletRequest request) {
+        return paramValue(request, "variant", ModuleVariant.DEFAULT_VARIANT_NAME);
+    }
+
     @Override
     public void run(SlingHttpServletRequest request, PostResponse response, SlingPostProcessor[] processors) {
         super.run(request, response, processors);
@@ -62,8 +67,14 @@ public class UnpublishVersion extends AbstractPostOperation {
             // call the extension point
             Locale locale = getLocale(request);
             Module module = getModule(request);
-            ModuleLocale moduleLocale = module.getModuleLocale(locale);
-            events.fireEvent(new ModuleVersionUnpublishedEvent(moduleLocale.getPath()), 15);
+            String variant = getVariant(request);
+            ModuleVersion moduleVersion = module.moduleLocale(locale).get()
+                    .variants().get()
+                    .variant(variant).get()
+                    .draft().get();
+
+            // TODO We need to change the event so that the right variant is processed
+            events.fireEvent(new ModuleVersionUnpublishedEvent(moduleVersion), 15);
         }
     }
 
@@ -71,25 +82,46 @@ public class UnpublishVersion extends AbstractPostOperation {
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) {
         Locale locale = getLocale(request);
         Module module = getModule(request);
+        String variant = getVariant(request);
 
         // Get the released version, there should be one
-        Optional<ModuleVersion> versionToUnpublish = module.getReleasedVersion(locale);
-        if( !versionToUnpublish.isPresent() ) {
+        Optional<ModuleVersion> foundVariant = module.getReleasedVersion(locale, variant);
+
+        if (!foundVariant.isPresent()) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                     "The module is not released (published)");
         } else {
-            // Released revision is emptied out
-            ModuleLocale moduleLocale = module.getModuleLocale(locale);
-            String unpublishedRevId = moduleLocale.released().get();
-            moduleLocale.released().set( null );
-
-            // if there is no draft version, set the recently unpublished one as draft
-            // it is guaranteed to be the latest one
-            if (!module.getDraftVersion(locale).isPresent()) {
-                moduleLocale.draft().set(unpublishedRevId);
-            }
+            foundVariant.get()
+                    .getParent()
+                    .revertReleased();
 
             changes.add(Modification.onModified(module.getPath()));
+            // Change source/released to source/draft
+            Optional<HashableFileResource> draftSource = traverseFrom(module)
+                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(ModuleLocale::source)
+                    .toChild(sourceContent -> sourceContent.draft())
+                    .getAsOptional();
+            FileResource releasedSource = traverseFrom(module)
+                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(ModuleLocale::source)
+                    .toChild(sourceContent -> sourceContent.released())
+                    .get();
+            if (draftSource.isPresent()) {
+                // Delete released
+                try {
+                    releasedSource.delete();
+                } catch (PersistenceException e) {
+                    throw new RuntimeException("Failed to delete source/released: " + releasedSource.getPath());
+                }
+
+            } else {
+                try {
+                    rename(releasedSource, "draft");
+                } catch (RepositoryException e) {
+                    throw new RuntimeException("Cannot rename source/released to source/draft: " + releasedSource.getPath());
+                }
+            }
         }
     }
 }

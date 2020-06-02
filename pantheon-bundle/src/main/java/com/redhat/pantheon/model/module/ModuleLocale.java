@@ -1,37 +1,21 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
-import com.redhat.pantheon.model.api.Reference;
-import com.redhat.pantheon.model.api.SlingModel;
-
-import static com.google.common.collect.Streams.stream;
-import static java.util.stream.Collectors.counting;
 
 /**
- * A specific module locale node which houses all the versions for a specific language in the module.
+ * A specific module locale node which houses asciidoc source and variants.
+ * A locale will contain two folders to store the source content (draft and released),
+ * and the different variants (the rendered content)
  */
 @JcrPrimaryType("pant:moduleLocale")
 public interface ModuleLocale extends WorkspaceChild {
 
-    Reference<ModuleVersion> released();
+    Child<SourceContent> source();
 
-    Reference<ModuleVersion> draft();
+    Child<Variants> variants();
 
-    default ModuleVersion getVersion(String name) {
-        return getChild(name, ModuleVersion.class);
-    }
-
-    default ModuleVersion getOrCreateVersion(String name) {
-        return getOrCreateChild(name, ModuleVersion.class);
-    }
-
-    default ModuleVersion createNextVersion() {
-        // Generate a new version name
-        return createChild(generateNextVersionName(), ModuleVersion.class);
-    }
-
-    default String generateNextVersionName() {
-        return "" + (stream(this.getChildren()).collect(counting()) + 1);
-    }
+    @Override
+    Module getParent();
 }
