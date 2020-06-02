@@ -20,7 +20,7 @@ class ModuleDisplay extends Component<any, any, any> {
             modulePath: '',
             moduleTitle: "",
             moduleType: '',
-            moduleUUID: '',
+            variantUUID: '',
             portalHost: '',
             productValue: "",
             releasePath: '',
@@ -64,15 +64,15 @@ class ModuleDisplay extends Component<any, any, any> {
                     </div>
                     <div>
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.moduleUUID !== ""
+                            && this.state.variantUUID !== ""
                             && this.state.portalHost !== ""
-                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID + '?variant=' + this.state.variant} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                         }
 
                         <span>&emsp;&emsp;</span>
 
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.moduleUUID !== ""
+                            && this.state.variantUUID !== ""
                             && this.state.portalHost !== ""
                             && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
                         }
@@ -164,10 +164,10 @@ class ModuleDisplay extends Component<any, any, any> {
         return window.open(docPath)
     }
 
-    private updateDate = (draftDate, releaseDate, releaseVersion, moduleUUID) => {
+    private updateDate = (draftDate, releaseDate, releaseVersion, variantUUID) => {
         this.setState({
             draftUpdateDate: draftDate,
-            moduleUUID,
+            variantUUID,
             releaseUpdateDate: releaseDate,
             releaseVersion,
         })
@@ -298,8 +298,8 @@ class ModuleDisplay extends Component<any, any, any> {
 
     private copyToClipboard = () => {
         const textField = document.createElement('textarea')
-        if (this.state.moduleUUID.trim() !== '') {
-            textField.value = this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID + '?variant=' + this.state.variant
+        if (this.state.variantUUID.trim() !== '') {
+            textField.value = this.state.portalHost + '/topics/en-us/' + this.state.variantUUID
             document.body.appendChild(textField)
             textField.select()
             document.execCommand('copy')

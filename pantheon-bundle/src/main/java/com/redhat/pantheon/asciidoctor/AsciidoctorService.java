@@ -296,6 +296,7 @@ public class AsciidoctorService {
                 cacheContent(moduleVersion, html);
 
                 // ack_status
+                // TODO: re-evaluate where ack_status node should be created
                 moduleVersion.ackStatus().getOrCreate();
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);

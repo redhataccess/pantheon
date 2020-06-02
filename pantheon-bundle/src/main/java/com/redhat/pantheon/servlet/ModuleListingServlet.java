@@ -6,6 +6,7 @@ import com.redhat.pantheon.model.module.HashableFileResource;
 import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -32,6 +33,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
+import static com.redhat.pantheon.model.module.ModuleVariant.DEFAULT_VARIANT_NAME;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static java.util.stream.Collectors.toList;
 
@@ -102,6 +104,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                     .append("jcr:like(*/*/*/*/metadata/@jcr:title,'%" + searchParam + "%') ")
                     .append("or jcr:like(*/*/*/*/metadata/@jcr:description,'%" + searchParam + "%')")
                     .append("or jcr:like(*/*/*/*/cached_html/jcr:content/@jcr:data,'%" + searchParam + "%')")
+//                    .append("or jcr:like(*/*/source/@jcr:created,'%" + searchParam + "%') ")
                     .append(")");
             queryFilters.add(textFilter);
         }
@@ -133,6 +136,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         if(!isNullOrEmpty(keyParam) && !isNullOrEmpty(directionParam)) {
+            //TODO: add condictional for order by
             queryBuilder.append(" order by */*/*/*/metadata/@")
                     .append(keyParam)
                     .append(" ")
@@ -183,11 +187,14 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
     protected Map<String, Object> resourceToMap(Resource resource) {
         Module module = resource.adaptTo(Module.class);
 
-        String variantName = module.getWorkspace()
+        String variantName = DEFAULT_VARIANT_NAME;
+        Stream<ModuleVariantDefinition> mvd = module.getWorkspace()
                 .moduleVariantDefinitions().get()
-                .getVariants()
-                .findFirst().get()
-                .getName();
+                .getVariants();
+
+        if (mvd != null) {
+            variantName = mvd.findFirst().get().getName();
+        }
 
         Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE, variantName);
         Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);
