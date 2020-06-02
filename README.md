@@ -48,6 +48,51 @@ For sling's management UI, you can head to http://localhost:8181/starter/index.h
 - To list all bundles and view their status: bundle:list
 - Find out why a bundle is in waiting state: diag _[bundle-id]_
 
+### Run the application using Podman
+First, install [podman](https://podman.io).
+
+Then, create a pod:
+
+```sh
+podman pod create --name pantheon-karaf -p 8181 -p 5005
+```
+
+This will create a `pantheon-karaf` pod with ports 8181 (for web access) and 5005 (for
+remote Java debugging) open.
+
+Run a mongo database container in the pod.
+
+```sh
+podman run --pod pantheon-karaf --name slingmongo -d mongo
+```
+
+Build the pantheon docker image
+
+```sh
+buildah bud --layers -f container/Dockerfile -t pantheon-karaf-app .
+```
+
+Run the sling container pod in the pod.
+
+```sh
+podman run --pod pantheon-karaf -d -e  MONGO_DB_REPLICA='mongodb://localhost:27017'   -t --name pantheon-karaf-app   pantheon-karaf-app 
+
+```
+
+The Sling launchpad can be accessed at `http://localhost:8181` and you can log in to
+it using the `admin/admin` username password combo.
+
+### Live deploy of code
+
+This is useful when developing the application.
+To deploy the code live to a running application, all you have to do is
+
+```sh
+./mvnw clean install sling:install -pl pantheon-bundle
+```
+
+This will install the code in this project on the running Sling instance, where it can
+be previewed and modified.
 ### Developing the frontend code
 
 If making modifications that are entirely contained within the frontend, it is not necessary to use maven to rebuild and redeploy the package on every change.

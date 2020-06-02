@@ -1,0 +1,91 @@
+# Generation of Kubernetes YAML is still under development!
+#
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-1.9.2
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2020-06-02T11:45:11Z"
+  labels:
+    app: pantheon-karaf
+  name: pantheon-karaf
+spec:
+  containers:
+  - command:
+    - /opt/pantheon-karaf-dist/bin/karaf
+    - run
+    env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: HOSTNAME
+      value: pantheon-karaf
+    - name: MONGO_DB
+      value: sling
+    - name: REPOSITORY
+      value: sling/repository
+    - name: MONGO_DB_REPLICA
+      value: mongodb://localhost:27017
+    - name: container
+      value: oci
+    image: localhost/pantheon-karaf-app:latest
+    name: pantheon-karaf-app
+    ports:
+    - containerPort: 8181
+      hostPort: 8181
+      protocol: TCP
+    - containerPort: 55555
+      hostPort: 55555
+      protocol: TCP
+    - containerPort: 1099
+      hostPort: 1099
+      protocol: TCP
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities: {}
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    tty: true
+    workingDir: /tmp/archive
+  - command:
+    - mongod
+    env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: HOSTNAME
+      value: pantheon-karaf
+    - name: container
+      value: podman
+    - name: GOSU_VERSION
+      value: "1.12"
+    - name: MONGO_REPO
+      value: repo.mongodb.org
+    - name: JSYAML_VERSION
+      value: 3.13.1
+    - name: MONGO_PACKAGE
+      value: mongodb-org
+    - name: MONGO_MAJOR
+      value: "4.2"
+    - name: MONGO_VERSION
+      value: 4.2.7
+    - name: GPG_KEYS
+      value: E162F504A20CDF15827F718D4B7C549A058F8B6B
+    image: docker.io/library/mongo:latest
+    name: slingmong
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities: {}
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    workingDir: /
+status: {}
+

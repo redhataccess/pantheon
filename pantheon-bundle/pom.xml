@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.redhat.pantheon</groupId>
     <artifactId>pantheon-bundle</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>pantheon-bundle</name>
     <description>Pantheon content management system</description>
     <packaging>bundle</packaging>
@@ -259,7 +259,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <sling.url>http://localhost:8080</sling.url>
+                <sling.url>http://localhost:8181</sling.url>
             </properties>
         </profile>
         <profile>
