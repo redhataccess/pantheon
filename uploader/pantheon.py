@@ -13,6 +13,7 @@ import requests
 import yaml
 from requests import Response
 from datetime import datetime
+from time import time
 
 
 DEFAULT_SERVER = 'http://localhost:8080'
@@ -300,7 +301,7 @@ def process_workspace(path):
     logger.debug('url: %s', url)
     workspace = {}
     workspace['jcr:primaryType'] = 'pant:workspace'
-    workspace['jcr:lastModified'] = datetime.now().strftime("%Y-%m-%dT%H:%m:%S") #SimpleDateFormat:yyyy-MM-dd'T'HH:mm:ss
+    workspace['jcr:lastModified'] = datetime.now().utcnow().strftime("%Y-%m-%dT%H:%m:%S") #SimpleDateFormat:yyyy-MM-dd'T'HH:mm:ss
     # Process variants. variants is a list of dictionaries
 
     data = {}
