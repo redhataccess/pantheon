@@ -13,8 +13,6 @@ import requests
 import yaml
 from requests import Response
 from datetime import datetime
-from time import time
-
 
 DEFAULT_SERVER = 'http://localhost:8080'
 DEFAULT_USER = 'author'
