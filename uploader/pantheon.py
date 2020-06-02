@@ -305,7 +305,6 @@ def process_workspace(path):
     # Process variants. variants is a list of dictionaries
 
     data = {}
-    cannonicalPresent = False
     if variants:
         validateVariants()
         for variant in variants:
@@ -319,7 +318,6 @@ def process_workspace(path):
                     module_variants['pant:attributesFilePath'] = value
                 if key.lower() == 'canonical':
                     module_variants['pant:canonical'] = value
-                    cannonicalPresent = 'true'
             if len(variants) == 1:
                 module_variants['pant:canonical'] = 'true'
             if 'pant:name' in module_variants:
