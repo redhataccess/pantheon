@@ -3,17 +3,8 @@ package com.redhat.pantheon.servlet.module;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
-import static com.redhat.pantheon.jcr.JcrResources.rename;
 import com.redhat.pantheon.model.api.FileResource;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import com.redhat.pantheon.model.module.*;
-import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
-import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.servlets.post.AbstractPostOperation;
@@ -25,6 +16,17 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+
+import static com.redhat.pantheon.jcr.JcrResources.rename;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 
 /**
  * API action which unpublishes the latest released version for a module, if there is one. This means the "released"
@@ -87,7 +89,7 @@ public class UnpublishVersion extends AbstractPostOperation {
         // Get the released version, there should be one
         Optional<ModuleVersion> foundVariant = module.getReleasedVersion(locale, variant);
 
-        if (!foundVariant.isPresent()) {
+        if(!foundVariant.isPresent()) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                     "The module is not released (published)");
         } else {
