@@ -1,8 +1,8 @@
 [id='search-keyword_{context}']
 
+The Search tab allows you to enter keywords or free text to search for modules.
 
 .Procedure
-To perform a keyword or free text search:
 
 . In the search bar at top right, enter a free text phrase or keywords.
 . You can add Boolean operators to the keywords to refine the search.
