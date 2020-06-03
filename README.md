@@ -66,13 +66,13 @@ Run a mongo database container in the pod.
 podman run --pod pantheon-karaf --name slingmongo -d mongo
 ```
 
-Build the pantheon docker image
+Build the pantheon image
 
 ```sh
 buildah bud --layers -f container/Dockerfile -t pantheon-karaf-app .
 ```
 
-Run the sling container pod in the pod.
+Run the sling container in the pod.
 
 ```sh
 podman run --pod pantheon-karaf -d -e  MONGO_DB_REPLICA='mongodb://localhost:27017'   -t --name pantheon-karaf-app   pantheon-karaf-app 
