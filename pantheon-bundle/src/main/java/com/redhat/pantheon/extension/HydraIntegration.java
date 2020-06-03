@@ -14,6 +14,7 @@ import org.apache.activemq.ActiveMQSslConnectionFactory;
 import org.apache.activemq.broker.SslContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.text.StringSubstitutor;
+import org.apache.jackrabbit.JcrConstants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -57,7 +58,7 @@ public class HydraIntegration implements EventProcessingExtension {
     private static String pantheonHost = "";
 
     //@TODO: externalize the variables
-    private static final String PANTHEON_MODULE_VERSION_API_PATH = "/api/module.json?module_id=${moduleUuid}&locale=${localeId}&variant=${variantName}";
+    private static final String PANTHEON_MODULE_VERSION_API_PATH = "/api/module/variant.json/{variantUuid}";
     private static final String TLS_VERSION = "TLSv1.2";
     private static final String UUID_FIELD = "jcr:uuid";
     private static final String HYDRA_TOPIC = "VirtualTopic.eng.pantheon2.notifications";
@@ -241,9 +242,8 @@ public class HydraIntegration implements EventProcessingExtension {
     private String buildModuleVersionUri(ModuleVersion moduleVersion) {
         StringSubstitutor strSubs = new StringSubstitutor();
         HashMap values = Maps.newHashMap();
-        values.put("moduleUuid", moduleVersion.getParent().getParent().getParent().getParent().uuid().get());
-        values.put("localeId", moduleVersion.getParent().getParent().getParent().getName());
-        values.put("variantName", moduleVersion.getParent().getName());
+        values.put("variantUuid", moduleVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
+                moduleVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
 
         String replacedUri = strSubs.replace(PANTHEON_MODULE_VERSION_API_PATH);
         return this.getPantheonHost() + replacedUri;
@@ -251,13 +251,8 @@ public class HydraIntegration implements EventProcessingExtension {
 
 
     private String getPortalUri(ModuleVersion moduleVersion) {
-        final String uriTemplate = System.getenv(PORTAL_URL) + "/topics/${localeId}/${moduleUuid}${variantSuffix}";
+        final String uriTemplate = System.getenv(PORTAL_URL) + "/topics/${localeId}/${variantUuid}";
         StringSubstitutor strSubs = new StringSubstitutor();
-
-        String variantSuffix = "/" + moduleVersion.getParent().getName();
-        if(DEFAULT_VARIANT_NAME.equals(variantSuffix)) {
-            variantSuffix = "";
-        }
 
         HashMap values = Maps.newHashMap();
         // TODO Clean this up, lots of locale transformations to make sure this aligns
@@ -265,8 +260,8 @@ public class HydraIntegration implements EventProcessingExtension {
                 ULocale.createCanonical(
                         moduleVersion.getParent().getParent().getParent().getName())
                         .toLocale()));
-        values.put("moduleUuid", moduleVersion.getParent().getParent().getParent().getParent().uuid().get());
-        values.put("variantSuffix", variantSuffix);
+        values.put("variantUuid", moduleVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
+                moduleVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
 
         return strSubs.replace(uriTemplate);
     }
