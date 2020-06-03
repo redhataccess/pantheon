@@ -17,7 +17,7 @@ const props = {
     productInfo: "Red Hat Enterprise Linux",
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
     variant: "test",
-    versionModulePath: "/modules/test/en_US/1"
+    versionModulePath: "/modules/test_module/en_US/variants/test/draft"
 }
 
 describe('Versions tests', () => {

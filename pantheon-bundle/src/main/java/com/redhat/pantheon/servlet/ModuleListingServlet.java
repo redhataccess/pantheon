@@ -2,11 +2,10 @@ package com.redhat.pantheon.servlet;
 
 import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
-import com.redhat.pantheon.model.module.HashableFileResource;
-import com.redhat.pantheon.model.module.Metadata;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.api.SlingModel;
+import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
+import com.redhat.pantheon.model.workspace.Workspace;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -23,10 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -104,7 +100,6 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                     .append("jcr:like(*/*/*/*/metadata/@jcr:title,'%" + searchParam + "%') ")
                     .append("or jcr:like(*/*/*/*/metadata/@jcr:description,'%" + searchParam + "%')")
                     .append("or jcr:like(*/*/*/*/cached_html/jcr:content/@jcr:data,'%" + searchParam + "%')")
-//                    .append("or jcr:like(*/*/source/@jcr:created,'%" + searchParam + "%') ")
                     .append(")");
             queryFilters.add(textFilter);
         }
@@ -188,9 +183,9 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         Module module = resource.adaptTo(Module.class);
 
         String variantName = DEFAULT_VARIANT_NAME;
-        Stream<ModuleVariantDefinition> mvd = module.getWorkspace()
-                .moduleVariantDefinitions().get()
-                .getVariants();
+        Stream<ModuleVariantDefinition> mvd = traverseFrom(module)
+                .toChild(m -> m.getWorkspace().moduleVariantDefinitions())
+                        .get().getVariants();
 
         if (mvd != null) {
             variantName = mvd.findFirst().get().getName();
