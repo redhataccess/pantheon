@@ -3,7 +3,8 @@
 The Search tab allows you to apply a number of filters to your search that are available as drop down menus.
  
 .Procedure
-.To add filters to the search, use any combination of the following:
+
+Use any combination of the following filters:
 * Select a Product name from the `Select a Product` drop down menu.
 * Select a version number from the `Select a Version` drop down menu.
 * Select a module type from the third drop down menu (`All`, `Concept`, `Procedure`, or `Reference`).

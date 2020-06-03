@@ -1,9 +1,13 @@
 package com.redhat.pantheon.model.module;
 
-import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
+import com.redhat.pantheon.model.api.SlingModels;
+import com.redhat.pantheon.model.api.WorkspaceChild;
+import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
+import org.apache.sling.api.resource.Resource;
 
 import javax.inject.Named;
 
@@ -14,12 +18,22 @@ import javax.inject.Named;
  * parent, but this is not validated.
  */
 @JcrPrimaryType("pant:moduleVersion")
-public interface ModuleVersion extends SlingModel {
+public interface ModuleVersion extends WorkspaceChild {
 
     @Named("jcr:uuid")
     Field<String> uuid();
 
-    Child<Content> content();
+    @Named("pant:hash")
+    Field<String> hash();
+
+    @Named("cached_html")
+    Child<FileResource> cachedHtml();
 
     Child<Metadata> metadata();
+
+    @Named("ack_status")
+    Child<AckStatus> ackStatus();
+
+    @Override
+    ModuleVariant getParent();
 }

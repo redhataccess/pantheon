@@ -1,33 +1,39 @@
 package com.redhat.pantheon.extension;
 
-import java.security.cert.X509Certificate;
-import java.util.Locale;
-
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
+import com.google.common.collect.Maps;
+import com.ibm.icu.util.ULocale;
+import com.redhat.pantheon.extension.events.ModuleVersionPublishStateEvent;
+import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
+import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
+import com.redhat.pantheon.model.api.SlingModels;
+import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import org.apache.activemq.ActiveMQSslConnectionFactory;
+import org.apache.activemq.broker.SslContext;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceUtil;
-import org.fusesource.stomp.jms.StompJmsConnectionFactory;
+import org.apache.commons.text.StringSubstitutor;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.redhat.pantheon.extension.events.ModuleVersionPublishStateEvent;
-import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
-import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.servlet.ServletUtils;
-import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Locale;
+
+import static com.redhat.pantheon.model.module.ModuleVariant.DEFAULT_VARIANT_NAME;
+import static com.redhat.pantheon.servlet.ServletUtils.toLanguageTag;
 
 /**
  * A Hydra message producer for Module post publish events.
@@ -45,15 +51,13 @@ import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
         )
 public class HydraIntegration implements EventProcessingExtension {
     // Environment variables.
-    private static String message_broker_hostname = "";
-    private static String message_broker_port = "";
-    private static String message_broker_scheme = "";
-    private static String message_broker_username = "";
-    private static String message_broker_user_pass = "";
-    private static String pantheon_host = "";
+    private static String messageBrokerUrl = "";
+    private static String messageBrokerUsername = "";
+    private static String messageBrokerUserPass = "";
+    private static String pantheonHost = "";
 
     //@TODO: externalize the variables
-    private static final String PANTHEON_MODULE_API_PATH = "/api/module?locale=en-us&module_id=";
+    private static final String PANTHEON_MODULE_VERSION_API_PATH = "/api/module.json?module_id=${moduleUuid}&locale=${localeId}&variant=${variantName}";
     private static final String TLS_VERSION = "TLSv1.2";
     private static final String UUID_FIELD = "jcr:uuid";
     private static final String HYDRA_TOPIC = "VirtualTopic.eng.pantheon2.notifications";
@@ -65,7 +69,6 @@ public class HydraIntegration implements EventProcessingExtension {
     public static final Locale DEFAULT_MODULE_LOCALE = Locale.US;
     public static final String PORTAL_URL = "PORTAL_URL";
 
-    private SSLContext sslContext;
     private ServiceResourceResolverProvider serviceResourceResolverProvider;
     private final Logger log = LoggerFactory.getLogger(HydraIntegration.class);
 
@@ -81,8 +84,10 @@ public class HydraIntegration implements EventProcessingExtension {
      */
     public boolean canProcessEvent(Event event) {
         // Stop processEvent if broker properties are missing
-        if (System.getenv("HYDRA_HOST") == null || System.getenv("HYDRA_PORT") == null || System.getenv("HYDRA_SCHEME") == null
-                || System.getenv("HYDRA_USER") == null || System.getenv("HYDRA_USER_PASS") == null || System.getenv("PANTHEON_HOST") == null){
+        if (System.getenv("MESSAGE_BROKER_URL") == null 
+                || System.getenv("HYDRA_USER") == null 
+                || System.getenv("HYDRA_USER_PASS") == null 
+                || System.getenv("PANTHEON_HOST") == null){
             return false;
         }
 
@@ -95,12 +100,8 @@ public class HydraIntegration implements EventProcessingExtension {
      */
     public void processEvent(Event event) throws Exception {
         ModuleVersionPublishStateEvent publishedEvent = (ModuleVersionPublishStateEvent) event;
-        Resource resource = null;
-        Module module = null;
-
-        // Get resource from path
-        resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleLocalePath(), 1));
-        module = resource.adaptTo(Module.class);
+        ModuleVersion moduleVersion = SlingModels.getModel(serviceResourceResolverProvider.getServiceResourceResolver(),
+                publishedEvent.getModuleVersionPath(), ModuleVersion.class);
 
         Connection connection = createConnectionFactory().createConnection();
         try {
@@ -112,21 +113,22 @@ public class HydraIntegration implements EventProcessingExtension {
 
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
-        String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
+//        String moduleVersionUUID = moduleVersion.uuid().get();
         String eventValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
-        String idValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? this.getPantheonHost() + PANTHEON_MODULE_API_PATH
-                + moduleUUID : "";
+        String idValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? buildModuleVersionUri(moduleVersion) : "";
         String uriValue = "";
         String msg = "";
 
         if (ModuleVersionPublishedEvent.class.equals(event.getClass())) {
+            // TODO Use a json generation api for this
             msg = "{\""
                     + ID_KEY + "\":" + "\"" + idValue +"\","
                     + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\"}";
         } else if (ModuleVersionUnpublishedEvent.class.equals(event.getClass())){
             if (System.getenv(PORTAL_URL) != null) {
-                uriValue = System.getenv(PORTAL_URL) + "/topics/" + ServletUtils.toLanguageTag(DEFAULT_MODULE_LOCALE) + "/" + moduleUUID;
+                uriValue = getPortalUri(moduleVersion);
 
+                // TODO Use a json generation api for this
                 msg = "{\""
                     + ID_KEY + "\":" + "\"" + idValue +"\","
                     + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\","
@@ -146,59 +148,17 @@ public class HydraIntegration implements EventProcessingExtension {
     }
 
     /**
-     * Broker hostname can be set as an environment variable
-     * @return message_broker_hostname.
-     */
-    public String getMessageBrokerHostname () {
-        if (System.getenv("HYDRA_HOST") != null){
-            message_broker_hostname = System.getenv("HYDRA_HOST");
-        } else {
-            log.info("HYDRA_HOST environment variable is not set");
-        }
-
-        return message_broker_hostname;
-    }
-
-    /**
-     * Broker port can be set as an environment variable
-     * @return message_broker_port. Default: '61612'
-     */
-    public String getMessageBrokerPort () {
-        if (System.getenv("HYDRA_PORT") != null) {
-            message_broker_port = System.getenv("HYDRA_PORT");
-        } else {
-            log.info("HYDRA_PORT environment variable is not set");
-        }
-
-        return message_broker_port;
-    }
-
-    /**
-     * Broker scheme can be set as an environment variable
-     * @return message_broker_scheme. Default: 'ssl'
-     */
-    public String getMessageBrokerScheme() {
-        if (System.getenv("HYDRA_SCHEME") != null) {
-            message_broker_scheme = System.getenv("HYDRA_SCHEME");
-        } else {
-            log.info("HYDRA_SCHEME environment variable is not set");
-        }
-
-        return message_broker_scheme;
-    }
-
-    /**
      * Broker user can be set as an environment variable
      * @return message_broker_username
      */
     public String getMesasgeBrokerUsername() {
         if (System.getenv("HYDRA_USER") != null) {
-            message_broker_username = System.getenv("HYDRA_USER");
+            messageBrokerUsername = System.getenv("HYDRA_USER");
         } else {
             log.info("HYDRA_USER environment variable is not set");
         }
 
-        return message_broker_username;
+        return messageBrokerUsername;
     }
 
     /**
@@ -207,12 +167,12 @@ public class HydraIntegration implements EventProcessingExtension {
      */
     public String getMesasgeBrokerUserPass() {
         if (System.getenv("HYDRA_USER_PASS") != null) {
-            message_broker_user_pass = System.getenv("HYDRA_USER_PASS");
+            messageBrokerUserPass = System.getenv("HYDRA_USER_PASS");
         } else {
             log.info("HYDRA_USER_PASS environment variable is not set");
         }
 
-        return message_broker_user_pass;
+        return messageBrokerUserPass;
     }
 
     /**
@@ -221,12 +181,26 @@ public class HydraIntegration implements EventProcessingExtension {
      */
     public String getPantheonHost() {
         if (System.getenv("PANTHEON_HOST") != null) {
-            pantheon_host = System.getenv("PANTHEON_HOST");
+            pantheonHost = System.getenv("PANTHEON_HOST");
         } else {
             log.info("PANTHEON_HOST environment variable is not set");
         }
 
-        return pantheon_host;
+        return pantheonHost;
+    }
+
+    /**
+     * Broker hostname can be set as an environment variable
+     * @return message_broker_hostname.
+     */
+    public String getMessageBrokerUrl () {
+        if (System.getenv("MESSAGE_BROKER_URL") != null){
+            messageBrokerUrl = System.getenv("MESSAGE_BROKER_URL");
+        } else {
+            log.info("MESSAGE_BROKER_URL environment variable is not set");
+        }
+
+        return messageBrokerUrl;
     }
 
     /**
@@ -249,19 +223,51 @@ public class HydraIntegration implements EventProcessingExtension {
                     }
                 }
         };
-        sslContext = SSLContext.getInstance(TLS_VERSION);
-        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
 
-        StompJmsConnectionFactory factory = new StompJmsConnectionFactory();
-        factory.setBrokerURI(this.getMessageBrokerScheme() + "://" + this.getMessageBrokerHostname() +":" + this.getMessageBrokerPort());
+        SslContext sContext = new SslContext(new KeyManager[0], trustAllCerts, new java.security.SecureRandom());
+        SslContext.setCurrentSslContext(sContext);
+        ActiveMQSslConnectionFactory factory = new ActiveMQSslConnectionFactory();
 
-        factory.setUsername(this.getMesasgeBrokerUsername());
+        factory.setBrokerURL(this.getMessageBrokerUrl());
+        factory.setUserName(this.getMesasgeBrokerUsername());
         factory.setPassword(decodedPass);
-        factory.setSslContext(sslContext);
-        factory.setForceAsyncSend(true);
-        factory.setDisconnectTimeout(5000);
+
+        factory.setUseAsyncSend(true);
+        factory.setConnectResponseTimeout(5000);
 
         return factory;
     }
 
+    private String buildModuleVersionUri(ModuleVersion moduleVersion) {
+        StringSubstitutor strSubs = new StringSubstitutor();
+        HashMap values = Maps.newHashMap();
+        values.put("moduleUuid", moduleVersion.getParent().getParent().getParent().getParent().uuid().get());
+        values.put("localeId", moduleVersion.getParent().getParent().getParent().getName());
+        values.put("variantName", moduleVersion.getParent().getName());
+
+        String replacedUri = strSubs.replace(PANTHEON_MODULE_VERSION_API_PATH);
+        return this.getPantheonHost() + replacedUri;
+    }
+
+
+    private String getPortalUri(ModuleVersion moduleVersion) {
+        final String uriTemplate = System.getenv(PORTAL_URL) + "/topics/${localeId}/${moduleUuid}${variantSuffix}";
+        StringSubstitutor strSubs = new StringSubstitutor();
+
+        String variantSuffix = "/" + moduleVersion.getParent().getName();
+        if(DEFAULT_VARIANT_NAME.equals(variantSuffix)) {
+            variantSuffix = "";
+        }
+
+        HashMap values = Maps.newHashMap();
+        // TODO Clean this up, lots of locale transformations to make sure this aligns
+        values.put("localeId", toLanguageTag(
+                ULocale.createCanonical(
+                        moduleVersion.getParent().getParent().getParent().getName())
+                        .toLocale()));
+        values.put("moduleUuid", moduleVersion.getParent().getParent().getParent().getParent().uuid().get());
+        values.put("variantSuffix", variantSuffix);
+
+        return strSubs.replace(uriTemplate);
+    }
 }

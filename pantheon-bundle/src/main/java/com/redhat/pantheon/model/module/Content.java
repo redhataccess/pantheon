@@ -1,9 +1,6 @@
 package com.redhat.pantheon.model.module;
 
-import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.api.Child;
-import com.redhat.pantheon.model.api.Field;
-import com.redhat.pantheon.model.api.SlingModel;
+import com.redhat.pantheon.model.api.*;
 
 import javax.inject.Named;
 
@@ -11,7 +8,7 @@ import javax.inject.Named;
  * Models a single instance of a module's content. Multiple content instances may be found on a
  * given module representing several content versions.
  */
-public interface Content extends SlingModel {
+public interface Content extends WorkspaceChild {
 
     @Named("asciidoc/jcr:content/jcr:data")
     Field<String> asciidocContent();

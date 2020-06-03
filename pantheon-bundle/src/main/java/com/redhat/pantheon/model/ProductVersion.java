@@ -6,7 +6,7 @@ import org.apache.sling.models.annotations.Default;
 
 import javax.inject.Named;
 import java.util.Calendar;
-import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.ModuleVariant;
 
 /**
  * Represents a ProductVersion as a sling resource.
@@ -43,4 +43,12 @@ public interface ProductVersion extends SlingModel {
      * Represents the productVersion's name.
      */
     Field<String> name();
+
+    /**
+     * Get Product object from Version.
+     * @return Product
+     */
+    default Product getProduct() {
+        return getParent().getParent().adaptTo(Product.class);
+    }
 }

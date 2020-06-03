@@ -1,6 +1,7 @@
 package com.redhat.pantheon.extension.events;
 
 import com.redhat.pantheon.extension.Event;
+import com.redhat.pantheon.model.module.ModuleVersion;
 
 import javax.annotation.Nonnull;
 
@@ -11,13 +12,13 @@ import javax.annotation.Nonnull;
  */
 public class ModuleVersionPublishStateEvent implements Event {
 
-    private final String moduleLocalePath;
+    private final String moduleVersionPath;
 
-    protected ModuleVersionPublishStateEvent(@Nonnull String moduleLocalePath) {
-        this.moduleLocalePath = moduleLocalePath;
+    protected ModuleVersionPublishStateEvent(@Nonnull ModuleVersion moduleVersion) {
+        this.moduleVersionPath = moduleVersion.getPath();
     }
 
-    public String getModuleLocalePath() {
-        return moduleLocalePath;
+    public String getModuleVersionPath() {
+        return moduleVersionPath;
     }
 }

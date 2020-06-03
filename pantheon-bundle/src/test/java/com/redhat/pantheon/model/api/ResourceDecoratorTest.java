@@ -24,7 +24,7 @@ class ResourceDecoratorTest {
     Resource resource;
 
     @Test
-    void getProperty() {
+    void field() {
         // Given
         ValueMap valueMap = mock(ValueMap.class);
         when(valueMap.get(eq("prop"), eq(String.class))).thenReturn("propval");
@@ -34,18 +34,18 @@ class ResourceDecoratorTest {
         ResourceDecorator decorator = new ResourceDecorator(resource);
 
         // Then
-        assertEquals("propval", decorator.getProperty("prop", String.class));
+        assertEquals("propval", decorator.field("prop", String.class).get());
     }
 
     @Test
-    void setProperty() {
+    void setField() {
         // Given
         ModifiableValueMap valueMap = mock(ModifiableValueMap.class);
         when(resource.adaptTo(eq(ModifiableValueMap.class))).thenReturn(valueMap);
 
         // When
         ResourceDecorator decorator = new ResourceDecorator(resource);
-        decorator.setProperty("prop", "propval");
+        decorator.field("prop", String.class).set("propval");
 
         // Then
         verify(valueMap, times(1)).put(eq("prop"), eq("propval"));

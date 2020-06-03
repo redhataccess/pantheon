@@ -1,9 +1,12 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
 import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.ModuleType;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.StructuralNode;
 import org.asciidoctor.extension.Treeprocessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +44,10 @@ import static java.util.stream.Collectors.toList;
  */
 public class MetadataExtractorTreeProcessor extends Treeprocessor {
 
+    private final static String MODULE_TYPE_ATT_NAME = "pantheon-module-type";
+
+    private final Logger log = LoggerFactory.getLogger(MetadataExtractorTreeProcessor.class);
+
     private final Metadata metadata;
 
     public MetadataExtractorTreeProcessor(Metadata metadata) {
@@ -53,6 +60,7 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
         extractDocTitle(document);
         extractHeadline(allNodes);
         extractAbstract(allNodes);
+        extractModuleType(document);
         return document;
     }
 
@@ -117,6 +125,29 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
         // if no abstract is detected, reset if
         if(!abstractNode.isPresent()) {
             metadata.mAbstract().set(null);
+        }
+    }
+
+    /**
+     * Extract the module type from the asciidoc content. This method looks at the pantheon-module-type
+     * property defined in the module.
+     * @param document The document which is being parsed by the extension
+     * @see ModuleType for the valid values for the property.
+     */
+    private void extractModuleType(Document document) {
+        Object attValue = document.getAttribute(MODULE_TYPE_ATT_NAME);
+        if(attValue != null) {
+            try {
+                ModuleType moduleType = ModuleType.valueOf(attValue.toString());
+                metadata.moduleType().set(moduleType);
+            } catch (IllegalArgumentException e) {
+                metadata.moduleType().set(null);
+                log.warn("Invalid argument for " + MODULE_TYPE_ATT_NAME + " asciidoc attribute: "
+                    + attValue.toString());
+            }
+        }
+        else {
+            metadata.moduleType().set(null);
         }
     }
 

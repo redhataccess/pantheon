@@ -1,5 +1,7 @@
 package com.redhat.pantheon.model.api;
 
+import com.redhat.pantheon.model.api.util.ResourceTraversal;
+
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,6 +34,12 @@ public interface Child<T extends SlingModel> extends Supplier<T> {
     T create();
 
     /**
+     * Indicates if the child exists.
+     * @return True, if the child exists. False otherwise.
+     */
+    boolean isPresent();
+
+    /**
      * Provides a null-safe way to operate on the value of the child, and return an
      * {@link Optional} with the result of the operation. This allowes the caller to
      * continue to operapate in a null-safe fashion.
@@ -40,6 +48,17 @@ public interface Child<T extends SlingModel> extends Supplier<T> {
      * @return An optional indicating the result of the operation. If the operation
      * returns null, or if the value of this child was not present in the first place,
      * this returns an empty Optional
+     * @deprecated Use {@link ResourceTraversal#traverseFrom(SlingModel)}
+     * for safe resource traversals
      */
+    @Deprecated
     <R> Optional<R> map(Function<? super T, ? extends R> func);
+
+    /**
+     * Start traversing the resource tree structure from this child
+     * @return a {@link ResourceTraversal} starting from this child.
+     */
+    default ResourceTraversal<T> traverse() {
+        return ResourceTraversal.traverseFrom(get());
+    }
 }
