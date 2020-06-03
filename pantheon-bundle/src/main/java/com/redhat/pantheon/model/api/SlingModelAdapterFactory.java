@@ -35,7 +35,8 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleLocale",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.Product",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.ProductVersion",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.workspace.Workspace"
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.workspace.Workspace",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleVariant"
         }
 )
 public class SlingModelAdapterFactory implements AdapterFactory {
