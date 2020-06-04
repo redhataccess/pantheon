@@ -36,9 +36,14 @@ public class SlingPathSuffix {
     private Map<String, String> parameterMap;
     private final Pattern pattern;
 
-    public SlingPathSuffix(final String parameterTemplate) {
+    /**
+     * Constructs a new {@link SlingPathSuffix}
+     * @param suffixTemplate The expected suffix template. See the class javadoc for the
+     *                       specifics of this template string.
+     */
+    public SlingPathSuffix(final String suffixTemplate) {
 
-        final Matcher matcher = PARAMETER_PATTERN.matcher(parameterTemplate);
+        final Matcher matcher = PARAMETER_PATTERN.matcher(suffixTemplate);
 
         while (matcher.find()) {
             if (matcher.groupCount() == 1) {
@@ -54,6 +59,15 @@ public class SlingPathSuffix {
 
     }
 
+    /**
+     * Retrieves a suffix path parameter by its name from a specific request.
+     * @param name The name of the parameter. It should match a parameter name as specified
+     *             in the template provided at construction time.
+     * @param request The specific {@link SlingHttpServletRequest} from which to extract the
+     *                parameter.
+     * @return The path parameter value as extracted from the suffix. Null if such a parameter
+     * does not exist, or could not be found.
+     */
     public String getParam(final String name, SlingHttpServletRequest request) {
         return parametersByName(request.getRequestPathInfo().getSuffix()).get(name);
     }
