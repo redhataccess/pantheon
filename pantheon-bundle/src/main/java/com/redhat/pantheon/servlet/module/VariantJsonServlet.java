@@ -54,8 +54,6 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
     protected String getQuery(SlingHttpServletRequest request) {
         // Get the query parameter(s)
         String uuid = suffix.getParam("variantUuid", request);
-        // Hydra fetch calls look like this:
-        // Calling pantheon2 with url https://<HOST>/api/module/variant.json/b537ef3c-5c7d-4280-91ce-e7e818e6cc11&proxyHost=<SOMEHOST>&proxyPort=8080&throwExceptionOnFailure=false
         StringBuilder query = new StringBuilder("select * from [pant:moduleVariant] as moduleVariant WHERE moduleVariant.[jcr:uuid] = '")
                 .append(sanitizeSuffix(uuid))
                 .append("'");

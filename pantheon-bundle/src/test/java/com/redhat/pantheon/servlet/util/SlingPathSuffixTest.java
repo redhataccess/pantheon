@@ -40,28 +40,4 @@ class SlingPathSuffixTest {
         // Then
         assertEquals("value", suffix.getParam("param1", sc.request()));
     }
-
-    @Test
-    void suffixWithExtraQueryParameters() {
-        // Given
-        SlingPathSuffix suffix = new SlingPathSuffix("/path/{param1}");
-        sc.requestPathInfo().setSuffix("/path/param1Segment?v=1");
-
-        // When
-
-        // Then
-        assertEquals("param1Segment", suffix.getParam("param1", sc.request()));
-    }
-
-    @Test
-    void suffixWithClientHash() {
-        // Given
-        SlingPathSuffix suffix = new SlingPathSuffix("/path/{param1}");
-        sc.requestPathInfo().setSuffix("/path/param1Segment#clientid");
-
-        // When
-
-        // Then
-        assertEquals("param1Segment", suffix.getParam("param1", sc.request()));
-    }
 }
