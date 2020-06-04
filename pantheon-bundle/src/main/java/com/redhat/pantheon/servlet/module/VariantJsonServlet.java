@@ -10,6 +10,7 @@ import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
 import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.servlet.util.SlingPathSuffix;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.servlets.annotations.SlingServletPaths;
@@ -47,11 +48,12 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
     private final Logger log = LoggerFactory.getLogger(ModuleJsonServlet.class);
 
+    private final SlingPathSuffix suffix = new SlingPathSuffix("/{variantUuid}");
+
     @Override
     protected String getQuery(SlingHttpServletRequest request) {
         // Get the query parameter(s)
-
-        String uuid = request.getRequestPathInfo().getSuffix().substring(1);
+        String uuid = suffix.getParam("variantUuid", request);
         StringBuilder query = new StringBuilder("select * from [pant:moduleVariant] as moduleVariant WHERE moduleVariant.[jcr:uuid] = '")
                 .append(uuid)
                 .append("'");
