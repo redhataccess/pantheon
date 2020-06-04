@@ -5,8 +5,7 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Carlos Munoz
@@ -19,8 +18,8 @@ class SlingPathSuffixTest {
     @Test
     void basicParameterTest() {
         // Given
-        sc.requestPathInfo().setSuffix("/path/value1/value2/other");
         SlingPathSuffix suffix = new SlingPathSuffix("/path/{param1}/{param2}/other");
+        sc.requestPathInfo().setSuffix("/path/value1/value2/other");
 
         // When
 
@@ -30,4 +29,15 @@ class SlingPathSuffixTest {
         assertNull(suffix.getParam("nonexisting", sc.request()));
     }
 
+    @Test
+    void partialSuffixSegmentParameters() {
+        // Given
+        SlingPathSuffix suffix = new SlingPathSuffix("/path/{param1}Suffix/other");
+        sc.requestPathInfo().setSuffix("/path/valueSuffix/other");
+
+        // When
+
+        // Then
+        assertEquals("value", suffix.getParam("param1", sc.request()));
+    }
 }
