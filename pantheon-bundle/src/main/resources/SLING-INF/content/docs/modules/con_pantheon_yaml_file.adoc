@@ -14,7 +14,8 @@ The configuration file defines the following:
 `server`:: The URL of the {ProductShortName} server.
 `repositories`:: a multi-valued structure with the following child members:
 +
-`name`:: A unique ID that {ProductShortName} appears in the user-facing URL. It is not the Git repository URL.
+`name`:: A unique ID that appears in URLs on the {ProductShortName} site when you view modules and assemblies. For example, if you specify `name: rhel_docs`, and one of your modules is named [filename]`foo.adoc`, the module's URL in {ProductShortName} is:
+`http://<_{ProductShortName}__url>/content/repositories/**rhel_docs**/entities/modules/getting_started/foo.adoc.preview`
 `modules`:: Patterns for modules that show up in the search results on {ProductShortName}.
 `resources`:: Image files, legal information or other content that is not a complete module or assembly.
 `attributes`:: a path to the repository-wide attributes file that your documents may depend on.
