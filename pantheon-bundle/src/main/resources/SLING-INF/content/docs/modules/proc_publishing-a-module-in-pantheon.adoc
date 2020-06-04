@@ -23,9 +23,9 @@ If you do not see the module listed, search for the modules using the search box
 +
 After you publish the module, you can access it at the following URL:
 +
-`https://__PRODUCT_URL__/__VANITY_URL_FRAGMENT__`
+`https://__PRODUCT_URL__/__UUID__`
 +
-where, __PRODUCT_URL__ is the URL for the product, and __VANITY_URL_FRAGMENT__ is the vanity URL fragment for the module.
+where, __PRODUCT_URL__ is the URL for the product, and __UUID__ is the auto-generated unique identifier for the module.
 
 .Additional Resources
 * link:<LinkToHowToSearchModules>[How To Search Modules]
