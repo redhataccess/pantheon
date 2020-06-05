@@ -1,0 +1,14 @@
+[id="module-metadata-in-pantheon_{context}"]
+= Module metadata in {ProductShortName}
+
+Each module in {ProductShortName} has associated metadata for search engine optimization (SEO). SEO improves the findability of modules.  
+
+There are two types of module-metadata in {ProductShortName}:
+
+* Intrinsic:
++
+The metadata that is inferred from the module automatically.
+
+* Extrinsic:
++
+The metadata that is applied manually before publishing.
