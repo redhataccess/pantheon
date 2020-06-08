@@ -1,6 +1,7 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.helper.Symlinks;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.module.Module;
@@ -86,18 +87,10 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
     }
 
     private Resource resolveWithSymlinks(String path, Resource pathParent) {
-        Resource resource = pathParent;
-        for (String resourceName : path.split("/")) {
-            if (resourceName.isEmpty()) {
-                continue;
-            }
-            resource = resolver.getResource(resource, resourceName);
-            if (resource == null) {
-                return null;
-            }
-            if ("pantheon/symlink".equals(resource.getResourceType())) {
-                resource = resolveWithSymlinks(resource.getValueMap().get("pant:target", String.class), resource.getParent());
-            }
+
+        Resource resource = Symlinks.resolve(resolver, pathParent.getPath() + "/" + path);
+        if ("sling:nonexisting".equals(resource.getResourceType())) {
+            return null;
         }
         return resource;
     }
