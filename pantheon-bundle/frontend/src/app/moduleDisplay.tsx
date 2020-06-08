@@ -176,7 +176,7 @@ class ModuleDisplay extends Component<any, any, any> {
     private fetchModuleDetails = (data) => {
         this.setState({
             modulePath: data.location.pathname,
-            releasePath: "/content" + data.location.pathname + ".preview"
+            releasePath: "/content" + data.location.pathname + ".preview?variant=" + this.state.variant
         })
 
         fetch(data.location.pathname + '/en_US.harray.4.json')
