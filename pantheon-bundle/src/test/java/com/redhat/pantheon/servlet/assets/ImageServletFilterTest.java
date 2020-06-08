@@ -69,7 +69,8 @@ class ImageServletFilterTest {
                 .resource(imagePath + imageName)
                 .resource(symlinkPath + symlinkName,
                         "sling:resourceType", "pantheon/symlink",
-                        "pant:target", "../.." + imagePath)
+                        "pant:target", "..///../" + imagePath) // <-- triple slash and trailing slash are important,
+                                                    // tests ability to ignore extra slashes just like local fs does
                 .commit();
         String imageUrl = Base64.getUrlEncoder().encodeToString((symlinkPath + symlinkName + imageName).getBytes());
         RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);

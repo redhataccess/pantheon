@@ -78,7 +78,7 @@ public class ImageServletFilter implements Filter {
             }
         }
 
-        request.getRequestDispatcher(realPath.toString())
+        request.getRequestDispatcher(realPath.toString().replaceAll("/+", "/"))
             .forward(request, response);
     }
 
