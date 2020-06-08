@@ -33,11 +33,10 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     public componentDidMount() {
+        // this.getVariantParam()
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
-
         this.getPortalUrl()
-        this.getVariantParam()
     }
 
     public render() {
@@ -173,7 +172,8 @@ class ModuleDisplay extends Component<any, any, any> {
         })
     }
 
-    private fetchModuleDetails = (data) => {
+    private fetchModuleDetails = async(data) => {
+        await this.getVariantParam()
         this.setState({
             modulePath: data.location.pathname,
             releasePath: "/content" + data.location.pathname + ".preview?variant=" + this.state.variant
@@ -324,7 +324,7 @@ class ModuleDisplay extends Component<any, any, any> {
             })
     }
 
-    private getVariantParam() {
+    private async getVariantParam() {
         const query = new URLSearchParams(this.props.location.search);
         const variantParam = query.get('variant')
         // console.log("[moduleDisplay] variantParam => ", variantParam)
