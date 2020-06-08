@@ -21,9 +21,6 @@ cd $PANTHEON_CODEBASE
 set -e
 # build the distribution
 ./mvnw clean install  -U -pl pantheon-bundle,pantheon-karaf-feature,pantheon-karaf-dist
-# extract the distribution
-tar -xvf pantheon-karaf-dist/target/pantheon-karaf-dist-1.0-SNAPSHOT.tar.gz -C pantheon-karaf-dist/target/ 
-# run the distribution
-pantheon-karaf-dist/target/pantheon-karaf-dist-1.0-SNAPSHOT/bin/karaf
+pantheon-karaf-dist/target/assembly/bin/karaf
 set +e
 
