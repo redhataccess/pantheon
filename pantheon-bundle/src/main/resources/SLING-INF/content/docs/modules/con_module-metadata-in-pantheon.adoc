@@ -8,7 +8,17 @@ There are two types of module-metadata in {ProductShortName}:
 * Intrinsic:
 +
 The metadata that is inferred from the module automatically.
++
+Example of intrinsic metadata include the following:
+
+** Module name
+** Module description
 
 * Extrinsic:
 +
 The metadata that is applied manually before publishing.
++
+Examples of extrinsic metadata include the following:
+
+** Product name - the product and the product-version that the module should be published for.
+** Search keywords - words that, when searched by users, should bring up the module in the search.
