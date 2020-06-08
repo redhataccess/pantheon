@@ -72,6 +72,18 @@
 [pant:hashable] mixin
     - pant:hash (string)
 
+// Base type for assemblies
+[pant:assembly] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/assembly' mandatory autocreated
+
+[pant:assemblyVariant] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/assemblyVariant' mandatory autocreated
+
+[pant:assemblyLocale] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/assemblyLocale' mandatory autocreated
+
+[pant:assemblyVersion] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/assemblyVersion' mandatory autocreated
 // Base type for titles
 //[pant:title] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
 //	- sling:resourceType (string) = 'pantheon/title' mandatory autocreated
