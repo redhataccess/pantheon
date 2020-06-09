@@ -3,13 +3,16 @@ package com.redhat.pantheon.servlet.module;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
+import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.HashableFileResource;
+import com.redhat.pantheon.model.module.Metadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleType;
 import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -19,15 +22,19 @@ import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
 import org.osgi.framework.Constants;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Post operation to add a new Module version to the system.
@@ -51,6 +58,17 @@ import java.util.Locale;
 public class ModuleVersionUpload extends AbstractPostOperation {
 
     private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
+
+    private AsciidoctorService asciidoctorService;
+    private ServiceResourceResolverProvider serviceResourceResolverProvider;
+
+    @Activate
+    public ModuleVersionUpload(
+            @Reference AsciidoctorService asciidoctorService,
+            @Reference ServiceResourceResolverProvider serviceResourceResolverProvider) {
+        this.asciidoctorService = asciidoctorService;
+        this.serviceResourceResolverProvider = serviceResourceResolverProvider;
+    }
 
     @Override
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
@@ -103,13 +121,19 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                 draftSrc.jcrContent().getOrCreate()
                         .mimeType().set("text/x-asciidoc");
 
-                // TODO Html can no longer be generated on upload since there might be too many variants
-                // TODO This will need to be re-thought since metadata now lies on the variant
+                resolver.commit();
+
+                Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
+                asciidoctorService.getModuleHtml(module, localeObj, module.getWorkspace().getCanonicalVariantName(),
+                        true, context, true);
+
+                Metadata metadata = moduleLocale.variants().getOrCreate().variant(moduleLocale.getWorkspace().getCanonicalVariantName()).getOrCreate().draft().getOrCreate().metadata().getOrCreate();
+                metadata.dateModified().set(Calendar.getInstance());
                 // Generate a module type based on the file name ONLY after asciidoc generation, so that the
                 // attribute-based logic takes precedence
-                // if(metadata.moduleType().get() == null) {
-                //    metadata.moduleType().set(determineModuleType(module));
-                //}
+                if(metadata.moduleType().get() == null) {
+                    metadata.moduleType().set(determineModuleType(module));
+                }
             }
 
             resolver.commit();
