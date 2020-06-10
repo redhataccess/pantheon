@@ -131,6 +131,8 @@ variants:
     - path: path/to/attribute2.adoc
       name: my_name2
 
+assemblies:
+      - assemblies/*.adoc
 modules:
       - master.adoc
       - modules/*.adoc
