@@ -34,9 +34,9 @@ import java.util.Locale;
         property = {
                 Constants.SERVICE_DESCRIPTION + "=Servlet POST operation which accepts module uploads and versions them appropriately",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
-                PostOperation.PROP_OPERATION_NAME + "=pant:newAssemblyVersion"
+                PostOperation.PROP_OPERATION_NAME + "=pant:newDraftVersion"
         })
-public class AssemblyVersionUpload extends AbstractPostOperation {
+public class DraftVersionUpload extends AbstractPostOperation {
     private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
 
     @Override
@@ -45,6 +45,7 @@ public class AssemblyVersionUpload extends AbstractPostOperation {
         try {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
             String asciidocContent = ServletUtils.paramValue(request, "asciidoc");
+//            String contentType = ServletUtils.paramValue(request, "type", "assembly");
 
             String encoding = request.getCharacterEncoding();
             if (encoding != null) {
@@ -53,15 +54,16 @@ public class AssemblyVersionUpload extends AbstractPostOperation {
 
             String path = request.getResource().getPath();
 
-            log.debug("Pushing new assembly version at: " + path + " with locale: " + locale);
+            log.debug("Pushing new version at: " + path + " with locale: " + locale);
             log.trace("and content: " + asciidocContent);
             int responseCode = HttpServletResponse.SC_OK;
 
-            // Try to find the module
+            // Try to find the resource
             ResourceResolver resolver = request.getResourceResolver();
-            Resource assemblyResource = resolver.getResource(path);
+            Resource resource = resolver.getResource(path);
+            // TODO: need make it more generic so that it can create both module and assemly contentTypes
             Assembly assembly;
-            if (assemblyResource == null) {
+            if (resource == null) {
                 assembly =
                         SlingModels.createModel(
                                 resolver,
@@ -69,7 +71,7 @@ public class AssemblyVersionUpload extends AbstractPostOperation {
                                 Assembly.class);
                 responseCode = HttpServletResponse.SC_CREATED;
             } else {
-                assembly = assemblyResource.adaptTo(Assembly.class);
+                assembly = resource.adaptTo(Assembly.class);
             }
 
             Locale localeObj = LocaleUtils.toLocale(locale);
@@ -92,6 +94,8 @@ public class AssemblyVersionUpload extends AbstractPostOperation {
             }
 
             resolver.commit();
+
+            // TODO: trigger an event to generate the html asynchronous
             response.setStatus(responseCode, "");
         } catch (Exception e) {
             throw new RepositoryException("Error uploading an assembly version", e);

@@ -4,12 +4,13 @@ import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
+import com.redhat.pantheon.model.module.Module;
 
 import javax.inject.Named;
 import java.util.Locale;
 
 @JcrPrimaryType("pant:assembly")
-public interface Assembly extends WorkspaceChild {
+public interface Assembly extends Module {
 
     @Named("jcr:uuid")
     Field<String> uuid();
