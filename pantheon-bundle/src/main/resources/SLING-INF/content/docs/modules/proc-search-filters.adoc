@@ -1,7 +1,7 @@
 [id='search-filters_{context}']
 
 The Search tab allows you to apply a number of filters to your search that are available as drop down menus.
- 
+
 .Procedure
 
 Use any combination of the following filters:
@@ -9,6 +9,4 @@ Use any combination of the following filters:
 * Select a Product name from the `Select a Product` menu.
 * Select a version number from the `Select a Version` menu.
 * Select a module type from the third menu (`All`, `Concept`, `Procedure`, or `Reference`).
-* Select a property from the fourth menu (`Uploaded date`, `Title`, `Updated date`, or `Module type`)
-* Select the number of results to be displayed per page. 
 * Press `Enter` or click the search icon to initiate the search.

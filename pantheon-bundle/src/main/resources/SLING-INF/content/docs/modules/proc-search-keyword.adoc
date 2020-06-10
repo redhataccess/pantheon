@@ -5,5 +5,4 @@ The Search tab allows you to enter keywords or free text to search for modules.
 .Procedure
 
 . In the search bar at top right, enter a free text phrase or keywords.
-. You can add Boolean operators to the keywords to refine the search.
 . Press `Enter` or click the search icon  to initiate the search.
