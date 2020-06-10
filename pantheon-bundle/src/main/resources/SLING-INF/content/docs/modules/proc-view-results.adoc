@@ -7,4 +7,5 @@ The search results are presented in a table organized into columns with the foll
 * `Published` - the publication status, `Published` or `Not published`
 * `Draft uploaded` - the date the draft was uploaded
 * `Module Type` - the module type, `Concept`, `Procedure`, or `Reference`
-* A sorting button allows you to quickly change the sorting order of search results from A-Z to Z-A.
+* Select a property from the fourth menu to sort according to that property (`Uploaded date`, `Title`, `Updated date`, or `Module type`)
+* Select the number of results you want to be displayed per page. 
