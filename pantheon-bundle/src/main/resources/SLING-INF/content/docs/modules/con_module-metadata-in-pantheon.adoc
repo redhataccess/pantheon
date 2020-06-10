@@ -3,22 +3,18 @@
 
 Each module in {ProductShortName} has associated metadata for search engine optimization (SEO). SEO improves the findability of modules.  
 
-There are two types of module-metadata in {ProductShortName}:
+The types of module metadata in {ProductShortName} are as follows:
 
-* Intrinsic:
-+
-The metadata that is inferred from the module automatically.
+Intrinsic:: The metadata that is inferred from the module automatically.
 +
 Example of intrinsic metadata include the following:
 
 ** Module name
 ** Module description
 
-* Extrinsic:
-+
-The metadata that is applied manually before publishing.
+Extrinsic:: The metadata that is applied manually before publishing.
 +
 Examples of extrinsic metadata include the following:
 
-** Product name - the product and the product-version that the module should be published for.
+** Product name - the product and the product version that the module should be published for.
 ** Search keywords - words that, when searched by users, should bring up the module in the search.
