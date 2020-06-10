@@ -12,10 +12,6 @@ import com.redhat.pantheon.model.module.SourceContent;
  */
 @JcrPrimaryType("pant:assemblyLocale")
 public interface AssemblyLocale extends ModuleLocale {
-//
-//    Child<SourceContent> source();
-//
-////    Child<Variants> variants();
 
     @Override
     Assembly getParent();
