@@ -11,11 +11,23 @@
 <meta content="AsciiDoc, Asciidoctor, syntax, reference, cheatsheet" name="keywords">
 <meta content="Dan Allen, Sarah White" name="author">
 <title>AsciiDoc Syntax Quick Reference</title>
+<link href="/rhdocs.css" rel="stylesheet">
+<link href="/pantheon.css" rel="stylesheet">
 <link href="https://static.redhat.com/libs/redhat/redhat-font/2/webfonts/red-hat-font.css" rel="stylesheet">
-<link href="rhdocs.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/custom-elements-es5-adapter.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/webcomponents-bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
+<script>
+  require([
+    "https://access.redhat.com/webassets/avalon/j/public_modules/node_modules/@patternfly/pfelement/dist/pfelement.umd.js"
+  ])
+  require([
+    "https://access.redhat.com/webassets/avalon/j/public_modules/node_modules/cp-documentation/dist/cp-documentation.umd.min.js"
+  ])
+</script>
 </head>
-<body class="article">
-<article class="rhdocs" id="rhdocs">
+<body class="article pantheon-render">
+<cp-documentation class="rhdocs" id="rhdocs" pfe-css="/rhdocs.css">
 <header class="rhdocs-header" id="rhdocs-header">
 <h1>AsciiDoc Syntax Quick Reference</h1>
 <ul class="rhdocs-details">
@@ -40,59 +52,28 @@ AsciiDoc produces complementary output when generating DocBook.</p>
 <section class="sect1">
 <h2 id="paragraphs">Paragraphs</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<strong class="heading">Normal</strong>
-<div class="content">
-<pre>Paragraphs don't require any special markup in AsciiDoc.&#x000A;A paragraph is just one or more lines of consecutive text.&#x000A;&#x000A;To begin a new paragraph, separate it by at least one blank line.</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <p>Paragraphs don&#8217;t require any special markup in AsciiDoc.
 A paragraph is just one or more lines of consecutive text.</p>
 <p>To begin a new paragraph, separate it by at least one blank line.</p>
-</div>
-</div>
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Line breaks</strong>
-<div class="content">
-<pre>To preserve a line break, end the line in a space followed by a plus sign. +&#x000A;This results in a visible line break (e.g., `&lt;br&gt;`) between the lines.</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <p>To preserve a line break, end the line in a space followed by a plus sign.<br>
 This results in a visible line break (e.g., <code>&lt;br&gt;</code>) between the lines.</p>
 </div>
-</div>
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Literal</strong>
-<div class="content">
-<pre>A normal paragraph.&#x000A;&#x000A; A sequence of lines that begin with at least one space is a literal paragraph.&#x000A; Literal paragraphs are treated as preformatted text.&#x000A; The text is shown in a fixed-width font&#x000A; and endlines are preserved.&#x000A;&#x000A;Another normal paragraph.</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <p>A normal paragraph.</p>
+</div>
 <div class="literalblock">
 <div class="content">
 <pre>A sequence of lines that begin with at least one space is a literal paragraph.&#x000A;Literal paragraphs are treated as preformatted text.&#x000A;The text is shown in a fixed-width font&#x000A;and endlines are preserved.</pre>
 </div>
 </div>
 <p>Another normal paragraph.</p>
-</div>
-</div>
-<div class="listingblock">
-<strong class="heading">Admonition</strong>
-<div class="content">
-<pre>NOTE: An admonition paragraph draws the reader's attention to&#x000A;auxiliary information.&#x000A;Its purpose is determined by the label&#x000A;at the beginning of the paragraph.&#x000A;&#x000A;Here are the other built-in admonition types:&#x000A;&#x000A;TIP: Pro tip...&#x000A;&#x000A;IMPORTANT: Don't forget...&#x000A;&#x000A;WARNING: Watch out for...&#x000A;&#x000A;CAUTION: Ensure that...</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <div class="admonitionblock note">
 <strong class="title icon-title">Note</strong>
 <div class="content">
+<strong class="title">Admonition</strong>
 An admonition paragraph draws the reader&#8217;s attention to
 auxiliary information.
 Its purpose is determined by the label
@@ -124,24 +105,15 @@ Watch out for&#8230;&#8203;
 Ensure that&#8230;&#8203;
 </div>
 </div>
-</div>
-</div>
 <div class="admonitionblock note">
 <strong class="title icon-title">Note</strong>
 <div class="content">
 You can also create <a href="#admon-bl">admonition blocks</a>.
 </div>
 </div>
-<div class="listingblock">
+<div class="paragraph lead">
 <strong class="heading">Lead paragraph</strong>
-<div class="content">
-<pre>[.lead]&#x000A;This text will be styled as a lead paragraph (i.e., larger font).</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <p>This text will be styled as a lead paragraph (i.e., larger font).</p>
-</div>
 </div>
 <div class="admonitionblock note">
 <strong class="title icon-title">Note</strong>
@@ -172,15 +144,10 @@ The default Asciidoctor stylesheet automatically styles the first paragraph of t
 <section class="sect1">
 <h2 id="formatted-text">Formatted Text</h2>
 <div class="sectionbody">
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Bold, Italic, and Monospace</strong>
-<div class="content">
-<pre>_italic phrase_&#x000A;&#x000A;__i__talic le__tt__ers&#x000A;&#x000A;*bold phrase*&#x000A;&#x000A;**b**old le**tt**ers&#x000A;&#x000A;*_bold italic phrase_*&#x000A;&#x000A;**__b__**old italic le**__tt__**ers&#x000A;&#x000A;`monospace phrase` and le``tt``ers&#x000A;&#x000A;`_monospace italic phrase_` and le``__tt__``ers&#x000A;&#x000A;`*monospace bold phrase*` and le``**tt**``ers&#x000A;&#x000A;`*_monospace bold italic phrase_*` and le``**__tt__**``ers&#x000A;&#x000A;`+inline literal passthrough+` (monospace text without substitutions)</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <p><em>italic phrase</em></p>
+</div>
 <p><em>i</em>talic le<em>tt</em>ers</p>
 <p><strong>bold phrase</strong></p>
 <p><strong>b</strong>old le<strong>tt</strong>ers</p>
@@ -191,44 +158,21 @@ The default Asciidoctor stylesheet automatically styles the first paragraph of t
 <p><code><strong>monospace bold phrase</strong></code> and le<code><strong>tt</strong></code>ers</p>
 <p><code><strong><em>monospace bold italic phrase</em></strong></code> and le<code><strong><em>tt</em></strong></code>ers</p>
 <p><code>inline literal passthrough</code> (monospace text without substitutions)</p>
-</div>
-</div>
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Custom Styling</strong>
-<div class="content">
-<pre>Do werewolves believe in [small]#small print#?&#x000A;&#x000A;[big]##O##nce upon an infinite loop.</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <p>Do werewolves believe in <span class="small">small print</span>?</p>
+</div>
 <p><span class="big">O</span>nce upon an infinite loop.</p>
-</div>
-</div>
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Superscript and Subscript</strong>
-<div class="content">
-<pre>^super^script phrase&#x000A;&#x000A;~sub~script phrase</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <p><sup>super</sup>script phrase</p>
+</div>
 <p><sub>sub</sub>script phrase</p>
-</div>
-</div>
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Curved Quotes</strong>
-<div class="content">
-<pre>'`single smart quotes`'&#x000A;&#x000A;"`double smart quotes`"</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <p>&#8216;single smart quotes&#8217;</p>
+</div>
 <p>&#8220;double smart quotes&#8221;</p>
-</div>
-</div>
 <aside class="sidebarblock">
 <strong class="heading">More Text Formatting Examples</strong>
 <div class="content">
@@ -258,11 +202,19 @@ The default Asciidoctor stylesheet automatically styles the first paragraph of t
 </div>
 </section>
 <!-- / Do the HTML part -->
-<h1 class="sect0" id="sample-headings">Sample Headings</h1>
+<section class="sect1">
+<h2 id="sample-headings">Sample Headings</h2>
+<div class="sectionbody">
 <hr>
+</div>
+</section>
 <!-- / Do the HTML part -->
-<h1 class="sect0" id="heading-level-1-paradigm-shift-seed-round-research-development-ramen-mass-market">Heading level 1 Paradigm shift seed round research &amp; development ramen mass market</h1>
+<section class="sect1">
+<h2 id="heading-level-1-paradigm-shift-seed-round-research-development-ramen-mass-market">Heading level 1 Paradigm shift seed round research &amp; development ramen mass market</h2>
+<div class="sectionbody">
 <p>This is an example paragraph, investor startup focus seed round advisor iPhone venture equity marketing series A financing branding. Value proposition influencer termsheet ownership buyer. Paradigm shift seed round research &amp; development ramen mass market product management ecosystem low hanging fruit assets. Low hanging fruit launch party niche market graphical user interface ecosystem freemium. Handshake gamification burn rate business-to-consumer market release rockstar.</p>
+</div>
+</section>
 <!-- / Do the HTML part -->
 <section class="sect1">
 <h2 id="heading-level-2-paradigm-shift-seed-round-research-development-ramen-mass-market">Heading level 2 Paradigm shift seed round research &amp; development ramen mass market</h2>
@@ -284,12 +236,6 @@ The default Asciidoctor stylesheet automatically styles the first paragraph of t
 <section class="sect5">
 <h6 id="heading-level-6-paradigm-shift-seed-round-research-development-ramen-mass-market">Heading level 6 Paradigm shift seed round research &amp; development ramen mass market</h6>
 <p>This is an example paragraph, investor startup focus seed round advisor iPhone venture equity marketing series A financing branding. Value proposition influencer termsheet ownership buyer. Paradigm shift seed round research &amp; development ramen mass market product management ecosystem low hanging fruit assets. Low hanging fruit launch party niche market graphical user interface ecosystem freemium. Handshake gamification burn rate business-to-consumer market release rockstar.</p>
-<div class="listingblock">
-<strong class="heading">Explicit id</strong>
-<div class="content">
-<pre>[[primitives-nulls]]&#x000A;== Primitive types and null values</pre>
-</div>
-</div>
 <div class="dlist">
 <strong class="heading">Section anchors and links (Asciidoctor only)</strong>
 <dl>
@@ -319,28 +265,18 @@ Section title anchors depend on the default Asciidoctor stylesheet to render pro
 <section class="sect1">
 <h2 id="include-files">Include Files</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<strong class="heading">Document parts</strong>
-<div class="content">
-<pre>= Reference Documentation&#x000A;Lead Developer&#x000A;&#x000A;This is documentation for project X.&#x000A;&#x000A;include::basics.adoc[]&#x000A;&#x000A;include::installation.adoc[]&#x000A;&#x000A;include::example.adoc[]</pre>
-</div>
-</div>
 <div class="admonitionblock caution">
 <strong class="title icon-title">Caution</strong>
 <div class="content">
+<strong class="title">Document parts</strong>
 Asciidoctor does not insert blank lines between adjacent include statements to keep the content separated.
 Be sure to add a blank line in the source document to avoid unexpected results, such as a section title being swallowed.
-</div>
-</div>
-<div class="listingblock">
-<strong class="heading">Include content from a URI</strong>
-<div class="content">
-<pre>:asciidoctor-source: https://raw.github.com/asciidoctor/asciidoctor/master&#x000A;&#x000A;include::{asciidoctor-source}/README.adoc[]</pre>
 </div>
 </div>
 <div class="admonitionblock note">
 <strong class="title icon-title">Note</strong>
 <div class="content">
+<strong class="title">Include content from a URI</strong>
 Including content from a URI is potentially dangerous, so it&#8217;s disabled if the safe mode is SECURE or greater.
 Assuming the safe mode is less than SECURE, you must also set the <code>allow-uri-read</code> attribute to permit Asciidoctor to read content from a URI.
 </div>
@@ -351,17 +287,7 @@ Assuming the safe mode is less than SECURE, you must also set the <code>allow-ur
 <section class="sect1">
 <h2 id="horizontal-rules-and-page-breaks">Horizontal Rules and Page Breaks</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<strong class="heading">Horizontal rule</strong>
-<div class="content">
-<pre>'''</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <hr>
-</div>
-</div>
 <div class="listingblock">
 <strong class="heading">Page break</strong>
 <div class="content">
@@ -374,15 +300,9 @@ Assuming the safe mode is less than SECURE, you must also set the <code>allow-ur
 <section class="sect1">
 <h2 id="lists">Lists</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<strong class="heading">Unordered, basic</strong>
-<div class="content">
-<pre>* Edgar Allen Poe&#x000A;* Sheri S. Tepper&#x000A;* Bill Bryson&#x000A;&#x000A;//^&#x000A;&#x000A;* Kevin Spacey&#x000A;* Jeremy Piven</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
-<ul>
+<div class="ulist">
+<strong class="heading" id="ulist_heading_0">Unordered, basic</strong>
+<ul aria-labelledby="ulist_heading_0">
 <li>
 <p>Edgar Allen Poe</p>
 </li>
@@ -393,6 +313,7 @@ Assuming the safe mode is less than SECURE, you must also set the <code>allow-ur
 <p>Bill Bryson</p>
 </li>
 </ul>
+</div>
 <ul>
 <li>
 <p>Kevin Spacey</p>
@@ -401,8 +322,6 @@ Assuming the safe mode is less than SECURE, you must also set the <code>allow-ur
 <p>Jeremy Piven</p>
 </li>
 </ul>
-</div>
-</div>
 <div class="admonitionblock note">
 <strong class="title icon-title">Note</strong>
 <div class="content">
@@ -416,15 +335,9 @@ You can force two lists apart with a line comment, as the previous example demon
 The text in the comment, (<code>^</code>), is optional, but serves as a hint to other authors that this line serves as an "end of list" marker.
 </div>
 </div>
-<div class="listingblock">
-<strong class="heading">Unordered, max nesting</strong>
-<div class="content">
-<pre>* level 1&#x000A;** level 2&#x000A;*** level 3&#x000A;**** level 4&#x000A;***** level 5&#x000A;* level 1</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
-<ul>
+<div class="ulist">
+<strong class="heading" id="ulist_heading_0">Unordered, max nesting</strong>
+<ul aria-labelledby="ulist_heading_0">
 <li>
 <p>level 1</p>
 <ul>
@@ -453,22 +366,15 @@ The text in the comment, (<code>^</code>), is optional, but serves as a hint to 
 </li>
 </ul>
 </div>
-</div>
 <div class="admonitionblock tip">
 <strong class="title icon-title">Tip</strong>
 <div class="content">
 The unordered list marker can be changed using <a href="http://asciidoctor.org/docs/user-manual/#custom-markers">block styles</a>.
 </div>
 </div>
-<div class="listingblock">
-<strong class="heading">Checklist</strong>
-<div class="content">
-<pre>- [*] checked&#x000A;- [x] also checked&#x000A;- [ ] not checked&#x000A;-     normal list item</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
-<ul class="checklist">
+<div class="ulist checklist">
+<strong class="heading" id="ulist_heading_0">Checklist</strong>
+<ul aria-labelledby="ulist_heading_0" class="checklist">
 <li>
 <p>&#10003; checked</p>
 </li>
@@ -483,22 +389,15 @@ The unordered list marker can be changed using <a href="http://asciidoctor.org/d
 </li>
 </ul>
 </div>
-</div>
 <div class="admonitionblock tip">
 <strong class="title icon-title">Tip</strong>
 <div class="content">
 Checklists can use <a href="http://asciidoctor.org/docs/user-manual/#checklists">font-based icons and be interactive</a>.
 </div>
 </div>
-<div class="listingblock">
-<strong class="heading">Ordered, basic</strong>
-<div class="content">
-<pre>. Step 1&#x000A;. Step 2&#x000A;. Step 3</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
-<ol class="arabic">
+<div class="olist arabic">
+<strong class="heading" id="olist_heading_1">Ordered, basic</strong>
+<ol aria-labelledby="olist_heading_1" class="arabic">
 <li>
 <p>Step 1</p>
 </li>
@@ -510,16 +409,9 @@ Checklists can use <a href="http://asciidoctor.org/docs/user-manual/#checklists"
 </li>
 </ol>
 </div>
-</div>
-<div class="listingblock">
-<strong class="heading">Ordered, nested</strong>
-<div class="content">
-<pre>. Step 1&#x000A;. Step 2&#x000A;.. Step 2a&#x000A;.. Step 2b&#x000A;. Step 3</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
-<ol class="arabic">
+<div class="olist arabic">
+<strong class="heading" id="olist_heading_2">Ordered, nested</strong>
+<ol aria-labelledby="olist_heading_2" class="arabic">
 <li>
 <p>Step 1</p>
 </li>
@@ -539,16 +431,9 @@ Checklists can use <a href="http://asciidoctor.org/docs/user-manual/#checklists"
 </li>
 </ol>
 </div>
-</div>
-<div class="listingblock">
-<strong class="heading">Ordered, max nesting</strong>
-<div class="content">
-<pre>. level 1&#x000A;.. level 2&#x000A;... level 3&#x000A;.... level 4&#x000A;..... level 5&#x000A;. level 1</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
-<ol class="arabic">
+<div class="olist arabic">
+<strong class="heading" id="olist_heading_4">Ordered, max nesting</strong>
+<ol aria-labelledby="olist_heading_4" class="arabic">
 <li>
 <p>level 1</p>
 <ol class="loweralpha" type="a">
@@ -577,21 +462,14 @@ Checklists can use <a href="http://asciidoctor.org/docs/user-manual/#checklists"
 </li>
 </ol>
 </div>
-</div>
 <div class="admonitionblock tip">
 <strong class="title icon-title">Tip</strong>
 <div class="content">
 For ordered lists, Asciidoctor supports <a href="http://asciidoctor.org/docs/user-manual/#numbering-styles">numeration styles</a> such as <code>lowergreek</code> and <code>decimal-leading-zero</code>.
 </div>
 </div>
-<div class="listingblock">
+<div class="dlist">
 <strong class="heading">Labeled, single-line</strong>
-<div class="content">
-<pre>first term:: definition of first term&#x000A;section term:: definition of second term</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <dl>
 <dt>first term</dt>
 <dd>
@@ -600,17 +478,11 @@ definition of first term
 <dt>section term</dt>
 <dd>
 definition of second term
-====//toc::[]
 </dd>
 </dl>
-<div class="listingblock">
+</div>
+<div class="dlist">
 <strong class="heading">Labeled, multi-line</strong>
-<div class="content">
-<pre>first term::&#x000A;definition of first term&#x000A;section term::&#x000A;definition of second term</pre>
-</div>
-</div>
-</div>
-</div>
 <dl>
 <dt>first term</dt>
 <dd>
@@ -621,18 +493,10 @@ definition of first term
 definition of second term
 </dd>
 </dl>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
-<strong class="heading">Q&amp;A</strong>
-<div class="content">
-<pre>[qanda]&#x000A;What is Asciidoctor?::&#x000A;  An implementation of the AsciiDoc processor in Ruby.&#x000A;What is the answer to the Ultimate Question?:: 42</pre>
-</div>
-</div>
-</div>
 </div>
 <div class="qlist qanda">
-<ol>
+<strong class="heading" id="dlist_heading_4">Q&amp;A</strong>
+<ol aria-labelledby="dlist_heading_4">
 <li>
 <dl>
 <dt>What is Asciidoctor?</dt>
@@ -651,16 +515,8 @@ An implementation of the AsciiDoc processor in Ruby.
 </li>
 </ol>
 </div>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
+<div class="dlist">
 <strong class="heading">Mixed</strong>
-<div class="content">
-<pre>Operating Systems::&#x000A;  Linux:::&#x000A;    . Fedora&#x000A;      * Desktop&#x000A;    . Ubuntu&#x000A;      * Desktop&#x000A;      * Server&#x000A;  BSD:::&#x000A;    . FreeBSD&#x000A;    . NetBSD&#x000A;&#x000A;Cloud Providers::&#x000A;  PaaS:::&#x000A;    . OpenShift&#x000A;    . CloudBees&#x000A;  IaaS:::&#x000A;    . Amazon EC2&#x000A;    . Rackspace</pre>
-</div>
-</div>
-</div>
-</div>
 <dl>
 <dt>Operating Systems</dt>
 <dd>
@@ -730,8 +586,7 @@ An implementation of the AsciiDoc processor in Ruby.
 </dl>
 </dd>
 </dl>
-<div class="exampleblock">
-<div class="content">
+</div>
 <div class="admonitionblock tip">
 <strong class="title icon-title">Tip</strong>
 <div class="content">
@@ -739,15 +594,9 @@ Lists can be indented.
 Leading whitespace is not significant.
 </div>
 </div>
-<div class="listingblock">
-<strong class="heading">Complex content in outline lists</strong>
-<div class="content">
-<pre>* Every list item has at least one paragraph of content,&#x000A;  which may be wrapped, even using a hanging indent.&#x000A;+&#x000A;Additional paragraphs or blocks are adjoined by putting&#x000A;a list continuation on a line adjacent to both blocks.&#x000A;+&#x000A;list continuation:: a plus sign (+) on a line by itself&#x000A;&#x000A;* A literal paragraph does not require a list continuation.&#x000A;&#x000A; $ gem install asciidoctor&#x000A;&#x000A;* AsciiDoc lists may contain any complex content.&#x000A;+&#x000A;[cols="2", options="header"]&#x000A;|===&#x000A;|Application&#x000A;|Language&#x000A;&#x000A;|AsciiDoc&#x000A;|Python&#x000A;&#x000A;|Asciidoctor&#x000A;|Ruby&#x000A;|===</pre>
-</div>
-</div>
-</div>
-</div>
-<ul>
+<div class="ulist">
+<strong class="heading" id="ulist_heading_12">Complex content in outline lists</strong>
+<ul aria-labelledby="ulist_heading_12">
 <li>
 <p>Every list item has at least one paragraph of content,
 which may be wrapped, even using a hanging indent.</p>
@@ -794,60 +643,36 @@ a plus sign (+) on a line by itself
 </table>
 </li>
 </ul>
-<div class="exampleblock">
-<div class="content">
-<p>== Links</p>
-<div class="listingblock">
+</div>
+</div>
+</section>
+<!-- / Do the HTML part -->
+<section class="sect1">
+<h2 id="links">Links</h2>
+<div class="sectionbody">
+<div class="paragraph">
 <strong class="heading">External</strong>
-<div class="content">
-<pre>http://asciidoctor.org - automatic!&#x000A;&#x000A;http://asciidoctor.org[Asciidoctor]&#x000A;&#x000A;https://github.com/asciidoctor[Asciidoctor @ *GitHub*]</pre>
-</div>
-</div>
-</div>
-</div>
 <p><a class="bare" href="http://asciidoctor.org">http://asciidoctor.org</a> - automatic!</p>
+</div>
 <p><a href="http://asciidoctor.org">Asciidoctor</a></p>
 <p><a href="https://github.com/asciidoctor">Asciidoctor @ <strong>GitHub</strong></a></p>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Relative</strong>
-<div class="content">
-<pre>link:index.html[Docs]</pre>
-</div>
-</div>
-</div>
-</div>
 <p><a href="index.html">Docs</a></p>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
+</div>
+<div class="paragraph">
 <strong class="heading">Email and IRC</strong>
-<div class="content">
-<pre>devel@discuss.arquillian.org&#x000A;&#x000A;mailto:devel@discuss.arquillian.org[Discuss Arquillian]&#x000A;&#x000A;mailto:devel-join@discuss.arquillian.org[Subscribe, Subscribe me, I want to join!]&#x000A;&#x000A;irc://irc.freenode.org/#asciidoctor</pre>
-</div>
-</div>
-</div>
-</div>
 <p><a href="mailto:devel@discuss.arquillian.org">devel@discuss.arquillian.org</a></p>
+</div>
 <p><a href="mailto:devel@discuss.arquillian.org">Discuss Arquillian</a></p>
 <p><a href="mailto:devel-join@discuss.arquillian.org?subject=Subscribe%20me&amp;body=I%20want%20to%20join!">Subscribe</a></p>
 <p><a class="bare" href="irc://irc.freenode.org/#asciidoctor">irc://irc.freenode.org/#asciidoctor</a></p>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Link with attributes (Asciidoctor only)</strong>
-<div class="content">
-<pre>http://discuss.asciidoctor.org[Discuss Asciidoctor, role="external", window="_blank"]&#x000A;&#x000A;http://discuss.asciidoctor.org[Discuss Asciidoctor^]&#x000A;&#x000A;http://search.example.com["Google, Yahoo, Bing^", role="teal"]</pre>
-</div>
-</div>
-</div>
-</div>
 <p><a class="external" href="http://discuss.asciidoctor.org" target="_blank">Discuss Asciidoctor</a></p>
+</div>
 <p><a href="http://discuss.asciidoctor.org" target="_blank">Discuss Asciidoctor</a></p>
 <p><a class="teal" href="http://search.example.com" target="_blank">Google, Yahoo, Bing</a></p>
-<div class="exampleblock">
-<div class="content">
 <div class="admonitionblock note">
 <strong class="title icon-title">Note</strong>
 <div class="content">
@@ -856,49 +681,33 @@ To enable them, you must set the <code>linkattrs</code> attribute on the documen
 When they are enabled, you must quote the link text if it contains a comma.
 </div>
 </div>
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Inline anchors</strong>
-<div class="content">
-<pre>[[bookmark-a]]Inline anchors make arbitrary content referenceable.&#x000A;&#x000A;anchor:bookmark-b[]Use a cross reference to link to this location.</pre>
-</div>
-</div>
-</div>
-</div>
 <p><a id="bookmark-a"></a>Inline anchors make arbitrary content referenceable.</p>
+</div>
 <p><a id="bookmark-b"></a>Use a cross reference to link to this location.</p>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Internal cross references</strong>
-<div class="content">
-<pre>See &lt;&lt;paragraphs&gt;&gt; to learn how to write paragraphs.&#x000A;&#x000A;Learn how to organize the document into &lt;&lt;section-titles,sections&gt;&gt;.</pre>
-</div>
-</div>
-</div>
-</div>
 <p>See <a href="#paragraphs">Paragraphs</a> to learn how to write paragraphs.</p>
+</div>
 <p>Learn how to organize the document into <a href="#section-titles">sections</a>.</p>
-<div class="exampleblock">
-<div class="content">
 <div class="listingblock">
 <strong class="heading">Inter-document cross references (Asciidoctor only)</strong>
 <div class="content">
 <pre>Refer to &lt;&lt;document-b.adoc#section-b,Section B&gt;&gt; for more information.&#x000A;&#x000A;See you when you get back from &lt;&lt;document-b#section-b,Section B&gt;&gt;!</pre>
 </div>
 </div>
-<p>== Images</p>
-<div class="listingblock">
-<strong class="heading">Block</strong>
-<div class="content">
-<pre>image::sunset.jpg[]&#x000A;&#x000A;image::sunset.jpg[Sunset]&#x000A;&#x000A;[[img-sunset]]&#x000A;.A mountain sunset&#x000A;image::sunset.jpg[Sunset, 300, 200, link="http://www.flickr.com/photos/javh/5448336655"]&#x000A;&#x000A;image::http://asciidoctor.org/images/octocat.jpg[GitHub mascot]</pre>
 </div>
-</div>
-</div>
-</div>
+</section>
+<!-- / Do the HTML part -->
+<section class="sect1">
+<h2 id="images">Images</h2>
+<div class="sectionbody">
 <figure class="imageblock">
 <div class="content">
 <img alt="sunset" src="images/sunset.jpg">
 </div>
+<figcaption class="caption">Block</figcaption>
 </figure>
 <figure class="imageblock">
 <div class="content">
@@ -918,8 +727,6 @@ When they are enabled, you must quote the link text if it contains a comma.
 <img alt="GitHub mascot" src="http://asciidoctor.org/images/octocat.jpg">
 </div>
 </figure>
-<div class="exampleblock">
-<div class="content">
 <div class="admonitionblock important">
 <strong class="title icon-title">Important</strong>
 <div class="content">
@@ -934,32 +741,20 @@ If the image target is a URL or absolute path, the <code>imagesdir</code> prefix
 You should use the <code>imagesdir</code> attribute to avoid hard coding the shared path to your images in every image macro.
 </div>
 </div>
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Image macro using positioning role</strong>
-<div class="content">
-<pre>image:sunset.jpg[Sunset,150,150,role="right"] What a beautiful sunset!</pre>
-</div>
-</div>
-</div>
-</div>
 <p><span class="image right"><img alt="Sunset" height="150" src="images/sunset.jpg" width="150"></span> What a beautiful sunset!</p>
-<div class="exampleblock">
-<div class="content">
+</div>
 <div class="admonitionblock tip">
 <strong class="title icon-title">Tip</strong>
 <div class="content">
 There are a variety of attributes available to <a href="http://asciidoctor.org/docs/user-manual/#put-images-in-their-place">position and frame images</a>.
 </div>
 </div>
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Inline</strong>
-<div class="content">
-<pre>Click image:icons/play.png[Play, title="Play"] to get the party started.&#x000A;&#x000A;Click image:icons/pause.png[title="Pause"] when you need a break.</pre>
-</div>
-</div>
-</div>
-</div>
 <p>Click <span class="image"><img alt="Play" src="images/icons/play.png" title="Play"></span> to get the party started.</p>
+</div>
 <p>Click <span class="image"><img alt="pause" src="images/icons/pause.png" title="Pause"></span> when you need a break.</p>
 <div class="exampleblock">
 <div class="content">
@@ -1007,53 +802,20 @@ You can control the video settings using <a href="http://asciidoctor.org/docs/us
 </div>
 </div>
 <p>== Source Code</p>
-<div class="listingblock">
+<div class="paragraph">
 <strong class="heading">Inline</strong>
-<div class="content">
-<pre>Reference code like `types` or `methods` inline.</pre>
-</div>
-</div>
-</div>
-</div>
 <p>Reference code like <code>types</code> or <code>methods</code> inline.</p>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
+</div>
+<div class="literalblock">
 <strong class="heading">Literal line</strong>
 <div class="content">
 <pre>Indent the line one space to insert a code snippet</pre>
 </div>
 </div>
-</div>
-</div>
 <div class="literalblock">
-<div class="content">
-<pre>Indent the line one space to insert a code snippet</pre>
-</div>
-</div>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
 <strong class="heading">Literal block</strong>
 <div class="content">
-<pre>....&#x000A;error: The requested operation returned error: 1954 Forbidden search for defensive operations manual&#x000A;absolutely fatal: operation initiation lost in the dodecahedron of doom&#x000A;would you like to die again? y/n&#x000A;....</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
 <pre>error: The requested operation returned error: 1954 Forbidden search for defensive operations manual&#x000A;absolutely fatal: operation initiation lost in the dodecahedron of doom&#x000A;would you like to die again? y/n</pre>
-</div>
-</div>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
-<strong class="heading">Listing block with title, no syntax highlighting</strong>
-<div class="content">
-<pre>.Gemfile.lock&#x000A;----&#x000A;GEM&#x000A;  remote: https://rubygems.org/&#x000A;  specs:&#x000A;    asciidoctor (0.1.4)&#x000A;&#x000A;PLATFORMS&#x000A;  ruby&#x000A;&#x000A;DEPENDENCIES&#x000A;  asciidoctor (~&gt; 0.1.4)&#x000A;----</pre>
-</div>
-</div>
 </div>
 </div>
 <div class="listingblock">
@@ -1062,35 +824,16 @@ You can control the video settings using <a href="http://asciidoctor.org/docs/us
 <pre>GEM&#x000A;  remote: https://rubygems.org/&#x000A;  specs:&#x000A;    asciidoctor (0.1.4)&#x000A;&#x000A;PLATFORMS&#x000A;  ruby&#x000A;&#x000A;DEPENDENCIES&#x000A;  asciidoctor (~&gt; 0.1.4)</pre>
 </div>
 </div>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
-<strong class="heading">Code block with title and syntax highlighting</strong>
-<div class="content">
-<pre>[source,ruby]&#x000A;.app.rb&#x000A;----&#x000A;require 'sinatra'&#x000A;&#x000A;get '/hi' do&#x000A;  "Hello World!"&#x000A;end&#x000A;----</pre>
-</div>
-</div>
-</div>
-</div>
 <div class="listingblock">
 <strong class="heading">app.rb</strong>
 <div class="content">
 <pre class="highlight"><code class="language-ruby" data-lang="ruby">require 'sinatra'&#x000A;&#x000A;get '/hi' do&#x000A;  "Hello World!"&#x000A;end</code></pre>
 </div>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="listingblock">
 <strong class="heading">Code block with callouts</strong>
 <div class="content">
-<pre>[source,ruby]&#x000A;----&#x000A;require 'sinatra' &lt;1&gt;&#x000A;&#x000A;get '/hi' do      &lt;2&gt;&#x000A;  "Hello World!"  &lt;3&gt;&#x000A;end&#x000A;----&#x000A;&lt;1&gt; Library import&#x000A;&lt;2&gt; URL mapping&#x000A;&lt;3&gt; Content for response</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-ruby" data-lang="ruby">require 'sinatra' <span class="colist-num"><i aria-label="See #1 in list below" class="conum">1</i></span>&#x000A;&#x000A;get '/hi' do      <span class="colist-num"><i aria-label="See #2 in list below" class="conum">2</i></span>&#x000A;  "Hello World!"  <span class="colist-num"><i aria-label="See #3 in list below" class="conum">3</i></span>&#x000A;end</code></pre>
+<pre class="highlight"><code class="language-ruby" data-lang="ruby">require 'sinatra' &lt;1&gt;&#x000A;&#x000A;get '/hi' do      &lt;2&gt;&#x000A;  "Hello World!"  &lt;3&gt;&#x000A;end</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1106,19 +849,10 @@ You can control the video settings using <a href="http://asciidoctor.org/docs/us
 </li>
 </ol>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="listingblock">
 <strong class="heading">Code block with non-selectable callouts</strong>
 <div class="content">
-<pre>----&#x000A;line of code  // &lt;1&gt;&#x000A;line of code  # &lt;2&gt;&#x000A;line of code  ;; &lt;3&gt;&#x000A;----&#x000A;&lt;1&gt; A callout behind a line comment for C-style languages.&#x000A;&lt;2&gt; A callout behind a line comment for Ruby, Python, Perl, etc.&#x000A;&lt;3&gt; A callout behind a line comment for Clojure.</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>line of code  <span class="colist-num"><i aria-label="See #1 in list below" class="conum">1</i></span>&#x000A;line of code  <span class="colist-num"><i aria-label="See #2 in list below" class="conum">2</i></span>&#x000A;line of code  <span class="colist-num"><i aria-label="See #3 in list below" class="conum">3</i></span></pre>
+<pre>line of code  // &lt;1&gt;&#x000A;line of code  # &lt;2&gt;&#x000A;line of code  ;; &lt;3&gt;</pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1134,19 +868,10 @@ You can control the video settings using <a href="http://asciidoctor.org/docs/us
 </li>
 </ol>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="listingblock">
 <strong class="heading">XML code block with a non-selectable callout</strong>
 <div class="content">
-<pre>[source,xml]&#x000A;----&#x000A;&lt;section&gt;&#x000A;  &lt;title&gt;Section Title&lt;/title&gt; &lt;!--1--&gt;&#x000A;&lt;/section&gt;&#x000A;----&#x000A;&lt;1&gt; The section title is required.</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;section&gt;&#x000A;  &lt;title&gt;Section Title&lt;/title&gt; <span class="colist-num"><i aria-label="See #1 in list below" class="conum">1</i></span>&#x000A;&lt;/section&gt;</code></pre>
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;section&gt;&#x000A;  &lt;title&gt;Section Title&lt;/title&gt; &lt;!--1--&gt;&#x000A;&lt;/section&gt;</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1156,8 +881,6 @@ You can control the video settings using <a href="http://asciidoctor.org/docs/us
 </li>
 </ol>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="listingblock">
 <strong class="heading">Code block sourced from file</strong>
 <div class="content">
@@ -1191,20 +914,11 @@ You can control the video settings using <a href="http://asciidoctor.org/docs/us
 <div class="listingblock">
 <strong class="heading">Code block without delimiters (no blank lines)</strong>
 <div class="content">
-<pre>[source,xml]&#x000A;&lt;meta name="viewport"&#x000A;  content="width=device-width, initial-scale=1.0"&gt;</pre>
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;meta name="viewport"&#x000A;  content="width=device-width, initial-scale=1.0"&gt;</code></pre>
 </div>
 </div>
 </div>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;meta name="viewport"&#x000A;  content="width=device-width, initial-scale=1.0"&gt;&#x000A;====</code></pre>
-</div>
-</div>
-<div class="admonitionblock important">
-<strong class="title icon-title">Important</strong>
-<div class="content">
-<strong class="title">Enabling the syntax highlighter</strong>
 <p>Syntax highlighting is enabled by setting the <code>source-highlighter</code> attribute in the document header or passed as an argument.</p>
 <div class="literalblock">
 <div class="content">
@@ -1212,22 +926,9 @@ You can control the video settings using <a href="http://asciidoctor.org/docs/us
 </div>
 </div>
 <p>The valid options for are <code>coderay</code>, <code>highlight.js</code>, <code>prettify</code>, and <code>pygments</code>.</p>
-</div>
-</div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="more-delimited-blocks">More Delimited Blocks</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<strong class="heading">Sidebar</strong>
+<div class="exampleblock">
 <div class="content">
-<pre>.AsciiDoc history&#x000A;****&#x000A;AsciiDoc was first released in Nov 2002 by Stuart Rackham.&#x000A;It was designed from the start to be a shorthand syntax&#x000A;for producing professional documents like DocBook and LaTeX.&#x000A;****</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
+<p>== More Delimited Blocks</p>
 <aside class="sidebarblock">
 <strong class="heading">AsciiDoc history</strong>
 <div class="content">
@@ -1236,8 +937,6 @@ It was designed from the start to be a shorthand syntax
 for producing professional documents like DocBook and LaTeX.</p>
 </div>
 </aside>
-</div>
-</div>
 <div class="admonitionblock note">
 <strong class="title icon-title">Note</strong>
 <div class="content">
@@ -1249,14 +948,11 @@ The dot cannot be followed by a space.
 <div class="listingblock">
 <strong class="heading">Example</strong>
 <div class="content">
-<pre>.Sample document&#x000A;====&#x000A;Here's a sample AsciiDoc document:&#x000A;&#x000A;[listing]&#x000A;....&#x000A;= Title of Document&#x000A;Doc Writer&#x000A;:toc:&#x000A;&#x000A;This guide provides...&#x000A;....&#x000A;&#x000A;The document header is useful, but not required.&#x000A;====</pre>
+<pre>.Sample document</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
-<div class="exampleblock">
-<strong class="heading">Sample document</strong>
-<div class="content">
+</div>
+</div>
 <p>Here&#8217;s a sample AsciiDoc document:</p>
 <div class="listingblock">
 <div class="content">
@@ -1264,21 +960,31 @@ The dot cannot be followed by a space.
 </div>
 </div>
 <p>The document header is useful, but not required.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="listingblock" id="admon-bl">
-<strong class="heading">Admonition</strong>
+<div class="exampleblock">
 <div class="content">
-<pre>[NOTE]&#x000A;====&#x000A;An admonition block may contain complex content.&#x000A;&#x000A;.A list&#x000A;- one&#x000A;- two&#x000A;- three&#x000A;&#x000A;Another paragraph.&#x000A;====</pre>
+<div class="listingblock">
+<div class="content">
+<pre>[example.result]&#x000A;--&#x000A;.Sample document</pre>
 </div>
 </div>
-<div class="exampleblock result">
+</div>
+</div>
+<p>Here&#8217;s a sample AsciiDoc document:</p>
+<div class="listingblock">
 <div class="content">
-<div class="admonitionblock note">
-<strong class="title icon-title">Note</strong>
+<pre>= Title of Document&#x000A;Doc Writer&#x000A;:toc:&#x000A;&#x000A;This guide provides...</pre>
+</div>
+</div>
+<p>The document header is useful, but not required.</p>
+<div class="exampleblock">
 <div class="content">
+<div class="openblock">
+<div class="content">
+
+</div>
+</div>
+</div>
+</div>
 <p>An admonition block may contain complex content.</p>
 <div class="ulist">
 <strong class="heading" id="ulist_heading_12">A list</strong>
@@ -1295,29 +1001,19 @@ The dot cannot be followed by a space.
 </ul>
 </div>
 <p>Another paragraph.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="admonitionblock tip">
-<strong class="title icon-title">Tip</strong>
+<div class="exampleblock">
 <div class="content">
-<strong class="title">Admonition and callout icons</strong>
+
+</div>
+</div>
 <p>Asciidoctor can "draw" icons using <a href="http://fortawesome.github.io/Font-Awesome" target="_blank">Font Awesome</a> and CSS.</p>
 <p>To use this feature, set the value of the <code>icons</code> document attribute to <code>font</code>.
 Asciidoctor will then emit HTML markup that selects an appropriate font character from the Font Awesome font for each admonition block.</p>
 <p>Icons can also be used <a href="http://asciidoctor.org/docs/user-manual/#inline-icons">inline</a> and <a href="http://asciidoctor.org/docs/user-manual/#size-rotate-and-flip">styled</a>.</p>
-</div>
-</div>
-<div class="listingblock">
-<strong class="heading">Blockquote</strong>
-<div class="content">
-<pre>[quote, Abraham Lincoln, Soldiers' National Cemetery Dedication]&#x000A;____&#x000A;Four score and seven years ago our fathers brought forth&#x000A;on this continent a new nation...&#x000A;____&#x000A;&#x000A;[quote, Albert Einstein]&#x000A;A person who never made a mistake never tried anything new.&#x000A;&#x000A;____&#x000A;A person who never made a mistake never tried anything new.&#x000A;____</pre>
-</div>
-</div>
-<div class="exampleblock result">
+<div class="exampleblock">
 <div class="content">
 <div class="quoteblock">
+<strong class="heading">Blockquote</strong>
 <blockquote>
 <div class="content"><p>Four score and seven years ago our fathers brought forth
 on this continent a new nation&#8230;&#8203;</p></div>
@@ -1345,17 +1041,8 @@ on this continent a new nation&#8230;&#8203;</p></div>
 <div class="content"><p>A person who never made a mistake never tried anything new.</p></div>
 </blockquote>
 </div>
-</div>
-</div>
-<div class="listingblock">
-<strong class="heading">Abbreviated blockquote (Asciidoctor only)</strong>
-<div class="content">
-<pre>"I hold it that a little rebellion now and then is a good thing,&#x000A;and as necessary in the political world as storms in the physical."&#x000A;-- Thomas Jefferson, Papers of Thomas Jefferson: Volume 11</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <div class="quoteblock">
+<strong class="heading">Abbreviated blockquote (Asciidoctor only)</strong>
 <blockquote>
 <div class="content">I hold it that a little rebellion now and then is a good thing,
 and as necessary in the political world as storms in the physical.</div>
@@ -1367,20 +1054,8 @@ and as necessary in the political world as storms in the physical.</div>
 </footer>
 </blockquote>
 </div>
-</div>
-</div>
-<div class="paragraph">
-<strong class="heading">Air quotes (Asciidoctor only)</strong>
 <p>As a tip of the hat to Dick, Asciidoctor recognizes text between "air quotes" as a quote block.
 Air quotes are the best thing since fenced code blocks.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>[, Richard M. Nixon]&#x000A;""&#x000A;When the President does it, that means that it's not illegal.&#x000A;""</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <div class="quoteblock">
 <blockquote>
 <div class="content"><p>When the President does it, that means that it&#8217;s not illegal.</p></div>
@@ -1392,16 +1067,6 @@ Air quotes are the best thing since fenced code blocks.</p>
 </footer>
 </blockquote>
 </div>
-</div>
-</div>
-<div class="listingblock">
-<strong class="heading">Passthrough</strong>
-<div class="content">
-<pre>++++&#x000A;&lt;p&gt;&#x000A;Content in a passthrough block is passed to the output unprocessed.&#x000A;That means you can include raw HTML, like this embedded Gist:&#x000A;&lt;/p&gt;&#x000A;&#x000A;&lt;script src="http://gist.github.com/mojavelinux/5333524.js"&gt;&#x000A;&lt;/script&gt;&#x000A;++++</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <p>
 Content in a passthrough block is passed to the output unprocessed.
 That means you can include raw HTML, like this embedded Gist:
@@ -1409,17 +1074,8 @@ That means you can include raw HTML, like this embedded Gist:
 
 <script src="http://gist.github.com/mojavelinux/5333524.js">
 </script>
-</div>
-</div>
-<div class="listingblock">
-<strong class="heading">Open</strong>
-<div class="content">
-<pre>--&#x000A;An open block can be an anonymous container,&#x000A;or it can masquerade as any other block.&#x000A;--&#x000A;&#x000A;[source]&#x000A;--&#x000A;puts "I'm a source block!"&#x000A;--</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
 <div class="openblock">
+<strong class="heading">Open</strong>
 <div class="content">
 <p>An open block can be an anonymous container,
 or it can masquerade as any other block.</p>
@@ -1430,29 +1086,13 @@ or it can masquerade as any other block.</p>
 <pre class="highlight"><code>puts "I'm a source block!"</code></pre>
 </div>
 </div>
-</div>
-</div>
 <div class="listingblock">
 <strong class="heading">Custom substitutions</strong>
-<div class="content">
-<pre>:version: 0.1.4&#x000A;&#x000A;[source,xml]&#x000A;[subs="verbatim,attributes"]&#x000A;----&#x000A;&lt;dependency&gt;&#x000A;  &lt;groupId&gt;org.asciidoctor&lt;/groupId&gt;&#x000A;  &lt;artifactId&gt;asciidoctor-java-integration&lt;/artifactId&gt;&#x000A;  &lt;version&gt;{version}&lt;/version&gt;&#x000A;&lt;/dependency&gt;&#x000A;----</pre>
-</div>
-</div>
-<div class="exampleblock result">
-<div class="content">
-<div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;&#x000A;  &lt;groupId&gt;org.asciidoctor&lt;/groupId&gt;&#x000A;  &lt;artifactId&gt;asciidoctor-java-integration&lt;/artifactId&gt;&#x000A;  &lt;version&gt;0.1.4&lt;/version&gt;&#x000A;&lt;/dependency&gt;</code></pre>
 </div>
 </div>
-</div>
-</div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="block-id-role-and-options">Block Id, Role and Options</h2>
-<div class="sectionbody">
+<p>== Block Id, Role and Options</p>
 <div class="listingblock">
 <strong class="heading">Traditional markup method for assigning block <code>id</code> and <code>role</code></strong>
 <div class="content">
@@ -1465,9 +1105,8 @@ or it can masquerade as any other block.</p>
 <pre>[#goals.incremental]&#x000A;* Goal 1&#x000A;* Goal 2</pre>
 </div>
 </div>
-<div class="admonitionblock tip">
-<strong class="title icon-title">Tip</strong>
-<div class="content">
+</div>
+</div>
 <ul>
 <li>
 <p>To specify multiple roles using the shorthand syntax, separate them by dots.</p>
@@ -1476,8 +1115,8 @@ or it can masquerade as any other block.</p>
 <p>The order of <code>id</code> and <code>role</code> values in the shorthand syntax does not matter.</p>
 </li>
 </ul>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Traditional markup method for assigning quoted text anchor (<code>id</code>) and <code>role</code></strong>
 <div class="content">
@@ -1508,12 +1147,7 @@ or it can masquerade as any other block.</p>
 <pre>[%header%footer%autowidth]&#x000A;|===&#x000A;|Cell A |Cell B&#x000A;|===</pre>
 </div>
 </div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="comments">Comments</h2>
-<div class="sectionbody">
+<p>== Comments</p>
 <div class="listingblock">
 <strong class="heading">Line</strong>
 <div class="content">
@@ -1532,12 +1166,7 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 <pre>////&#x000A;A multi-line comment.&#x000A;&#x000A;Notice it's a delimited block.&#x000A;////</pre>
 </div>
 </div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="tables">Tables</h2>
-<div class="sectionbody">
+<p>== Tables</p>
 <div class="listingblock">
 <strong class="heading">Table with a title, three columns, a header, and two rows of content</strong>
 <div class="content">
@@ -1554,8 +1183,8 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 </li>
 </ol>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <caption class="title">Table Title</caption>
 <colgroup>
@@ -1583,8 +1212,8 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Table with two columns, a header, and two rows of content</strong>
 <div class="content">
@@ -1598,8 +1227,8 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 </li>
 </ol>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 50%;">
@@ -1622,8 +1251,8 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Table with three columns, a header, and two rows of content</strong>
 <div class="content">
@@ -1637,8 +1266,8 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 </li>
 </ol>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <caption class="title">Applications</caption>
 <colgroup>
@@ -1669,16 +1298,16 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Table with column containing AsciiDoc content</strong>
 <div class="content">
 <pre>[cols="2,2,5a"]&#x000A;|===&#x000A;|Firefox&#x000A;|Browser&#x000A;|Mozilla Firefox is an open-source web browser.&#x000A;&#x000A;It's designed for:&#x000A;&#x000A;* standards compliance&#x000A;* performance&#x000A;* portability&#x000A;&#x000A;http://getfirefox.com[Get Firefox]!&#x000A;|===</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 22.2222%;">
@@ -1706,16 +1335,16 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Table from CSV data</strong>
 <div class="content">
 <pre>[format="csv", options="header"]&#x000A;|===&#x000A;Artist,Track,Genre&#x000A;Baauer,Harlem Shake,Hip Hop&#x000A;The Lumineers,Ho Hey,Folk Rock&#x000A;|===</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1742,16 +1371,16 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Table from CSV data using shorthand (Asciidoctor only)</strong>
 <div class="content">
 <pre>,===&#x000A;Artist,Track,Genre&#x000A;&#x000A;Baauer,Harlem Shake,Hip Hop&#x000A;,===</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1773,16 +1402,16 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Table from DSV data using shorthand (Asciidoctor only)</strong>
 <div class="content">
 <pre>:===&#x000A;Artist:Track:Genre&#x000A;&#x000A;Robyn:Indestructable:Dance&#x000A;:===</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1804,16 +1433,16 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Table with formatted, aligned and merged cells</strong>
 <div class="content">
 <pre>[cols="e,m,^,&gt;s", width="25%"]&#x000A;|===&#x000A;|1 &gt;s|2 |3 |4&#x000A;^|5 2.2+^.^|6 .3+&lt;.&gt;m|7&#x000A;^|8&#x000A;|9 2+&gt;|10&#x000A;|===</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <table class="tableblock frame-all grid-all" style="width: 25%;">
 <colgroup>
 <col style="width: 25%;">
@@ -1842,14 +1471,9 @@ Single-line comments can be used to divide elements, such as two adjacent lists.
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="ui-macros">UI Macros</h2>
-<div class="sectionbody">
+<div class="exampleblock">
+<div class="content">
+<p>== UI Macros</p>
 <div class="admonitionblock important">
 <strong class="title icon-title">Important</strong>
 <div class="content">
@@ -1862,8 +1486,8 @@ You <strong>must</strong> set the <code>experimental</code> attribute in the doc
 <pre>|===&#x000A;|Shortcut |Purpose&#x000A;&#x000A;|kbd:[F11]&#x000A;|Toggle fullscreen&#x000A;&#x000A;|kbd:[Ctrl+T]&#x000A;|Open a new tab&#x000A;&#x000A;|kbd:[Ctrl+Shift+N]&#x000A;|New incognito window&#x000A;&#x000A;|kbd:[Ctrl + +]&#x000A;|Increase zoom&#x000A;|===</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 50%;">
@@ -1894,46 +1518,41 @@ You <strong>must</strong> set the <code>experimental</code> attribute in the doc
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Menu selections (inline <code>menu</code> macro)</strong>
 <div class="content">
 <pre>To save the file, select menu:File[Save].&#x000A;&#x000A;Select menu:View[Zoom &gt; Reset] to reset the zoom level to the default setting.</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <p>To save the file, select <span class="menuseq"><span class="menu">File</span>&#160;&#9656; <span class="menuitem">Save</span></span>.</p>
 <p>Select <span class="menuseq"><span class="menu">View</span>&#160;&#9656; <span class="submenu">Zoom</span>&#160;&#9656; <span class="menuitem">Reset</span></span> to reset the zoom level to the default setting.</p>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Buttons (inline <code>btn</code> macro)</strong>
 <div class="content">
 <pre>Press the btn:[OK] button when you are finished.&#x000A;&#x000A;Select a file in the file navigator and click btn:[Open].</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <p>Press the <b class="button">OK</b> button when you are finished.</p>
 <p>Select a file in the file navigator and click <b class="button">Open</b>.</p>
-</div>
-</div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="attributes-and-substitutions">Attributes and Substitutions</h2>
-<div class="sectionbody">
+<div class="exampleblock">
+<div class="content">
+<p>== Attributes and Substitutions</p>
 <div class="listingblock">
 <strong class="heading">Attribute declaration and usage</strong>
 <div class="content">
 <pre>:homepage: http://asciidoctor.org&#x000A;:docslink: http://asciidoctor.org/docs[Asciidoctor's Docs]&#x000A;:desc: Asciidoctor is a mature, plain-text document format for +&#x000A;       writing notes, articles, documentation, books, and more. +&#x000A;       It's also a text processor &amp; toolchain for translating +&#x000A;       documents into various output formats (i.e., backends), +&#x000A;       including HTML, DocBook, PDF and ePub.&#x000A;:checkedbox: pass:normal[`[&amp;#10004;]`]&#x000A;&#x000A;Check out {homepage}[Asciidoctor]!&#x000A;&#x000A;{desc}&#x000A;&#x000A;Check out {docslink} too!&#x000A;&#x000A;{checkedbox} That's done!</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <table class="tableblock frame-all grid-all spread unstyled">
 <colgroup>
 <col style="width: 100%;">
@@ -1947,8 +1566,8 @@ You <strong>must</strong> set the <code>experimental</code> attribute in the doc
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="ulist">
 <strong class="heading" id="ulist_heading_12">Attribute assignment precedence (highest to lowest)</strong>
 <ul aria-labelledby="ulist_heading_12">
@@ -2162,82 +1781,67 @@ Replaces the line break character (<code>&#43;</code>)
 <pre>[caption=""]&#x000A;.Parts{counter2:index:0}&#x000A;|===&#x000A;|Part Id |Description&#x000A;&#x000A;|PX-{counter:index}&#x000A;|Description of PX-{index}&#x000A;&#x000A;|PX-{counter:index}&#x000A;|Description of PX-{index}&#x000A;|===</pre>
 </div>
 </div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="text-replacement">Text Replacement</h2>
-<div class="sectionbody">
+<p>==  Text Replacement</p>
 <div class="admonitionblock tip">
 <strong class="title icon-title">Tip</strong>
 <div class="content">
 Any named, numeric or hex <a href="http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references">XML entity reference</a> is supported.
 </div>
 </div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="escaping-text">Escaping Text</h2>
-<div class="sectionbody">
+<p>== Escaping Text</p>
 <div class="listingblock">
 <strong class="heading">Backslash</strong>
 <div class="content">
 <pre>\*Stars* is not rendered as bold text.&#x000A;The asterisks around the word are preserved.&#x000A;&#x000A;\{author} is not resolved to the author name.&#x000A;The curly brackets around the word are preserved.&#x000A;&#x000A;The backslash character is automatically removed.</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <p>*Stars* is not rendered as bold text.
 The asterisks around the word are preserved.</p>
 <p>{author} is not resolved to the author name.
 The curly brackets around the word are preserved.</p>
 <p>The backslash character is automatically removed.</p>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Double dollar</strong>
 <div class="content">
 <pre>$$*Stars*$$ is not rendered as bold text.&#x000A;The asterisks around the word are preserved.&#x000A;&#x000A;$$&amp;amp;$$ renders as an XML entity instead of &amp;.</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <p>*Stars* is not rendered as bold text.
 The asterisks around the word are preserved.</p>
 <p>&amp;amp; renders as an XML entity instead of &amp;.</p>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Triple plus and inline passthrough macro</strong>
 <div class="content">
 <pre>+++&lt;u&gt;underline me&lt;/u&gt;+++ renders as underlined text.&#x000A;&#x000A;pass:[&lt;u&gt;underline me&lt;/u&gt;] also renders as underlined text.</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <p><u>underline me</u> renders as underlined text.</p>
 <p><u>underline me</u> also renders as underlined text.</p>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Backticks</strong>
 <div class="content">
 <pre>`Text in {backticks}` renders exactly as entered, in `monospace`.&#x000A;The attribute reference is not resolved.</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <p><code>Text in {backticks}</code> renders exactly as entered, in <code>monospace</code>.
 The attribute reference is not resolved.</p>
-</div>
-</div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="table-of-contents-toc">Table of Contents (ToC)</h2>
-<div class="sectionbody">
+<div class="exampleblock">
+<div class="content">
+<p>== Table of Contents (ToC)</p>
 <div class="listingblock">
 <strong class="heading">Document with ToC</strong>
 <div class="content">
@@ -2256,20 +1860,15 @@ The attribute reference is not resolved.</p>
 The ToC <a href="http://asciidoctor.org/docs/user-manual/#table-of-contents">title, levels, and positioning</a> can be customized.
 </div>
 </div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="bibliography">Bibliography</h2>
-<div class="sectionbody">
+<p>== Bibliography</p>
 <div class="listingblock">
 <strong class="heading">References</strong>
 <div class="content">
 <pre>'The Pragmatic Programmer' &lt;&lt;prag&gt;&gt; should be required reading for&#x000A;all developers.&#x000A;&#x000A;[bibliography]&#x000A;- [[[prag]]] Andy Hunt &amp; Dave Thomas. 'The Pragmatic Programmer:&#x000A;  From Journeyman to Master'. Addison-Wesley. 1999.&#x000A;- [[[seam]]] Dan Allen. 'Seam in Action'. Manning Publications.&#x000A;  2008.</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <p>'The Pragmatic Programmer' <a href="#prag">[prag]</a> should be required reading for
 all developers.</p>
 <ul class="bibliography">
@@ -2282,22 +1881,17 @@ From Journeyman to Master'. Addison-Wesley. 1999.</p>
 2008.</p>
 </li>
 </ul>
-</div>
-</div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="section-footnotes">Footnotes</h2>
-<div class="sectionbody">
+<div class="exampleblock">
+<div class="content">
+<p>== Footnotes</p>
 <div class="listingblock">
 <strong class="heading">Normal and reusable footnotes</strong>
 <div class="content">
 <pre>A statement.footnote:[Clarification about this statement.]&#x000A;&#x000A;A bold statement.footnoteref:[disclaimer,These opinions are my own.]&#x000A;&#x000A;Another bold statement.footenoteref:[disclaimer]</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <table class="tableblock frame-all grid-all spread unstyled">
 <colgroup>
 <col style="width: 100%;">
@@ -2319,14 +1913,9 @@ From Journeyman to Master'. Addison-Wesley. 1999.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="markdown-compatibility">Markdown Compatibility</h2>
-<div class="sectionbody">
+<div class="exampleblock">
+<div class="content">
+<p>== Markdown Compatibility</p>
 <div class="admonitionblock important">
 <strong class="title icon-title">Important</strong>
 <div class="content">
@@ -2340,39 +1929,39 @@ You can configure AsciiDoc (Python) to recognize this syntax by putting <a href=
 <pre># Document Title (Level 0)&#x000A;&#x000A;## Section Level 1&#x000A;&#x000A;### Section Level 2&#x000A;&#x000A;#### Section Level 3&#x000A;&#x000A;##### Section Level 4&#x000A;&#x000A;###### Section Level 5</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <h1 class="float" id="document-title-level-0">Document Title (Level 0)</h1>
 <h2 class="float" id="section-level-1">Section Level 1</h2>
 <h3 class="float" id="section-level-2">Section Level 2</h3>
 <h4 class="float" id="section-level-3">Section Level 3</h4>
 <h5 class="float" id="section-level-4">Section Level 4</h5>
 <h6 class="float" id="section-level-5">Section Level 5</h6>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Fenced code block with syntax highlighting</strong>
 <div class="content">
 <pre>```ruby&#x000A;require 'sinatra'&#x000A;&#x000A;get '/hi' do&#x000A;  "Hello World!"&#x000A;end&#x000A;```</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-ruby" data-lang="ruby">require 'sinatra'&#x000A;&#x000A;get '/hi' do&#x000A;  "Hello World!"&#x000A;end</code></pre>
 </div>
 </div>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Markdown-style blockquote</strong>
 <div class="content">
 <pre>&gt; I hold it that a little rebellion now and then is a good thing,&#x000A;&gt; and as necessary in the political world as storms in the physical.&#x000A;&gt; -- Thomas Jefferson, Papers of Thomas Jefferson: Volume 11</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <div class="quoteblock">
 <blockquote>
 <div class="content"><p>I hold it that a little rebellion now and then is a good thing,
@@ -2385,16 +1974,16 @@ and as necessary in the political world as storms in the physical.</p></div>
 </footer>
 </blockquote>
 </div>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Markdown-style blockquote with block content</strong>
 <div class="content">
 <pre>&gt; &gt; What's new?&#x000A;&gt;&#x000A;&gt; I've got Markdown in my AsciiDoc!&#x000A;&gt;&#x000A;&gt; &gt; Like what?&#x000A;&gt;&#x000A;&gt; * Blockquotes&#x000A;&gt; * Headings&#x000A;&gt; * Fenced code blocks&#x000A;&gt;&#x000A;&gt; &gt; Is there more?&#x000A;&gt;&#x000A;&gt; Yep. AsciiDoc and Markdown share a lot of common syntax already.</pre>
 </div>
 </div>
-<div class="exampleblock result">
-<div class="content">
+</div>
+</div>
 <div class="quoteblock">
 <blockquote>
 <div class="content"><div class="quoteblock">
@@ -2427,30 +2016,27 @@ and as necessary in the political world as storms in the physical.</p></div>
 <p>Yep. AsciiDoc and Markdown share a lot of common syntax already.</p></div>
 </blockquote>
 </div>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <strong class="heading">Markdown-style horizontal rules</strong>
 <div class="content">
 <pre>---&#x000A;&#x000A;- - -&#x000A;&#x000A;***&#x000A;&#x000A;* * *</pre>
 </div>
 </div>
-<div class="exampleblock result">
+</div>
+</div>
+<hr>
+<hr>
+<hr>
+<hr>
+<div class="exampleblock">
 <div class="content">
-<hr>
-<hr>
-<hr>
-<hr>
-</div>
-</div>
-</div>
-</section>
-<!-- / Do the HTML part -->
-<section class="sect1">
-<h2 id="user-manual-and-help">User Manual and Help</h2>
-<div class="sectionbody">
+<p>== User Manual and Help</p>
 <p>To learn more about Asciidoctor and its capabilities, check out the other <a href="http://asciidoctor.org/docs">Asciidoctor guides</a> and its <a href="http://asciidoctor.org/docs/user-manual">User Manual</a>.
 Also, don&#8217;t forget to join the <a href="http://discuss.asciidoctor.org">Asciidoctor mailing list</a>, where you can ask questions and leave comments.</p>
+</div>
+</div>
 </div>
 </section>
 <div class="rh-docs-legal-notice">
@@ -2460,9 +2046,9 @@ Also, don&#8217;t forget to join the <a href="http://discuss.asciidoctor.org">As
 <footer class="rhdocs-footer" id="rhdocs-footer">
 <div class="rhdocs-footer-text" id="rhdocs-footer-text">
 Version 1.0.3<br>
-Last updated 2020-05-21 13:06:34 EDT
+Last updated 2020-06-10 16:17:00 EDT
 </div>
 </footer>
-</article>
+</cp-documentation>
 </body>
 </html>

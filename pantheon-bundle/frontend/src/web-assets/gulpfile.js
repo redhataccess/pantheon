@@ -34,12 +34,10 @@ const
   cssOutput = '../../../src/main/resources/SLING-INF/content/static/',
   asciiDocTemplates = '../../../src/main/resources/apps/pantheon/templates/haml/html5';
 
-// const isDev = process.env.NODE_ENV === 'dev';
-
 task(
   'compileAsciiDocs',
   parallel(
-    shell.task(`asciidoctor -T ${asciiDocTemplates} -a env=localwebassets dev-assets/ascii-doc-styleguide.adoc`),
+    shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets dev-assets/ascii-doc-styleguide.adoc`),
   )
 );
 
@@ -67,6 +65,7 @@ const compileCSS = () => {
     // to this directory for dev
     .pipe(sourceMaps.write())
     .pipe(dest('./dev-assets/'))
+    // Make production CSS and put in prod location
     .pipe(postCss([cssNano(),]))
     .pipe(dest(cssOutput));
 };

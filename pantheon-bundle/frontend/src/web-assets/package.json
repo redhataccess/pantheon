@@ -19,17 +19,20 @@
     "gulp-shell": "^0.8.0",
     "gulp-sourcemaps": "^2.6.5",
     "normalizecss": "^3.0.0",
-    "postcss-pxtorem": "^4.0.1"
+    "postcss-pxtorem": "^4.0.1",
+    "yarn": "^1.22.4"
   },
   "scripts": {
     "gulp": "gulp",
+    "yarn": "yarn",
     "browser-sync": "browser-sync",
     "build": "gulp",
     "build:dev": "gulp build:dev",
     "watch": "npm run gulp watch",
     "dev": "npm run gulp watch",
     "clean": "rm -rf node_modules",
-    "start": "npm run watch"
+    "start": "npm run watch",
+    "postinstall": "cd dev-assets && yarn install"
   },
   "dependencies": {}
 }
