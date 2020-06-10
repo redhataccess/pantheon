@@ -5,24 +5,111 @@
 
 Pantheon 2 is a modular documentation management and publication system based on asciidoc
 and built on top of Apache sling.
+* [Contributing to Pantheon](#contributing-to-pantheon)
+* [Installing Pantheon](#installing-pantheon)
+ * [Prerequisites](#prerequisites)
+ * [Environment Variables](#environment-variables)
+ * [Building the application](#building-the-application)
+ * [Unit tests](#unit-tests)
+ * [Running the application](#running-the-application)
+ * [Live deploy of code](#live-deploy-of-code)
+ * [Using the application](#using-the-application)
+ * [Other use cases](#other-use-cases)
+ * [Developing the frontend code](#developing-the-frontend-code)
+* [End user documentation](#end-user-documentation)
 
-### Prerequsistes
-Java
+## Contributing to Pantheon
 
-Clone and build _https://github.com/apache/sling-org-apache-sling-karaf-configs.git_. This is required because sling-karaf-configs is not available on any of the maven repositories.
+### Prerequisites
+
+* You must have an account on GitHub.  
+  [Signing up for a new GitHub account](https://help.github.com/en/github/getting-started-with-github/signing-up-for-a-new-github-account)
+* You must have registered SSH keys in your GitHub account.  
+[Adding a new SSH key to your GitHub account](https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account)
+* You must be a member of the `pantheon-doc-authors` team in the `redhataccess` group in GitHub.
+* You must be logged in to your account on GitHub.
+
+### Forking the repository
+
+Fork the repository so that you can create and work with branches independently of the `redhataccess/pantheon` repository.
+
+1. In a web browser, navigate to https://github.com/redhataccess/pantheon
+1. Click **Fork**.
+1. Click your user space in GitHub.
+
+### Cloning the repository
+
+After you have forked the repository, you must clone it to your local machine and add the original `redhataccess/pantheon` repository as an upstream remote.
+
+1. From a terminal, clone the repository:  
+       $ git clone git@github.com:<user-space>/pantheon.git
+1. Set up `redhataccess/pantheon` as the upstream:  
+       $ cd pantheon
+       $ git remote add upstream git@github.com:redhataccess/pantheon.git
+
+### Creating a working branch
+
+Whenever you work on a new issue, you must create a new working branch based on the latest version of the upstream master branch.
+
+1. Ensure you are on master  
+       $ git checkout master
+1. Ensure your fork is up to date  
+       $ git pull upstream master
+1. Create a working branch based on the issue in JIRA:  
+       $ git checkout -b FCCEUD<ID#>
+
+### Creating a pull request and completing review
+
+When your work is ready to be reviewed and merged, create a pull request.
+
+1. Push your working branch to your fork:  
+       $ git push -u origin <branch_name>
+1. From the repository page in GitHub, click **New pull request**.
+1. Select your working branch from the compare list.
+1. Add `WIP` to the title of the pull request.
+1. Add the **awaiting tech review** label to the pull request.
+1. In the pull request comment field, enter `@redhataccess/pantheon-developers Please review for technical completeness and accuracy`.
+1. Click **Create new pull request**.
+
+For code pull requests, one or more developers review the pull request. For documentation pull requests, the developers review the pull request for technical accuracy and documentation team members review the pull request for clarity, consistency, and compliance with necessary standards.
+
+### The review process
+
+Both the technical review and peer review processes take place in pull requests in GitHub.
+
+After creating and labeling a pull request as outlined above, the developers review the pull request and add comments regarding technical accuracy. Writers receive a notification that comments have been added via email, and when all comments have been addressed, the developers change the label from **awaiting tech review** to **tech review passed**.
+
+When technical review is complete, writers click the **Reviewers** gear icon and select the name of a team member to request peer review. Writers receive a notification that comments have been added via email, and when all comments have been addressed, the reviewer clicks **Review changes > Approve** from the **Files changed** tab of the pull request to approve the changes and the pull request.
+
+### Merging a pull request
+
+When you have addressed all technical review and peer review comments, notify the developers to accept the pull request.
+
+1. Remove `WIP` from the title of the pull request.
+1. Click **Request Review** and enter `@redhataccess/pantheon-developers`.
+
+The developers check that the **Tech review passed** label has been added to the pull request and peer pull request approval provided, then accept it.
+
+## Installing Pantheon
+
+### Prerequisites
+* Podman
+* Buildah
+* Java
+
 ### Environment Variables
 **Project Root Directory**
 
-The build script provided in _scripts_ directory makes use of _PANTHEON_CODEBASE_ environmet variable. Set this variable in your .bashrc or .bash_profile script. _PANTHEON_CODEBASE_ should point to the project's root directory.
+The build script provided in _scripts_ directory makes use of _PANTHEON_CODEBASE_ environment variable. Set this variable in your .bashrc or .bash_profile script. _PANTHEON_CODEBASE_ should point to the project's root directory.
 
 **Sling and MongoDB**
-The scripts folder contains _pantheon_karaf.exports_ file. It contains the values required for patheon karaf distribution. If you are running MongoDB on a different port then
+The scripts folder contains _pantheon_karaf.exports_ file. It contains the values required for the pantheon karaf distribution. If you are running MongoDB on a different port then
 - Make a copy of _pantheon_karaf.exports_ file 
 - Place it in _.pantheon_ directory under your home directory
-- Update the _MONGO_DB_REPLICA_ variable
+- Update the _MONGO_DB_URI_ variable
 
-### Build the application
-_(All commands from here on will be assumed to be ran from the project's root directory)_
+### Building the application
+_(All commands from here on will be assumed to be run from the project's root directory)_
 
 ```sh
 sh scripts/deploy_local.sh
