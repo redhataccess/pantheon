@@ -6,6 +6,7 @@ import { mount, shallow } from 'enzyme'
 import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Dropdown, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput, DropdownItem, Title, Alert, AlertActionCloseButton, DataListContent, KebabToggle } from '@patternfly/react-core'
 import renderer from 'react-test-renderer'
 import sinon from 'sinon'
+import { any } from 'prop-types';
 
 const anymatch = require('anymatch')
 
@@ -14,8 +15,9 @@ const props = {
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
     productInfo: "Red Hat Enterprise Linux",
-    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
-    versionModulePath: "/modules/test/en_US/1"
+    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
+    variant: "test",
+    versionModulePath: "/modules/test_module/en_US/variants/test/draft"
 }
 
 describe('Versions tests', () => {
@@ -287,13 +289,14 @@ describe('Versions tests', () => {
         expect(inst.getHarrayChildNamed(anymatch, 'metadata')).toMatchSnapshot()
     })
 
-    it('has a moduleUUID of "1234"', () => {
+    it('has a variantUUID of "1234"', () => {
         const state: IProps = {
             modulePath: "somePath",
             onGetProduct: (productValue) => anymatch,
             onGetVersion: (versionValue) => anymatch,
             productInfo: "Red Hat Enterprise Linux",
-            updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => anymatch,
+            updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
+            variant: "DEFAULT",
             versionModulePath: "versionPath"
         }
         state.updateDate("-", "-", 1, "1234")

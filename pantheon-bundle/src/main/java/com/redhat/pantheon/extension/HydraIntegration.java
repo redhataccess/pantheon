@@ -1,7 +1,25 @@
 package com.redhat.pantheon.extension;
 
-import java.security.cert.X509Certificate;
-import java.util.Locale;
+import com.google.common.collect.Maps;
+import com.ibm.icu.util.ULocale;
+import com.redhat.pantheon.extension.events.ModuleVersionPublishStateEvent;
+import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
+import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
+import com.redhat.pantheon.model.api.SlingModels;
+import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import org.apache.activemq.ActiveMQSslConnectionFactory;
+import org.apache.activemq.broker.SslContext;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.text.StringSubstitutor;
+import org.apache.jackrabbit.JcrConstants;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -11,33 +29,21 @@ import javax.jms.Session;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Locale;
 
-import org.apache.activemq.ActiveMQSslConnectionFactory;
-import org.apache.activemq.broker.SslContext;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceUtil;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.redhat.pantheon.extension.events.ModuleVersionPublishStateEvent;
-import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
-import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.servlet.ServletUtils;
-import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import static com.redhat.pantheon.model.module.ModuleVariant.DEFAULT_VARIANT_NAME;
+import static com.redhat.pantheon.servlet.ServletUtils.toLanguageTag;
 
 /**
  * A Hydra message producer for Module post publish events.
  * 
  * A sample message for publish event:
- * {"id":"https://example.com/api/module?locale=en-us&module_id=fb8f7586-1b68-437c-94d9-bfc4f85866ed","event":"publish"}
+ * {"id":"https://example.com/api/module?locale=en-us&module_id=fb8f7586-1b68-437c-94d9-bfc4f85866ed&variant=DEFAULT","event":"publish"}
  *
  * A sample message for unpublish event:
- * {"id":"","event":"unpublish", "view_uri":"https://example.com/topics/en-us/fb8f7586-1b68-437c-94d9-bfc4f85866ed"}
+ * {"id":"","event":"unpublish", "view_uri":"https://example.com/topics/en-us/fb8f7586-1b68-437c-94d9-bfc4f85866ed?variant=DEFAULT"}
  *
  * @author Lisa Davidson
  */
@@ -52,7 +58,7 @@ public class HydraIntegration implements EventProcessingExtension {
     private static String pantheonHost = "";
 
     //@TODO: externalize the variables
-    private static final String PANTHEON_MODULE_API_PATH = "/api/module?locale=en-us&module_id=";
+    private static final String PANTHEON_MODULE_VERSION_API_PATH = "/api/module/variant.json/{variantUuid}";
     private static final String TLS_VERSION = "TLSv1.2";
     private static final String UUID_FIELD = "jcr:uuid";
     private static final String HYDRA_TOPIC = "VirtualTopic.eng.pantheon2.notifications";
@@ -95,12 +101,8 @@ public class HydraIntegration implements EventProcessingExtension {
      */
     public void processEvent(Event event) throws Exception {
         ModuleVersionPublishStateEvent publishedEvent = (ModuleVersionPublishStateEvent) event;
-        Resource resource = null;
-        Module module = null;
-
-        // Get resource from path
-        resource = serviceResourceResolverProvider.getServiceResourceResolver().getResource(ResourceUtil.getParent(publishedEvent.getModuleLocalePath(), 1));
-        module = resource.adaptTo(Module.class);
+        ModuleVersion moduleVersion = SlingModels.getModel(serviceResourceResolverProvider.getServiceResourceResolver(),
+                publishedEvent.getModuleVersionPath(), ModuleVersion.class);
 
         Connection connection = createConnectionFactory().createConnection();
         try {
@@ -112,21 +114,22 @@ public class HydraIntegration implements EventProcessingExtension {
 
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
-        String moduleUUID = module.getValueMap().get(UUID_FIELD, String.class);
+
         String eventValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
-        String idValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? this.getPantheonHost() + PANTHEON_MODULE_API_PATH
-                + moduleUUID : "";
+        String idValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? buildModuleVersionUri(moduleVersion) : "";
         String uriValue = "";
         String msg = "";
 
         if (ModuleVersionPublishedEvent.class.equals(event.getClass())) {
+            // TODO Use a json generation api for this
             msg = "{\""
                     + ID_KEY + "\":" + "\"" + idValue +"\","
                     + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\"}";
         } else if (ModuleVersionUnpublishedEvent.class.equals(event.getClass())){
             if (System.getenv(PORTAL_URL) != null) {
-                uriValue = System.getenv(PORTAL_URL) + "/topics/" + ServletUtils.toLanguageTag(DEFAULT_MODULE_LOCALE) + "/" + moduleUUID;
+                uriValue = getPortalUri(moduleVersion);
 
+                // TODO Use a json generation api for this
                 msg = "{\""
                     + ID_KEY + "\":" + "\"" + idValue +"\","
                     + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\","
@@ -236,4 +239,30 @@ public class HydraIntegration implements EventProcessingExtension {
         return factory;
     }
 
+    private String buildModuleVersionUri(ModuleVersion moduleVersion) {
+        StringSubstitutor strSubs = new StringSubstitutor();
+        HashMap values = Maps.newHashMap();
+        values.put("variantUuid", moduleVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
+                moduleVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
+
+        String replacedUri = strSubs.replace(PANTHEON_MODULE_VERSION_API_PATH);
+        return this.getPantheonHost() + replacedUri;
+    }
+
+
+    private String getPortalUri(ModuleVersion moduleVersion) {
+        final String uriTemplate = System.getenv(PORTAL_URL) + "/topics/${localeId}/${variantUuid}";
+        StringSubstitutor strSubs = new StringSubstitutor();
+
+        HashMap values = Maps.newHashMap();
+        // TODO Clean this up, lots of locale transformations to make sure this aligns
+        values.put("localeId", toLanguageTag(
+                ULocale.createCanonical(
+                        moduleVersion.getParent().getParent().getParent().getName())
+                        .toLocale()));
+        values.put("variantUuid", moduleVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
+                moduleVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
+
+        return strSubs.replace(uriTemplate);
+    }
 }

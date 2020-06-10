@@ -22,7 +22,7 @@ import static com.redhat.pantheon.util.function.FunctionalUtils.tryAndThrowRunti
 import static java.util.Optional.*;
 
 /**
- * Stores all global configuration values. Since some values are better to load at system start-up,
+ * Stores all global configuration values. Since some values are better to load at system traverseFrom-up,
  * this class provides a method to eagerly load any such values.
  *
  * @author Carlos Munoz

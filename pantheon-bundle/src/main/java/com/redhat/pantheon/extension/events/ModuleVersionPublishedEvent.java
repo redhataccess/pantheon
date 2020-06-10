@@ -1,5 +1,7 @@
 package com.redhat.pantheon.extension.events;
 
+import com.redhat.pantheon.model.module.ModuleVersion;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -9,7 +11,7 @@ import javax.annotation.Nonnull;
  */
 public class ModuleVersionPublishedEvent extends ModuleVersionPublishStateEvent {
 
-    public ModuleVersionPublishedEvent(@Nonnull String moduleVersionPath) {
-        super(moduleVersionPath);
+    public ModuleVersionPublishedEvent(@Nonnull ModuleVersion moduleVersion) {
+        super(moduleVersion);
     }
 }

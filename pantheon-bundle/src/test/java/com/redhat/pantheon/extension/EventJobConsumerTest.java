@@ -25,7 +25,7 @@ class EventJobConsumerTest {
         EventProcessingExtension extension = mock(EventProcessingExtension.class);
         // (partial mock)
         EventJobConsumer jobConsumer = spy(new EventJobConsumer());
-        doReturn(newArrayList(extension)).when(jobConsumer).getEventProcessingServices();
+        jobConsumer.extensions.add(extension);
         lenient().when(job.getProperty(Event.class.getName(), Event.class)).thenReturn(event);
         lenient().when(extension.canProcessEvent(event)).thenReturn(true);
 
@@ -50,7 +50,8 @@ class EventJobConsumerTest {
         lenient().doThrow(new Exception()).when(extension2).processEvent(eq(event));
         // (partial mock)
         EventJobConsumer jobConsumer = spy(new EventJobConsumer());
-        doReturn(newArrayList(extension1, extension2)).when(jobConsumer).getEventProcessingServices();
+        jobConsumer.extensions.add(extension1);
+        jobConsumer.extensions.add(extension2);
 
         // When
         JobResult result = jobConsumer.process(job);
@@ -72,7 +73,8 @@ class EventJobConsumerTest {
         lenient().when(extension2.canProcessEvent(event)).thenReturn(false);
         // (partial mock)
         EventJobConsumer jobConsumer = spy(new EventJobConsumer());
-        doReturn(newArrayList(extension1, extension2)).when(jobConsumer).getEventProcessingServices();
+        jobConsumer.extensions.add(extension1);
+        jobConsumer.extensions.add(extension2);
 
         // When
         JobResult result = jobConsumer.process(job);

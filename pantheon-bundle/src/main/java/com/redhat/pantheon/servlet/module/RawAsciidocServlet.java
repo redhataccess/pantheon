@@ -1,8 +1,10 @@
 package com.redhat.pantheon.servlet.module;
 
-import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.module.Module;
-import org.apache.commons.lang3.LocaleUtils;
+import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.SourceContent;
+import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.http.entity.ContentType;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -17,35 +19,38 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Locale;
 import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
-import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
+import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
  * Renders the asciidoc content exactly as stored.
- * (Use a browser plugin to watch it turn into HTML)
  */
 @Component(
         service = Servlet.class,
         property = {
-                "sling.servlet.resourceTypes=pantheon/module",
-                "sling.servlet.extensions=raw",
-                Constants.SERVICE_DESCRIPTION+"=Renders asciidoc content in its raw original form",
                 Constants.SERVICE_VENDOR+"=Red Hat Content Tooling team"
         }
 )
-public class AsciidocContentRenderingServlet extends SlingSafeMethodsServlet {
+@SlingServlet(
+        methods = "GET",
+        extensions = "raw",
+        resourceTypes = "pantheon/module",
+        description = "Renders asciidoc content in its raw original form"
+)
+public class RawAsciidocServlet extends SlingSafeMethodsServlet {
 
-    private final Logger log = LoggerFactory.getLogger(AsciidocContentRenderingServlet.class);
+    private final Logger log = LoggerFactory.getLogger(RawAsciidocServlet.class);
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
-        String locale = paramValue(request, "locale", DEFAULT_MODULE_LOCALE.toString());
-        // TODO right now, only allow draft and released content
+        Locale locale = paramValueAsLocale(request, "locale", DEFAULT_MODULE_LOCALE);
         boolean draft = paramValueAsBoolean(request, "draft");
 
         Resource resource = request.getResource();
@@ -54,16 +59,26 @@ public class AsciidocContentRenderingServlet extends SlingSafeMethodsServlet {
         response.setContentType("html");
         Writer w = response.getWriter();
 
-        Optional<Content> content;
+        Optional<String> content;
         if (draft) {
-            content = module.getDraftContent(LocaleUtils.toLocale(locale));
+            content = traverseFrom(module)
+                    .toChild(m -> m.moduleLocale(locale))
+                    .toChild(ModuleLocale::source)
+                    .toChild(SourceContent::draft)
+                    .toChild(FileResource::jcrContent)
+                    .toField(FileResource.JcrContent::jcrData);
         } else {
-            content = module.getReleasedContent(LocaleUtils.toLocale(locale));
+            content = traverseFrom(module)
+                    .toChild(m -> m.moduleLocale(locale))
+                    .toChild(ModuleLocale::source)
+                    .toChild(SourceContent::released)
+                    .toChild(FileResource::jcrContent)
+                    .toField(FileResource.JcrContent::jcrData);
         }
 
         if(content.isPresent()) {
             response.setContentType(ContentType.TEXT_PLAIN.toString());
-            w.write(content.get().asciidocContent().get());
+            w.write(content.get());
         } else {
             response.sendError(SC_NOT_FOUND, "Requested content not found for locale " + locale.toString()
                     + " and in state " + (draft ? "'draft'" : "released"));

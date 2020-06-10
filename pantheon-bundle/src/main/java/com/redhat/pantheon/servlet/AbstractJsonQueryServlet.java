@@ -36,7 +36,7 @@ public abstract class AbstractJsonQueryServlet extends SlingSafeMethodsServlet {
     /** Parameter name for the maximum size of the results */
     protected static final String PARAM_LIMIT = "limit";
 
-    /** Parameter name for the start offset of the result set */
+    /** Parameter name for the traverseFrom offset of the result set */
     protected static final String PARAM_OFFSET = "offset";
 
     /**

@@ -67,7 +67,7 @@ class Search extends Component<IAppState, ISearchState> {
       pageLimit: 25,
       redirect: false,
       redirectLocation: '',
-      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false,"publishedDate": "-","pant:moduleType": "-"}],
+      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false,"publishedDate": "-","pant:moduleType": "-", "variant": ""}],
       selectAllCheckValue: false,
       showDropdownOptions: true,
       sortKey: ''
@@ -171,10 +171,14 @@ class Search extends Component<IAppState, ISearchState> {
                     <DataListItemCells key={"cells_" + key}
                       dataListCells={[
                         <DataListCell key={"title_" + key} width={2}>
-                          {this.props.userAuthenticated &&
-                            <Link to={data['pant:transientPath']} key={"link_" + key}>{data["jcr:title"]}</Link>}
-                          {!this.props.userAuthenticated &&
-                            <a href={"/" + data['pant:transientPath'] + ".preview"} target="_blank">{data["jcr:title"]}</a>}
+                          {this.props.userAuthenticated && data["jcr:title"] !== '-' &&
+                            <Link to={data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["jcr:title"]}</Link>}
+                          {this.props.userAuthenticated && data["jcr:title"] === '-' && data["pant:transientPath"] &&
+                            <Link to={data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["pant:transientPath"]}</Link>}
+                          {!this.props.userAuthenticated && data["jcr:title"] !== '-' &&
+                            <a href={"/" + data['pant:transientPath'] + ".preview" + "?variant=" + data.variant} target="_blank">{data["jcr:title"]}</a>}
+                          {!this.props.userAuthenticated && data["jcr:title"] === '-' && data["pant:transientPath"] &&
+                            <a href={"/" + data['pant:transientPath'] + ".preview" + "?variant=" + data.variant} target="_blank">{data["pant:transientPath"]}</a>}
                         </DataListCell>,      
                         <DataListCell key={"published-date_" + key}>                          
                           <span>{data[Fields.PANT_PUBLISHED_DATE]}</span>
@@ -403,7 +407,7 @@ class Search extends Component<IAppState, ISearchState> {
   };
 
   private buildSearchUrl() {
-    let backend = "/modules.json?"
+    let backend = "/pantheon/internal/modules.json?"
     backend += this.state.filterQuery
     if (this.state.filterQuery.trim() !== "") {
       backend += "&"

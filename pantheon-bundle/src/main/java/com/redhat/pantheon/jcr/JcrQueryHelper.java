@@ -49,7 +49,7 @@ public class JcrQueryHelper {
         QueryResult result = queryObj.execute();
 
         // Transform to sling resources
-        return transform(result);
+        return toResourceStream(result);
     }
 
     /**
@@ -95,7 +95,7 @@ public class JcrQueryHelper {
         query.setLimit(limit);
         query.setOffset(offset);
         QueryResult result = query.execute();
-        return transform(result);
+        return toResourceStream(result);
     }
 
     public Stream<Resource> queryAll(String nodeType) throws RepositoryException {
@@ -114,7 +114,7 @@ public class JcrQueryHelper {
      * @return A stream of sling resources
      * @throws RepositoryException
      */
-    private Stream<Resource> transform(QueryResult result) throws RepositoryException {
+    private Stream<Resource> toResourceStream(QueryResult result) throws RepositoryException {
         // TODO This might be a costly transformation if done on large result sets
         return Lists.newArrayList((Iterator<Row>) result.getRows())
                 .stream()

@@ -14,7 +14,8 @@ export interface IProps {
     modulePath: string
     productInfo: string
     versionModulePath: string
-    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => any
+    variant: string
+    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
@@ -41,7 +42,8 @@ interface IState {
 
     successAlertVisible: boolean
     usecaseOptions: any
-    usecaseValue: string
+    usecaseValue: string,
+    // variant: string
 }
 
 class Versions extends Component<IProps, IState> {
@@ -76,7 +78,7 @@ class Versions extends Component<IProps, IState> {
             usecaseOptions: [
                 { value: '', label: 'Select Use Case', disabled: false }
             ],
-            usecaseValue: ''
+            usecaseValue: '',
         }
     }
 
@@ -126,7 +128,7 @@ class Versions extends Component<IProps, IState> {
                         <li>Are you logged in as a publisher?</li>
                         <li>Does the module have all required metadata?</li>
                     </ul>
-          </Alert>
+                </Alert>
                 }
                 <Card>
                     <div>
@@ -323,15 +325,15 @@ class Versions extends Component<IProps, IState> {
                         >
                             <InputGroup>
                                 <FormSelect value={this.state.product.value} onChange={this.onChangeProduct} aria-label='FormSelect Product'>
-                                    <FormSelectOption label='Select a Product'/>
+                                    <FormSelectOption label='Select a Product' />
                                     {this.state.allProducts.map((option, key) => (
-                                        <FormSelectOption key={key} value={option.value} label={option.label}/>
+                                        <FormSelectOption key={key} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
                                 <FormSelect value={this.state.productVersion.uuid} onChange={this.onChangeVersion} aria-label='FormSelect Version' id='productVersion'>
-                                    <FormSelectOption label='Select a Version'/>
+                                    <FormSelectOption label='Select a Version' />
                                     {this.state.allProductVersions.map((option, key) => (
-                                        <FormSelectOption key={key} value={option['jcr:uuid']} label={option.name}/>
+                                        <FormSelectOption key={key} value={option['jcr:uuid']} label={option.name} />
                                     ))}
                                 </FormSelect>
                             </InputGroup>
@@ -383,41 +385,68 @@ class Versions extends Component<IProps, IState> {
         if (this.props.modulePath !== '') {
             // fetchpath needs to start from modulePath instead of modulePath/en_US.
             // We need extact the module uuid for customer portal url to the module.
-            const fetchpath = '/content' + this.props.modulePath + '.harray.4.json'
+            const fetchpath = '/content' + this.props.modulePath + '.harray.5.json'
             fetch(fetchpath)
                 .then(response => response.json())
                 .then(responseJSON => {
                     const en_US = this.getHarrayChildNamed(responseJSON, 'en_US')
-                    const releasedTag = en_US.released
-                    const draftTag = en_US.draft
-                    const versionCount = en_US.__children__.length
+                    const source = this.getHarrayChildNamed(en_US, 'source')
+                    const variants = this.getHarrayChildNamed(en_US, 'variants')
+
+                    const firstVariant = this.getHarrayChildNamed(variants, this.props.variant)
+                    // process draftUpdateDate from source/draft
+                    let draftDate = ''
+                    if (source !== 'undefined' && source.__name__ === 'source') {
+                        for (const childNode of source.__children__) {
+                            if (childNode.__name__ === 'draft') {
+                                draftDate = childNode["jcr:created"]
+                            } else if (childNode.__name__ === 'released') {
+                                draftDate = childNode["jcr:created"]
+                            }
+                        }
+                    }
+                    // process variantUUID
+                    let variantUuid = ''
+                    if (firstVariant["jcr:primaryType"] !== "undefined" && firstVariant["jcr:primaryType"]=== "pant:moduleVariant") {
+                        variantUuid = firstVariant["jcr:uuid"]
+                    }
+                    const versionCount = firstVariant.__children__.length
                     for (let i = 0; i < versionCount; i++) {
-                        const moduleVersion = en_US.__children__[i]
-                        if (moduleVersion['jcr:uuid'] === draftTag) {
+                        const moduleVersion = firstVariant.__children__[i]
+                        let variantReleased = false
+                        // console.log("[versions] moduleVersion => ", moduleVersion)
+                        if (moduleVersion.__name__ === 'draft') {
                             this.draft[0].version = 'Version ' + moduleVersion.__name__
                             this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
-                            this.draft[0].updatedDate = this.draft[0].metadata['pant:dateUploaded'] !== undefined ? this.draft[0].metadata['pant:dateUploaded'] : ''
+                            // get created date from source/draft
+                            this.draft[0].updatedDate = draftDate !== undefined ? draftDate : ''
                             // this.props.modulePath starts with a slash
-                            this.draft[0].path = '/content' + this.props.modulePath + '/en_US/' + moduleVersion.__name__
+                            this.draft[0].path = '/content' + this.props.modulePath + '/en_US/variants/' + firstVariant.__name__ + '/' + moduleVersion.__name__
                         }
-                        if (moduleVersion['jcr:uuid'] === releasedTag) {
+                        if (moduleVersion.__name__ === 'released') {
                             this.release[0].version = 'Version ' + moduleVersion.__name__
                             this.release[0].metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
                             this.release[0].updatedDate = this.release[0].metadata['pant:datePublished'] !== undefined ? this.release[0].metadata['pant:datePublished'] : ''
-                            this.release[0].draftUploadDate = this.release[0].metadata['pant:dateUploaded'] !== undefined ? this.release[0].metadata['pant:dateUploaded'] : ''
+                            // get created date from source/draft
+                            this.release[0].draftUploadDate = draftDate !== undefined ? draftDate : ''
                             // this.props.modulePath starts with a slash
-                            this.release[0].path = '/content' + this.props.modulePath + '/en_US/' + moduleVersion.__name__
+                            this.release[0].path = '/content' + this.props.modulePath + '/en_US/variants/' + firstVariant.__name__ + '/' + moduleVersion.__name__
+                            variantReleased = true
                         }
-                        if (releasedTag === undefined) {
+                        if (!variantReleased) {
                             this.release[0].updatedDate = '-'
                         }
-                        this.props.updateDate((this.draft[0].updatedDate !== '' ? this.draft[0].updatedDate : this.release[0].draftUploadDate), this.release[0].updatedDate, this.release[0].version, responseJSON['jcr:uuid'])
+                        this.props.updateDate((draftDate !== '' ? draftDate : ''), this.release[0].updatedDate, this.release[0].version, variantUuid)
                     }
                     this.setState({
-                            results: [this.draft, this.release],
-                            // tslint:disable-next-line: object-literal-sort-keys
-                            metadataPath: this.draft ? this.draft[0].path : this.release[0].path
+                        results: [this.draft, this.release],
                     })
+
+                    if (this.draft && this.draft[0].version.length > 0) {
+                        this.setState({ metadataPath: this.draft[0].path })
+                    } else if (this.release && this.release[0].version.length > 0) {
+                        this.setState({ metadataPath: this.release[0].path })
+                    }
                     this.getMetadata(this.state.metadataPath)
                 })
         }
@@ -452,6 +481,8 @@ class Versions extends Component<IProps, IState> {
                     // console.log('Unpublished file path:', this.props.modulePath);
                     this.release[0].version = '';
                 }
+                formData.append('locale', 'en_US')
+                formData.append('variant', this.props.variant)
                 fetch('/content' + this.props.modulePath, {
                     body: formData,
                     method: 'post'
@@ -496,9 +527,9 @@ class Versions extends Component<IProps, IState> {
     private previewDoc = (buttonText) => {
         let docPath = ''
         if (buttonText === 'Preview') {
-            docPath = '/content' + this.props.modulePath + '.preview?draft=true'
+            docPath = '/content' + this.props.modulePath + '.preview?draft=true&variant=' + this.props.variant
         } else {
-            docPath = '/content' + this.props.modulePath + '.preview'
+            docPath = '/content' + this.props.modulePath + '.preview?variant=' + this.props.variant
         }
         // console.log('Preview path: ', docPath)
         return window.open(docPath)
@@ -538,7 +569,7 @@ class Versions extends Component<IProps, IState> {
             formData.append('documentUsecase', this.state.usecaseValue)
             formData.append('urlFragment', '/' + this.state.moduleUrl)
             formData.append('searchKeywords', this.state.keywords === undefined ? '' : this.state.keywords)
-            // console.log('[metadataPath] ', this.state.metadataPath)
+
             fetch(this.state.metadataPath + '/metadata', {
                 body: formData,
                 headers: hdrs,
@@ -620,7 +651,7 @@ class Versions extends Component<IProps, IState> {
             })
             .then(responseJSON => {
                 for (const product of responseJSON.__children__) {
-                    products.push({ label: product.name, value: product.__name__})
+                    products.push({ label: product.name, value: product.__name__ })
                 }
                 this.setState({
                     allProducts: products
@@ -673,7 +704,9 @@ class Versions extends Component<IProps, IState> {
                             productVersion: { label: '', uuid: metadataResults.productVersion },
                             usecaseValue: metadataResults.documentUsecase
                         })
-                        this.getProductFromVersionUuid(metadataResults.productVersion)
+                        if (metadataResults.productVersion !== 'undefined') {
+                            this.getProductFromVersionUuid(metadataResults.productVersion)
+                        }
                     }
                 })
         }
@@ -690,7 +723,7 @@ class Versions extends Component<IProps, IState> {
                 this.populateProductVersions(this.state.product.value)
                 this.props.onGetProduct(this.state.product.label)
                 this.props.onGetVersion(this.state.productVersion.label)
-        })
+            })
     }
 }
 

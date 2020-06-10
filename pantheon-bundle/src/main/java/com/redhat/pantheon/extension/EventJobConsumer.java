@@ -7,15 +7,18 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.redhat.pantheon.extension.Events.EVENT_TOPIC_NAME;
+import static org.osgi.service.component.annotations.ReferencePolicy.DYNAMIC;
 
 /**
  * Base class for all Job consumers for fired events. It contains most of the logic necessary to
@@ -38,6 +41,9 @@ public class EventJobConsumer implements JobConsumer {
 
     public static final Logger log = LoggerFactory.getLogger(EventJobConsumer.class);
 
+    @Reference(policy=DYNAMIC)
+    final List<EventProcessingExtension> extensions = new CopyOnWriteArrayList<>();
+
     /**
      * Generic method that processes a job. The job will always check for the presence of
      * an event in the job properties, and an error will be reported if no such property
@@ -54,41 +60,16 @@ public class EventJobConsumer implements JobConsumer {
             return JobResult.CANCEL;
         }
 
-        try {
-            getEventProcessingServices().forEach(service -> {
-                try {
-                    if(service.canProcessEvent(firedEvent)) {
-                        service.processEvent(firedEvent);
-                        log.trace("Extension " + service.getClass().getName() + " finished successfully");
-                    }
-                } catch (Throwable t) {
-                    log.warn("Extension " + service.getClass().getName() + " did not execute successfully", t);
+        extensions.stream().forEach(ext -> {
+            try {
+                if(ext.canProcessEvent(firedEvent)) {
+                    ext.processEvent(firedEvent);
+                    log.trace("Extension " + ext.getClass().getName() + " finished successfully");
                 }
-            });
-        } catch (InvalidSyntaxException e) {
-            // This should not happen since we are not filtering the services (the filter parameter is null)
-            log.error("Invalid filter syntax", e);
-            return JobResult.CANCEL;
-        }
+            } catch (Throwable t) {
+                log.warn("Extension " + ext.getClass().getName() + " did not execute successfully", t);
+            }
+        });
         return JobResult.OK;
-    }
-
-    /**
-     * Collects all the services registered as implementations of {@link EventProcessingExtension}.
-     *
-     * @return A set of extension services which implement the extension interface for event processing
-     */
-    Collection<EventProcessingExtension> getEventProcessingServices() throws InvalidSyntaxException {
-        List<EventProcessingExtension> extensions = newArrayList();
-        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-        Collection<ServiceReference<EventProcessingExtension>> serviceReferences =
-                bundleContext
-                        .getServiceReferences(EventProcessingExtension.class, null);
-
-        for (ServiceReference<EventProcessingExtension> reference : serviceReferences) {
-            EventProcessingExtension service = bundleContext.getService(reference);
-            extensions.add(service);
-        }
-        return extensions;
     }
 }

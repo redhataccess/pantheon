@@ -30,42 +30,35 @@ public class StatusAcknowledgementServletTest {
     @BeforeEach
     public void setUp(){
         slingContext.create()
-                .resource("/content/repositories/repo/module",
+                .resource("/content/repositories/repo/entities/module",
                         "jcr:primaryType", "pant:module");
         slingContext.create()
-                .resource("/content/repositories/repo/module/en_US",
+                .resource("/content/repositories/repo/entities/module/en_US",
                         "jcr:primaryType", "pant:moduleLocale");
         slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1",
+                .resource("/content/repositories/repo/entities/module/en_US/variants/test/released",
                         "jcr:primaryType", "pant:moduleVersion");
         slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1/metadata",
+                .resource("/content/repositories/repo/entities/module/en_US/variants/test/released/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description");
         slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1/content/asciidoc",
-                        "jcr:content", testHTML);
-        slingContext.create()
-                .resource("/content/repositories/repo/module/en_US/1/content/cachedHtml",
+                .resource("/content/repositories/repo/entities/module/en_US/variants/test/released/cached_html/jcr:content",
                         "jcr:data", testHTML);
-
-        slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US").adaptTo(ModifiableValueMap.class)
-                .put("released", slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/1").getValueMap()
-                        .get("jcr:uuid"));
         registerMockAdapter(Module.class, slingContext);
     }
     @Test
     public void testAddAcknowledgement() throws ServletException, IOException {
 
         String resourceUuid = slingContext.resourceResolver()
-                .getResource("/content/repositories/repo/module")
+                .getResource("/content/repositories/repo/entities/module")
                 .getValueMap()
                 .get("jcr:uuid")
                 .toString();
 
         Charset utf8 = Charset.forName("UTF-8");
 
-        String data = "{\"id\":\""+resourceUuid+"\",\"status\": \"received\",\"sender\":\"hydra\",\"message\":\"from hydra\"}";
+        String data = "{\"id\":\""+resourceUuid+"\",\"variant\": \"test\",\"status\": \"received\",\"sender\":\"hydra\",\"message\":\"from hydra\"}";
         //slingContext.request().setContent(data.getBytes(utf8));
         MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
         mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
@@ -76,27 +69,27 @@ public class StatusAcknowledgementServletTest {
         Assertions.assertEquals(200, slingContext.response().getStatus(), "Status should be 200");
         Module module =
                 SlingModels.getModel(
-                        slingContext.resourceResolver().getResource("/content/repositories/repo/module"),
+                        slingContext.resourceResolver().getResource("/content/repositories/repo/entities/module"),
                         Module.class);
-        assertNotNull(module.getReleasedVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get());
-        assertEquals("received", module.getReleasedVersion(LocaleUtils.toLocale("en_US"))
+        assertNotNull(module.getReleasedVersion(LocaleUtils.toLocale("en_US"), "test").get().ackStatus().get());
+        assertEquals("received", module.getReleasedVersion(LocaleUtils.toLocale("en_US"), "test")
                 .get().ackStatus()
                 .get().status().get());
-        assertEquals("from hydra", module.getReleasedVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get().message().get());
-        assertEquals("hydra", module.getReleasedVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get().sender().get());
+        assertEquals("from hydra", module.getReleasedVersion(LocaleUtils.toLocale("en_US"), "test").get().ackStatus().get().message().get());
+        assertEquals("hydra", module.getReleasedVersion(LocaleUtils.toLocale("en_US"), "test").get().ackStatus().get().sender().get());
     }
 
     @Test
     public void testAddAcknowledgementWithoutRequiredFields() throws ServletException, IOException {
 
         String resourceUuid = slingContext.resourceResolver()
-                .getResource("/content/repositories/repo/module")
+                .getResource("/content/repositories/repo/entities/module")
                 .getValueMap()
                 .get("jcr:uuid")
                 .toString();
 
         Charset utf8 = Charset.forName("UTF-8");
-        String data = "{\"id\":\"" + resourceUuid + "\",\"status\": \"received\",\"sender\":\"hydra\"}";
+        String data = "{\"id\":\"" + resourceUuid + "\",\"variant\": \"test\",\"status\": \"received\",\"sender\":\"hydra\"}";
         MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
         mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
         StatusAcknowledgeServlet statusAcknowledgeServlet = new StatusAcknowledgeServlet();
@@ -110,37 +103,34 @@ public class StatusAcknowledgementServletTest {
     public void testAddAcknowledgementWhenTheLocaleIsNotSupported() throws ServletException, IOException {
 
         slingContext.create()
-                .resource("/content/repositories/repo/module1",
+                .resource("/content/repositories/repo/entities/module1",
                         "jcr:primaryType", "pant:module");
         slingContext.create()
-                .resource("/content/repositories/repo/module1/es_ES",
+                .resource("/content/repositories/repo/entities/module1/es_ES",
                         "jcr:primaryType", "pant:moduleLocale");
         slingContext.create()
-                .resource("/content/repositories/repo/module1/es_ES/1",
+                .resource("/content/repositories/repo/entities/module1/es_ES/variants/test/released",
                         "jcr:primaryType", "pant:moduleVersion");
         slingContext.create()
-                .resource("/content/repositories/repo/module1/es_ES/1/metadata",
+                .resource("/content/repositories/repo/entities/module1/es_ES/variants/test/released/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description");
         slingContext.create()
-                .resource("/content/repositories/repo/module1/es_ES/1/content/asciidoc",
-                        "jcr:content", testHTML);
-        slingContext.create()
-                .resource("/content/repositories/repo/module1/es_ES/1/content/cachedHtml",
+                .resource("/content/repositories/repo/entities/module1/es_ES/variants/test/released/cached_html/jcr:content",
                         "jcr:data", testHTML);
 
-        slingContext.resourceResolver().getResource("/content/repositories/repo/module1/es_ES").adaptTo(ModifiableValueMap.class)
-                .put("released", slingContext.resourceResolver().getResource("/content/repositories/repo/module1/es_ES/1").getValueMap()
+        slingContext.resourceResolver().getResource("/content/repositories/repo/entities/module1/es_ES").adaptTo(ModifiableValueMap.class)
+                .put("released", slingContext.resourceResolver().getResource("/content/repositories/repo/entities/module1/es_ES/variants/test/released").getValueMap()
                         .get("jcr:uuid"));
         registerMockAdapter(Module.class, slingContext);
         String resourceUuid = slingContext.resourceResolver()
-                .getResource("/content/repositories/repo/module1")
+                .getResource("/content/repositories/repo/entities/module1")
                 .getValueMap()
                 .get("jcr:uuid")
                 .toString();
 
         Charset utf8 = Charset.forName("UTF-8");
-        String data = "{\"id\":\""+resourceUuid+"\",\"status\": \"received\",\"sender\":\"hydra\",\"message\":\"from hydra\"}";
+        String data = "{\"id\":\""+resourceUuid+"\",\"variant\": \"test\",\"status\": \"received\",\"sender\":\"hydra\",\"message\":\"from hydra\"}";
         MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
         mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
         StatusAcknowledgeServlet statusAcknowledgeServlet = new StatusAcknowledgeServlet();
@@ -154,38 +144,32 @@ public class StatusAcknowledgementServletTest {
     public void testAddAcknowledgementWhenDraft() throws ServletException, IOException {
 
         slingContext.create()
-                .resource("/content/repositories/repo/module1",
+                .resource("/content/repositories/repo/entities/module1",
                         "jcr:primaryType", "pant:module");
         slingContext.create()
-                .resource("/content/repositories/repo/module1/en_US",
+                .resource("/content/repositories/repo/entities/module1/en_US",
                         "jcr:primaryType", "pant:moduleLocale");
         slingContext.create()
-                .resource("/content/repositories/repo/module1/en_US/1",
+                .resource("/content/repositories/repo/entities/module1/en_US/variants/test/draft",
                         "jcr:primaryType", "pant:moduleVersion");
         slingContext.create()
-                .resource("/content/repositories/repo/module1/en_US/1/metadata",
+                .resource("/content/repositories/repo/entities/module1/en_US/variants/test/draft/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description");
         slingContext.create()
-                .resource("/content/repositories/repo/module1/en_US/1/content/asciidoc",
-                        "jcr:content", testHTML);
-        slingContext.create()
-                .resource("/content/repositories/repo/module1/en_US/1/content/cachedHtml",
+                .resource("/content/repositories/repo/entities/module1/en_US/variants/test/draft/cached_html/jcr:content",
                         "jcr:data", testHTML);
 
-        slingContext.resourceResolver().getResource("/content/repositories/repo/module1/en_US").adaptTo(ModifiableValueMap.class)
-                .put("draft", slingContext.resourceResolver().getResource("/content/repositories/repo/module1/en_US/1").getValueMap()
-                        .get("jcr:uuid"));
         registerMockAdapter(Module.class, slingContext);
 
         String resourceUuid = slingContext.resourceResolver()
-                .getResource("/content/repositories/repo/module1")
+                .getResource("/content/repositories/repo/entities/module1")
                 .getValueMap()
                 .get("jcr:uuid")
                 .toString();
 
         Charset utf8 = Charset.forName("UTF-8");
-        String data = "{\"id\":\""+resourceUuid+"\",\"status\": \"received\",\"sender\":\"hydra\",\"message\":\"from hydra\"}";
+        String data = "{\"id\":\""+resourceUuid+"\",\"variant\": \"test\",\"status\": \"received\",\"sender\":\"hydra\",\"message\":\"from hydra\"}";
         MockSlingHttpServletRequest mockSlingHttpServletRequest = new MockSlingHttpServletRequest(slingContext.resourceResolver());
         mockSlingHttpServletRequest.setContent(data.getBytes(utf8));
         StatusAcknowledgeServlet statusAcknowledgeServlet = new StatusAcknowledgeServlet();
@@ -195,13 +179,13 @@ public class StatusAcknowledgementServletTest {
         Assertions.assertEquals(200, slingContext.response().getStatus(), "Status should be 200");
         Module module =
                 SlingModels.getModel(
-                        slingContext.resourceResolver().getResource("/content/repositories/repo/module1"),
+                        slingContext.resourceResolver().getResource("/content/repositories/repo/entities/module1"),
                         Module.class);
-        assertNotNull(module.getDraftVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get());
-        assertEquals("received", module.getDraftVersion(LocaleUtils.toLocale("en_US"))
+        assertNotNull(module.getDraftVersion(LocaleUtils.toLocale("en_US"), "test").get().ackStatus().get());
+        assertEquals("received", module.getDraftVersion(LocaleUtils.toLocale("en_US"), "test")
                 .get().ackStatus()
                 .get().status().get());
-        assertEquals("from hydra", module.getDraftVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get().message().get());
-        assertEquals("hydra", module.getDraftVersion(LocaleUtils.toLocale("en_US")).get().ackStatus().get().sender().get());
+        assertEquals("from hydra", module.getDraftVersion(LocaleUtils.toLocale("en_US"), "test").get().ackStatus().get().message().get());
+        assertEquals("hydra", module.getDraftVersion(LocaleUtils.toLocale("en_US"), "test").get().ackStatus().get().sender().get());
     }
 }

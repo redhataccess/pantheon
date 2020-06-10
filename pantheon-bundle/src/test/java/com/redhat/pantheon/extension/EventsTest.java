@@ -10,6 +10,7 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -31,7 +32,7 @@ class EventsTest {
         lenient().when(jobBuilder.properties(anyMap())).thenReturn(jobBuilder);
 
         // When
-        events.fireEvent(new ModuleVersionPublishedEvent("/a/odule/version/path"), 15);
+        events.fireEvent(new ModuleVersionPublishedEvent(mock(ModuleVersion.class)), 15);
 
         // Then
         verify(jobBuilder, times(1)).properties(anyMap());
