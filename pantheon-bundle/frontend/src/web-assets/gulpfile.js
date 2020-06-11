@@ -16,6 +16,7 @@ const
     task,
     watch,
   } = require('gulp'),
+  shell = require('gulp-shell'),
   // gulpIf = require('gulp-if'),
   sourceMaps = require('gulp-sourcemaps'),
   sass = require('gulp-sass'),
@@ -28,10 +29,17 @@ const
   browserSync = require('browser-sync').create();
 
 // File locations
-const cssSource = 'scss/**/*.scss',
-      cssOutput = '../../../src/main/resources/SLING-INF/content/static/';
+const
+  cssSource = 'scss/**/*.scss',
+  cssOutput = '../../../src/main/resources/SLING-INF/content/static/',
+  asciiDocTemplates = '../../../src/main/resources/apps/pantheon/templates/haml/html5';
 
-// const isDev = process.env.NODE_ENV === 'dev';
+task(
+  'compileAsciiDocs',
+  parallel(
+    shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets dev-assets/ascii-doc-styleguide.adoc`),
+  )
+);
 
 /**
  * CSS Compilation
@@ -56,7 +64,8 @@ const compileCSS = () => {
     // Write an unminified version with sourcemaps
     // to this directory for dev
     .pipe(sourceMaps.write())
-    .pipe(dest('./'))
+    .pipe(dest('./dev-assets/'))
+    // Make production CSS and put in prod location
     .pipe(postCss([cssNano(),]))
     .pipe(dest(cssOutput));
 };
@@ -67,33 +76,58 @@ const compileCSS = () => {
 /**
  * Start Browsersync
  */
-task('startBrowserSync',
-  () => browserSync.init({
-    'server': './',
-    'index': 'a-doc-styleguide.html',
-  })
-);
+const startBrowserSync = (done) => {
+  browserSync.init({
+    'server': './dev-assets/',
+    'index': 'ascii-doc-styleguide.html',
+  });
+  done();
+};
+
+const reloadBrowserSync = (done) => {
+  browserSync.reload();
+  done();
+};
 
 /**
  * Gulp tasks
  */
-// Builds into static
-task('default', compileCSS);
+// Builds dev assets in dev-assets and prod CSS in to the correct folder (see cssOutput variable)
+task('default', parallel(compileCSS));
+
+task('build:dev', parallel(compileCSS, 'compileAsciiDocs'));
 
 const watchTasks = () => {
   compileCSS();
   watch(
     cssSource,
-    series(compileCSS, () => browserSync.reload())
+    series(
+      compileCSS,
+      reloadBrowserSync
+    )
   );
 
-  watch('*.html', () => browserSync.reload());
+  watch(
+    `${asciiDocTemplates}/**/*.haml`,
+    series(
+      'compileAsciiDocs',
+      reloadBrowserSync
+    )
+  );
+
+  watch(
+    'dev-assets/**/*.adoc',
+    series(
+      'compileAsciiDocs',
+      reloadBrowserSync
+    )
+  );
 };
 
 // Starts browsersync, watches project for changes and reloads all browsers
 task('watch',
   parallel(
-    'startBrowserSync',
+    startBrowserSync,
     watchTasks
   )
 );
