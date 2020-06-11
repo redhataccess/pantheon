@@ -127,7 +127,13 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                 asciidoctorService.getModuleHtml(module, localeObj, module.getWorkspace().getCanonicalVariantName(),
                         true, context, true);
 
-                Metadata metadata = moduleLocale.variants().getOrCreate().variant(moduleLocale.getWorkspace().getCanonicalVariantName()).getOrCreate().draft().getOrCreate().metadata().getOrCreate();
+                Metadata metadata = moduleLocale
+                        .variants().getOrCreate()
+                        .variant(
+                                moduleLocale.getWorkspace().getCanonicalVariantName())
+                        .getOrCreate()
+                        .draft().getOrCreate()
+                        .metadata().getOrCreate();
                 metadata.dateModified().set(Calendar.getInstance());
                 // Generate a module type based on the file name ONLY after asciidoc generation, so that the
                 // attribute-based logic takes precedence

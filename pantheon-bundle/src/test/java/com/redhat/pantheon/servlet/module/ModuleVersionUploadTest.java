@@ -29,7 +29,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 class ModuleVersionUploadTest {
@@ -87,6 +90,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -132,6 +136,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -177,6 +182,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -237,6 +243,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -298,6 +305,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -364,5 +372,6 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verifyZeroInteractions(asciidoctorService);
     }
 }
