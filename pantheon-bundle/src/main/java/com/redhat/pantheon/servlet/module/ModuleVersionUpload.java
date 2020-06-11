@@ -12,7 +12,6 @@ import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleType;
 import com.redhat.pantheon.servlet.ServletUtils;
-import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -60,14 +59,11 @@ public class ModuleVersionUpload extends AbstractPostOperation {
     private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
 
     private AsciidoctorService asciidoctorService;
-    private ServiceResourceResolverProvider serviceResourceResolverProvider;
 
     @Activate
     public ModuleVersionUpload(
-            @Reference AsciidoctorService asciidoctorService,
-            @Reference ServiceResourceResolverProvider serviceResourceResolverProvider) {
+            @Reference AsciidoctorService asciidoctorService) {
         this.asciidoctorService = asciidoctorService;
-        this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
 
     @Override

@@ -42,9 +42,6 @@ class ModuleVersionUploadTest {
     @Mock
     AsciidoctorService asciidoctorService;
 
-    @Mock
-    ServiceResourceResolverProvider serviceResourceResolverProvider;
-
     @Test
     void createFirstVersion() throws Exception {
         // Given
@@ -59,11 +56,9 @@ class ModuleVersionUploadTest {
                 asciidoctorService.getModuleHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
-                .thenReturn(slingContext.resourceResolver());
         registerMockAdapter(Workspace.class, slingContext);
 
-        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService, serviceResourceResolverProvider);
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the adoc content");
@@ -105,11 +100,9 @@ class ModuleVersionUploadTest {
                 asciidoctorService.getModuleHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
-                .thenReturn(slingContext.resourceResolver());
         registerMockAdapter(Workspace.class, slingContext);
 
-        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService, serviceResourceResolverProvider);
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.SIMPLIFIED_CHINESE.toString());
         params.put("asciidoc", "å\u008D\u0097äº¬é\u0098²ç\u0096«ç\u008E°å\u009Cº");
@@ -151,11 +144,9 @@ class ModuleVersionUploadTest {
                 asciidoctorService.getModuleHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
-                .thenReturn(slingContext.resourceResolver());
         registerMockAdapter(Workspace.class, slingContext);
 
-        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService, serviceResourceResolverProvider);
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.SIMPLIFIED_CHINESE.toString());
         params.put("asciidoc", "南京防疫现场");
@@ -202,11 +193,9 @@ class ModuleVersionUploadTest {
                 asciidoctorService.getModuleHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
-                .thenReturn(slingContext.resourceResolver());
         registerMockAdapter(Workspace.class, slingContext);
 
-        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService, serviceResourceResolverProvider);
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "en_US");
         params.put("asciidoc", "Draft asciidoc content");
@@ -264,11 +253,9 @@ class ModuleVersionUploadTest {
                 asciidoctorService.getModuleHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
-                .thenReturn(slingContext.resourceResolver());
         registerMockAdapter(Workspace.class, slingContext);
 
-        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService, serviceResourceResolverProvider);
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "en_US");
         params.put("asciidoc", "Revised asciidoc content");
@@ -332,10 +319,8 @@ class ModuleVersionUploadTest {
                 asciidoctorService.getModuleHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
-        lenient().when(serviceResourceResolverProvider.getServiceResourceResolver())
-                .thenReturn(slingContext.resourceResolver());
 
-        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService, serviceResourceResolverProvider);
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.US);
         params.put("asciidoc", "This is the draft adoc content");
