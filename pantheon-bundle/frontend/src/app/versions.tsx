@@ -704,7 +704,7 @@ class Versions extends Component<IProps, IState> {
                             productVersion: { label: '', uuid: metadataResults.productVersion },
                             usecaseValue: metadataResults.documentUsecase
                         })
-                        if (metadataResults.productVersion !== 'undefined') {
+                        if (metadataResults.productVersion !== undefined) {
                             this.getProductFromVersionUuid(metadataResults.productVersion)
                         }
                     }

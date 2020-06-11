@@ -58,7 +58,7 @@ public class HydraIntegration implements EventProcessingExtension {
     private static String pantheonHost = "";
 
     //@TODO: externalize the variables
-    private static final String PANTHEON_MODULE_VERSION_API_PATH = "/api/module/variant.json/{variantUuid}";
+    private static final String PANTHEON_MODULE_VERSION_API_PATH = "/api/module/variant.json/${variantUuid}";
     private static final String TLS_VERSION = "TLSv1.2";
     private static final String UUID_FIELD = "jcr:uuid";
     private static final String HYDRA_TOPIC = "VirtualTopic.eng.pantheon2.notifications";
@@ -240,10 +240,10 @@ public class HydraIntegration implements EventProcessingExtension {
     }
 
     private String buildModuleVersionUri(ModuleVersion moduleVersion) {
-        StringSubstitutor strSubs = new StringSubstitutor();
         HashMap values = Maps.newHashMap();
         values.put("variantUuid", moduleVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
                 moduleVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
+        StringSubstitutor strSubs = new StringSubstitutor(values);
 
         String replacedUri = strSubs.replace(PANTHEON_MODULE_VERSION_API_PATH);
         return this.getPantheonHost() + replacedUri;
@@ -252,7 +252,6 @@ public class HydraIntegration implements EventProcessingExtension {
 
     private String getPortalUri(ModuleVersion moduleVersion) {
         final String uriTemplate = System.getenv(PORTAL_URL) + "/topics/${localeId}/${variantUuid}";
-        StringSubstitutor strSubs = new StringSubstitutor();
 
         HashMap values = Maps.newHashMap();
         // TODO Clean this up, lots of locale transformations to make sure this aligns
@@ -262,6 +261,7 @@ public class HydraIntegration implements EventProcessingExtension {
                         .toLocale()));
         values.put("variantUuid", moduleVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
                 moduleVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
+        StringSubstitutor strSubs = new StringSubstitutor(values);
 
         return strSubs.replace(uriTemplate);
     }
