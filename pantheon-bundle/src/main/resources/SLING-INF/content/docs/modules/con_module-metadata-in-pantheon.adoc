@@ -7,7 +7,7 @@ The types of module metadata in {ProductShortName} are as follows:
 
 Intrinsic:: The metadata that is inferred from the module automatically.
 +
-Example of intrinsic metadata include the following:
+Examples of intrinsic metadata include the following:
 
 ** Module name
 ** Module description
