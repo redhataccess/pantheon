@@ -221,6 +221,8 @@ public class AsciidoctorService {
                     .attribute("pantheonproduct", productName)
                     // show pantheonversion on the generated html. Base the value from metadata.
                     .attribute("pantheonversion", productVersion.isPresent() ? productVersion.get().name().get() : "")
+                    // Shows custom rendering attribute to Haml
+                    .attribute("pantheonenv", "preview")
                     // we want to avoid the footer on the generated html
                     .noFooter(true)
                     // link the css instead of embedding it

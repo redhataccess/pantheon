@@ -5,8 +5,10 @@ import com.redhat.pantheon.model.api.Folder;
 import com.redhat.pantheon.model.api.OrderedFolder;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
+import com.redhat.pantheon.model.module.ModuleVariant;
 
 import javax.inject.Named;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -22,6 +24,11 @@ public interface Workspace extends SlingModel {
 
     @Named("entities")
     Child<Folder> entities();
+
+    default String getCanonicalVariantName() {
+        Optional<ModuleVariantDefinition> cv = moduleVariantDefinitions().getOrCreate().getVariants().filter(def -> def.isCanonical().get()).findFirst();
+        return cv.isPresent() ? cv.get().getName() : ModuleVariant.DEFAULT_VARIANT_NAME;
+    }
 
     @JcrPrimaryType("sling:OrderedFolder")
     interface ModuleVariantDefinitionFolder extends OrderedFolder {

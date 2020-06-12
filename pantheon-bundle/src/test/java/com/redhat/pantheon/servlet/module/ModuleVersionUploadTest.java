@@ -1,7 +1,10 @@
 package com.redhat.pantheon.servlet.module;
 
+import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.workspace.Workspace;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.servlets.post.HtmlResponse;
@@ -10,6 +13,7 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,12 +25,22 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 class ModuleVersionUploadTest {
 
     private SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
+
+    @Mock
+    AsciidoctorService asciidoctorService;
 
     @Test
     void createFirstVersion() throws Exception {
@@ -34,8 +48,17 @@ class ModuleVersionUploadTest {
         slingContext.build()
                 .resource("/content/repositories/test_workspace",
                         "jcr:primaryType", "pant:workspace")
+                .resource("/content/repositories/test_workspace/module_variants/singleVariant",
+                        "pant:canonical", true)
                 .commit();
-        ModuleVersionUpload upload = new ModuleVersionUpload();
+
+        lenient().when(
+                asciidoctorService.getModuleHtml(
+                        any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
+                .thenReturn("A generated html string");
+        registerMockAdapter(Workspace.class, slingContext);
+
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the adoc content");
@@ -49,7 +72,7 @@ class ModuleVersionUploadTest {
         // Then
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatusCode());
         assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module/es_ES/source/draft/jcr:content"));
-        assertNull(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module/es_ES/variants"));
+        assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module/es_ES/variants"));
 
         Module module =
                 SlingModels.getModel(
@@ -62,6 +85,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -71,7 +95,14 @@ class ModuleVersionUploadTest {
                 .resource("/content/repositories/test_workspace",
                         "jcr:primaryType", "pant:workspace")
                 .commit();
-        ModuleVersionUpload upload = new ModuleVersionUpload();
+
+        lenient().when(
+                asciidoctorService.getModuleHtml(
+                        any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
+                .thenReturn("A generated html string");
+        registerMockAdapter(Workspace.class, slingContext);
+
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.SIMPLIFIED_CHINESE.toString());
         params.put("asciidoc", "å\u008D\u0097äº¬é\u0098²ç\u0096«ç\u008E°å\u009Cº");
@@ -98,6 +129,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -107,7 +139,14 @@ class ModuleVersionUploadTest {
                 .resource("/content/repositories/test_workspace",
                         "jcr:primaryType", "pant:workspace")
                 .commit();
-        ModuleVersionUpload upload = new ModuleVersionUpload();
+
+        lenient().when(
+                asciidoctorService.getModuleHtml(
+                        any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
+                .thenReturn("A generated html string");
+        registerMockAdapter(Workspace.class, slingContext);
+
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.SIMPLIFIED_CHINESE.toString());
         params.put("asciidoc", "南京防疫现场");
@@ -134,6 +173,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -148,7 +188,14 @@ class ModuleVersionUploadTest {
                         "jcr:data", "This is the released adoc content")
                 .commit();
         // set the draft and released 'pointers'
-        ModuleVersionUpload upload = new ModuleVersionUpload();
+
+        lenient().when(
+                asciidoctorService.getModuleHtml(
+                        any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
+                .thenReturn("A generated html string");
+        registerMockAdapter(Workspace.class, slingContext);
+
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "en_US");
         params.put("asciidoc", "Draft asciidoc content");
@@ -185,6 +232,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -200,7 +248,14 @@ class ModuleVersionUploadTest {
                 .resource("/content/repositories/test_workspace/entities/new/module/en_US/source/released/jcr:content",
                         "jcr:data", "This is the released adoc content")
                 .commit();
-        ModuleVersionUpload upload = new ModuleVersionUpload();
+
+        lenient().when(
+                asciidoctorService.getModuleHtml(
+                        any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
+                .thenReturn("A generated html string");
+        registerMockAdapter(Workspace.class, slingContext);
+
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", "en_US");
         params.put("asciidoc", "Revised asciidoc content");
@@ -237,6 +292,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -258,7 +314,13 @@ class ModuleVersionUploadTest {
                 .resource("/content/repositories/test_workspace/entities/new/module/en_US/source/released/jcr:content",
                         "jcr:data", "This is the released adoc content")
                 .commit();
-        ModuleVersionUpload upload = new ModuleVersionUpload();
+
+        lenient().when(
+                asciidoctorService.getModuleHtml(
+                        any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
+                .thenReturn("A generated html string");
+
+        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.US);
         params.put("asciidoc", "This is the draft adoc content");
@@ -295,5 +357,6 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        verifyZeroInteractions(asciidoctorService);
     }
 }
