@@ -38,6 +38,7 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
  * query parameter of name 'ctx_product' provided in the url.
  */
 
+
 public class AssemblyRendering implements Rendering {
 
     private final Logger log = LoggerFactory.getLogger(AssemblyRendering.class);
