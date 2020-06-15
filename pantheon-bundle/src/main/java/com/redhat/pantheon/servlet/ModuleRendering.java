@@ -1,7 +1,12 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
+<<<<<<< HEAD:pantheon-bundle/src/main/java/com/redhat/pantheon/servlet/ModuleRendererServlet.java
 import com.redhat.pantheon.helper.PantheonConstants;
+=======
+import com.redhat.pantheon.model.Rendering;
+import com.redhat.pantheon.model.api.FileResource;
+>>>>>>> c7b8025... Assembly changes:pantheon-bundle/src/main/java/com/redhat/pantheon/servlet/ModuleRendering.java
 import com.redhat.pantheon.model.module.*;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -38,6 +43,7 @@ import static java.util.stream.Collectors.toMap;
  * For example, if an asciidoc attribute of name 'product' needs to be passed, there will need to be a
  * query parameter of name 'ctx_product' provided in the url.
  */
+<<<<<<< HEAD:pantheon-bundle/src/main/java/com/redhat/pantheon/servlet/ModuleRendererServlet.java
 @Component(
         service = Servlet.class,
         property = {
@@ -51,22 +57,47 @@ import static java.util.stream.Collectors.toMap;
 public class ModuleRendererServlet extends SlingSafeMethodsServlet {
 
     private final Logger log = LoggerFactory.getLogger(ModuleRendererServlet.class);
+=======
+public class ModuleRendering implements Rendering {
+
+    private final Logger log = LoggerFactory.getLogger(ModuleRendering.class);
+
+    static final String PARAM_RERENDER = "rerender";
+    static final String PARAM_DRAFT = "draft";
+    static final String PARAM_LOCALE = "locale";
+    static final String PARAM_VARIANT = "variant";
+>>>>>>> c7b8025... Assembly changes:pantheon-bundle/src/main/java/com/redhat/pantheon/servlet/ModuleRendering.java
 
     private AsciidoctorService asciidoctorService;
 
     @Activate
+<<<<<<< HEAD:pantheon-bundle/src/main/java/com/redhat/pantheon/servlet/ModuleRendererServlet.java
     public ModuleRendererServlet(
+=======
+    public ModuleRendering(
+>>>>>>> c7b8025... Assembly changes:pantheon-bundle/src/main/java/com/redhat/pantheon/servlet/ModuleRendering.java
             @Reference AsciidoctorService asciidoctorService) {
         this.asciidoctorService = asciidoctorService;
     }
 
     @Override
+<<<<<<< HEAD:pantheon-bundle/src/main/java/com/redhat/pantheon/servlet/ModuleRendererServlet.java
     protected void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws ServletException, IOException {
         String locale = paramValue(request, PantheonConstants.PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
         boolean draft = paramValueAsBoolean(request, PantheonConstants.PARAM_DRAFT);
         boolean reRender = paramValueAsBoolean(request, PantheonConstants.PARAM_RERENDER);
         String variantName = paramValue(request, PantheonConstants.PARAM_VARIANT, DEFAULT_VARIANT_NAME);
+=======
+    public void getRenderedHTML(SlingHttpServletRequest request,
+            SlingHttpServletResponse response) throws IOException {
+        String locale = paramValue(request, PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
+        boolean draft = paramValueAsBoolean(request, PARAM_DRAFT);
+        boolean reRender = paramValueAsBoolean(request, PARAM_RERENDER);
+        String variantName = paramValue(request, PARAM_VARIANT, DEFAULT_VARIANT_NAME);
+
+        Module module = request.getResource().adaptTo(Module.class);
+>>>>>>> c7b8025... Assembly changes:pantheon-bundle/src/main/java/com/redhat/pantheon/servlet/ModuleRendering.java
         Locale localeObj = LocaleUtils.toLocale(locale);
 
         Module module = request.getResource().adaptTo(Module.class);
