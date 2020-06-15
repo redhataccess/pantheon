@@ -29,12 +29,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 
+import static com.redhat.pantheon.jcr.JcrResources.hash;
+
 @Component(
         service = PostOperation.class,
         property = {
                 Constants.SERVICE_DESCRIPTION + "=Servlet POST operation which accepts module uploads and versions them appropriately",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
-                PostOperation.PROP_OPERATION_NAME + "=pant:newDraftVersion"
+                PostOperation.PROP_OPERATION_NAME + "=pant:newAssemblyVersion"
         })
 public class DraftVersionUpload extends AbstractPostOperation {
     private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
@@ -100,13 +102,5 @@ public class DraftVersionUpload extends AbstractPostOperation {
         } catch (Exception e) {
             throw new RepositoryException("Error uploading an assembly version", e);
         }
-    }
-
-    /*
-     * calculates a hash for a string
-     * TODO This should probably be moved elsewhere
-     */
-    private HashCode hash(String str) {
-        return Hashing.adler32().hashString(str == null ? "" : str, Charsets.UTF_8);
     }
 }

@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.assembly;
 
+import com.redhat.pantheon.model.Document.Document;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.WorkspaceChild;
@@ -10,7 +11,7 @@ import javax.inject.Named;
 import java.util.Locale;
 
 @JcrPrimaryType("pant:assembly")
-public interface Assembly extends Module {
+public interface Assembly extends Document {
 
     @Named("jcr:uuid")
     Field<String> uuid();

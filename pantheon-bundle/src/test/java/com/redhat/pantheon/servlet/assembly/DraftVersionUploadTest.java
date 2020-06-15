@@ -50,7 +50,7 @@ public class DraftVersionUploadTest {
                         slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/assemblies/assembly1"),
                         Assembly.class);
         assertEquals("This is the adoc content",
-                assembly.moduleLocale(LocaleUtils.toLocale("es_ES")).get()
+                assembly.assemblyLocale(LocaleUtils.toLocale("es_ES")).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()

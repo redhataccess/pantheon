@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.Document.Document;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
@@ -39,7 +40,7 @@ import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
  *                                      ackStatus
  */
 @JcrPrimaryType("pant:module")
-public interface Module extends WorkspaceChild {
+public interface Module extends Document {
 
     @Named("jcr:uuid")
     Field<String> uuid();

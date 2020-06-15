@@ -293,7 +293,7 @@ def process_file(path, filetype):
         jcr_primary_type = 'pant:assembly'
         data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type='nt:file')
         # This is needed to add a new module version, otherwise it won't be handled
-        data[':operation'] = 'pant:newDraftVersion'
+        data[':operation'] = 'pant:newAssemblyVersion'
         files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
 
         if not args.dry:

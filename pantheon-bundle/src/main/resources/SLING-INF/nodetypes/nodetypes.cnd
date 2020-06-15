@@ -30,7 +30,6 @@
 // INTERESTING NOTE:
 // There is some "version" keyword that we can add on these types. What does it do? Hmmm...
 // Future investigation seems warranted.
-
 // Base type for modules
 // nt:hierarchyNode gets us jcr:created - https://wiki.apache.org/jackrabbit/nt%3AhierarchyNode
 // nt:unstructured lets us put whatever properties/children we want - https://wiki.apache.org/jackrabbit/nt%3Aunstructured
@@ -84,6 +83,13 @@
 
 [pant:assemblyVersion] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/assemblyVersion' mandatory autocreated
+
+// Generic Content type
+[pant:document] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/document' mandatory autocreated
+
+[pant:documentLocale] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/documentLocale' mandatory autocreated
 // Base type for titles
 //[pant:title] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
 //	- sling:resourceType (string) = 'pantheon/title' mandatory autocreated
