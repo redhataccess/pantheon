@@ -1,5 +1,5 @@
 [id='log-in-to-pantheon_{context}']
-= Log in to Pantheon
+= Log in to {ProductShortName}
 
 Log in to {ProductShortName} using your {RH} credentials.
 
