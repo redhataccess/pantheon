@@ -27,7 +27,7 @@ yarn run dev
 This will start a local browser-sync server that:
 * Automatically loads the `a-doc-styleguide.html`, which is generated from Pantheon's templates
 * Will watch and compile the dev and prod versions of the Scss, and watch for changes in HTML
-* Will watch for any changes in the adocs in the dev-assets folder
+* Will watch for any changes in the adocs in the dev-preview folder
 * Reload the page anything changes
 * It will run on a port that will show up in command line
 

@@ -37,7 +37,7 @@ const
 task(
   'compileAsciiDocs',
   parallel(
-    shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets dev-assets/ascii-doc-styleguide.adoc`),
+    shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets dev-preview/ascii-doc-styleguide.adoc`),
   )
 );
 
@@ -64,7 +64,7 @@ const compileCSS = () => {
     // Write an unminified version with sourcemaps
     // to this directory for dev
     .pipe(sourceMaps.write())
-    .pipe(dest('./dev-assets/'))
+    .pipe(dest('./dev-preview/'))
     // Make production CSS and put in prod location
     .pipe(postCss([cssNano(),]))
     .pipe(dest(cssOutput));
@@ -78,8 +78,8 @@ const compileCSS = () => {
  */
 const startBrowserSync = (done) => {
   browserSync.init({
-    'server': './dev-assets/',
-    'index': 'ascii-doc-styleguide.html',
+    'server': './',
+    'index': './dev-preview/ascii-doc-styleguide.html',
   });
   done();
 };
@@ -92,13 +92,14 @@ const reloadBrowserSync = (done) => {
 /**
  * Gulp tasks
  */
-// Builds dev assets in dev-assets and prod CSS in to the correct folder (see cssOutput variable)
-task('default', parallel(compileCSS));
+// Builds dev assets in dev-preview and prod CSS in to the correct folder (see cssOutput variable)
+task('default', parallel(compileCSS, 'compileAsciiDocs'));
 
 task('build:dev', parallel(compileCSS, 'compileAsciiDocs'));
 
 const watchTasks = () => {
   compileCSS();
+
   watch(
     cssSource,
     series(
@@ -116,7 +117,7 @@ const watchTasks = () => {
   );
 
   watch(
-    'dev-assets/**/*.adoc',
+    'dev-preview/**/*.adoc',
     series(
       'compileAsciiDocs',
       reloadBrowserSync

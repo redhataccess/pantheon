@@ -1,0 +1,13 @@
+cp-documentation {
+  display: block; }
+
+.pantheon-render {
+  padding: 2.5rem 3.75rem; }
+  .pantheon-render cp-documentation {
+    max-width: 54.6875rem;
+    margin-left: auto;
+    margin-right: auto; }
+    .pantheon-render cp-documentation.rhdocs {
+      padding: 0; }
+
+/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInBhbnRoZW9uLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxjQUFjLEVBQUE7O0FBR2hCO0VBQ0UsdUJBQWtCLEVBQUE7RUFEcEI7SUFJSSxxQkFBZ0I7SUFDaEIsaUJBQWlCO0lBQ2pCLGtCQUFrQixFQUFBO0lBTnRCO01BU00sVUFBVSxFQUFBIiwiZmlsZSI6InBhbnRoZW9uLmNzcyIsInNvdXJjZXNDb250ZW50IjpbImNwLWRvY3VtZW50YXRpb24ge1xuICBkaXNwbGF5OiBibG9jaztcbn1cblxuLnBhbnRoZW9uLXJlbmRlciB7XG4gIHBhZGRpbmc6IDQwcHggNjBweDtcblxuICBjcC1kb2N1bWVudGF0aW9uIHtcbiAgICBtYXgtd2lkdGg6IDg3NXB4O1xuICAgIG1hcmdpbi1sZWZ0OiBhdXRvO1xuICAgIG1hcmdpbi1yaWdodDogYXV0bztcblxuICAgICYucmhkb2NzIHtcbiAgICAgIHBhZGRpbmc6IDA7XG4gICAgfVxuICB9XG59XG4iXX0= */
