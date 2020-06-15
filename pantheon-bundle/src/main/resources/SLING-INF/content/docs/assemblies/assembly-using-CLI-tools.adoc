@@ -1,9 +1,0 @@
-[id'using-CLI-tools_{context}']
-
-= Using command line interface tools
-
-Some operations available in the Pantheon user interface can also be performed using commands in the command line interface.
-
-include::../modules/con_pantheon_yaml_file.adoc[]
-include::../modules/proc_installing_uploader_tool.adoc[]
-include::../modules/proc_uploader_tool.adoc[]
