@@ -1,12 +1,12 @@
 [id='log-in-to-pantheon_{context}']
 = Log in to Pantheon
 
-Log in to Pantheon using your Red Hat credentials.
+Log in to {ProductShortName} using your {RH} credentials.
 
 [discrete]
 == Procedure
 
-. Navigate to link:https://pantheon.cee.redhat.com/[].
+. Navigate to link:{ProductUrl}[].
 . Click `Login`.
 . Enter your user name.
 . Enter your password.
