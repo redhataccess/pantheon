@@ -55,27 +55,22 @@ public class RenderingServlet extends SlingSafeMethodsServlet {
 
     private final Logger log = LoggerFactory.getLogger(RenderingServlet.class);
 
-    static final String PARAM_RERENDER = "rerender";
-    static final String PARAM_DRAFT = "draft";
-    static final String PARAM_LOCALE = "locale";
-    static final String PARAM_VARIANT = "variant";
-
-    private Rendering rendering;
+    private AsciidoctorService asciidoctorService;
 
     @Activate
     public RenderingServlet(
-            @Reference Rendering rendering) {
-        this.rendering = rendering;
+            @Reference AsciidoctorService asciidoctorService) {
+        this.asciidoctorService = asciidoctorService;
     }
 
     @Override
     protected void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws ServletException, IOException {
         if(request.getResource().getResourceType().equals("pantheon/module")){
-            rendering.getRenderedHTML(request,response);
+            new ModuleRendering(asciidoctorService).getRenderedHTML(request,response);
         }
         else if(request.getResource().getResourceType().equals("pantheon/assembly")){
-            rendering.getRenderedHTML(request,response);
+            new AssemblyRendering(asciidoctorService).getRenderedHTML(request,response);
         }
     }
 }
