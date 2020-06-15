@@ -1,6 +1,7 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
+import com.redhat.pantheon.model.Rendering;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
@@ -39,20 +40,9 @@ import static java.util.stream.Collectors.toMap;
  * For example, if an asciidoc attribute of name 'product' needs to be passed, there will need to be a
  * query parameter of name 'ctx_product' provided in the url.
  */
-@Component(
-        service = Servlet.class,
-        property = {
-                Constants.SERVICE_DESCRIPTION + "=Servlet which transforms asciidoc content into html",
-                Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
-        })
-@SlingServletResourceTypes(
-        resourceTypes = { "pantheon/module" },
-        methods = "GET",
-        extensions = "preview")
-@SuppressWarnings("serial")
-public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
+public class ModuleRendering implements Rendering {
 
-    private final Logger log = LoggerFactory.getLogger(AsciidocRenderingServlet.class);
+    private final Logger log = LoggerFactory.getLogger(ModuleRendering.class);
 
     static final String PARAM_RERENDER = "rerender";
     static final String PARAM_DRAFT = "draft";
@@ -62,14 +52,14 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
     private AsciidoctorService asciidoctorService;
 
     @Activate
-    public AsciidocRenderingServlet(
+    public ModuleRendering(
             @Reference AsciidoctorService asciidoctorService) {
         this.asciidoctorService = asciidoctorService;
     }
 
     @Override
-    protected void doGet(SlingHttpServletRequest request,
-            SlingHttpServletResponse response) throws ServletException, IOException {
+    public void getRenderedHTML(SlingHttpServletRequest request,
+            SlingHttpServletResponse response) throws IOException {
         String locale = paramValue(request, PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
         boolean draft = paramValueAsBoolean(request, PARAM_DRAFT);
         boolean reRender = paramValueAsBoolean(request, PARAM_RERENDER);
@@ -114,5 +104,6 @@ public class AsciidocRenderingServlet extends SlingSafeMethodsServlet {
             w.write(html);
         }
     }
+
 }
 
