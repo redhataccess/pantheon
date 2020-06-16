@@ -119,7 +119,7 @@
     &::before {
       display: inline-block;
       margin: 0 0.125rem;
-      content: '\2014';
+      content: '—';
     }
   }
 }
@@ -335,10 +335,10 @@
         margin-top: 0;
 
         &::before {
+          content: '“';
           display: block;
           margin-right: 0.5rem;
           float: left;
-          content: '\201C';
           color: $color--brand-primary;
           font-size: 2.75rem;
           font-style: normal;

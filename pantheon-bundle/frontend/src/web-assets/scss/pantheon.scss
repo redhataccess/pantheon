@@ -1,10 +1,17 @@
+cp-documentation {
+  display: block;
+}
+
 .pantheon-render {
   padding: 40px 60px;
 
-  pfe-documentation {
-    display: block;
+  cp-documentation {
     max-width: 875px;
     margin-left: auto;
     margin-right: auto;
+
+    &.rhdocs {
+      padding: 0;
+    }
   }
 }
