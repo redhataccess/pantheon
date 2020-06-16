@@ -14,6 +14,7 @@ import org.apache.activemq.ActiveMQSslConnectionFactory;
 import org.apache.activemq.broker.SslContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.text.StringSubstitutor;
+import org.apache.jackrabbit.JcrConstants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -39,10 +40,10 @@ import static com.redhat.pantheon.servlet.ServletUtils.toLanguageTag;
  * A Hydra message producer for Module post publish events.
  * 
  * A sample message for publish event:
- * {"id":"https://example.com/api/module?locale=en-us&module_id=fb8f7586-1b68-437c-94d9-bfc4f85866ed","event":"publish"}
+ * {"id":"https://example.com/api/module?locale=en-us&module_id=fb8f7586-1b68-437c-94d9-bfc4f85866ed&variant=DEFAULT","event":"publish"}
  *
  * A sample message for unpublish event:
- * {"id":"","event":"unpublish", "view_uri":"https://example.com/topics/en-us/fb8f7586-1b68-437c-94d9-bfc4f85866ed"}
+ * {"id":"","event":"unpublish", "view_uri":"https://example.com/topics/en-us/fb8f7586-1b68-437c-94d9-bfc4f85866ed?variant=DEFAULT"}
  *
  * @author Lisa Davidson
  */
@@ -57,7 +58,7 @@ public class HydraIntegration implements EventProcessingExtension {
     private static String pantheonHost = "";
 
     //@TODO: externalize the variables
-    private static final String PANTHEON_MODULE_VERSION_API_PATH = "/api/module.json?module_id=${moduleUuid}&locale=${localeId}&variant=${variantName}";
+    private static final String PANTHEON_MODULE_VERSION_API_PATH = "/api/module/variant.json/${variantUuid}";
     private static final String TLS_VERSION = "TLSv1.2";
     private static final String UUID_FIELD = "jcr:uuid";
     private static final String HYDRA_TOPIC = "VirtualTopic.eng.pantheon2.notifications";
@@ -113,7 +114,7 @@ public class HydraIntegration implements EventProcessingExtension {
 
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
-//        String moduleVersionUUID = moduleVersion.uuid().get();
+
         String eventValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
         String idValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? buildModuleVersionUri(moduleVersion) : "";
         String uriValue = "";
@@ -239,11 +240,10 @@ public class HydraIntegration implements EventProcessingExtension {
     }
 
     private String buildModuleVersionUri(ModuleVersion moduleVersion) {
-        StringSubstitutor strSubs = new StringSubstitutor();
         HashMap values = Maps.newHashMap();
-        values.put("moduleUuid", moduleVersion.getParent().getParent().getParent().getParent().uuid().get());
-        values.put("localeId", moduleVersion.getParent().getParent().getParent().getName());
-        values.put("variantName", moduleVersion.getParent().getName());
+        values.put("variantUuid", moduleVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
+                moduleVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
+        StringSubstitutor strSubs = new StringSubstitutor(values);
 
         String replacedUri = strSubs.replace(PANTHEON_MODULE_VERSION_API_PATH);
         return this.getPantheonHost() + replacedUri;
@@ -251,13 +251,7 @@ public class HydraIntegration implements EventProcessingExtension {
 
 
     private String getPortalUri(ModuleVersion moduleVersion) {
-        final String uriTemplate = System.getenv(PORTAL_URL) + "/topics/${localeId}/${moduleUuid}${variantSuffix}";
-        StringSubstitutor strSubs = new StringSubstitutor();
-
-        String variantSuffix = "/" + moduleVersion.getParent().getName();
-        if(DEFAULT_VARIANT_NAME.equals(variantSuffix)) {
-            variantSuffix = "";
-        }
+        final String uriTemplate = System.getenv(PORTAL_URL) + "/topics/${localeId}/${variantUuid}";
 
         HashMap values = Maps.newHashMap();
         // TODO Clean this up, lots of locale transformations to make sure this aligns
@@ -265,8 +259,9 @@ public class HydraIntegration implements EventProcessingExtension {
                 ULocale.createCanonical(
                         moduleVersion.getParent().getParent().getParent().getName())
                         .toLocale()));
-        values.put("moduleUuid", moduleVersion.getParent().getParent().getParent().getParent().uuid().get());
-        values.put("variantSuffix", variantSuffix);
+        values.put("variantUuid", moduleVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
+                moduleVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
+        StringSubstitutor strSubs = new StringSubstitutor(values);
 
         return strSubs.replace(uriTemplate);
     }

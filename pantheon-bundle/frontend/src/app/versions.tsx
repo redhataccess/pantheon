@@ -15,7 +15,7 @@ export interface IProps {
     productInfo: string
     versionModulePath: string
     variant: string
-    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, moduleUUID) => any
+    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
@@ -405,6 +405,11 @@ class Versions extends Component<IProps, IState> {
                             }
                         }
                     }
+                    // process variantUUID
+                    let variantUuid = ''
+                    if (firstVariant["jcr:primaryType"] !== "undefined" && firstVariant["jcr:primaryType"]=== "pant:moduleVariant") {
+                        variantUuid = firstVariant["jcr:uuid"]
+                    }
                     const versionCount = firstVariant.__children__.length
                     for (let i = 0; i < versionCount; i++) {
                         const moduleVersion = firstVariant.__children__[i]
@@ -431,7 +436,7 @@ class Versions extends Component<IProps, IState> {
                         if (!variantReleased) {
                             this.release[0].updatedDate = '-'
                         }
-                        this.props.updateDate((draftDate !== '' ? draftDate : ''), this.release[0].updatedDate, this.release[0].version, responseJSON['jcr:uuid'])
+                        this.props.updateDate((draftDate !== '' ? draftDate : ''), this.release[0].updatedDate, this.release[0].version, variantUuid)
                     }
                     this.setState({
                         results: [this.draft, this.release],
@@ -699,7 +704,7 @@ class Versions extends Component<IProps, IState> {
                             productVersion: { label: '', uuid: metadataResults.productVersion },
                             usecaseValue: metadataResults.documentUsecase
                         })
-                        if (metadataResults.productVersion !== 'undefined') {
+                        if (metadataResults.productVersion !== undefined) {
                             this.getProductFromVersionUuid(metadataResults.productVersion)
                         }
                     }
