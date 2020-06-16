@@ -1,8 +1,6 @@
 package com.redhat.pantheon.servlet.assembly;
 
-import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.assembly.Assembly;
@@ -38,7 +36,7 @@ import static com.redhat.pantheon.jcr.JcrResources.hash;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
                 PostOperation.PROP_OPERATION_NAME + "=pant:newAssemblyVersion"
         })
-public class DraftVersionUpload extends AbstractPostOperation {
+public class AssemblyVersionUpload extends AbstractPostOperation {
     private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
 
     @Override

@@ -19,7 +19,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
-public class DraftVersionUploadTest {
+public class AssemblyVersionUploadTest {
     private SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
     @Test
@@ -29,7 +29,7 @@ public class DraftVersionUploadTest {
                 .resource("/content/repositories/test_workspace",
                         "jcr:primaryType", "pant:workspace")
                 .commit();
-        DraftVersionUpload upload = new DraftVersionUpload();
+        AssemblyVersionUpload upload = new AssemblyVersionUpload();
         Map<String, Object> params = newHashMap();
         params.put("locale", "es_ES");
         params.put("asciidoc", "This is the adoc content");
