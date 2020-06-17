@@ -1,7 +1,13 @@
 !!! 5
+-# Set path to CSS
+- rhDocsCssPath = '/static/rhdocs.css'
+- pantheonCssPath = '/static/pantheon.css'
+
+- if (@document.attr :pantheonenv) == 'localwebassets'
+  - rhDocsCssPath = '/dev-preview/rhdocs.css'
+  - pantheonCssPath = '/dev-preview/pantheon.css'
+
 %html{:lang=>(attr :lang, 'en')}
-
-
   %head
     %meta(charset="#{attr :encoding, 'UTF-8'}")
     /[if IE]
@@ -13,30 +19,17 @@
         %meta{:name=>(meta || key), :content=>(attr key)}
 
     %title=((doctitle :sanitize => true) || (attr 'untitled-label'))
+    %link(rel="stylesheet" href="https://static.redhat.com/libs/redhat/redhat-font/2/webfonts/red-hat-font.css")
 
-    - if (@document.attr :pantheonenv) == 'localwebassets'
-      -# Assets for front-end build testing at GITROOT/pantheon-bundle/frontend/src/web-assets
-      %link(rel="stylesheet" href="/rhdocs.css")
-      %link(rel="stylesheet" href="/pantheon.css")
-      %link(rel="stylesheet" href="https://static.redhat.com/libs/redhat/redhat-font/2/webfonts/red-hat-font.css")
+    %link(rel="stylesheet" href=pantheonCssPath )
+    %link(rel="stylesheet" href=rhDocsCssPath )
 
-    - else
-      -# Assets for pantheon build/document preview
-      %link(rel="stylesheet" href="https://static.redhat.com/libs/redhat/redhat-font/2/webfonts/red-hat-font.css")
-      %link(rel="stylesheet" href="https://pantheon2-proxy.ext.us-west.aws.prod.paas.redhat.com/static/rhdocs.css")
-      -# %link(rel="stylesheet" href="/pantheon.css")
 
     - if (@document.attr :pantheonenv) == 'localwebassets'
       %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/custom-elements-es5-adapter.js")
       %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/webcomponents-bundle.js")
       %script(src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js")
-      :javascript
-        require([
-          "https://access.redhat.com/webassets/avalon/j/public_modules/node_modules/@patternfly/pfelement/dist/pfelement.umd.js"
-        ])
-        require([
-          "https://access.redhat.com/webassets/avalon/j/public_modules/node_modules/cp-documentation/dist/cp-documentation.umd.min.js"
-        ])
+      %script(type="module" src="/node_modules/cp-documentation/dist/cp-documentation.js")
 
     - else
       - # Dummy cp chrome code
@@ -59,7 +52,7 @@
 
   %body{:id => @id, :class=>[doctype, 'pantheon-render', ((attr? :toc) && (attr? 'toc-placement', 'auto') ? "has-toc toc-#{attr 'toc-position', 'left'}" : nil)]}
     -# Begin main document
-    %cp-documentation#rhdocs.rhdocs(pfe-css="https://pantheon2-proxy.ext.us-west.aws.prod.paas.redhat.com/static/rhdocs.css")
+    %cp-documentation#rhdocs.rhdocs
       - unless noheader
         -# Set some simple vars so our if statements aren't gross
         - hasTitle = !(notitle) && (@header != nil) && (@header&.title != nil)

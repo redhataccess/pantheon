@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.redhat.pantheon.jcr.JcrResources.hash;
+
 /**
  * Post operation to add a new Module version to the system.
  * The expected parameters in the post request are:
@@ -165,13 +167,5 @@ public class ModuleVersionUpload extends AbstractPostOperation {
         else {
             return null;
         }
-    }
-
-    /*
-     * calculates a hash for a string
-     * TODO This should probably be moved elsewhere
-     */
-    private HashCode hash(String str) {
-        return Hashing.adler32().hashString(str == null ? "" : str, Charsets.UTF_8);
     }
 }

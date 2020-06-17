@@ -131,6 +131,8 @@ variants:
     - path: path/to/attribute2.adoc
       name: my_name2
 
+assemblies:
+      - assemblies/*.adoc
 modules:
       - master.adoc
       - modules/*.adoc
@@ -207,6 +209,8 @@ def process_file(path, filetype):
     """
     isModule = True if filetype == 'modules' else False
     isResource = True if filetype == 'resources' else False
+    isAssembly = True if filetype == 'assemblies' else False
+
     content_root = 'sandbox' if args.sandbox else 'repositories'
     url = server + '/content/' + content_root + '/' + repository + '/entities'
 
@@ -283,6 +287,18 @@ def process_file(path, filetype):
             if not args.dry:
                 r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
                 _print_response('resource', path, r.status_code, r.reason)
+    elif isAssembly:
+        url += '/' + path.name
+        logger.debug('url: %s', url)
+        jcr_primary_type = 'pant:assembly'
+        data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type='nt:file')
+        # This is needed to add a new module version, otherwise it won't be handled
+        data[':operation'] = 'pant:newAssemblyVersion'
+        files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
+
+        if not args.dry:
+            r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
+            _print_response('assembly', path, r.status_code, r.reason)
     logger.debug('')
 
 
@@ -388,9 +404,12 @@ def listdir_recursive(directory, allFiles):
 
 
 def readYamlGlob(config, keyword):
-    globs = config[keyword] if config is not None and keyword in config else ()
-    logger.debug('keyword: $s', keyword)
-    logger.debug('config[keyword] $s', config[keyword])
+    if config is not None and keyword is not None and keyword in config:
+        globs = config[keyword]
+        logger.debug('keyword: $s', keyword)
+        logger.debug('config[keyword] $s', config[keyword])
+    else:
+        globs = []
     if globs is not None:
         for i, val in enumerate(globs):
             globs[i] = val.replace('*', '[^/]+')
@@ -467,12 +486,14 @@ if len(config.keys()) > 0 and 'repository' in config:
 
     moduleGlobs = readYamlGlob(config, 'modules')
     resourceGlobs = readYamlGlob(config, 'resources')
+    assemblyGlobs = readYamlGlob(config, 'assemblies')
     if attribute_files:
         if resourceGlobs is None:
             resourceGlobs = attribute_files
         else:
             resourceGlobs = resourceGlobs + attribute_files
     non_resource_files = []
+    logger.debug('assemblyGlobs: %s', assemblyGlobs)
     logger.debug('moduleGlobs: %s', moduleGlobs)
     logger.debug('resourceGlobs: %s', resourceGlobs)
     logger.debug('args.directory: %s', args.directory)
@@ -483,6 +504,7 @@ if len(config.keys()) > 0 and 'repository' in config:
 
     processRegexMatches(allFiles, resourceGlobs, 'resources')
     processRegexMatches(allFiles, moduleGlobs, 'modules')
+    processRegexMatches(allFiles, assemblyGlobs, 'assemblies')
 
     leftoverFiles = len(allFiles)
     if leftoverFiles > 0:

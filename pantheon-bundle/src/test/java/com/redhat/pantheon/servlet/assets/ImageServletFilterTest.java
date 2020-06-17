@@ -56,34 +56,4 @@ class ImageServletFilterTest {
         verify(requestDispatcherFactory).getRequestDispatcher(eq(imagePath), any());
         verify(requestDispatcher).forward(any(), any());
     }
-
-    @Test
-    void symlink() throws Exception {
-        // Given
-        String imagePath = "/path/to/my";
-        String imageName = "/image.png";
-        String symlinkPath = "/something/else";
-        String symlinkName = "/symlink";
-
-        sc.build()
-                .resource(imagePath + imageName)
-                .resource(symlinkPath + symlinkName,
-                        "sling:resourceType", "pantheon/symlink",
-                        "pant:target", "../.." + imagePath)
-                .commit();
-        String imageUrl = Base64.getUrlEncoder().encodeToString((symlinkPath + symlinkName + imageName).getBytes());
-        RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-        sc.request().setRequestDispatcherFactory(requestDispatcherFactory);
-        sc.request().setPathInfo(GlobalConfig.IMAGE_PATH_PREFIX + "/" + imageUrl);
-        when(requestDispatcherFactory.getRequestDispatcher(anyString(), any())).thenReturn(requestDispatcher);
-        ImageServletFilter filter = new ImageServletFilter();
-
-        // When
-        filter.init(mock(FilterConfig.class));
-        filter.doFilter(sc.request(), sc.response(), filterChain);
-
-        // Then
-        verify(requestDispatcherFactory).getRequestDispatcher(eq(symlinkPath + "/../.." + imagePath + imageName), any());
-        verify(requestDispatcher).forward(any(), any());
-    }
 }
