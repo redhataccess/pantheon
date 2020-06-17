@@ -34,7 +34,7 @@ You need to define the values for `server` and `repository`.
 
 server: {server_url}
 # Example
-# server: http://{ProductShortName}.redhat.com[]
+# server: {ProductUrl}[]
 repositories:
   - name: repo_id
     attributes: path/to/attribute.adoc
