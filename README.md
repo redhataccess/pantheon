@@ -68,7 +68,7 @@ When your work is ready to be reviewed and merged, create a pull request.
 1. Select your working branch from the compare list.
 1. Add `WIP` to the title of the pull request.
 1. Add the **awaiting tech review** label to the pull request.
-1. In the pull request comment field, enter `@redhataccess/pantheon-developers Please review for technical completeness and accuracy`.
+1. In the pull request comment field, enter `@redhataccess/eud-tech-review - Please review for technical completeness and accuracy`.
 1. Click **Create new pull request**.
 
 For code pull requests, one or more developers review the pull request. For documentation pull requests, the developers review the pull request for technical accuracy and documentation team members review the pull request for clarity, consistency, and compliance with necessary standards.
@@ -86,7 +86,7 @@ When technical review is complete, writers click the **Reviewers** gear icon and
 When you have addressed all technical review and peer review comments, notify the developers to accept the pull request.
 
 1. Remove `WIP` from the title of the pull request.
-1. Click **Request Review** and enter `@redhataccess/pantheon-developers`.
+1. Click the **Reviewers** gear icon and enter `@redhataccess/eud-tech-review`.
 
 The developers check that the **Tech review passed** label has been added to the pull request and peer pull request approval provided, then accept it.
 
