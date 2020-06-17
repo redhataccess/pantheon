@@ -313,18 +313,11 @@
         </dependency>
         <!-- Provided dependencies -->
         <dependency>
-            <artifactId>org.apache.felix.http.servlet-api</artifactId>
-            <version>1.1.2</version>
-            <groupId>org.apache.felix</groupId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.compendium -->
-<!--        <dependency>-->
-<!--            <groupId>org.osgi</groupId>-->
-<!--            <artifactId>org.osgi.compendium</artifactId>-->
-<!--            <version>5.0.0</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
@@ -347,7 +340,7 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
-            <version>2.11.0</version>
+            <version>2.22.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -359,7 +352,7 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.servlets.post</artifactId>
-            <version>2.3.30</version>
+            <version>2.3.36</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -371,13 +364,13 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.scripting.sightly.compiler.java</artifactId>
-            <version>1.0.26-1.4.0</version>
+            <version>1.1.4-1.4.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>1.7.29</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -393,9 +386,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <artifactId>org.apache.sling.scripting.sightly.runtime</artifactId>
+            <version>1.2.0-1.4.0</version>
             <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.models.impl</artifactId>
-            <version>1.4.10</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -413,18 +406,12 @@
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-jcr-commons</artifactId>
-            <version>2.18.2</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.jackrabbit</groupId>
-            <artifactId>jackrabbit-api</artifactId>
-            <version>2.16.3</version>
+            <version>2.20.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <artifactId>oak-commons</artifactId>
-            <version>1.16.0</version>
+            <version>1.26.0</version>
             <groupId>org.apache.jackrabbit</groupId>
             <scope>provided</scope>
         </dependency>
@@ -436,7 +423,7 @@
         </dependency>
         <dependency>
             <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
+            <version>3.10</version>
             <groupId>org.apache.commons</groupId>
             <scope>provided</scope>
         </dependency>
@@ -455,7 +442,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.10</version>
+            <version>4.5.12</version>
             <scope>provided</scope>
         </dependency>
         <!-- Test dependencies -->
