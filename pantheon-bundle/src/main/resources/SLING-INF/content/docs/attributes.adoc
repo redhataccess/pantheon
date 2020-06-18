@@ -7,9 +7,9 @@
 :ProductName: Pantheon
 :ProductShortName: Pantheon
 :ProductNumber: 2
-:ProductUrl: http://pantheon2.int.us-west.aws.prod.paas.redhat.com[]
+:ProductUrl: http://pantheon.corp.redhat.com[]
 
-// Publishing 
-:PublishingPortal: Customer Portal 
+// Publishing
+:PublishingPortal: Customer Portal
 
 :imagesdir: images
