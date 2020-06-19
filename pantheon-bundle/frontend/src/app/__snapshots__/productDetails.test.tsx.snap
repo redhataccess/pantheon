@@ -55,14 +55,8 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
           fieldId="new_version_name"
           label="New Version:"
         >
-          <TextInput
-            aria-label={null}
-            className=""
+          <ForwardRef
             id="new_version_name_text"
-            isDisabled={false}
-            isReadOnly={false}
-            isRequired={false}
-            isValid={true}
             onChange={[Function]}
             placeholder="New version name"
             type="text"

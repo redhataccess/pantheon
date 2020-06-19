@@ -10,14 +10,8 @@ exports[`ProductListing tests should render ProductListing component 1`] = `
       <div
         className="row-view"
       >
-        <TextInput
-          aria-label={null}
-          className=""
+        <ForwardRef
           id="search"
-          isDisabled={false}
-          isReadOnly={false}
-          isRequired={false}
-          isValid={true}
           onChange={[Function]}
           placeholder="Type product name to search"
           type="text"
