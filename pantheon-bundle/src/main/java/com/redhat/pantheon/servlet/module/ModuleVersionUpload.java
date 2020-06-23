@@ -14,12 +14,13 @@ import com.redhat.pantheon.model.module.ModuleType;
 import com.redhat.pantheon.servlet.ServletUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
+import org.apache.sling.servlets.post.impl.operations.AbstractPostOperation;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -69,7 +70,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
     }
 
     @Override
-    protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
+    protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws PersistenceException {
 
         try {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
@@ -143,7 +144,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             resolver.commit();
             response.setStatus(responseCode, "");
         } catch (Exception e) {
-            throw new RepositoryException("Error uploading a module version", e);
+            throw new PersistenceException("Error uploading a module version", e);
         }
     }
 
