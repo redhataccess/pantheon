@@ -55,8 +55,11 @@ public class SlingPathSuffix {
                 }
             }
         }
-        pattern = Pattern.compile(Pattern.quote(matcher.replaceAll("_____PARAM_____")).replace("_____PARAM_____", "\\E([^/]*)\\Q"));
-
+        pattern = Pattern.compile(
+                Pattern.quote(matcher.replaceAll("_____PARAM_____"))
+                        .replace("_____PARAM_____", "\\E([^/\\?#]*)\\Q")
+                        // add this in case the url has extra parameters
+                        + ".*");
     }
 
     /**
