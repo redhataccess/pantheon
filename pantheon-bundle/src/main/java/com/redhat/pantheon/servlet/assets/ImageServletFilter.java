@@ -1,5 +1,8 @@
 package com.redhat.pantheon.servlet.assets;
 
+import com.redhat.pantheon.helper.Symlinks;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.servlets.annotations.SlingServletFilter;
 import org.osgi.service.component.annotations.Component;
 
@@ -52,7 +55,11 @@ public class ImageServletFilter implements Filter {
         String assetId = pathMatcher.group("assetId");
 
         String imagePath = new String(Base64.getUrlDecoder().decode(assetId));
-        request.getRequestDispatcher(imagePath)
+        StringBuilder realPath = new StringBuilder(imagePath);
+
+        Resource image = Symlinks.resolve(((SlingHttpServletRequest) request).getResourceResolver(), imagePath);
+
+        request.getRequestDispatcher(image.getPath())
             .forward(request, response);
     }
 

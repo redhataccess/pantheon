@@ -1,8 +1,8 @@
-@import 'variables';
-@import 'mixins';
+@import '_core/variables';
+@import '_core/mixins';
 
-@import 'fonts/overpass';
-@import '../node_modules/normalizecss/normalize.css';
+@import 'base/normalize';
+@import 'base/base';
 @import 'components/styles';
 @import 'components/prismjs';
 @import 'components/fa-icons';

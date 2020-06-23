@@ -16,6 +16,8 @@ import javax.servlet.RequestDispatcher;
 
 import java.util.Base64;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_DATA;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;

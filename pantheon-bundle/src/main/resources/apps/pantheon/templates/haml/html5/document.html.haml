@@ -14,77 +14,52 @@
 
     %title=((doctitle :sanitize => true) || (attr 'untitled-label'))
 
-    - if Asciidoctor::DEFAULT_STYLESHEET_KEYS.include?(attr :stylesheet)
-      - if @safe >= Asciidoctor::SafeMode::SECURE || (attr? :linkcss)
-        %link(rel='stylesheet'){:href=>normalize_web_path(Asciidoctor::DEFAULT_STYLESHEET_NAME, (attr :stylesdir, ''))}
-      - else
-        %style=Asciidoctor::Stylesheets.instance.primary_stylesheet_data
-    - elsif attr? :stylesheet
-      - if @safe >= Asciidoctor::SafeMode::SECURE || (attr? :linkcss)
-        %link(rel='stylesheet'){:href=>normalize_web_path((attr :stylesheet), (attr :stylesdir, ''))}
-      - else
-        %style=read_asset(normalize_system_path((attr :stylesheet), (attr :stylesdir, '')), true)
-    - if attr? :icons, 'font'
-      - if !(attr 'iconfont-remote', '').nil?
-        %link(rel='stylesheet'){:href=>(attr 'iconfont-cdn', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css')}
-      - else
-        %link(rel='stylesheet'){:href=>normalize_web_path("#{attr 'iconfont-name', 'font-awesome'}.css", (attr :stylesdir, ''))}
-    - case attr 'source-highlighter'
-    - when 'coderay'
-      - if (attr 'coderay-css', 'class') == 'class'
-        - if @safe >= Asciidoctor::SafeMode::SECURE || (attr? :linkcss)
-          %link(rel='stylesheet'){:href=>normalize_web_path('asciidoctor-coderay.css', (attr :stylesdir, ''))}
-        - else
-          %style=Asciidoctor::Stylesheets.instance.coderay_stylesheet_data
-    - when 'pygments'
-      - if (attr 'pygments-css', 'class') == 'class'
-        - if @safe >= Asciidoctor::SafeMode::SECURE || (attr? :linkcss)
-          %link(rel='stylesheet'){:href=>normalize_web_path('asciidoctor-pygments.css', (attr :stylesdir, ''))}
-        - else
-          %style=Asciidoctor::Stylesheets.instance.pygments_stylesheet_data(attr 'pygments-style')
-    - when 'highlightjs'
-      %link(rel='stylesheet' href="#{attr :highlightjsdir, 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4'}/styles/#{attr 'highlightjs-theme', 'googlecode'}.min.css")
-      %script(src="#{attr :highlightjsdir, 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4'}/highlight.min.js")
-      %script hljs.initHighlightingOnLoad()
-    - when 'prismjs'
-      - if (attr 'prismjs-theme') != 'rhdocs'
-        %link(rel='stylesheet' href="#{attr :prismjsdir, 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0'}/themes/prism#{((attr? 'prismjs-theme') ? '-' : nil)}#{attr 'prismjs-theme', nil}.min.css")
-      %script(src="#{attr :prismjsdir, 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0'}/prism.min.js")
-      %script(src="#{attr :prismjsdir, 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0'}/plugins/show-language/prism-show-language.min.js")
-      %script(src="#{attr :prismjsdir, 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0'}/plugins/keep-markup/prism-keep-markup.js")
-      - prism_langs = @document.attr :prismjslangs
-      - prism_langs = prism_langs.split(',')
-      - if prism_langs
-        - prism_langs.each do |item|
-          %script(src="#{attr :prismjsdir, 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0'}/components/prism-#{item}.min.js")
-    - when 'prettify'
-      %link(rel='stylesheet' href="#{attr :prettifydir, 'http://cdnjs.cloudflare.com/ajax/libs/prettify/r298'}/#{attr 'prettify-theme', 'prettify'}.min.css")
-      %script(src="#{attr :prettifydir, 'http://cdnjs.cloudflare.com/ajax/libs/prettify/r298'}/prettify.min.js")
-      %script document.addEventListener('DOMContentLoaded', prettyPrint)
-    - if attr? 'stem'
-      %script(type='text/x-mathjax-config')
-        :plain
-          MathJax.Hub.Config({
-            tex2jax: {
-              inlineMath: [['\\(','\\)']],
-              displayMath: [['\\[','\\]']],
-              ignoreClass: 'nostem|nolatexmath'
-            },
-            asciimath2jax: {
-              delimiters: [['\\$','\\$']],
-              ignoreClass: 'nostem|noasciimath'
-            }
-          });
-      %script(type='text/javascript' src='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML')
-    - unless (docinfo_content = docinfo).empty?
-      =docinfo_content
+    - if (@document.attr :pantheonenv) == 'localwebassets'
+      -# Assets for front-end build testing at GITROOT/pantheon-bundle/frontend/src/web-assets
+      %link(rel="stylesheet" href="/rhdocs.css")
+      %link(rel="stylesheet" href="/pantheon.css")
+      %link(rel="stylesheet" href="https://static.redhat.com/libs/redhat/redhat-font/2/webfonts/red-hat-font.css")
+
+    - else
+      -# Assets for pantheon build/document preview
+      %link(rel="stylesheet" href="https://static.redhat.com/libs/redhat/redhat-font/2/webfonts/red-hat-font.css")
+      %link(rel="stylesheet" href="https://pantheon2-proxy.ext.us-west.aws.prod.paas.redhat.com/static/rhdocs.css")
+      -# %link(rel="stylesheet" href="/pantheon.css")
+
+    - if (@document.attr :pantheonenv) == 'localwebassets'
+      %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/custom-elements-es5-adapter.js")
+      %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/webcomponents-bundle.js")
+      %script(src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js")
+      :javascript
+        require([
+          "https://access.redhat.com/webassets/avalon/j/public_modules/node_modules/@patternfly/pfelement/dist/pfelement.umd.js"
+        ])
+        require([
+          "https://access.redhat.com/webassets/avalon/j/public_modules/node_modules/cp-documentation/dist/cp-documentation.umd.min.js"
+        ])
+
+    - else
+      - # Dummy cp chrome code
+      :javascript
+        window.portal = {
+          analytics : {},
+          host      : "https://access.redhat.com",
+          idp_url   : "https://sso.redhat.com",
+          lang      : "en",  
+          version   : "7b09880",
+          builddate : "2020-06-10T14:50:01.831Z",
+          fetchdate : "2020-06-10T14:50:04-0400",
+          nrid      : "14615289",
+          nrlk      : "2a497fa56f"
+        };
+      %script(src="https://access.redhat.com/webassets/avalon/j/lib/require.js")
+      :javascript
+        chrometwo_require(["wc"], wc => wc.include("cp-documentation/dist/cp-documentation.umd.min"));
 
 
-  %body{:id => @id, :class=>[doctype, ((attr? :toc) && (attr? 'toc-placement', 'auto') ? "has-toc toc-#{attr 'toc-position', 'left'}" : nil)], :style=>("max-width: #{attr 'max-width'};" if (attr? 'max-width'))}
-
-
+  %body{:id => @id, :class=>[doctype, 'pantheon-render', ((attr? :toc) && (attr? 'toc-placement', 'auto') ? "has-toc toc-#{attr 'toc-position', 'left'}" : nil)]}
     -# Begin main document
-    %article#rhdocs.rhdocs
+    %cp-documentation#rhdocs.rhdocs(pfe-css="https://pantheon2-proxy.ext.us-west.aws.prod.paas.redhat.com/static/rhdocs.css")
       - unless noheader
         -# Set some simple vars so our if statements aren't gross
         - hasTitle = !(notitle) && (@header != nil) && (@header&.title != nil)
@@ -130,7 +105,7 @@
           %h2#rhdocs-toctitle.rhdocs-toctitle=attr 'toc-title'
           =converter.convert self, 'outline'
 
-      %main#rhdocs-content.rhdocs-content
+      %article#rhdocs-content.rhdocs-content
         =content
         - unless !footnotes? || attr?(:nofootnotes)
           #rhdocs-footnotes.rhdocs-footnotes{:aria => {:label => 'Footnotes'}}

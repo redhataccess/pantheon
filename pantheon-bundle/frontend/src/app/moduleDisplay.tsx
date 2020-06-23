@@ -20,7 +20,7 @@ class ModuleDisplay extends Component<any, any, any> {
             modulePath: '',
             moduleTitle: "",
             moduleType: '',
-            moduleUUID: '',
+            variantUUID: '',
             portalHost: '',
             productValue: "",
             releasePath: '',
@@ -33,11 +33,10 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     public componentDidMount() {
+        // this.getVariantParam()
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
-
         this.getPortalUrl()
-        this.getVariantParam()
     }
 
     public render() {
@@ -64,15 +63,15 @@ class ModuleDisplay extends Component<any, any, any> {
                     </div>
                     <div>
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.moduleUUID !== ""
+                            && this.state.variantUUID !== ""
                             && this.state.portalHost !== ""
-                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                         }
 
                         <span>&emsp;&emsp;</span>
 
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.moduleUUID !== ""
+                            && this.state.variantUUID !== ""
                             && this.state.portalHost !== ""
                             && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
                         }
@@ -164,19 +163,20 @@ class ModuleDisplay extends Component<any, any, any> {
         return window.open(docPath)
     }
 
-    private updateDate = (draftDate, releaseDate, releaseVersion, moduleUUID) => {
+    private updateDate = (draftDate, releaseDate, releaseVersion, variantUUID) => {
         this.setState({
             draftUpdateDate: draftDate,
-            moduleUUID,
+            variantUUID,
             releaseUpdateDate: releaseDate,
             releaseVersion,
         })
     }
 
-    private fetchModuleDetails = (data) => {
+    private fetchModuleDetails = async(data) => {
+        await this.getVariantParam()
         this.setState({
             modulePath: data.location.pathname,
-            releasePath: "/content" + data.location.pathname + ".preview"
+            releasePath: "/content" + data.location.pathname + ".preview?variant=" + this.state.variant
         })
 
         fetch(data.location.pathname + '/en_US.harray.4.json')
@@ -298,8 +298,8 @@ class ModuleDisplay extends Component<any, any, any> {
 
     private copyToClipboard = () => {
         const textField = document.createElement('textarea')
-        if (this.state.moduleUUID.trim() !== '') {
-            textField.value = this.state.portalHost + '/topics/en-us/' + this.state.moduleUUID
+        if (this.state.variantUUID.trim() !== '') {
+            textField.value = this.state.portalHost + '/topics/en-us/' + this.state.variantUUID
             document.body.appendChild(textField)
             textField.select()
             document.execCommand('copy')
@@ -324,7 +324,7 @@ class ModuleDisplay extends Component<any, any, any> {
             })
     }
 
-    private getVariantParam() {
+    private async getVariantParam() {
         const query = new URLSearchParams(this.props.location.search);
         const variantParam = query.get('variant')
         // console.log("[moduleDisplay] variantParam => ", variantParam)
