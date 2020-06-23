@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.module;
 
+import com.redhat.pantheon.model.Document.DocumentLocale;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
@@ -10,11 +11,11 @@ import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
  * and the different variants (the rendered content)
  */
 @JcrPrimaryType("pant:moduleLocale")
-public interface ModuleLocale extends WorkspaceChild {
+public interface ModuleLocale extends DocumentLocale {
 
-    Child<SourceContent> source();
-
-    Child<Variants> variants();
+//    Child<SourceContent> source();
+//
+//    Child<Variants> variants();
 
     @Override
     Module getParent();

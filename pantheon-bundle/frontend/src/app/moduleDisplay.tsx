@@ -33,9 +33,9 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     public componentDidMount() {
+        // this.getVariantParam()
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
-
         this.getPortalUrl()
         this.getVariantParam()
     }
@@ -173,10 +173,11 @@ class ModuleDisplay extends Component<any, any, any> {
         })
     }
 
-    private fetchModuleDetails = (data) => {
+    private fetchModuleDetails = async(data) => {
+        await this.getVariantParam()
         this.setState({
             modulePath: data.location.pathname,
-            releasePath: "/content" + data.location.pathname + ".preview"
+            releasePath: "/content" + data.location.pathname + ".preview?variant=" + this.state.variant
         })
 
         fetch(data.location.pathname + '/en_US.harray.4.json')
@@ -324,7 +325,7 @@ class ModuleDisplay extends Component<any, any, any> {
             })
     }
 
-    private getVariantParam() {
+    private async getVariantParam() {
         const query = new URLSearchParams(this.props.location.search);
         const variantParam = query.get('variant')
         // console.log("[moduleDisplay] variantParam => ", variantParam)

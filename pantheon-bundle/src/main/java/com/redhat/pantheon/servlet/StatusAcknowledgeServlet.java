@@ -3,6 +3,7 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.model.Acknowledgment;
 import com.redhat.pantheon.model.module.AckStatus;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.validation.validators.NotNullValidator;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -68,17 +69,11 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
         }
         try {
             Resource resource = getResourceByUuid(acknowledgment.getId(), request);
-            Module module = resource.adaptTo(Module.class);
-            List<Resource> moduleLocale = $(module).find("pant:moduleLocale").asList();
+            ModuleVariant moduleVariant = resource.adaptTo(ModuleVariant.class);
 
-            if (!hasLocale(moduleLocale, "en_US")) {
-                getLogger().error("The module with id=" + acknowledgment.getId() + " does not have en_US locale");
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Locale other than en_US is not supported");
-                return;
-            }
             // TODO The empty string below needs to contain the variant name. Either the ID needs to now point
             //  to a specific Module version (within a variant), or the variant needs to be passed in the request
-            processAcknowledgementRequest(acknowledgment, module, moduleLocale, acknowledgment.getVariant(),
+            processAcknowledgementRequest(acknowledgment, moduleVariant,
                     request.getUserPrincipal().getName());
 
         } catch (RepositoryException | PersistenceException e) {
@@ -112,32 +107,23 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
      * supported locale
      *
      * @param acknowledgement request data
-     * @param module module corresponding to the UUID in the request data
-     * @param moduleLocale list of locales in the module
-     * @param variantName
+     * @param moduleVariant moduleVariant corresponding to the UUID in the request data
      * @param lastModifiedBy
      * @throws PersistenceException signals that request data could not be saved
      */
-    private void processAcknowledgementRequest(Acknowledgment acknowledgement, Module module,
-            List<Resource> moduleLocale, String variantName, String lastModifiedBy) throws PersistenceException {
+    private void processAcknowledgementRequest(Acknowledgment acknowledgement, ModuleVariant moduleVariant,
+            String lastModifiedBy) throws PersistenceException {
 
-        for (Resource locale : moduleLocale) {
-            //defensive programming: double check that only for en_US locale the status node is created
-            if (locale.getName().equalsIgnoreCase("en_US")) {
-                createStatusNode(locale, module, variantName, acknowledgement, lastModifiedBy);
-                break;
-            }
-        }
+        createStatusNode(moduleVariant, acknowledgement, lastModifiedBy);
     }
 
     private boolean hasLocale(List<Resource> moduleLocale, String locale) {
         return moduleLocale.stream().anyMatch(ml -> ml.getName().equalsIgnoreCase(locale));
     }
 
-    private void createStatusNode(Resource moduleLocale, Module module, String variantName,
+    private void createStatusNode(ModuleVariant moduleVariant,
                                   Acknowledgment acknowledgement, String lastModifiedBy) throws PersistenceException {
-        Locale locale = LocaleUtils.toLocale(moduleLocale.getName());
-        AckStatus status = createStatusNode(module, locale, variantName);
+        AckStatus status = createStatusNode(moduleVariant);
         status.status().set(acknowledgement.getStatus());
         status.message().set(acknowledgement.getMessage());
         status.sender().set(acknowledgement.getSender());
@@ -152,16 +138,14 @@ public class StatusAcknowledgeServlet extends AbstractJsonPostOrPutServlet<Ackno
      * Creates or retrieves status node based on whether a published version exists. If a published version exists,
      * either create a new status node if it does not exist
      *
-     * @param module
-     * @param locale
-     * @param variantName
+     * @param moduleVariant
      * @return
      */
-    private AckStatus createStatusNode(Module module, Locale locale, String variantName) {
-        if (module.getReleasedVersion(locale, variantName).isPresent()) {
-            return module.getReleasedVersion(locale, variantName).get().ackStatus().getOrCreate();
+    private AckStatus createStatusNode(ModuleVariant moduleVariant) {
+        if (moduleVariant.released().isPresent()) {
+            return moduleVariant.released().get().ackStatus().getOrCreate();
         }
-        return module.getDraftVersion(locale, variantName).get().ackStatus().getOrCreate();
+        return moduleVariant.draft().get().ackStatus().getOrCreate();
     }
 
     /**

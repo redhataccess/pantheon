@@ -1,6 +1,8 @@
 {
-  "name": "rhdocs-styles-migration",
-  "version": "0.1.0",
+  "name": "pantheon-front-end",
+  "description": "Front-end for https://github.com/redhataccess/pantheon",
+  "version": "0.1.1",
+  "license": "MIT",
   "engines": {
     "node": ">=8.x.x"
   },
@@ -8,26 +10,36 @@
     "autoprefixer": "^9.4.2",
     "browser-sync": "^2.26.7",
     "browserslist": "^4.8.7",
+    "cp-documentation": "^0.1.2",
     "cssnano": "^4.1.7",
+    "grunt-cli": "^1.3.2",
     "gulp": "^4.0.0",
     "gulp-if": "^2.0.2",
     "gulp-postcss": "^8.0.0",
     "gulp-sass": "^4.0.2",
     "gulp-sass-globbing": "0.0.2",
     "gulp-sass-lint": "^1.4.0",
+    "gulp-shell": "^0.8.0",
     "gulp-sourcemaps": "^2.6.5",
     "normalizecss": "^3.0.0",
-    "postcss-pxtorem": "^4.0.1"
+    "postcss-pxtorem": "^4.0.1",
+    "yarn": "^1.22.4"
   },
   "scripts": {
     "gulp": "gulp",
+    "yarn": "yarn",
     "browser-sync": "browser-sync",
-    "//": "Making build and build dev the same thing",
     "build": "gulp",
-    "build:dev": "NODE_ENV=dev gulp",
-    "watch": "NODE_ENV=dev npm run gulp watch",
-    "clean": "rm -rf node_modules",
-    "start": "npm run watch"
+    "build:dev": "gulp build:dev",
+    "watch": "yarn run gulp watch",
+    "dev": "yarn run gulp watch",
+    "clean": "rm -rf node_modules && rm dev-preview/*.css && rm dev-preview/*.html",
+    "start": "yarn run watch"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redhataccess/pantheon",
+    "directory": "pantheon-bundle/frontend/src/web-assets/"
+  }
 }

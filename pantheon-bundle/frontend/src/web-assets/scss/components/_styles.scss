@@ -1,205 +1,3 @@
-// Base
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-.rhdocs {
-  font-size: $font-size--base;
-  line-height: $line-height--base;
-  font-family: $font-family--base;
-  color: $color--text;
-  tab-size: 4;
-}
-
-img,
-object,
-svg {
-  display: inline-block;
-  vertical-align: middle;
-  max-width: 100%;
-}
-
-hr {
-  clear: both;
-  margin: 1rem 0;
-  height: 0;
-  border: 0;
-  border-top: 1px solid $color--border;
-}
-
-// UI / Links
-a {
-  color: $color--link;
-
-  &:hover,
-  &:focus {
-    color: darken($color--link, 20%);
-  }
-}
-
-
-// Basic Typography
-p {
-  margin: 1rem 0;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin: 2rem 0 1rem;
-  font-weight: 500;
-}
-
-h1 {
-  font-size: $heading--1;
-  line-height: $line-height--lg;
-}
-
-h2 {
-  font-size: $heading--2;
-  line-height: $line-height--lg;
-}
-
-h3 {
-  font-size: $heading--3;
-  line-height: $line-height--lg;
-}
-
-h4 {
-  font-size: $heading--4;
-  line-height: $line-height--base;
-}
-
-h5 {
-  font-size: $heading--5;
-  line-height: $line-height--base;
-  font-weight: 700;
-}
-
-h6 {
-  font-size: $heading--6;
-  line-height: $line-height--base;
-  font-weight: 700;
-}
-
-.heading {
-  margin: 1rem 0 0;
-  font-size: $heading--block;
-  line-height: $line-height--base;
-  text-transform: $heading--block--transform;
-  font-style: $heading--block--style;
-  font-weight: $heading--block--weight;
-  color: $color--brand-primary-darker;
-
-  + p,
-  + .content > *:first-child {
-    margin-top: 0;
-  }
-}
-
-// Lists
-ul,
-ol {
-  margin: 1rem 0;
-  padding: 0 0 0 1.5rem;
-
-  > li {
-    margin: 0;
-    padding: 0;
-
-    > p {
-      margin: 0.5rem 0;
-    }
-
-    > ul,
-    > ol {
-      margin: 0;
-    }
-
-  }
-}
-
-dl {
-  margin: 1rem 0;
-
-  dt {
-    margin: 0.5rem 0;
-    font-weight: 600;
-  }
-
-  dd {
-    margin: 0.5rem 0 0.5rem 1rem;
-
-    > p {
-      margin: 0.5rem 0;
-    }
-  }
-}
-
-// Tables
-table {
-  margin: 2rem 0;
-  border: 1px solid $color--table--border;
-  border-collapse: collapse;
-  font-size: $font-size--md;
-  line-height: $line-height--base;
-  table-layout: fixed;
-
-  caption {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    color: $color--text--subtle;
-    text-align: left;
-  }
-
-  td,
-  th {
-    padding: 0.5em 1rem;
-    border: 1px solid $color--table--border;
-    // text-align: left;
-    // vertical-align: top;
-
-    &.halign-left {
-      text-align: left;
-    }
-
-    &.halign-center {
-      text-align: center;
-    }
-
-    &.halign-right {
-      text-align: right;
-    }
-
-    &.valign-top {
-      vertical-align: top;
-    }
-
-    &.valign-middle {
-      vertical-align: middle;
-    }
-
-    &.valign-bottom {
-      vertical-align: bottom;
-    }
-  }
-
-  thead {
-    td,
-    th {
-      background: $color--table--th--bg;
-      font-weight: 600;
-    }
-  }
-}
-
-
-// Article
 .rhdocs { // sass-lint:disable-line no-mergeable-selectors
   padding: 2em;
   // max-width: 65em; // Optimal line-length for best legibility.
@@ -247,15 +45,6 @@ table {
     @media (min-width: 992px) {
       grid-template-columns: 20rem auto;
     }
-  }
-}
-
-// Header
-.rhdocs-header {
-  h1 {
-    margin: 0;
-    font-size: $heading--xxl;
-    line-height: $line-height--lg;
   }
 }
 
@@ -330,7 +119,7 @@ table {
     &::before {
       display: inline-block;
       margin: 0 0.125rem;
-      content: '\2014';
+      content: '—';
     }
   }
 }
@@ -388,12 +177,8 @@ table {
 }
 
 // Sections
-section {
-  &.sect1 {
-    margin: 2rem 0 1rem;
-
-    // & + .sect1 {}
-  }
+.sect1 {
+  margin: 2rem 0 1rem;
 }
 
 // Admonitions
@@ -413,8 +198,6 @@ section {
       font-size: 1.5rem;
     }
   }
-
-  // &.tip {}
 
   &.note {
     color: $color--text--info;
@@ -447,26 +230,7 @@ section {
   }
 }
 
-// Literal Blocks & Listing Blocks
-pre {
-  font-family: $font-family--code;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  word-spacing: normal;
-  word-break: break-all;
-  // overflow-wrap: break-word;
-  font-size: $font-size--monospace;
-  line-height: $line-height--base;
-}
 
-:not(pre) > code {
-  padding: 0.25em 0.5em;
-  font-family: $font-family--code;
-  background: $color--bg--code-inline;
-  color: $color--text--code-inline;
-  font-size: $font-size--monospace;
-  line-height: $line-height--base;
-}
 
 .colist {
   ol {
@@ -571,10 +335,10 @@ pre {
         margin-top: 0;
 
         &::before {
+          content: '“';
           display: block;
           margin-right: 0.5rem;
           float: left;
-          content: '\201C';
           color: $color--brand-primary;
           font-size: 2.75rem;
           font-style: normal;
@@ -630,11 +394,6 @@ pre {
         }
       }
     }
-
-    // > li {
-    //   > a {
-    //   }
-    // }
   }
 }
 
