@@ -2,7 +2,6 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.servlet.ModuleRendering;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -14,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Locale;
 
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
-public class ModuleRenderingServletTest {
+public class ModuleRendererServletTest {
 
     private final SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
@@ -59,13 +59,11 @@ public class ModuleRenderingServletTest {
                 .thenReturn("A generated html string");
 
         // Test class
-/*        RenderingServlet servlet = new RenderingServlet(asciidoctorService);
-        servlet.init();*/
-
-        ModuleRendering moduleRendering = new ModuleRendering(asciidoctorService);
+        ModuleRendererServlet moduleRendererServlet = new ModuleRendererServlet(asciidoctorService);
+        moduleRendererServlet.init();;
 
         // When
-        moduleRendering.getRenderedHTML(slingContext.request(), slingContext.response());
+        moduleRendererServlet.doGet(slingContext.request(), slingContext.response());
 
         // Then
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
@@ -99,9 +97,11 @@ public class ModuleRenderingServletTest {
                 .commit();
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
+        HashMap<String,Object> pMap = new HashMap<>();
+        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(ModuleRendering.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(ModuleRendering.PARAM_DRAFT, new String[]{"true"});
+        slingContext.request().setParameterMap(pMap);
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -113,10 +113,11 @@ public class ModuleRenderingServletTest {
                 .thenReturn("A generated html string");
 
         // Test class
-        ModuleRendering moduleRendering = new ModuleRendering(asciidoctorService);
+        ModuleRendererServlet moduleRendererServlet = new ModuleRendererServlet(asciidoctorService);
+        moduleRendererServlet.init();;
 
         // When
-        moduleRendering.getRenderedHTML(slingContext.request(), slingContext.response());
+        moduleRendererServlet.doGet(slingContext.request(), slingContext.response());
         // Then
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
@@ -149,13 +150,12 @@ public class ModuleRenderingServletTest {
                 .commit();
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
+        HashMap<String,Object> pMap = new HashMap<>();
+        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_VARIANT, new String[]{"variant1"});
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(ModuleRendering.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(ModuleRendering.PARAM_DRAFT, new String[]{"true"});
-        slingContext.request().getParameterMap().put(ModuleRendering.PARAM_VARIANT, new String[]{"variant1"});
-
-        // Test class
-        ModuleRendering moduleRendering = new ModuleRendering(asciidoctorService);
+        slingContext.request().setParameterMap(pMap);
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -166,8 +166,12 @@ public class ModuleRenderingServletTest {
                         anyBoolean()))
                 .thenReturn("A generated html string");
 
+        // Test class
+        ModuleRendererServlet moduleRendererServlet = new ModuleRendererServlet(asciidoctorService);
+        moduleRendererServlet.init();;
+
         // When
-        moduleRendering.getRenderedHTML(slingContext.request(), slingContext.response());
+        moduleRendererServlet.doGet(slingContext.request(), slingContext.response());
 
 
         // Then
@@ -197,10 +201,12 @@ public class ModuleRenderingServletTest {
                 .commit();
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
+        HashMap<String,Object> pMap = new HashMap<>();
+        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_VARIANT, new String[]{"non_existing"});
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(ModuleRendering.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(ModuleRendering.PARAM_DRAFT, new String[]{"true"});
-        slingContext.request().getParameterMap().put(ModuleRendering.PARAM_VARIANT, new String[]{"non_existing"});
+        slingContext.request().setParameterMap(pMap);
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -212,10 +218,11 @@ public class ModuleRenderingServletTest {
                 .thenReturn("A generated html string");
 
         // Test class
-        ModuleRendering moduleRendering = new ModuleRendering(asciidoctorService);
+        ModuleRendererServlet moduleRendererServlet = new ModuleRendererServlet(asciidoctorService);
+        moduleRendererServlet.init();;
 
         // When
-        moduleRendering.getRenderedHTML(slingContext.request(), slingContext.response());
+        moduleRendererServlet.doGet(slingContext.request(), slingContext.response());
 
         // Then
         assertEquals(HttpServletResponse.SC_NOT_FOUND, slingContext.response().getStatus());
@@ -235,10 +242,12 @@ public class ModuleRenderingServletTest {
                 .commit();
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
+        HashMap<String,Object> pMap = new HashMap<>();
+        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_LOCALE, new String[]{"ja_JP"});
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(ModuleRendering.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(ModuleRendering.PARAM_DRAFT, new String[]{"true"});
-        slingContext.request().getParameterMap().put(ModuleRendering.PARAM_LOCALE, new String[]{"ja_JP"});
+        slingContext.request().setParameterMap(pMap);
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -250,10 +259,11 @@ public class ModuleRenderingServletTest {
                 .thenReturn("A generated html string");
 
         // Test class
-        ModuleRendering moduleRendering = new ModuleRendering(asciidoctorService);
+        ModuleRendererServlet moduleRendererServlet = new ModuleRendererServlet(asciidoctorService);
+        moduleRendererServlet.init();;
 
         // When
-        moduleRendering.getRenderedHTML(slingContext.request(), slingContext.response());
+        moduleRendererServlet.doGet(slingContext.request(), slingContext.response());
 
         // Then
         assertEquals(HttpServletResponse.SC_NOT_FOUND, slingContext.response().getStatus());

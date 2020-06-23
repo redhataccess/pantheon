@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Locale;
 
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
@@ -22,7 +23,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
-public class AssemblyRenderingServletTest {
+public class AssemblyRenderServletTest {
 
     private final SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
@@ -58,13 +59,10 @@ public class AssemblyRenderingServletTest {
                 .thenReturn("A generated html string");
 
         // Test class
-/*        RenderingServlet servlet = new RenderingServlet(asciidoctorService);
-        servlet.init();*/
-
-        AssemblyRendering assemblyRendering = new AssemblyRendering(asciidoctorService);
-
+        AssemblyRenderServlet assemblyRenderServlet = new AssemblyRenderServlet(asciidoctorService);
+        assemblyRenderServlet.init();
         // When
-        assemblyRendering.getRenderedHTML(slingContext.request(), slingContext.response());
+        assemblyRenderServlet.doGet(slingContext.request(), slingContext.response());
 
         // Then
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
@@ -99,8 +97,11 @@ public class AssemblyRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(AssemblyRendering.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AssemblyRendering.PARAM_DRAFT, new String[]{"true"});
+        HashMap<String,Object> pMap = new HashMap<>();
+        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
+        slingContext.request().setParameterMap(pMap);
+
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -112,10 +113,10 @@ public class AssemblyRenderingServletTest {
                 .thenReturn("A generated html string");
 
         // Test class
-        AssemblyRendering assemblyRendering = new AssemblyRendering(asciidoctorService);
-
+        AssemblyRenderServlet assemblyRenderServlet = new AssemblyRenderServlet(asciidoctorService);
+        assemblyRenderServlet.init();
         // When
-        assemblyRendering.getRenderedHTML(slingContext.request(), slingContext.response());
+        assemblyRenderServlet.doGet(slingContext.request(), slingContext.response());
         // Then
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
@@ -149,9 +150,11 @@ public class AssemblyRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(AssemblyRendering.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AssemblyRendering.PARAM_DRAFT, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AssemblyRendering.PARAM_VARIANT, new String[]{"variant1"});
+        HashMap<String,Object> pMap = new HashMap<>();
+        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_VARIANT, new String[]{"variant1"});
+        slingContext.request().setParameterMap(pMap);
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -163,10 +166,10 @@ public class AssemblyRenderingServletTest {
                 .thenReturn("A generated html string").thenReturn("A generated html string").thenReturn("A generated html string");
 
         // Test class
-        AssemblyRendering assemblyRendering = new AssemblyRendering(asciidoctorService);
-
+        AssemblyRenderServlet assemblyRenderServlet = new AssemblyRenderServlet(asciidoctorService);
+        assemblyRenderServlet.init();
         // When
-        assemblyRendering.getRenderedHTML(slingContext.request(), slingContext.response());
+        assemblyRenderServlet.doGet(slingContext.request(), slingContext.response());
 
         // Then
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
@@ -196,9 +199,11 @@ public class AssemblyRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(AssemblyRendering.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AssemblyRendering.PARAM_DRAFT, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AssemblyRendering.PARAM_VARIANT, new String[]{"non_existing"});
+        HashMap<String,Object> pMap = new HashMap<>();
+        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_VARIANT, new String[]{"non_existing"});
+        slingContext.request().setParameterMap(pMap);
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -210,10 +215,10 @@ public class AssemblyRenderingServletTest {
                 .thenReturn("A generated html string");
 
         // Test class
-        AssemblyRendering assemblyRendering = new AssemblyRendering(asciidoctorService);
-
+        AssemblyRenderServlet assemblyRenderServlet = new AssemblyRenderServlet(asciidoctorService);
+        assemblyRenderServlet.init();
         // When
-        assemblyRendering.getRenderedHTML(slingContext.request(), slingContext.response());
+        assemblyRenderServlet.doGet(slingContext.request(), slingContext.response());
 
         // Then
         assertEquals(HttpServletResponse.SC_NOT_FOUND, slingContext.response().getStatus());
@@ -234,9 +239,11 @@ public class AssemblyRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(AssemblyRendering.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AssemblyRendering.PARAM_DRAFT, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AssemblyRendering.PARAM_LOCALE, new String[]{"ja_JP"});
+        HashMap<String,Object> pMap = new HashMap<>();
+        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
+        pMap.put(AssemblyRenderServlet.PARAM_LOCALE, new String[]{"ja_JP"});
+        slingContext.request().setParameterMap(pMap);
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -248,10 +255,10 @@ public class AssemblyRenderingServletTest {
                 .thenReturn("A generated html string");
 
         // Test class
-        AssemblyRendering assemblyRendering = new AssemblyRendering(asciidoctorService);
-
+        AssemblyRenderServlet assemblyRenderServlet = new AssemblyRenderServlet(asciidoctorService);
+        assemblyRenderServlet.init();
         // When
-        assemblyRendering.getRenderedHTML(slingContext.request(), slingContext.response());
+        assemblyRenderServlet.doGet(slingContext.request(), slingContext.response());
 
         // Then
         assertEquals(HttpServletResponse.SC_NOT_FOUND, slingContext.response().getStatus());

@@ -1,7 +1,6 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
-import com.redhat.pantheon.model.Rendering;
 import com.redhat.pantheon.model.module.HashableFileResource;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
@@ -9,6 +8,8 @@ import com.redhat.pantheon.model.module.SourceContent;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -37,11 +38,20 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
  * For example, if an asciidoc attribute of name 'product' needs to be passed, there will need to be a
  * query parameter of name 'ctx_product' provided in the url.
  */
+@Component(
+        service = Servlet.class,
+        property = {
+                Constants.SERVICE_DESCRIPTION + "=Servlet which transforms asciidoc content into html",
+                Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
+        })
+@SlingServletResourceTypes(
+        resourceTypes = { "pantheon/assembly" },
+        methods = "GET",
+        extensions = "preview")
+@SuppressWarnings("serial")
+public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
 
-
-public class AssemblyRendering implements Rendering {
-
-    private final Logger log = LoggerFactory.getLogger(AssemblyRendering.class);
+    private final Logger log = LoggerFactory.getLogger(AssemblyRenderServlet.class);
 
     static final String PARAM_RERENDER = "rerender";
     static final String PARAM_DRAFT = "draft";
@@ -51,13 +61,13 @@ public class AssemblyRendering implements Rendering {
     private AsciidoctorService asciidoctorService;
 
     @Activate
-    public AssemblyRendering(
+    public AssemblyRenderServlet(
             @Reference AsciidoctorService asciidoctorService) {
         this.asciidoctorService = asciidoctorService;
     }
 
     @Override
-    public void getRenderedHTML(SlingHttpServletRequest request,
+    public void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws IOException {
         String locale = paramValue(request, PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
         boolean draft = paramValueAsBoolean(request, PARAM_DRAFT);
@@ -67,20 +77,24 @@ public class AssemblyRendering implements Rendering {
         Module module = request.getResource().adaptTo(Module.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
 
-        Optional<HashableFileResource> moduleVariantSource;
+        Optional<HashableFileResource> moduleVariantSource = null;
 
-        if(draft) {
-            moduleVariantSource = module.moduleLocale(localeObj)
-                .traverse()
-                .toChild(ModuleLocale::source)
-                .toChild(SourceContent::draft)
-                .getAsOptional();
-        } else {
-            moduleVariantSource = module.moduleLocale(localeObj)
-                    .traverse()
-                    .toChild(ModuleLocale::source)
-                    .toChild(SourceContent::released)
-                    .getAsOptional();
+        switch(paramValue(request, PARAM_DRAFT)){
+            case "true":
+                moduleVariantSource = module.moduleLocale(localeObj)
+                        .traverse()
+                        .toChild(ModuleLocale::source)
+                        .toChild(SourceContent::draft)
+                        .getAsOptional();
+                break;
+
+            case "false":
+                moduleVariantSource = module.moduleLocale(localeObj)
+                        .traverse()
+                        .toChild(ModuleLocale::source)
+                        .toChild(SourceContent::released)
+                        .getAsOptional();
+                break;
         }
 
 
@@ -89,19 +103,18 @@ public class AssemblyRendering implements Rendering {
                     + "source content not found for " + variantName +  " module variant at "
                     + request.getResource().getPath());
         }
-        else {
-            // collect a list of parameter that traverseFrom with 'ctx_' as those will be used as asciidoctorj
-            // parameters
-            Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
 
-            // only allow forced rerendering if this is a draft version. Released and historical revs are written in stone.
-            String html = asciidoctorService.getModuleHtml(
-                    module, localeObj, variantName, draft, context, reRender && draft);
+        // collect a list of parameter that traverseFrom with 'ctx_' as those will be used as asciidoctorj
+        // parameters
+        Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
 
-            response.setContentType("text/html");
-            Writer w = response.getWriter();
-            w.write(html);
-        }
+        // only allow forced rerendering if this is a draft version. Released and historical revs are written in stone.
+        String html = asciidoctorService.getModuleHtml(
+                module, localeObj, variantName, draft, context, reRender && draft);
+
+        response.setContentType("text/html");
+        Writer w = response.getWriter();
+        w.write(html);
     }
 
 }
