@@ -15,7 +15,4 @@
 // Publishing 
 :PublishingPortal: Customer Portal 
 
-// Publishing 
-:PublishingPortal: Customer Portal 
-
 :imagesdir: images

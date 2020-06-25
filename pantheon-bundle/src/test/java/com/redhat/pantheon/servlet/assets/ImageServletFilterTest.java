@@ -1,23 +1,18 @@
 package com.redhat.pantheon.servlet.assets;
 
 import com.redhat.pantheon.conf.GlobalConfig;
+import java.util.Base64;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.apache.sling.testing.mock.sling.servlet.MockRequestDispatcherFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
-
-import java.util.Base64;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 class ImageServletFilterTest {

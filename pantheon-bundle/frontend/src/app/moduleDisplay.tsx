@@ -37,6 +37,7 @@ class ModuleDisplay extends Component<any, any, any> {
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
         this.getPortalUrl()
+        this.getVariantParam()
     }
 
     public render() {

@@ -1,6 +1,8 @@
 package com.redhat.pantheon.servlet.module;
 
+import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.SlingModels;
@@ -10,6 +12,13 @@ import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleType;
 import com.redhat.pantheon.servlet.ServletUtils;
+import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -24,16 +33,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import static com.redhat.pantheon.jcr.JcrResources.hash;
 
 /**
  * Post operation to add a new Module version to the system. The expected parameters in the post request are: 1. locale
@@ -162,5 +161,13 @@ public class ModuleVersionUpload extends AbstractPostOperation {
         } else {
             return null;
         }
+    }
+
+    /*
+     * calculates a hash for a string
+     * TODO This should probably be moved elsewhere
+     */
+    private HashCode hash(String str) {
+        return Hashing.adler32().hashString(str == null ? "" : str, Charsets.UTF_8);
     }
 }
