@@ -1,6 +1,10 @@
+// This module should not be published. For now the Uploader tool is not being used.
+
 [id="installing-uploader-tool_{context}"]
 
 = Installing the Uploader tool
+
+The Uploader tool enables uploading one or more modules using the command line.
 
 .Procedure
 

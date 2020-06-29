@@ -1,20 +1,20 @@
 [id='about-pantheon_{context}']
-= About Pantheon
+= About {ProductShortName}
 
-Pantheon is a content-management system and publishing platform developed by Red Hat.
+{ProductShortName} is a content-management system and publishing platform developed by Red Hat.
 You can use it to publish documents based on AsciiDoc source.
-After adding your modules and assemblies to Pantheon, you can do the following:
+After adding your modules and assemblies to {ProductShortName}, you can do the following:
 
 . Add metadata
 . Preview your content using the look and feel of the Customer Portal
 . Associate modules and assemblies with a product
 . Publish, and unpublish content
 
-The following table describes features that Pantheon does and does not provide.
+The following table describes features that {ProductShortName} does and does not provide.
 
-.Pantheon Features
+.{ProductShortName} Features
 |===
-|Pantheon provides: |Pantheon does not provide:
+|{ProductShortName} provides: |{ProductShortName} does not provide:
 
 a|* A GUI for managing modules and assemblies, including the ability for authors to search for specific content and other workflow features that are more user-friendly than those currently available.
 * Metadata editing to optimize content for search engines.
@@ -25,12 +25,12 @@ a|* A way to define the appearance of content.
 * Source control. Git is the source control system.
 |===
 
-.Pantheon authoring workflow
+.{ProductShortName} authoring workflow
 
-The following steps walk through the general flow of adding new content in Pantheon:
+The following steps walk through the general flow of adding new content in {ProductShortName}:
 
 . Write your content as modular documentation, using modules and assemblies, as needed.
 . Commit and push your content to Gitlab or Github.
-. When you're ready to publish your content, import it to Pantheon from Github or Gitlab.
-. Use Pantheon to add metadata.
+. When you're ready to publish your content, import it to {ProductShortName} from Github or Gitlab.
+. Use {ProductShortName} to add metadata.
 . Publish the document.
