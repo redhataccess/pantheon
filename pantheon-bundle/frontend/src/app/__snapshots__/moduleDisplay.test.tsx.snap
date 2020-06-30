@@ -54,7 +54,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
           onClick={[Function]}
           variant="primary"
         >
-          Generate Draft Html
+          Generate Draft Html!
         </Component>
           
       </LevelItem>

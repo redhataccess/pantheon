@@ -83,7 +83,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         <LevelItem>{}</LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>
-                            <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
+                            <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html!</Button>{'  '}
                         </LevelItem>
                     </Level>
                     <br />
