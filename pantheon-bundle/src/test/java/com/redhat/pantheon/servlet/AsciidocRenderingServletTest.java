@@ -97,8 +97,7 @@ public class AsciidocRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
-        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
-        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
+
         slingContext.request().setParameterMap(
                 ImmutableMap.<String, Object>builder()
                         .put(AsciidocRenderingServlet.PARAM_DRAFT, "true")
@@ -154,9 +153,7 @@ public class AsciidocRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
-        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
-        //slingContext.request().setParameterMap(ImmutableMap.<String, Object>builder().put(AsciidocRenderingServlet.PARAM_DRAFT, "true").build());
-        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_VARIANT, new String[]{"variant1"});
+
         slingContext.request().setParameterMap(
                 ImmutableMap.<String, Object>builder()
                         .put(AsciidocRenderingServlet.PARAM_DRAFT, "true")
