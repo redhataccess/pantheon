@@ -413,7 +413,7 @@ def readYamlGlob(config, keyword):
     if globs is not None:
         for i, val in enumerate(globs):
             globs[i] = val.replace('*', '[^/]+')
-            logger.debug('key:val => $s : $s', i, val)
+            # logger.debug('key:val => $s : $s', i, val)
 
     return globs
 

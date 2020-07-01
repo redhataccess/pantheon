@@ -1,15 +1,22 @@
 FROM registry.access.redhat.com/ubi8/ubi
 RUN yum -y install java-1.8.0-openjdk
 
-RUN mkdir -p /opt/sling
+ENV MONGO_DB="sling"
+ENV REPOSITORY="sling/repository"
+ENV KARAF_DEBUG=true
+RUN mkdir -p /opt/pantheon-karaf-dist
+RUN mkdir /tmp/archive
+WORKDIR /tmp/archive
 
-COPY ../pantheon-slingstart/target/pantheon-slingstart-*.jar /opt/sling/pantheon.jar
+COPY ../pantheon-karaf-dist/target/pantheon-karaf-dist-*.tar.gz /tmp/archive/pantheon-karaf-dist.tar.gz
 
-WORKDIR /opt/sling/
-EXPOSE 8080
-EXPOSE 5005
+RUN tar --strip-components=1 -C /opt/pantheon-karaf-dist -xzf pantheon-karaf-dist.tar.gz; \
+    rm -rf /tmp/*
 
-ENV JAVA_OPTS -Xmx1024m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
-ENV SLING_OPS ''
+RUN chmod 755 /opt; 
+    #sed -i "21s/out/stdout/" /opt/pantheon-karaf-dist/etc/org.ops4j.pax.logging.cfg;
 
-CMD export COMMIT_HASH=$(cat /opt/sling/commit_hash); java $JAVA_OPTS -jar pantheon.jar $SLING_OPTS
+# expose JMX HTTP DEBUG ports
+EXPOSE 1099 8181 5005
+
+CMD  ["/opt/pantheon-karaf-dist/bin/karaf", "run"]

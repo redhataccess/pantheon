@@ -1,1 +1,0 @@
-Provisioning files taken directly (and in some cases modified) from https://github.com/apache/sling-org-apache-sling-starter 

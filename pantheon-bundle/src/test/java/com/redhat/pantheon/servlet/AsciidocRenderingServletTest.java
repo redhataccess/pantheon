@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet;
 
+import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.resource.Resource;
@@ -96,8 +97,14 @@ public class AsciidocRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
+        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
+        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
+        slingContext.request().setParameterMap(
+                ImmutableMap.<String, Object>builder()
+                        .put(AsciidocRenderingServlet.PARAM_DRAFT, "true")
+                        .put(AsciidocRenderingServlet.PARAM_RERENDER, "true")
+                        .build()
+        );
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -147,9 +154,16 @@ public class AsciidocRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
-        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
-        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_VARIANT, new String[]{"variant1"});
+        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
+        //slingContext.request().setParameterMap(ImmutableMap.<String, Object>builder().put(AsciidocRenderingServlet.PARAM_DRAFT, "true").build());
+        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_VARIANT, new String[]{"variant1"});
+        slingContext.request().setParameterMap(
+                ImmutableMap.<String, Object>builder()
+                        .put(AsciidocRenderingServlet.PARAM_DRAFT, "true")
+                        .put(AsciidocRenderingServlet.PARAM_RERENDER, "true")
+                        .put(AsciidocRenderingServlet.PARAM_VARIANT, "variant1")
+                        .build()
+        );
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),

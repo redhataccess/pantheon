@@ -29,18 +29,17 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 
 /**
- * API action which unpublishes the latest released version for a module, if there is one.
- * This means the "released" pointer is set to null, and the version should no longer be
- * accessible through the rendering API.
+ * API action which unpublishes the latest released version for a module, if there is one. This means the "released"
+ * pointer is set to null, and the version should no longer be accessible through the rendering API.
  *
  * @author Carlos Munoz
  */
 @Component(
         service = PostOperation.class,
         property = {
-                Constants.SERVICE_DESCRIPTION + "=Unpublishes the latest released version of a module",
-                Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
-                PostOperation.PROP_OPERATION_NAME + "=pant:unpublish"
+            Constants.SERVICE_DESCRIPTION + "=Unpublishes the latest released version of a module",
+            Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
+            PostOperation.PROP_OPERATION_NAME + "=pant:unpublish"
         })
 public class UnpublishVersion extends AbstractPostOperation {
 
