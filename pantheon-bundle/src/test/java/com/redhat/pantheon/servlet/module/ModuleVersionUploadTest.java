@@ -1,35 +1,38 @@
 package com.redhat.pantheon.servlet.module;
 
-import static com.google.common.collect.Maps.newHashMap;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.workspace.Workspace;
-import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.servlets.post.HtmlResponse;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import java.util.Map;
+
+import static com.google.common.collect.Maps.newHashMap;
+import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import org.mockito.Mock;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 class ModuleVersionUploadTest {
@@ -71,8 +74,8 @@ class ModuleVersionUploadTest {
         assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module/es_ES/source/draft/jcr:content"));
         assertNotNull(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module/es_ES/variants"));
 
-        Module module
-                = SlingModels.getModel(
+        Module module =
+                SlingModels.getModel(
                         slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module"),
                         Module.class);
         assertEquals("This is the adoc content",
@@ -114,8 +117,8 @@ class ModuleVersionUploadTest {
         // Then
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatusCode());
 
-        Module module
-                = SlingModels.getModel(
+        Module module =
+                SlingModels.getModel(
                         slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module"),
                         Module.class);
         assertEquals("南京防疫现场",
@@ -158,8 +161,8 @@ class ModuleVersionUploadTest {
         // Then
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatusCode());
 
-        Module module
-                = SlingModels.getModel(
+        Module module =
+                SlingModels.getModel(
                         slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module"),
                         Module.class);
         assertEquals("南京防疫现场",
@@ -211,8 +214,8 @@ class ModuleVersionUploadTest {
         assertNotNull(slingContext.resourceResolver()
                 .getResource("/content/repositories/test_workspace/entities/new/module/en_US/source/draft"));
 
-        Module module
-                = SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
+        Module module =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
         assertEquals("Draft asciidoc content",
                 module
                         .moduleLocale(Locale.US).get()
@@ -271,8 +274,8 @@ class ModuleVersionUploadTest {
         assertNotNull(slingContext.resourceResolver()
                 .getResource("/content/repositories/test_workspace/entities/new/module/en_US/source/draft"));
 
-        Module module
-                = SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
+        Module module =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
         assertEquals("Revised asciidoc content",
                 module
                         .moduleLocale(Locale.US).get()
@@ -336,8 +339,8 @@ class ModuleVersionUploadTest {
         assertNotNull(slingContext.resourceResolver()
                 .getResource("/content/repositories/test_workspace/entities/new/module/en_US/source/draft"));
 
-        Module module
-                = SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
+        Module module =
+                SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
         assertEquals("This is the draft adoc content",
                 module
                         .moduleLocale(Locale.US).get()

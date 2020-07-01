@@ -12,13 +12,6 @@ import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleType;
 import com.redhat.pantheon.servlet.ServletUtils;
-import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -34,23 +27,34 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static com.redhat.pantheon.jcr.JcrResources.hash;
+
 /**
- * Post operation to add a new Module version to the system. The expected parameters in the post request are: 1. locale
- * - Optional; indicates the locale that the module content is in 2. :operation - This value must be
- * 'pant:newModuleVersion' 3. asciidoc - The file upload (multipart) containing the asciidoc content file for the new
- * module version.
+ * Post operation to add a new Module version to the system.
+ * The expected parameters in the post request are:
+ * 1. locale - Optional; indicates the locale that the module content is in
+ * 2. :operation - This value must be 'pant:newModuleVersion'
+ * 3. asciidoc - The file upload (multipart) containing the asciidoc content file for the new module version.
  *
- * The url to POST a request to the server is the path of the new or existing module to host the content. If there is no
- * content for said url, the module is created and a single version along with it.
+ * The url to POST a request to the server is the path of the new or existing module to host the content.
+ * If there is no content for said url, the module is created and a single version along with it.
  *
  * @author Carlos Munoz
  */
 @Component(
         service = PostOperation.class,
         property = {
-            Constants.SERVICE_DESCRIPTION + "=Servlet POST operation which accepts module uploads and versions them appropriately",
-            Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
-            PostOperation.PROP_OPERATION_NAME + "=pant:newModuleVersion"
+                Constants.SERVICE_DESCRIPTION + "=Servlet POST operation which accepts module uploads and versions them appropriately",
+                Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
+                PostOperation.PROP_OPERATION_NAME + "=pant:newModuleVersion"
         })
 public class ModuleVersionUpload extends AbstractPostOperation {
 
@@ -86,9 +90,9 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             ResourceResolver resolver = request.getResourceResolver();
             Resource moduleResource = resolver.getResource(path);
             Module module;
-            if (moduleResource == null) {
-                module
-                        = SlingModels.createModel(
+            if(moduleResource == null) {
+                module =
+                        SlingModels.createModel(
                                 resolver,
                                 path,
                                 Module.class);
@@ -107,7 +111,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             HashCode incomingSrcHash = hash(asciidocContent);
             String storedSrcHash = draftSrc.hash().get();
             // If the source content is the same, don't update it
-            if (incomingSrcHash.toString().equals(storedSrcHash)) {
+            if(incomingSrcHash.toString().equals( storedSrcHash )) {
                 responseCode = HttpServletResponse.SC_NOT_MODIFIED;
             } else {
                 draftSrc.jcrContent().getOrCreate()
@@ -131,7 +135,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                 metadata.dateModified().set(Calendar.getInstance());
                 // Generate a module type based on the file name ONLY after asciidoc generation, so that the
                 // attribute-based logic takes precedence
-                if (metadata.moduleType().get() == null) {
+                if(metadata.moduleType().get() == null) {
                     metadata.moduleType().set(determineModuleType(module));
                 }
             }
@@ -145,29 +149,23 @@ public class ModuleVersionUpload extends AbstractPostOperation {
 
     /**
      * Determines the module type from the uploaded module version
-     *
      * @param module The uploaded module
      * @return A module type for the module version, or null if one cannot be determined.
      */
     private static ModuleType determineModuleType(Module module) {
         String fileName = module.getName();
 
-        if (fileName.startsWith("proc_")) {
+        if( fileName.startsWith("proc_") ) {
             return ModuleType.PROCEDURE;
-        } else if (fileName.startsWith("con_")) {
+        }
+        else if( fileName.startsWith("con_") ) {
             return ModuleType.CONCEPT;
-        } else if (fileName.startsWith("ref_")) {
+        }
+        else if( fileName.startsWith("ref_") ) {
             return ModuleType.REFERENCE;
-        } else {
+        }
+        else {
             return null;
         }
-    }
-
-    /*
-     * calculates a hash for a string
-     * TODO This should probably be moved elsewhere
-     */
-    private HashCode hash(String str) {
-        return Hashing.adler32().hashString(str == null ? "" : str, Charsets.UTF_8);
     }
 }

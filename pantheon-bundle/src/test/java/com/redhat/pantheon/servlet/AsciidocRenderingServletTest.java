@@ -1,33 +1,33 @@
 package com.redhat.pantheon.servlet;
 
-import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
-import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
-import java.util.Locale;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.*;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
+
+import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 public class AsciidocRenderingServletTest {
 
     private final SlingContext slingContext = new SlingContext(ResourceResolverType.JCR_OAK);
 
-    @Mock
-    AsciidoctorService asciidoctorService;
+    @Mock AsciidoctorService asciidoctorService;
 
     @Test
     @DisplayName("Generate html content from asciidoc (released version, cached content, default variant)")
@@ -96,14 +96,8 @@ public class AsciidocRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
-        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
-        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
-        slingContext.request().setParameterMap(
-                ImmutableMap.<String, Object>builder()
-                        .put(AsciidocRenderingServlet.PARAM_DRAFT, "true")
-                        .put(AsciidocRenderingServlet.PARAM_RERENDER, "true")
-                        .build()
-        );
+        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
+        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -153,16 +147,9 @@ public class AsciidocRenderingServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
-        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
-        //slingContext.request().setParameterMap(ImmutableMap.<String, Object>builder().put(AsciidocRenderingServlet.PARAM_DRAFT, "true").build());
-        //slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_VARIANT, new String[]{"variant1"});
-        slingContext.request().setParameterMap(
-                ImmutableMap.<String, Object>builder()
-                        .put(AsciidocRenderingServlet.PARAM_DRAFT, "true")
-                        .put(AsciidocRenderingServlet.PARAM_RERENDER, "true")
-                        .put(AsciidocRenderingServlet.PARAM_VARIANT, "variant1")
-                        .build()
-        );
+        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_RERENDER, new String[]{"true"});
+        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_DRAFT, new String[]{"true"});
+        slingContext.request().getParameterMap().put(AsciidocRenderingServlet.PARAM_VARIANT, new String[]{"variant1"});
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
