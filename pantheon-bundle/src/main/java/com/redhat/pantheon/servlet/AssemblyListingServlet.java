@@ -1,11 +1,11 @@
 package com.redhat.pantheon.servlet;
 
-import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
-import com.redhat.pantheon.model.api.SlingModel;
-import com.redhat.pantheon.model.module.*;
+import com.redhat.pantheon.model.module.HashableFileResource;
+import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
-import com.redhat.pantheon.model.workspace.Workspace;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -22,7 +22,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -42,10 +45,10 @@ import static java.util.stream.Collectors.toList;
                 Constants.SERVICE_DESCRIPTION + "=Servlet which provides initial module listing and search functionality",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
-@SlingServletPaths(value = "/pantheon/internal/modules.json")
-public class ModuleListingServlet extends AbstractJsonQueryServlet {
+@SlingServletPaths(value = "/pantheon/internal/assemblies.json")
+public class AssemblyListingServlet extends AbstractJsonQueryServlet {
 
-    private final Logger log = LoggerFactory.getLogger(ModuleListingServlet.class);
+    private final Logger log = LoggerFactory.getLogger(AssemblyListingServlet.class);
 
     @Override
     protected String getQueryLanguage() {
@@ -60,7 +63,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String directionParam = paramValue(request, "direction");
         String[] productIds = request.getParameterValues("product");
         String[] productVersionIds = request.getParameterValues("productversion");
-        String type = paramValue(request, "type");        
+        String type = paramValue(request, "type");
 
         if(keyParam == null || keyParam.contains("Uploaded")) {
             keyParam = "pant:dateUploaded";
@@ -68,7 +71,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             keyParam = "jcr:title";
         } else if (keyParam.contains("Published")){
             keyParam = "pant:datePublished";
-        } else if (keyParam.contains("Module")){            
+        } else if (keyParam.contains("Module")){
             keyParam = "pant:moduleType";
         } else if (keyParam.contains("Updated")){
             keyParam = JcrConstants.JCR_LASTMODIFIED;
@@ -89,7 +92,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         StringBuilder queryBuilder = new StringBuilder()
-                .append("/jcr:root/content/(repositories | modules)//element(*, pant:module)");
+                .append("/jcr:root/content/(repositories | modules)//element(*, pant:assembly)");
 
         List<StringBuilder> queryFilters = newArrayListWithCapacity(4);
 
@@ -114,13 +117,6 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                     .collect(toList());
             productVersionCondition.append("(" + StringUtils.join(conditions, " or ") + ")");
             queryFilters.add(productVersionCondition);
-        }
-
-        // Module type filter
-        if(!Strings.isNullOrEmpty(type)) {
-            StringBuilder moduleTypeCondition = new StringBuilder()
-                    .append("*/*/*/*/metadata/@pant:moduleType = '" + type + "'");
-            queryFilters.add(moduleTypeCondition);
         }
 
         // join all the available conditions
@@ -182,7 +178,14 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
     protected Map<String, Object> resourceToMap(Resource resource) {
         Module module = resource.adaptTo(Module.class);
 
-        String variantName = module.getWorkspace().getCanonicalVariantName();
+        String variantName = DEFAULT_VARIANT_NAME;
+        Stream<ModuleVariantDefinition> mvd = traverseFrom(module)
+                .toChild(m -> m.getWorkspace().moduleVariantDefinitions())
+                        .get().getVariants();
+
+        if (mvd != null) {
+            variantName = mvd.findFirst().get().getName();
+        }
 
         Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE, variantName);
         Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);

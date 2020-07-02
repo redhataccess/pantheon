@@ -30,7 +30,20 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
           data-testid="navLink_search"
           to="/search"
         >
-          Search
+          Search Modules
+        </Link>
+      </NavItem>
+      <NavItem
+        groupId="grp-1"
+        isActive={false}
+        itemId="grp-1_itm-1"
+        onClick={[Function]}
+      >
+        <Link
+          data-testid="navLink_search"
+          to="/searchAsm"
+        >
+          Search Assemblies
         </Link>
       </NavItem>
       <NavItem
