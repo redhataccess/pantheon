@@ -203,12 +203,16 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
         
         //logic for file name is present in ModuleVersionUpload.java
-        if(draftMetadata.isPresent() && draftMetadata.get().moduleType().get()!=null){
-            m.put("moduleType",draftMetadata.get().moduleType().get());
-        }else if(releasedMetadata.isPresent() && releasedMetadata.get().moduleType().get()!=null){
-            m.put("moduleType",releasedMetadata.get().moduleType().get());   
-        }else{
-            m.put("moduleType","-");
+        if ("pantheon/assembly".equals(resource.getResourceType())) {
+            m.put("moduleType", "ASSEMBLY"); // This is temporary while assembly and modules are munged together.
+        } else {
+            if (draftMetadata.isPresent() && draftMetadata.get().moduleType().get() != null) {
+                m.put("moduleType", draftMetadata.get().moduleType().get());
+            } else if (releasedMetadata.isPresent() && releasedMetadata.get().moduleType().get() != null) {
+                m.put("moduleType", releasedMetadata.get().moduleType().get());
+            } else {
+                m.put("moduleType", "-");
+            }
         }
 
         if(sourceFile.isPresent() && sourceFile.get().created().get() != null){
