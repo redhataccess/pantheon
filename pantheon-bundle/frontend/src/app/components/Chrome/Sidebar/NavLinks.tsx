@@ -26,8 +26,7 @@ class NavLinks extends Component<IAppState, any> {
     const gitText = 'Git Import'
     const productText = 'New Product'
     const productsText = 'Product Listing'
-    const searchModulesText = 'Search Modules'
-    const searchAssembliesText = 'Search Assemblies'
+    const searchText = 'Search'
     const slingHomeText = 'Sling Welcome'
 
     return (
@@ -40,15 +39,7 @@ class NavLinks extends Component<IAppState, any> {
               isActive={this.state.activeGroup === 'grp-1' && this.state.activeItem === 'grp-1_itm-1'}
               onClick={this.handleItemOnclick}
             >
-              <Link to='/search' data-testid="navLink_search">{searchModulesText}</Link>
-            </NavItem>
-            <NavItem
-              groupId="grp-1"
-              itemId="grp-1_itm-1"
-              isActive={this.state.activeGroup === 'grp-1' && this.state.activeItem === 'grp-1_itm-1'}
-              onClick={this.handleItemOnclick}
-            >
-              <Link to='/searchAsm' data-testid="navLink_search">{searchAssembliesText}</Link>
+              <Link to='/search' data-testid="navLink_search">{searchText}</Link>
             </NavItem>
             {(this.props.userAuthenticated) &&
               (<NavItem

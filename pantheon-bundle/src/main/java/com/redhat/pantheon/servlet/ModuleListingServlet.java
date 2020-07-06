@@ -62,9 +62,9 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String[] productVersionIds = request.getParameterValues("productversion");
         String type = paramValue(request, "type");        
 
-        if(keyParam == null || keyParam.contains("Uploaded")) {
+        if(keyParam==null || keyParam.contains("Uploaded")){
             keyParam = "pant:dateUploaded";
-        } else if (keyParam.contains("Title")) {
+        }else if (keyParam.contains("Title")) {
             keyParam = "jcr:title";
         } else if (keyParam.contains("Published")){
             keyParam = "pant:datePublished";

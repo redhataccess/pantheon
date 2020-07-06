@@ -38,17 +38,17 @@ describe('NavLinks tests', () => {
     expect(expandable.exists()).toBe(true)
   })
 
-  it('should contain 2 NavItems without authentication', () => {
+  it('should contain 1 NavItem without authentication', () => {
     const wrapper = shallow(<NavLinks {...mockStateGuest} />)
 
     const items = wrapper.find(NavItem)
-    expect(items).toHaveLength(2)
+    expect(items).toHaveLength(1)
   })
 
   it('should handle state changes for isLoggedIn', () => {
     const wrapper = shallow(<NavLinks {...mockStateUser} />)
     const navGroup1 = wrapper.find('[groupId="grp-1"]')
-    expect(navGroup1.length).toBe(4)
+    expect(navGroup1.length).toBe(3)
     const navGroup2 = wrapper.find('[groupId="grp-2"]')
     expect(navGroup2.length).toBe(3)
   })

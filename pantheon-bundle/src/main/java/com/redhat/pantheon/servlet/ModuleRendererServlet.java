@@ -76,11 +76,24 @@ public class ModuleRendererServlet extends SlingSafeMethodsServlet {
 
         Optional<HashableFileResource> moduleVariantSource = null;
 
-        moduleVariantSource = module.moduleLocale(localeObj)
-                .traverse()
-                .toChild(ModuleLocale::source)
-                .toChild(draft ? SourceContent::draft : SourceContent::released)
-                .getAsOptional();
+        switch(paramValue(request, PARAM_DRAFT)){
+            case "true":
+                moduleVariantSource = module.moduleLocale(localeObj)
+                        .traverse()
+                        .toChild(ModuleLocale::source)
+                        .toChild(SourceContent::draft)
+                        .getAsOptional();
+                        break;
+
+            case "false":
+                moduleVariantSource = module.moduleLocale(localeObj)
+                    .traverse()
+                    .toChild(ModuleLocale::source)
+                    .toChild(SourceContent::released)
+                    .getAsOptional();
+                break;
+        }
+
 
         if(!moduleVariantSource.isPresent()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, (draft ? "Draft " : "Released ")
