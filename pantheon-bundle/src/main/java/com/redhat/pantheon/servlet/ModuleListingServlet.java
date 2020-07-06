@@ -89,9 +89,10 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         StringBuilder queryBuilder = new StringBuilder()
-                .append("/jcr:root/content/(repositories | modules)//element(*, pant:module)");
+                .append("/jcr:root/content/(repositories | modules)//element()");
 
-        List<StringBuilder> queryFilters = newArrayListWithCapacity(4);
+        List<StringBuilder> queryFilters = newArrayListWithCapacity(5);
+        queryFilters.add(new StringBuilder("(@jcr:primaryType = 'pant:assembly' or @jcr:primaryType = 'pant:module')"));
 
         // only filter by text if provided
         if (searchParam.length() > 0) {
