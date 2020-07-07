@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet;
 
+import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.resource.Resource;
@@ -97,11 +98,12 @@ public class ModuleRendererServletTest {
                 .commit();
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
-        HashMap<String,Object> pMap = new HashMap<>();
-        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
-        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
-        slingContext.request().setResource(resource);
-        slingContext.request().setParameterMap(pMap);
+        slingContext.request().setParameterMap(
+                ImmutableMap.<String, Object>builder()
+                        .put(AsciidocRenderingServlet.PARAM_DRAFT, "true")
+                        .put(AsciidocRenderingServlet.PARAM_RERENDER, "true")
+                        .build()
+        );
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -150,12 +152,13 @@ public class ModuleRendererServletTest {
                 .commit();
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
-        HashMap<String,Object> pMap = new HashMap<>();
-        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
-        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
-        pMap.put(AssemblyRenderServlet.PARAM_VARIANT, new String[]{"variant1"});
-        slingContext.request().setResource(resource);
-        slingContext.request().setParameterMap(pMap);
+        slingContext.request().setParameterMap(
+                ImmutableMap.<String, Object>builder()
+                        .put(AsciidocRenderingServlet.PARAM_DRAFT, "true")
+                        .put(AsciidocRenderingServlet.PARAM_RERENDER, "true")
+                        .put(AsciidocRenderingServlet.PARAM_VARIANT, "variant1")
+                        .build()
+        );
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),

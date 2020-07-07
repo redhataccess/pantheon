@@ -1,0 +1,9 @@
+[id="search-modules_{context}"]
+
+= How to search Modules
+
+The *Modules* tab allows you to search for modules in {ProductShortName} both by simple keyword or free text search, and by applying a number of different filters to search and to sort the results.
+
+include::../modules/proc-search-keyword.adoc[]
+include::../modules/proc-search-filters.adoc[]
+include::../modules/proc-view-results.adoc[]

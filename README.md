@@ -3,12 +3,12 @@
 [![Build Status](https://travis-ci.org/redhataccess/pantheon.png)](https://travis-ci.org/redhataccess/pantheon)
 [![Code Coverage](https://codecov.io/gh/redhataccess/pantheon/branch/master/graph/badge.svg)](https://codecov.io/github/redhataccess/pantheon?branch=master)
 
-Pantheon 2 is a modular documentation management and publication system based on AsciiDoc
-and built on top of Apache Sling.
-
+Pantheon 2 is a modular documentation management and publication system based on asciidoc
+and built on top of Apache sling.
 * [Contributing to Pantheon](#contributing-to-pantheon)
 * [Installing Pantheon](#installing-pantheon)
  * [Prerequisites](#prerequisites)
+ * [Environment Variables](#environment-variables)
  * [Building the application](#building-the-application)
  * [Unit tests](#unit-tests)
  * [Running the application](#running-the-application)
@@ -97,45 +97,76 @@ The developers check that the **Tech review passed** label has been added to the
 * Buildah
 * Java
 
+### Environment Variables
+**Project Root Directory**
+
+The build script provided in _scripts_ directory makes use of _PANTHEON_CODEBASE_ environment variable. Set this variable in your .bashrc or .bash_profile script. _PANTHEON_CODEBASE_ should point to the project's root directory.
+
+**Sling and MongoDB**
+The scripts folder contains _pantheon_karaf.exports_ file. It contains the values required for the pantheon karaf distribution. If you are running MongoDB on a different port then
+- Make a copy of _pantheon_karaf.exports_ file 
+- Place it in _.pantheon_ directory under your home directory
+- Update the _MONGO_DB_URI_ variable
+
 ### Building the application
 _(All commands from here on will be assumed to be run from the project's root directory)_
 
 ```sh
-./mvnw clean install
+sh scripts/deploy_local.sh
 ```
+The _deploy_local_ script will:
+- Run maven build that creates the pantheon karaf distribution
+- Extract the archive to _$PANTHEON_CODEBASE/pantheon-karaf-dist/target_. The distribution is being extracted to target, currently, because a fresh distribution is needed for changes in the pantheon-bundle codebase. In the future, that may change and accordingly script will also change.
+- Start Karaf, and drop you into the karaf shell
+### Using the application
 
-### Unit tests
+Head to http://localhost:8181/pantheon for the application's entry point.
+
+For sling's management UI, you can head to http://localhost:8181/starter/index.html
+
+**Note:** If you plan to use git import UI locally, please follow the instructions in README under tools/git2pantheon. Also you will need to set the credentials of the user that would be used by git2pantheon to push the repository. It can be done by using environment variables (for both podman based and non-podman based).
+
+### Other use cases...
+
+
+**Debug using Karaf shell**
+- To view logs: log:display
+- To view exceptions: log:exception-display
+- To list all bundles and view their status: bundle:list
+- Find out why a bundle is in waiting state: diag _[bundle-id]_
+
+### Run the application using Podman
+First, install [podman](https://podman.io).
+
+Then, create a pod:
 
 ```sh
-./mvnw test
+podman pod create --name pantheon-karaf -p 8181 -p 5005
 ```
 
-### Running the application
-
-The best way to run Pantheon is to install [podman](https://podman.io).
-
-1. First, create a pod:  
-```sh
-podman pod create --name pantheon -p 8080 -p 5005
-```
-This will create a `pantheon` pod with ports 8080 (for web access) and 5005 (for
+This will create a `pantheon-karaf` pod with ports 8181 (for web access) and 5005 (for
 remote Java debugging) open.
 
-1. Run a Mongo database container in the pod.
+Run a mongo database container in the pod.
+
 ```sh
-podman run --pod pantheon --name slingmongo -d mongo
-```
-1. Build the Pantheon Docker-formatted container image.
-```sh
-buildah bud --layers -f container/Dockerfile -t pantheon-app .
+podman run --pod pantheon-karaf --name slingmongo -d mongo
 ```
 
-1. Run the Sling container pod in the pod.
+Build the pantheon image
+
 ```sh
-podman run --pod pantheon -d -e SLING_OPTS='-Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://localhost:27017' --name pantheon-app pantheon-app
+buildah bud --layers -f container/Dockerfile -t pantheon-karaf-app .
 ```
 
-The Sling launchpad can be accessed at `http://localhost:8080` and you can log in to
+Run the sling container in the pod.
+
+```sh
+podman run --pod pantheon-karaf -d -e  MONGO_DB_REPLICA='mongodb://localhost:27017'   -t --name pantheon-karaf-app   pantheon-karaf-app 
+
+```
+
+The Sling launchpad can be accessed at `http://localhost:8181` and you can log in to
 it using the `admin/admin` username password combo.
 
 ### Live deploy of code
@@ -144,41 +175,11 @@ This is useful when developing the application.
 To deploy the code live to a running application, all you have to do is
 
 ```sh
-./mvnw clean package sling:install -pl pantheon-bundle
+./mvnw clean install sling:install -pl pantheon-bundle
 ```
 
 This will install the code in this project on the running Sling instance, where it can
 be previewed and modified.
-
-### Using the application
-
-Head to http://localhost:8080/pantheon for the application's entry point.
-
-For Sling's management UI, you can head to http://localhost:8080/starter/index.html
-
-You can stop and start the pod as necessary with podman's pod command:
-
-```sh
-podman pod stop pantheon
-podman pod start pantheon
-```
-### Other use cases...
-
-Run the container without Mongo, but this will result in the data being destroyed with the container.
-```sh
-podman run --rm -p 8080:8080  YOURTAG
-```
-
-Open a terminal inside the container and debug
-
-get the container process
-```
-podman ps
-```
-
-```
-podman exec -it PROCESS bash
-```
 ### Developing the frontend code
 
 If making modifications that are entirely contained within the frontend, it is not necessary to use maven to rebuild and redeploy the package on every change.

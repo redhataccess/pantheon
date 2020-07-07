@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
@@ -64,16 +65,15 @@ public class ModuleRendererServlet extends SlingSafeMethodsServlet {
     }
 
     @Override
-    public void doGet(SlingHttpServletRequest request,
-            SlingHttpServletResponse response) throws IOException {
+    protected void doGet(SlingHttpServletRequest request,
+            SlingHttpServletResponse response) throws ServletException, IOException {
         String locale = paramValue(request, PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
-        Boolean draft = paramValueAsBoolean(request, PARAM_DRAFT);
+        boolean draft = paramValueAsBoolean(request, PARAM_DRAFT);
         boolean reRender = paramValueAsBoolean(request, PARAM_RERENDER);
         String variantName = paramValue(request, PARAM_VARIANT, DEFAULT_VARIANT_NAME);
-
-        Module module = request.getResource().adaptTo(Module.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
 
+        Module module = request.getResource().adaptTo(Module.class);
         Optional<HashableFileResource> moduleVariantSource = null;
 
         switch(paramValue(request, PARAM_DRAFT)){

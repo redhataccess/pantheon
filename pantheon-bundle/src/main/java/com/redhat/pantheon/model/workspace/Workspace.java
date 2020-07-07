@@ -26,7 +26,7 @@ public interface Workspace extends SlingModel {
     Child<Folder> entities();
 
     default String getCanonicalVariantName() {
-        Optional<ModuleVariantDefinition> cv = moduleVariantDefinitions().getOrCreate().getVariants().filter(def -> def.isCanonical().get()).findFirst();
+        Optional<ModuleVariantDefinition> cv = moduleVariantDefinitions().getOrCreate().getVariants().filter(def -> def.isCanonical()).findFirst();
         return cv.isPresent() ? cv.get().getName() : ModuleVariant.DEFAULT_VARIANT_NAME;
     }
 

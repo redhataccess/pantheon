@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
@@ -61,14 +62,14 @@ public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
     private AsciidoctorService asciidoctorService;
 
     @Activate
-    public AssemblyRenderServlet(
+    protected AssemblyRenderServlet(
             @Reference AsciidoctorService asciidoctorService) {
         this.asciidoctorService = asciidoctorService;
     }
 
     @Override
     public void doGet(SlingHttpServletRequest request,
-            SlingHttpServletResponse response) throws IOException {
+            SlingHttpServletResponse response) throws ServletException, IOException {
         String locale = paramValue(request, PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
         boolean draft = paramValueAsBoolean(request, PARAM_DRAFT);
         boolean reRender = paramValueAsBoolean(request, PARAM_RERENDER);
@@ -79,24 +80,11 @@ public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
 
         Optional<HashableFileResource> moduleVariantSource = null;
 
-        switch(paramValue(request, PARAM_DRAFT)){
-            case "true":
-                moduleVariantSource = module.moduleLocale(localeObj)
+        moduleVariantSource = module.moduleLocale(localeObj)
                         .traverse()
                         .toChild(ModuleLocale::source)
-                        .toChild(SourceContent::draft)
+                        .toChild(draft ? SourceContent::draft : SourceContent::released)
                         .getAsOptional();
-                break;
-
-            case "false":
-                moduleVariantSource = module.moduleLocale(localeObj)
-                        .traverse()
-                        .toChild(ModuleLocale::source)
-                        .toChild(SourceContent::released)
-                        .getAsOptional();
-                break;
-        }
-
 
         if(!moduleVariantSource.isPresent()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, (draft ? "Draft " : "Released ")
