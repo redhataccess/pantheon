@@ -73,6 +73,14 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                         .toChild(FileResource::jcrContent)
                         .toField(FileResource.JcrContent::jcrData)
                         .get();
+                content = new StringBuilder(":pantheon_module_id: ")
+                        .append(module.uuid().get())
+                        .append("\r\n")
+                        .append(content)
+                        .append("\r\n")
+                        .append(":!pantheon_module_id:")
+                        .append("\r\n")
+                        .toString();
             } else {
                 // It's a plain file
                 FileResource file = includedResourceAsModel.adaptTo(FileResource.class);
