@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
+import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -14,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.Locale;
 
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
@@ -98,10 +98,11 @@ public class ModuleRendererServletTest {
                 .commit();
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
+        slingContext.request().setResource(resource);
         slingContext.request().setParameterMap(
                 ImmutableMap.<String, Object>builder()
-                        .put(AsciidocRenderingServlet.PARAM_DRAFT, "true")
-                        .put(AsciidocRenderingServlet.PARAM_RERENDER, "true")
+                        .put(PantheonConstants.PARAM_DRAFT, "true")
+                        .put(PantheonConstants.PARAM_RERENDER, "true")
                         .build()
         );
         lenient().when(
@@ -152,11 +153,12 @@ public class ModuleRendererServletTest {
                 .commit();
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
+        slingContext.request().setResource(resource);
         slingContext.request().setParameterMap(
                 ImmutableMap.<String, Object>builder()
-                        .put(AsciidocRenderingServlet.PARAM_DRAFT, "true")
-                        .put(AsciidocRenderingServlet.PARAM_RERENDER, "true")
-                        .put(AsciidocRenderingServlet.PARAM_VARIANT, "variant1")
+                        .put(PantheonConstants.PARAM_DRAFT, "true")
+                        .put(PantheonConstants.PARAM_RERENDER, "true")
+                        .put(PantheonConstants.PARAM_VARIANT, "variant1")
                         .build()
         );
         lenient().when(
@@ -204,12 +206,14 @@ public class ModuleRendererServletTest {
                 .commit();
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
-        HashMap<String,Object> pMap = new HashMap<>();
-        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
-        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
-        pMap.put(AssemblyRenderServlet.PARAM_VARIANT, new String[]{"non_existing"});
         slingContext.request().setResource(resource);
-        slingContext.request().setParameterMap(pMap);
+        slingContext.request().setParameterMap(
+                ImmutableMap.<String, Object>builder()
+                        .put(PantheonConstants.PARAM_DRAFT, "true")
+                        .put(PantheonConstants.PARAM_RERENDER, "true")
+                        .put(PantheonConstants.PARAM_VARIANT, new String[]{"non_existing"})
+                        .build()
+        );
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),
@@ -245,12 +249,14 @@ public class ModuleRendererServletTest {
                 .commit();
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
-        HashMap<String,Object> pMap = new HashMap<>();
-        pMap.put(AssemblyRenderServlet.PARAM_RERENDER,new String[]{"true"});
-        pMap.put(AssemblyRenderServlet.PARAM_DRAFT, new String[]{"true"});
-        pMap.put(AssemblyRenderServlet.PARAM_LOCALE, new String[]{"ja_JP"});
         slingContext.request().setResource(resource);
-        slingContext.request().setParameterMap(pMap);
+        slingContext.request().setParameterMap(
+                ImmutableMap.<String, Object>builder()
+                        .put(PantheonConstants.PARAM_DRAFT, "true")
+                        .put(PantheonConstants.PARAM_RERENDER, "true")
+                        .put(PantheonConstants.PARAM_LOCALE, new String[]{"ja_JP"})
+                        .build()
+        );
         lenient().when(
                 asciidoctorService.getModuleHtml(
                         any(Module.class),

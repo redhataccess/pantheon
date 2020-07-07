@@ -1,6 +1,7 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
+import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.module.*;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -51,11 +52,6 @@ public class ModuleRendererServlet extends SlingSafeMethodsServlet {
 
     private final Logger log = LoggerFactory.getLogger(ModuleRendererServlet.class);
 
-    static final String PARAM_RERENDER = "rerender";
-    static final String PARAM_DRAFT = "draft";
-    static final String PARAM_LOCALE = "locale";
-    static final String PARAM_VARIANT = "variant";
-
     private AsciidoctorService asciidoctorService;
 
     @Activate
@@ -67,38 +63,24 @@ public class ModuleRendererServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws ServletException, IOException {
-        String locale = paramValue(request, PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
-        boolean draft = paramValueAsBoolean(request, PARAM_DRAFT);
-        boolean reRender = paramValueAsBoolean(request, PARAM_RERENDER);
-        String variantName = paramValue(request, PARAM_VARIANT, DEFAULT_VARIANT_NAME);
+        String locale = paramValue(request, PantheonConstants.PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
+        boolean draft = paramValueAsBoolean(request, PantheonConstants.PARAM_DRAFT);
+        boolean reRender = paramValueAsBoolean(request, PantheonConstants.PARAM_RERENDER);
+        String variantName = paramValue(request, PantheonConstants.PARAM_VARIANT, DEFAULT_VARIANT_NAME);
         Locale localeObj = LocaleUtils.toLocale(locale);
 
         Module module = request.getResource().adaptTo(Module.class);
-        Optional<HashableFileResource> moduleVariantSource = null;
-
-        switch(paramValue(request, PARAM_DRAFT)){
-            case "true":
-                moduleVariantSource = module.moduleLocale(localeObj)
+        Optional<HashableFileResource> moduleVariantSource = module.moduleLocale(localeObj)
                         .traverse()
                         .toChild(ModuleLocale::source)
-                        .toChild(SourceContent::draft)
+                        .toChild(draft ? SourceContent::draft : SourceContent::released)
                         .getAsOptional();
-                        break;
-
-            case "false":
-                moduleVariantSource = module.moduleLocale(localeObj)
-                    .traverse()
-                    .toChild(ModuleLocale::source)
-                    .toChild(SourceContent::released)
-                    .getAsOptional();
-                break;
-        }
-
 
         if(!moduleVariantSource.isPresent()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, (draft ? "Draft " : "Released ")
                     + "source content not found for " + variantName +  " module variant at "
                     + request.getResource().getPath());
+            return;
         }
         // collect a list of parameter that traverseFrom with 'ctx_' as those will be used as asciidoctorj
         // parameters
