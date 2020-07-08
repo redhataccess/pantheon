@@ -87,9 +87,6 @@
                             !org.apache.commons.lang,
                             !org.apache.commons.lang.builder,*
                         </Import-Package>
-                        <Include-Resource>
-                            @org.apache.sling.servlets.post-*.jar!/org/apache/sling/servlets/post/impl/**
-                        </Include-Resource>
                         <!-- Embed the necessary dependencies -->
                         <!-- The `inline=true` is important, don't remove it unless you want cryptic problems such as servlets that suddenly stop resolving without explanation -->
                         <Embed-Dependency>*;scope=compile;inline=true</Embed-Dependency>
