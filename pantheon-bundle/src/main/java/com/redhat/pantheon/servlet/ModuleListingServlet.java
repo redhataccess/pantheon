@@ -182,14 +182,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
     protected Map<String, Object> resourceToMap(Resource resource) {
         Module module = resource.adaptTo(Module.class);
 
-        String variantName = DEFAULT_VARIANT_NAME;
-        Stream<ModuleVariantDefinition> mvd = traverseFrom(module)
-                .toChild(m -> m.getWorkspace().moduleVariantDefinitions())
-                        .get().getVariants();
-
-        if (mvd != null) {
-            variantName = mvd.findFirst().get().getName();
-        }
+        String variantName = module.getWorkspace().getCanonicalVariantName();
 
         Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE, variantName);
         Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);
