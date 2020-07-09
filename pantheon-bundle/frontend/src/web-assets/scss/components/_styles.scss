@@ -2,6 +2,10 @@
   padding: 2em;
   // max-width: 65em; // Optimal line-length for best legibility.
 
+  :host & {
+    padding: 0; // No padding when in the web component
+  }
+
   .has-toc.toc-left & {
     @media (min-width: 768px) {
       padding: 0;
@@ -55,24 +59,26 @@
 }
 
 .rh-docs-details-item {
+  $font-size: 16px;
+  $line-height: 24px / $font-size; // Getting unitless line-height
   margin: 0 0 8px;
-  font-size: 16px;
-  line-height: 24 / 16; // Getting unitless line-height
+  font-size: $font-size;
+  line-height: #{ $line-height };
 }
 
 .rhdocs-products {
+  $font-size: 24px;
+  $line-height: 31px / $font-size; // Getting unitless line-height
   margin: 0 0 16px;
   font-size: 24px;
-  line-height: 31 / 24; // Getting unitless lineheight
+  line-height: #{ $line-height };
   font-weight: bold;
   text-transform: uppercase;
 }
 
 // .rhdocs-product-name {}
 
-.rhdocs-product-version {
-  display: block;
-}
+// .rhdocs-product-version {}
 
 .rhdocs-author-details {
   display: inline-block;

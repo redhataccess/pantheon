@@ -38,6 +38,7 @@ task(
   'compileAsciiDocs',
   parallel(
     shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets dev-preview/ascii-doc-styleguide.adoc`),
+    shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets 'dev-preview/rhel-8-docs/enterprise/assemblies/assembly_access-control-list.adoc'`),
   )
 );
 

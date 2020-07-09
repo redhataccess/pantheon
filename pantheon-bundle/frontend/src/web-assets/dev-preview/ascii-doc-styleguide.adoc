@@ -34,6 +34,8 @@ v1.0.3, 2014-12-28
 :pass-ref: {user-ref}/#passthrough-macros
 :mailinglist: http://discuss.asciidoctor.org
 
+* link:/dev-preview/assembly_access-control-list.html[Short Assembly Demo]
+
 // Stolen and modified from: 
 // https://gist.github.com/mojavelinux/8198e5a5ac2570a0cf30
 
