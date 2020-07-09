@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.helper.PantheonConstants;
+import com.redhat.pantheon.model.document.SourceContent;
 import com.redhat.pantheon.model.module.*;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -70,7 +71,7 @@ public class ModuleRendererServlet extends SlingSafeMethodsServlet {
         Locale localeObj = LocaleUtils.toLocale(locale);
 
         Module module = request.getResource().adaptTo(Module.class);
-        Optional<HashableFileResource> moduleVariantSource = module.moduleLocale(localeObj)
+        Optional<HashableFileResource> moduleVariantSource = module.locale(localeObj)
                 .traverse()
                 .toChild(ModuleLocale::source)
                 .toChild(draft ? SourceContent::draft : SourceContent::released)
