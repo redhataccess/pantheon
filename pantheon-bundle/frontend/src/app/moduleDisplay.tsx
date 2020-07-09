@@ -203,7 +203,7 @@ class ModuleDisplay extends Component<any, any, any> {
                             }
 
                             for (const offspring of myGrandchild.__children__) {
-                                if (offspring.__name__ === 'moduleMetadata') {
+                                if (offspring.__name__ === 'metadata') {
 
                                     if (offspring[Fields.JCR_TITLE] !== undefined) {
 
@@ -237,7 +237,7 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     private getVersionUUID = (path) => {
-        // path = "/content" + path + "/en_US/1/moduleMetadata.json"
+        // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + "/en_US.harray.4.json"
         fetch(path)
             .then(response => response.json())
@@ -257,7 +257,7 @@ class ModuleDisplay extends Component<any, any, any> {
                             }
 
                             for (const offspring of variant.__children__) {
-                                if (offspring.__name__ === 'moduleMetadata') {
+                                if (offspring.__name__ === 'metadata') {
 
                                     if (offspring[Fields.PANT_PRODUCT_VERSION_REF] !== undefined) {
 

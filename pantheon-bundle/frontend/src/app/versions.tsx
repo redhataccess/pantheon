@@ -49,8 +49,8 @@ interface IState {
 class Versions extends Component<IProps, IState> {
     private static USE_CASES = ['Select Use Case', 'Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network', 'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize']
 
-    public draft = [{ 'type': 'draft', 'icon': BlankImage, 'path': '', 'version': '', 'publishedState': 'Not published', 'updatedDate': '', 'firstButtonType': 'primary', 'secondButtonType': 'secondary', 'firstButtonText': 'Publish', 'secondButtonText': 'Preview', 'isDropdownOpen': false, 'isArchiveDropDownOpen': false, 'moduleMetadata': '' }]
-    public release = [{ 'type': 'release', 'icon': CheckImage, 'path': '', 'version': '', 'publishedState': 'Released', 'updatedDate': '', 'firstButtonType': 'secondary', 'secondButtonType': 'primary', 'firstButtonText': 'Unpublish', 'secondButtonText': 'View', 'isDropdownOpen': false, 'isArchiveDropDownOpen': false, 'moduleMetadata': '', 'draftUploadDate': '' }]
+    public draft = [{ 'type': 'draft', 'icon': BlankImage, 'path': '', 'version': '', 'publishedState': 'Not published', 'updatedDate': '', 'firstButtonType': 'primary', 'secondButtonType': 'secondary', 'firstButtonText': 'Publish', 'secondButtonText': 'Preview', 'isDropdownOpen': false, 'isArchiveDropDownOpen': false, 'metadata': '' }]
+    public release = [{ 'type': 'release', 'icon': CheckImage, 'path': '', 'version': '', 'publishedState': 'Released', 'updatedDate': '', 'firstButtonType': 'secondary', 'secondButtonType': 'primary', 'firstButtonText': 'Unpublish', 'secondButtonText': 'View', 'isDropdownOpen': false, 'isArchiveDropDownOpen': false, 'metadata': '', 'draftUploadDate': '' }]
 
     constructor(props) {
         super(props)
@@ -126,7 +126,7 @@ class Versions extends Component<IProps, IState> {
                     Module failed to publish. Check the following:
                     <ul>
                         <li>Are you logged in as a publisher?</li>
-                        <li>Does the module have all required moduleMetadata?</li>
+                        <li>Does the module have all required metadata?</li>
                     </ul>
                 </Alert>
                 }
@@ -217,7 +217,7 @@ class Versions extends Component<IProps, IState> {
                                                                         key={'kebab_' + key1 + '_' + key2}
                                                                         dropdownItems={[
                                                                             <DropdownItem key={'archive_' + key1 + '_' + key2} isDisabled={true}>Archive</DropdownItem>,
-                                                                            <DropdownItem id={data.path} key={'edit_metadata_' + key1 + '_' + key2} component='button' onClick={this.handleModalToggle}>Edit moduleMetadata</DropdownItem>,
+                                                                            <DropdownItem id={data.path} key={'edit_metadata_' + key1 + '_' + key2} component='button' onClick={this.handleModalToggle}>Edit metadata</DropdownItem>,
                                                                         ]}
                                                                     />
                                                                 </DataListCell>
@@ -265,7 +265,7 @@ class Versions extends Component<IProps, IState> {
                                                                     <span className='sp-prop-nosort' id='span-source-type-module-title'>Module Title</span>
                                                                 </DataListCell>,
                                                                 <DataListCell key={'details_jcr_title_' + key1 + '_' + key2} width={4}>
-                                                                    {(data['moduleMetadata']['jcr:title'] !== undefined) ? data['moduleMetadata']['jcr:title'] : '-'}
+                                                                    {(data['metadata']['jcr:title'] !== undefined) ? data['metadata']['jcr:title'] : '-'}
                                                                 </DataListCell>,
                                                                 <DataListCell key={'details_context_package_' + key1 + '_' + key2} width={2}>
                                                                     <span className='sp-prop-nosort' id='span-source-type-context-package'>Context Package</span>
@@ -287,10 +287,10 @@ class Versions extends Component<IProps, IState> {
                 </Card>
                 <Modal
                     width={'60%'}
-                    title='Edit moduleMetadata'
+                    title='Edit metadata'
                     isOpen={this.state.isModalOpen}
                     header={header}
-                    ariaDescribedById='edit-moduleMetadata'
+                    ariaDescribedById='edit-metadata'
                     onClose={this.handleModalClose}
                     actions={[
                         <Button form='edit_metadata' key='confirm' variant='primary' onClick={this.saveMetadata}>
@@ -417,7 +417,7 @@ class Versions extends Component<IProps, IState> {
                         // console.log("[versions] moduleVersion => ", moduleVersion)
                         if (moduleVersion.__name__ === 'draft') {
                             this.draft[0].version = 'Version ' + moduleVersion.__name__
-                            this.draft[0].moduleMetadata = this.getHarrayChildNamed(moduleVersion, 'moduleMetadata')
+                            this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
                             // get created date from source/draft
                             this.draft[0].updatedDate = draftDate !== undefined ? draftDate : ''
                             // this.props.modulePath starts with a slash
@@ -425,8 +425,8 @@ class Versions extends Component<IProps, IState> {
                         }
                         if (moduleVersion.__name__ === 'released') {
                             this.release[0].version = 'Version ' + moduleVersion.__name__
-                            this.release[0].moduleMetadata = this.getHarrayChildNamed(moduleVersion, 'moduleMetadata')
-                            this.release[0].updatedDate = this.release[0].moduleMetadata['pant:datePublished'] !== undefined ? this.release[0].moduleMetadata['pant:datePublished'] : ''
+                            this.release[0].metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
+                            this.release[0].updatedDate = this.release[0].metadata['pant:datePublished'] !== undefined ? this.release[0].metadata['pant:datePublished'] : ''
                             // get created date from source/draft
                             this.release[0].draftUploadDate = draftDate !== undefined ? draftDate : ''
                             // this.props.modulePath starts with a slash
@@ -570,7 +570,7 @@ class Versions extends Component<IProps, IState> {
             formData.append('urlFragment', '/' + this.state.moduleUrl)
             formData.append('searchKeywords', this.state.keywords === undefined ? '' : this.state.keywords)
 
-            fetch(this.state.metadataPath + '/moduleMetadata', {
+            fetch(this.state.metadataPath + '/metadata', {
                 body: formData,
                 headers: hdrs,
                 method: 'post'
@@ -685,7 +685,7 @@ class Versions extends Component<IProps, IState> {
 
     private getMetadata = (versionPath) => {
         if (versionPath.trim() !== '') {
-            fetch(versionPath + '/moduleMetadata.json')
+            fetch(versionPath + '/metadata.json')
                 .then(response => response.json())
                 .then(metadataResults => {
                     if (JSON.stringify(metadataResults) !== '[]') {
