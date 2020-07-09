@@ -38,7 +38,7 @@ task(
   'compileAsciiDocs',
   parallel(
     shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets dev-preview/ascii-doc-styleguide.adoc`),
-    shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets 'dev-preview/rhel-8-docs/enterprise/assemblies/assembly_access-control-list.adoc'`),
+    shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets 'dev-preview/assembly_access-control-list.adoc'`),
   )
 );
 
@@ -90,17 +90,7 @@ const reloadBrowserSync = (done) => {
   done();
 };
 
-/**
- * Gulp tasks
- */
-// Builds dev assets in dev-preview and prod CSS in to the correct folder (see cssOutput variable)
-task('default', parallel(compileCSS, 'compileAsciiDocs'));
-
-task('build:dev', parallel(compileCSS, 'compileAsciiDocs'));
-
 const watchTasks = () => {
-  compileCSS();
-
   watch(
     cssSource,
     series(
@@ -126,10 +116,24 @@ const watchTasks = () => {
   );
 };
 
+/**
+ * Gulp tasks
+ */
+// Builds dev assets in dev-preview and prod CSS in to the correct folder (see cssOutput variable)
+task('default', parallel(compileCSS, 'compileAsciiDocs'));
+
+task('build:dev', parallel(compileCSS, 'compileAsciiDocs'));
+
 // Starts browsersync, watches project for changes and reloads all browsers
 task('watch',
-  parallel(
-    startBrowserSync,
-    watchTasks
+  series(
+    parallel(
+      compileCSS,
+      'compileAsciiDocs'
+    ),
+    parallel(
+      startBrowserSync,
+      watchTasks
+    )
   )
 );

@@ -54,7 +54,6 @@ ifdef::context[:parent-context-of-access-control-list: {context}]
 = Access control list
 
 :context: access-control-list
-// :pantheonid: 12345
 
 Traditionally, each file and directory can only have one user owner and one group owner at a time. If you want to apply a more specific set of permissions to a file or directory (allow certain users outside the group to gain access to a specific file within a directory but not to other files) without changing the ownership and permissions of a file or directory, you can use the access control lists (ACL).
 
@@ -63,11 +62,12 @@ The following section describes how to:
 * Display the current ACL.
 * Set the ACL.
 
+:pantheon_module_id: 12345
 include::adoc-includes/proc_displaying-the-current-acl.adoc[leveloffset=+1]
 
 This is glue text!!!
 
-:pantheonid: 67890
+:pantheon_module_id: 67890
 include::adoc-includes/proc_setting-the-acl.adoc[leveloffset=+1]
 
 
