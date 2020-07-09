@@ -80,16 +80,16 @@
                 -#           - if attr? "email_#{idx}"
                 -#             %dd{:id=>"email#{idx}", :class=>"email"}= sub_macros(attr "email_#{idx}")
 
-                -# Product moduleMetadata
+                -# Product metadata
                 - if (attr? :pantheonproduct)
                   %li.rh-docs-details-item.rhdocs-products
                     %span.rhdocs-product-name=attr :pantheonproduct
                     - if (attr? :pantheonversion)
                       %span.rhdocs-product-version=attr :pantheonversion
-                -# Last Updated moduleMetadata
+                -# Last Updated metadata
                 - if (attr? :pantheonupdateddate)
                   %li.rh-docs-details-item.rhdocs-updated-date Updated #{attr :pantheonupdateddate}
-                -# Published Date moduleMetadata
+                -# Published Date metadata
                 - if (attr? :pantheonpublisheddate)
                   %li.rh-docs-details-item.rhdocs-published-date Published #{attr :pantheonpublisheddate}
 

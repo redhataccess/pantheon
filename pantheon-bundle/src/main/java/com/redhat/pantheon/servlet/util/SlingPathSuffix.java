@@ -3,11 +3,13 @@ package com.redhat.pantheon.servlet.util;
 import org.apache.sling.api.SlingHttpServletRequest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Represents the suffix of a sling url and allows to extract information from it.
@@ -32,6 +34,8 @@ import java.util.regex.Pattern;
 public class SlingPathSuffix {
 
     private static final Pattern PARAMETER_PATTERN = Pattern.compile("(\\{[a-zA-Z0-9]+})");
+    // A list of the characters denoting the end of a resource path
+    private static final String PATH_END_CHARS = escapeCharsForRegex('/', '?', '#');
     private final List<String> parameterNames = new ArrayList<>();
     private Map<String, String> parameterMap;
     private final Pattern pattern;
@@ -55,7 +59,11 @@ public class SlingPathSuffix {
                 }
             }
         }
-        pattern = Pattern.compile(Pattern.quote(matcher.replaceAll("_____PARAM_____")).replace("_____PARAM_____", "\\E([^/]*)\\Q"));
+        pattern = Pattern.compile(
+                Pattern.quote(matcher.replaceAll("_____PARAM_____"))
+                        .replace("_____PARAM_____", "\\E([^" + PATH_END_CHARS + "]*)\\Q")
+                        // add this in case the url has extra 'things' (like parameters)
+                        + ".*");
     }
 
     /**
@@ -83,5 +91,15 @@ public class SlingPathSuffix {
             }
         }
         return parameterMap;
+    }
+
+    /**
+     * Escapes each provided character individually and returns a string
+     * with the escaped characters for use in regular expressions.
+     */
+    private static String escapeCharsForRegex(Character ... chars) {
+        return Arrays.stream(chars)
+                .map(character -> Pattern.quote(character.toString()))
+                .collect(Collectors.joining());
     }
 }
