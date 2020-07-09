@@ -1,12 +1,11 @@
 package com.redhat.pantheon.asciidoctor;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
 import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModels;
@@ -69,29 +68,35 @@ public class AsciidoctorService {
     }
 
     /**
-     * Returns a module's html representation. If the module has not been built before, or if it is explicitly requested,
-     * it is fully built. Otherwise a cached copy of the html is returned.
+     * Returns a document's html representation. If the document has not been built before, or if it is explicitly
+     * requested, it is fully built. Otherwise a cached copy of the html is returned.
      *
-     * @param module      The module for which to get the html representation
-     * @param locale      The module locale
-     * @param variantName The name of the module variant
-     * @param draft       True if generating the draft version of the module. False if generating the released version.
+     * @param document    The document for which to get the html representation
+     * @param locale      The document locale
+     * @param variantName The name of the document variant
+     * @param draft       True if generating the draft version of the document. False if generating the released version.
      * @param context     any necessary context (attributes and their values) necessary to generate the html
      * @param forceRegen  when true, the html content is always re-generated; the cached content is ignored
      *                    This parameter is useful when passing context, as the cached content does not take
      *                    the context into account
-     * @return The module's html representation based on its current asciidoc content
+     * @return The document's html representation based on its current asciidoc content
      */
-    public String getModuleHtml(@Nonnull Module module,
+    public String getModuleHtml(@Nonnull Document document,
                                 @Nonnull Locale locale,
                                 @Nonnull String variantName,
                                 boolean draft,
                                 Map<String, Object> context,
                                 boolean forceRegen) {
+        document.getLocale(locale).get().getVariants();
 
-        ResourceTraversal<ModuleVariant> traversal = module.moduleLocale(locale)
+        Module m;
+        m.getLocale(locale).get().getVariants();
+
+
+
+        ResourceTraversal<ModuleVariant> traversal = document.documentLocale(locale)
                 .traverse()
-                .toChild(ModuleLocale::variants)
+                .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName));
 
         Optional<ModuleVersion> moduleVersion;
@@ -114,7 +119,7 @@ public class AsciidoctorService {
         if (forceRegen
                 || !moduleVersion.isPresent()
                 || moduleVersion.get().cachedHtml().get() == null) {
-            html = buildModule(module, locale, variantName, draft, context, true);
+            html = buildDocument(document, locale, variantName, draft, context, true);
         } else {
             html = moduleVersion.get()
                     .cachedHtml().get()
@@ -156,13 +161,13 @@ public class AsciidoctorService {
      * @param regenMetadata If true, metadata will be extracted from the content and repopulated into the JCR module.
      * @return The generated html string.
      */
-    private String buildModule(@Nonnull Module base, @Nonnull Locale locale, @Nonnull String variantName, boolean isDraft,
+    private String buildDocument(@Nonnull Document base, @Nonnull Locale locale, @Nonnull String variantName, boolean isDraft,
                                Map<String, Object> context, final boolean regenMetadata) {
 
         Optional<HashableFileResource> sourceFile =
                 traverseFrom(base)
-                        .toChild(m -> m.moduleLocale(locale))
-                        .toChild(ModuleLocale::source)
+                        .toChild(m -> m.documentLocale(locale))
+                        .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> isDraft ? sourceContent.draft() : sourceContent.released())
                         .getAsOptional();
 
@@ -190,7 +195,7 @@ public class AsciidoctorService {
             Optional<ProductVersion> productVersion =
                     moduleVersion.metadata()
                             .traverse()
-                            .toRef(Metadata::productVersion)
+                            .toRef(ModuleMetadata::productVersion)
                             .getAsOptional();
 
             String productName = null;
@@ -202,7 +207,7 @@ public class AsciidoctorService {
 
             Optional<Calendar> publishedDate = moduleVersion.metadata()
                     .traverse()
-                    .toField(Metadata::datePublished);
+                    .toField(ModuleMetadata::datePublished);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
 

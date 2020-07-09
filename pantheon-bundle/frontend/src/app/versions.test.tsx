@@ -132,7 +132,7 @@ describe('Versions tests', () => {
         const wrapper = mount(<Versions {...props} />)
         wrapper.setState({ 'login': true })
         wrapper.setState({
-            'results': [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]],
+            'results': [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "moduleMetadata": '' }]],
         })
         const kebabToggle = wrapper.find(KebabToggle)
         expect(kebabToggle.exists()).toBe(true)
@@ -217,7 +217,7 @@ describe('Versions tests', () => {
         const instance = wrapper.instance()
         wrapper.setState({ 'login': true })
         wrapper.setState({ 'isModalOpen': true })
-        // Assuming metadata exists
+        // Assuming moduleMetadata exists
         const spy = sinon.spy(instance, 'saveMetadata')
         const urlFragment = wrapper.find('input')
         expect(urlFragment.exists()).toBe(true)
@@ -286,7 +286,7 @@ describe('Versions tests', () => {
     it('test getHarrayChildNamed function', () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
-        expect(inst.getHarrayChildNamed(anymatch, 'metadata')).toMatchSnapshot()
+        expect(inst.getHarrayChildNamed(anymatch, 'moduleMetadata')).toMatchSnapshot()
     })
 
     it('has a variantUUID of "1234"', () => {
@@ -309,7 +309,7 @@ describe('Versions tests', () => {
         const instance = wrapper.instance()
         wrapper.setState({ 'login': true })
         wrapper.setState({
-            'results': [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]],
+            'results': [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "moduleMetadata": '' }]],
         })
         const spy = sinon.spy(instance, 'changePublishState')
         wrapper.find(Button).at(2).simulate('click')

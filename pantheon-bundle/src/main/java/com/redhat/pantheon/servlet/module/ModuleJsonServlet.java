@@ -4,11 +4,8 @@ import com.google.common.base.Charsets;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.api.Reference;
-import com.redhat.pantheon.model.module.Content;
-import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
 import com.redhat.pantheon.servlet.ServletUtils;
@@ -97,7 +94,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
 
         Locale locale = paramValueAsLocale(request, "locale", DEFAULT_MODULE_LOCALE);
         String variantName = paramValue(request, "variant", DEFAULT_VARIANT_NAME);
-        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(locale, variantName);
+        Optional<ModuleMetadata> releasedMetadata = module.getReleasedMetadata(locale, variantName);
         Optional<FileResource> releasedContent = module.getReleasedContent(locale, variantName);
         Optional<ModuleVersion> releasedRevision = module.getReleasedVersion(locale, variantName);
 

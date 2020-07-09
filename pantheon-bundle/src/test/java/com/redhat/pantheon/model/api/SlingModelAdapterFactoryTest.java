@@ -3,7 +3,7 @@ package com.redhat.pantheon.model.api;
 import com.redhat.pantheon.model.Product;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.module.Content;
-import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
@@ -56,7 +56,7 @@ class SlingModelAdapterFactoryTest {
         assertNotNull(modelAdapterFactory.getAdapter(mockResource, Module.class));
         assertNotNull(modelAdapterFactory.getAdapter(mockResource, ModuleVersion.class));
         assertNotNull(modelAdapterFactory.getAdapter(mockResource, Content.class));
-        assertNotNull(modelAdapterFactory.getAdapter(mockResource, Metadata.class));
+        assertNotNull(modelAdapterFactory.getAdapter(mockResource, ModuleMetadata.class));
         assertNotNull(modelAdapterFactory.getAdapter(mockResource, ModuleVariant.class));
         assertNotNull(modelAdapterFactory.getAdapter(mockResource, Product.class));
         assertNotNull(modelAdapterFactory.getAdapter(mockResource, ProductVersion.class));

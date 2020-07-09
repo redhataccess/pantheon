@@ -9,7 +9,7 @@ Publish a module in {ProductShortName} to the {PublishingPortal}.
 * You are assigned the publisher role in {ProductShortName}.
 * You are logged in.
 * The module to be published has been imported to {ProductShortName}.
-* The metadata required for publishing has been applied to the module.
+* The moduleMetadata required for publishing has been applied to the module.
 
 .Procedure
 
@@ -33,7 +33,7 @@ where, __PRODUCT_URL__ is the URL for the product, and __UUID__ is the auto-gene
 ////
 . In the list of module versions, click the three verical dots next to the version of the module you want to publish.
 
-. Click *Edit metadata* to add the following publishing details for the module:
+. Click *Edit moduleMetadata* to add the following publishing details for the module:
 +
 * *Product Name* - Select the Product and its Version that the module should be published for.
 * *Document use case* - Select the verb that best describes the module.

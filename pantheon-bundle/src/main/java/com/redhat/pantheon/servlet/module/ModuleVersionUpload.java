@@ -1,13 +1,11 @@
 package com.redhat.pantheon.servlet.module;
 
-import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.HashableFileResource;
-import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleType;
@@ -125,18 +123,18 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                 asciidoctorService.getModuleHtml(module, localeObj, module.getWorkspace().getCanonicalVariantName(),
                         true, context, true);
 
-                Metadata metadata = moduleLocale
+                ModuleMetadata moduleMetadata = moduleLocale
                         .variants().getOrCreate()
                         .variant(
                                 moduleLocale.getWorkspace().getCanonicalVariantName())
                         .getOrCreate()
                         .draft().getOrCreate()
                         .metadata().getOrCreate();
-                metadata.dateModified().set(Calendar.getInstance());
+                moduleMetadata.dateModified().set(Calendar.getInstance());
                 // Generate a module type based on the file name ONLY after asciidoc generation, so that the
                 // attribute-based logic takes precedence
-                if(metadata.moduleType().get() == null) {
-                    metadata.moduleType().set(determineModuleType(module));
+                if(moduleMetadata.moduleType().get() == null) {
+                    moduleMetadata.moduleType().set(determineModuleType(module));
                 }
             }
 

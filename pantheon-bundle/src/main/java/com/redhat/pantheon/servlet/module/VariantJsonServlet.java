@@ -5,7 +5,7 @@ import com.ibm.icu.util.ULocale;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
@@ -72,7 +72,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
     protected Map<String, Object> resourceToMap(@Nonnull SlingHttpServletRequest request,
                                                 @NotNull Resource resource) throws RepositoryException {
         ModuleVariant moduleVariant = resource.adaptTo(ModuleVariant.class);
-        Optional<Metadata> releasedMetadata = traverseFrom(moduleVariant)
+        Optional<ModuleMetadata> releasedMetadata = traverseFrom(moduleVariant)
                     .toChild(ModuleVariant::released)
                     .toChild(ModuleVersion::metadata)
                     .getAsOptional();

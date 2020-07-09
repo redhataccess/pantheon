@@ -93,7 +93,7 @@ exports[`Versions tests should render Versions component 1`] = `
       ]
     }
     appendTo={<body />}
-    ariaDescribedById="edit-metadata"
+    ariaDescribedById="edit-moduleMetadata"
     className=""
     header={
       <React.Fragment>
@@ -118,7 +118,7 @@ exports[`Versions tests should render Versions component 1`] = `
     isSmall={false}
     onClose={[Function]}
     showClose={true}
-    title="Edit metadata"
+    title="Edit moduleMetadata"
     width="60%"
   >
     <div />

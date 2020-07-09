@@ -1,7 +1,7 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
 import com.redhat.pantheon.model.api.SlingModels;
-import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.ModuleMetadata;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
-class MetadataExtractorTreeProcessorTest {
+class ModuleMetadataExtractorTreeProcessorTest {
 
     private final SlingContext slingContext = new SlingContext();
 
@@ -24,14 +24,14 @@ class MetadataExtractorTreeProcessorTest {
     void extractMetadata() {
         // Given
         slingContext.build()
-                .resource("/content/module1/locales/en_US/1/metadata")
+                .resource("/content/module1/locales/en_US/1/moduleMetadata")
                 .commit();
-        Metadata metadata =
+        ModuleMetadata moduleMetadata =
                 SlingModels.getModel(
                         slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"),
-                        Metadata.class);
-        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
+                                "/content/module1/locales/en_US/1/moduleMetadata"),
+                        ModuleMetadata.class);
+        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(moduleMetadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
         final String adocContent = "= A title for content" +
@@ -44,23 +44,23 @@ class MetadataExtractorTreeProcessorTest {
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
-        assertEquals("A title for content", metadata.title().get());
-        assertEquals("This is the module abstract",  metadata.mAbstract().get());
+        assertEquals("A title for content", moduleMetadata.title().get());
+        assertEquals("This is the module abstract",  moduleMetadata.mAbstract().get());
     }
 
     @Test
     void extractMetadataAbstractNotPresent() {
         // Given
         slingContext.build()
-                .resource("/content/module1/locales/en_US/1/metadata")
+                .resource("/content/module1/locales/en_US/1/moduleMetadata")
                 .commit();
-        Metadata metadata =
+        ModuleMetadata moduleMetadata =
                 SlingModels.getModel(
                         slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"),
-                        Metadata.class);
+                                "/content/module1/locales/en_US/1/moduleMetadata"),
+                        ModuleMetadata.class);
         Resource module = slingContext.resourceResolver().getResource("/content/module1");
-        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
+        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(moduleMetadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
         final String adocContent = "= A title for content";
@@ -69,21 +69,21 @@ class MetadataExtractorTreeProcessorTest {
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
-        assertNull(metadata.mAbstract().get());
+        assertNull(moduleMetadata.mAbstract().get());
     }
 
     @Test
     void extractHeadline() {
         // Given
         slingContext.build()
-                .resource("/content/module1/locales/en_US/1/metadata")
+                .resource("/content/module1/locales/en_US/1/moduleMetadata")
                 .commit();
-        Metadata metadata =
+        ModuleMetadata moduleMetadata =
                 SlingModels.getModel(
                         slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"),
-                        Metadata.class);
-        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
+                                "/content/module1/locales/en_US/1/moduleMetadata"),
+                        ModuleMetadata.class);
+        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(moduleMetadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
         final String adocContent = "include::shared/attributes.adoc[]\n" +
@@ -101,7 +101,7 @@ class MetadataExtractorTreeProcessorTest {
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
-        assertEquals("Headline", metadata.headline().get());
+        assertEquals("Headline", moduleMetadata.headline().get());
     }
 
     /**
@@ -113,14 +113,14 @@ class MetadataExtractorTreeProcessorTest {
     void extractHeadlineWithException() {
         // Given
         slingContext.build()
-                .resource("/content/module1/locales/en_US/1/metadata")
+                .resource("/content/module1/locales/en_US/1/moduleMetadata")
                 .commit();
-        Metadata metadata =
+        ModuleMetadata moduleMetadata =
                 SlingModels.getModel(
                         slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"),
-                        Metadata.class);
-        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
+                                "/content/module1/locales/en_US/1/moduleMetadata"),
+                        ModuleMetadata.class);
+        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(moduleMetadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
         final String adocContent =
@@ -141,21 +141,21 @@ class MetadataExtractorTreeProcessorTest {
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
-        assertNull(metadata.headline().get());
+        assertNull(moduleMetadata.headline().get());
     }
 
     @Test
     void extractHeadlineNotPresent() {
         // Given
         slingContext.build()
-                .resource("/content/module1/locales/en_US/1/metadata")
+                .resource("/content/module1/locales/en_US/1/moduleMetadata")
                 .commit();
-        Metadata metadata =
+        ModuleMetadata moduleMetadata =
                 SlingModels.getModel(
                         slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"),
-                        Metadata.class);
-        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
+                                "/content/module1/locales/en_US/1/moduleMetadata"),
+                        ModuleMetadata.class);
+        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(moduleMetadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
         final String adocContent = "= A title for content" +
@@ -165,6 +165,6 @@ class MetadataExtractorTreeProcessorTest {
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
-        assertNull(metadata.headline().get());
+        assertNull(moduleMetadata.headline().get());
     }
 }

@@ -1,47 +1,52 @@
-package com.redhat.pantheon.model.module;
+package com.redhat.pantheon.model.document;
 
+import com.redhat.pantheon.jcr.JcrResources;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.SlingModels;
+import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
-import com.redhat.pantheon.model.document.DocumentVariant;
+import com.redhat.pantheon.model.api.Reference;
+import com.redhat.pantheon.model.api.SlingModel;
 import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.Resource;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import java.util.Calendar;
 
 import static com.google.common.collect.Streams.stream;
 import static com.redhat.pantheon.jcr.JcrResources.rename;
+import static java.util.stream.Collectors.counting;
 
 /**
- * A specific module variant node which houses all the versions for a specific language in the module.
+ * A specific Document variant node which houses all the versions for a specific language in the Document.
  */
-@JcrPrimaryType("pant:moduleVariant")
-public interface ModuleVariant extends DocumentVariant {
+public interface DocumentVariant extends WorkspaceChild {
 
     String DEFAULT_VARIANT_NAME = "DEFAULT";
 
-    Child<ModuleVersion> draft();
+    Child<DocumentVersion> draft();
 
-    Child<ModuleVersion> released();
+    Child<DocumentVersion> released();
 
     @Override
-    ModuleVariants getParent();
+    DocumentVariants getParent();
 
     // Since we are not storing historical versions anymore, the only needed ones are draft and released
-    /*default ModuleVersion getVersion(String name) {
-        return getChild(name, ModuleVersion.class);
+    /*default DocumentVersion getVersion(String name) {
+        return getChild(name, DocumentVersion.class);
     }*/
 
     // TODO Not sure we need this
-    default ModuleVersion getOrCreateVersion(String name) {
-        return child(name, ModuleVersion.class).get();
+    default DocumentVersion getOrCreateVersion(String name) {
+        return child(name, DocumentVersion.class).get();
     }
 
     // TODO Not sure we need this
-    default ModuleVersion createNextVersion() {
+    default DocumentVersion createNextVersion() {
         // Generate a new version name
-        return child(generateNextVersionName(), ModuleVersion.class).create();
+        return child(generateNextVersionName(), DocumentVersion.class).create();
     }
 
     // TODO Not sure we need this
@@ -90,8 +95,8 @@ public interface ModuleVariant extends DocumentVariant {
         }
     }
 
-    default ModuleLocale getParentLocale() {
-        return SlingModels.getModel(this.getParent().getParent(), ModuleLocale.class);
+    default DocumentLocale getParentLocale() {
+        return SlingModels.getModel(this.getParent().getParent(), DocumentLocale.class);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.redhat.pantheon.model;
 
-import com.redhat.pantheon.model.Document.Document;
+import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.api.SlingModels;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;

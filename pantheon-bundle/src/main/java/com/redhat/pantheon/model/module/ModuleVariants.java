@@ -3,6 +3,8 @@ package com.redhat.pantheon.model.module;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.OrderedFolder;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
+import com.redhat.pantheon.model.document.DocumentLocale;
+import com.redhat.pantheon.model.document.DocumentVariants;
 
 import javax.inject.Named;
 import java.util.Optional;
@@ -14,7 +16,7 @@ import static com.redhat.pantheon.model.module.ModuleVariant.DEFAULT_VARIANT_NAM
  * @author Carlos Munoz
  */
 @JcrPrimaryType("sling:OrderedFolder")
-public interface Variants extends OrderedFolder {
+public interface ModuleVariants extends DocumentVariants {
 
     // The default variant
     @Named(DEFAULT_VARIANT_NAME)

@@ -31,7 +31,7 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.Module",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleVersion",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.Content",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.Metadata",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleMetadata",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleLocale",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.Product",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.ProductVersion",
