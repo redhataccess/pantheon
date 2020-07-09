@@ -72,7 +72,7 @@ public class UnpublishVersion extends AbstractPostOperation {
             Locale locale = getLocale(request);
             Module module = getModule(request);
             String variant = getVariant(request);
-            ModuleVersion moduleVersion = module.getLocale(locale).get()
+            ModuleVersion moduleVersion = module.locale(locale).get()
                     .variants().get()
                     .variant(variant).get()
                     .draft().get();
@@ -102,13 +102,13 @@ public class UnpublishVersion extends AbstractPostOperation {
             changes.add(Modification.onModified(module.getPath()));
             // Change source/released to source/draft
             Optional<HashableFileResource> draftSource = traverseFrom(module)
-                    .toChild(m -> module.getLocale(locale))
-                    .toChild(ModuleLocale::getSource)
+                    .toChild(m -> module.locale(locale))
+                    .toChild(ModuleLocale::source)
                     .toChild(sourceContent -> sourceContent.draft())
                     .getAsOptional();
             FileResource releasedSource = traverseFrom(module)
-                    .toChild(m -> module.getLocale(locale))
-                    .toChild(ModuleLocale::getSource)
+                    .toChild(m -> module.locale(locale))
+                    .toChild(ModuleLocale::source)
                     .toChild(sourceContent -> sourceContent.released())
                     .get();
             if (draftSource.isPresent()) {

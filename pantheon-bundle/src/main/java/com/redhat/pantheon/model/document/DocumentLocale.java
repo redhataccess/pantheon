@@ -4,7 +4,7 @@ import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 
 public interface DocumentLocale extends WorkspaceChild {
-    Child<SourceContent> getSource();
+    Child<SourceContent> source();
 
     Child<? extends DocumentVariants> variants();
 

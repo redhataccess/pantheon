@@ -60,7 +60,7 @@ public class ModuleRendererServletTest {
 
         // Test class
         ModuleRendererServlet moduleRendererServlet = new ModuleRendererServlet(asciidoctorService);
-        moduleRendererServlet.init();;
+        moduleRendererServlet.init();
 
         // When
         moduleRendererServlet.doGet(slingContext.request(), slingContext.response());

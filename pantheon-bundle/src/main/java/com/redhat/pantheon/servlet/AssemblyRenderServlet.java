@@ -79,9 +79,9 @@ public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
 
         Optional<HashableFileResource> moduleVariantSource = null;
 
-        moduleVariantSource = module.getLocale(localeObj)
+        moduleVariantSource = module.locale(localeObj)
                 .traverse()
-                .toChild(ModuleLocale::getSource)
+                .toChild(ModuleLocale::source)
                 .toChild(draft ? SourceContent::draft : SourceContent::released)
                 .getAsOptional();
 

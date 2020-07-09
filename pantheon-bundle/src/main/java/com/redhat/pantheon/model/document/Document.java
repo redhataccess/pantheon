@@ -17,12 +17,14 @@ public interface Document extends WorkspaceChild {
     @Named("jcr:uuid")
     Field<String> uuid();
 
-    Child<? extends DocumentLocale> getLocale(Locale locale);
+    default Child<? extends DocumentLocale> locale(Locale locale) {
+        return child(locale.toString(), DocumentLocale.class);
+    }
 
     default Optional<? extends DocumentVersion> getDraftVersion(@Nonnull final Locale locale,
-                                                    @Nonnull final String variantName) {
+                                                                @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> m.getLocale(locale))
+                .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::draft)
@@ -30,9 +32,9 @@ public interface Document extends WorkspaceChild {
     }
 
     default Optional<? extends DocumentVersion> getReleasedVersion(@Nonnull final Locale locale,
-                                                       @Nonnull final String variantName) {
+                                                                   @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> m.getLocale(locale))
+                .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::released)
@@ -44,10 +46,10 @@ public interface Document extends WorkspaceChild {
      * @param variantName
      * @return The draft content for a given locale
      */
-    default Optional<FileResource> getDraftContent(final Locale locale,
+    default Optional<FileResource> getDraftContent(@Nonnull final Locale locale,
                                                    @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> m.getLocale(locale))
+                .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::draft)
@@ -60,10 +62,10 @@ public interface Document extends WorkspaceChild {
      * @param variantName
      * @return The released content for a given locale
      */
-    default Optional<FileResource> getReleasedContent(final Locale locale,
+    default Optional<FileResource> getReleasedContent(@Nonnull final Locale locale,
                                                       @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> m.getLocale(locale))
+                .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::released)
@@ -76,10 +78,10 @@ public interface Document extends WorkspaceChild {
      * @param variantName
      * @return The draft metadata for a given locale
      */
-    default Optional<? extends DocumentMetadata> getDraftMetadata(final Locale locale,
-                                                        @Nonnull final String variantName) {
+    default Optional<? extends DocumentMetadata> getDraftMetadata(@Nonnull final Locale locale,
+                                                                  @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> m.getLocale(locale))
+                .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::draft)
@@ -92,10 +94,10 @@ public interface Document extends WorkspaceChild {
      * @param variantName
      * @return The released metadata for a given locale
      */
-    default Optional<? extends DocumentMetadata> getReleasedMetadata(final Locale locale,
-                                                         @Nonnull final String variantName) {
+    default Optional<? extends DocumentMetadata> getReleasedMetadata(@Nonnull final Locale locale,
+                                                                     @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> m.getLocale(locale))
+                .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::released)
@@ -109,10 +111,10 @@ public interface Document extends WorkspaceChild {
      * @param variantName
      * @return the  status data for a released version for a given locale
      */
-    default Optional<AckStatus> getAcknowledgementStatus(final Locale locale,
+    default Optional<AckStatus> getAcknowledgementStatus(@Nonnull final Locale locale,
                                                          @Nonnull final String variantName) {
         return traverseFrom(this)
-                .toChild(m -> m.getLocale(locale))
+                .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::released)

@@ -51,7 +51,7 @@ public class AssemblyVersionUploadTest {
                         Assembly.class);
         assertEquals("This is the adoc content",
                 assembly.assemblyLocale(LocaleUtils.toLocale("es_ES")).get()
-                        .getSource().get()
+                        .source().get()
                         .draft().get()
                         .jcrContent().get()
                         .jcrData().get()

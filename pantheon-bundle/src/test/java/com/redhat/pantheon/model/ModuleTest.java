@@ -33,8 +33,8 @@ class ModuleTest {
                         Module.class);
 
         // When
-        module.getLocale(new Locale("es", "ES")).create()
-                .getSource()
+        module.locale(new Locale("es", "ES")).create()
+                .source()
                 .getOrCreate()
                 .draft()
                 .getOrCreate();
@@ -71,26 +71,26 @@ class ModuleTest {
 
         // Then
         assertNotNull(
-                module1.getLocale(new Locale("en", "US")).get().getSource().getOrCreate().child("released", FileResource.class).get());
+                module1.locale(new Locale("en", "US")).get().source().getOrCreate().child("released", FileResource.class).get());
         assertNotNull(
-                module1.getLocale(new Locale("en", "US")).get().getSource().getOrCreate().child("draft", FileResource.class).get());
+                module1.locale(new Locale("en", "US")).get().source().getOrCreate().child("draft", FileResource.class).get());
         assertNotNull(
-                module1.getLocale(new Locale("es", "ES")).get().getSource().getOrCreate().child("released", FileResource.class).get());
+                module1.locale(new Locale("es", "ES")).get().source().getOrCreate().child("released", FileResource.class).get());
         assertNotNull(
-                module1.getLocale(new Locale("es", "ES")).get().getSource().getOrCreate().child("draft", FileResource.class).get());
+                module1.locale(new Locale("es", "ES")).get().source().getOrCreate().child("draft", FileResource.class).get());
         assertNotNull(
-                module2.getLocale(new Locale("en", "US")).get().getSource().getOrCreate().child("released", FileResource.class).get());
+                module2.locale(new Locale("en", "US")).get().source().getOrCreate().child("released", FileResource.class).get());
         assertNotNull(
-                module2.getLocale(new Locale("en", "US")).get().getSource().getOrCreate().child("draft", FileResource.class).get());
+                module2.locale(new Locale("en", "US")).get().source().getOrCreate().child("draft", FileResource.class).get());
         assertNotNull(
-                module2.getLocale(new Locale("es", "ES")).get().getSource().getOrCreate().child("released", FileResource.class).get());
+                module2.locale(new Locale("es", "ES")).get().source().getOrCreate().child("released", FileResource.class).get());
         assertNotNull(
-                module2.getLocale(new Locale("es", "ES")).get().getSource().getOrCreate().child("draft", FileResource.class).get());
+                module2.locale(new Locale("es", "ES")).get().source().getOrCreate().child("draft", FileResource.class).get());
 
         assertNull(
-                module1.getLocale(Locale.SIMPLIFIED_CHINESE).get());
+                module1.locale(Locale.SIMPLIFIED_CHINESE).get());
         assertFalse(
-                module1.getLocale(new Locale("es", "ES")).get().getSource().getOrCreate().child("abc", FileResource.class).isPresent());
+                module1.locale(new Locale("es", "ES")).get().source().getOrCreate().child("abc", FileResource.class).isPresent());
     }
 
 }

@@ -1,9 +1,11 @@
 package com.redhat.pantheon.servlet.module;
 
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.document.SourceContent;
+import com.redhat.pantheon.model.module.HashableFileResource;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.http.entity.ContentType;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -59,22 +61,12 @@ public class RawAsciidocServlet extends SlingSafeMethodsServlet {
         response.setContentType("html");
         Writer w = response.getWriter();
 
-        Optional<String> content;
-        if (draft) {
-            content = traverseFrom(document)
-                    .toChild(m -> m.getLocale(locale))
-                    .toChild(DocumentLocale::getSource)
-                    .toChild(SourceContent::draft)
-                    .toChild(FileResource::jcrContent)
-                    .toField(FileResource.JcrContent::jcrData);
-        } else {
-            content = traverseFrom(document)
-                    .toChild(m -> m.getLocale(locale))
-                    .toChild(DocumentLocale::getSource)
-                    .toChild(SourceContent::released)
-                    .toChild(FileResource::jcrContent)
-                    .toField(FileResource.JcrContent::jcrData);
-        }
+        Optional<String> content = traverseFrom(document)
+                .toChild(m -> m.locale(locale))
+                .toChild(DocumentLocale::source)
+                .toChild(draft ? SourceContent::draft : SourceContent::released)
+                .toChild(FileResource::jcrContent)
+                .toField(FileResource.JcrContent::jcrData);
 
         if(content.isPresent()) {
             response.setContentType(ContentType.TEXT_PLAIN.toString());

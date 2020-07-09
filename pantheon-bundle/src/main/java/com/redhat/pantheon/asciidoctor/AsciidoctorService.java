@@ -89,7 +89,7 @@ public class AsciidoctorService {
                                 boolean draft,
                                 Map<String, Object> context,
                                 boolean forceRegen) {
-        ResourceTraversal<? extends DocumentVariant> traversal = document.getLocale(locale)
+        ResourceTraversal<? extends DocumentVariant> traversal = document.locale(locale)
                 .traverse()
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName));
@@ -161,8 +161,8 @@ public class AsciidoctorService {
 
         Optional<HashableFileResource> sourceFile =
                 traverseFrom(base)
-                        .toChild(m -> m.getLocale(locale))
-                        .toChild(DocumentLocale::getSource)
+                        .toChild(m -> m.locale(locale))
+                        .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> isDraft ? sourceContent.draft() : sourceContent.released())
                         .getAsOptional();
 
@@ -175,7 +175,7 @@ public class AsciidoctorService {
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
 
             Module serviceModule = SlingModels.getModel(serviceResourceResolver, base.getPath(), Module.class);
-            ModuleVariant moduleVariant = serviceModule.getLocale(locale).getOrCreate()
+            ModuleVariant moduleVariant = serviceModule.locale(locale).getOrCreate()
                     .variants().getOrCreate()
                     .variant(variantName).getOrCreate();
 
