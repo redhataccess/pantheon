@@ -1,0 +1,55 @@
+[id="setting-the-acl_{context}"]
+
+= Setting the ACL
+
+The following section describes how to set the ACL.
+
+.Prerequisites
+
+* `Root` access
+
+.Procedure
+
+* To set the ACL for a file or directory, use:
+
+[subs=+quotes]
+----
+# setfacl -m u:__username__:__symbolic_value__ _file-name_
+----
+Replace _username_ with the name of the user, _symbolic_value_ with a symbolic value, and _file-name_ with the name of the file or directory. For more information see the `setfacl` man page.
+
+.Example
+
+The following example describes how to modify permissions for the `group-project` file owned by the `root` user that belongs to the `root` group so that this file is:
+
+* Not executable by anyone.
+* The user `andrew` has the `rw-` permission.
+* The user `susan` has the `---` permission.
+* Other users have the `r--` permission.
+
+.Procedure
+----
+# setfacl -m u:andrew:rw- group-project
+# setfacl -m u:susan:--- group-project
+----
+
+.Verification steps
+
+* To verify that the user `andrew` has the `rw-` permission, the user `susan` has the `---` permission, and other users have the `r--` permission, use:
++
+----
+$ getfacl group-project
+----
++
+The output returns:
++
+----
+# file: group-project
+# owner: root
+# group: root
+user:andrew:rw-
+user:susan:---
+group::r--
+mask::rw-
+other::r--
+----

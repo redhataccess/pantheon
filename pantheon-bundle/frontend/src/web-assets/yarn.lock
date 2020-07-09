@@ -1068,10 +1068,10 @@ cosmiconfig@^5.0.0:
     js-yaml "^3.13.1"
     parse-json "^4.0.0"
 
-cp-documentation@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/cp-documentation/-/cp-documentation-0.1.1.tgz#b24e7967f77e5a317af4fe6df9a87becc65228f2"
-  integrity sha512-Il8C9FoT4sPMjDrhhmIkEvBFY01f7u3R92Xb7Bepgm2Xjltb9PjtBfddOurN2zjhmr61MnWrdsZXYfdRQdTlGw==
+cp-documentation@0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/cp-documentation/-/cp-documentation-0.1.4.tgz#9d361df55e6fcd3bd969f6f059c4dae82ba1d606"
+  integrity sha512-9SZvDUQG4+vXg48PleAeRfeoAI3Bw1Wpkbexxx86Qob7ubGW2xeUhyJlaQSyd9VgllgE9knexlw8L0etdAn6NA==
   dependencies:
     "@patternfly/pfe-sass" "1.0.0-prerelease.45"
     "@patternfly/pfelement" "1.0.0-prerelease.45"

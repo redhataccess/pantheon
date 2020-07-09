@@ -1,0 +1,15 @@
+[id="displaying-the-current-acl_{context}"]
+
+= Displaying the current ACL
+
+The following section describes how to display the current ACL.
+
+.Procedure
+
+* To display the current ACL for a particular file or directory, use:
++
+[subs=+quotes]
+----
+$ getfacl _file-name_
+----
+Replace _file-name_ with the name of the file or directory.
