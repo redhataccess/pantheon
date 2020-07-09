@@ -18,9 +18,9 @@ public interface DocumentVariants extends OrderedFolder {
 
     // The default variant
     @Named(DEFAULT_VARIANT_NAME)
-    Child<DocumentVariant> defaultVariant();
+    Child<? extends DocumentVariant> defaultVariant();
 
-    default Stream<DocumentVariant> getVariants() {
+    default Stream<? extends DocumentVariant> getVariants() {
         return this.as(DocumentVariant.class);
     }
 
@@ -28,7 +28,7 @@ public interface DocumentVariants extends OrderedFolder {
         return child(name, DocumentVariant.class).get();
     }
 
-    default Child<DocumentVariant> variant(String name) {
+    default Child<? extends DocumentVariant> variant(String name) {
         return child(name, DocumentVariant.class);
     }
 

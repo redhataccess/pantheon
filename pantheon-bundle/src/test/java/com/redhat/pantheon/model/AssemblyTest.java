@@ -32,7 +32,7 @@ public class AssemblyTest {
 
         // When
         assembly.assemblyLocale(new Locale("es", "ES")).create()
-                .source()
+                .getSource()
                 .getOrCreate()
                 .draft()
                 .getOrCreate();

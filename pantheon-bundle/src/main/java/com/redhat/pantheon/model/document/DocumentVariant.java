@@ -26,9 +26,9 @@ public interface DocumentVariant extends WorkspaceChild {
 
     String DEFAULT_VARIANT_NAME = "DEFAULT";
 
-    Child<DocumentVersion> draft();
+    Child<? extends DocumentVersion> draft();
 
-    Child<DocumentVersion> released();
+    Child<? extends DocumentVersion> released();
 
     @Override
     DocumentVariants getParent();

@@ -6,7 +6,7 @@ import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
-import com.redhat.pantheon.model.module.SourceContent;
+import com.redhat.pantheon.model.document.SourceContent;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.asciidoctor.ast.Document;
@@ -67,8 +67,8 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
                 // TODO, right now only default locale and latest (draft) version of the module are used
                 content = traverseFrom(module)
-                        .toChild(module1 -> module.moduleLocale(GlobalConfig.DEFAULT_MODULE_LOCALE))
-                        .toChild(ModuleLocale::source)
+                        .toChild(module1 -> module.getLocale(GlobalConfig.DEFAULT_MODULE_LOCALE))
+                        .toChild(ModuleLocale::getSource)
                         .toChild(SourceContent::draft)
                         .toChild(FileResource::jcrContent)
                         .toField(FileResource.JcrContent::jcrData)

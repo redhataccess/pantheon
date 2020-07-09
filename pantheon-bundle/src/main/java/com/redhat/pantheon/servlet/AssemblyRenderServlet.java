@@ -4,7 +4,7 @@ import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.module.HashableFileResource;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
-import com.redhat.pantheon.model.module.SourceContent;
+import com.redhat.pantheon.model.document.SourceContent;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -79,9 +79,9 @@ public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
 
         Optional<HashableFileResource> moduleVariantSource = null;
 
-        moduleVariantSource = module.moduleLocale(localeObj)
+        moduleVariantSource = module.getLocale(localeObj)
                 .traverse()
-                .toChild(ModuleLocale::source)
+                .toChild(ModuleLocale::getSource)
                 .toChild(draft ? SourceContent::draft : SourceContent::released)
                 .getAsOptional();
 

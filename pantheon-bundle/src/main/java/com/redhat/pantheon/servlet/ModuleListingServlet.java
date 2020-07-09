@@ -2,6 +2,8 @@ package com.redhat.pantheon.servlet;
 
 import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
+import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import org.apache.commons.lang3.ArrayUtils;
@@ -187,8 +189,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         Optional<ModuleMetadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);
         Optional<HashableFileResource> sourceFile =
                 traverseFrom(module)
-                        .toChild(m -> m.moduleLocale(DEFAULT_MODULE_LOCALE))
-                        .toChild(ModuleLocale::source)
+                        .toChild(m -> m.getLocale(DEFAULT_MODULE_LOCALE))
+                        .toChild(ModuleLocale::getSource)
                         .toChild(sourceContent -> sourceContent.draft().isPresent() ? sourceContent.draft() : sourceContent.released())
                         .getAsOptional();
 

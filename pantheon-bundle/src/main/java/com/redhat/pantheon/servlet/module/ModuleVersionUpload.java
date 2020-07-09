@@ -100,9 +100,9 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             }
 
             Locale localeObj = LocaleUtils.toLocale(locale);
-            ModuleLocale moduleLocale = module.moduleLocale(localeObj).getOrCreate();
+            ModuleLocale moduleLocale = module.getLocale(localeObj).getOrCreate();
             HashableFileResource draftSrc = moduleLocale
-                    .source().getOrCreate()
+                    .getSource().getOrCreate()
                     .draft().getOrCreate();
 
             // Check if the content is the same as what is hashed already

@@ -44,52 +44,6 @@ public interface ModuleVariant extends DocumentVariant {
         return child(generateNextVersionName(), ModuleVersion.class).create();
     }
 
-    // TODO Not sure we need this
-    default String generateNextVersionName() {
-        return "draft";
-    }
-
-    default void releaseDraft() {
-        if(draft().get() == null) {
-            throw new RuntimeException("There is no draft to release");
-        }
-
-        try {
-            // ensure the released version is discarded
-            if( released().get() != null ) {
-                getResourceResolver().delete(released().get());
-            }
-            rename(draft().get(), "released");
-            released().get()
-                    .metadata().get()
-                    .datePublished().set(Calendar.getInstance());
-        } catch (PersistenceException | RepositoryException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    default void revertReleased() {
-        if(released().get() == null) {
-            throw new RuntimeException("There is no released version to revert");
-        }
-
-        try {
-            // if there is no draft version, set the recently unpublished one as draft
-            // it is guaranteed to be the latest one
-            if(draft().get() == null) {
-                rename(released().get(), "draft");
-            } else {
-                // released + draft
-                released().get().delete();
-            }
-
-        } catch (RepositoryException e) {
-            throw new RuntimeException(e);
-        } catch (PersistenceException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     default ModuleLocale getParentLocale() {
         return SlingModels.getModel(this.getParent().getParent(), ModuleLocale.class);
     }

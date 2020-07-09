@@ -78,7 +78,7 @@ public class RelatedModuleServlet extends SlingSafeMethodsServlet {
             resultStream.map(r -> r.adaptTo(Module.class))
                     .forEach(module -> {
                             Map<String, String> m = new HashMap<>();
-                            m.put("title", module.moduleLocale(locale).get()
+                            m.put("title", module.getLocale(locale).get()
                                     .variants().get()
                                     .defaultVariant().get()
                                     .released().get()

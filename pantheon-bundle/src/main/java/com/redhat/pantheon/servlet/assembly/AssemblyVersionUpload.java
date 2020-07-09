@@ -77,7 +77,7 @@ public class AssemblyVersionUpload extends AbstractPostOperation {
             Locale localeObj = LocaleUtils.toLocale(locale);
             AssemblyLocale assemblyLocale = assembly.assemblyLocale(localeObj).getOrCreate();
             HashableFileResource draftSrc = assemblyLocale
-                    .source().getOrCreate()
+                    .getSource().getOrCreate()
                     .draft().getOrCreate();
 
             // Check if the content is the same as what is hashed already

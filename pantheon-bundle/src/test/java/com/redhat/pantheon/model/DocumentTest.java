@@ -31,8 +31,8 @@ public class DocumentTest {
                         Document.class);
 
         // When
-        document.documentLocale(new Locale("es", "ES")).create()
-                .source()
+        document.getLocale(new Locale("es", "ES")).create()
+                .getSource()
                 .getOrCreate()
                 .draft()
                 .getOrCreate();

@@ -1,9 +1,9 @@
 package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleLocale;
-import com.redhat.pantheon.model.module.SourceContent;
+import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentLocale;
+import com.redhat.pantheon.model.document.SourceContent;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.http.entity.ContentType;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -54,23 +54,23 @@ public class RawAsciidocServlet extends SlingSafeMethodsServlet {
         boolean draft = paramValueAsBoolean(request, "draft");
 
         Resource resource = request.getResource();
-        Module module = resource.adaptTo(Module.class);
+        Document document = resource.adaptTo(Document.class);
 
         response.setContentType("html");
         Writer w = response.getWriter();
 
         Optional<String> content;
         if (draft) {
-            content = traverseFrom(module)
-                    .toChild(m -> m.moduleLocale(locale))
-                    .toChild(ModuleLocale::source)
+            content = traverseFrom(document)
+                    .toChild(m -> m.getLocale(locale))
+                    .toChild(DocumentLocale::getSource)
                     .toChild(SourceContent::draft)
                     .toChild(FileResource::jcrContent)
                     .toField(FileResource.JcrContent::jcrData);
         } else {
-            content = traverseFrom(module)
-                    .toChild(m -> m.moduleLocale(locale))
-                    .toChild(ModuleLocale::source)
+            content = traverseFrom(document)
+                    .toChild(m -> m.getLocale(locale))
+                    .toChild(DocumentLocale::getSource)
                     .toChild(SourceContent::released)
                     .toChild(FileResource::jcrContent)
                     .toField(FileResource.JcrContent::jcrData);

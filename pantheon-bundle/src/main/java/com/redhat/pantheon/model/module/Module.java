@@ -47,4 +47,12 @@ public interface Module extends Document {
     default Child<ModuleLocale> getLocale(Locale locale) {
         return child(locale.toString(), ModuleLocale.class);
     }
+
+    Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale, @Nonnull final String variantName);
+
+    Optional<ModuleVersion> getReleasedVersion(@Nonnull final Locale locale, @Nonnull final String variantName);
+
+    Optional<ModuleMetadata> getDraftMetadata(final Locale locale, @Nonnull final String variantName);
+
+    Optional<ModuleMetadata> getReleasedMetadata(final Locale locale, @Nonnull final String variantName);
 }

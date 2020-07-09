@@ -10,6 +10,8 @@ import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.util.ResourceTraversal;
+import com.redhat.pantheon.model.document.DocumentVariant;
+import com.redhat.pantheon.model.document.DocumentVersion;
 import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
@@ -87,26 +89,19 @@ public class AsciidoctorService {
                                 boolean draft,
                                 Map<String, Object> context,
                                 boolean forceRegen) {
-        document.getLocale(locale).get().getVariants();
-
-        Module m;
-        m.getLocale(locale).get().getVariants();
-
-
-
-        ResourceTraversal<ModuleVariant> traversal = document.documentLocale(locale)
+        ResourceTraversal<? extends DocumentVariant> traversal = document.getLocale(locale)
                 .traverse()
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName));
 
-        Optional<ModuleVersion> moduleVersion;
+        Optional<? extends DocumentVersion> moduleVersion;
         if (draft) {
             moduleVersion =
-                    traversal.toChild(ModuleVariant::draft)
+                    traversal.toChild(DocumentVariant::draft)
                             .getAsOptional();
         } else {
             moduleVersion =
-                    traversal.toChild(ModuleVariant::released)
+                    traversal.toChild(DocumentVariant::released)
                             .getAsOptional();
         }
 
@@ -166,8 +161,8 @@ public class AsciidoctorService {
 
         Optional<HashableFileResource> sourceFile =
                 traverseFrom(base)
-                        .toChild(m -> m.documentLocale(locale))
-                        .toChild(DocumentLocale::source)
+                        .toChild(m -> m.getLocale(locale))
+                        .toChild(DocumentLocale::getSource)
                         .toChild(sourceContent -> isDraft ? sourceContent.draft() : sourceContent.released())
                         .getAsOptional();
 
@@ -180,7 +175,7 @@ public class AsciidoctorService {
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
 
             Module serviceModule = SlingModels.getModel(serviceResourceResolver, base.getPath(), Module.class);
-            ModuleVariant moduleVariant = serviceModule.moduleLocale(locale).getOrCreate()
+            ModuleVariant moduleVariant = serviceModule.getLocale(locale).getOrCreate()
                     .variants().getOrCreate()
                     .variant(variantName).getOrCreate();
 
