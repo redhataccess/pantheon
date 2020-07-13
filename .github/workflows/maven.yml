@@ -23,6 +23,9 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java }}
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
     
     - name: Cache maven dependencies
       uses: actions/cache@v2
@@ -34,6 +37,17 @@ jobs:
     
     - name: Build with Maven
       run: ./mvnw clean install
+
+    - name: Install Go dependencies
+      working-directory: tools/git2pantheon
+      run: |
+        go get gopkg.in/src-d/go-git.v4
+
+    - name: Build git2pantheon
+      working-directory: tools/git2pantheon
+      run: |
+        go build
+        go test -race -coverprofile=coverage.txt -covermode=atomic
 
     - name: Push to Codecov
       uses: codecov/codecov-action@v1
