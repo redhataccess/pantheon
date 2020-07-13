@@ -1,6 +1,12 @@
 name: CI build
 
-on: [push, pull_request]
+on:
+  push:
+    paths-ignore:
+      - docs/**
+  pull_request:
+    paths-ignore:
+      - docs/**
 
 jobs:
   build:
@@ -35,7 +41,7 @@ jobs:
       with:
         #token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
         #file: ./coverage.xml # optional
-        files: ./coverage1.xml,./coverage2.xml # optional
+        #files: ./coverage1.xml,./coverage2.xml # optional
         flags: java # optional
         name: codecov-java # optional
         #fail_ci_if_error: true # optional (default = false)
