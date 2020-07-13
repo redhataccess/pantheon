@@ -9,7 +9,7 @@ on:
       - docs/**
 
 jobs:
-  build:
+  maven-build:
 
     runs-on: [ubuntu-latest]
     strategy:
@@ -25,9 +25,9 @@ jobs:
         java-version: ${{ matrix.java }}
     
     - name: Cache maven dependencies
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
-        path: ~/.m2/repository
+        path: ~/.m2
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
