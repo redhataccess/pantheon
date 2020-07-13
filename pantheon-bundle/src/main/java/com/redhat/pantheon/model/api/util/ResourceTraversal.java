@@ -25,15 +25,9 @@ import static java.util.Optional.ofNullable;
  *
  * @author Carlos Munoz
  */
-public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
+public interface ResourceTraversal<T extends SlingModel> extends Supplier<T> {
 
-    private static final ResourceTraversal<?> EMPTY = new ResourceTraversal<>(null);
-
-    private final Optional<T> currentResource;
-
-    private ResourceTraversal(T resource) {
-        this.currentResource = ofNullable(resource);
-    }
+    ResourceTraversal<?> EMPTY = (ResourceTraversal<?>) () -> null;
 
     /**
      * Starts a resource tree traversal.
@@ -42,8 +36,8 @@ public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
      * @return A traversal object starting from the given {@link SlingModel}. If the model
      * is null, traversals will still conclude but will always yield null results.
      */
-    public static final <M extends SlingModel> ResourceTraversal<M> traverseFrom(@Nullable M model) {
-        return new ResourceTraversal<>(model);
+    static <M extends SlingModel> ResourceTraversal<M> traverseFrom(@Nullable M model) {
+        return () -> model;
     }
 
     /**
@@ -52,10 +46,13 @@ public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
      * @param <U>
      * @return A resource traversal at the child accessed via the child accessor.
      */
-    public <U extends SlingModel> ResourceTraversal<U> toChild(Function<? super T, Child<U>> childAccessor) {
-        if(currentResource.isPresent()) {
-            Child<U> nextTraversalChild = childAccessor.apply(currentResource.get());
-            return new ResourceTraversal<>(nextTraversalChild.get());
+    default <U extends SlingModel> ResourceTraversal<U> toChild(Function<? super T, Child<U>> childAccessor) {
+        if(isPresent()) {
+            Child<U> nextTraversalChild = childAccessor.apply(get());
+            if(nextTraversalChild.isPresent()) {
+                return () -> nextTraversalChild.get();
+            }
+            return (ResourceTraversal<U>) EMPTY;
         }
         return (ResourceTraversal<U>) EMPTY;
     }
@@ -68,9 +65,9 @@ public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
      * @return An optional containing the value of the field. If the field is not present, or if
      * any of the intermediary nodes in the traversal was not present, this optional is empty.
      */
-    public <F> Optional<F> toField(Function<? super T, Field<F>> fieldAccessor) {
-        if(currentResource.isPresent()) {
-            Field<F> field = fieldAccessor.apply(currentResource.get());
+    default <F> Optional<F> toField(Function<? super T, Field<F>> fieldAccessor) {
+        if(isPresent()) {
+            Field<F> field = fieldAccessor.apply(get());
             return ofNullable(field.get());
         }
         return Optional.empty();
@@ -84,41 +81,35 @@ public class ResourceTraversal<T extends SlingModel> implements Supplier<T> {
      * @return A traversal object at the referenced object.
      * @see ResourceTraversal#toField(Function) for simple access to the reference value.
      */
-    public <R extends SlingModel> ResourceTraversal<R> toRef(
+    default <R extends SlingModel> ResourceTraversal<R> toRef(
             Function<? super T, Reference<R>> referenceAccessor) {
-        if(currentResource.isPresent()) {
-            Reference<R> reference = referenceAccessor.apply(currentResource.get());
-            try {
-                return new ResourceTraversal<>(reference.getReference());
-            }
-            catch (RepositoryException e) {
-                // This happens when the reference is not found
-                // TODO Right now this just falls through and returns an empty traversal,
-                //  but we might need to log an entry
-            }
+        if(isPresent()) {
+            Reference<R> reference = referenceAccessor.apply(get());
+            return () -> {
+                try {
+                    return reference.getReference();
+                } catch (RepositoryException e) {
+                    // This happens when the reference is not found
+                    // TODO Right now this just falls through and returns an empty traversal,
+                    //  but we might need to log an entry
+                    return null;
+                }
+            };
         }
         return (ResourceTraversal<R>) EMPTY;
     }
 
     /**
-     * @return The current resource in the traversal. May be null if the resource does not exist.
-     */
-    @Override
-    public T get() {
-        return currentResource.orElse(null);
-    }
-
-    /**
      * @return The current resource in the traversal as an optional.
      */
-    public Optional<T> getAsOptional() {
-        return currentResource;
+    default Optional<T> getAsOptional() {
+        return Optional.ofNullable(get());
     }
 
     /**
      * @return True, if the current resource in the traversal exists, false otherwise.
      */
-    public boolean isPresent() {
-        return currentResource.isPresent();
+    default boolean isPresent() {
+        return get() != null;
     }
 }
