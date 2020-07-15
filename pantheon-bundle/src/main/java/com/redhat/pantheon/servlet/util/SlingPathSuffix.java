@@ -80,16 +80,16 @@ public class SlingPathSuffix {
     }
 
     private Map<String, String> parametersByName(final String uriString) {
-        if(parameterMap == null) {
-            parameterMap = new HashMap<>();
-            final Matcher matcher = pattern.matcher(uriString);
-            if (!matcher.matches()) {
-                throw new IllegalArgumentException("Uri does not match");
-            }
-            for (int i = 1; i <= matcher.groupCount(); i++) {
-                parameterMap.put(parameterNames.get(i - 1), matcher.group(i));
-            }
+
+        parameterMap = new HashMap<>();
+        final Matcher matcher = pattern.matcher(uriString);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Uri does not match");
         }
+        for (int i = 1; i <= matcher.groupCount(); i++) {
+            parameterMap.put(parameterNames.get(i - 1), matcher.group(i));
+        }
+
         return parameterMap;
     }
 
@@ -102,4 +102,5 @@ public class SlingPathSuffix {
                 .map(character -> Pattern.quote(character.toString()))
                 .collect(Collectors.joining());
     }
+
 }
