@@ -117,6 +117,28 @@ class ResourceTraversalTest {
                 .isPresent());
     }
 
+    @Test
+    void getAsOptionalTest() {
+        // Given
+        sc.build()
+                .resource("/level1/level2")
+                .commit();
+        ResourceTraversalTest.Level1 startModel = SlingModels.getModel(sc.resourceResolver().getResource("/level1"), ResourceTraversalTest.Level1.class);
+
+        // When
+
+        // Then
+        assertTrue(ResourceTraversal.traverseFrom(startModel)
+                .toChild(ResourceTraversalTest.Level1::level2)
+                .getAsOptional()
+                .isPresent());
+        assertFalse(ResourceTraversal.traverseFrom(startModel)
+                .toChild(ResourceTraversalTest.Level1::level2)
+                .toChild(ResourceTraversalTest.Level2::level3)
+                .getAsOptional()
+                .isPresent());
+    }
+
     interface Level1 extends SlingModel {
         Child<Level2> level2();
 

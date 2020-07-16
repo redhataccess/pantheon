@@ -92,6 +92,12 @@
             db=${env:MONGO_DB}
             repository.home=${env:REPOSITORY}
         </config>
+        <config name="org.apache.sling.engine.impl.log.RequestLoggerService">
+            request.log.service.format = %h %m %u %t %f "%r" %>s %b "%\{Referer}i" "%\{User-Agent}i"
+            request.log.service.onentry = true
+            request.log.service.output = data/log/request.log
+            request.log.service.outputtype = 1
+        </config>
         <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.9.9</bundle>
         <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.9.9</bundle>
         <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.9.9</bundle>
