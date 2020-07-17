@@ -1,12 +1,22 @@
-# Patternfly Seed
+# Pantheon Admin
 
-Patternfly Seed is an open source build scaffolding utility for web apps. The primary purpose of this project is to give developers a jump start when creating new projects that will use patternfly. A secondary purpose of this project is to serve as a reference for how to configure various aspects of an application that uses patternfly.
+Based on Patternfly Seed
 
-## Quick-start
+## Requirements
+
+[Node JS v10+](https://nodejs.org/en/)
+[Yarn](https://yarnpkg.com/)
+
+## Getting Started
+Run pantheon Java app
+
+From `GITROOT/`:
 ```bash
-npm install yarn -g # ensure you have yarn on your machine globally
-git clone https://github.com/patternfly/patternfly-react-seed # clone the project
-cd patternfly-react-seed # navigate into the project directory
+java -Xmx1G -jar pantheon-slingstart/target/pantheon-slingstart-1.0-SNAPSHOT.jar -Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://localhost:27017
+```
+
+Then in `GITROOT/pantheon-bundle/frontend`:
+```bash
 yarn # install patternfly-react-seed dependencies
 yarn build # build the project
 yarn start # start the development server
