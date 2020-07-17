@@ -7136,10 +7136,10 @@ raw-loader@^1.0.0:
     loader-utils "^1.1.0"
     schema-utils "^1.0.0"
 
-react-axe@^3.0.2:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/react-axe/-/react-axe-3.5.0.tgz#3db57990698441ddca579db11c7d68bf11c2be71"
-  integrity sha512-1UCf7I+RPYXRHHTI2ohVNIyd2gAgx3XhkoQ0sNG8ZjKqE7i+V0XQyDOUHVbteebBNgxS2no9zvobl+ohOAnk8Q==
+react-axe@^3.5.3:
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/react-axe/-/react-axe-3.5.3.tgz#38dac84e20cdf3e09e5752eb405b30c5ac845fa8"
+  integrity sha512-WDKAoLVsC6rsmYboXThY7OnVDaQOOOecySHJJjggn1cFOJyWtzNh2uiV3oSxoAolONGTi22G9zKDxw53g/8Vqg==
   dependencies:
     axe-core "^3.5.0"
     requestidlecallback "^0.3.0"

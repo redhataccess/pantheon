@@ -46,7 +46,7 @@
     "prop-types": "^15.6.1",
     "raw-loader": "^1.0.0",
     "react": "^16.8.4",
-    "react-axe": "^3.0.2",
+    "react-axe": "^3.5.3",
     "react-dom": "^16.6.3",
     "react-router-dom": "^5.0.0",
     "regenerator-runtime": "^0.13.1",
