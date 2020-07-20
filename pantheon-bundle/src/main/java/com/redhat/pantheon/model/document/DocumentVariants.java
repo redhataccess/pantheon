@@ -24,10 +24,6 @@ public interface DocumentVariants extends OrderedFolder {
         return this.as(DocumentVariant.class);
     }
 
-    default DocumentVariant getOrCreateVariant(String name) {
-        return child(name, DocumentVariant.class).get();
-    }
-
     default Child<? extends DocumentVariant> variant(String name) {
         return child(name, DocumentVariant.class);
     }
