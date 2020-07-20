@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model.module;
+package com.redhat.pantheon.model.document;
 
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.Field;
@@ -15,7 +15,7 @@ import java.util.Calendar;
  * instances may found on a given module representing different
  * versions of said metadata.
  */
-public interface Metadata extends WorkspaceChild {
+public interface DocumentMetadata extends WorkspaceChild {
 
     @Named("jcr:title")
     Field<String> title();
@@ -34,9 +34,6 @@ public interface Metadata extends WorkspaceChild {
 
     @Named("jcr:createdBy")
     Field<String> createdBy();
-
-    @Named("pant:moduleType")
-    Field<ModuleType> moduleType();
 
     @Named("pant:datePublished")
     Field<Calendar> datePublished();

@@ -1,9 +1,9 @@
 package com.redhat.pantheon.model.module;
 
-import com.redhat.pantheon.model.Document.DocumentLocale;
 import com.redhat.pantheon.model.api.Child;
-import com.redhat.pantheon.model.api.WorkspaceChild;
+import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
+import com.redhat.pantheon.model.document.SourceContent;
 
 /**
  * A specific module locale node which houses asciidoc source and variants.
@@ -13,9 +13,10 @@ import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 @JcrPrimaryType("pant:moduleLocale")
 public interface ModuleLocale extends DocumentLocale {
 
-//    Child<SourceContent> source();
-//
-//    Child<Variants> variants();
+    Child<SourceContent> source();
+
+    @Override
+    Child<ModuleVariants> variants();
 
     @Override
     Module getParent();

@@ -1,6 +1,7 @@
 package com.redhat.pantheon.servlet.module;
 
 import com.google.common.collect.Maps;
+import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.NonExistingResource;
@@ -30,7 +31,7 @@ class RawAsciidocServletTest {
                 .resource("/module/en_US/source/draft/jcr:content",
                         "jcr:data", "A source asciidoc string")
                 .commit();
-        registerMockAdapter(Module.class, sc);
+        registerMockAdapter(Document.class, sc);
         RawAsciidocServlet servlet = new RawAsciidocServlet();
         Map<String, Object> params = Maps.newHashMap();
         params.put("draft", "true");

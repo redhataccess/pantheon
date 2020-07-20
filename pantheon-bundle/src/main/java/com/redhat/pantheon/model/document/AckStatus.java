@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model.module;
+package com.redhat.pantheon.model.document;
 
 import java.util.Calendar;
 

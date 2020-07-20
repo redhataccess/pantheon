@@ -2,10 +2,8 @@ package com.redhat.pantheon.servlet;
 
 import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
-import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
-import com.redhat.pantheon.model.workspace.Workspace;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -89,9 +87,10 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         StringBuilder queryBuilder = new StringBuilder()
-                .append("/jcr:root/content/(repositories | modules)//element(*, pant:module)");
+                .append("/jcr:root/content/(repositories | modules)//element()");
 
-        List<StringBuilder> queryFilters = newArrayListWithCapacity(4);
+        List<StringBuilder> queryFilters = newArrayListWithCapacity(5);
+        queryFilters.add(new StringBuilder("(@jcr:primaryType = 'pant:assembly' or @jcr:primaryType = 'pant:module')"));
 
         // only filter by text if provided
         if (searchParam.length() > 0) {
@@ -184,11 +183,11 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
         String variantName = module.getWorkspace().getCanonicalVariantName();
 
-        Optional<Metadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE, variantName);
-        Optional<Metadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);
+        Optional<ModuleMetadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE, variantName);
+        Optional<ModuleMetadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);
         Optional<HashableFileResource> sourceFile =
                 traverseFrom(module)
-                        .toChild(m -> m.moduleLocale(DEFAULT_MODULE_LOCALE))
+                        .toChild(m -> m.locale(DEFAULT_MODULE_LOCALE))
                         .toChild(ModuleLocale::source)
                         .toChild(sourceContent -> sourceContent.draft().isPresent() ? sourceContent.draft() : sourceContent.released())
                         .getAsOptional();
@@ -202,12 +201,16 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
         
         //logic for file name is present in ModuleVersionUpload.java
-        if(draftMetadata.isPresent() && draftMetadata.get().moduleType().get()!=null){
-            m.put("moduleType",draftMetadata.get().moduleType().get());
-        }else if(releasedMetadata.isPresent() && releasedMetadata.get().moduleType().get()!=null){
-            m.put("moduleType",releasedMetadata.get().moduleType().get());   
-        }else{
-            m.put("moduleType","-");
+        if ("pantheon/assembly".equals(resource.getResourceType())) {
+            m.put("moduleType", "ASSEMBLY"); // This is temporary while assembly and modules are munged together.
+        } else {
+            if (draftMetadata.isPresent() && draftMetadata.get().moduleType().get() != null) {
+                m.put("moduleType", draftMetadata.get().moduleType().get());
+            } else if (releasedMetadata.isPresent() && releasedMetadata.get().moduleType().get() != null) {
+                m.put("moduleType", releasedMetadata.get().moduleType().get());
+            } else {
+                m.put("moduleType", "-");
+            }
         }
 
         if(sourceFile.isPresent() && sourceFile.get().created().get() != null){

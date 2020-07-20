@@ -1,14 +1,13 @@
-package com.redhat.pantheon.model.Document;
+package com.redhat.pantheon.model.document;
 
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.WorkspaceChild;
-import com.redhat.pantheon.model.module.SourceContent;
-import com.redhat.pantheon.model.module.Variants;
 
 public interface DocumentLocale extends WorkspaceChild {
     Child<SourceContent> source();
 
-    Child<Variants> variants();
+    Child<? extends DocumentVariants> variants();
 
+    @Override
     Document getParent();
 }

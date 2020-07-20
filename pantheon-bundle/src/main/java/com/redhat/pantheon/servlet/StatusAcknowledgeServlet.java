@@ -1,11 +1,9 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.model.Acknowledgment;
-import com.redhat.pantheon.model.module.AckStatus;
-import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.document.AckStatus;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.validation.validators.NotNullValidator;
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.PersistenceException;
@@ -27,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

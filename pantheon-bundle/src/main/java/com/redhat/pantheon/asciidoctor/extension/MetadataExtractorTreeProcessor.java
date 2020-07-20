@@ -1,6 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
-import com.redhat.pantheon.model.module.Metadata;
+import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.ModuleType;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.ast.StructuralNode;
@@ -19,7 +19,7 @@ import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
 /**
- * A tree processor that extracts metadata from the asciidoc AST and inserts it
+ * A tree processor that extracts moduleMetadata from the asciidoc AST and inserts it
  * into a sling resource.
  *
  * <p>
@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
  *     <li>Abstract - The first paragraph in the asciidoc document</li>
  * </ul>
  *
- * A current restriction is that when the extracted metadata contains variable
+ * A current restriction is that when the extracted moduleMetadata contains variable
  * substitutions, the substitutions will not be applied when recording the
  * value in the resource.
  * </p>
@@ -48,10 +48,10 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
 
     private final Logger log = LoggerFactory.getLogger(MetadataExtractorTreeProcessor.class);
 
-    private final Metadata metadata;
+    private final ModuleMetadata moduleMetadata;
 
-    public MetadataExtractorTreeProcessor(Metadata metadata) {
-        this.metadata = metadata;
+    public MetadataExtractorTreeProcessor(ModuleMetadata moduleMetadata) {
+        this.moduleMetadata = moduleMetadata;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
     private void extractDocTitle(Document document) {
         String docTitle = document.getDoctitle();
         if(!isNullOrEmpty(docTitle)) {
-            metadata.title().set(docTitle);
+            moduleMetadata.title().set(docTitle);
         }
     }
 
@@ -94,11 +94,11 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                     }
                 })
                 .findFirst();
-        headlineBlock.ifPresent(headline -> metadata.headline().set(headline.getTitle()));
+        headlineBlock.ifPresent(headline -> moduleMetadata.headline().set(headline.getTitle()));
 
         // if no headline is detected, reset it
         if(!headlineBlock.isPresent()) {
-            metadata.headline().set(null);
+            moduleMetadata.headline().set(null);
         }
     }
 
@@ -120,11 +120,11 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                             }
                         })
                         .findFirst();
-        abstractNode.ifPresent(node -> metadata.mAbstract().set(node.getContent().toString()));
+        abstractNode.ifPresent(node -> moduleMetadata.mAbstract().set(node.getContent().toString()));
 
         // if no abstract is detected, reset if
         if(!abstractNode.isPresent()) {
-            metadata.mAbstract().set(null);
+            moduleMetadata.mAbstract().set(null);
         }
     }
 
@@ -139,15 +139,15 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
         if(attValue != null) {
             try {
                 ModuleType moduleType = ModuleType.valueOf(attValue.toString());
-                metadata.moduleType().set(moduleType);
+                moduleMetadata.moduleType().set(moduleType);
             } catch (IllegalArgumentException e) {
-                metadata.moduleType().set(null);
+                moduleMetadata.moduleType().set(null);
                 log.warn("Invalid argument for " + MODULE_TYPE_ATT_NAME + " asciidoc attribute: "
                     + attValue.toString());
             }
         }
         else {
-            metadata.moduleType().set(null);
+            moduleMetadata.moduleType().set(null);
         }
     }
 

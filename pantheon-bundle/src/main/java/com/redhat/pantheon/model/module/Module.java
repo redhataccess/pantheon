@@ -1,10 +1,9 @@
 package com.redhat.pantheon.model.module;
 
-import com.redhat.pantheon.model.Document.Document;
+import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 
 import javax.annotation.Nonnull;
@@ -45,125 +44,27 @@ public interface Module extends Document {
     @Named("jcr:uuid")
     Field<String> uuid();
 
-    default Child<ModuleLocale> moduleLocale(Locale locale) {
+    default Child<ModuleLocale> locale(Locale locale) {
         return child(locale.toString(), ModuleLocale.class);
     }
 
     default Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale,
                                                     @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.moduleLocale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::draft)
-                .getAsOptional();
+        return (Optional<ModuleVersion>) Document.super.getDraftVersion(locale, variantName);
     }
 
     default Optional<ModuleVersion> getReleasedVersion(@Nonnull final Locale locale,
-                                                    @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.moduleLocale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::released)
-                .getAsOptional();
+                                                       @Nonnull final String variantName) {
+        return (Optional<ModuleVersion>) Document.super.getReleasedVersion(locale, variantName);
     }
 
-    /**
-     * @param locale The locale to fetch the content instance for.
-     * @param variantName
-     * @return The released content for a given locale
-     */
-    default Optional<FileResource> getReleasedContent(final Locale locale,
+    default Optional<ModuleMetadata> getDraftMetadata(@Nonnull final Locale locale,
                                                       @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.moduleLocale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::released)
-                .toChild(ModuleVersion::cachedHtml)
-                .getAsOptional();
+        return (Optional<ModuleMetadata>) Document.super.getDraftMetadata(locale, variantName);
     }
 
-    /**
-     * @param locale The locale to fetch the content instance for.
-     * @param variantName
-     * @return The draft content for a given locale
-     */
-    default Optional<FileResource> getDraftContent(final Locale locale,
-                                                 @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.moduleLocale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::draft)
-                .toChild(ModuleVersion::cachedHtml)
-                .getAsOptional();
-    }
-
-    /**
-     * @param locale The locale to fetch the content instance for.
-     * @param variantName
-     * @return The released metadata for a given locale
-     */
-    default Optional<Metadata> getReleasedMetadata(final Locale locale,
-                                                   @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.moduleLocale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::released)
-                .toChild(ModuleVersion::metadata)
-                .getAsOptional();
-    }
-
-  /**
-    *
-    * @param locale the locale to fetch the acknowledgment status content
-    * @param variantName
-    * @return the  status data for a released version for a given locale
-    */
-    default Optional<AckStatus> getAcknowledgementStatus(final Locale locale,
+    default Optional<ModuleMetadata> getReleasedMetadata(@Nonnull final Locale locale,
                                                          @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.moduleLocale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::released)
-                .toChild(ModuleVersion::ackStatus)
-                .getAsOptional();
-    }
-
-    /**
-     *
-     * @param locale the locale to fetch the status content
-     * @param variantName
-     * @return the  status data for a draft version for a given locale
-     */
-    default Optional<AckStatus> getDraftAcknowledgementStatus(final Locale locale,
-                                                              @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.moduleLocale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::draft)
-                .toChild(ModuleVersion::ackStatus)
-                .getAsOptional();
-    }
-
-    /**
-     * @param locale The locale to fetch the content instance for.
-     * @param variantName
-     * @return The draft metadata for a given locale
-     */
-    default Optional<Metadata> getDraftMetadata(final Locale locale,
-                                                @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.moduleLocale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::draft)
-                .toChild(ModuleVersion::metadata)
-                .getAsOptional();
+        return (Optional<ModuleMetadata>) Document.super.getReleasedMetadata(locale, variantName);
     }
 }

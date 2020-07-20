@@ -1,24 +1,23 @@
-package com.redhat.pantheon.model.module;
+package com.redhat.pantheon.model.document;
 
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
+import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
-import com.redhat.pantheon.model.document.AckStatus;
-import com.redhat.pantheon.model.document.DocumentVersion;
+import org.apache.sling.api.resource.Resource;
 
 import javax.inject.Named;
 
 /**
- * A {@link SlingModel} which describes the structure for a module version.
- * Contains all the properties and content for the state of a given module at
- * a given time. ModuleVersions should differ in content when part of the same
+ * A {@link SlingModel} which describes the structure for a Document version.
+ * Contains all the properties and content for the state of a given Document at
+ * a given time. DocumentVersions should differ in content when part of the same
  * parent, but this is not validated.
  */
-@JcrPrimaryType("pant:moduleVersion")
-public interface ModuleVersion extends DocumentVersion {
+public interface DocumentVersion extends WorkspaceChild {
 
     @Named("jcr:uuid")
     Field<String> uuid();
@@ -29,11 +28,11 @@ public interface ModuleVersion extends DocumentVersion {
     @Named("cached_html")
     Child<FileResource> cachedHtml();
 
-    Child<ModuleMetadata> metadata();
+    Child<? extends DocumentMetadata> metadata();
 
     @Named("ack_status")
     Child<AckStatus> ackStatus();
 
     @Override
-    ModuleVariant getParent();
+    DocumentVariant getParent();
 }

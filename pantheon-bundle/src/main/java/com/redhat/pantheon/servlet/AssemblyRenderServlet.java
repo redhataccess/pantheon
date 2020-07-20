@@ -5,7 +5,7 @@ import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.module.HashableFileResource;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
-import com.redhat.pantheon.model.module.SourceContent;
+import com.redhat.pantheon.model.document.SourceContent;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.Servlet;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
@@ -65,7 +64,7 @@ public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
 
     @Override
     public void doGet(SlingHttpServletRequest request,
-            SlingHttpServletResponse response) throws ServletException, IOException {
+            SlingHttpServletResponse response) throws IOException {
         String locale = paramValue(request, PantheonConstants.PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
         boolean draft = paramValueAsBoolean(request, PantheonConstants.PARAM_DRAFT);
         boolean reRender = paramValueAsBoolean(request, PantheonConstants.PARAM_RERENDER);
@@ -74,11 +73,13 @@ public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
         Module module = request.getResource().adaptTo(Module.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
 
-        Optional<HashableFileResource> moduleVariantSource = module.moduleLocale(localeObj)
-                        .traverse()
-                        .toChild(ModuleLocale::source)
-                        .toChild(draft ? SourceContent::draft : SourceContent::released)
-                        .getAsOptional();
+        Optional<HashableFileResource> moduleVariantSource = null;
+
+        moduleVariantSource = module.locale(localeObj)
+                .traverse()
+                .toChild(ModuleLocale::source)
+                .toChild(draft ? SourceContent::draft : SourceContent::released)
+                .getAsOptional();
 
         if(!moduleVariantSource.isPresent()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, (draft ? "Draft " : "Released ")

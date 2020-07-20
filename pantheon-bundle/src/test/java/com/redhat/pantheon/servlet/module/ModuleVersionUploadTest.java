@@ -4,7 +4,6 @@ import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.workspace.Workspace;
-import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.servlets.post.HtmlResponse;
@@ -79,7 +78,7 @@ class ModuleVersionUploadTest {
                         slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module"),
                         Module.class);
         assertEquals("This is the adoc content",
-                module.moduleLocale(LocaleUtils.toLocale("es_ES")).get()
+                module.locale(LocaleUtils.toLocale("es_ES")).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()
@@ -123,7 +122,7 @@ class ModuleVersionUploadTest {
                         Module.class);
         assertEquals("南京防疫现场",
                 module
-                        .moduleLocale(Locale.SIMPLIFIED_CHINESE).get()
+                        .locale(Locale.SIMPLIFIED_CHINESE).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()
@@ -167,7 +166,7 @@ class ModuleVersionUploadTest {
                         Module.class);
         assertEquals("南京防疫现场",
                 module
-                        .moduleLocale(Locale.SIMPLIFIED_CHINESE).get()
+                        .locale(Locale.SIMPLIFIED_CHINESE).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()
@@ -218,7 +217,7 @@ class ModuleVersionUploadTest {
                 SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
         assertEquals("Draft asciidoc content",
                 module
-                        .moduleLocale(Locale.US).get()
+                        .locale(Locale.US).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()
@@ -226,7 +225,7 @@ class ModuleVersionUploadTest {
         );
         assertEquals("This is the released adoc content",
                 module
-                        .moduleLocale(Locale.US).get()
+                        .locale(Locale.US).get()
                         .source().get()
                         .released().get()
                         .jcrContent().get()
@@ -278,7 +277,7 @@ class ModuleVersionUploadTest {
                 SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
         assertEquals("Revised asciidoc content",
                 module
-                        .moduleLocale(Locale.US).get()
+                        .locale(Locale.US).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()
@@ -286,7 +285,7 @@ class ModuleVersionUploadTest {
         );
         assertEquals("This is the released adoc content",
                 module
-                        .moduleLocale(Locale.US).get()
+                        .locale(Locale.US).get()
                         .source().get()
                         .released().get()
                         .jcrContent().get()
@@ -343,7 +342,7 @@ class ModuleVersionUploadTest {
                 SlingModels.getModel(slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/module"), Module.class);
         assertEquals("This is the draft adoc content",
                 module
-                        .moduleLocale(Locale.US).get()
+                        .locale(Locale.US).get()
                         .source().get()
                         .draft().get()
                         .jcrContent().get()
@@ -351,7 +350,7 @@ class ModuleVersionUploadTest {
         );
         assertEquals("This is the released adoc content",
                 module
-                        .moduleLocale(Locale.US).get()
+                        .locale(Locale.US).get()
                         .source().get()
                         .released().get()
                         .jcrContent().get()

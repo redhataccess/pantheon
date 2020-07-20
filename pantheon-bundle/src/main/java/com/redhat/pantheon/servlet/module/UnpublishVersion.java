@@ -4,6 +4,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
 import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.document.DocumentVersion;
 import com.redhat.pantheon.model.module.*;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
@@ -71,7 +72,7 @@ public class UnpublishVersion extends AbstractPostOperation {
             Locale locale = getLocale(request);
             Module module = getModule(request);
             String variant = getVariant(request);
-            ModuleVersion moduleVersion = module.moduleLocale(locale).get()
+            ModuleVersion moduleVersion = module.locale(locale).get()
                     .variants().get()
                     .variant(variant).get()
                     .draft().get();
@@ -88,7 +89,7 @@ public class UnpublishVersion extends AbstractPostOperation {
         String variant = getVariant(request);
 
         // Get the released version, there should be one
-        Optional<ModuleVersion> foundVariant = module.getReleasedVersion(locale, variant);
+        Optional<? extends DocumentVersion> foundVariant = module.getReleasedVersion(locale, variant);
 
         if(!foundVariant.isPresent()) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
@@ -101,12 +102,12 @@ public class UnpublishVersion extends AbstractPostOperation {
             changes.add(Modification.onModified(module.getPath()));
             // Change source/released to source/draft
             Optional<HashableFileResource> draftSource = traverseFrom(module)
-                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(m -> module.locale(locale))
                     .toChild(ModuleLocale::source)
                     .toChild(sourceContent -> sourceContent.draft())
                     .getAsOptional();
             FileResource releasedSource = traverseFrom(module)
-                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(m -> module.locale(locale))
                     .toChild(ModuleLocale::source)
                     .toChild(sourceContent -> sourceContent.released())
                     .get();

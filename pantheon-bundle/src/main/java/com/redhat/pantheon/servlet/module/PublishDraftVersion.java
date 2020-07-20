@@ -65,7 +65,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
             Locale locale = getLocale(request);
             Module module = getModule(request);
             String variant = getVariant(request);
-            ModuleVersion moduleVersion = module.moduleLocale(locale).get()
+            ModuleVersion moduleVersion = module.locale(locale).get()
                     .variants().get()
                     .variant(variant).get()
                     .released().get();
@@ -100,7 +100,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
         } else {
             // Draft becomes the new released version
             ModuleVariant moduleVariant = traverseFrom(module)
-                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(m -> module.locale(locale))
                     .toChild(ModuleLocale::variants)
                     .toChild(variants -> variants.variant(variant))
                     .get();
@@ -108,13 +108,13 @@ public class PublishDraftVersion extends AbstractPostOperation {
             changes.add(Modification.onModified(module.getPath()));
             // source/draft becomes source/released
             FileResource draftSource = traverseFrom(module)
-                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(m -> module.locale(locale))
                     .toChild(ModuleLocale::source)
                     .toChild(sourceContent -> sourceContent.draft())
                     .get();
             // Check for released version
             Optional<HashableFileResource> releasedSource = traverseFrom(module)
-                    .toChild(m -> module.moduleLocale(locale))
+                    .toChild(m -> module.locale(locale))
                     .toChild(ModuleLocale::source)
                     .toChild(sourceContent -> sourceContent.released())
                     .getAsOptional();
