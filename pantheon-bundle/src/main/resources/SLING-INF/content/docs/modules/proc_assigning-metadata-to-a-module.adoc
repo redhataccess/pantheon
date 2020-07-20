@@ -21,8 +21,8 @@ If you do not see the module listed, search for the modules using the search box
 . Click *Edit metadata* to assign the following metadata: 
 +
 * *Product Name* - Select the Product and its Version that the module should be published for.
-* *Document use case* - Select the verb that best describes the use case for the module..
-* *Vanity URL fragment* - Enter a URL for the module.
+* *Document use case* - Select the verb that best describes the use case for the module.
+* *Vanity URL fragment* - Enter a URL for the module. This is optional.
 * *Search keywords* - Enter the words that, when searched by users, should bring up the module in the user's search. This is optional.
 
 . Click *Save*.
