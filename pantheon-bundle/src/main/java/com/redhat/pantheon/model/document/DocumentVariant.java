@@ -33,11 +33,6 @@ public interface DocumentVariant extends WorkspaceChild {
     @Override
     DocumentVariants getParent();
 
-    // Since we are not storing historical versions anymore, the only needed ones are draft and released
-    /*default DocumentVersion getVersion(String name) {
-        return getChild(name, DocumentVersion.class);
-    }*/
-
     // TODO Not sure we need this
     default DocumentVersion getOrCreateVersion(String name) {
         return child(name, DocumentVersion.class).get();

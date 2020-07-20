@@ -50,65 +50,21 @@ public interface Module extends Document {
 
     default Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale,
                                                     @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.locale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::draft)
-                .getAsOptional();
+        return (Optional<ModuleVersion>) Document.super.getDraftVersion(locale, variantName);
     }
 
     default Optional<ModuleVersion> getReleasedVersion(@Nonnull final Locale locale,
                                                        @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.locale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::released)
-                .getAsOptional();
-    }
-
-    default Optional<FileResource> getDraftContent(@Nonnull final Locale locale,
-                                                   @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.locale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::draft)
-                .toChild(ModuleVersion::cachedHtml)
-                .getAsOptional();
-    }
-
-    default Optional<FileResource> getReleasedContent(@Nonnull final Locale locale,
-                                                      @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.locale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::released)
-                .toChild(ModuleVersion::cachedHtml)
-                .getAsOptional();
+        return (Optional<ModuleVersion>) Document.super.getReleasedVersion(locale, variantName);
     }
 
     default Optional<ModuleMetadata> getDraftMetadata(@Nonnull final Locale locale,
                                                       @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.locale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::draft)
-                .toChild(ModuleVersion::metadata)
-                .getAsOptional();
+        return (Optional<ModuleMetadata>) Document.super.getDraftMetadata(locale, variantName);
     }
 
     default Optional<ModuleMetadata> getReleasedMetadata(@Nonnull final Locale locale,
                                                          @Nonnull final String variantName) {
-        return traverseFrom(this)
-                .toChild(m -> m.locale(locale))
-                .toChild(ModuleLocale::variants)
-                .toChild(variants -> variants.variant(variantName))
-                .toChild(ModuleVariant::released)
-                .toChild(ModuleVersion::metadata)
-                .getAsOptional();
+        return (Optional<ModuleMetadata>) Document.super.getReleasedMetadata(locale, variantName);
     }
 }
