@@ -1,10 +1,10 @@
 package com.redhat.pantheon.servlet.util;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.sling.api.SlingHttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -21,8 +21,9 @@ import java.util.stream.Collectors;
  *
  * <pre>{@code
  * SlingPathSuffix suffix = new SlingPathSuffix("/path/with/{param1}/and/{param2}");
- * suffix.getParam("param1", request);
- * suffix.getParam("param2", request);
+ * Map<String, String> params = suffix.getParameters(request);
+ * params.get("param1");
+ * params.get("param2");
  * }</pre>
  *
  * The suffix needs a template or pattern to be provided in order to be able to extract
@@ -37,7 +38,6 @@ public class SlingPathSuffix {
     // A list of the characters denoting the end of a resource path
     private static final String PATH_END_CHARS = escapeCharsForRegex('/', '?', '#');
     private final List<String> parameterNames = new ArrayList<>();
-    private Map<String, String> parameterMap;
     private final Pattern pattern;
 
     /**
@@ -67,30 +67,24 @@ public class SlingPathSuffix {
     }
 
     /**
-     * Retrieves a suffix path parameter by its name from a specific request.
-     * @param name The name of the parameter. It should match a parameter name as specified
-     *             in the template provided at construction time.
+     * Retrieves all suffix path parameters. This is a potentially expensive operation so
+     * the result of this map should be saved for multiple uses.
      * @param request The specific {@link SlingHttpServletRequest} from which to extract the
      *                parameter.
-     * @return The path parameter value as extracted from the suffix. Null if such a parameter
-     * does not exist, or could not be found.
+     * @return An immutable map of parameters with the parameter name as index, and the value
+     * of the parameter.
      */
-    public String getParam(final String name, SlingHttpServletRequest request) {
-        return parametersByName(request.getRequestPathInfo().getSuffix()).get(name);
-    }
-
-    private Map<String, String> parametersByName(final String uriString) {
-
-        parameterMap = new HashMap<>();
-        final Matcher matcher = pattern.matcher(uriString);
+    public Map<String, String> getParameters(final SlingHttpServletRequest request) {
+        final ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+        final Matcher matcher = pattern.matcher(request.getRequestPathInfo().getSuffix());
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("Uri does not match");
+            throw new IllegalArgumentException("Request path suffix does not match suffix expression");
         }
         for (int i = 1; i <= matcher.groupCount(); i++) {
-            parameterMap.put(parameterNames.get(i - 1), matcher.group(i));
+            mapBuilder.put(parameterNames.get(i - 1), matcher.group(i));
         }
 
-        return parameterMap;
+        return mapBuilder.build();
     }
 
     /**
