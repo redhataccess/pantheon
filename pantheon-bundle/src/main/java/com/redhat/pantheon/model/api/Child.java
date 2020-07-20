@@ -42,7 +42,7 @@ public interface Child<T extends SlingModel> extends Supplier<T> {
     /**
      * Provides a null-safe way to operate on the value of the child, and return an
      * {@link Optional} with the result of the operation. This allowes the caller to
-     * continue to operapate in a null-safe fashion.
+     * continue to operate in a null-safe fashion.
      * @param func The function to apply to the value
      * @param <R>
      * @return An optional indicating the result of the operation. If the operation

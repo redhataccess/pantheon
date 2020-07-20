@@ -5,6 +5,8 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,11 +24,13 @@ class SlingPathSuffixTest {
         sc.requestPathInfo().setSuffix("/path/value1/value2/other");
 
         // When
+        Map<String, String> params = suffix.getParameters(sc.request());
 
         // Then
-        assertEquals("value1", suffix.getParam("param1", sc.request()));
-        assertEquals("value2", suffix.getParam("param2", sc.request()));
-        assertNull(suffix.getParam("nonexisting", sc.request()));
+        assertEquals("value1", params.get("param1"));
+        assertEquals("value2", params.get("param2"));
+        assertFalse(params.containsKey("nonexisting"));
+        assertNull(params.get("nonexisting"));
     }
 
     @Test
@@ -36,9 +40,10 @@ class SlingPathSuffixTest {
         sc.requestPathInfo().setSuffix("/path/valueSuffix/other");
 
         // When
+        Map<String, String> params = suffix.getParameters(sc.request());
 
         // Then
-        assertEquals("value", suffix.getParam("param1", sc.request()));
+        assertEquals("value", params.get("param1"));
     }
 
     @Test
@@ -48,9 +53,10 @@ class SlingPathSuffixTest {
         sc.requestPathInfo().setSuffix("/path/param1Segment?v=1");
 
         // When
+        Map<String, String> params = suffix.getParameters(sc.request());
 
         // Then
-        assertEquals("param1Segment", suffix.getParam("param1", sc.request()));
+        assertEquals("param1Segment", params.get("param1"));
     }
 
     @Test
@@ -60,8 +66,9 @@ class SlingPathSuffixTest {
         sc.requestPathInfo().setSuffix("/path/param1Segment#clientid");
 
         // When
+        Map<String, String> params = suffix.getParameters(sc.request());
 
         // Then
-        assertEquals("param1Segment", suffix.getParam("param1", sc.request()));
+        assertEquals("param1Segment", params.get("param1"));
     }
 }
