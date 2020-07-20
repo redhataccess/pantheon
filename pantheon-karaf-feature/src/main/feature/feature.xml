@@ -67,7 +67,7 @@
                 end\n\
                 \n\
                 set ACL for pantheon-publishers\n\
-                allow jcr:removeNode,jcr:modifyProperties,jcr:read on /content/repositories\n\
+                allow jcr:removeNode,jcr:modifyProperties,jcr:read,jcr:addChildNodes on /content/repositories\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/modules\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/products\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/sandbox\n\
