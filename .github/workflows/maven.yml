@@ -1,0 +1,61 @@
+name: CI build
+
+on:
+  push:
+    paths-ignore:
+      - docs/**
+  pull_request:
+    paths-ignore:
+      - docs/**
+
+jobs:
+  maven-build:
+
+    runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        java: [1.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java }}
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+    
+    - name: Cache maven dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    
+    - name: Build with Maven
+      run: ./mvnw clean install -pl pantheon-bundle,pantheon-karaf-feature,pantheon-karaf-dist
+
+    - name: Install Go dependencies
+      working-directory: tools/git2pantheon
+      run: |
+        go get gopkg.in/src-d/go-git.v4
+
+    - name: Build git2pantheon
+      working-directory: tools/git2pantheon
+      run: |
+        go build
+        go test -race -coverprofile=coverage.txt -covermode=atomic
+
+    - name: Push to Codecov
+      uses: codecov/codecov-action@v1
+      if: ${{ matrix.java }} == '1.8'
+      with:
+        #token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+        #file: ./coverage.xml # optional
+        #files: ./coverage1.xml,./coverage2.xml # optional
+        flags: java # optional
+        name: codecov-java # optional
+        #fail_ci_if_error: true # optional (default = false)
