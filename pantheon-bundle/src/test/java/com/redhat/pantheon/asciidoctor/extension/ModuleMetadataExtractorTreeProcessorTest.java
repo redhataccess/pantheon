@@ -37,7 +37,7 @@ class ModuleMetadataExtractorTreeProcessorTest {
         final String adocContent = "= A title for content" +
                 "\n" +
                 "\n" +
-                "[.abstract]\n" +
+                "[.pantheon:abstract]\n" +
                 "This is the module abstract";
 
         // When
