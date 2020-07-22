@@ -1,0 +1,75 @@
+:Year: 2020
+
+// Red Hat and divisions
+:RH: Red{nbsp}Hat
+:CCS: Customer Content Services
+:OrgName: {RH}
+:OrgDiv: {CCS}
+
+// The product (RHEL)
+:ProductName: {RH} Enterprise{nbsp}Linux
+:RHEL: {ProductName}
+:ProductShortName: RHEL
+// This is the version displayed under "Red Hat Enterprise Linux"
+:ProductNumber: 8
+:RHEL8: {RHEL}{nbsp}8
+:RHEL7: {RHEL}{nbsp}7
+//:ProductRelease: Beta
+
+:imagesdir: images
+:experimental:
+
+// Identity Management attributes
+
+:IPA: Identity{nbsp}Management
+:aIPA: an Identity{nbsp}Management
+:AD: Active{nbsp}Directory
+:RH: Red{nbsp}Hat
+:RHEL: Red{nbsp}Hat Enterprise{nbsp}Linux
+:DS: Directory{nbsp}Server
+:CS: Certificate{nbsp}System
+:SSSD: System Security Services Daemon
+:AD: Active{nbsp}Directory
+
+// Platform tools attributes
+:gcct: GCC Toolset
+// dts and rhscl references are to be removed in rhel 8, present only to enable building
+:dts: {rh} Developer{nbsp}Toolset
+:rhdts: {dts}
+:dts-ver: 8
+:scl: {rh} Software{nbsp}Collections
+:rhscl: {scl}
+:rhah: {ProductName} Atomic{nbsp}Host
+:rhdt: {rh} Developer{nbsp}Tools
+// ++ for using in things like g++ that are NOT capitalized C++ = {cpp}
+:plus2: &#x002b;&#x002b;
+
+:pantheonproduct: {ProductName}
+:pantheonversion: {dts-ver}
+:pantheonupdateddate: Juluary 42nd, 2020/666
+:pantheondoctype: assembly
+ifdef::context[:parent-context-of-access-control-list: {context}]
+
+[id="access-control-list_{context}"]
+= Access control list
+
+:context: access-control-list
+
+Traditionally, each file and directory can only have one user owner and one group owner at a time. If you want to apply a more specific set of permissions to a file or directory (allow certain users outside the group to gain access to a specific file within a directory but not to other files) without changing the ownership and permissions of a file or directory, you can use the access control lists (ACL).
+
+The following section describes how to:
+
+* Display the current ACL.
+* Set the ACL.
+
+:pantheon_module_id: 12345
+include::adoc-includes/proc_displaying-the-current-acl.adoc[leveloffset=+1]
+
+This is glue text!!!
+
+:pantheon_module_id: 67890
+include::adoc-includes/proc_setting-the-acl.adoc[leveloffset=+1]
+
+
+ifdef::parent-context-of-access-control-list[:context: {parent-context-of-access-control-list}]
+ifndef::parent-context-of-access-control-list[:!context:]

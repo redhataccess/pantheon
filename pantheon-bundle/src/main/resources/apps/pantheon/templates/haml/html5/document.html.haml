@@ -7,6 +7,10 @@
   - rhDocsCssPath = '/dev-preview/rhdocs.css'
   - pantheonCssPath = '/dev-preview/pantheon.css'
 
+- wrappingTag = 'cp-documentation'
+-# - if (@document.attr :pantheondoctype) == 'assembly'
+-#   - wrappingTag = 'div'
+
 %html{:lang=>(attr :lang, 'en')}
   %head
     %meta(charset="#{attr :encoding, 'UTF-8'}")
@@ -52,7 +56,9 @@
 
   %body{:id => @id, :class=>[doctype, 'pantheon-render', ((attr? :toc) && (attr? 'toc-placement', 'auto') ? "has-toc toc-#{attr 'toc-position', 'left'}" : nil)]}
     -# Begin main document
-    %cp-documentation#rhdocs.rhdocs
+
+    -# %cp-documentation#rhdocs.rhdocs
+    - haml_tag wrappingTag do
       - unless noheader
         -# Set some simple vars so our if statements aren't gross
         - hasTitle = !(notitle) && (@header != nil) && (@header&.title != nil)
