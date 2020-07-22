@@ -14,7 +14,7 @@ public interface Assembly extends Document {
     @Named("jcr:uuid")
     Field<String> uuid();
 
-    default Child<AssemblyLocale> assemblyLocale(Locale locale) {
+    default Child<AssemblyLocale> locale(Locale locale) {
         return child(locale.toString(), AssemblyLocale.class);
     }
 }

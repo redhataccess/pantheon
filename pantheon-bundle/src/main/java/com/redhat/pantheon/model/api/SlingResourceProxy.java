@@ -11,6 +11,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.function.Function;
 
 import static com.redhat.pantheon.model.api.SlingModels.getModel;
@@ -130,7 +133,12 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
 
     private static Class<?> extractParameterizedReturnType(Method method) {
         // TODO This might fail if the type isn't parameterized
-        return (Class)((ParameterizedType)method.getGenericReturnType()).getActualTypeArguments()[0];
+        Type t = ((ParameterizedType)method.getGenericReturnType()).getActualTypeArguments()[0];
+        if (t instanceof WildcardType) {
+            WildcardType w = (WildcardType) t;
+            return (Class) w.getUpperBounds()[0];
+        }
+        return (Class) t;
     }
 
     private static MethodType getMethodType(Method method) {

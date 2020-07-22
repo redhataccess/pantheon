@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.helper.PantheonConstants;
+import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.document.SourceContent;
 import com.redhat.pantheon.model.module.*;
 import org.apache.commons.lang3.LocaleUtils;
@@ -21,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.TypeVariable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -71,6 +73,11 @@ public class ModuleRendererServlet extends SlingSafeMethodsServlet {
         Locale localeObj = LocaleUtils.toLocale(locale);
 
         Module module = request.getResource().adaptTo(Module.class);
+        System.out.println("Module 1!!!");
+        tellMeAbout(module);
+        Module module2 = SlingModels.getModel(request.getResourceResolver().getResource(module.getPath()), Module.class);
+        tellMeAbout(module2);
+
         Optional<HashableFileResource> moduleVariantSource = module.locale(localeObj)
                 .traverse()
                 .toChild(ModuleLocale::source)
@@ -96,5 +103,27 @@ public class ModuleRendererServlet extends SlingSafeMethodsServlet {
         w.write(html);
     }
 
+    private static void tellMeAbout(Object o) {
+        System.out.println("\nTelling you about!!");
+        System.out.println("o: " + o);
+        System.out.println("o class: " + o.getClass());
+        System.out.println("o type: " + o.getClass().getTypeName());
+        for (TypeVariable<? extends Class<?>> i : o.getClass().getTypeParameters()) {
+            System.out.println("Type parameter! " + i);
+        }
+
+        System.out.println("Class tree:");
+        Class c = o.getClass();
+        while (c != null) {
+            System.out.println(c);
+            c = c.getSuperclass();
+        }
+        System.out.println("done");
+        System.out.println(o.getClass().getCanonicalName());
+        for (Class<?> i : o.getClass().getInterfaces()) {
+            System.out.println("Interface: " + i);
+        }
+        System.out.println("DONE TALKING!");
+    }
 }
 

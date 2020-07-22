@@ -2,6 +2,8 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.helper.PantheonConstants;
+import com.redhat.pantheon.model.assembly.Assembly;
+import com.redhat.pantheon.model.assembly.AssemblyLocale;
 import com.redhat.pantheon.model.module.HashableFileResource;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
@@ -70,14 +72,16 @@ public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
         boolean reRender = paramValueAsBoolean(request, PantheonConstants.PARAM_RERENDER);
         String variantName = paramValue(request, PantheonConstants.PARAM_VARIANT, DEFAULT_VARIANT_NAME);
 
-        Module module = request.getResource().adaptTo(Module.class);
+        System.out.println("Rerender? " + reRender);
+
+        Assembly asm = request.getResource().adaptTo(Assembly.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
 
         Optional<HashableFileResource> moduleVariantSource = null;
 
-        moduleVariantSource = module.locale(localeObj)
+        moduleVariantSource = asm.locale(localeObj)
                 .traverse()
-                .toChild(ModuleLocale::source)
+                .toChild(AssemblyLocale::source)
                 .toChild(draft ? SourceContent::draft : SourceContent::released)
                 .getAsOptional();
 
@@ -94,7 +98,7 @@ public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
 
         // only allow forced rerendering if this is a draft version. Released and historical revs are written in stone.
         String html = asciidoctorService.getModuleHtml(
-                module, localeObj, variantName, draft, context, reRender && draft);
+                asm, localeObj, variantName, draft, context, reRender && draft);
 
         response.setContentType("text/html");
         Writer w = response.getWriter();

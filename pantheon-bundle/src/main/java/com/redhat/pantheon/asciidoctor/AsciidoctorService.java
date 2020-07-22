@@ -10,6 +10,7 @@ import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.util.ResourceTraversal;
+import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.document.DocumentVersion;
 import com.redhat.pantheon.model.module.*;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.TypeVariable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -166,6 +168,19 @@ public class AsciidoctorService {
                         .toChild(sourceContent -> isDraft ? sourceContent.draft() : sourceContent.released())
                         .getAsOptional();
 
+        System.out.println("Base");
+        tellMeAbout(base);
+        System.out.println("Locale");
+        tellMeAbout(base.locale(locale).getOrCreate());
+        System.out.println("Variants");
+        tellMeAbout(base.locale(locale).getOrCreate().variants().getOrCreate());
+        System.out.println("Specific Variant");
+        tellMeAbout(base.locale(locale).getOrCreate().variants().getOrCreate().variant(variantName).getOrCreate());
+        System.out.println("Draft");
+        tellMeAbout(base.locale(locale).getOrCreate().variants().getOrCreate().variant(variantName).getOrCreate().draft().getOrCreate());
+        System.out.println("Metadata");
+        tellMeAbout(base.locale(locale).getOrCreate().variants().getOrCreate().variant(variantName).getOrCreate().draft().getOrCreate().metadata().getOrCreate());
+
         if (!sourceFile.isPresent()) {
             throw new RuntimeException("Cannot find source content for module: " + base.getPath() + ", locale: " + locale
                     + ",variant: " + variantName + ", draft: " + isDraft);
@@ -174,23 +189,23 @@ public class AsciidoctorService {
         // Use a service-level resource resolver to build the module as it will require write access to the resources
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
 
-            Module serviceModule = SlingModels.getModel(serviceResourceResolver, base.getPath(), Module.class);
-            ModuleVariant moduleVariant = serviceModule.locale(locale).getOrCreate()
+            Document serviceDocument = SlingModels.getModel(serviceResourceResolver, base.getPath(), Document.class);
+            DocumentVariant documentVariant = serviceDocument.locale(locale).getOrCreate()
                     .variants().getOrCreate()
                     .variant(variantName).getOrCreate();
 
-            ModuleVersion moduleVersion;
+            DocumentVersion documentVersion;
             if (isDraft) {
-                moduleVersion = moduleVariant.draft().getOrCreate();
+                documentVersion = documentVariant.draft().getOrCreate();
             } else {
-                moduleVersion = moduleVariant.released().getOrCreate();
+                documentVersion = documentVariant.released().getOrCreate();
             }
 
             // process product and version.
             Optional<ProductVersion> productVersion =
-                    moduleVersion.metadata()
+                    documentVersion.metadata()
                             .traverse()
-                            .toRef(ModuleMetadata::productVersion)
+                            .toRef(DocumentMetadata::productVersion)
                             .getAsOptional();
 
             String productName = null;
@@ -200,9 +215,9 @@ public class AsciidoctorService {
 
             Calendar updatedDate = sourceFile.get().created().get();
 
-            Optional<Calendar> publishedDate = moduleVersion.metadata()
+            Optional<Calendar> publishedDate = documentVersion.metadata()
                     .traverse()
-                    .toField(ModuleMetadata::datePublished);
+                    .toField(DocumentMetadata::datePublished);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
 
@@ -281,8 +296,11 @@ public class AsciidoctorService {
 
                 // add specific extensions for metadata regeneration
                 if (regenMetadata) {
+                    System.out.println("This is what I am passing to the tree processor!!!!");
+                    DocumentMetadata i = documentVersion.metadata().getOrCreate();
+                    tellMeAbout(i);
                     asciidoctor.javaExtensionRegistry().treeprocessor(
-                            new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
+                            new MetadataExtractorTreeProcessor(i));
                 }
 
                 StringBuilder content = new StringBuilder();
@@ -295,11 +313,11 @@ public class AsciidoctorService {
                         .jcrContent().get()
                         .jcrData().get());
                 html = asciidoctor.convert(content.toString(), ob.get());
-                cacheContent(moduleVersion, html);
+                cacheContent(documentVersion, html);
 
                 // ack_status
                 // TODO: re-evaluate where ack_status node should be created
-                moduleVersion.ackStatus().getOrCreate();
+                documentVersion.ackStatus().getOrCreate();
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);
             }
@@ -320,10 +338,33 @@ public class AsciidoctorService {
      * @param version The specific module version for which to cache the html
      * @param html    The html that was generated
      */
-    private void cacheContent(final ModuleVersion version, final String html) {
+    private void cacheContent(final DocumentVersion version, final String html) {
         FileResource.JcrContent cachedHtmlFile = version.cachedHtml().getOrCreate()
                 .jcrContent().getOrCreate();
         cachedHtmlFile.jcrData().set(html);
         cachedHtmlFile.mimeType().set("text/html");
+    }
+
+    private static void tellMeAbout(Object o) {
+        System.out.println("\nTelling you about!!");
+        System.out.println("o: " + o);
+        System.out.println("o class: " + o.getClass());
+        System.out.println("o type: " + o.getClass().getTypeName());
+        for (TypeVariable<? extends Class<?>> i : o.getClass().getTypeParameters()) {
+            System.out.println("Type parameter! " + i);
+        }
+
+        System.out.println("Class tree:");
+        Class c = o.getClass();
+        while (c != null) {
+            System.out.println(c);
+            c = c.getSuperclass();
+        }
+        System.out.println("done");
+        System.out.println(o.getClass().getCanonicalName());
+        for (Class<?> i : o.getClass().getInterfaces()) {
+            System.out.println("Interface: " + i);
+        }
+        System.out.println("DONE TALKING!");
     }
 }

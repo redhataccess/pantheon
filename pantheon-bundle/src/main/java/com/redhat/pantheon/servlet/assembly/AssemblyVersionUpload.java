@@ -75,7 +75,7 @@ public class AssemblyVersionUpload extends AbstractPostOperation {
             }
 
             Locale localeObj = LocaleUtils.toLocale(locale);
-            AssemblyLocale assemblyLocale = assembly.assemblyLocale(localeObj).getOrCreate();
+            AssemblyLocale assemblyLocale = assembly.locale(localeObj).getOrCreate();
             HashableFileResource draftSrc = assemblyLocale
                     .source().getOrCreate()
                     .draft().getOrCreate();
