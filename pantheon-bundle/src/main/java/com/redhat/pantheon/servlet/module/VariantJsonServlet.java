@@ -99,7 +99,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantMap.put("revision_id", releasedRevision.get().getName());
         variantMap.put("title", releasedMetadata.get().title().get());
         variantMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline().get() : "");
-        variantMap.put("description", releasedMetadata.get().description().get());
+        variantMap.put("description", releasedMetadata.get().getValueMap().containsKey("jcr:description") ? releasedMetadata.get().description().get() : releasedMetadata.get().mAbstract().get());
         variantMap.put("content_type", CONTENT_TYPE);
         variantMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
         variantMap.put("status", "published");
