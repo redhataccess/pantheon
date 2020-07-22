@@ -111,7 +111,7 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                 allNodes.stream()
                         .filter(block -> {
                             try {
-                                return block.getRoles().contains("abstract");
+                                return block.getRoles().contains("pantheon:abstract");
                             } catch (Exception e) {
                                 // Asciidoctor (the Ruby code) throws certain exceptions when properties are not available.
                                 // In this case 'context' might not be available, and so the filter should just
