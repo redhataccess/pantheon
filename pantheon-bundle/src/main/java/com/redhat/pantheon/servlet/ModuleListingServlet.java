@@ -87,7 +87,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         StringBuilder queryBuilder = new StringBuilder()
-                .append("/jcr:root/content/(repositories | modules)//element(*, pant:document)");
+                .append("/jcr:root/content/(repositories | modules)//element(*, pant:queryableDocument)");
 
         List<StringBuilder> queryFilters = newArrayListWithCapacity(5);
 
