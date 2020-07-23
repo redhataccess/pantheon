@@ -3,7 +3,7 @@ package com.redhat.pantheon.servlet;
 import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.helper.PantheonConstants;
-import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.assembly.Assembly;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -47,12 +47,12 @@ public class AssemblyRenderServletTest {
                 .resource("/repo/entities/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
                         "jcr:data", "A generated html string")
                 .commit();
-        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Assembly.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(Module.class),
+                        any(Assembly.class),
                         any(Locale.class),
                         anyString(),
                         anyBoolean(),
@@ -71,7 +71,7 @@ public class AssemblyRenderServletTest {
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
         verify(asciidoctorService).getModuleHtml(
-                any(Module.class),
+                any(Assembly.class),
                 eq(Locale.US),
                 eq("DEFAULT"),
                 eq(false), // not draft
@@ -96,7 +96,7 @@ public class AssemblyRenderServletTest {
                 .resource("/repo/entities/module/en_US/variants/DEFAULT/draft/cached_html/jcr:content",
                         "jcr:data", "A generated html string")
                 .commit();
-        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Assembly.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
         slingContext.request().setParameterMap(
@@ -107,7 +107,7 @@ public class AssemblyRenderServletTest {
         );
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(Module.class),
+                        any(Assembly.class),
                         any(Locale.class),
                         anyString(),
                         anyBoolean(),
@@ -125,7 +125,7 @@ public class AssemblyRenderServletTest {
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
         verify(asciidoctorService).getModuleHtml(
-                any(Module.class),
+                any(Assembly.class),
                 eq(Locale.US),
                 eq("DEFAULT"),
                 eq(true), // draft
@@ -150,7 +150,7 @@ public class AssemblyRenderServletTest {
                 .resource("/repo/entities/module/en_US/variants/variant1/draft/cached_html/jcr:content",
                         "jcr:data", "A generated html string")
                 .commit();
-        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Assembly.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
         slingContext.request().setParameterMap(
@@ -162,7 +162,7 @@ public class AssemblyRenderServletTest {
         );
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(Module.class),
+                        any(Assembly.class),
                         any(Locale.class),
                         anyString(),
                         anyBoolean(),
@@ -181,7 +181,7 @@ public class AssemblyRenderServletTest {
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
         verify(asciidoctorService).getModuleHtml(
-                any(Module.class),
+                any(Assembly.class),
                 eq(Locale.US),
                 eq("variant1"), // non-default variant
                 eq(true), // draft
@@ -201,7 +201,7 @@ public class AssemblyRenderServletTest {
                         "jcr:data", "A generated html string")
                 .resource("/module/en_US/variants/DEFAULT/draft/metadata")
                 .commit();
-        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Assembly.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
         slingContext.request().setParameterMap(
@@ -213,7 +213,7 @@ public class AssemblyRenderServletTest {
         );
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(Module.class),
+                        any(Assembly.class),
                         any(Locale.class),
                         anyString(),
                         anyBoolean(),
@@ -243,7 +243,7 @@ public class AssemblyRenderServletTest {
                         "jcr:data", "A generated html string")
                 .resource("/module/en_US/variants/DEFAULT/draft/metadata")
                 .commit();
-        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Assembly.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/module");
         slingContext.request().setResource(resource);
         slingContext.request().setParameterMap(
@@ -255,7 +255,7 @@ public class AssemblyRenderServletTest {
         );
         lenient().when(
                 asciidoctorService.getModuleHtml(
-                        any(Module.class),
+                        any(Assembly.class),
                         any(Locale.class),
                         anyString(),
                         anyBoolean(),

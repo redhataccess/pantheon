@@ -4,6 +4,7 @@ import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.ProductVersion;
@@ -168,19 +169,6 @@ public class AsciidoctorService {
                         .toChild(sourceContent -> isDraft ? sourceContent.draft() : sourceContent.released())
                         .getAsOptional();
 
-        System.out.println("Base");
-        tellMeAbout(base);
-        System.out.println("Locale");
-        tellMeAbout(base.locale(locale).getOrCreate());
-        System.out.println("Variants");
-        tellMeAbout(base.locale(locale).getOrCreate().variants().getOrCreate());
-        System.out.println("Specific Variant");
-        tellMeAbout(base.locale(locale).getOrCreate().variants().getOrCreate().variant(variantName).getOrCreate());
-        System.out.println("Draft");
-        tellMeAbout(base.locale(locale).getOrCreate().variants().getOrCreate().variant(variantName).getOrCreate().draft().getOrCreate());
-        System.out.println("Metadata");
-        tellMeAbout(base.locale(locale).getOrCreate().variants().getOrCreate().variant(variantName).getOrCreate().draft().getOrCreate().metadata().getOrCreate());
-
         if (!sourceFile.isPresent()) {
             throw new RuntimeException("Cannot find source content for module: " + base.getPath() + ", locale: " + locale
                     + ",variant: " + variantName + ", draft: " + isDraft);
@@ -189,7 +177,9 @@ public class AsciidoctorService {
         // Use a service-level resource resolver to build the module as it will require write access to the resources
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
 
-            Document serviceDocument = SlingModels.getModel(serviceResourceResolver, base.getPath(), Document.class);
+            Class cls = base instanceof Module ? Module.class : Assembly.class;
+            Document serviceDocument = (Document) SlingModels.getModel(serviceResourceResolver, base.getPath(), cls);
+
             DocumentVariant documentVariant = serviceDocument.locale(locale).getOrCreate()
                     .variants().getOrCreate()
                     .variant(variantName).getOrCreate();
@@ -296,11 +286,8 @@ public class AsciidoctorService {
 
                 // add specific extensions for metadata regeneration
                 if (regenMetadata) {
-                    System.out.println("This is what I am passing to the tree processor!!!!");
-                    DocumentMetadata i = documentVersion.metadata().getOrCreate();
-                    tellMeAbout(i);
                     asciidoctor.javaExtensionRegistry().treeprocessor(
-                            new MetadataExtractorTreeProcessor(i));
+                            new MetadataExtractorTreeProcessor(documentVersion.metadata().getOrCreate()));
                 }
 
                 StringBuilder content = new StringBuilder();
@@ -343,28 +330,5 @@ public class AsciidoctorService {
                 .jcrContent().getOrCreate();
         cachedHtmlFile.jcrData().set(html);
         cachedHtmlFile.mimeType().set("text/html");
-    }
-
-    private static void tellMeAbout(Object o) {
-        System.out.println("\nTelling you about!!");
-        System.out.println("o: " + o);
-        System.out.println("o class: " + o.getClass());
-        System.out.println("o type: " + o.getClass().getTypeName());
-        for (TypeVariable<? extends Class<?>> i : o.getClass().getTypeParameters()) {
-            System.out.println("Type parameter! " + i);
-        }
-
-        System.out.println("Class tree:");
-        Class c = o.getClass();
-        while (c != null) {
-            System.out.println(c);
-            c = c.getSuperclass();
-        }
-        System.out.println("done");
-        System.out.println(o.getClass().getCanonicalName());
-        for (Class<?> i : o.getClass().getInterfaces()) {
-            System.out.println("Interface: " + i);
-        }
-        System.out.println("DONE TALKING!");
     }
 }

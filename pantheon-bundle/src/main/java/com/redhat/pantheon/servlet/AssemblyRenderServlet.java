@@ -72,8 +72,6 @@ public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
         boolean reRender = paramValueAsBoolean(request, PantheonConstants.PARAM_RERENDER);
         String variantName = paramValue(request, PantheonConstants.PARAM_VARIANT, DEFAULT_VARIANT_NAME);
 
-        System.out.println("Rerender? " + reRender);
-
         Assembly asm = request.getResource().adaptTo(Assembly.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
 

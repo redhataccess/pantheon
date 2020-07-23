@@ -58,13 +58,11 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
 
     @Override
     public Document process(Document document) {
-        System.out.println("Processing document!");
         List<StructuralNode> allNodes = nodeFlatMap(document).collect(toList());
         extractDocTitle(document);
         extractHeadline(allNodes);
         extractAbstract(allNodes);
         extractModuleType(document);
-        System.out.println("Done processing!");
         return document;
     }
 
@@ -140,33 +138,25 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
      */
     private void extractModuleType(Document document) {
         Object attValue = document.getAttribute(MODULE_TYPE_ATT_NAME);
-        System.out.println("Document Metadata type: " + documentMetadata.getClass().getTypeName());
-//        System.out.println("Document Metadata type: " + documentMetadata.getClass().getTypeParameters()[0]);
-        System.out.println("instanceof module? " + (documentMetadata instanceof ModuleMetadata));
-        Class c = documentMetadata.getClass();
-        while (c != null) {
-            System.out.println(c);
-            c = c.getSuperclass();
+        ModuleMetadata mm = null;
+        if (documentMetadata instanceof ModuleMetadata) {
+            mm = (ModuleMetadata) documentMetadata;
+        } else {
+            return;
         }
-        System.out.println("done");
-        System.out.println(documentMetadata.getClass().getCanonicalName());
-        for (Class<?> i : documentMetadata.getClass().getInterfaces()) {
-            System.out.println("Interface: " + i);
+
+        if(attValue != null) {
+            try {
+                ModuleType moduleType = ModuleType.valueOf(attValue.toString());
+                mm.moduleType().set(moduleType);
+            } catch (IllegalArgumentException e) {
+                mm.moduleType().set(null);
+                log.warn("Invalid argument for " + MODULE_TYPE_ATT_NAME + " asciidoc attribute: "
+                    + attValue.toString());
+            }
+        } else {
+            mm.moduleType().set(null);
         }
-        System.out.println(Proxy.getInvocationHandler(documentMetadata));
-//        if(attValue != null) {
-//            try {
-//                ModuleType moduleType = ModuleType.valueOf(attValue.toString());
-//                documentMetadata.moduleType().set(moduleType);
-//            } catch (IllegalArgumentException e) {
-//                documentMetadata.moduleType().set(null);
-//                log.warn("Invalid argument for " + MODULE_TYPE_ATT_NAME + " asciidoc attribute: "
-//                    + attValue.toString());
-//            }
-//        }
-//        else {
-//            documentMetadata.moduleType().set(null);
-//        }
     }
 
     /**

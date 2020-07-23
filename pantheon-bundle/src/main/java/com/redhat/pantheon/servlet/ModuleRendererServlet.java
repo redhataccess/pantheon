@@ -73,10 +73,6 @@ public class ModuleRendererServlet extends SlingSafeMethodsServlet {
         Locale localeObj = LocaleUtils.toLocale(locale);
 
         Module module = request.getResource().adaptTo(Module.class);
-        System.out.println("Module 1!!!");
-        tellMeAbout(module);
-        Module module2 = SlingModels.getModel(request.getResourceResolver().getResource(module.getPath()), Module.class);
-        tellMeAbout(module2);
 
         Optional<HashableFileResource> moduleVariantSource = module.locale(localeObj)
                 .traverse()
@@ -101,29 +97,6 @@ public class ModuleRendererServlet extends SlingSafeMethodsServlet {
         response.setContentType("text/html");
         Writer w = response.getWriter();
         w.write(html);
-    }
-
-    private static void tellMeAbout(Object o) {
-        System.out.println("\nTelling you about!!");
-        System.out.println("o: " + o);
-        System.out.println("o class: " + o.getClass());
-        System.out.println("o type: " + o.getClass().getTypeName());
-        for (TypeVariable<? extends Class<?>> i : o.getClass().getTypeParameters()) {
-            System.out.println("Type parameter! " + i);
-        }
-
-        System.out.println("Class tree:");
-        Class c = o.getClass();
-        while (c != null) {
-            System.out.println(c);
-            c = c.getSuperclass();
-        }
-        System.out.println("done");
-        System.out.println(o.getClass().getCanonicalName());
-        for (Class<?> i : o.getClass().getInterfaces()) {
-            System.out.println("Interface: " + i);
-        }
-        System.out.println("DONE TALKING!");
     }
 }
 
