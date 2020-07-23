@@ -1,7 +1,5 @@
 package com.redhat.pantheon.model.api;
 
-import com.google.common.base.Functions;
-import com.google.common.base.Suppliers;
 import com.redhat.pantheon.util.function.Memoizer;
 import org.apache.sling.api.resource.Resource;
 
@@ -12,7 +10,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.function.Function;
 
