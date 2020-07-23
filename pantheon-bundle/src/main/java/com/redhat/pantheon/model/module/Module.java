@@ -1,17 +1,14 @@
 package com.redhat.pantheon.model.module;
 
-import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
-import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
+import com.redhat.pantheon.model.document.Document;
 
 import javax.annotation.Nonnull;
 import javax.inject.Named;
 import java.util.Locale;
 import java.util.Optional;
-
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 
 /**
  * The definition of a Module resource in the system.

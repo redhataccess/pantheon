@@ -1,5 +1,6 @@
 package com.redhat.pantheon.model.assembly;
 
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 
@@ -11,8 +12,8 @@ import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 @JcrPrimaryType("pant:assemblyLocale")
 public interface AssemblyLocale extends DocumentLocale {
 
-//    @Override
-//    Child<AssemblyVariants> variants();
+    @Override
+    Child<AssemblyVariants> variants();
 
     @Override
     Assembly getParent();

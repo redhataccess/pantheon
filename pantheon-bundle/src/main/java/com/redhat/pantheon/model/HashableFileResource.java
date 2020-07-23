@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model.module;
+package com.redhat.pantheon.model;
 
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;

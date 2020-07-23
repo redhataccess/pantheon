@@ -2,7 +2,7 @@ package com.redhat.pantheon.model.api;
 
 import com.redhat.pantheon.model.Product;
 import com.redhat.pantheon.model.ProductVersion;
-import com.redhat.pantheon.model.module.Content;
+import com.redhat.pantheon.model.Content;
 import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVariant;

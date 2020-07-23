@@ -2,7 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.helper.PantheonConstants;
-import com.redhat.pantheon.model.api.SlingModels;
+import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.document.SourceContent;
 import com.redhat.pantheon.model.module.*;
 import org.apache.commons.lang3.LocaleUtils;
@@ -22,7 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.TypeVariable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;

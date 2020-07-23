@@ -4,7 +4,7 @@ import com.google.common.hash.HashCode;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.SlingModels;
-import com.redhat.pantheon.model.module.HashableFileResource;
+import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;

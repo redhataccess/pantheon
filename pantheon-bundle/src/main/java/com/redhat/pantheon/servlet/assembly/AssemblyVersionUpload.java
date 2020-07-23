@@ -5,7 +5,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.assembly.AssemblyLocale;
-import com.redhat.pantheon.model.module.HashableFileResource;
+import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.servlet.module.ModuleVersionUpload;
 import org.apache.commons.lang3.LocaleUtils;
