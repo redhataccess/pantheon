@@ -56,6 +56,7 @@ func push2Pantheon(directory string) {
 		var user = os.Getenv("UPLOADER_USER")
 		var password = os.Getenv("UPLOADER_PASSWORD")
 		var server = os.Getenv("PANTHEON_SERVER")
+		log.Printf("Using user %s, directory %s, and pantheon server %s ", user, directory, server)
 		args := []string{"pantheon.py", "push", "--user", user, "--password", password, "--directory", directory, "--server", server}
 		if user == "" || password == "" || server == "" {
 			log.Print("Environment variables not found, using uploader and pantheon.yml settings.")
@@ -63,9 +64,14 @@ func push2Pantheon(directory string) {
 		}
 		//Now call python
 		cmd := exec.Command("python3", args...)
+
 		out, err := cmd.Output()
 
-		log.Print(err)
+		//Print error if only its not null
+		if err != nil {
+			log.Print(err)
+		}
+
 		log.Print(string(out))
 	}
 

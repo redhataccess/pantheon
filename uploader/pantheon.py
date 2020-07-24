@@ -261,7 +261,8 @@ def process_file(path, filetype):
 
         if not args.dry:
             r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
-            _print_response('module', path, r.status_code, r.reason)
+            # print the response content received from Pantheon, not just reason
+            _print_response('module', path, r.status_code, r.text)
     elif isResource:
         if os.path.islink(path):
             target = str(os.readlink(path))
@@ -274,7 +275,8 @@ def process_file(path, filetype):
                 symlinkData['jcr:primaryType'] = 'pant:symlink'
                 symlinkData['pant:target'] = target
                 r = requests.post(url, headers=HEADERS, data=symlinkData, auth=(args.user, pw))
-                _print_response('symlink', path, r.status_code, r.reason)
+                # print the response content received from Pantheon, not just reason
+                _print_response('symlink', path, r.status_code, r.text)
 
         else:
             # determine the file content type, for some common ones
@@ -286,7 +288,8 @@ def process_file(path, filetype):
             files = {path.name: (path.name, open(path, 'rb'), file_type)}
             if not args.dry:
                 r = requests.post(url, headers=HEADERS, files=files, auth=(args.user, pw))
-                _print_response('resource', path, r.status_code, r.reason)
+                # print the response content received from Pantheon, not just reason
+                _print_response('resource', path, r.status_code, r.text)
     elif isAssembly:
         url += '/' + path.name
         logger.debug('url: %s', url)
@@ -298,7 +301,8 @@ def process_file(path, filetype):
 
         if not args.dry:
             r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(args.user, pw))
-            _print_response('assembly', path, r.status_code, r.reason)
+            # print the response content received from Pantheon, not just reason
+            _print_response('assembly', path, r.status_code, r.text)
     logger.debug('')
 
 
@@ -384,11 +388,11 @@ def createVariant(data, path, url, workspace):
     # print(payload)
     if not args.dry:
         r: Response = requests.post(url, headers=HEADERS, data=workspace, auth=(args.user, pw))
-        _print_response('workspace', path, r.status_code, r.reason)
+        _print_response('workspace', path, r.status_code, r.text)
         if r.status_code == 200 or r.status_code == 201:
             url = url + '/' + 'module_variants'
             r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
-            _print_response('module_variants', list(data.keys()), r.status_code, r.reason)
+            _print_response('module_variants', list(data.keys()), r.status_code, r.text)
     logger.debug('')
 
 
