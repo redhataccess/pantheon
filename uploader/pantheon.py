@@ -388,11 +388,11 @@ def createVariant(data, path, url, workspace):
     # print(payload)
     if not args.dry:
         r: Response = requests.post(url, headers=HEADERS, data=workspace, auth=(args.user, pw))
-        _print_response('workspace', path, r.status_code, r.reason)
+        _print_response('workspace', path, r.status_code, r.text)
         if r.status_code == 200 or r.status_code == 201:
             url = url + '/' + 'module_variants'
             r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
-            _print_response('module_variants', list(data.keys()), r.status_code, r.reason)
+            _print_response('module_variants', list(data.keys()), r.status_code, r.text)
     logger.debug('')
 
 
