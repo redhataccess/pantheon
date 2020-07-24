@@ -1,5 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
+import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.ModuleType;
 import org.asciidoctor.ast.Document;
@@ -48,10 +49,10 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
 
     private final Logger log = LoggerFactory.getLogger(MetadataExtractorTreeProcessor.class);
 
-    private final ModuleMetadata moduleMetadata;
+    private final DocumentMetadata documentMetadata;
 
-    public MetadataExtractorTreeProcessor(ModuleMetadata moduleMetadata) {
-        this.moduleMetadata = moduleMetadata;
+    public MetadataExtractorTreeProcessor(DocumentMetadata documentMetadata) {
+        this.documentMetadata = documentMetadata;
     }
 
     @Override
@@ -71,7 +72,7 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
     private void extractDocTitle(Document document) {
         String docTitle = document.getDoctitle();
         if(!isNullOrEmpty(docTitle)) {
-            moduleMetadata.title().set(docTitle);
+            documentMetadata.title().set(docTitle);
         }
     }
 
@@ -94,11 +95,11 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                     }
                 })
                 .findFirst();
-        headlineBlock.ifPresent(headline -> moduleMetadata.headline().set(headline.getTitle()));
+        headlineBlock.ifPresent(headline -> documentMetadata.headline().set(headline.getTitle()));
 
         // if no headline is detected, reset it
         if(!headlineBlock.isPresent()) {
-            moduleMetadata.headline().set(null);
+            documentMetadata.headline().set(null);
         }
     }
 
@@ -120,11 +121,11 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                             }
                         })
                         .findFirst();
-        abstractNode.ifPresent(node -> moduleMetadata.mAbstract().set(node.getContent().toString()));
+        abstractNode.ifPresent(node -> documentMetadata.mAbstract().set(node.getContent().toString()));
 
         // if no abstract is detected, reset if
         if(!abstractNode.isPresent()) {
-            moduleMetadata.mAbstract().set(null);
+            documentMetadata.mAbstract().set(null);
         }
     }
 
@@ -136,18 +137,24 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
      */
     private void extractModuleType(Document document) {
         Object attValue = document.getAttribute(MODULE_TYPE_ATT_NAME);
+        ModuleMetadata mm = null;
+        if (documentMetadata instanceof ModuleMetadata) {
+            mm = (ModuleMetadata) documentMetadata;
+        } else {
+            return;
+        }
+
         if(attValue != null) {
             try {
                 ModuleType moduleType = ModuleType.valueOf(attValue.toString());
-                moduleMetadata.moduleType().set(moduleType);
+                mm.moduleType().set(moduleType);
             } catch (IllegalArgumentException e) {
-                moduleMetadata.moduleType().set(null);
+                mm.moduleType().set(null);
                 log.warn("Invalid argument for " + MODULE_TYPE_ATT_NAME + " asciidoc attribute: "
                     + attValue.toString());
             }
-        }
-        else {
-            moduleMetadata.moduleType().set(null);
+        } else {
+            mm.moduleType().set(null);
         }
     }
 

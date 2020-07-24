@@ -1,6 +1,7 @@
-package com.redhat.pantheon.model.module;
+package com.redhat.pantheon.model;
 
 import com.redhat.pantheon.model.api.*;
+import com.redhat.pantheon.model.module.ModuleVersion;
 
 import javax.inject.Named;
 

@@ -13,8 +13,6 @@ import com.redhat.pantheon.model.document.SourceContent;
 @JcrPrimaryType("pant:moduleLocale")
 public interface ModuleLocale extends DocumentLocale {
 
-    Child<SourceContent> source();
-
     @Override
     Child<ModuleVariants> variants();
 

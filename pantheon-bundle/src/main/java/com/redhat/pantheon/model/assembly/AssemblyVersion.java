@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model.module;
+package com.redhat.pantheon.model.assembly;
 
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
@@ -11,13 +11,13 @@ import com.redhat.pantheon.model.document.DocumentVersion;
 import javax.inject.Named;
 
 /**
- * A {@link SlingModel} which describes the structure for a module version.
- * Contains all the properties and content for the state of a given module at
- * a given time. ModuleVersions should differ in content when part of the same
+ * A {@link SlingModel} which describes the structure for an assembly version.
+ * Contains all the properties and content for the state of a given assembly at
+ * a given time. AssemblyVersions should differ in content when part of the same
  * parent, but this is not validated.
  */
-@JcrPrimaryType("pant:moduleVersion")
-public interface ModuleVersion extends DocumentVersion {
+@JcrPrimaryType("pant:assemblyVersion")
+public interface AssemblyVersion extends DocumentVersion {
 
     @Named("jcr:uuid")
     Field<String> uuid();
@@ -28,11 +28,11 @@ public interface ModuleVersion extends DocumentVersion {
     @Named("cached_html")
     Child<FileResource> cachedHtml();
 
-    Child<ModuleMetadata> metadata();
+    Child<AssemblyMetadata> metadata();
 
     @Named("ack_status")
     Child<AckStatus> ackStatus();
 
     @Override
-    ModuleVariant getParent();
+    AssemblyVariant getParent();
 }

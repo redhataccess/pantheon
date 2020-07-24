@@ -4,12 +4,15 @@ import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.HashableFileResource;
+import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.util.ResourceTraversal;
+import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.document.DocumentVersion;
 import com.redhat.pantheon.model.module.*;
@@ -174,23 +177,25 @@ public class AsciidoctorService {
         // Use a service-level resource resolver to build the module as it will require write access to the resources
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
 
-            Module serviceModule = SlingModels.getModel(serviceResourceResolver, base.getPath(), Module.class);
-            ModuleVariant moduleVariant = serviceModule.locale(locale).getOrCreate()
+            Class cls = base instanceof Module ? Module.class : Assembly.class;
+            Document serviceDocument = (Document) SlingModels.getModel(serviceResourceResolver, base.getPath(), cls);
+
+            DocumentVariant documentVariant = serviceDocument.locale(locale).getOrCreate()
                     .variants().getOrCreate()
                     .variant(variantName).getOrCreate();
 
-            ModuleVersion moduleVersion;
+            DocumentVersion documentVersion;
             if (isDraft) {
-                moduleVersion = moduleVariant.draft().getOrCreate();
+                documentVersion = documentVariant.draft().getOrCreate();
             } else {
-                moduleVersion = moduleVariant.released().getOrCreate();
+                documentVersion = documentVariant.released().getOrCreate();
             }
 
             // process product and version.
             Optional<ProductVersion> productVersion =
-                    moduleVersion.metadata()
+                    documentVersion.metadata()
                             .traverse()
-                            .toRef(ModuleMetadata::productVersion)
+                            .toRef(DocumentMetadata::productVersion)
                             .getAsOptional();
 
             String productName = null;
@@ -200,9 +205,9 @@ public class AsciidoctorService {
 
             Calendar updatedDate = sourceFile.get().created().get();
 
-            Optional<Calendar> publishedDate = moduleVersion.metadata()
+            Optional<Calendar> publishedDate = documentVersion.metadata()
                     .traverse()
-                    .toField(ModuleMetadata::datePublished);
+                    .toField(DocumentMetadata::datePublished);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
 
@@ -282,7 +287,7 @@ public class AsciidoctorService {
                 // add specific extensions for metadata regeneration
                 if (regenMetadata) {
                     asciidoctor.javaExtensionRegistry().treeprocessor(
-                            new MetadataExtractorTreeProcessor(moduleVersion.metadata().getOrCreate()));
+                            new MetadataExtractorTreeProcessor(documentVersion.metadata().getOrCreate()));
                 }
 
                 StringBuilder content = new StringBuilder();
@@ -295,11 +300,11 @@ public class AsciidoctorService {
                         .jcrContent().get()
                         .jcrData().get());
                 html = asciidoctor.convert(content.toString(), ob.get());
-                cacheContent(moduleVersion, html);
+                cacheContent(documentVersion, html);
 
                 // ack_status
                 // TODO: re-evaluate where ack_status node should be created
-                moduleVersion.ackStatus().getOrCreate();
+                documentVersion.ackStatus().getOrCreate();
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);
             }
@@ -320,7 +325,7 @@ public class AsciidoctorService {
      * @param version The specific module version for which to cache the html
      * @param html    The html that was generated
      */
-    private void cacheContent(final ModuleVersion version, final String html) {
+    private void cacheContent(final DocumentVersion version, final String html) {
         FileResource.JcrContent cachedHtmlFile = version.cachedHtml().getOrCreate()
                 .jcrContent().getOrCreate();
         cachedHtmlFile.jcrData().set(html);

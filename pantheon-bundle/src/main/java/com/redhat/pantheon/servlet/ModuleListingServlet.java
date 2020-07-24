@@ -2,8 +2,8 @@ package com.redhat.pantheon.servlet;
 
 import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
+import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.module.*;
-import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -27,7 +27,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
-import static com.redhat.pantheon.model.module.ModuleVariant.DEFAULT_VARIANT_NAME;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static java.util.stream.Collectors.toList;
 

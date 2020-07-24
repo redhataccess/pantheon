@@ -1,9 +1,9 @@
 package com.redhat.pantheon.model.module;
 
-import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
+import com.redhat.pantheon.model.document.Document;
 
 import javax.annotation.Nonnull;
 import javax.inject.Named;

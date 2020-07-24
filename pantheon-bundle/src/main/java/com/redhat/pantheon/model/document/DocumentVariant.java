@@ -33,22 +33,6 @@ public interface DocumentVariant extends WorkspaceChild {
     @Override
     DocumentVariants getParent();
 
-    // TODO Not sure we need this
-    default DocumentVersion getOrCreateVersion(String name) {
-        return child(name, DocumentVersion.class).get();
-    }
-
-    // TODO Not sure we need this
-    default DocumentVersion createNextVersion() {
-        // Generate a new version name
-        return child(generateNextVersionName(), DocumentVersion.class).create();
-    }
-
-    // TODO Not sure we need this
-    default String generateNextVersionName() {
-        return "draft";
-    }
-
     default void releaseDraft() {
         if(draft().get() == null) {
             throw new RuntimeException("There is no draft to release");

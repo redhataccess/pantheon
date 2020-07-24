@@ -3,6 +3,7 @@ package com.redhat.pantheon.servlet.module;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
+import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.document.DocumentVersion;
 import com.redhat.pantheon.model.module.*;

@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model.module;
+package com.redhat.pantheon.model.assembly;
 
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
@@ -13,20 +13,20 @@ import static com.redhat.pantheon.model.document.DocumentVariant.DEFAULT_VARIANT
  * @author Carlos Munoz
  */
 @JcrPrimaryType("sling:OrderedFolder")
-public interface ModuleVariants extends DocumentVariants {
+public interface AssemblyVariants extends DocumentVariants {
 
     // The default variant
     @Named(DEFAULT_VARIANT_NAME)
-    Child<ModuleVariant> defaultVariant();
+    Child<AssemblyVariant> defaultVariant();
 
-    default Stream<ModuleVariant> getVariants() {
-        return this.as(ModuleVariant.class);
+    default Stream<AssemblyVariant> getVariants() {
+        return this.as(AssemblyVariant.class);
     }
 
-    default Child<ModuleVariant> variant(String name) {
-        return child(name, ModuleVariant.class);
+    default Child<AssemblyVariant> variant(String name) {
+        return child(name, AssemblyVariant.class);
     }
 
     @Override
-    ModuleLocale getParent();
+    AssemblyLocale getParent();
 }
