@@ -23,10 +23,6 @@ public interface ModuleVariants extends DocumentVariants {
         return this.as(ModuleVariant.class);
     }
 
-    default ModuleVariant getOrCreateVariant(String name) {
-        return child(name, ModuleVariant.class).get();
-    }
-
     default Child<ModuleVariant> variant(String name) {
         return child(name, ModuleVariant.class);
     }

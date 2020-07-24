@@ -23,10 +23,6 @@ public interface AssemblyVariants extends DocumentVariants {
         return this.as(AssemblyVariant.class);
     }
 
-    default AssemblyVariant getOrCreateVariant(String name) {
-        return child(name, AssemblyVariant.class).get();
-    }
-
     default Child<AssemblyVariant> variant(String name) {
         return child(name, AssemblyVariant.class);
     }

@@ -18,17 +18,6 @@ public interface ModuleVariant extends DocumentVariant {
     @Override
     ModuleVariants getParent();
 
-    // TODO Not sure we need this
-    default ModuleVersion getOrCreateVersion(String name) {
-        return child(name, ModuleVersion.class).get();
-    }
-
-    // TODO Not sure we need this
-    default ModuleVersion createNextVersion() {
-        // Generate a new version name
-        return child(generateNextVersionName(), ModuleVersion.class).create();
-    }
-
     default ModuleLocale getParentLocale() {
         return SlingModels.getModel(this.getParent().getParent(), ModuleLocale.class);
     }
