@@ -189,7 +189,7 @@ cd pantheon-bundle/frontend
 # Install/update node deps
 yarn
 # Build the app
-yarn run build
+yarn build
 # Run React dev server/process
 yarn start
 ```
