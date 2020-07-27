@@ -27,13 +27,16 @@ class App extends Component<any, IAppState> {
 
     const realFetch = self.fetch
     self.fetch = (input: RequestInfo, init?: RequestInit | undefined) => {
-      let newInput = input.toString()
-      if (window.location.host.startsWith('localhost') && input.toString().startsWith('/')) {
-        console.log('newinputtin');
-        newInput = 'http://localhost:8080' + input.toString()
+      let newInput = input.toString();
+      if (
+        window.location.host.startsWith('localhost')
+        // Only changing requests Sling's old port
+        && parseInt(window.location.port) === 8080
+        && input.toString().startsWith('/')) {
+        newInput = 'http://localhost:8181' + input.toString()
       }
       console.log('Development fetch', input, '=>', newInput)
-      return realFetch(newInput, init)
+      return realFetch(newInput, init);
     }
 
     this.state = {
@@ -49,7 +52,7 @@ class App extends Component<any, IAppState> {
     fetch("/system/sling/info.sessionInfo.json")
       .then(response => response.json())
       .then(responseJSON => {
-          this.setState({ 
+          this.setState({
             isAdmin: responseJSON.userID === App.ADMIN_USER ,
             userAuthenticated: responseJSON.userID !== App.ANON_USER,
             username: responseJSON.userID
@@ -65,7 +68,7 @@ class App extends Component<any, IAppState> {
       isNavOpen: !App.thisApp.state.isNavOpen
     })
   }
-  
+
   public render() {
     return (
       <React.Fragment>

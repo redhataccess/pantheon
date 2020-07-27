@@ -12,7 +12,7 @@ Run pantheon Java app
 
 From `GITROOT/`:
 ```bash
-java -Xmx1G -jar pantheon-slingstart/target/pantheon-slingstart-1.0-SNAPSHOT.jar -Dsling.run.modes=oak_mongo -Doak.mongo.uri=mongodb://localhost:27017
+source ~/.pantheon/pantheon_karaf.exports && pantheon-karaf-dist/target/assembly/bin/karaf
 ```
 
 Then in `GITROOT/pantheon-bundle/frontend`:
@@ -21,6 +21,21 @@ yarn # install patternfly-react-seed dependencies
 yarn build # build the project
 yarn start # start the development server
 ```
+
+### Setting a different host name or port for the server
+Copy .env.example to .env and change the values to whatever is preferred. Ports 9000 and 8181 are taken by other parts of Pantheon.
+
+### Warning: Don't use env on port 9000
+
+Use the URL that should pop in a browser, it's also listed in the CLI formatted like this:
+```bash
+ -----------------------------
+ Local: http://localhost:9595/
+ -----------------------------
+```
+
+Which is also the default environment URL, unless a .env sets it to something else.
+
 ## Development Scripts
 
 Install development/build dependencies
