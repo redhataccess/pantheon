@@ -396,13 +396,13 @@ def createVariant(data, path, url, workspace):
             _print_response('module_variants', list(data.keys()), r.status_code, r.text)
             if r.status_code == 200 or r.status_code == 201:
                 # indicate that variant have been created
-                return True
+                return None
             else:
                 # indicate that variant have not been created
-                return False
+                return r.text
         else:
             # indicate that workspace have not been created
-            False
+            return r.text
     logger.debug('')
 
 
@@ -492,9 +492,9 @@ if len(config.keys()) > 0 and 'repository' in config:
         variants = []
     _info('Using ' + mode + ': ' + repository)
     print('--------------')
-
-    if not process_workspace(repository):
-        exit('Variants could not be created. Hence, exiting.')
+    err = process_workspace(repository)
+    if err is not None:
+        exit('Exiting because either workspace or variant could not be created because of '+ err)
     attribute_files = []
     if variants:
         attribute_files = process_attributes_as_resources(variants)
