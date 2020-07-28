@@ -344,7 +344,7 @@ def process_workspace(path):
 
     else:
         data = {'DEFAULT': {}}
-    createVariant(data, path, url, workspace)
+    return createVariant(data, path, url, workspace)
 
 
 """
@@ -391,8 +391,18 @@ def createVariant(data, path, url, workspace):
         _print_response('workspace', path, r.status_code, r.text)
         if r.status_code == 200 or r.status_code == 201:
             url = url + '/' + 'module_variants'
+
             r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(args.user, pw))
             _print_response('module_variants', list(data.keys()), r.status_code, r.text)
+            if r.status_code == 200 or r.status_code == 201:
+                # indicate that variant have been created
+                return None
+            else:
+                # indicate that variant have not been created
+                return r.text
+        else:
+            # indicate that workspace have not been created
+            return r.text
     logger.debug('')
 
 
@@ -482,8 +492,9 @@ if len(config.keys()) > 0 and 'repository' in config:
         variants = []
     _info('Using ' + mode + ': ' + repository)
     print('--------------')
-
-    process_workspace(repository)
+    err = process_workspace(repository)
+    if err is not None:
+        exit('Exiting because either workspace or variant could not be created because of '+ err)
     attribute_files = []
     if variants:
         attribute_files = process_attributes_as_resources(variants)
