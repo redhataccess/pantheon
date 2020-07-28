@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet.assembly;
 
 import com.google.common.hash.HashCode;
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.jcr.JcrResources;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.assembly.AssemblyLocale;
@@ -81,7 +82,7 @@ public class AssemblyVersionUpload extends AbstractPostOperation {
                     .draft().getOrCreate();
 
             // Check if the content is the same as what is hashed already
-            HashCode incomingSrcHash = hash(asciidocContent);
+            HashCode incomingSrcHash = JcrResources.hash(asciidocContent);
             String storedSrcHash = draftSrc.hash().get();
             // If the source content is the same, don't update it
             if (incomingSrcHash.toString().equals(storedSrcHash)) {

@@ -84,6 +84,12 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        assertNotNull(
+                module.locale(LocaleUtils.toLocale("es_ES")).get()
+                        .source().get()
+                        .draft().get()
+                        .hash().get()
+        );
         verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
@@ -128,6 +134,12 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
+        assertNotNull(
+                module.locale(Locale.SIMPLIFIED_CHINESE).get()
+                        .source().get()
+                        .draft().get()
+                        .hash().get()
+        );
         verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
@@ -171,6 +183,12 @@ class ModuleVersionUploadTest {
                         .draft().get()
                         .jcrContent().get()
                         .jcrData().get()
+        );
+        assertNotNull(
+                module.locale(Locale.SIMPLIFIED_CHINESE).get()
+                        .source().get()
+                        .draft().get()
+                        .hash().get()
         );
         verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }

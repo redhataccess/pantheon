@@ -3,11 +3,12 @@ package com.redhat.pantheon.servlet.module;
 import com.google.common.hash.HashCode;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.jcr.JcrResources;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.HashableFileResource;
-import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.ModuleType;
 import com.redhat.pantheon.servlet.ServletUtils;
 import org.apache.commons.lang3.LocaleUtils;
@@ -26,14 +27,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static com.redhat.pantheon.jcr.JcrResources.hash;
 
 /**
  * Post operation to add a new Module version to the system.
@@ -71,17 +73,14 @@ public class ModuleVersionUpload extends AbstractPostOperation {
 
         try {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
-            String asciidocContent = ServletUtils.paramValue(request, "asciidoc");
-
             String encoding = request.getCharacterEncoding();
-            if (encoding != null) {
-                asciidocContent = new String(asciidocContent.getBytes(encoding), StandardCharsets.UTF_8);
+            if (encoding == null) {
+                encoding = StandardCharsets.UTF_8.name();
             }
 
             String path = request.getResource().getPath();
 
             log.debug("Pushing new module version at: " + path + " with locale: " + locale);
-            log.trace("and content: " + asciidocContent);
             int responseCode = HttpServletResponse.SC_OK;
 
             // Try to find the module
@@ -106,14 +105,31 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                     .draft().getOrCreate();
 
             // Check if the content is the same as what is hashed already
-            HashCode incomingSrcHash = hash(asciidocContent);
+            HashCode incomingSrcHash =
+                ServletUtils.handleParamAsStream(request, "asciidoc",
+                        inputStream -> {
+                            try {
+                                return JcrResources.hash(inputStream);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
             String storedSrcHash = draftSrc.hash().get();
             // If the source content is the same, don't update it
             if(incomingSrcHash.toString().equals( storedSrcHash )) {
                 responseCode = HttpServletResponse.SC_NOT_MODIFIED;
             } else {
-                draftSrc.jcrContent().getOrCreate()
-                        .jcrData().set(asciidocContent);
+                ServletUtils.handleParamAsStream(request, "asciidoc", encoding,
+                        inputStream -> {
+                            Session session = resolver.adaptTo(Session.class);
+                            // TODO this magic string needs to be here for now in order to be able
+                            //  to assign InputStreams to fields
+                            draftSrc.jcrContent().getOrCreate()
+                                    .field("jcr:data", InputStream.class)
+                                    .set(inputStream);
+                            return null;
+                        });
+                draftSrc.hash().set( incomingSrcHash.toString() );
                 draftSrc.jcrContent().getOrCreate()
                         .mimeType().set("text/x-asciidoc");
 
