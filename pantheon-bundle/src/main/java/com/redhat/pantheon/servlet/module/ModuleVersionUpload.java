@@ -122,10 +122,8 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                 ServletUtils.handleParamAsStream(request, "asciidoc", encoding,
                         inputStream -> {
                             Session session = resolver.adaptTo(Session.class);
-                            // TODO this magic string needs to be here for now in order to be able
-                            //  to assign InputStreams to fields
                             draftSrc.jcrContent().getOrCreate()
-                                    .field("jcr:data", InputStream.class)
+                                    .jcrData().toFieldType(InputStream.class)
                                     .set(inputStream);
                             return null;
                         });

@@ -3,6 +3,7 @@ package com.redhat.pantheon.model.api;
 import org.apache.sling.api.resource.ModifiableValueMap;
 
 import javax.annotation.Nullable;
+import java.io.InputStream;
 
 /**
  * Default implementation of the {@link Field} interface.
@@ -62,5 +63,17 @@ public class FieldImpl<T> implements Field<T> {
         else {
             mvm.put(name, value);
         }
+    }
+
+    /**
+     * Casts this field to a different contained type. Not all conversions may work and the
+     * resulting field might throw exceptions when reading or updating the value.
+     * @param newFieldType The new field type to convert the field to.
+     * @param <R>
+     * @return A new field which produces/consumes values of a different type
+     */
+    @Override
+    public <R> Field<R> toFieldType(Class<R> newFieldType) {
+        return this.owner.field(getName(), newFieldType);
     }
 }
