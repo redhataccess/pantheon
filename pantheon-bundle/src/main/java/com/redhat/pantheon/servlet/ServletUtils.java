@@ -180,7 +180,7 @@ public final class ServletUtils {
                                             @Nonnull final Function<InputStream, R> handler)
             throws IOException {
         ReaderInputStream ris;
-        try (InputStream stream = request.getRequestParameterMap().getValue(paramName).getInputStream()) {
+        try (InputStream stream = request.getRequestParameter(paramName).getInputStream()) {
             ris = new ReaderInputStream(new InputStreamReader(stream), StandardCharsets.UTF_8);
         }
         return handler.apply(ris);
