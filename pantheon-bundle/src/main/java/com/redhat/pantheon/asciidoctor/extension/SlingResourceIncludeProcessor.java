@@ -4,6 +4,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.helper.Symlinks;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
+import com.redhat.pantheon.model.assembly.TableOfContents;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.document.SourceContent;
@@ -15,6 +16,9 @@ import org.asciidoctor.extension.PreprocessorReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
@@ -26,6 +30,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
 
     private ResourceResolver resolver;
     private Resource parent;
+    private TableOfContents toc = new TableOfContents();
 
     public SlingResourceIncludeProcessor(final Resource resource) {
         this.resolver = resource.getResourceResolver();
@@ -65,6 +70,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             // Included resource might be a plain file or another module
             if( includedResourceAsModel.field(JCR_PRIMARYTYPE, String.class).get().equals("pant:module") ) {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
+                toc.addEntry((String) attributes.get("leveloffset"), module);
                 // TODO, right now only default locale and latest (draft) version of the module are used
                 content = traverseFrom(module)
                         .toChild(module1 -> module.locale(GlobalConfig.DEFAULT_MODULE_LOCALE))
@@ -101,5 +107,9 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             return null;
         }
         return resource;
+    }
+
+    public TableOfContents getTableOfContents() {
+        return toc;
     }
 }

@@ -6,6 +6,7 @@ import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.assembly.Assembly;
+import com.redhat.pantheon.model.assembly.TableOfContents;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.ProductVersion;
@@ -279,8 +280,8 @@ public class AsciidoctorService {
             String html = "";
             try {
                 // extensions needed to generate a module's html
-                asciidoctor.javaExtensionRegistry().includeProcessor(
-                        new SlingResourceIncludeProcessor(base));
+                SlingResourceIncludeProcessor includeProcessor = new SlingResourceIncludeProcessor(base);
+                asciidoctor.javaExtensionRegistry().includeProcessor(includeProcessor);
                 asciidoctor.javaExtensionRegistry().postprocessor(
                         new HtmlModulePostprocessor(base));
 
@@ -300,6 +301,9 @@ public class AsciidoctorService {
                         .jcrContent().get()
                         .jcrData().get());
                 html = asciidoctor.convert(content.toString(), ob.get());
+                for (TableOfContents.Entry m : includeProcessor.getTableOfContents().getEntries()) {
+                    System.out.println("Resolved module " + m.getIndex() + ": " + m.getModule().getPath() + "; levelOffset: " + m.getLevelOffset());
+                }
                 cacheContent(documentVersion, html);
 
                 // ack_status
