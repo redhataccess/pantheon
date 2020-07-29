@@ -2,15 +2,27 @@ package com.redhat.pantheon.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.icu.util.ULocale;
+import org.apache.commons.io.input.ReaderInputStream;
+import org.apache.sling.api.SlingHttpServletRequest;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Writer;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -125,6 +137,56 @@ public final class ServletUtils {
     }
 
     /**
+     * Performs a function over the contents of a request parameter using an {@link InputStream}.
+     * The InputStream is created, processed and then discarded internally. This particular method
+     * parses the content as a character stream using the provided character set encoding.
+     * @param request The Sling servlet request.
+     * @param paramName The name of the parameter to extract from the servlet request.
+     * @param charsetEncoding The character encoding to use when parsing the stream.
+     * @param handler The handler function. Whatever this function returns is also returned by this
+     *                method.
+     * @param <R>
+     * @return The result of processing the stream's content.
+     * @throws IOException
+     */
+    public static <R> R handleParamAsStream(@Nonnull final SlingHttpServletRequest request,
+                                            @Nonnull final String paramName,
+                                            @Nonnull final String charsetEncoding,
+                                            @Nonnull final Function<InputStream, R> handler)
+            throws IOException {
+        return handleParamAsStream(request, paramName,
+                inputStream -> {
+                    try(ReaderInputStream ris = new ReaderInputStream(new InputStreamReader(inputStream), charsetEncoding)) {
+                        return handler.apply(ris);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+    }
+
+    /**
+     * Performs a function over the contents of a request parameter using an {@link InputStream}.
+     * The InputStream is created, processed and then discarded internally.
+     * @param request The Sling servlet request.
+     * @param paramName The name of the parameter to extract from the servlet request.
+     * @param handler The handler function. Whatever this function returns is also returned by this
+     *                method.
+     * @param <R>
+     * @return The result of processing the stream's content.
+     * @throws IOException
+     */
+    public static <R> R handleParamAsStream(@Nonnull final SlingHttpServletRequest request,
+                                            @Nonnull final String paramName,
+                                            @Nonnull final Function<InputStream, R> handler)
+            throws IOException {
+        ReaderInputStream ris;
+        try (InputStream stream = request.getRequestParameter(paramName).getInputStream()) {
+            ris = new ReaderInputStream(new InputStreamReader(stream), StandardCharsets.UTF_8);
+        }
+        return handler.apply(ris);
+    }
+
+    /**
      * Transforms the locale to an IETF BCP 47 language tag, which is a common URL friendly tag.
      * @param locale The locale object to convert
      * @return The appropriate IETF BCP 47 language tag for the provided locale.
@@ -176,35 +238,5 @@ public final class ServletUtils {
                     + pathRegexp);
         }
         return matcher;
-    }
-
-    /**
-     * @param input
-     * @return
-     */
-    public static String getHash(String input) {
-        try {
-            // getInstance() method is called with algorithm SHA-512
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
-
-            // digest() method is called
-            // to calculate message digest of the input string
-            // returned as array of byte
-            byte[] messageDigest = md.digest(input.getBytes());
-
-            // Convert byte array into signum representation
-            BigInteger no = new BigInteger(1, messageDigest);
-
-            // Convert message digest into hex value
-            String hashtext = no.toString(16);
-
-            // return the HashText
-            return hashtext;
-        }
-
-        // For specifying wrong message digest algorithms
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
