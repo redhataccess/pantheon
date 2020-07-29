@@ -7,6 +7,7 @@ import { ProductListing } from '@app/productListing'
 import { Login } from '@app/login'
 import { GitImport } from './gitImport'
 import { ModuleDisplay } from '@app/moduleDisplay'
+import { AssemblyDisplay } from '@app/assemblyDisplay'
 import { IAppState } from './app'
 
 interface IAppRoute {
@@ -30,14 +31,14 @@ class Routes extends Component<IAppState> {
         path: '/search',
         requiresLogin: false
       },
-      {
-        component: (routeProps) => <Module />,
-        exact: true,
-        icon: null,
-        label: '',
-        path: '/module',
-        requiresLogin: true
-      },
+      // {
+      //   component: (routeProps) => <Module />,
+      //   exact: true,
+      //   icon: null,
+      //   label: '',
+      //   path: '/module',
+      //   requiresLogin: true
+      // },
       {
         component: (routeProps) => <Product />,
         exact: true,
@@ -75,7 +76,15 @@ class Routes extends Component<IAppState> {
         exact: false,
         icon: null,
         label: '', // Empty because we are using the Brand component to render the text.
-        path: '/:data',
+        path: '/module/:data',
+        requiresLogin: true
+      },
+      {
+        component: (routeProps) => <AssemblyDisplay {...routeProps} />,
+        exact: false,
+        icon: null,
+        label: '', // Empty because we are using the Brand component to render the text.
+        path: '/assembly/:data',
         requiresLogin: true
       }
     ]
