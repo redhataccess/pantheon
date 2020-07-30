@@ -91,7 +91,8 @@ public class PublishDraftVersion extends AbstractPostOperation {
 
     @Override
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws  RepositoryException{
-        try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
+        try {
+            ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
             Module module = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Module.class);
             Locale locale = getLocale(request);
             String variant = getVariant(request);
