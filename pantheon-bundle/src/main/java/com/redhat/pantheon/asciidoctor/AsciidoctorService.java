@@ -5,18 +5,19 @@ import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.HashableFileResource;
-import com.redhat.pantheon.model.assembly.Assembly;
-import com.redhat.pantheon.model.assembly.TableOfContents;
-import com.redhat.pantheon.model.document.Document;
-import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.util.ResourceTraversal;
+import com.redhat.pantheon.model.assembly.Assembly;
+import com.redhat.pantheon.model.assembly.AssemblyVersion;
+import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.document.DocumentVersion;
-import com.redhat.pantheon.model.module.*;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.jackrabbit.oak.commons.PathUtils;
@@ -301,8 +302,8 @@ public class AsciidoctorService {
                         .jcrContent().get()
                         .jcrData().get());
                 html = asciidoctor.convert(content.toString(), ob.get());
-                for (TableOfContents.Entry m : includeProcessor.getTableOfContents().getEntries()) {
-                    System.out.println("Resolved module " + m.getIndex() + ": " + m.getModule().getPath() + "; levelOffset: " + m.getLevelOffset());
+                if (documentVersion instanceof AssemblyVersion) {
+                    ((AssemblyVersion) documentVersion).consumeTableOfContents(includeProcessor.getTableOfContents());
                 }
                 cacheContent(documentVersion, html);
 
