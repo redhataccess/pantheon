@@ -310,7 +310,7 @@ class Versions extends Component<IProps, IState> {
                             <div className='notification-container'>
                                 <Alert
                                     variant='warning'
-                                    title='All fields are required.'
+                                    title=''
                                     action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                 />
                                 <br />

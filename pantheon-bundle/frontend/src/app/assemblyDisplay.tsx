@@ -175,11 +175,11 @@ class AssemblyDisplay extends Component<any, any, any> {
     private fetchModuleDetails = async(data) => {
         await this.getVariantParam()
         this.setState({
-            modulePath: data.location.pathname,
-            releasePath: "/content" + data.location.pathname + ".preview?variant=" + this.state.variant
+            modulePath: data.location.pathname.substring(9),
+            releasePath: "/content" + data.location.pathname.substring(9) + ".preview?variant=" + this.state.variant
         })
 
-        fetch(data.location.pathname + '/en_US.harray.4.json')
+        fetch(data.location.pathname.substring(9) + '/en_US.harray.4.json')
             .then(response => response.json())
             .then(responseJSON => {
                 // console.log('fetch results:', responseJSON)
@@ -237,6 +237,8 @@ class AssemblyDisplay extends Component<any, any, any> {
     }
 
     private getVersionUUID = (path) => {
+        // Remove /assembly from path
+        path = path.substring(9)
         // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + "/en_US.harray.4.json"
         fetch(path)

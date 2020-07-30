@@ -170,8 +170,6 @@ class Search extends Component<IAppState, ISearchState> {
                         onChange={this.handleDeleteCheckboxChange}
                         key={'checked_' + key}
                       />}
-                      {console.log("[search] data=>", data)}
-                      {console.log("[search] key=>", key)}                 
                     <DataListItemCells key={"cells_" + key}
                       dataListCells={[
                         <DataListCell key={"title_" + key} width={2}>
