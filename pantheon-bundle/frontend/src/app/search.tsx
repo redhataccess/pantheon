@@ -80,6 +80,12 @@ class Search extends Component<IAppState, ISearchState> {
     this.doSearch()
   }
 
+  public searchResults() {
+    if (this.props.userAuthenticated && !this.state.isEmptyResults) {
+      return
+    }
+  }
+
   public render() {
     const { isEmptyResults } = this.state;
 
@@ -121,16 +127,24 @@ class Search extends Component<IAppState, ISearchState> {
                   <DataListItemCells
                     dataListCells={[
                       <DataListCell width={2} key="title">
-                        <span className="sp-prop-nosort" id="span-name" aria-label="column name">Title</span>
+                        <span className="sp-prop-nosort" id="span-name" aria-label="column name">
+                          Title
+                        </span>
                       </DataListCell>,
                       <DataListCell key="resource source">
-                        <span className="sp-prop-nosort" id="span-source-type">Published</span>
+                        <span className="sp-prop-nosort" id="span-source-type">
+                          Published
+                        </span>
                       </DataListCell>,
                       <DataListCell key="source name">
-                        <span className="sp-prop-nosort" id="span-source-name">Draft Uploaded</span>
+                        <span className="sp-prop-nosort" id="span-source-name">
+                          Draft Uploaded
+                        </span>
                       </DataListCell>,
                       <DataListCell key="upload time">
-                        <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">Module Type</span>
+                        <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">
+                          Module Type
+                        </span>
                       </DataListCell>,
                     ]}
                   />
@@ -156,7 +170,7 @@ class Search extends Component<IAppState, ISearchState> {
                       </div></LevelItem>
                     <LevelItem />
                   </Level>
-                )}                            
+                )}
                 {!this.state.displayLoadIcon && (this.state.results.map((data, key) => (
                   <DataListItemRow id="data-rows" key={key}>
                     {this.props.userAuthenticated && !this.state.isEmptyResults &&
@@ -181,11 +195,11 @@ class Search extends Component<IAppState, ISearchState> {
                             <a href={"/" + data['pant:transientPath'] + ".preview" + "?variant=" + data.variant} target="_blank">{data["jcr:title"]}</a>}
                           {!this.props.userAuthenticated && data["jcr:title"] === '-' && data["pant:transientPath"] &&
                             <a href={"/" + data['pant:transientPath'] + ".preview" + "?variant=" + data.variant} target="_blank">{data["pant:transientPath"]}</a>}
-                        </DataListCell>,      
-                        <DataListCell key={"published-date_" + key}>                          
+                        </DataListCell>,
+                        <DataListCell key={"published-date_" + key}>
                           <span>{data[Fields.PANT_PUBLISHED_DATE]}</span>
                         </DataListCell>,
-                        <DataListCell key={"date-uploaded_" + key}>                              
+                        <DataListCell key={"date-uploaded_" + key}>
                           <span>{data[Fields.PANT_DATE_UPLOADED]}</span>
                         </DataListCell>,
                         <DataListCell key={"module-type_" + key}>
@@ -304,7 +318,7 @@ class Search extends Component<IAppState, ISearchState> {
       </React.Fragment>
     );
   }
-  
+
   private handleSelectAll = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
     const newResults: any[] = []
     this.state.results.map(dataitem => {
@@ -375,19 +389,19 @@ class Search extends Component<IAppState, ISearchState> {
       .then(responseJSON => {
         this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })
       })
-      .then(() => {        
+      .then(() => {
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
             displayLoadIcon: false,
             isEmptyResults: true,
             selectAllCheckValue: false
           })
-        } else {          
+        } else {
           this.setState({
             displayLoadIcon: false,
-            isEmptyResults: false,            
+            isEmptyResults: false,
             selectAllCheckValue: false,
-          })          
+          })
         }
       })
       .catch(error => {
@@ -396,7 +410,7 @@ class Search extends Component<IAppState, ISearchState> {
           displayLoadIcon: false,
           isSearchException: true
         },()=>{ console.log("[doSearch] error ", error) })
-        
+
       })
   }
 

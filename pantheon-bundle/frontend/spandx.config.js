@@ -37,6 +37,11 @@ module.exports = {
       host: {
         local: "http://localhost:8181"
       }
+    },
+    "/j_security_check": {
+      host: {
+        local: "http://localhost:8181"
+      }
     }
     // Route a URL path to an app server, and watch local files for changes.
     // This is most useful for putting a local development at a certain
