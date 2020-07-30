@@ -19,6 +19,9 @@ public interface AssemblyPage extends WorkspaceChild {
     @Named("pant:moduleUuid")
     Reference<Module> module();
 
+    @Named("pant:leveloffset")
+    Field<String> leveloffset();
+
     @Named("cached_html")
     Child<FileResource> cachedHtml();
 }

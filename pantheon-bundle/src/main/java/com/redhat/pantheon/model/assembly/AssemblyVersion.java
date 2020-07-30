@@ -57,6 +57,7 @@ public interface AssemblyVersion extends DocumentVersion {
                 p.title().set(title);
             }
             p.module().set(entry.getModule().uuid().get());
+            p.leveloffset().set(entry.getLevelOffset());
         }
     }
 }
