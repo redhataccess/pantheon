@@ -86,7 +86,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
         }
         log.debug("Operation Publishinging draft version,  completed");
         long elapseTime = System.currentTimeMillis() - startTime;
-        log.info("Total elapsed http request/response time in milliseconds: " + elapseTime);
+        log.debug("Total elapsed http request/response time in milliseconds: " + elapseTime);
     }
 
     @Override
@@ -102,16 +102,19 @@ public class PublishDraftVersion extends AbstractPostOperation {
             if (!versionToRelease.isPresent()) {
                 response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                         "The module doesn't have a draft version to be released");
+                return;
             } else if (versionToRelease.get().metadata().getOrCreate().productVersion().get() == null
                     || versionToRelease.get().metadata().getOrCreate().productVersion().get().isEmpty()) {
                 // Check if productVersion is set
                 response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                         "The version to be released doesn't have productVersion metadata");
+                return;
             } else if (versionToRelease.get().metadata().getOrCreate().urlFragment().get() == null
                     || versionToRelease.get().metadata().getOrCreate().urlFragment().get().isEmpty()) {
                 // Check if urlFragment is set
                 response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                         "The version to be released doesn't have urlFragment metadata");
+                return;
             } else {
                 // Draft becomes the new released version
                 ModuleVariant moduleVariant = traverseFrom(module)
@@ -150,6 +153,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
                 if(serviceResourceResolver.hasChanges()) {
                     serviceResourceResolver.commit();
                 }
+                return;
             }
         }catch (Exception ex){
             throw new RepositoryException(ex.getMessage());

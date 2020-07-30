@@ -93,7 +93,7 @@ public class UnpublishVersion extends AbstractPostOperation {
         }
         log.debug("Operation UnPublishinging draft version,  completed");
         long elapseTime = System.currentTimeMillis() - startTime;
-        log.info("Total elapsed http request/response time in milliseconds: " + elapseTime);
+        log.debug("Total elapsed http request/response time in milliseconds: " + elapseTime);
     }
 
     @Override
@@ -110,6 +110,7 @@ public class UnpublishVersion extends AbstractPostOperation {
             if(!foundVariant.isPresent()) {
                 response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                         "The module is not released (published)");
+                return;
             } else {
                 foundVariant.get()
                         .getParent()
@@ -146,6 +147,7 @@ public class UnpublishVersion extends AbstractPostOperation {
                     serviceResourceResolver.commit();
                 }
             }
+            return;
         }catch (Exception ex){
             throw new RepositoryException(ex.getMessage());
         }
