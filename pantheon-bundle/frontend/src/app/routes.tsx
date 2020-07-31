@@ -31,14 +31,6 @@ class Routes extends Component<IAppState> {
         path: '/search',
         requiresLogin: false
       },
-      // {
-      //   component: (routeProps) => <Module />,
-      //   exact: true,
-      //   icon: null,
-      //   label: '',
-      //   path: '/module',
-      //   requiresLogin: true
-      // },
       {
         component: (routeProps) => <Product />,
         exact: true,

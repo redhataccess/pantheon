@@ -20,3 +20,9 @@ export class JcrTypes {
 export class SlingTypes {
     public static PRODUCT_VERSION = 'pantheon/productVersion'
 }
+
+// tslint:disable-next-line: max-classes-per-file
+export class PathPrefixes {
+    public static MODULE_PATH_PREFIX = '/module'
+    public static ASSEBMLY_PATH_PREFIX = '/assembly'
+}

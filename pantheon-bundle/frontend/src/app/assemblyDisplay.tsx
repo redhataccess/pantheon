@@ -6,7 +6,7 @@ import {
     DataListCell, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core'
 import { Versions } from '@app/versions'
-import { Fields } from '@app/Constants'
+import { Fields, PathPrefixes } from '@app/Constants'
 import { continueStatement } from '@babel/types';
 
 class AssemblyDisplay extends Component<any, any, any> {
@@ -83,7 +83,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                         <LevelItem>{}</LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>
-                            <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
+                        <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
                         </LevelItem>
                     </Level>
                     <br />
@@ -157,7 +157,7 @@ class AssemblyDisplay extends Component<any, any, any> {
         )
     }
     private generateDraftHtml = (pathname: any) => {
-        const docPath = '/content' + pathname + '.preview?draft=true&variant=' + this.state.variant
+        const docPath = '/content' + pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length) + '.preview?draft=true&variant=' + this.state.variant
 
         // console.log('Preview path: ', docPath)
         return window.open(docPath)
@@ -174,12 +174,13 @@ class AssemblyDisplay extends Component<any, any, any> {
 
     private fetchModuleDetails = async(data) => {
         await this.getVariantParam()
+        const path = data.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
         this.setState({
-            modulePath: data.location.pathname.substring(9),
-            releasePath: "/content" + data.location.pathname.substring(9) + ".preview?variant=" + this.state.variant
+            modulePath: path,
+            releasePath: "/content" + path + ".preview?variant=" + this.state.variant
         })
 
-        fetch(data.location.pathname.substring(9) + '/en_US.harray.4.json')
+        fetch(path + '/en_US.harray.4.json')
             .then(response => response.json())
             .then(responseJSON => {
                 // console.log('fetch results:', responseJSON)
@@ -238,7 +239,7 @@ class AssemblyDisplay extends Component<any, any, any> {
 
     private getVersionUUID = (path) => {
         // Remove /assembly from path
-        path = path.substring(9)
+        path = path.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
         // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + "/en_US.harray.4.json"
         fetch(path)
