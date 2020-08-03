@@ -7,8 +7,10 @@ import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.document.DocumentVersion;
 import com.redhat.pantheon.model.module.*;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
@@ -18,6 +20,8 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
@@ -47,10 +51,14 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 public class UnpublishVersion extends AbstractPostOperation {
 
     private Events events;
+    private ServiceResourceResolverProvider serviceResourceResolverProvider;
+    private Logger logger = LoggerFactory.getLogger(PublishDraftVersion.class);
 
     @Activate
-    public UnpublishVersion(@Reference Events events) {
+    public UnpublishVersion(@Reference Events events,
+                            @Reference ServiceResourceResolverProvider serviceResourceResolverProvider) {
         this.events = events;
+        this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
 
     private Module getModule(SlingHttpServletRequest request) {
@@ -67,6 +75,8 @@ public class UnpublishVersion extends AbstractPostOperation {
 
     @Override
     public void run(SlingHttpServletRequest request, PostResponse response, SlingPostProcessor[] processors) {
+        logger.debug("Operation UnPublishinging draft version started");
+        long startTime = System.currentTimeMillis();
         super.run(request, response, processors);
         if (response.getError() == null) {
             // call the extension point
@@ -81,52 +91,65 @@ public class UnpublishVersion extends AbstractPostOperation {
             // TODO We need to change the event so that the right variant is processed
             events.fireEvent(new ModuleVersionUnpublishedEvent(moduleVersion), 15);
         }
+        log.debug("Operation UnPublishinging draft version,  completed");
+        long elapseTime = System.currentTimeMillis() - startTime;
+        log.debug("Total elapsed http request/response time in milliseconds: " + elapseTime);
     }
 
     @Override
-    protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) {
-        Locale locale = getLocale(request);
-        Module module = getModule(request);
-        String variant = getVariant(request);
+    protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException{
+        try {
+            ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
+            Module module = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Module.class);
+            Locale locale = getLocale(request);
+            String variant = getVariant(request);
 
-        // Get the released version, there should be one
-        Optional<? extends DocumentVersion> foundVariant = module.getReleasedVersion(locale, variant);
+            // Get the released version, there should be one
+            Optional<? extends DocumentVersion> foundVariant = module.getReleasedVersion(locale, variant);
 
-        if(!foundVariant.isPresent()) {
-            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
-                    "The module is not released (published)");
-        } else {
-            foundVariant.get()
-                    .getParent()
-                    .revertReleased();
-
-            changes.add(Modification.onModified(module.getPath()));
-            // Change source/released to source/draft
-            Optional<HashableFileResource> draftSource = traverseFrom(module)
-                    .toChild(m -> module.locale(locale))
-                    .toChild(ModuleLocale::source)
-                    .toChild(sourceContent -> sourceContent.draft())
-                    .getAsOptional();
-            FileResource releasedSource = traverseFrom(module)
-                    .toChild(m -> module.locale(locale))
-                    .toChild(ModuleLocale::source)
-                    .toChild(sourceContent -> sourceContent.released())
-                    .get();
-            if (draftSource.isPresent()) {
-                // Delete released
-                try {
-                    releasedSource.delete();
-                } catch (PersistenceException e) {
-                    throw new RuntimeException("Failed to delete source/released: " + releasedSource.getPath());
-                }
-
+            if(!foundVariant.isPresent()) {
+                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
+                        "The module is not released (published)");
+                return;
             } else {
-                try {
-                    rename(releasedSource, "draft");
-                } catch (RepositoryException e) {
-                    throw new RuntimeException("Cannot rename source/released to source/draft: " + releasedSource.getPath());
+                foundVariant.get()
+                        .getParent()
+                        .revertReleased();
+
+                changes.add(Modification.onModified(module.getPath()));
+                // Change source/released to source/draft
+                Optional<HashableFileResource> draftSource = traverseFrom(module)
+                        .toChild(m -> module.locale(locale))
+                        .toChild(ModuleLocale::source)
+                        .toChild(sourceContent -> sourceContent.draft())
+                        .getAsOptional();
+                FileResource releasedSource = traverseFrom(module)
+                        .toChild(m -> module.locale(locale))
+                        .toChild(ModuleLocale::source)
+                        .toChild(sourceContent -> sourceContent.released())
+                        .get();
+                if (draftSource.isPresent()) {
+                    // Delete released
+                    try {
+                        releasedSource.delete();
+                    } catch (PersistenceException e) {
+                        throw new RuntimeException("Failed to delete source/released: " + releasedSource.getPath());
+                    }
+
+                } else {
+                    try {
+                        rename(releasedSource, "draft");
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException("Cannot rename source/released to source/draft: " + releasedSource.getPath());
+                    }
+                }
+                if(serviceResourceResolver.hasChanges()) {
+                    serviceResourceResolver.commit();
                 }
             }
+            return;
+        }catch (Exception ex){
+            throw new RepositoryException(ex.getMessage());
         }
     }
 }

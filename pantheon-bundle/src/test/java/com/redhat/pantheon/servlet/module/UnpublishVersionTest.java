@@ -3,6 +3,8 @@ package com.redhat.pantheon.servlet.module;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.servlets.post.HtmlResponse;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.ModificationType;
@@ -12,6 +14,8 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -19,6 +23,7 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith({SlingContextExtension.class})
@@ -44,11 +49,16 @@ class UnpublishVersionTest {
                         "jcr:data", "Released content");
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
+        ServiceResourceResolverProvider serviceResourceResolverProvider = Mockito.mock(ServiceResourceResolverProvider.class);
+        ResourceResolver resourceResolver = slingContext.request().getResourceResolver();
+        Module module = slingContext.request().adaptTo(Module.class);
+        lenient().doReturn(resourceResolver)
+                .when(serviceResourceResolverProvider).getServiceResourceResolver();
         Events events = mock(Events.class);
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
-        UnpublishVersion operation = new UnpublishVersion(events);
+        UnpublishVersion operation = new UnpublishVersion(events, serviceResourceResolverProvider);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);
@@ -89,10 +99,15 @@ class UnpublishVersionTest {
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
         Events events = mock(Events.class);
+        ServiceResourceResolverProvider serviceResourceResolverProvider = Mockito.mock(ServiceResourceResolverProvider.class);
+        ResourceResolver resourceResolver = slingContext.request().getResourceResolver();
+        Module module = slingContext.request().adaptTo(Module.class);
+        lenient().doReturn(resourceResolver)
+                .when(serviceResourceResolverProvider).getServiceResourceResolver();
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
-        UnpublishVersion operation = new UnpublishVersion(events);
+        UnpublishVersion operation = new UnpublishVersion(events,serviceResourceResolverProvider);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);
@@ -120,8 +135,13 @@ class UnpublishVersionTest {
         registerMockAdapter(Module.class, slingContext);
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
+        ServiceResourceResolverProvider serviceResourceResolverProvider = Mockito.mock(ServiceResourceResolverProvider.class);
+        ResourceResolver resourceResolver = slingContext.request().getResourceResolver();
+        Module module = slingContext.request().adaptTo(Module.class);
+        lenient().doReturn(resourceResolver)
+                .when(serviceResourceResolverProvider).getServiceResourceResolver();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
-        UnpublishVersion operation = new UnpublishVersion(null);
+        UnpublishVersion operation = new UnpublishVersion(null, serviceResourceResolverProvider);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);
