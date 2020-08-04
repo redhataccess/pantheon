@@ -2,8 +2,14 @@ package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.extension.Events;
+import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import jdk.nashorn.internal.ir.annotations.Reference;
 import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.resourceresolver.impl.ResourceResolverFactoryImpl;
 import org.apache.sling.servlets.post.HtmlResponse;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.ModificationType;
@@ -14,13 +20,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Locale;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith({SlingContextExtension.class})
@@ -51,8 +61,14 @@ class PublishDraftVersionTest {
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
 
+        ServiceResourceResolverProvider serviceResourceResolver = Mockito.mock(ServiceResourceResolverProvider.class);
+        ResourceResolver resourceResolver = slingContext.request().getResourceResolver();
+        Module module = slingContext.request().adaptTo(Module.class);
+        lenient().doReturn(resourceResolver)
+                .when(serviceResourceResolver).getServiceResourceResolver();
+
         //FIXME - asciidoctorService parameter is temporary
-        PublishDraftVersion operation = new PublishDraftVersion(events, asciidoctorService);
+        PublishDraftVersion operation = new PublishDraftVersion(events, asciidoctorService, serviceResourceResolver);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);
@@ -86,9 +102,13 @@ class PublishDraftVersionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
-
+        ServiceResourceResolverProvider serviceResourceResolver = Mockito.mock(ServiceResourceResolverProvider.class);
+        ResourceResolver resourceResolver = slingContext.request().getResourceResolver();
+        Module module = slingContext.request().adaptTo(Module.class);
+        lenient().doReturn(resourceResolver)
+                .when(serviceResourceResolver).getServiceResourceResolver();
         //FIXME - asciidoctorService parameter is temporary
-        PublishDraftVersion operation = new PublishDraftVersion(null, asciidoctorService);
+        PublishDraftVersion operation = new PublishDraftVersion(null, asciidoctorService, serviceResourceResolver);
 
         // When
         operation.doRun(slingContext.request(), postResponse, changes);
@@ -96,5 +116,6 @@ class PublishDraftVersionTest {
         // Then
         assertTrue(changes.size() == 0);
         assertEquals(HttpServletResponse.SC_PRECONDITION_FAILED, postResponse.getStatusCode());
+
     }
 }
