@@ -100,10 +100,6 @@ class Versions extends Component<IProps, IState> {
                 <Title headingLevel={TitleLevel.h1} size={BaseSizes['2xl']}>
                     Edit Metadata
               </Title>
-                <br />
-                <p className='pf-u-pl-sm'>
-                    All fields are required.
-              </p>
             </React.Fragment>
         )
 
@@ -310,7 +306,7 @@ class Versions extends Component<IProps, IState> {
                             <div className='notification-container'>
                                 <Alert
                                     variant='warning'
-                                    title='All fields are required.'
+                                    title=''
                                     action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                 />
                                 <br />
@@ -342,6 +338,7 @@ class Versions extends Component<IProps, IState> {
                             label='Document use case'
                             isRequired={true}
                             fieldId='document-usecase'
+                            helperText="Explanations of document user cases included in documentation."
                         >
                             <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label='FormSelect Usecase'>
                                 {Versions.USE_CASES.map((option, key) => (
@@ -351,14 +348,13 @@ class Versions extends Component<IProps, IState> {
                         </FormGroup>
                         <FormGroup
                             label='Vanity URL fragment'
-                            isRequired={true}
                             fieldId='url-fragment'
                         >
                             <InputGroup>
                                 <InputGroupText id='slash' aria-label='/'>
                                     <span>/</span>
                                 </InputGroupText>
-                                <TextInput isRequired={true} id='url-fragment' type='text' placeholder='Enter URL' value={this.state.moduleUrl} onChange={this.handleURLInput} />
+                                <TextInput isRequired={false} id='url-fragment' type='text' placeholder='Enter URL' value={this.state.moduleUrl} onChange={this.handleURLInput} />
                             </InputGroup>
                         </FormGroup>
                         <FormGroup
@@ -554,8 +550,7 @@ class Versions extends Component<IProps, IState> {
         // save form data
         if (this.state.product.value === undefined || this.state.product.value === 'Select a Product' || this.state.product.value === ''
             || this.state.productVersion.uuid === undefined || this.state.productVersion.label === 'Select a Version' || this.state.productVersion.uuid === ''
-            || this.state.usecaseValue === undefined || this.state.usecaseValue === 'Select Use Case' || this.state.usecaseValue === ''
-            || this.state.moduleUrl.trim() === '') {
+            || this.state.usecaseValue === undefined || this.state.usecaseValue === 'Select Use Case' || this.state.usecaseValue === '') {
 
             this.setState({ isMissingFields: true })
         } else {
@@ -567,7 +562,7 @@ class Versions extends Component<IProps, IState> {
             const formData = new FormData(event.target.form)
             formData.append('productVersion', this.state.productVersion.uuid)
             formData.append('documentUsecase', this.state.usecaseValue)
-            formData.append('urlFragment', '/' + this.state.moduleUrl)
+            formData.append('urlFragment', this.state.moduleUrl === undefined ? '' : '/' + this.state.moduleUrl )
             formData.append('searchKeywords', this.state.keywords === undefined ? '' : this.state.keywords)
 
             fetch(this.state.metadataPath + '/metadata', {

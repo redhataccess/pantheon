@@ -103,12 +103,6 @@ exports[`Versions tests should render Versions component 1`] = `
         >
           Edit Metadata
         </Title>
-        <br />
-        <p
-          className="pf-u-pl-sm"
-        >
-          All fields are required.
-        </p>
       </React.Fragment>
     }
     hideTitle={false}
@@ -170,6 +164,7 @@ exports[`Versions tests should render Versions component 1`] = `
       </FormGroup>
       <FormGroup
         fieldId="document-usecase"
+        helperText="Explanations of document user cases included in documentation."
         isRequired={true}
         label="Document use case"
       >
@@ -253,7 +248,6 @@ exports[`Versions tests should render Versions component 1`] = `
       </FormGroup>
       <FormGroup
         fieldId="url-fragment"
-        isRequired={true}
         label="Vanity URL fragment"
       >
         <InputGroup>
@@ -271,7 +265,7 @@ exports[`Versions tests should render Versions component 1`] = `
             id="url-fragment"
             isDisabled={false}
             isReadOnly={false}
-            isRequired={true}
+            isRequired={false}
             isValid={true}
             onChange={[Function]}
             placeholder="Enter URL"

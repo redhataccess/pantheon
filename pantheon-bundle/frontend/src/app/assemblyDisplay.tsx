@@ -9,7 +9,7 @@ import { Versions } from '@app/versions'
 import { Fields, PathPrefixes } from '@app/Constants'
 import { continueStatement } from '@babel/types';
 
-class ModuleDisplay extends Component<any, any, any> {
+class AssemblyDisplay extends Component<any, any, any> {
 
     constructor(props) {
         super(props)
@@ -46,7 +46,7 @@ class ModuleDisplay extends Component<any, any, any> {
                 <div>
                     <div className="app-container">
                         <Breadcrumb>
-                            <BreadcrumbItem ><a href="#/search">Modules</a></BreadcrumbItem>
+                            <BreadcrumbItem ><a href="#/search">Assemblies</a></BreadcrumbItem>
                             <BreadcrumbItem to="#" isActive={true}>{this.state.moduleTitle}</BreadcrumbItem>
                         </Breadcrumb>
                     </div>
@@ -83,7 +83,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         <LevelItem>{}</LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>
-                            <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
+                        <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
                         </LevelItem>
                     </Level>
                     <br />
@@ -157,7 +157,7 @@ class ModuleDisplay extends Component<any, any, any> {
         )
     }
     private generateDraftHtml = (pathname: any) => {
-        const docPath = '/content' + pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length) + '.preview?draft=true&variant=' + this.state.variant
+        const docPath = '/content' + pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length) + '.preview?draft=true&variant=' + this.state.variant
 
         // console.log('Preview path: ', docPath)
         return window.open(docPath)
@@ -174,7 +174,7 @@ class ModuleDisplay extends Component<any, any, any> {
 
     private fetchModuleDetails = async(data) => {
         await this.getVariantParam()
-        const path = data.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
+        const path = data.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
         this.setState({
             modulePath: path,
             releasePath: "/content" + path + ".preview?variant=" + this.state.variant
@@ -238,8 +238,8 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     private getVersionUUID = (path) => {
-        // remove /module from path
-        path = path.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
+        // Remove /assembly from path
+        path = path.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
         // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + "/en_US.harray.4.json"
         fetch(path)
@@ -338,4 +338,4 @@ class ModuleDisplay extends Component<any, any, any> {
 
 }
 
-export { ModuleDisplay }
+export { AssemblyDisplay }

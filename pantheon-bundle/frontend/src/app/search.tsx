@@ -12,13 +12,14 @@ import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import { IAppState } from '@app/app'
 import { SearchFilter } from '@app/searchFilter';
 import SpinImage from '@app/images/spin.gif';
-import { Fields } from '@app/Constants';
+import { Fields, SlingTypesPrefixes } from '@app/Constants';
 
 export interface ISearchState {
   alertOneVisible: boolean
   checkNextPageRow: string
   columns: string[]
   confirmDelete: boolean
+  contentType: string
   deleteState: string
   filterQuery: string
   isEmptyResults: boolean
@@ -52,6 +53,7 @@ class Search extends Component<IAppState, ISearchState> {
       checkNextPageRow: "",
       columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
       confirmDelete: false,
+      contentType: "module",
       deleteState: '',
       displayLoadIcon: true,
       filterQuery: '',
@@ -167,14 +169,14 @@ class Search extends Component<IAppState, ISearchState> {
                         name={data[Search.KEY_TRANSIENTPATH]}
                         onChange={this.handleDeleteCheckboxChange}
                         key={'checked_' + key}
-                      />}                                   
+                      />}
                     <DataListItemCells key={"cells_" + key}
                       dataListCells={[
                         <DataListCell key={"title_" + key} width={2}>
                           {this.props.userAuthenticated && data["jcr:title"] !== '-' &&
-                            <Link to={data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["jcr:title"]}</Link>}
+                            <Link to={data['sling:resourceType'].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["jcr:title"]}</Link>}
                           {this.props.userAuthenticated && data["jcr:title"] === '-' && data["pant:transientPath"] &&
-                            <Link to={data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["pant:transientPath"]}</Link>}
+                            <Link to={data['sling:resourceType'].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["pant:transientPath"]}</Link>}
                           {!this.props.userAuthenticated && data["jcr:title"] !== '-' &&
                             <a href={"/" + data['pant:transientPath'] + ".preview" + "?variant=" + data.variant} target="_blank">{data["jcr:title"]}</a>}
                           {!this.props.userAuthenticated && data["jcr:title"] === '-' && data["pant:transientPath"] &&
