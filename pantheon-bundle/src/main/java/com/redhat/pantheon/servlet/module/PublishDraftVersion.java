@@ -4,19 +4,26 @@ import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
+import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import org.apache.jackrabbit.api.JackrabbitSession;
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.Group;
+import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.jcr.base.util.AccessControlUtil;
 import org.apache.sling.servlets.post.*;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.apache.jackrabbit.api.security.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,11 +99,26 @@ public class PublishDraftVersion extends AbstractPostOperation {
     @Override
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws  RepositoryException{
         try {
-            ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
+            Boolean canPublish = false;
+            Session session = request.getResourceResolver().adaptTo(Session.class);
+            UserManager userManager = AccessControlUtil.getUserManager(session);
+            Iterator<Group> groupIterator = userManager.getAuthorizable(session.getUserID()).memberOf();
+
+
+            logger.info("group =" + groupIterator);
+            while (groupIterator.hasNext()) {
+                Authorizable group = groupIterator.next();
+                if (group.isGroup() && PantheonConstants.PANTHEON_PUBLISHERS.equalsIgnoreCase(group.getID())) {
+                    canPublish = true;
+                }
+            }
+            ResourceResolver serviceResourceResolver = request.getResourceResolver();
+            if(canPublish) {
+                serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
+            }
             Module module = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Module.class);
             Locale locale = getLocale(request);
             String variant = getVariant(request);
-
             // Get the draft version, there should be one
             Optional<ModuleVersion> versionToRelease = module.getDraftVersion(locale, variant);
             if (!versionToRelease.isPresent()) {
