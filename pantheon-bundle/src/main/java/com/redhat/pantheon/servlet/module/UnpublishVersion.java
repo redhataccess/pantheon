@@ -114,6 +114,7 @@ public class UnpublishVersion extends AbstractPostOperation {
                 Authorizable group = groupIterator.next();
                 if (group.isGroup() && PantheonConstants.PANTHEON_PUBLISHERS.equalsIgnoreCase(group.getID())) {
                     canUnPublish = true;
+                    break;
                 }
             }
             ResourceResolver serviceResourceResolver = request.getResourceResolver();
