@@ -3,6 +3,7 @@ package com.redhat.pantheon.asciidoctor;
 import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
+import com.redhat.pantheon.asciidoctor.extension.XrefPreprocessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.ProductVersion;
@@ -283,6 +284,8 @@ public class AsciidoctorService {
                 // extensions needed to generate a module's html
                 SlingResourceIncludeProcessor includeProcessor = new SlingResourceIncludeProcessor(base);
                 asciidoctor.javaExtensionRegistry().includeProcessor(includeProcessor);
+                asciidoctor.javaExtensionRegistry().preprocessor(
+                        new XrefPreprocessor(base));
                 asciidoctor.javaExtensionRegistry().postprocessor(
                         new HtmlModulePostprocessor(base));
 
