@@ -3,14 +3,19 @@ package com.redhat.pantheon.servlet.module;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
+import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.document.DocumentVersion;
 import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.Group;
+import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.jcr.base.util.AccessControlUtil;
 import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
@@ -24,7 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -99,7 +106,21 @@ public class UnpublishVersion extends AbstractPostOperation {
     @Override
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException{
         try {
-            ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
+            boolean canUnPublish = false;
+            Session session = request.getResourceResolver().adaptTo(Session.class);
+            UserManager userManager = AccessControlUtil.getUserManager(session);
+            Iterator<Group> groupIterator = userManager.getAuthorizable(session.getUserID()).memberOf();
+            while (groupIterator.hasNext()) {
+                Authorizable group = groupIterator.next();
+                if (group.isGroup() && PantheonConstants.PANTHEON_PUBLISHERS.equalsIgnoreCase(group.getID())) {
+                    canUnPublish = true;
+                    break;
+                }
+            }
+            ResourceResolver serviceResourceResolver = request.getResourceResolver();
+            if(canUnPublish) {
+                serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
+            }
             Module module = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Module.class);
             Locale locale = getLocale(request);
             String variant = getVariant(request);

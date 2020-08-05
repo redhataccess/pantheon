@@ -28,6 +28,7 @@
         <feature>sling-quickstart-oak-mongo</feature>
         <feature>sling-starter-content</feature>
         <feature>eventadmin</feature>
+        <feature>sling-jcr</feature>
         <config name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-com.redhat.pantheon">
             user.mapping=[\
             "com.redhat.pantheon\=pantheon"\
