@@ -99,7 +99,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
     @Override
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws  RepositoryException{
         try {
-            Boolean canPublish = false;
+            boolean canPublish = false;
             Session session = request.getResourceResolver().adaptTo(Session.class);
             UserManager userManager = AccessControlUtil.getUserManager(session);
             Iterator<Group> groupIterator = userManager.getAuthorizable(session.getUserID()).memberOf();
