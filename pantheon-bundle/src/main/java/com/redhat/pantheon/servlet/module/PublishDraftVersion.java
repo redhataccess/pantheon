@@ -103,9 +103,6 @@ public class PublishDraftVersion extends AbstractPostOperation {
             Session session = request.getResourceResolver().adaptTo(Session.class);
             UserManager userManager = AccessControlUtil.getUserManager(session);
             Iterator<Group> groupIterator = userManager.getAuthorizable(session.getUserID()).memberOf();
-
-
-            logger.info("group =" + groupIterator);
             while (groupIterator.hasNext()) {
                 Authorizable group = groupIterator.next();
                 if (group.isGroup() && PantheonConstants.PANTHEON_PUBLISHERS.equalsIgnoreCase(group.getID())) {
