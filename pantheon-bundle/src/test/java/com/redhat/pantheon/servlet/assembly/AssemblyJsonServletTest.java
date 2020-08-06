@@ -1,10 +1,7 @@
 package com.redhat.pantheon.servlet.assembly;
 
 import com.redhat.pantheon.model.assembly.Assembly;
-import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.servlet.ServletUtils;
-import com.redhat.pantheon.servlet.assembly.AssemblyJsonServlet;
-import com.redhat.pantheon.servlet.module.ModuleJsonServlet;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
@@ -48,7 +45,7 @@ class AssemblyJsonServletTest {
         AssemblyJsonServlet servlet = new AssemblyJsonServlet();
         Map<String, Object> map = newHashMap();
         map.put("locale", ServletUtils.toLanguageTag(Locale.US));
-        map.put("module_id", "jcr:uuid");
+        map.put("assembly_id", "jcr:uuid");
         slingContext.request().setParameterMap(map);
 
         // When
@@ -85,26 +82,26 @@ class AssemblyJsonServletTest {
         Map<String, Object> map = servlet.resourceToMap(
                 slingContext.request(),
                 slingContext.resourceResolver().getResource("/content/repositories/rhel-8-docs/entities/assemblies/changes"));
-        Map<String, Object> moduleMap = (Map<String, Object>)map.get("assembly");
+        Map<String, Object> assemblyMap = (Map<String, Object>)map.get("assembly");
 
         // Then
         assertTrue(map.containsKey("status"));
         assertTrue(map.containsKey("message"));
         assertTrue(map.containsKey("assembly"));
-        assertTrue(moduleMap.containsKey("assembly_uuid"));
-        assertTrue(moduleMap.containsKey("products"));
-        assertTrue(moduleMap.containsKey("locale"));
-        assertTrue(moduleMap.containsKey("title"));
-        assertTrue(moduleMap.containsKey("body"));
-        assertTrue(moduleMap.containsKey("content_type"));
-        assertTrue(moduleMap.containsKey("date_modified"));
-        assertTrue(moduleMap.containsKey("date_published"));
-        assertTrue(moduleMap.containsKey("status"));
-        assertTrue(moduleMap.containsKey("context_id"));
-        assertTrue(moduleMap.containsKey("headline"));
-        assertTrue(moduleMap.containsKey("assembly_url_fragment"));
-        assertTrue(moduleMap.containsKey("revision_id"));
-        assertTrue(moduleMap.containsKey("context_url_fragment"));
+        assertTrue(assemblyMap.containsKey("assembly_uuid"));
+        assertTrue(assemblyMap.containsKey("products"));
+        assertTrue(assemblyMap.containsKey("locale"));
+        assertTrue(assemblyMap.containsKey("title"));
+        assertTrue(assemblyMap.containsKey("body"));
+        assertTrue(assemblyMap.containsKey("content_type"));
+        assertTrue(assemblyMap.containsKey("date_modified"));
+        assertTrue(assemblyMap.containsKey("date_published"));
+        assertTrue(assemblyMap.containsKey("status"));
+        assertTrue(assemblyMap.containsKey("context_id"));
+        assertTrue(assemblyMap.containsKey("headline"));
+        assertTrue(assemblyMap.containsKey("assembly_url_fragment"));
+        assertTrue(assemblyMap.containsKey("revision_id"));
+        assertTrue(assemblyMap.containsKey("context_url_fragment"));
         assertEquals((map.get("message")), "Assembly Found");
         assertEquals((map.get("status")), SC_OK);
     }
@@ -133,9 +130,9 @@ class AssemblyJsonServletTest {
         Map<String, Object> map = servlet.resourceToMap(
                 slingContext.request(),
                 slingContext.resourceResolver().getResource("/content/repositories/rhel-8-docs/entities/assemblies/changes"));
-        Map<String, Object> moduleMap = (Map<String, Object>)map.get("assembly");
+        Map<String, Object> assemblyMap = (Map<String, Object>)map.get("assembly");
 
         //Then
-        assertTrue(moduleMap.containsKey("view_uri"));
+        assertTrue(assemblyMap.containsKey("view_uri"));
     }
 }
