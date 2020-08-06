@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { CopyIcon } from '@patternfly/react-icons';
-import { Level, LevelItem, Breadcrumb, BreadcrumbItem, Button } from '@patternfly/react-core'
+import { Level, LevelItem, Button, Divider, Title, TextList, TextListItem, TextListVariants, TextListItemVariants } from '@patternfly/react-core'
 import {
     DataList, DataListItem, DataListItemRow, DataListItemCells,
     DataListCell, Card, Text, TextContent, TextVariants
@@ -44,24 +44,32 @@ class AssemblyDisplay extends Component<any, any, any> {
         return (
             <React.Fragment>
                 <div>
-                    <div className="app-container">
-                        <Breadcrumb>
-                            <BreadcrumbItem ><a href="#/search">Assemblies</a></BreadcrumbItem>
-                            <BreadcrumbItem to="#" isActive={true}>{this.state.moduleTitle}</BreadcrumbItem>
-                        </Breadcrumb>
-                    </div>
-                    <br />
-                    <div>
+                    <Level gutter="md">
+                        <LevelItem>
+                            <Title headingLevel="h1" size="xl">{this.state.moduleTitle}</Title>
+                        </LevelItem>
+                        <LevelItem />
+                    </Level>
+                    
                         <Level gutter="md">
                             <LevelItem>
                                 <TextContent>
-                                    <Text component={TextVariants.h1}>{this.state.moduleTitle}</Text>
+                                    <Text component={TextVariants.small}>Assembly</Text>
                                 </TextContent>
                             </LevelItem>
                             <LevelItem />
                         </Level>
-                    </div>
-                    <div>
+                    
+                        <Level gutter="md">
+                            <LevelItem>
+                                <TextContent>
+                                    <Text component="a">{this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)}</Text>
+                                </TextContent>
+                            </LevelItem>
+                            <LevelItem />
+                        </Level>
+                    
+                    
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.variantUUID !== ""
                             && this.state.portalHost !== ""
@@ -77,68 +85,58 @@ class AssemblyDisplay extends Component<any, any, any> {
                         }
 
                         <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
-                    </div>
+                    
+                    
+                        <Level gutter="md">
+                            <LevelItem>
+                                <TextContent>
+                                    <Text><strong>Product</strong></Text>
+                                </TextContent>
+                            </LevelItem>
+                            <LevelItem>
+                                <TextContent>
+                                    <Text><strong>Draft Uploaded</strong></Text>
+                                </TextContent>
+                            </LevelItem>
+                            <LevelItem>
+                                <TextContent>
+                                    <Text><strong>Published</strong></Text>
+                                </TextContent>
+                            </LevelItem>
+                        </Level>
+                    
+                    <Level gutter="md">
+                        <LevelItem><span>{this.state.productValue + ' ' + this.state.versionValue}</span></LevelItem>
+                        <LevelItem>
+                            <span>
+                                {this.state.draftUpdateDate.trim() !== ""
+                                    && this.state.draftUpdateDate.length >= 15 ?
+                                    this.state.draftUpdateDate : "-"}
+                            </span>
+                        </LevelItem>
+                        <LevelItem><span>
+                            {this.state.releaseUpdateDate.trim() !== ""
+                                && this.state.releaseUpdateDate.length >= 15 ?
+                                this.state.releaseUpdateDate : "--"}
+                            {this.state.releaseUpdateDate.trim() !== ""
+                                && this.state.releaseUpdateDate.length >= 15 ?
+                                <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a> : ""}
+                        </span>
+                        </LevelItem>
+                    </Level>
+                    
                     <br />
                     <Level gutter="md">
                         <LevelItem>{}</LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>
-                        <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
+                            <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
                         </LevelItem>
                     </Level>
                     <br />
-                    <div>
-                        <DataList aria-label="single action data list">
-                            <DataListItem aria-labelledby="simple-item1">
-                                <DataListItemRow id="data-rows-header" >
-                                    <DataListItemCells
-                                        dataListCells={[
-                                            <DataListCell width={2} key="product">
-                                                <span className="sp-prop-nosort" id="span-source-type-product">Product</span>
-                                            </DataListCell>,
-                                            <DataListCell key="published">
-                                                <span className="sp-prop-nosort" id="span-source-type-published">Published</span>
-                                            </DataListCell>,
-                                            <DataListCell key="updated">
-                                                <span className="sp-prop-nosort" id="span-source-type-draft-uploaded">Draft Uploaded</span>
-                                            </DataListCell>,
-                                            <DataListCell key="module_type">
-                                                <span className="sp-prop-nosort" id="span-source-name-module-type">Module Type</span>
-                                            </DataListCell>
-                                        ]}
-                                    />
-                                </DataListItemRow>
-                                <DataListItemRow>
-                                    <DataListItemCells
-                                        dataListCells={[
-                                            <DataListCell width={2} key="product">
-                                                <span>{this.state.productValue + ' ' + this.state.versionValue}</span>
-                                            </DataListCell>,
-                                            <DataListCell key="published">
-                                                <span>
-                                                    {this.state.releaseUpdateDate.trim() !== ""
-                                                        && this.state.releaseUpdateDate.length >= 15 ?
-                                                        this.state.releaseUpdateDate : "-"} <br />
-                                                    {this.state.releaseUpdateDate.trim() !== "" &&
-                                                        <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a>}
-                                                </span>
-                                            </DataListCell>,
-                                            <DataListCell key="updated">
-                                                <span>
-                                                    {this.state.draftUpdateDate.trim() !== ""
-                                                        && this.state.draftUpdateDate.length >= 15 ?
-                                                        this.state.draftUpdateDate : "-"}
-                                                </span>
-                                            </DataListCell>,
-                                            <DataListCell key="module_type">
-                                                <span>{this.state.moduleType !== undefined ? this.state.moduleType : "-"}</span>
-                                            </DataListCell>,
-                                        ]}
-                                    />
-                                </DataListItemRow>
-                            </DataListItem>
-                        </DataList>
-                    </div>
+
+                    <Divider />
+                    <br />
                     <div>
                         <Card>
                             <Versions
@@ -172,7 +170,7 @@ class AssemblyDisplay extends Component<any, any, any> {
         })
     }
 
-    private fetchModuleDetails = async(data) => {
+    private fetchModuleDetails = async (data) => {
         await this.getVariantParam()
         const path = data.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
         this.setState({
