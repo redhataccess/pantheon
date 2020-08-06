@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.helper.Symlinks;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
+import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.servlet.assets.ImageServletFilter;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -51,38 +52,29 @@ public class DocumentPreviewFilter implements Filter {
         Matcher pathMatcher = getPathMatcher(PATH_PATTERN, (HttpServletRequest) request);
         String docId = pathMatcher.group("documentId");
 
-        System.out.println("doc ID: " + docId);
-
         String query = "select * from [pant:document] as document WHERE document.[jcr:uuid] = '" + docId + "'";
-        System.out.println("Query: " + query);
         @NotNull ResourceResolver resolver = ((SlingHttpServletRequest) request).getResourceResolver();
         JcrQueryHelper queryHelper = new JcrQueryHelper(resolver);
         try {
             Stream<Resource> resultStream = queryHelper.query(query);
-
             Optional<Resource> firstResource = resultStream.findFirst();
             if (firstResource.isPresent()) {
                 Resource res = firstResource.get();
-                System.out.println("Resource found: " + res.getPath());
                 request.getRequestDispatcher(res.getPath() + ".preview").forward(request, response);
+            } else {
+                // Not a document, but maybe a document variant
+                String query2 = "select * from [pant:documentVariant] as variant WHERE variant.[jcr:uuid] = '" + docId + "'";
+                resultStream = queryHelper.query(query2);
+                firstResource = resultStream.findFirst();
+                if (firstResource.isPresent()) {
+                    Resource res = firstResource.get();
+                    DocumentVariant dv = res.adaptTo(DocumentVariant.class);
+                    request.getRequestDispatcher(dv.getPath() + ".preview").forward(request, response);
+                }
             }
         } catch (RepositoryException e) {
 
         }
-//
-//        // turn the node back into a resource
-//        Resource foundResource = request.getResourceResolver()
-//                .getResource(foundNode.getPath())
-//
-//        Document doc =
-
-//        String imagePath = new String(Base64.getUrlDecoder().decode(assetId));
-//        StringBuilder realPath = new StringBuilder(imagePath);
-//
-//        Resource image = Symlinks.resolve(((SlingHttpServletRequest) request).getResourceResolver(), imagePath);
-//
-//        request.getRequestDispatcher(image.getPath())
-//                .forward(request, response);
     }
 
     @Override

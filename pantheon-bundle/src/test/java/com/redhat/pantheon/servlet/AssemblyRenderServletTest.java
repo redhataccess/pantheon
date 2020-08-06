@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.assembly.Assembly;
+import com.redhat.pantheon.servlet.assembly.AssemblyRenderServlet;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -15,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.Locale;
 
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
