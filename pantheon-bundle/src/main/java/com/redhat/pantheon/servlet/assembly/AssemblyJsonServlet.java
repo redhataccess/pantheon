@@ -35,8 +35,8 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
  * 1. locale - Optional; indicates the locale that the assembly content is in, defaulted to en-US
  * 2. assembly_id - indicates the uuid string which uniquely identifies an assembly
  *
- * The url to GET a request from the server is /api/module
- * Example: <server_url>/api/assembly?locale=en-us&module_id=xyz&variant=abc
+ * The url to GET a request from the server is /api/assembly
+ * Example: <server_url>/api/assembly?locale=en-us&assembly_id=xyz&variant=abc
  * The said url is accessible outside of the system without any authentication.
  *
  * @author A.P. Rajjshekhar
@@ -44,10 +44,10 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @Component(
         service = Servlet.class,
         property = {
-                Constants.SERVICE_DESCRIPTION + "=Servlet to facilitate GET operation which accepts locale and assembly uuid to output module data",
+                Constants.SERVICE_DESCRIPTION + "=Servlet to facilitate GET operation which accepts locale and assembly uuid to output assembly data",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
-// /api/module.json?module_id=${moduleUuid}&locale=${localeId}&variant=${variantName}";
+// /api/assembly.json?assembly_id=${assemblyUuid}&locale=${localeId}&variant=${variantName}";
 @SlingServletPaths(value = "/api/assembly")
 public class AssemblyJsonServlet extends AbstractJsonSingleQueryServlet {
     public static final String PRODUCT_VERSION = "product_version";
@@ -112,12 +112,12 @@ public class AssemblyJsonServlet extends AbstractJsonSingleQueryServlet {
         assemblyMap.put("assembly_url_fragment", resourcePath.substring("/content/repositories/".length()));
 
         // Striping out the jcr: from key name
-        String module_uuid = (String) assemblyMap.remove("jcr:uuid");
-        assemblyMap.put("assembly_uuid", module_uuid);
+        String assemblyId = (String) assemblyMap.remove("jcr:uuid");
+        assemblyMap.put("assembly_uuid", assemblyId);
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         assemblyMap.put("date_modified", dateModified.toInstant().toString());
-        // Return the body content of the module ONLY
+        // Return the body content of the assembly ONLY
         assemblyMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
                         .andThen(Html.getBody())
@@ -160,7 +160,7 @@ public class AssemblyJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
-            String view_uri = System.getenv(PORTAL_URL) + "/topics/" + ServletUtils.toLanguageTag(locale) + "/" + module_uuid;
+            String view_uri = System.getenv(PORTAL_URL) + "/topics/" + ServletUtils.toLanguageTag(locale) + "/" + assemblyId;
             assemblyMap.put(VIEW_URI, view_uri);
         }
         else {
@@ -175,7 +175,7 @@ public class AssemblyJsonServlet extends AbstractJsonSingleQueryServlet {
         assemblyMap.remove("sling:resourceType");
         assemblyMap.remove("jcr:primaryType");
 
-        // Adding moduleMap to a parent moduleDetails map
+        // Adding assemblyMap to a parent assemblyDetails map
         assemblyDetails.put("assembly", assemblyMap);
 
         return assemblyDetails;
