@@ -1,6 +1,8 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
+import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentLocale;
 import org.apache.sling.api.resource.Resource;
 import org.asciidoctor.extension.Preprocessor;
 import org.asciidoctor.extension.PreprocessorReader;
@@ -36,13 +38,26 @@ public class XrefPreprocessor extends Preprocessor {
             StringBuffer sb = new StringBuffer();
             while (matcher.find()) {
                 String originalTarget = matcher.group(1);
+                // Assume it's a relative path to a file in the same repo for now
                 Resource desiredTarget = document.getResourceResolver().getResource(document.getParent().getPath() + "/" + originalTarget);
                 if (desiredTarget == null) {
                     // Can't tell what the author is trying to link to, just leave the xref alone and hope for the best
                     // TODO - plug in a validation warning/error here once validation is a thing
                     matcher.appendReplacement(sb, matcher.group(0));
                 } else {
-                    matcher.appendReplacement(sb, "xref:" + "http://www.google.com" + "[" + matcher.group(2) + "]");
+                    System.out.println("target type: " + desiredTarget.getResourceType());
+                    if (!PantheonConstants.RESOURCE_TYPE_ASSEMBLY.equals(desiredTarget.getResourceType())
+                            && !PantheonConstants.RESOURCE_TYPE_MODULE.equals(desiredTarget.getResourceType())) {
+                        System.out.println("Wrong type :(");
+                        matcher.appendReplacement(sb, matcher.group(0));
+                    } else {
+                        Document docTarget = desiredTarget.adaptTo(Document.class);
+
+                        // FIXME FIXME FIXME
+                        String targetUuid = docTarget.child("en_US", DocumentLocale.class).get().variants().get().variant("ben-atts").get().uuid().get();
+
+                        matcher.appendReplacement(sb, "xref:./" + targetUuid + "[" + matcher.group(2) + "]");
+                    }
                 }
             }
             matcher.appendTail(sb);

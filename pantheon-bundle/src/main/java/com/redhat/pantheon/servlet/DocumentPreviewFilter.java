@@ -47,7 +47,6 @@ public class DocumentPreviewFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        System.out.println("Servlet called :)");
         // Get the id, everything after the prefix
         Matcher pathMatcher = getPathMatcher(PATH_PATTERN, (HttpServletRequest) request);
         String docId = pathMatcher.group("documentId");
