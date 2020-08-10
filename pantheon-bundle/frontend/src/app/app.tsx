@@ -25,20 +25,6 @@ class App extends Component<any, IAppState> {
   constructor(props) {
     super(props)
 
-    const realFetch = self.fetch
-    self.fetch = (input: RequestInfo, init?: RequestInit | undefined) => {
-      let newInput = input.toString();
-      if (
-        window.location.host.startsWith('localhost')
-        // Only changing requests Sling's old port
-        && parseInt(window.location.port) === 8080
-        && input.toString().startsWith('/')) {
-        newInput = 'http://localhost:8181' + input.toString()
-      }
-      console.log('Development fetch', input, '=>', newInput)
-      return realFetch(newInput, init);
-    }
-
     this.state = {
       isAdmin: false,
       isNavOpen: true,
