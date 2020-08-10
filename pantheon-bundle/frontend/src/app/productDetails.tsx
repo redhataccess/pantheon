@@ -28,9 +28,9 @@ class ProductDetails extends Component<IProps, IState> {
         }
     }
 
-    public componentDidUpdate() {
+    public componentWillReceiveProps(nextProps) {
         // allow page load from productDetails to products listing
-        if (this.props.productName !== undefined && this.props.productName.trim() !== '') {
+        if (nextProps.productName !== undefined && nextProps.productName.trim() !== '') {
             return window.location.reload(false)
         }
     }

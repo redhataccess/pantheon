@@ -116,11 +116,11 @@ describe('ProductDetails tests', () => {
 
   // @todo componentWillReceiveProps is deprecated https://reactjs.org/docs/react-component.html#unsafe_componentwillreceivepropscomponentWillReceiveProps
   // @todo This test is triggering reload which breaks Jest tests, adding the fix from "test handleInputChange function" doesn't fix this one
-  // it('test componentDidUpdate function', () => {
-  //   const wrapper = renderer.create(<ProductDetails {...props} />)
-  //   const inst = wrapper.getInstance()
-  //   expect(inst.componentDidUpdate({ ...props })).toMatchSnapshot()
-  // })
+  it('test componentWillReceiveProps function', () => {
+    const wrapper = renderer.create(<ProductDetails {...props} />)
+    const inst = wrapper.getInstance()
+    expect(inst.componentWillReceiveProps({ ...props })).toMatchSnapshot()
+  })
 
   it('has a productName of "Red Hat Enterprise Linux"', () => {
     const state: IProps = {
