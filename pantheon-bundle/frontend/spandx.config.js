@@ -19,8 +19,7 @@ module.exports = {
     "/": {
       host: {
           local: "http://localhost:9000"
-      },
-      path: "/"
+      }
     },
 
     "/content": {
@@ -34,6 +33,11 @@ module.exports = {
       }
     },
     "/pantheon": {
+      host: {
+        local: "http://localhost:8181"
+      }
+    },
+    "/conf": {
       host: {
         local: "http://localhost:8181"
       }

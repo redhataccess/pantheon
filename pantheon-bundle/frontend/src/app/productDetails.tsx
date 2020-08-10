@@ -28,9 +28,9 @@ class ProductDetails extends Component<IProps, IState> {
         }
     }
 
-    public componentWillReceiveProps(nextProps) {
+    public componentDidUpdate() {
         // allow page load from productDetails to products listing
-        if (nextProps.productName !== undefined && nextProps.productName.trim() !== '') {
+        if (this.props.productName !== undefined && this.props.productName.trim() !== '') {
             return window.location.reload(false)
         }
     }
@@ -38,7 +38,7 @@ class ProductDetails extends Component<IProps, IState> {
     public componentDidMount() {
         this.fetchProductDetails(this.state.allVersionNames)
     }
-    
+
     public render() {
         return (
             <React.Fragment>

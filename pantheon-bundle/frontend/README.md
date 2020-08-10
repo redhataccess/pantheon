@@ -8,7 +8,7 @@ Based on Patternfly Seed
 [Yarn](https://yarnpkg.com/)
 
 ## Getting Started
-Run pantheon Java app
+Run pantheon Java app (assuming it's already installed, if not follow instructions in [GITROOT README](../../README.md)).
 
 From `GITROOT/`:
 ```bash

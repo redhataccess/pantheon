@@ -56,7 +56,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
         >
           Generate Draft Html
         </Component>
-
+          
       </LevelItem>
     </Level>
     <br />
@@ -119,13 +119,13 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                     width={2}
                   >
                     <span>
-
+                       
                     </span>
                   </DataListCell>,
                   <DataListCell>
                     <span>
                       -
-
+                       
                       <br />
                     </span>
                   </DataListCell>,
@@ -136,7 +136,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
                   </DataListCell>,
                   <DataListCell>
                     <span>
-
+                      
                     </span>
                   </DataListCell>,
                 ]
