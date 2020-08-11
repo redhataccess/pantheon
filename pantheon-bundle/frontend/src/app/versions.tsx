@@ -527,7 +527,6 @@ class Versions extends Component<IProps, IState> {
         } else {
             docPath = '/content' + this.props.modulePath + '.preview?variant=' + this.props.variant
         }
-        // console.log('Preview path: ', docPath)
         return window.open(docPath)
     }
 

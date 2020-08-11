@@ -22,9 +22,9 @@ and built on top of Apache sling.
 
 ### Prerequisites
 
-* You must have an account on GitHub.  
+* You must have an account on GitHub.
   [Signing up for a new GitHub account](https://help.github.com/en/github/getting-started-with-github/signing-up-for-a-new-github-account)
-* You must have registered SSH keys in your GitHub account.  
+* You must have registered SSH keys in your GitHub account.
 [Adding a new SSH key to your GitHub account](https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account)
 * You must be a member of the `pantheon-doc-authors` team in the `redhataccess` group in GitHub.
 * You must be logged in to your account on GitHub.
@@ -41,9 +41,9 @@ Fork the repository so that you can create and work with branches independently 
 
 After you have forked the repository, you must clone it to your local machine and add the original `redhataccess/pantheon` repository as an upstream remote.
 
-1. From a terminal, clone the repository:  
+1. From a terminal, clone the repository:
        $ git clone git@github.com:<user-space>/pantheon.git
-1. Set up `redhataccess/pantheon` as the upstream:  
+1. Set up `redhataccess/pantheon` as the upstream:
        $ cd pantheon
        $ git remote add upstream git@github.com:redhataccess/pantheon.git
 
@@ -51,18 +51,18 @@ After you have forked the repository, you must clone it to your local machine an
 
 Whenever you work on a new issue, you must create a new working branch based on the latest version of the upstream master branch.
 
-1. Ensure you are on master  
+1. Ensure you are on master
        $ git checkout master
-1. Ensure your fork is up to date  
+1. Ensure your fork is up to date
        $ git pull upstream master
-1. Create a working branch based on the issue in JIRA:  
+1. Create a working branch based on the issue in JIRA:
        $ git checkout -b FCCEUD<ID#>
 
 ### Creating a pull request and completing review
 
 When your work is ready to be reviewed and merged, create a pull request.
 
-1. Push your working branch to your fork:  
+1. Push your working branch to your fork:
        $ git push -u origin <branch_name>
 1. From the repository page in GitHub, click **New pull request**.
 1. Select your working branch from the compare list.
@@ -104,7 +104,7 @@ The build script provided in _scripts_ directory makes use of _PANTHEON_CODEBASE
 
 **Sling and MongoDB**
 The scripts folder contains _pantheon_karaf.exports_ file. It contains the values required for the pantheon karaf distribution. If you are running MongoDB on a different port then
-- Make a copy of _pantheon_karaf.exports_ file 
+- Make a copy of _pantheon_karaf.exports_ file
 - Place it in _.pantheon_ directory under your home directory
 - Update the _MONGO_DB_URI_ variable
 
@@ -162,7 +162,7 @@ buildah bud --layers -f container/Dockerfile -t pantheon-karaf-app .
 Run the sling container in the pod.
 
 ```sh
-podman run --pod pantheon-karaf -d -e  MONGO_DB_REPLICA='mongodb://localhost:27017'   -t --name pantheon-karaf-app   pantheon-karaf-app 
+podman run --pod pantheon-karaf -d -e  MONGO_DB_REPLICA='mongodb://localhost:27017'   -t --name pantheon-karaf-app   pantheon-karaf-app
 
 ```
 
@@ -182,26 +182,25 @@ This will install the code in this project on the running Sling instance, where 
 be previewed and modified.
 ### Developing the frontend code
 
-If making modifications that are entirely contained within the frontend, it is not necessary to use maven to rebuild and redeploy the package on every change.
-
-These instructions provide an imperfect-but-workable shortcut that can accelerate development.
+If making modifications that are entirely contained within the frontend, follow the instructions to build the application in this README, then
 
 ```sh
-cd pantheon/frontend
+cd pantheon-bundle/frontend
+# Install/update node deps
+yarn
+# Build the app
+yarn build
+# Run React dev server/process
 yarn start
 ```
+
+See the pantheon-bundle/frontend/README.md for more information on the development server
 
 NOTE: It will likely be necessary to increase your inotify limit to ensure that yarn is able to detect changes in every project file.
 If you are running into issues with yarn not automatically detecting saved changes, run the following command (its effects are permenent):
 ```sh
 echo fs.inotify.max_user_watches=65535 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
-
-```sh
-chromium-browser --disable-web-security --user-data-dir=/home/user/anywhere/chromeDev/ &
-```
-
-This works because there is code in app.tsx that preempts all fetch() calls and checks if the app is being served from localhost. If so, it modifies the request to point to localhost:8080 specifically, rather than localhost:9000 which is where webpack-dev-server serves the frontend code from.
 
 It might be possible to improve this technique. Suggestions are welcome.
 
