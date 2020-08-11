@@ -43,7 +43,7 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
 @SlingServletResourceTypes(
-        resourceTypes = { "pantheon/moduleVariant", "pantheon/documentVariant" },
+        resourceTypes = { "pantheon/moduleVariant", "pantheon/assemblyVariant" },
         methods = "GET",
         extensions = "preview")
 public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
