@@ -285,7 +285,7 @@ public class AsciidoctorService {
                 SlingResourceIncludeProcessor includeProcessor = new SlingResourceIncludeProcessor(base);
                 asciidoctor.javaExtensionRegistry().includeProcessor(includeProcessor);
                 asciidoctor.javaExtensionRegistry().preprocessor(
-                        new XrefPreprocessor(base));
+                        new XrefPreprocessor(documentVariant));
                 asciidoctor.javaExtensionRegistry().postprocessor(
                         new HtmlModulePostprocessor(base));
 

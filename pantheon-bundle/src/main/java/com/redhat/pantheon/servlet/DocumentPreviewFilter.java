@@ -43,13 +43,17 @@ import static com.redhat.pantheon.servlet.ServletUtils.getPathMatcher;
         pattern = DocumentPreviewFilter.PATH_PATTERN)
 public class DocumentPreviewFilter implements Filter {
 
-    static final String PATH_PATTERN = "/pantheon/preview/(?<documentId>.*)";
+    static final String PATH_PATTERN = "/pantheon/preview/(?<mode>released|latest)/(?<documentId>.{36})(?:.html)?";
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         // Get the id, everything after the prefix
         Matcher pathMatcher = getPathMatcher(PATH_PATTERN, (HttpServletRequest) request);
         String docId = pathMatcher.group("documentId");
+        String mode = pathMatcher.group("mode");
+
+        System.out.println("documentId: " + docId);
+        System.out.println("mode: " + mode);
 
         String query = "select * from [pant:document] as document WHERE document.[jcr:uuid] = '" + docId + "'";
         @NotNull ResourceResolver resolver = ((SlingHttpServletRequest) request).getResourceResolver();
@@ -68,7 +72,9 @@ public class DocumentPreviewFilter implements Filter {
                 if (firstResource.isPresent()) {
                     Resource res = firstResource.get();
                     DocumentVariant dv = res.adaptTo(DocumentVariant.class);
-                    request.getRequestDispatcher(dv.getPath() + ".preview").forward(request, response);
+                    String forwardString = dv.getPath() + ".preview/" + mode;
+                    System.out.println("Forwarding to: " + forwardString);
+                    request.getRequestDispatcher(forwardString).forward(request, response);
                 }
             }
         } catch (RepositoryException e) {

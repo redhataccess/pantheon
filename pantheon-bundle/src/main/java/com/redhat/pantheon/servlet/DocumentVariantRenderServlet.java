@@ -21,8 +21,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
 
@@ -43,8 +45,16 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
 @SlingServletResourceTypes(
         resourceTypes = { "pantheon/moduleVariant", "pantheon/documentVariant" },
         methods = "GET",
-        extensions = "preview" )
+        extensions = "preview")
 public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
+
+    private static final Set<String> RELEASED_SUFFIXES = new HashSet<>();
+    static {
+        RELEASED_SUFFIXES.add("/released");
+        RELEASED_SUFFIXES.add("/");
+        RELEASED_SUFFIXES.add("");
+        RELEASED_SUFFIXES.add(null);
+    }
 
     private final Logger log = LoggerFactory.getLogger(DocumentVariantRenderServlet.class);
 
@@ -59,14 +69,22 @@ public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request,
                          SlingHttpServletResponse response) throws ServletException, IOException {
-        boolean draft = paramValueAsBoolean(request, PantheonConstants.PARAM_DRAFT);
+        String suffix = request.getRequestPathInfo().getSuffix();
+        boolean latest = false;
+        if ("/latest".equals(suffix)) {
+            latest = true;
+        } else if (!RELEASED_SUFFIXES.contains(suffix)) {
+            throw new ServletException("Unrecognized suffix: " + suffix + ". Valid values are '/latest', '/released', and unspecified.");
+        }
+
         boolean reRender = paramValueAsBoolean(request, PantheonConstants.PARAM_RERENDER);
 
         DocumentVariant variant = request.getResource().adaptTo(DocumentVariant.class);
 
-        if(!variant.child(draft ? "draft" : "released", DocumentVersion.class).isPresent()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, (draft ? "Draft" : "Released")
-                    + " content not found for " + variant.getName() +  " module variant at "
+        if(!latest && variant.released().get() == null) { // This is presumably safe, at least one version should exist
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Released content not found for "
+                    + variant.getName()
+                    +  " module variant at "
                     + request.getResource().getPath());
             return;
         }
@@ -75,6 +93,7 @@ public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
         Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
 
         // only allow forced rerendering if this is a draft version. Released and historical revs are written in stone.
+        boolean draft = latest && variant.hasDraft();
         String html = asciidoctorService.getModuleHtml(
                 variant.getParentLocale().getParent(), LocaleUtils.toLocale(variant.getParentLocale().getName()), variant.getName(), draft, context, reRender && draft);
 

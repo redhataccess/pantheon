@@ -3,6 +3,7 @@ package com.redhat.pantheon.asciidoctor.extension;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
+import com.redhat.pantheon.model.document.DocumentVariant;
 import org.apache.sling.api.resource.Resource;
 import org.asciidoctor.extension.Preprocessor;
 import org.asciidoctor.extension.PreprocessorReader;
@@ -21,11 +22,11 @@ public class XrefPreprocessor extends Preprocessor {
     private static final Pattern XREF_PATTERN = Pattern.compile("xref:(.*?)\\[(.*?)\\]");
     private static final Pattern TRIANGLE_PATTERN = Pattern.compile("<<(.*?),(.*?)>>");
 
-    private Document document;
+    private DocumentVariant documentVariant;
     private String newModulePath;
 
-    public XrefPreprocessor(Document document) {
-        this.document = document;
+    public XrefPreprocessor(DocumentVariant documentVariant) {
+        this.documentVariant = documentVariant;
     }
 
     @Override
@@ -39,7 +40,7 @@ public class XrefPreprocessor extends Preprocessor {
             while (matcher.find()) {
                 String originalTarget = matcher.group(1);
                 // Assume it's a relative path to a file in the same repo for now
-                Resource desiredTarget = document.getResourceResolver().getResource(document.getParent().getPath() + "/" + originalTarget);
+                Resource desiredTarget = documentVariant.getResourceResolver().getResource(documentVariant.getParentLocale().getParent().getParent().getPath() + "/" + originalTarget);
                 if (desiredTarget == null) {
                     // Can't tell what the author is trying to link to, just leave the xref alone and hope for the best
                     // TODO - plug in a validation warning/error here once validation is a thing
@@ -53,10 +54,13 @@ public class XrefPreprocessor extends Preprocessor {
                     } else {
                         Document docTarget = desiredTarget.adaptTo(Document.class);
 
-                        // FIXME FIXME FIXME
-                        String targetUuid = docTarget.child("en_US", DocumentLocale.class).get().variants().get().variant("ben-atts").get().uuid().get();
+                        String targetUuid = docTarget
+                                .child(documentVariant.getParentLocale().getName(), DocumentLocale.class).get() // TODO - assume same locale for now
+                                .variants().get()
+                                .variant(documentVariant.getName()).get() // TODO - assume same variant for now
+                                .uuid().get();
 
-                        matcher.appendReplacement(sb, "xref:./" + targetUuid + "[" + matcher.group(2) + "]");
+                        matcher.appendReplacement(sb, "xref:./" + targetUuid + "#[" + matcher.group(2) + "]");
                     }
                 }
             }

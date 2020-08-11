@@ -32,6 +32,14 @@ public interface DocumentVariant extends WorkspaceChild {
 
     Child<? extends DocumentVersion> released();
 
+    default boolean hasDraft() {
+        return draft().get() != null;
+    }
+
+    default Child<? extends  DocumentVersion> latestVersion() {
+        return hasDraft() ? draft() : released();
+    }
+
     @Named("jcr:uuid")
     Field<String> uuid();
 
