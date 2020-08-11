@@ -19,8 +19,8 @@ public class XrefPreprocessor extends Preprocessor {
 
     private static final Logger log = LoggerFactory.getLogger(XrefPreprocessor.class);
 
-    private static final Pattern XREF_PATTERN = Pattern.compile("xref:(.*?)\\[(.*?)\\]");
-    private static final Pattern TRIANGLE_PATTERN = Pattern.compile("<<(.*?),(.*?)>>");
+    private static final Pattern XREF_PATTERN = Pattern.compile("xref:(?<filepath>\\S*?)(?:#(?<anchor>\\S*))?\\[(?<label>.*?)\\]");
+    private static final Pattern TRIANGLE_PATTERN = Pattern.compile("<<(.*?),(.*?)>>"); // TODO
 
     private DocumentVariant documentVariant;
     private String newModulePath;
@@ -38,7 +38,7 @@ public class XrefPreprocessor extends Preprocessor {
             Matcher matcher = XREF_PATTERN.matcher(line);
             StringBuffer sb = new StringBuffer();
             while (matcher.find()) {
-                String originalTarget = matcher.group(1);
+                String originalTarget = matcher.group("filepath");
                 // Assume it's a relative path to a file in the same repo for now
                 Resource desiredTarget = documentVariant.getResourceResolver().getResource(documentVariant.getParentLocale().getParent().getParent().getPath() + "/" + originalTarget);
                 if (desiredTarget == null) {
@@ -58,7 +58,17 @@ public class XrefPreprocessor extends Preprocessor {
                                 .variant(documentVariant.getName()).get() // TODO - assume same variant for now
                                 .uuid().get();
 
-                        matcher.appendReplacement(sb, "xref:" + targetUuid + "#[" + matcher.group(2) + "]");
+                        String anchor = matcher.group("anchor");
+                        matcher.appendReplacement(sb, new StringBuilder()
+                                .append("xref:")
+                                .append(targetUuid)
+                                .append("#")
+                                .append(anchor == null ? "" : anchor)
+                                .append("[")
+                                .append(matcher.group("label"))
+                                .append("]")
+                                .toString()
+                        );
                     }
                 }
             }
