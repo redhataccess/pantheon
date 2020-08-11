@@ -39,7 +39,7 @@ class Product extends Component<any, IState> {
                                     <div className="notification-container">
                                         <Alert  variant="warning"
                                                 title="A Product name is required."
-                                                action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                                actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                         />
                                     </div>
                                 }
@@ -47,7 +47,7 @@ class Product extends Component<any, IState> {
                                     <div className="notification-container">
                                         <Alert  variant="warning"
                                                 title="Duplicated Product name."
-                                                action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                                actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                         />
                                     </div>
                                 }
@@ -55,7 +55,7 @@ class Product extends Component<any, IState> {
                                     <div className="notification-container">
                                         <Alert  variant="danger"
                                                 title="Failed to create product."
-                                                action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                                actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                         >
                                             Please check if you are logged in as a publisher.
                                         </Alert>

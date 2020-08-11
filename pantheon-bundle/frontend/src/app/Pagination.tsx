@@ -65,7 +65,7 @@ class Pagination extends React.Component<IProps> {
     
     return (
       <Fragment>
-        <Level gutter="md">
+        <Level>
           <LevelItem />
           <LevelItem />
           <LevelItem>

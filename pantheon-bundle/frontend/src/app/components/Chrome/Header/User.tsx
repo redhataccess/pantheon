@@ -42,7 +42,7 @@ class User extends Component<IAppState, IState> {
                 </Modal>
                 <Dropdown onSelect={this.onHelpSelect}
                         toggle={
-                            <DropdownToggle iconComponent={null} onToggle={this.onHelpToggle}>
+                            <DropdownToggle toggleIndicator={null} onToggle={this.onHelpToggle}>
                                 <HelpIcon />
                             </DropdownToggle>
                         }

@@ -111,17 +111,17 @@ describe('ModuleDisplay tests', () => {
         expect(inst.fetchModuleDetails(props)).toMatchSnapshot()
     })
 
-    it('test getProduct function', () => {
-        const wrapper = renderer.create(<ModuleDisplay {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.getProduct()).toMatchSnapshot()
-    })
+    // it('test getProduct function', () => {
+    //     const wrapper = renderer.create(<ModuleDisplay {...props} />)
+    //     const inst = wrapper.getInstance()
+    //     expect(inst.getProduct()).toMatchSnapshot()
+    // })
 
-    it('test getVersion function', () => {
-        const wrapper = renderer.create(<ModuleDisplay {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.getVersion()).toMatchSnapshot()
-    })
+    // it('test getVersion function', () => {
+    //     const wrapper = renderer.create(<ModuleDisplay {...props} />)
+    //     const inst = wrapper.getInstance()
+    //     expect(inst.getVersion()).toMatchSnapshot()
+    // })
 
     it('test getVersionUUID function', () => {
         const wrapper = renderer.create(<ModuleDisplay {...props} />)
@@ -276,11 +276,11 @@ describe('ModuleDisplay tests', () => {
         expect(wrapper.find('#permanentURL').exists())
     })
 
-    it('test mouseLeave function', () => {
-        const wrapper = renderer.create(<ModuleDisplay {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.mouseLeave()).toMatchSnapshot()
-    })
+    // it('test mouseLeave function', () => {
+    //     const wrapper = renderer.create(<ModuleDisplay {...props} />)
+    //     const inst = wrapper.getInstance()
+    //     expect(inst.mouseLeave()).toMatchSnapshot()
+    // })
 
     it('test fetch api call for portalUrl', async () => {
         window.fetch = jest.fn().mockImplementation(async () => {

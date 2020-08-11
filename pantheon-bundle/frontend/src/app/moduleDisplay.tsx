@@ -20,7 +20,6 @@ class ModuleDisplay extends Component<any, any, any> {
             modulePath: '',
             moduleTitle: "",
             moduleType: '',
-            variantUUID: '',
             portalHost: '',
             productValue: "",
             releasePath: '',
@@ -28,6 +27,7 @@ class ModuleDisplay extends Component<any, any, any> {
             releaseVersion: '',
             results: {},
             variant: 'DEFAULT',
+            variantUUID: '',
             versionValue: ""
         }
     }
@@ -52,7 +52,7 @@ class ModuleDisplay extends Component<any, any, any> {
                     </div>
                     <br />
                     <div>
-                        <Level gutter="md">
+                        <Level>
                             <LevelItem>
                                 <TextContent>
                                     <Text component={TextVariants.h1}>{this.state.moduleTitle}</Text>
@@ -79,7 +79,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
                     </div>
                     <br />
-                    <Level gutter="md">
+                    <Level>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>

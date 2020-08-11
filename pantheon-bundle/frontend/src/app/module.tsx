@@ -28,7 +28,7 @@ class Module extends Component<any, any> {
                   <Alert
                     variant="warning"
                     title="A module name and choosing a file is required."
-                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                    actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                   />
                 </div>
               )}

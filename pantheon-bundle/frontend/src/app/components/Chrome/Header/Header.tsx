@@ -18,7 +18,7 @@ export const Header: React.FunctionComponent<IHeaderProps> = ({
     return (
         <PageHeader
             logo={<Brand />}
-            toolbar={<User {...appState} />}
+            headerTools={<User {...appState} />}
             showNavToggle={true}
             isNavOpen={isNavOpen}
             onNavToggle={onNavToggle}

@@ -6,7 +6,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
     <div
       className="app-container"
     >
-      <Component>
+      <Breadcrumb>
         <BreadcrumbItem>
           <a
             href="#/search"
@@ -18,13 +18,11 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
           isActive={true}
           to="#"
         />
-      </Component>
+      </Breadcrumb>
     </div>
     <br />
     <div>
-      <Level
-        gutter="md"
-      >
+      <Level>
         <LevelItem>
           <TextContent>
             <Text
@@ -44,18 +42,16 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
       </span>
     </div>
     <br />
-    <Level
-      gutter="md"
-    >
+    <Level>
       <LevelItem />
       <LevelItem />
       <LevelItem>
-        <Component
+        <Button
           onClick={[Function]}
           variant="primary"
         >
           Generate Draft Html
-        </Component>
+        </Button>
           
       </LevelItem>
     </Level>
@@ -169,12 +165,6 @@ exports[`ModuleDisplay tests test fetchModuleDetails function 1`] = `Promise {}`
 
 exports[`ModuleDisplay tests test getPortalUrl function 1`] = `undefined`;
 
-exports[`ModuleDisplay tests test getProduct function 1`] = `undefined`;
-
 exports[`ModuleDisplay tests test getProductInitialLoad function 1`] = `undefined`;
 
-exports[`ModuleDisplay tests test getVersion function 1`] = `undefined`;
-
 exports[`ModuleDisplay tests test getVersionUUID function 1`] = `undefined`;
-
-exports[`ModuleDisplay tests test mouseLeave function 1`] = `undefined`;

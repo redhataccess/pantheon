@@ -3,7 +3,7 @@ import {
   Alert, AlertActionCloseButton,
   DataList, DataListItem, DataListItemRow, DataListItemCells,
   DataListCell, Button, Modal,
-  Level, LevelItem, Checkbox
+  Level, LevelItem, Checkbox, ModalVariant
 } from '@patternfly/react-core'
 import '@app/app.css'
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
@@ -144,7 +144,7 @@ class Search extends Component<IAppState, ISearchState> {
                   }
                 </DataListItemRow>
                 {this.state.displayLoadIcon && (
-                  <Level gutter="md">
+                  <Level>
                     <LevelItem />
                     <LevelItem>
                       <div className="notification-container">
@@ -206,7 +206,7 @@ class Search extends Component<IAppState, ISearchState> {
 
                 </DataListItemRow>
                 {isEmptyResults && (
-                  <Level gutter="md">
+                  <Level>
                     <LevelItem />
                     <LevelItem>
                       <div className="notification-container">
@@ -215,7 +215,7 @@ class Search extends Component<IAppState, ISearchState> {
                         <Alert
                           variant="warning"
                           title={"No modules found with your search"}
-                          action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                          actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                         />
                         <br />
                         <br />
@@ -225,7 +225,7 @@ class Search extends Component<IAppState, ISearchState> {
 
                 )}
                 {this.state.isSearchException && (
-                  <Level gutter="md">
+                  <Level>
                     <LevelItem />
                     <LevelItem>
                       <div className="notification-container">
@@ -234,7 +234,7 @@ class Search extends Component<IAppState, ISearchState> {
                         <Alert
                           variant="danger"
                           title={"Error in fetching search results"}
-                          action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                          actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                         />
                         <br />
                         <br />
@@ -261,7 +261,7 @@ class Search extends Component<IAppState, ISearchState> {
             {/* Alert for delete confirmation */}
             <div className="alert">
               {this.state.confirmDelete === true && <Modal
-                isSmall={true}
+                variant={ModalVariant.small}
                 title="Confirmation"
                 isOpen={!this.state.isModalOpen}
                 onClose={this.hideAlertOne}
@@ -272,7 +272,7 @@ class Search extends Component<IAppState, ISearchState> {
                 </Modal>}
               {/* Alerts after confirmation on delete */}
               {this.state.deleteState === 'positive' && <Modal
-                isSmall={true}
+                variant={ModalVariant.small}
                 title="Success"
                 isOpen={!this.state.isModalOpen}
                 onClose={this.hideAlertOne}
@@ -281,7 +281,7 @@ class Search extends Component<IAppState, ISearchState> {
                 Selected items were deleted.
                 </Modal>}
               {this.state.deleteState === 'negative' && <Modal
-                isSmall={true}
+                variant={ModalVariant.small}
                 title="Failure"
                 isOpen={!this.state.isModalOpen}
                 onClose={this.hideAlertOne}
@@ -290,7 +290,7 @@ class Search extends Component<IAppState, ISearchState> {
                 Selected items were not found.
                 </Modal>}
               {this.state.deleteState === 'unknown' && <Modal
-                isSmall={true}
+                variant={ModalVariant.small}
                 title="Error"
                 isOpen={!this.state.isModalOpen}
                 onClose={this.hideAlertOne}

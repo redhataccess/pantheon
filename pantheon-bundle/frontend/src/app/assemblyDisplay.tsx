@@ -44,89 +44,89 @@ class AssemblyDisplay extends Component<any, any, any> {
         return (
             <React.Fragment>
                 <div>
-                    <Level gutter="md">
+                    <Level>
                         <LevelItem>
                             <Title headingLevel="h1" size="xl">{this.state.moduleTitle}</Title>
                         </LevelItem>
                         <LevelItem />
                     </Level>
-                    
-                        <Level gutter="md">
-                            <LevelItem>
-                                <TextContent>
-                                    <Text component={TextVariants.small}>Assembly</Text>
-                                </TextContent>
-                            </LevelItem>
-                            <LevelItem />
-                        </Level>
-                    
-                        <Level gutter="md">
-                            <LevelItem>
-                                <TextContent>
-                                    <Text component="a">{this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)}</Text>
-                                </TextContent>
-                            </LevelItem>
-                            <LevelItem />
-                        </Level>
-                    
-                    
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.variantUUID !== ""
-                            && this.state.portalHost !== ""
-                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
-                        }
-
-                        <span>&emsp;&emsp;</span>
-
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.variantUUID !== ""
-                            && this.state.portalHost !== ""
-                            && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
-                        }
-
-                        <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
-                    
-                    
-                        <Level gutter="md">
-                            <LevelItem>
-                                <TextContent>
-                                    <Text><strong>Product</strong></Text>
-                                </TextContent>
-                            </LevelItem>
-                            <LevelItem>
-                                <TextContent>
-                                    <Text><strong>Draft Uploaded</strong></Text>
-                                </TextContent>
-                            </LevelItem>
-                            <LevelItem>
-                                <TextContent>
-                                    <Text><strong>Published</strong></Text>
-                                </TextContent>
-                            </LevelItem>
-                        </Level>
-                    
-                    <Level gutter="md">
-                        <LevelItem><span>{this.state.productValue + ' ' + this.state.versionValue}</span></LevelItem>
+                    <Level>
                         <LevelItem>
+                            <TextContent>
+                                <Text component={TextVariants.small}>Assembly</Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem />
+                    </Level>
+
+                    <Level>
+                        <LevelItem>
+                            <TextContent>
+                                <Text component="a">{this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)}</Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem />
+                        <LevelItem>
+                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                                && this.state.variantUUID !== ""
+                                && this.state.portalHost !== ""
+                                && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                            }
+                        </LevelItem>
+                        <LevelItem>
+                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                                && this.state.variantUUID !== ""
+                                && this.state.portalHost !== ""
+                                && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
+                            }
+
+                            <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
+
+                        </LevelItem>
+                    </Level>
+                    <br />
+                    <Level>
+                        <LevelItem>
+                            <TextContent>
+                                <Text><strong>Product</strong></Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem>{}</LevelItem>
+                        <LevelItem>
+                            <TextContent>
+                                <Text><strong>Draft Uploaded</strong></Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem>
+                            <TextContent>
+                                <Text><strong>Published</strong></Text>
+                            </TextContent>
+                        </LevelItem>
+                    </Level>
+
+                    <Level>
+                        <LevelItem><span>{this.state.productValue + ' ' + this.state.versionValue}</span></LevelItem>
+                        <LevelItem>{}</LevelItem>
+                        <LevelItem className="pf-u-text-align-left">
                             <span>
                                 {this.state.draftUpdateDate.trim() !== ""
                                     && this.state.draftUpdateDate.length >= 15 ?
-                                    this.state.draftUpdateDate : "-"}
+                                    new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.draftUpdateDate)) : "--"}
                             </span>
                         </LevelItem>
-                        <LevelItem><span>
+                        <LevelItem className="pf-u-text-align-left"><span>
                             {this.state.releaseUpdateDate.trim() !== ""
                                 && this.state.releaseUpdateDate.length >= 15 ?
-                                this.state.releaseUpdateDate : "--"}
+                                new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.releaseUpdateDate)) : "--"}
                             {this.state.releaseUpdateDate.trim() !== ""
                                 && this.state.releaseUpdateDate.length >= 15 ?
                                 <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a> : ""}
                         </span>
                         </LevelItem>
                     </Level>
-                    
+
                     <br />
-                    <Level gutter="md">
+                    <Level>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>
@@ -333,7 +333,6 @@ class AssemblyDisplay extends Component<any, any, any> {
             this.setState({ variant: variantParam })
         }
     }
-
 }
 
 export { AssemblyDisplay }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Bullseye, Button, Alert, Modal, AlertActionCloseButton, FormGroup, TextInput } from '@patternfly/react-core';
+import { Bullseye, Button, Alert, Modal, AlertActionCloseButton, FormGroup, TextInput, ModalVariant } from '@patternfly/react-core';
 import '@app/app.css';
 import { Redirect } from 'react-router-dom'
 
@@ -23,7 +23,7 @@ class GitImport extends Component {
           <div className="app-container">
             {isFormSubmitted && isSucess && (
               <Modal
-                isSmall={true}
+                variant={ModalVariant.small}
                 title="Request submitted."
                 isOpen={true}
                 onClose={this.dismissNotification}
@@ -37,7 +37,7 @@ class GitImport extends Component {
                   <Alert
                     variant="warning"
                     title="A repository url is required."
-                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                    actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                   />
                 </div>
               )}
@@ -46,7 +46,7 @@ class GitImport extends Component {
                   <Alert
                     variant="danger"
                     title={this.state.submitMsg}
-                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                    actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                   />
                 </div>
               )}

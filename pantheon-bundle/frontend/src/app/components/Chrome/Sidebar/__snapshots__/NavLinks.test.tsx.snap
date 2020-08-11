@@ -5,10 +5,8 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
   <NavList
     ariaLeftScroll="Scroll left"
     ariaRightScroll="Scroll right"
-    className=""
     id="nav-primary-expandable"
     onSelect={[Function]}
-    variant="default"
   >
     <NavExpandable
       className=""
@@ -83,17 +81,3 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
   </NavList>
 </Fragment>
 `;
-
-exports[`NavLinks tests test browserLink function 1`] = `undefined`;
-
-exports[`NavLinks tests test checkAuth function 1`] = `undefined`;
-
-exports[`NavLinks tests test handleItemOnclick function 1`] = `undefined`;
-
-exports[`NavLinks tests test onExpandableSelect function 1`] = `undefined`;
-
-exports[`NavLinks tests test render function 1`] = `[Function]`;
-
-exports[`NavLinks tests test webConsole function 1`] = `undefined`;
-
-exports[`NavLinks tests test welcomeLink function 1`] = `undefined`;

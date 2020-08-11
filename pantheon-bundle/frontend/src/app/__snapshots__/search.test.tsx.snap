@@ -90,9 +90,7 @@ exports[`Search tests should render default Search component 1`] = `
           <DataListItemRow
             id="data-rows"
           />
-          <Level
-            gutter="md"
-          >
+          <Level>
             <LevelItem />
             <LevelItem>
               <div
