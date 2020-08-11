@@ -284,8 +284,10 @@ public class AsciidoctorService {
                 // extensions needed to generate a module's html
                 SlingResourceIncludeProcessor includeProcessor = new SlingResourceIncludeProcessor(base);
                 asciidoctor.javaExtensionRegistry().includeProcessor(includeProcessor);
+
                 asciidoctor.javaExtensionRegistry().preprocessor(
-                        new XrefPreprocessor(documentVariant));
+                        new XrefPreprocessor(documentVariant, includeProcessor.getTableOfContents()));
+
                 asciidoctor.javaExtensionRegistry().postprocessor(
                         new HtmlModulePostprocessor(base));
 
