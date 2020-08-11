@@ -46,7 +46,7 @@
                 - head_scope = nil
                 - head_id = nil
                 - headers_attr = colsArray[columnCnt]
-              - haml_tag (tblsec == :head || cell.style == :header ? 'th' : 'td'), :<, :class=>['tableblock', "halign-#{cell.attr :halign}", "valign-#{cell.attr :valign}"],
+              - haml_tag (tblsec == :head || cell.style == :header ? 'th' : 'td'), :class=>['tableblock', "halign-#{cell.attr :halign}", "valign-#{cell.attr :valign}"],
                   :colspan=>cell.colspan, :rowspan=>cell.rowspan, :style=>cell_css_style, :scope=>head_scope, :id=>head_id, :headers=>headers_attr do
                 - if tblsec == :head
                   =cell_content
