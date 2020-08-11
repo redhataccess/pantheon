@@ -15,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  */
 public class AsciidocTest {
 
+    private static final String CUSTOM_HAML_TEMPLATES_PATH = "apps/pantheon/templates/haml";
+
     /*
      * CCS-3186: Ensure tables with empty cells don't throw an error when using Pantheon's
      * custom HAML templates
@@ -32,14 +34,14 @@ public class AsciidocTest {
                 "|Column 1 |          | Column 3\n" +
                 "|===" +
                 "";
+        OptionsBuilder options = OptionsBuilder.options()
+                .templateDir(
+                        new File(getClass().getClassLoader().getResource(CUSTOM_HAML_TEMPLATES_PATH).getFile()));
 
         // When
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
 
         // Then
-        OptionsBuilder options = OptionsBuilder.options()
-                .templateDir(
-                        new File(getClass().getClassLoader().getResource("apps/pantheon/templates/haml").getFile()));
         assertDoesNotThrow(() -> asciidoctor.convert(asciidocContent, options.get()));
     }
 }
