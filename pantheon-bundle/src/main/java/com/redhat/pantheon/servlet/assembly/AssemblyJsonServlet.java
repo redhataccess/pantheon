@@ -103,7 +103,7 @@ public class AssemblyJsonServlet extends AbstractJsonSingleQueryServlet {
         assemblyMap.put("revision_id", releasedRevision.get().getName());
         assemblyMap.put("title", releasedMetadata.get().title().get());
         assemblyMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline().get() : "");
-        //assemblyMap.put("description", releasedMetadata.get().description().get());
+        assemblyMap.put("description", releasedMetadata.get().mAbstract().get());
         assemblyMap.put("content_type", "assembly");
         assemblyMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
         assemblyMap.put("status", "published");
@@ -160,7 +160,7 @@ public class AssemblyJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
-            String view_uri = System.getenv(PORTAL_URL) + "/topics/" + ServletUtils.toLanguageTag(locale) + "/" + assemblyId;
+            String view_uri = System.getenv(PORTAL_URL) + "/guides/" + ServletUtils.toLanguageTag(locale) + "/" + assemblyId;
             assemblyMap.put(VIEW_URI, view_uri);
         }
         else {
