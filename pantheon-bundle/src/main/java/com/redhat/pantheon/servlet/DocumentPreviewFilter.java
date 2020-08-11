@@ -52,33 +52,26 @@ public class DocumentPreviewFilter implements Filter {
         String docId = pathMatcher.group("documentId");
         String mode = pathMatcher.group("mode");
 
-        System.out.println("documentId: " + docId);
-        System.out.println("mode: " + mode);
-
-        String query = "select * from [pant:document] as document WHERE document.[jcr:uuid] = '" + docId + "'";
+        String query = "select * from [pant:documentVariant] as variant WHERE variant.[jcr:uuid] = '" + docId + "'";
         @NotNull ResourceResolver resolver = ((SlingHttpServletRequest) request).getResourceResolver();
         JcrQueryHelper queryHelper = new JcrQueryHelper(resolver);
         try {
             Stream<Resource> resultStream = queryHelper.query(query);
             Optional<Resource> firstResource = resultStream.findFirst();
-            if (firstResource.isPresent()) {
-                Resource res = firstResource.get();
-                request.getRequestDispatcher(res.getPath() + ".preview").forward(request, response);
-            } else {
-                // Not a document, but maybe a document variant
-                String query2 = "select * from [pant:documentVariant] as variant WHERE variant.[jcr:uuid] = '" + docId + "'";
+            if (!firstResource.isPresent()) {
+                // Not a document variant, but maybe a document
+                String query2 = "select * from [pant:document] as document WHERE document.[jcr:uuid] = '" + docId + "'";
                 resultStream = queryHelper.query(query2);
                 firstResource = resultStream.findFirst();
-                if (firstResource.isPresent()) {
-                    Resource res = firstResource.get();
-                    DocumentVariant dv = res.adaptTo(DocumentVariant.class);
-                    String forwardString = dv.getPath() + ".preview/" + mode;
-                    System.out.println("Forwarding to: " + forwardString);
-                    request.getRequestDispatcher(forwardString).forward(request, response);
+                if (!firstResource.isPresent()) {
+                    throw new ServletException("No document objects found with UUID " + docId);
                 }
             }
+            // FIXME - need to rework document preview servlets to support latest suffix (variant preview servlet already works)
+            String forwardString = firstResource.get().getPath() + ".preview/" + mode;
+            request.getRequestDispatcher(forwardString).forward(request, response);
         } catch (RepositoryException e) {
-
+            throw new ServletException(e);
         }
     }
 

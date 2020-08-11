@@ -46,10 +46,8 @@ public class XrefPreprocessor extends Preprocessor {
                     // TODO - plug in a validation warning/error here once validation is a thing
                     matcher.appendReplacement(sb, matcher.group(0));
                 } else {
-                    System.out.println("target type: " + desiredTarget.getResourceType());
                     if (!PantheonConstants.RESOURCE_TYPE_ASSEMBLY.equals(desiredTarget.getResourceType())
                             && !PantheonConstants.RESOURCE_TYPE_MODULE.equals(desiredTarget.getResourceType())) {
-                        System.out.println("Wrong type :(");
                         matcher.appendReplacement(sb, matcher.group(0));
                     } else {
                         Document docTarget = desiredTarget.adaptTo(Document.class);
@@ -60,7 +58,7 @@ public class XrefPreprocessor extends Preprocessor {
                                 .variant(documentVariant.getName()).get() // TODO - assume same variant for now
                                 .uuid().get();
 
-                        matcher.appendReplacement(sb, "xref:./" + targetUuid + "#[" + matcher.group(2) + "]");
+                        matcher.appendReplacement(sb, "xref:" + targetUuid + "#[" + matcher.group(2) + "]");
                     }
                 }
             }
