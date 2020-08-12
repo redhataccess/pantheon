@@ -22,29 +22,26 @@ export interface IProps {
 }
 
 interface IState {
+    allProducts: any
+    allProductVersions: any
+    attributesFilePath: string
     canChangePublishState: boolean
     isArchiveDropDownOpen: boolean
     isDropDownOpen: boolean
     isHeadingToggle: boolean
-    login: boolean
-    results: any
-
-    allProducts: any
-    allProductVersions: any
-
     isMissingFields: boolean
     isModalOpen: boolean
     keywords: string
+    login: boolean
     metadataPath: string
     moduleUrl: string
     product: { label: string, value: string }
     productVersion: { label: string, uuid: string }
     publishAlertVisible: boolean
-
+    results: any
     successAlertVisible: boolean
     usecaseOptions: any
     usecaseValue: string,
-    // variant: string
 }
 
 class Versions extends Component<IProps, IState> {
@@ -56,25 +53,24 @@ class Versions extends Component<IProps, IState> {
     constructor(props) {
         super(props)
         this.state = {
+            allProducts: [],
+            // tslint:disable-next-line: object-literal-sort-keys
+            allProductVersions: [],
+            attributesFilePath: '',
             canChangePublishState: true,
             isArchiveDropDownOpen: false,
             isDropDownOpen: false,
             isHeadingToggle: true,
-            login: false,
-            results: [this.draft, this.release],
-
-            allProducts: [],
-            allProductVersions: [],
-
             isMissingFields: false,
             isModalOpen: false,
             keywords: '',
+            login: false,
             metadataPath: '',
             moduleUrl: '',
             product: { label: '', value: '' },
             productVersion: { label: '', uuid: '' },
             publishAlertVisible: false,
-
+            results: [this.draft, this.release],
             successAlertVisible: false,
             usecaseOptions: [
                 { value: '', label: 'Select Use Case', disabled: false }
@@ -86,6 +82,8 @@ class Versions extends Component<IProps, IState> {
     public componentDidMount() {
         this.fetchProducts()
         this.fetchVersions()
+        console.log("[componentDidMount] location.pathname=>", this.props)
+        console.log("[componentDidMount] modulePath =>", this.props.modulePath)
     }
 
     public componentDidUpdate(prevProps) {
@@ -127,234 +125,98 @@ class Versions extends Component<IProps, IState> {
                     </ul>
                 </Alert>
                 }
-                
-                <Grid hasGutter={true}>  
-                <GridItem span={6}>      
-                        <Card className="pf-m-light pf-site-background-medium pf-c-card-draft">
-                            <CardHeader>
 
-                                <CardHeaderMain><strong>Draft</strong></CardHeaderMain>
-                                <CardActions>{}</CardActions>
-                                <CardActions><i className="pf-icon pf-icon-warning-triangle" /><Button variant="link" isInline={true}>Add metadata</Button>
-                                </CardActions>
-                                <CardActions><Button variant="link" isInline={true}>Preview</Button>
-                                </CardActions>
-                                <CardActions><Tooltip content="Add metadta to publish"><Button isAriaDisabled={true} variant="secondary" isSmall={true}>Publish</Button></Tooltip>
-                                </CardActions>
-                            </CardHeader>
+                <Grid hasGutter={true}>
+                    {console.log('[results]', this.state.results)}
+                    {this.state.results.map((type, key1) => (
+                        type.map((data, key2) => (
+                            data.version !== '' && data.type === "draft" && (
+                                <GridItem span={6}>
+                                    <Card className="pf-m-light pf-site-background-medium pf-c-card-draft">
+                                        <CardHeader>
 
-                            <CardBody>
-                                <TextContent>
-                                    <div><Text><strong>Upload time</strong></Text></div>
-                                    <div><Text>Tue Jul 28 2020 08:59:55 GMT-0400</Text></div>
-                                </TextContent>
-                                <br />
-                                <TextContent>
-                                    <div><Text><strong>Attribute file</strong></Text></div>
-                                    <div><Text>enterprise/meta/attributes.adoc</Text></div>
-                                </TextContent>
-                                <br />
-                                <TextContent>
-                                    <div><Text><strong>Modules</strong></Text></div>
-                                    <div><Text>{}</Text></div>
-                                </TextContent>
-                            </CardBody>
+                                            <CardHeaderMain><strong>Draft</strong></CardHeaderMain>
+                                            <CardActions>{}</CardActions>
+                                            <CardActions><i className="pf-icon pf-icon-warning-triangle" />
+                                            <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
+                                            </CardActions>
+                                            <CardActions><Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)}>Preview</Button>
+                                            </CardActions>
+                                            <CardActions><Tooltip content="Add metadta to publish">
+                                                <Button isAriaDisabled={true} variant="secondary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button></Tooltip>
+                                            </CardActions>
+                                        </CardHeader>
 
-                        </Card>
-                        </GridItem>
-                        <GridItem span={6}>
-                        <Card>
-                            <CardHeader>
+                                        <CardBody>
+                                            <TextContent>
+                                                <div><Text><strong>Upload time</strong></Text></div>
+                                                <div><Text>{data.updatedDate}</Text></div>
+                                            </TextContent>
+                                            <br />
+                                            <TextContent>
+                                                <div><Text><strong>Attribute file</strong></Text></div>
+                                                <div><Text>{this.state.attributesFilePath}</Text></div>
+                                            </TextContent>
+                                            <br />
+                                            <TextContent>
+                                                <div><Text><strong>Modules</strong></Text></div>
+                                                <div><Text>{}</Text></div>
+                                            </TextContent>
+                                        </CardBody>
 
-                                <CardHeaderMain><strong>Published</strong></CardHeaderMain>
-                                <CardActions>{}</CardActions>
-                                <CardActions><div className="pf-c-alert__icon"><i className="fas fa-fw fa-exclamation-triangle" /></div><Button variant="link" isInline={true}>Add metadata</Button>
-                                </CardActions>
-                                <CardActions><Button variant="link" isInline={true}>Preview</Button>
-                                </CardActions>
-                                <CardActions><Button variant="primary" isSmall={true}>Unpublish</Button>
-                                </CardActions>
-                            </CardHeader>
+                                    </Card>
+                                </GridItem>)
+                        ))
+                    ))}
+                    {this.state.results.map((type, key1) => (
+                        type.map((data, key2) => (
+                            data.version !== '' && data.type === "release" && (
+                                <GridItem span={6}>
+                                    <Card>
+                                        <CardHeader>
 
-                            <CardBody>
-                                <TextContent>
-                                    <div><Text><strong>Upload time</strong></Text></div>
-                                    <div><Text>Tue Jul 28 2020 08:59:55 GMT-0400</Text></div>
-                                </TextContent>
-                                <br />
-                                <TextContent>
-                                    <div><Text><strong>Attribute file</strong></Text></div>
-                                    <div><Text>enterprise/meta/attributes.adoc</Text></div>
-                                </TextContent>
-                                <br />
-                                <TextContent>
-                                    <div><Text><strong>Modules</strong></Text></div>
-                                    <div><Text>{}</Text></div>
-                                </TextContent>
-                            </CardBody>
+                                            <CardHeaderMain><strong><span id='span-source-type-version-published'>Published</span></strong></CardHeaderMain>
+                                            <CardActions>{}</CardActions>
+                                            <CardActions><i className="pf-icon pf-icon-warning-triangle" />
+                                                <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
+                                            </CardActions>
+                                            <CardActions>
+                                                <Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)}>Preview</Button>
+                                            </CardActions>
+                                            <CardActions>
+                                                <Button variant="secondary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
+                                            </CardActions>
+                                        </CardHeader>
 
-                        </Card>
-                        </GridItem>
-                    </Grid>
-                <div>
-                    <DataList aria-label='Simple data list'>
-                        <DataListItem aria-labelledby='simple-item1' isExpanded={this.state.isHeadingToggle}>
-                            <DataListItemRow id='data-rows-header' >
-                                <DataListToggle
-                                    // tslint:disable-next-line: jsx-no-lambda
-                                    onClick={() => this.onHeadingToggle()}
-                                    isExpanded={true}
-                                    id='width-ex3-toggle1'
-                                    aria-controls='width-ex3-expand1'
-                                />
-                                <DataListItemCells
-                                    dataListCells={[
-                                        <DataListCell key='version_header_version'>
-                                            <span className='sp-prop-nosort' id='span-source-type-version'>Version</span>
-                                        </DataListCell>,
-                                        <DataListCell key='version_header_published'>
-                                            <span className='sp-prop-nosort' id='span-source-type-version-published'>Published</span>
-                                        </DataListCell>,
-                                        <DataListCell key='version_header_updated'>
-                                            <span className='sp-prop-nosort' id='span-source-type-version-draft-uploaded'>Draft Uploaded</span>
-                                        </DataListCell>,
-                                        <DataListCell key='version_header_publish_buttons'>
-                                            <span className='sp-prop-nosort' id='span-source-name-version-publish-buttons' />
-                                        </DataListCell>,
-                                        <DataListCell key='version_header_module_view_button'>
-                                            <span className='sp-prop-nosort' id='span-source-name' />
-                                        </DataListCell>
-                                    ]}
-                                />
-                            </DataListItemRow>
-                        </DataListItem>
-                        <DataListContent
-                            aria-label='Secondary Content Details'
-                            id={'Content'}
-                            isHidden={!this.state.isHeadingToggle}
+                                        <CardBody>
+                                            <TextContent>
+                                                <div><Text><strong>Upload time</strong></Text></div>
+                                                <div><Text>{data.updateDate}</Text></div>
+                                            </TextContent>
+                                            <br />
+                                            <TextContent>
+                                                <div><Text><strong>Attribute file</strong></Text></div>
+                            <div><Text>{this.state.attributesFilePath}</Text></div>
+                                            </TextContent>
+                                            <br />
+                                            <TextContent>
+                                                <div><Text><strong>Modules</strong></Text></div>
+                                                <div><Text>{}</Text></div>
+                                            </TextContent>
+                                        </CardBody>
 
-                            key='details_dlc'
-                        >
-                            {/* this is the data list for the inner row */}
-                            {/* {console.log('[results]', this.state.results)} */}
-                            {this.state.results.map((type, key1) => (
-                                type.map((data, key2) => (
-                                    data.version !== '' && (
-                                        <DataList aria-label='Simple data list2' key={'datalist_' + key1 + '_' + key2}>
-                                            <DataListItem aria-labelledby='simple-item2' isExpanded={data.isDropdownOpen} key={'datalistitem1_' + key1 + '_' + key2}>
-                                                <DataListItemRow key={'datalistitemrow1_' + key1 + '_' + key2}>
-                                                    <DataListToggle
-                                                        // tslint:disable-next-line: jsx-no-lambda
-                                                        onClick={() => this.onExpandableToggle(data)}
-                                                        isExpanded={data.isDropdownOpen}
-                                                        id={data.version}
-                                                        aria-controls={data.version}
-                                                        key={'datalisttoggle1_' + key1 + '_' + key2}
-                                                    />
-                                                    <DataListItemCells
-                                                        key={'datalistitemcells1_' + key1 + '_' + key2}
-                                                        dataListCells={[
-                                                            <DataListCell key={'version_value_' + key1 + '_' + key2}>
-                                                                {/* <img src={CheckImage} width='20px' height='20px'/> */}
-                                                                {data.version}
-                                                            </DataListCell>,
-                                                            <DataListCell key={'published_value_' + key1 + '_' + key2}>
-                                                                {data.publishedState === 'Not published' && data.publishedState}
-                                                                {data.publishedState === 'Released' && data.updatedDate}
-                                                            </DataListCell>,
-                                                            <DataListCell key={'version_updated_' + key1 + '_' + key2}>
-                                                                {data['type'] === 'draft' && (data['updatedDate'].trim() !== '' ? data.updatedDate : '-')}
-                                                                {data['type'] === 'release' && (data['draftUploadDate'].trim() !== '' ? data.draftUploadDate : '-')}
-                                                            </DataListCell>,
-                                                            <DataListCell key={'publish_buttons_' + key1 + '_' + key2}>
-                                                                <Button variant='primary' onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>{'  '}
-                                                                {/* tslint:disable-next-line: jsx-no-lambda*/}
-                                                                <Button variant='secondary' onClick={() => this.previewDoc(data.secondButtonText)}>{data.secondButtonText}</Button>{'  '}
-                                                            </DataListCell>,
-                                                            <DataListCell key={'image_' + key1 + '_' + key2} width={1}>
-                                                                <Dropdown
-                                                                    isPlain={true}
-                                                                    position={DropdownPosition.right}
-                                                                    isOpen={data.isArchiveDropDownOpen}
-                                                                    onSelect={this.onArchiveSelect}
-                                                                    // tslint:disable-next-line: jsx-no-lambda
-                                                                    toggle={<KebabToggle onToggle={() => this.onArchiveToggle(data)} />}
-                                                                    key={'kebab_' + key1 + '_' + key2}
-                                                                    dropdownItems={[
-                                                                        <DropdownItem key={'archive_' + key1 + '_' + key2} isDisabled={true}>Archive</DropdownItem>,
-                                                                        <DropdownItem id={data.path} key={'edit_metadata_' + key1 + '_' + key2} component='button' onClick={this.handleModalToggle}>Edit metadata</DropdownItem>,
-                                                                    ]}
-                                                                />
-                                                            </DataListCell>
-                                                        ]}
-                                                    />
-                                                </DataListItemRow>
-                                                <DataListContent
-                                                    aria-label={data.version}
-                                                    id={data.version}
-                                                    isHidden={!data.isDropdownOpen}
-
-                                                    key={'details_' + key1 + '_' + key2}
-                                                >
-                                                    {/* this is the content for the inner data list content */}
-                                                    <DataListItemCells
-                                                        key={'details_cells_' + key1 + '_' + key2}
-                                                        dataListCells={[
-                                                            <DataListCell key={'details_whitespace_' + key1 + '_' + key2} width={2}>
-                                                                <span>{' '}</span>
-                                                            </DataListCell>,
-                                                            <DataListCell key={'details_file_name_' + key1 + '_' + key2} width={2}>
-                                                                <span className='sp-prop-nosort' id='span-source-type-filename'>File Name</span>
-                                                            </DataListCell>,
-                                                            <DataListCell key={'details_modulePath_' + key1 + '_' + key2} width={4}>
-                                                                {this.props.modulePath}
-                                                            </DataListCell>,
-                                                            <DataListCell key={'details_upload_time_' + key1 + '_' + key2} width={2}>
-                                                                <span className='sp-prop-nosort' id='span-source-type-upload-time'>Upload Time</span>
-                                                            </DataListCell>,
-                                                            <DataListCell key={'details_updated_' + key1 + '_' + key2} width={4}>
-                                                                {data['type'] === 'draft' && (data['updatedDate'].trim() !== '' ? data.updatedDate : '-')}
-                                                                {data['type'] === 'release' && (data['draftUploadDate'].trim() !== '' ? data.draftUploadDate : '-')}
-                                                            </DataListCell>,
-                                                        ]}
-                                                    />
-
-                                                    <DataListItemCells
-                                                        key={'details_cells2_' + key1 + '_' + key2}
-                                                        dataListCells={[
-                                                            <DataListCell key={'details_whitespace2_' + key1 + '_' + key2} width={2}>
-                                                                <span>{' '}</span>
-                                                            </DataListCell>,
-                                                            <DataListCell key={'details_module_title_' + key1 + '_' + key2} width={2}>
-                                                                <span>{'  '}</span>
-                                                                <span className='sp-prop-nosort' id='span-source-type-module-title'>Module Title</span>
-                                                            </DataListCell>,
-                                                            <DataListCell key={'details_jcr_title_' + key1 + '_' + key2} width={4}>
-                                                                {(data['metadata']['jcr:title'] !== undefined) ? data['metadata']['jcr:title'] : '-'}
-                                                            </DataListCell>,
-                                                            <DataListCell key={'details_context_package_' + key1 + '_' + key2} width={2}>
-                                                                <span className='sp-prop-nosort' id='span-source-type-context-package'>Context Package</span>
-                                                            </DataListCell>,
-                                                            <DataListCell key={'details_context_value_' + key1 + '_' + key2} width={4}>
-                                                                N/A
-                                                                </DataListCell>,
-                                                        ]}
-                                                    />
-
-                                                </DataListContent>
-                                            </DataListItem>
-                                        </DataList>)
-                                ))
-                            ))}
-                        </DataListContent>
-                    </DataList>
-                </div>
+                                    </Card>
+                                </GridItem>)
+                        ))
+                    ))}
+                </Grid>
 
                 <Modal
                     width={'60%'}
                     title='Edit metadata'
                     isOpen={this.state.isModalOpen}
                     header={header}
+                    aria-label="Edit metadata"
                     onClose={this.handleModalClose}
                     actions={[
                         <Button form='edit_metadata' key='confirm' variant='primary' onClick={this.saveMetadata}>
@@ -786,6 +648,37 @@ class Versions extends Component<IProps, IState> {
                 this.populateProductVersions(this.state.product.value)
                 this.props.onGetProduct(this.state.product.label)
                 this.props.onGetVersion(this.state.productVersion.label)
+            })
+    }
+private fetchAttributesFilePath = (path) => {
+
+        // path = '/content/repositories/test-repo/entities/.../assembly_access-control-list.adoc/en_US/variants/rhel8/draft'
+        let repo = ''
+        let variant = ''
+        const group = path.split("/")
+        repo = group[3]
+        variant = group.pop()
+        variant = group.pop()
+
+        fetch('/content/repositories/' + repo + '/module_variants/ ' + variant + '.harray.json')
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error(response.statusText)
+                }
+            })
+            .then(responseJSON => {
+                for (const variants of responseJSON.__children__) {
+                    console.log("[fetchAttributeFilePath] variants=> ", variants)
+                    if (variants["pant:attributesFilePath"] !== undefined) {
+                        this.setState({attributesFilePath: variants["pant:attributesFilePath"]})
+                    }
+                }
+                
+            })
+            .catch((error) => {
+                console.log(error)
             })
     }
 }

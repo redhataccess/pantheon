@@ -212,19 +212,19 @@ describe('Versions tests', () => {
     //     expect(inst.dismissNotification()).toMatchSnapshot()
     // })
 
-    // it('test getMetadata function', () => {
-    //     const wrapper = shallow(<Versions {...props} />)
-    //     const instance = wrapper.instance()
-    //     wrapper.setState({ 'login': true })
-    //     wrapper.setState({ 'isModalOpen': true })
-    //     // Assuming metadata exists
-    //     const spy = sinon.spy(instance, 'saveMetadata')
-    //     const urlFragment = wrapper.find('input')
-    //     expect(urlFragment.exists()).toBe(true)
+    it('test getMetadata function', () => {
+        const wrapper = shallow(<Versions {...props} />)
+        const instance = wrapper.instance()
+        wrapper.setState({ 'login': true })
+        wrapper.setState({ 'isModalOpen': true })
+        // Assuming metadata exists
+        const spy = sinon.spy(instance, 'saveMetadata')
+        const urlFragment = wrapper.find('input')
+        expect(urlFragment.exists()).toBe(true)
 
-    //     const useCaseValue = wrapper.find('[aria-label="FormSelect Usecase"]').simulate('change', { target: { value: 'Administer' } })
-    //     expect(useCaseValue.exists()).toBe(true)
-    // })
+        const useCaseValue = wrapper.find('[aria-label="FormSelect Usecase"]').simulate('change', { target: { value: 'Administer' } })
+        expect(useCaseValue.exists()).toBe(true)
+    })
 
     // it('test getHarrayChildNamed function', () => {
     //     const wrapper = renderer.create(<Versions {...props} />)
@@ -244,16 +244,7 @@ describe('Versions tests', () => {
     //     expect(inst.hidePublishAlert()).toMatchSnapshot();
     // });
 
-    // test('Version Button click', () => {
-    //     const wrapper = shallow(<Versions {...props} />)
-    //     const instance = wrapper.instance()
-    //     const spy = sinon.spy(instance, 'onHeadingToggle')
-
-    //     wrapper.find(DataListToggle).simulate('click')
-    //     sinon.assert.called(spy)
-    // })
-
-    // // Value testing with Enzyme.
+    // Value testing with Enzyme.
     // it('renders Version heading', () => {
     //     const wrapper = mount(<Versions {...props} />)
     //     const sourceTypeText = wrapper.find('#span-source-type-version').text()
@@ -262,26 +253,10 @@ describe('Versions tests', () => {
     //     expect(sourceTypeText).toEqual("Version")
     // })
 
-    // it('renders Published heading', () => {
-    //     const wrapper = mount(<Versions {...props} />)
-    //     const sourceTypeText = wrapper.find('#span-source-type-version-published').text()
-
-    //     // ensure it matches what is expected
-    //     expect(sourceTypeText).toEqual("Published")
-    // })
-
-    // it('renders Draft Uploaded heading', () => {
-    //     const wrapper = mount(<Versions {...props} />)
-    //     const sourceTypeText = wrapper.find('#span-source-type-version-draft-uploaded').text()
-
-    //     // ensure it matches what is expected
-    //     expect(sourceTypeText).toEqual("Draft Uploaded")
-    // })
-
-    // it('has a props', () => {
-    //     const versions = mount(<Versions {...props} />).matchesElement
-    //     expect(versions.length === 1)
-    // })
+    it('has a props', () => {
+        const versions = mount(<Versions {...props} />).matchesElement
+        expect(versions.length === 1)
+    })
 
     // it('test getHarrayChildNamed function', () => {
     //     const wrapper = renderer.create(<Versions {...props} />)
@@ -289,20 +264,20 @@ describe('Versions tests', () => {
     //     expect(inst.getHarrayChildNamed(anymatch, 'metadata')).toMatchSnapshot()
     // })
 
-    // it('has a variantUUID of "1234"', () => {
-    //     const state: IProps = {
-    //         modulePath: "somePath",
-    //         onGetProduct: (productValue) => anymatch,
-    //         onGetVersion: (versionValue) => anymatch,
-    //         productInfo: "Red Hat Enterprise Linux",
-    //         updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
-    //         variant: "DEFAULT",
-    //         versionModulePath: "versionPath"
-    //     }
-    //     state.updateDate("-", "-", 1, "1234")
-    //     expect(state.modulePath).toEqual('somePath')
-    //     expect(state.versionModulePath).toEqual('versionPath')
-    // })
+    it('has a variantUUID of "1234"', () => {
+        const state: IProps = {
+            modulePath: "somePath",
+            onGetProduct: (productValue) => anymatch,
+            onGetVersion: (versionValue) => anymatch,
+            productInfo: "Red Hat Enterprise Linux",
+            updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
+            variant: "DEFAULT",
+            versionModulePath: "versionPath"
+        }
+        state.updateDate("-", "-", 1, "1234")
+        expect(state.modulePath).toEqual('somePath')
+        expect(state.versionModulePath).toEqual('versionPath')
+    })
 
     // test('changePublishState click', () => {
     //     const wrapper = mount(<Versions {...props} />)
