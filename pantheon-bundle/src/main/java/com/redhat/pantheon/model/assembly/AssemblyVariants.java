@@ -19,6 +19,10 @@ public interface AssemblyVariants extends DocumentVariants {
     @Named(DEFAULT_VARIANT_NAME)
     Child<AssemblyVariant> defaultVariant();
 
+    default Child<AssemblyVariant> canonicalVariant() {
+        return variant(getParent().getWorkspace().getCanonicalVariantName());
+    }
+
     default Stream<AssemblyVariant> getVariants() {
         return this.as(AssemblyVariant.class);
     }

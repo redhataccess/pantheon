@@ -84,6 +84,9 @@
 [pant:assemblyVersion] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
     - sling:resourceType (string) = 'pantheon/assemblyVersion' mandatory autocreated
 
+[pant:assemblyPage] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/assemblyPage' mandatory autocreated
+
 // Generic Content type
 [pant:document] mixin
 

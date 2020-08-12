@@ -55,14 +55,8 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
           fieldId="new_version_name"
           label="New Version:"
         >
-          <TextInput
-            aria-label={null}
-            className=""
+          <ForwardRef
             id="new_version_name_text"
-            isDisabled={false}
-            isReadOnly={false}
-            isRequired={false}
-            isValid={true}
             onChange={[Function]}
             placeholder="New version name"
             type="text"
@@ -88,7 +82,5 @@ exports[`ProductDetails tests test componentWillReceiveProps function 1`] = `und
 exports[`ProductDetails tests test createVersionsPath function 1`] = `[Function]`;
 
 exports[`ProductDetails tests test fetchProductDetails function 1`] = `Array []`;
-
-exports[`ProductDetails tests test handleTextInputChange function 1`] = `undefined`;
 
 exports[`ProductDetails tests test saveVersion function 1`] = `[Function]`;

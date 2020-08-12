@@ -2,140 +2,133 @@
 
 exports[`Search tests should render default Search component 1`] = `
 <Fragment>
-  <div>
-    <div>
-      <SearchFilter
-        filterQuery={[Function]}
-        onClick={[Function]}
-        onKeyDown={[Function]}
-      />
-      <div
-        className="notification-container"
-      >
-        <Pagination
-          bottom={false}
-          handleMoveLeft={[Function]}
-          handleMoveRight={[Function]}
-          handleMoveToFirst={[Function]}
-          handlePerPageLimit={[Function]}
-          nextPageRecordCount={1}
-          pageNumber={1}
-          perPageLimit={25}
-          showDropdownOptions={true}
-        />
-      </div>
-      <DataList
-        aria-label="Simple data list"
-      >
-        <DataListItem
-          aria-labelledby="simple-item1"
-        >
-          <DataListItemRow
-            id="data-rows-header"
-          >
-            <Checkbox
-              aria-label="controlled checkbox example"
-              aria-labelledby="width-ex1-check1"
-              checked={false}
-              className="checkbox"
-              id="check"
-              isChecked={false}
-              isDisabled={false}
-              isValid={true}
-              onChange={[Function]}
-            />
-            <DataListItemCells
-              dataListCells={
-                Array [
-                  <DataListCell
-                    width={2}
-                  >
-                    <span
-                      aria-label="column name"
-                      className="sp-prop-nosort"
-                      id="span-name"
-                    >
-                      Title
-                    </span>
-                  </DataListCell>,
-                  <DataListCell>
-                    <span
-                      className="sp-prop-nosort"
-                      id="span-source-type"
-                    >
-                      Published
-                    </span>
-                  </DataListCell>,
-                  <DataListCell>
-                    <span
-                      className="sp-prop-nosort"
-                      id="span-source-name"
-                    >
-                      Draft Uploaded
-                    </span>
-                  </DataListCell>,
-                  <DataListCell>
-                    <span
-                      aria-label="column upload time"
-                      className="sp-prop-nosort"
-                      id="span-upload-time"
-                    >
-                      Module Type
-                    </span>
-                  </DataListCell>,
-                ]
-              }
-            />
-          </DataListItemRow>
-          <DataListItemRow
-            id="data-rows"
-          />
-          <Level
-            gutter="md"
-          >
-            <LevelItem />
-            <LevelItem>
-              <div
-                className="notification-container"
-              >
-                <br />
-                <br />
-                <img
-                  alt="Spinlogo"
-                  src="test-file-stub"
-                />
-                <br />
-                <br />
-              </div>
-            </LevelItem>
-            <LevelItem />
-          </Level>
-          <DataListItemRow
-            id="data-rows"
-          />
-        </DataListItem>
-      </DataList>
-      <div
-        className="notification-container"
-      >
-        <Pagination
-          bottom={true}
-          handleMoveLeft={[Function]}
-          handleMoveRight={[Function]}
-          handleMoveToFirst={[Function]}
-          handlePerPageLimit={[Function]}
-          nextPageRecordCount={1}
-          pageNumber={1}
-          perPageLimit={25}
-          showDropdownOptions={false}
-        />
-        <BuildInfo />
-      </div>
-      <div
-        className="alert"
-      />
-    </div>
+  <SearchFilter
+    filterQuery={[Function]}
+    onClick={[Function]}
+    onKeyDown={[Function]}
+  />
+  <div
+    className="notification-container"
+  >
+    <Pagination
+      bottom={false}
+      handleMoveLeft={[Function]}
+      handleMoveRight={[Function]}
+      handleMoveToFirst={[Function]}
+      handlePerPageLimit={[Function]}
+      nextPageRecordCount={1}
+      pageNumber={1}
+      perPageLimit={25}
+      showDropdownOptions={true}
+    />
   </div>
+  <DataList
+    aria-label="Search results Headings"
+  >
+    <DataListItem
+      aria-labelledby="span-name"
+    >
+      <DataListItemRow
+        id="data-rows-header"
+      >
+        <Checkbox
+          aria-label="controlled checkbox example"
+          aria-labelledby="width-ex1-check1"
+          checked={false}
+          className="checkbox"
+          id="check"
+          isChecked={false}
+          isDisabled={false}
+          isValid={true}
+          onChange={[Function]}
+        />
+        <DataListItemCells
+          dataListCells={
+            Array [
+              <DataListCell
+                width={2}
+              >
+                <span
+                  aria-label="column name"
+                  className="sp-prop-nosort"
+                  id="span-name"
+                >
+                  Title
+                </span>
+              </DataListCell>,
+              <DataListCell>
+                <span
+                  className="sp-prop-nosort"
+                  id="span-source-type"
+                >
+                  Published
+                </span>
+              </DataListCell>,
+              <DataListCell>
+                <span
+                  className="sp-prop-nosort"
+                  id="span-source-name"
+                >
+                  Draft Uploaded
+                </span>
+              </DataListCell>,
+              <DataListCell>
+                <span
+                  aria-label="column upload time"
+                  className="sp-prop-nosort"
+                  id="span-upload-time"
+                >
+                  Module Type
+                </span>
+              </DataListCell>,
+            ]
+          }
+        />
+      </DataListItemRow>
+      <Level
+        gutter="md"
+      >
+        <LevelItem />
+        <LevelItem>
+          <div
+            className="notification-container"
+          >
+            <br />
+            <br />
+            <img
+              alt="Spinlogo"
+              src="test-file-stub"
+            />
+            <br />
+            <br />
+          </div>
+        </LevelItem>
+        <LevelItem />
+      </Level>
+      <DataListItemRow
+        id="data-rows"
+      />
+    </DataListItem>
+  </DataList>
+  <div
+    className="notification-container"
+  >
+    <Pagination
+      bottom={true}
+      handleMoveLeft={[Function]}
+      handleMoveRight={[Function]}
+      handleMoveToFirst={[Function]}
+      handlePerPageLimit={[Function]}
+      nextPageRecordCount={1}
+      pageNumber={1}
+      perPageLimit={25}
+      showDropdownOptions={false}
+    />
+    <BuildInfo />
+  </div>
+  <div
+    className="alert"
+  />
 </Fragment>
 `;
 

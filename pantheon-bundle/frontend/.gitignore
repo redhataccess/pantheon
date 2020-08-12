@@ -8,3 +8,4 @@ coverage
 .prettierrc
 RH-IT-Root-CA.crt
 .yarnrc
+.env

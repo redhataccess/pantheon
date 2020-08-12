@@ -11,14 +11,8 @@ exports[`Login tests should render Login component 1`] = `
           fieldId="module-name"
           label="Module Name"
         >
-          <TextInput
-            aria-label={null}
-            className=""
+          <ForwardRef
             id="module-name"
-            isDisabled={false}
-            isReadOnly={false}
-            isRequired={false}
-            isValid={true}
             onChange={[Function]}
             placeholder="Module Name"
             type="text"
@@ -30,14 +24,8 @@ exports[`Login tests should render Login component 1`] = `
           fieldId="module-description"
           label="Module Description"
         >
-          <TextInput
-            aria-label={null}
-            className=""
+          <ForwardRef
             id="module-description"
-            isDisabled={false}
-            isReadOnly={false}
-            isRequired={false}
-            isValid={true}
             onChange={[Function]}
             placeholder="Module Description"
             type="text"

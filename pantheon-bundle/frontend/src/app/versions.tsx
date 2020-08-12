@@ -306,7 +306,7 @@ class Versions extends Component<IProps, IState> {
                             <div className='notification-container'>
                                 <Alert
                                     variant='warning'
-                                    title=''
+                                    title='Fields indicated by * are mandatory'
                                     action={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                 />
                                 <br />
@@ -527,7 +527,6 @@ class Versions extends Component<IProps, IState> {
         } else {
             docPath = '/content' + this.props.modulePath + '.preview?variant=' + this.props.variant
         }
-        // console.log('Preview path: ', docPath)
         return window.open(docPath)
     }
 
@@ -562,7 +561,7 @@ class Versions extends Component<IProps, IState> {
             const formData = new FormData(event.target.form)
             formData.append('productVersion', this.state.productVersion.uuid)
             formData.append('documentUsecase', this.state.usecaseValue)
-            formData.append('urlFragment', this.state.moduleUrl === undefined ? '' : '/' + this.state.moduleUrl )
+            formData.append('urlFragment', this.state.moduleUrl.trim().length > 0 ? '/' + this.state.moduleUrl.trim() : '')
             formData.append('searchKeywords', this.state.keywords === undefined ? '' : this.state.keywords)
 
             fetch(this.state.metadataPath + '/metadata', {
