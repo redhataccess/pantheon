@@ -157,7 +157,7 @@ class ModuleDisplay extends Component<any, any, any> {
         )
     }
     private generateDraftHtml = (pathname: any) => {
-        const docPath = '/content' + pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length) + '.preview?draft=true&variant=' + this.state.variant
+        const docPath = '/content' + pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length) + '.preview?draft=true&rerender=true&variant=' + this.state.variant
 
         return window.open(docPath)
     }
