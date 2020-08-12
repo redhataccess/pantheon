@@ -19,6 +19,10 @@ public interface ModuleVariants extends DocumentVariants {
     @Named(DEFAULT_VARIANT_NAME)
     Child<ModuleVariant> defaultVariant();
 
+    default Child<ModuleVariant> canonicalVariant() {
+        return variant(getParent().getWorkspace().getCanonicalVariantName());
+    }
+
     default Stream<ModuleVariant> getVariants() {
         return this.as(ModuleVariant.class);
     }

@@ -93,4 +93,4 @@ class Routes extends Component<IAppState> {
   }
 }
 
-export { Routes } 
+export { Routes }

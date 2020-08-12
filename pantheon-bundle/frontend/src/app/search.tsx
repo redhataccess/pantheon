@@ -85,78 +85,87 @@ class Search extends Component<IAppState, ISearchState> {
 
     return (
       <React.Fragment>
-        <div>
-          <div>
-            <SearchFilter
-              onKeyDown={this.getRows}
-              onClick={this.newSearch}
-              filterQuery={this.setQuery}
-              // we could add one that monitors for changes and when is tru we run getRows. To discuss.
-            />
-            <div className="notification-container">
-              <Pagination
-                handleMoveLeft={this.updatePageCounter("L")}
-                handleMoveRight={this.updatePageCounter("R")}
-                handleMoveToFirst={this.updatePageCounter("F")}
-                pageNumber={this.state.page}
-                nextPageRecordCount={this.state.nextPageRowCount}
-                handlePerPageLimit={this.changePerPageLimit}
-                perPageLimit={this.state.pageLimit}
-                showDropdownOptions={this.state.showDropdownOptions}
-                bottom={false}
+        <SearchFilter
+          onKeyDown={this.getRows}
+          onClick={this.newSearch}
+          filterQuery={this.setQuery}
+          // we could add one that monitors for changes and when is tru we run getRows. To discuss.
+        />
+        <div className="notification-container">
+          <Pagination
+            handleMoveLeft={this.updatePageCounter("L")}
+            handleMoveRight={this.updatePageCounter("R")}
+            handleMoveToFirst={this.updatePageCounter("F")}
+            pageNumber={this.state.page}
+            nextPageRecordCount={this.state.nextPageRowCount}
+            handlePerPageLimit={this.changePerPageLimit}
+            perPageLimit={this.state.pageLimit}
+            showDropdownOptions={this.state.showDropdownOptions}
+            bottom={false}
+          />
+        </div>
+        {/* @todo This should _definitely_ be a table */}
+        <DataList aria-label="Search results Headings" >
+          <DataListItem aria-labelledby="span-name">
+            <DataListItemRow id="data-rows-header" >
+              {this.props.userAuthenticated && !this.state.isEmptyResults &&
+                <Checkbox aria-labelledby="width-ex1-check1"
+                  className="checkbox"
+                  isChecked={this.state.selectAllCheckValue}
+                  checked={this.state.selectAllCheckValue}
+                  aria-label="controlled checkbox example"
+                  id="check"
+                  onChange={this.handleSelectAll}
+                />}
+              <DataListItemCells
+                dataListCells={[
+                  <DataListCell width={2} key="title">
+                    <span className="sp-prop-nosort" id="span-name" aria-label="column name">
+                      Title
+                    </span>
+                  </DataListCell>,
+                  <DataListCell key="resource source">
+                    <span className="sp-prop-nosort" id="span-source-type">
+                      Published
+                    </span>
+                  </DataListCell>,
+                  <DataListCell key="source name">
+                    <span className="sp-prop-nosort" id="span-source-name">
+                      Draft Uploaded
+                    </span>
+                  </DataListCell>,
+                  <DataListCell key="upload time">
+                    <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">
+                      Module Type
+                    </span>
+                  </DataListCell>,
+                ]}
               />
-            </div>
-            <DataList aria-label="Simple data list" >
-              <DataListItem aria-labelledby="simple-item1">
-                <DataListItemRow id="data-rows-header" >
-                  {this.props.userAuthenticated && !this.state.isEmptyResults &&
-                    <Checkbox aria-labelledby="width-ex1-check1"
-                      className="checkbox"
-                      isChecked={this.state.selectAllCheckValue}
-                      checked={this.state.selectAllCheckValue}
-                      aria-label="controlled checkbox example"
-                      id="check"
-                      onChange={this.handleSelectAll}
-                    />}
-                  <DataListItemCells
-                    dataListCells={[
-                      <DataListCell width={2} key="title">
-                        <span className="sp-prop-nosort" id="span-name" aria-label="column name">Title</span>
-                      </DataListCell>,
-                      <DataListCell key="resource source">
-                        <span className="sp-prop-nosort" id="span-source-type">Published</span>
-                      </DataListCell>,
-                      <DataListCell key="source name">
-                        <span className="sp-prop-nosort" id="span-source-name">Draft Uploaded</span>
-                      </DataListCell>,
-                      <DataListCell key="upload time">
-                        <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">Module Type</span>
-                      </DataListCell>,
-                    ]}
-                  />
-                </DataListItemRow>
-                {/* Delete button at the top */}
+              </DataListItemRow>
+              {/* Delete button at the top */}
+              {
+                this.buildTransientPathArray().length > 0 ?
                 <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
-                  {
-                    this.buildTransientPathArray().length > 0 ?
-                      <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
-                      : null
-                  }
+                  <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
                 </DataListItemRow>
-                {this.state.displayLoadIcon && (
-                  <Level>
-                    <LevelItem />
-                    <LevelItem>
+                  : null
+              } 
+              {this.state.displayLoadIcon && (
+                <Level hasGutter={true}>
+                  <LevelItem />
+                  <LevelItem>
                       <div className="notification-container">
+                        {/* @todo Take out these <br>s and replace it with CSS layout */}
                         <br />
                         <br />
                           <img src={SpinImage} alt="Spinlogo"/>
                         <br />
                         <br />
-                      </div></LevelItem>
+                      </div>
+                    </LevelItem>
                     <LevelItem />
                   </Level>
-                )}                            
+                )}                          
                 {!this.state.displayLoadIcon && (this.state.results.map((data, key) => (
                   <DataListItemRow id="data-rows" key={key}>
                     {this.props.userAuthenticated && !this.state.isEmptyResults &&
@@ -196,17 +205,17 @@ class Search extends Component<IAppState, ISearchState> {
                   </DataListItemRow>
                 )))}
 
-                {/* Delete button at the bottom */}
-                <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
-                  {
-                    this.buildTransientPathArray().length > 0 ?
-                      <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
-                      : null
-                  }
+            {/* Delete button at the bottom */}
+            <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
+              {
+                this.buildTransientPathArray().length > 0 ?
+                  <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
+                  : null
+              }
 
                 </DataListItemRow>
                 {isEmptyResults && (
-                  <Level>
+                  <Level hasGutter={true}>
                     <LevelItem />
                     <LevelItem>
                       <div className="notification-container">
@@ -225,7 +234,7 @@ class Search extends Component<IAppState, ISearchState> {
 
                 )}
                 {this.state.isSearchException && (
-                  <Level>
+                  <Level hasGutter={true}>
                     <LevelItem />
                     <LevelItem>
                       <div className="notification-container">
@@ -238,7 +247,8 @@ class Search extends Component<IAppState, ISearchState> {
                         />
                         <br />
                         <br />
-                      </div></LevelItem>
+                      </div>
+                      </LevelItem>
                     <LevelItem />
                   </Level>
                 )}
@@ -299,12 +309,10 @@ class Search extends Component<IAppState, ISearchState> {
                 An unknown error occured, please check if you are logged in.
                 </Modal>}
             </div>
-          </div>
-        </div>
       </React.Fragment>
     );
   }
-  
+
   private handleSelectAll = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
     const newResults: any[] = []
     this.state.results.map(dataitem => {
@@ -375,19 +383,19 @@ class Search extends Component<IAppState, ISearchState> {
       .then(responseJSON => {
         this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })
       })
-      .then(() => {        
+      .then(() => {
         if (JSON.stringify(this.state.results) === "[]") {
           this.setState({
             displayLoadIcon: false,
             isEmptyResults: true,
             selectAllCheckValue: false
           })
-        } else {          
+        } else {
           this.setState({
             displayLoadIcon: false,
-            isEmptyResults: false,            
+            isEmptyResults: false,
             selectAllCheckValue: false,
-          })          
+          })
         }
       })
       .catch(error => {
@@ -396,7 +404,7 @@ class Search extends Component<IAppState, ISearchState> {
           displayLoadIcon: false,
           isSearchException: true
         },()=>{ console.log("[doSearch] error ", error) })
-        
+
       })
   }
 

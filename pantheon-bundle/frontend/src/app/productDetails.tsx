@@ -38,7 +38,7 @@ class ProductDetails extends Component<IProps, IState> {
     public componentDidMount() {
         this.fetchProductDetails(this.state.allVersionNames)
     }
-    
+
     public render() {
         return (
             <React.Fragment>

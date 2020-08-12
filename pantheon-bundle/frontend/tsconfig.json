@@ -22,6 +22,8 @@
       "@app/*": ["src/app/*"],
       "@assets/*": ["node_modules/@patternfly/react-core/dist/styles/assets/*"]
     },
+    "types": ["node", "jest", "mocha"],
+    "typeRoots": ["node_modules/@types"]
   },
   "include": [
     "**/*.ts",
