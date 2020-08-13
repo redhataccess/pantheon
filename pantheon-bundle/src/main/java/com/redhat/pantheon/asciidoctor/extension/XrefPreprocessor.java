@@ -77,7 +77,7 @@ public class XrefPreprocessor extends Preprocessor {
                             .uuid().get();
 
                     replacement.append(targetUuid);
-                } else if (anchor == null) {
+                } else if (anchor == null || anchor.isEmpty()) {
                     // If we land here, it means:
                     // 1.) We are linking INSIDE of this document
                     // 2.) The user did not specify an anchor.
