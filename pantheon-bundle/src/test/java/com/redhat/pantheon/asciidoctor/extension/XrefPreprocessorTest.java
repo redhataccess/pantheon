@@ -59,7 +59,6 @@ public class XrefPreprocessorTest {
         //When
         XrefPreprocessor xp = new XrefPreprocessor(variant, new TableOfContents());
         List<String> output = xp.preprocess(Arrays.asList("xref:moduleB[Link Label]"));
-        System.out.println(output.get(0));
 
         //Then
         assertEquals("xref:efgh5678#[Link Label]", output.get(0));
@@ -90,7 +89,6 @@ public class XrefPreprocessorTest {
         //When
         XrefPreprocessor xp = new XrefPreprocessor(variant, toc);
         List<String> output = xp.preprocess(Arrays.asList("xref:moduleB[Link Label]"));
-        System.out.println(output.get(0));
 
         //Then
         assertEquals("xref:#_abcd1234[Link Label]", output.get(0));
