@@ -29,7 +29,7 @@ import java.util.Set;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
 
 /**
- * Renders an HTML preview for a single module.
+ * Renders an HTML preview for a single document variant.
  * To provide parameters to the asciidoc generation process, provide the parameters with their name prefixed
  * with "ctx_".
  *
@@ -66,10 +66,19 @@ public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
         this.asciidoctorService = asciidoctorService;
     }
 
+    /**
+     * Exists only to be overridden by test class.
+     * @param request
+     * @return
+     */
+    protected String getSuffix(SlingHttpServletRequest request) {
+        return request.getRequestPathInfo().getSuffix();
+    }
+
     @Override
     protected void doGet(SlingHttpServletRequest request,
                          SlingHttpServletResponse response) throws ServletException, IOException {
-        String suffix = request.getRequestPathInfo().getSuffix();
+        String suffix = getSuffix(request);
         boolean latest = false;
         if ("/latest".equals(suffix)) {
             latest = true;
