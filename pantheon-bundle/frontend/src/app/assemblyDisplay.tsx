@@ -4,7 +4,7 @@ import {
     Level, LevelItem, Button, Divider, Title, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core'
 import { Versions } from '@app/versions'
-import { Fields, PathPrefixes } from '@app/Constants'
+import { Fields, PathPrefixes, PantheonContentTypes } from '@app/Constants'
 // import { continueStatement } from '@babel/types';
 
 class AssemblyDisplay extends Component<any, any, any> {
@@ -154,6 +154,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                     <div>
                         <Card>
                             <Versions
+                                contentType={PantheonContentTypes.ASSEMBLY}
                                 modulePath={this.state.modulePath}
                                 productInfo={this.state.productValue}
                                 versionModulePath={this.state.moduleTitle}

@@ -155,6 +155,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
   <Card>
     <Versions
       attributesFilePath=""
+      contentType="module"
       modulePath=""
       onGetProduct={[Function]}
       onGetVersion={[Function]}

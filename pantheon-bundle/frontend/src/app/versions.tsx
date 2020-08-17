@@ -10,8 +10,10 @@ import CheckImage from '@app/images/check_image.jpg'
 import BlankImage from '@app/images/blank.jpg'
 import { Redirect } from 'react-router-dom'
 import { ExclamationTriangleIcon, TimesIcon, PlusCircleIcon } from '@patternfly/react-icons'
+import { PantheonContentTypes } from './Constants'
 
 export interface IProps {
+    contentType: string
     modulePath: string
     productInfo: string
     versionModulePath: string
@@ -39,6 +41,7 @@ interface IState {
     productVersion: { label: string, uuid: string }
     publishAlertVisible: boolean
     results: any
+    showMetadataAlertIcon: boolean
     successAlertVisible: boolean
     usecaseOptions: any
     usecaseValue: string,
@@ -70,6 +73,7 @@ class Versions extends Component<IProps, IState> {
             productVersion: { label: '', uuid: '' },
             publishAlertVisible: false,
             results: [this.draft, this.release],
+            showMetadataAlertIcon: true,
             successAlertVisible: false,
             usecaseOptions: [
                 { value: '', label: 'Select Use Case', disabled: false }
@@ -81,6 +85,7 @@ class Versions extends Component<IProps, IState> {
     public componentDidMount() {
         this.fetchProducts()
         this.fetchVersions()
+        this.handlePublishButton()
     }
 
     public componentDidUpdate(prevProps) {
@@ -124,7 +129,7 @@ class Versions extends Component<IProps, IState> {
                 }
 
                 <Grid hasGutter={true}>
-                    {console.log('[results]', this.state.results)}
+                    {/* {console.log('[results]', this.state.results)} */}
                     {this.state.results.map((type, key1) => (
                         type.map((data, key2) => (
                             data.version !== '' && data.type === "draft" && (
@@ -133,22 +138,22 @@ class Versions extends Component<IProps, IState> {
                                         <CardHeader>
                                             <CardHeaderMain><strong>Draft</strong></CardHeaderMain>
                                             <CardActions>{}</CardActions>
-                                            {data.metadata !== undefined && data.metadata.productVersion !== undefined &&
+                                            {data.metadata !== undefined && !this.state.showMetadataAlertIcon &&
                                                 <CardActions>
                                                     <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
                                                 </CardActions>}
-                                            {data.metadata !== undefined && data.metadata.productVersion === undefined &&
+                                            {data.metadata !== undefined && this.state.showMetadataAlertIcon &&
                                                 <CardActions><i className="pf-icon pf-icon-warning-triangle" />
                                                     <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
                                                 </CardActions>}
                                             <CardActions><Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)}>Preview</Button>
                                             </CardActions>
-                                            {data.metadata !== undefined && data.metadata.productVersion !== undefined &&
+                                            {data.metadata !== undefined && !this.state.showMetadataAlertIcon &&
                                                 <CardActions>
                                                     <Button variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
                                                 </CardActions>
                                             }
-                                            {data.metadata !== undefined && 
+                                            {data.metadata !== undefined && this.state.showMetadataAlertIcon &&
                                                 <CardActions>
                                                     <Tooltip content="Add metadata to publish">
                                                         <Button isAriaDisabled={true} variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
@@ -159,18 +164,24 @@ class Versions extends Component<IProps, IState> {
 
                                         <CardBody>
                                             <TextContent>
-                                                <div><Text><strong>Upload time</strong></Text></div>
-                                                <div><Text>{data.updatedDate}</Text></div>
+                                                <Text><strong>Upload time</strong></Text>
+                                                <Text component={TextVariants.p}>{data.updatedDate}</Text>
                                             </TextContent>
                                             <br />
                                             <TextContent>
-                                                <div><Text><strong>Attribute file</strong></Text></div>
-                                                <div><Text>{this.props.attributesFilePath}</Text></div>
+                                                <Text><strong>Attribute file</strong></Text>
+                                                <Text component={TextVariants.p}>{this.props.attributesFilePath}</Text>
                                             </TextContent>
                                             <br />
                                             <TextContent>
-                                                <div><Text><strong>Modules</strong></Text></div>
-                                                <div><Text>{}</Text></div>
+                                                {this.props.contentType === PantheonContentTypes.MODULE &&
+                                                 <Text><strong>Assemblies</strong></Text>
+                                                }
+
+                                                {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
+                                                 <Text><strong>Modules</strong></Text>
+                                                }  
+                                                <Text component={TextVariants.p}>{}</Text>
                                             </TextContent>
                                         </CardBody>
 
@@ -199,18 +210,23 @@ class Versions extends Component<IProps, IState> {
 
                                         <CardBody>
                                             <TextContent>
-                                                <div><Text><strong>Upload time</strong></Text></div>
-                                                <div><Text>{data.updateDate}</Text></div>
+                                                <Text><strong>Upload time</strong></Text>
+                                                <Text component={TextVariants.p}>{data.draftUploadDate}</Text>
                                             </TextContent>
                                             <br />
                                             <TextContent>
-                                                <div><Text><strong>Attribute file</strong></Text></div>
-                                                <div><Text>{this.props.attributesFilePath}</Text></div>
+                                                <Text><strong>Attribute file</strong></Text>
+                                                <Text component={TextVariants.p}>{this.props.attributesFilePath}</Text>
                                             </TextContent>
                                             <br />
                                             <TextContent>
-                                                <div><Text><strong>Modules</strong></Text></div>
-                                                <div><Text>{}</Text></div>
+                                            {this.props.contentType === PantheonContentTypes.MODULE &&
+                                                 <Text><strong>Assemblies</strong></Text>
+                                                }
+                                                {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
+                                                 <Text><strong>Modules</strong></Text>
+                                                }
+                                                <Text component={TextVariants.p}>{}</Text>
                                             </TextContent>
                                         </CardBody>
 
@@ -245,7 +261,7 @@ class Versions extends Component<IProps, IState> {
                             <div className='notification-container'>
                                 <Alert
                                     variant='warning'
-                                    title=''
+                                    title='Fields indicated by * are mandatory'
                                     actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                 />
                                 <br />
@@ -424,7 +440,10 @@ class Versions extends Component<IProps, IState> {
                 }).then(response => {
                     if (response.status === 201 || response.status === 200) {
                         console.log(buttonText + ' works: ' + response.status)
-                        this.setState({ publishAlertVisible: false, canChangePublishState: true })
+                        this.setState({ 
+                            canChangePublishState: true,
+                            publishAlertVisible: false,
+                            showMetadataAlertIcon: false })
                     } else {
                         console.log(buttonText + ' failed ' + response.status)
                         this.setState({ publishAlertVisible: true })
@@ -514,7 +533,12 @@ class Versions extends Component<IProps, IState> {
                 if (response.status === 201 || response.status === 200) {
                     // console.log('successful edit ', response.status)
                     this.handleModalClose()
-                    this.setState({ successAlertVisible: true, canChangePublishState: true, publishAlertVisible: false })
+                    this.setState({ 
+                        canChangePublishState: true, 
+                        publishAlertVisible: false, 
+                        showMetadataAlertIcon: false,
+                        successAlertVisible: true, 
+                     })
                     this.props.onGetProduct(this.state.product.label)
                     this.props.onGetVersion(this.state.productVersion.label)
                 } else if (response.status === 500) {
@@ -642,6 +666,7 @@ class Versions extends Component<IProps, IState> {
                         })
                         if (metadataResults.productVersion !== undefined) {
                             this.getProductFromVersionUuid(metadataResults.productVersion)
+                            this.setState({showMetadataAlertIcon: false})
                         }
                     }
                 })
@@ -660,6 +685,13 @@ class Versions extends Component<IProps, IState> {
                 this.props.onGetProduct(this.state.product.label)
                 this.props.onGetVersion(this.state.productVersion.label)
             })
+    }
+
+    private handlePublishButton = () => {
+        // console.log("[handlePublishButton] productInfo =>", this.props.productInfo)
+        if (this.props.productInfo !== undefined && this.props.productInfo.trim().length > 0) {
+            this.setState({ showMetadataAlertIcon: false })
+        } 
     }
 }
 

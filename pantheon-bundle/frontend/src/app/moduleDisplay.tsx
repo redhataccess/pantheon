@@ -6,7 +6,7 @@ import {
     DataListCell, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core'
 import { Versions } from '@app/versions'
-import { Fields, PathPrefixes } from '@app/Constants'
+import { Fields, PathPrefixes, PantheonContentTypes } from '@app/Constants'
 import { continueStatement } from '@babel/types';
 
 class ModuleDisplay extends Component<any, any, any> {
@@ -34,7 +34,6 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     public componentDidMount() {
-        // this.getVariantParam()
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
         this.getPortalUrl()
@@ -167,6 +166,7 @@ class ModuleDisplay extends Component<any, any, any> {
 
                 <Card>
                     <Versions
+                        contentType={PantheonContentTypes.MODULE}
                         modulePath={this.state.modulePath}
                         productInfo={this.state.productValue}
                         versionModulePath={this.state.moduleTitle}
@@ -237,10 +237,10 @@ class ModuleDisplay extends Component<any, any, any> {
                                             moduleTitle: offspring[Fields.JCR_TITLE],
                                         })
                                     }
-                                    if (offspring[Fields.PANT_MODULE_TYPE] !== undefined) {
+                                    if (offspring["pant:moduleType"] !== undefined) {
 
                                         this.setState({
-                                            moduleType: offspring[Fields.PANT_MODULE_TYPE],
+                                            moduleType: offspring["pant:moduleType"],
 
                                         })
                                     }

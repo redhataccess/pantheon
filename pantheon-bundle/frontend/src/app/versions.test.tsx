@@ -12,6 +12,7 @@ const anymatch = require('anymatch')
 
 const props = {
     attributesFilePath: "/repositories/testRepo/attributes.adoc",
+    contentType: "module",
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
@@ -268,6 +269,7 @@ describe('Versions tests', () => {
     it('has a variantUUID of "1234"', () => {
         const state: IProps = {
             attributesFilePath: "/repositories/testRepo/attributes.adoc",
+            contentType: "module",
             modulePath: "somePath",
             onGetProduct: (productValue) => anymatch,
             onGetVersion: (versionValue) => anymatch,
