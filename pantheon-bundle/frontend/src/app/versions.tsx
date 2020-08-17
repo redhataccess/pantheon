@@ -16,6 +16,7 @@ export interface IProps {
     productInfo: string
     versionModulePath: string
     variant: string
+    attributesFilePath: string
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
@@ -24,7 +25,6 @@ export interface IProps {
 interface IState {
     allProducts: any
     allProductVersions: any
-    attributesFilePath: string
     canChangePublishState: boolean
     isArchiveDropDownOpen: boolean
     isDropDownOpen: boolean
@@ -56,7 +56,6 @@ class Versions extends Component<IProps, IState> {
             allProducts: [],
             // tslint:disable-next-line: object-literal-sort-keys
             allProductVersions: [],
-            attributesFilePath: '',
             canChangePublishState: true,
             isArchiveDropDownOpen: false,
             isDropDownOpen: false,
@@ -82,8 +81,6 @@ class Versions extends Component<IProps, IState> {
     public componentDidMount() {
         this.fetchProducts()
         this.fetchVersions()
-        console.log("[componentDidMount] location.pathname=>", this.props)
-        console.log("[componentDidMount] modulePath =>", this.props.modulePath)
     }
 
     public componentDidUpdate(prevProps) {
@@ -134,17 +131,30 @@ class Versions extends Component<IProps, IState> {
                                 <GridItem span={6}>
                                     <Card className="pf-m-light pf-site-background-medium pf-c-card-draft">
                                         <CardHeader>
-
                                             <CardHeaderMain><strong>Draft</strong></CardHeaderMain>
                                             <CardActions>{}</CardActions>
-                                            <CardActions><i className="pf-icon pf-icon-warning-triangle" />
-                                            <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
-                                            </CardActions>
+                                            {data.metadata !== undefined && data.metadata.productVersion !== undefined &&
+                                                <CardActions>
+                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
+                                                </CardActions>}
+                                            {data.metadata === undefined &&
+                                                <CardActions><i className="pf-icon pf-icon-warning-triangle" />
+                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
+                                                </CardActions>}
                                             <CardActions><Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)}>Preview</Button>
                                             </CardActions>
-                                            <CardActions><Tooltip content="Add metadta to publish">
-                                                <Button isAriaDisabled={true} variant="secondary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button></Tooltip>
-                                            </CardActions>
+                                            {data.metadata !== undefined && data.metadata.productVersion !== undefined &&
+                                                <CardActions>
+                                                    <Button variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
+                                                </CardActions>
+                                            }
+                                            {data.metadata === undefined &&
+                                                <CardActions>
+                                                    <Tooltip content="Add metadata to publish">
+                                                        <Button isAriaDisabled={true} variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
+                                                    </Tooltip>
+                                                </CardActions>
+                                            }
                                         </CardHeader>
 
                                         <CardBody>
@@ -155,7 +165,7 @@ class Versions extends Component<IProps, IState> {
                                             <br />
                                             <TextContent>
                                                 <div><Text><strong>Attribute file</strong></Text></div>
-                                                <div><Text>{this.state.attributesFilePath}</Text></div>
+                                                <div><Text>{this.props.attributesFilePath}</Text></div>
                                             </TextContent>
                                             <br />
                                             <TextContent>
@@ -174,10 +184,9 @@ class Versions extends Component<IProps, IState> {
                                 <GridItem span={6}>
                                     <Card>
                                         <CardHeader>
-
                                             <CardHeaderMain><strong><span id='span-source-type-version-published'>Published</span></strong></CardHeaderMain>
                                             <CardActions>{}</CardActions>
-                                            <CardActions><i className="pf-icon pf-icon-warning-triangle" />
+                                            <CardActions>
                                                 <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
                                             </CardActions>
                                             <CardActions>
@@ -196,7 +205,7 @@ class Versions extends Component<IProps, IState> {
                                             <br />
                                             <TextContent>
                                                 <div><Text><strong>Attribute file</strong></Text></div>
-                            <div><Text>{this.state.attributesFilePath}</Text></div>
+                                                <div><Text>{this.props.attributesFilePath}</Text></div>
                                             </TextContent>
                                             <br />
                                             <TextContent>
@@ -647,37 +656,6 @@ class Versions extends Component<IProps, IState> {
                 this.populateProductVersions(this.state.product.value)
                 this.props.onGetProduct(this.state.product.label)
                 this.props.onGetVersion(this.state.productVersion.label)
-            })
-    }
-private fetchAttributesFilePath = (path) => {
-
-        // path = '/content/repositories/test-repo/entities/.../assembly_access-control-list.adoc/en_US/variants/rhel8/draft'
-        let repo = ''
-        let variant = ''
-        const group = path.split("/")
-        repo = group[3]
-        variant = group.pop()
-        variant = group.pop()
-
-        fetch('/content/repositories/' + repo + '/module_variants/ ' + variant + '.harray.json')
-            .then((response) => {
-                if (response.ok) {
-                    return response.json()
-                } else {
-                    throw new Error(response.statusText)
-                }
-            })
-            .then(responseJSON => {
-                for (const variants of responseJSON.__children__) {
-                    console.log("[fetchAttributeFilePath] variants=> ", variants)
-                    if (variants["pant:attributesFilePath"] !== undefined) {
-                        this.setState({attributesFilePath: variants["pant:attributesFilePath"]})
-                    }
-                }
-                
-            })
-            .catch((error) => {
-                console.log(error)
             })
     }
 }

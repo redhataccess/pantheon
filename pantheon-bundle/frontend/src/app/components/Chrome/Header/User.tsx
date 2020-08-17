@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import {
     Button, Dropdown,
     DropdownToggle,
-    DropdownItem, Modal
+    DropdownItem, Modal, DropdownPosition
 } from '@patternfly/react-core'
 import { HelpIcon } from '@patternfly/react-icons'
 
@@ -49,7 +49,7 @@ class User extends Component<IAppState, IState> {
                         isPlain={true}
                         isOpen={this.state.helpDropdownOpen}
                         dropdownItems={dropdownItems}
-                        position='right'
+                        position={DropdownPosition.right}
                 />
                 <Link to={this.props.userAuthenticated ? '' : '/login'}
                         onClick={this.conditionalRedirect}>

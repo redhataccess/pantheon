@@ -1,26 +1,23 @@
 import React, { Component } from 'react'
 import { CopyIcon } from '@patternfly/react-icons';
-import { Level, LevelItem, Button, Divider, Title, TextList, TextListItem, TextListVariants, TextListItemVariants } from '@patternfly/react-core'
-import {
-    DataList, DataListItem, DataListItemRow, DataListItemCells,
-    DataListCell, Card, Text, TextContent, TextVariants
+import { Level, LevelItem, Button, Divider, Title, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core'
 import { Versions } from '@app/versions'
 import { Fields, PathPrefixes } from '@app/Constants'
-import { continueStatement } from '@babel/types';
+// import { continueStatement } from '@babel/types';
 
 class AssemblyDisplay extends Component<any, any, any> {
 
     constructor(props) {
         super(props)
         this.state = {
+            attributesFilePath: '',
             copySuccess: '',
             draftPath: '',
             draftUpdateDate: '',
             modulePath: '',
             moduleTitle: "",
             moduleType: '',
-            variantUUID: '',
             portalHost: '',
             productValue: "",
             releasePath: '',
@@ -28,15 +25,16 @@ class AssemblyDisplay extends Component<any, any, any> {
             releaseVersion: '',
             results: {},
             variant: 'DEFAULT',
+            variantUUID: '',
             versionValue: ""
         }
     }
 
     public componentDidMount() {
-        // this.getVariantParam()
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
         this.getPortalUrl()
+        this.fetchAttributesFilePath(this.props)
     }
 
     public render() {
@@ -44,7 +42,7 @@ class AssemblyDisplay extends Component<any, any, any> {
         return (
             <React.Fragment>
                 <div>
-                    <Level>
+                    <Level hasGutter={true}>
                         <LevelItem>
                             <Title headingLevel="h1" size="xl">{this.state.moduleTitle}</Title>
                         </LevelItem>
@@ -59,7 +57,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                         <LevelItem />
                     </Level>
 
-                    <Level>
+                    <Level hasGutter={true}>
                         <LevelItem>
                             <TextContent>
                                 <Text component="a">{this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)}</Text>
@@ -85,26 +83,26 @@ class AssemblyDisplay extends Component<any, any, any> {
                         </LevelItem>
                     </Level>
                     <br />
-                    <Level>
+                    <Level hasGutter={true}>
                         <LevelItem>
                             <TextContent>
-                                <Text><strong>Product</strong></Text>
+                                <Text><strong><span id="span-source-type-product">Product</span></strong></Text>
                             </TextContent>
                         </LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>
                             <TextContent>
-                                <Text><strong>Draft Uploaded</strong></Text>
+                                <Text><strong><span id="span-source-type-draft-uploaded">Draft uploaded</span></strong></Text>
                             </TextContent>
                         </LevelItem>
                         <LevelItem>
                             <TextContent>
-                                <Text><strong>Published</strong></Text>
+                                <Text><strong><span id="span-source-type-draft-published">Published</span></strong></Text>
                             </TextContent>
                         </LevelItem>
                     </Level>
 
-                    <Level>
+                    <Level hasGutter={true}>
                         <LevelItem><span>{this.state.productValue + ' ' + this.state.versionValue}</span></LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem className="pf-u-text-align-left">
@@ -126,11 +124,11 @@ class AssemblyDisplay extends Component<any, any, any> {
                     </Level>
 
                     <br />
-                    <Level>
+                    <Level hasGutter={true}>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>
-                            <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
+                            <Button variant='secondary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
                         </LevelItem>
                     </Level>
                     <br />
@@ -144,6 +142,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                                 productInfo={this.state.productValue}
                                 versionModulePath={this.state.moduleTitle}
                                 variant={this.state.variant}
+                                attributesFilePath={this.state.attributesFilePath}
                                 updateDate={this.updateDate}
                                 onGetProduct={this.getProduct}
                                 onGetVersion={this.getVersion}
@@ -332,6 +331,35 @@ class AssemblyDisplay extends Component<any, any, any> {
         if (variantParam !== 'undefined') {
             this.setState({ variant: variantParam })
         }
+    }
+
+    private fetchAttributesFilePath = async (data) => {
+        await this.getVariantParam()
+        // console.log("[fetchAttributesFilePath] data=>", data)
+        console.log("[fetchAttributesFilePath] variant=>",this.state.variant)
+        const path = data.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
+        console.log("[fetchAttributesFilePath] path =>", path)
+        // path = '/repositories/test-repo/entities/.../assembly_access-control-list.adoc'
+        let repo = ''
+        const group = path.split("/")
+        repo = group[2]
+
+        fetch('/content/repositories/' + repo + '/module_variants/' + this.state.variant + '.harray.json')
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error(response.statusText)
+                }
+            })
+            .then(responseJSON => {
+                if (responseJSON["pant:attributesFilePath"] !== undefined) {
+                    this.setState({ attributesFilePath: responseJSON["pant:attributesFilePath"] })
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     }
 }
 

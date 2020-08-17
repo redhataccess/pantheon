@@ -19,18 +19,6 @@ describe('ModuleDisplay tests', () => {
         expect(view).toMatchSnapshot()
     })
 
-    it('should render a Breadcrumb', () => {
-        const wrapper = mount(<ModuleDisplay {...props} />)
-        const breadcrumb = wrapper.find(Breadcrumb)
-        expect(breadcrumb.exists()).toBe(true)
-    })
-
-    it('should render a BreadcrumbItem', () => {
-        const wrapper = mount(<ModuleDisplay {...props} />)
-        const breadcrumbItem = wrapper.find(BreadcrumbItem)
-        expect(breadcrumbItem.exists()).toBe(true)
-    })
-
     it('should render a Button', () => {
         const wrapper = mount(<ModuleDisplay {...props} />)
         const button = wrapper.find(Button)
@@ -41,38 +29,6 @@ describe('ModuleDisplay tests', () => {
         const wrapper = mount(<ModuleDisplay {...props} />)
         const card = wrapper.find(Card)
         expect(card.exists()).toBe(true)
-    })
-
-    it('should render a Data List', () => {
-        const wrapper = mount(<ModuleDisplay {...props} />)
-        const dataList = wrapper.find(DataList)
-        expect(dataList.exists()).toBe(true)
-    })
-
-    it('should render a DataListItem', () => {
-        const wrapper = mount(<ModuleDisplay {...props} />)
-        const dataListItem = wrapper.find(DataListItem)
-        expect(dataListItem.exists()).toBe(true)
-    })
-
-    it('should render a DataListItemCells Element', () => {
-        const wrapper = mount(<ModuleDisplay {...props} />)
-        const dataListItemCells = wrapper.find(DataListItemCells)
-        expect(dataListItemCells.exists()).toBe(true)
-    })
-
-    it('should render a DataListItemRow element', () => {
-        const wrapper = mount(<ModuleDisplay {...props} />)
-        const dataListItemRow = wrapper.find(DataListItemRow)
-        expect(dataListItemRow.exists()).toBe(true)
-    })
-
-    it('should render a DataListCell', () => {
-        const wrapper = mount(<ModuleDisplay {...props} />)
-        const dataListCell = wrapper.find(DataListCell)
-        expect(dataListCell.exists()).toBe(true)
-        // console.log("[DataListCell] length", dataListCell.length)
-        expect(dataListCell.at(0).contains("Product")).toBe(true)
     })
 
     it('should render a TextContent Element', () => {
@@ -99,11 +55,11 @@ describe('ModuleDisplay tests', () => {
         expect(versions.exists()).toBe(true)
     })
 
-    it('should render a h1 component', () => {
-        const wrapper = mount(<ModuleDisplay {...props} />)
-        const h1 = wrapper.find('[component="h1"]')
-        expect(h1.exists()).toBe(true)
-    })
+    // it('should render a h1 component', () => {
+    //     const wrapper = mount(<ModuleDisplay {...props} />)
+    //     const h1 = wrapper.find('[component="h1"]')
+    //     expect(h1.exists()).toBe(true)
+    // })
 
     it('test fetchModuleDetails function', () => {
         const wrapper = renderer.create(<ModuleDisplay {...props} />)
@@ -174,7 +130,7 @@ describe('ModuleDisplay tests', () => {
         const sourceTypeText = wrapper.find('#span-source-type-draft-uploaded').first().text()
 
         // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("Draft Uploaded")
+        expect(sourceTypeText).toEqual("Draft uploaded")
     })
 
     it('renders Module Type heading', () => {
@@ -182,7 +138,7 @@ describe('ModuleDisplay tests', () => {
         const sourceTypeText = wrapper.find('#span-source-name-module-type').first().text()
 
         // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("Module Type")
+        expect(sourceTypeText).toEqual("Module type")
     })
 
     it('renders View on Customer Portal hotlink', () => {
@@ -191,7 +147,7 @@ describe('ModuleDisplay tests', () => {
         wrapper.setState({ 'releaseUpdateDate': "Fri Oct 18 2019 17:35:50 GMT-0400" })
         wrapper.setState({ 'variantUUID': "123" })
         wrapper.setState({ 'portalHost': "https://example.com" })
-        const sourceTypeText = wrapper.find('a').at(2).text()
+        const sourceTypeText = wrapper.find('a').at(1).text()
 
         // ensure it matches what is expected
         expect(sourceTypeText).toContain("View on Customer Portal")
@@ -218,16 +174,16 @@ describe('ModuleDisplay tests', () => {
         expect(wrapper.state('moduleType')).toBeDefined()
     })
 
-    it('should have a moduleTitle', () => {
-        const wrapper = shallow(<ModuleDisplay {...props} />)
-        wrapper.setState({ 'login': true })
-        wrapper.setState({ "moduleTitle": "test title" })
+    // it('should have a moduleTitle', () => {
+    //     const wrapper = shallow(<ModuleDisplay {...props} />)
+    //     wrapper.setState({ 'login': true })
+    //     wrapper.setState({ "moduleTitle": "test title" })
 
-        const sourceText = wrapper.find('[component="h1"]').first().html()
-        // ensure it matches what is expected
-        expect(wrapper.state('moduleTitle')).toBeDefined()
-        expect(sourceText).toContain("test title")
-    })
+    //     const sourceText = wrapper.find('[component="h1"]').first().html()
+    //     // ensure it matches what is expected
+    //     expect(wrapper.state('moduleTitle')).toBeDefined()
+    //     expect(sourceText).toContain("test title")
+    // })
 
     it('should have a versionUUID', () => {
         const wrapper = shallow(<ModuleDisplay {...props} />)

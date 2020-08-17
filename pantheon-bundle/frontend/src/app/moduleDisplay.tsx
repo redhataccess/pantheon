@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { CopyIcon } from '@patternfly/react-icons';
-import { Level, LevelItem, Breadcrumb, BreadcrumbItem, Button } from '@patternfly/react-core'
+import { Level, LevelItem, Breadcrumb, BreadcrumbItem, Button, Divider, Title } from '@patternfly/react-core'
 import {
     DataList, DataListItem, DataListItemRow, DataListItemCells,
     DataListCell, Card, Text, TextContent, TextVariants
@@ -14,6 +14,7 @@ class ModuleDisplay extends Component<any, any, any> {
     constructor(props) {
         super(props)
         this.state = {
+            attributesFilePath: '',
             copySuccess: '',
             draftPath: '',
             draftUpdateDate: '',
@@ -37,122 +38,130 @@ class ModuleDisplay extends Component<any, any, any> {
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
         this.getPortalUrl()
+        this.fetchAttributesFilePath(this.props)
     }
 
     public render() {
         // console.log('Props: ', this.props)
         return (
             <React.Fragment>
-                <div>
-                    <div className="app-container">
-                        <Breadcrumb>
-                            <BreadcrumbItem ><a href="#/search">Modules</a></BreadcrumbItem>
-                            <BreadcrumbItem to="#" isActive={true}>{this.state.moduleTitle}</BreadcrumbItem>
-                        </Breadcrumb>
-                    </div>
-                    <br />
-                    <div>
-                        <Level>
-                            <LevelItem>
-                                <TextContent>
-                                    <Text component={TextVariants.h1}>{this.state.moduleTitle}</Text>
-                                </TextContent>
-                            </LevelItem>
-                            <LevelItem />
-                        </Level>
-                    </div>
-                    <div>
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.variantUUID !== ""
-                            && this.state.portalHost !== ""
-                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
-                        }
-
-                        <span>&emsp;&emsp;</span>
-
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.variantUUID !== ""
-                            && this.state.portalHost !== ""
-                            && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
-                        }
-
-                        <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
-                    </div>
-                    <br />
-                    <Level>
-                        <LevelItem>{}</LevelItem>
-                        <LevelItem>{}</LevelItem>
+                
+                    <Level hasGutter={true}>
                         <LevelItem>
-                            <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
+                            <Title headingLevel="h1" size="xl">{this.state.moduleTitle}</Title>
+                        </LevelItem>
+                        <LevelItem />
+                    </Level>
+                    <Level>
+                        <LevelItem>
+                            <TextContent>
+                                <Text component={TextVariants.small}>Module</Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem />
+                    </Level>
+
+                    <Level hasGutter={true}>
+                        <LevelItem>
+                            <TextContent>
+                                <Text component="a">{this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length-1)}</Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem />
+                        <LevelItem>
+                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                                && this.state.variantUUID !== ""
+                                && this.state.portalHost !== ""
+                                && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                            }
+                        </LevelItem>
+                        <LevelItem>
+                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                                && this.state.variantUUID !== ""
+                                && this.state.portalHost !== ""
+                                && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
+                            }
+
+                            <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
+
                         </LevelItem>
                     </Level>
                     <br />
-                    <div>
-                        <DataList aria-label="single action data list">
-                            <DataListItem aria-labelledby="simple-item1">
-                                <DataListItemRow id="data-rows-header" >
-                                    <DataListItemCells
-                                        dataListCells={[
-                                            <DataListCell width={2} key="product">
-                                                <span className="sp-prop-nosort" id="span-source-type-product">Product</span>
-                                            </DataListCell>,
-                                            <DataListCell key="published">
-                                                <span className="sp-prop-nosort" id="span-source-type-published">Published</span>
-                                            </DataListCell>,
-                                            <DataListCell key="updated">
-                                                <span className="sp-prop-nosort" id="span-source-type-draft-uploaded">Draft Uploaded</span>
-                                            </DataListCell>,
-                                            <DataListCell key="module_type">
-                                                <span className="sp-prop-nosort" id="span-source-name-module-type">Module Type</span>
-                                            </DataListCell>
-                                        ]}
-                                    />
-                                </DataListItemRow>
-                                <DataListItemRow>
-                                    <DataListItemCells
-                                        dataListCells={[
-                                            <DataListCell width={2} key="product">
-                                                <span>{this.state.productValue + ' ' + this.state.versionValue}</span>
-                                            </DataListCell>,
-                                            <DataListCell key="published">
-                                                <span>
-                                                    {this.state.releaseUpdateDate.trim() !== ""
-                                                        && this.state.releaseUpdateDate.length >= 15 ?
-                                                        this.state.releaseUpdateDate : "-"} <br />
-                                                    {this.state.releaseUpdateDate.trim() !== "" &&
-                                                        <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a>}
-                                                </span>
-                                            </DataListCell>,
-                                            <DataListCell key="updated">
-                                                <span>
-                                                    {this.state.draftUpdateDate.trim() !== ""
-                                                        && this.state.draftUpdateDate.length >= 15 ?
-                                                        this.state.draftUpdateDate : "-"}
-                                                </span>
-                                            </DataListCell>,
-                                            <DataListCell key="module_type">
-                                                <span>{this.state.moduleType !== undefined ? this.state.moduleType : "-"}</span>
-                                            </DataListCell>,
-                                        ]}
-                                    />
-                                </DataListItemRow>
-                            </DataListItem>
-                        </DataList>
-                    </div>
-                    <div>
+                    <Level hasGutter={true}>
+                        <LevelItem>
+                            <TextContent>
+                                <Text><strong><span id="span-source-type-product">Product</span></strong></Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem>{}</LevelItem>
+                        <LevelItem>
+                            <TextContent>
+                                <Text><strong><span id="span-source-name-module-type">Module type</span></strong></Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem>
+                            <TextContent>
+                                <Text><strong><span id="span-source-type-draft-uploaded">Draft uploaded</span></strong></Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem>
+                            <TextContent>
+                                <Text><strong><span id="span-source-type-published">Published</span></strong></Text>
+                            </TextContent>
+                        </LevelItem>
+                    </Level>
+
+                    <Level hasGutter={true}>
+                        <LevelItem><span>{this.state.productValue + ' ' + this.state.versionValue}</span></LevelItem>
+                        <LevelItem>{}</LevelItem>
+                        <LevelItem>
+                            <span>
+                                {this.state.moduleType.trim() !== "" ?
+                                    this.state.moduleType : ""}
+                            </span>
+                        </LevelItem>
+                        <LevelItem>
+                            <span>
+                                {this.state.draftUpdateDate.trim() !== ""
+                                    && this.state.draftUpdateDate.length >= 15 ?
+                                    new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.draftUpdateDate)) : "--"}
+                            </span>
+                        </LevelItem>
+                        <LevelItem><span>
+                            {this.state.releaseUpdateDate.trim() !== ""
+                                && this.state.releaseUpdateDate.length >= 15 ?
+                                new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.releaseUpdateDate)) : "--"}
+                        </span>
+                        </LevelItem>
+                    </Level>
+
+                    <br />
+                    <Level hasGutter={true}>
+                        <LevelItem>{}</LevelItem>
+                        <LevelItem>{}</LevelItem>
+                        <LevelItem>
+                            <Button variant='secondary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
+                        </LevelItem>
+                    </Level>
+                    <br />
+
+                    <Divider />
+                    <br />
+                    
                         <Card>
                             <Versions
                                 modulePath={this.state.modulePath}
                                 productInfo={this.state.productValue}
                                 versionModulePath={this.state.moduleTitle}
                                 variant={this.state.variant}
+                                attributesFilePath={this.state.attributesFilePath}
                                 updateDate={this.updateDate}
                                 onGetProduct={this.getProduct}
                                 onGetVersion={this.getVersion}
                             />
                         </Card>
-                    </div>
-                </div>
+                    
+                
             </React.Fragment>
         )
     }
@@ -333,6 +342,32 @@ class ModuleDisplay extends Component<any, any, any> {
         if (variantParam !== 'undefined') {
             this.setState({ variant: variantParam })
         }
+    }
+
+    private fetchAttributesFilePath = async (data) => {
+        await this.getVariantParam()
+        // console.log("[fetchAttributesFilePath] data=>", data)
+        const path = data.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
+        console.log("[fetchAttributesFilePath] path =>", path)
+        let repo = ''
+        const group = path.split("/")
+        repo = group[2]
+        fetch('/content/repositories/' + repo + '/module_variants/' + this.state.variant + '.harray.json')
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error(response.statusText)
+                }
+            })
+            .then(responseJSON => {
+                if (responseJSON["pant:attributesFilePath"] !== undefined) {
+                    this.setState({ attributesFilePath: responseJSON["pant:attributesFilePath"] })
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     }
 
 }

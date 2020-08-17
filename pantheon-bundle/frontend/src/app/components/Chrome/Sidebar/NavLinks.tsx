@@ -34,6 +34,7 @@ class NavLinks extends Component<IAppState, any> {
         <NavList onSelect={this.onExpandableSelect} id="nav-primary-expandable">
           <NavExpandable title="Modules" groupId="grp-1" isActive={this.state.activeGroup === 'grp-1'} isExpanded={true} data-testid="navLink_modules">
             <NavItem
+              preventDefault={true}
               groupId="grp-1"
               itemId="grp-1_itm-1"
               isActive={this.state.activeGroup === 'grp-1' && this.state.activeItem === 'grp-1_itm-1'}
@@ -43,6 +44,7 @@ class NavLinks extends Component<IAppState, any> {
             </NavItem>
             {(this.props.userAuthenticated) &&
               (<NavItem
+                preventDefault={true}
                 groupId="grp-1"
                 itemId="grp-1_itm-2"
                 isActive={this.state.activeItem === 'grp-1_itm-2'}
@@ -53,6 +55,7 @@ class NavLinks extends Component<IAppState, any> {
           </NavExpandable>
           {(this.props.userAuthenticated) && (<NavExpandable title="Products" groupId="grp-2" isActive={this.state.activeGroup === 'grp-2'}>
             <NavItem
+              preventDefault={true}
               groupId="grp-2"
               itemId="grp-2_itm-1"
               isActive={this.state.activeGroup === 'grp-2' && this.state.activeItem === 'grp-2_itm-1'}
@@ -62,6 +65,7 @@ class NavLinks extends Component<IAppState, any> {
             </NavItem>
             {(productText.length > 0) &&
               (<NavItem
+                preventDefault={true}
                 groupId="grp-2"
                 itemId="grp-2_itm-2"
                 isActive={this.state.activeGroup === 'grp-2' && this.state.activeItem === 'grp-2_itm-2'}
