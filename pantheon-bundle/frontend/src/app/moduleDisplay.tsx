@@ -45,123 +45,140 @@ class ModuleDisplay extends Component<any, any, any> {
         // console.log('Props: ', this.props)
         return (
             <React.Fragment>
-                
-                    <Level hasGutter={true}>
-                        <LevelItem>
-                            <Title headingLevel="h1" size="xl">{this.state.moduleTitle}</Title>
-                        </LevelItem>
-                        <LevelItem />
-                    </Level>
-                    <Level>
-                        <LevelItem>
-                            <TextContent>
-                                <Text component={TextVariants.small}>Module</Text>
-                            </TextContent>
-                        </LevelItem>
-                        <LevelItem />
-                    </Level>
 
-                    <Level hasGutter={true}>
-                        <LevelItem>
-                            <TextContent>
-                                <Text component="a">{this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length-1)}</Text>
-                            </TextContent>
-                        </LevelItem>
-                        <LevelItem />
-                        <LevelItem>
-                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                                && this.state.variantUUID !== ""
-                                && this.state.portalHost !== ""
-                                && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
-                            }
-                        </LevelItem>
-                        <LevelItem>
-                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                                && this.state.variantUUID !== ""
-                                && this.state.portalHost !== ""
-                                && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
-                            }
+                <Level>
+                    <LevelItem>
+                        <Title headingLevel="h1" size="xl">{this.state.moduleTitle}</Title>
+                    </LevelItem>
+                    <LevelItem />
+                </Level>
+                <Level>
+                    <LevelItem>
+                        <TextContent>
+                            <Text component={TextVariants.small}>Module</Text>
+                        </TextContent>
+                    </LevelItem>
+                    <LevelItem />
+                </Level>
 
-                            <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
+                <Level>
+                    <LevelItem>
+                        <TextContent>
+                            <Text component={TextVariants.a} href="#">{this.props.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length)}</Text>
+                        </TextContent>
+                    </LevelItem>
+                    <LevelItem />
+                    <LevelItem>
+                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                            && this.state.variantUUID !== ""
+                            && this.state.portalHost !== ""
+                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                        }
+                    </LevelItem>
+                    <LevelItem>
+                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                            && this.state.variantUUID !== ""
+                            && this.state.portalHost !== ""
+                            && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
+                        }
 
-                        </LevelItem>
-                    </Level>
-                    <br />
-                    <Level hasGutter={true}>
-                        <LevelItem>
-                            <TextContent>
-                                <Text><strong><span id="span-source-type-product">Product</span></strong></Text>
-                            </TextContent>
-                        </LevelItem>
-                        <LevelItem>{}</LevelItem>
-                        <LevelItem>
-                            <TextContent>
-                                <Text><strong><span id="span-source-name-module-type">Module type</span></strong></Text>
-                            </TextContent>
-                        </LevelItem>
-                        <LevelItem>
-                            <TextContent>
-                                <Text><strong><span id="span-source-type-draft-uploaded">Draft uploaded</span></strong></Text>
-                            </TextContent>
-                        </LevelItem>
-                        <LevelItem>
-                            <TextContent>
-                                <Text><strong><span id="span-source-type-published">Published</span></strong></Text>
-                            </TextContent>
-                        </LevelItem>
-                    </Level>
+                        <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
 
-                    <Level hasGutter={true}>
-                        <LevelItem><span>{this.state.productValue + ' ' + this.state.versionValue}</span></LevelItem>
-                        <LevelItem>{}</LevelItem>
-                        <LevelItem>
-                            <span>
-                                {this.state.moduleType.trim() !== "" ?
-                                    this.state.moduleType : ""}
-                            </span>
-                        </LevelItem>
-                        <LevelItem>
-                            <span>
-                                {this.state.draftUpdateDate.trim() !== ""
-                                    && this.state.draftUpdateDate.length >= 15 ?
-                                    new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.draftUpdateDate)) : "--"}
-                            </span>
-                        </LevelItem>
-                        <LevelItem><span>
-                            {this.state.releaseUpdateDate.trim() !== ""
-                                && this.state.releaseUpdateDate.length >= 15 ?
-                                new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.releaseUpdateDate)) : "--"}
-                        </span>
-                        </LevelItem>
-                    </Level>
+                    </LevelItem>
+                </Level>
+                <br />
+                <Level>
+                    <LevelItem>
+                        <TextContent>
+                            <Text><strong><span id="span-source-type-product">Product</span></strong></Text>
+                        </TextContent>
+                    </LevelItem>
+                    <LevelItem>{}</LevelItem>
+                    <LevelItem>
+                        <TextContent>
+                            <Text><strong><span id="span-source-name-module-type">Module type</span></strong></Text>
+                        </TextContent>
+                    </LevelItem>
+                    <LevelItem>
+                        <TextContent>
+                            <Text><strong><span id="span-source-type-draft-uploaded">Draft uploaded</span></strong></Text>
+                        </TextContent>
+                    </LevelItem>
+                    <LevelItem>
+                        <TextContent>
+                            <Text><strong><span id="span-source-type-published">Published</span></strong></Text>
+                        </TextContent>
+                    </LevelItem>
+                </Level>
 
-                    <br />
-                    <Level hasGutter={true}>
-                        <LevelItem>{}</LevelItem>
-                        <LevelItem>{}</LevelItem>
-                        <LevelItem>
-                            <Button variant='secondary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
-                        </LevelItem>
-                    </Level>
-                    <br />
+                <Level>
+                    <LevelItem>
+                        <TextContent>
+                            <Text><span>{this.state.productValue + ' ' + this.state.versionValue}</span></Text>
+                        </TextContent>
+                    </LevelItem>
+                    <LevelItem>{}</LevelItem>
+                    <LevelItem>
+                        <TextContent>
+                            <Text>
+                                <span>
+                                    {this.state.moduleType.trim() !== "" ?
+                                        this.state.moduleType : ""}
+                                </span>
+                            </Text>
+                        </TextContent>
+                    </LevelItem>
+                    <LevelItem>
+                        <TextContent>
+                            <Text>
+                                <span>
+                                    {this.state.draftUpdateDate.trim() !== ""
+                                        && this.state.draftUpdateDate.length >= 15 ?
+                                        new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.draftUpdateDate)) : "--"}
+                                </span>
+                            </Text>
+                        </TextContent>
+                    </LevelItem>
+                    <LevelItem>
+                        <TextContent>
+                            <Text>
+                                <span>
+                                    {this.state.releaseUpdateDate.trim() !== ""
+                                        && this.state.releaseUpdateDate.length >= 15 ?
+                                        new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.releaseUpdateDate)) : "--"}
+                                </span>
+                            </Text>
+                        </TextContent>
+                    </LevelItem>
+                </Level>
 
-                    <Divider />
-                    <br />
-                    
-                        <Card>
-                            <Versions
-                                modulePath={this.state.modulePath}
-                                productInfo={this.state.productValue}
-                                versionModulePath={this.state.moduleTitle}
-                                variant={this.state.variant}
-                                attributesFilePath={this.state.attributesFilePath}
-                                updateDate={this.updateDate}
-                                onGetProduct={this.getProduct}
-                                onGetVersion={this.getVersion}
-                            />
-                        </Card>
-                    
-                
+                <br />
+                <Level>
+                    <LevelItem>{}</LevelItem>
+                    <LevelItem>{}</LevelItem>
+                    <LevelItem>
+                        <Button variant='secondary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
+                    </LevelItem>
+                </Level>
+                <br />
+
+                <Divider />
+                <br />
+
+                <Card>
+                    <Versions
+                        modulePath={this.state.modulePath}
+                        productInfo={this.state.productValue}
+                        versionModulePath={this.state.moduleTitle}
+                        variant={this.state.variant}
+                        attributesFilePath={this.state.attributesFilePath}
+                        updateDate={this.updateDate}
+                        onGetProduct={this.getProduct}
+                        onGetVersion={this.getVersion}
+                    />
+                </Card>
+
+
             </React.Fragment>
         )
     }
@@ -180,7 +197,7 @@ class ModuleDisplay extends Component<any, any, any> {
         })
     }
 
-    private fetchModuleDetails = async(data) => {
+    private fetchModuleDetails = async (data) => {
         await this.getVariantParam()
         const path = data.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
         this.setState({
@@ -346,9 +363,8 @@ class ModuleDisplay extends Component<any, any, any> {
 
     private fetchAttributesFilePath = async (data) => {
         await this.getVariantParam()
-        // console.log("[fetchAttributesFilePath] data=>", data)
-        const path = data.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
-        console.log("[fetchAttributesFilePath] path =>", path)
+        const path = data.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
+        // console.log("[fetchAttributesFilePath] path =>", path)
         let repo = ''
         const group = path.split("/")
         repo = group[2]

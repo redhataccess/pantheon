@@ -137,7 +137,7 @@ class Versions extends Component<IProps, IState> {
                                                 <CardActions>
                                                     <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
                                                 </CardActions>}
-                                            {data.metadata === undefined &&
+                                            {data.metadata !== undefined && data.metadata.productVersion === undefined &&
                                                 <CardActions><i className="pf-icon pf-icon-warning-triangle" />
                                                     <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
                                                 </CardActions>}
@@ -148,7 +148,7 @@ class Versions extends Component<IProps, IState> {
                                                     <Button variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
                                                 </CardActions>
                                             }
-                                            {data.metadata === undefined &&
+                                            {data.metadata !== undefined && 
                                                 <CardActions>
                                                     <Tooltip content="Add metadata to publish">
                                                         <Button isAriaDisabled={true} variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>

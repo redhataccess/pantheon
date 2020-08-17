@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { CopyIcon } from '@patternfly/react-icons';
-import { Level, LevelItem, Button, Divider, Title, Card, Text, TextContent, TextVariants
+import {
+    Level, LevelItem, Button, Divider, Title, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core'
 import { Versions } from '@app/versions'
 import { Fields, PathPrefixes } from '@app/Constants'
@@ -42,7 +43,7 @@ class AssemblyDisplay extends Component<any, any, any> {
         return (
             <React.Fragment>
                 <div>
-                    <Level hasGutter={true}>
+                    <Level>
                         <LevelItem>
                             <Title headingLevel="h1" size="xl">{this.state.moduleTitle}</Title>
                         </LevelItem>
@@ -57,10 +58,10 @@ class AssemblyDisplay extends Component<any, any, any> {
                         <LevelItem />
                     </Level>
 
-                    <Level hasGutter={true}>
+                    <Level>
                         <LevelItem>
                             <TextContent>
-                                <Text component="a">{this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)}</Text>
+                                <Text component={TextVariants.a} href="#">{this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)}</Text>
                             </TextContent>
                         </LevelItem>
                         <LevelItem />
@@ -83,7 +84,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                         </LevelItem>
                     </Level>
                     <br />
-                    <Level hasGutter={true}>
+                    <Level>
                         <LevelItem>
                             <TextContent>
                                 <Text><strong><span id="span-source-type-product">Product</span></strong></Text>
@@ -102,29 +103,44 @@ class AssemblyDisplay extends Component<any, any, any> {
                         </LevelItem>
                     </Level>
 
-                    <Level hasGutter={true}>
-                        <LevelItem><span>{this.state.productValue + ' ' + this.state.versionValue}</span></LevelItem>
+                    <Level>
+                        <LevelItem>
+                            <TextContent>
+                                <Text>
+                                    <span>{this.state.productValue + ' ' + this.state.versionValue}</span>
+                                </Text>
+                            </TextContent>
+                        </LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem className="pf-u-text-align-left">
-                            <span>
-                                {this.state.draftUpdateDate.trim() !== ""
-                                    && this.state.draftUpdateDate.length >= 15 ?
-                                    new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.draftUpdateDate)) : "--"}
-                            </span>
+                            <TextContent>
+                                <Text>
+                                    <span>
+                                        {this.state.draftUpdateDate.trim() !== ""
+                                            && this.state.draftUpdateDate.length >= 15 ?
+                                            new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.draftUpdateDate)) : "--"}
+                                    </span>
+                                </Text>
+                            </TextContent>
                         </LevelItem>
-                        <LevelItem className="pf-u-text-align-left"><span>
-                            {this.state.releaseUpdateDate.trim() !== ""
-                                && this.state.releaseUpdateDate.length >= 15 ?
-                                new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.releaseUpdateDate)) : "--"}
-                            {this.state.releaseUpdateDate.trim() !== ""
-                                && this.state.releaseUpdateDate.length >= 15 ?
-                                <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a> : ""}
-                        </span>
+                        <LevelItem className="pf-u-text-align-left">
+                            <TextContent>
+                                <Text>
+                                    <span>
+                                        {this.state.releaseUpdateDate.trim() !== ""
+                                            && this.state.releaseUpdateDate.length >= 15 ?
+                                            new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.releaseUpdateDate)) : "--"}
+                                        {this.state.releaseUpdateDate.trim() !== ""
+                                            && this.state.releaseUpdateDate.length >= 15 ?
+                                            <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a> : ""}
+                                    </span>
+                                </Text>
+                            </TextContent>
                         </LevelItem>
                     </Level>
 
                     <br />
-                    <Level hasGutter={true}>
+                    <Level>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>
@@ -336,7 +352,7 @@ class AssemblyDisplay extends Component<any, any, any> {
     private fetchAttributesFilePath = async (data) => {
         await this.getVariantParam()
         // console.log("[fetchAttributesFilePath] data=>", data)
-        console.log("[fetchAttributesFilePath] variant=>",this.state.variant)
+        console.log("[fetchAttributesFilePath] variant=>", this.state.variant)
         const path = data.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
         console.log("[fetchAttributesFilePath] path =>", path)
         // path = '/repositories/test-repo/entities/.../assembly_access-control-list.adoc'

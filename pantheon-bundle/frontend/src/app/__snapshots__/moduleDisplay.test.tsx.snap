@@ -2,9 +2,7 @@
 
 exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
 <Fragment>
-  <Level
-    hasGutter={true}
-  >
+  <Level>
     <LevelItem>
       <Title
         headingLevel="h1"
@@ -25,15 +23,14 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
     </LevelItem>
     <LevelItem />
   </Level>
-  <Level
-    hasGutter={true}
-  >
+  <Level>
     <LevelItem>
       <TextContent>
         <Text
           component="a"
+          href="#"
         >
-          est
+          test
         </Text>
       </TextContent>
     </LevelItem>
@@ -46,9 +43,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
     </LevelItem>
   </Level>
   <br />
-  <Level
-    hasGutter={true}
-  >
+  <Level>
     <LevelItem>
       <TextContent>
         <Text>
@@ -103,33 +98,45 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
       </TextContent>
     </LevelItem>
   </Level>
-  <Level
-    hasGutter={true}
-  >
+  <Level>
     <LevelItem>
-      <span>
-         
-      </span>
+      <TextContent>
+        <Text>
+          <span>
+             
+          </span>
+        </Text>
+      </TextContent>
     </LevelItem>
     <LevelItem />
     <LevelItem>
-      <span />
+      <TextContent>
+        <Text>
+          <span />
+        </Text>
+      </TextContent>
     </LevelItem>
     <LevelItem>
-      <span>
-        --
-      </span>
+      <TextContent>
+        <Text>
+          <span>
+            --
+          </span>
+        </Text>
+      </TextContent>
     </LevelItem>
     <LevelItem>
-      <span>
-        --
-      </span>
+      <TextContent>
+        <Text>
+          <span>
+            --
+          </span>
+        </Text>
+      </TextContent>
     </LevelItem>
   </Level>
   <br />
-  <Level
-    hasGutter={true}
-  >
+  <Level>
     <LevelItem />
     <LevelItem />
     <LevelItem>

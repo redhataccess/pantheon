@@ -23,7 +23,6 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         isActive={false}
         itemId="grp-1_itm-1"
         onClick={[Function]}
-        preventDefault={true}
       >
         <Link
           data-testid="navLink_search"
@@ -37,7 +36,6 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         isActive={false}
         itemId="grp-1_itm-2"
         onClick={[Function]}
-        preventDefault={true}
       >
         <Link
           to="/git"
@@ -60,7 +58,6 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         isActive={false}
         itemId="grp-2_itm-1"
         onClick={[Function]}
-        preventDefault={true}
       >
         <Link
           to="/products"
@@ -73,7 +70,6 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         isActive={false}
         itemId="grp-2_itm-2"
         onClick={[Function]}
-        preventDefault={true}
       >
         <Link
           to="/product"
