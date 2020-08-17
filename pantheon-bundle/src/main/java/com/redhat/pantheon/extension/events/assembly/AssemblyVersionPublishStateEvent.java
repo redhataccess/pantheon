@@ -18,7 +18,7 @@ public class AssemblyVersionPublishStateEvent implements Event {
         this.moduleVersionPath = assemblyVersion.getPath();
     }
 
-    public String getModuleVersionPath() {
+    public String getAssemblyVersionPath() {
         return moduleVersionPath;
     }
 }

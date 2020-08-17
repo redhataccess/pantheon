@@ -78,7 +78,7 @@ class UnpublishVersionTest {
 
     @Test
     @DisplayName("doRun for module with both released and draft version")
-    void doRunWithDraftVersoin() throws Exception {
+    void doRunWithDraftVersion() throws Exception {
         // Given
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released",
