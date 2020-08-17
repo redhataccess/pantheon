@@ -475,7 +475,10 @@ class Versions extends Component<IProps, IState> {
         })
 
         // process path
-        this.setState({ metadataPath: event.target.id })
+        const target = event.nativeEvent.target
+        if (target.id !== undefined && target.id.trim().length > 0) {
+            this.setState({ metadataPath: target.id })
+        }
     }
 
     private handleModalClose = () => {
