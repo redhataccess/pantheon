@@ -59,19 +59,31 @@ body {
     height: 100vh;
 }
 
+
+/* Use grey color as background for Draft card */
+
 .pf-c-card-draft {
     --pf-c-card--BackgroundColor: var(--pf-global--palette--black-200) !important;
 }
 
+
+/* Use yellow color for warning. The default is black color */
+
 .pf-icon-warning-triangle {
     color: var(--pf-global--warning-color--100) !important
 }
+
+
+/* Remove scrollbar from the left nav */
 
 .pf-c-page__sidebar {
     overflow-x: hidden !important;
     overflow-y: hidden !important;
 }
 
+
+/* Use green color for background on Published card */
+
 .pf-c-card.pf-m-selectable.pf-m-selected:before {
-    background-color: var(--pf-c-card--m-selectable--m-selected--before--BackgroundColor, #5ba352) !important;
+    background-color: #5ba352 !important;
 }
