@@ -101,19 +101,15 @@ class SearchFilter extends Component<any, any> {
 
 
         </div>
-        
-          {chipGroups.map(currentGroup => (
-          <ChipGroup categoryName={currentGroup.category}>  
-            <Chip key={currentGroup.category}>
-              {currentGroup.chips.map(chip => (
-                <Chip key={chip} onClick={this.deleteItem(currentGroup.category, chip)}>
-                  {chip}
-                </Chip>
-              ))}
-          </Chip>    
-          </ChipGroup>    
-          ))}
-        {/* </ChipGroup> */}
+        {chipGroups.map(currentGroup => (
+          <ChipGroup key={currentGroup.category} categoryName={currentGroup.category}>
+            {currentGroup.chips.map(chip => (
+              <Chip key={chip} onClick={this.deleteItem(currentGroup.category, chip)}>
+                {chip}
+              </Chip>
+            ))}
+          </ChipGroup>
+        ))}
       </React.Fragment>
 
     );
