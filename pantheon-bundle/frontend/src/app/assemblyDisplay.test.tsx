@@ -67,18 +67,6 @@ describe('AssemblyDisplay tests', () => {
         expect(inst.fetchModuleDetails(props)).toMatchSnapshot()
     })
 
-    // it('test getProduct function', () => {
-    //     const wrapper = renderer.create(<AssemblyDisplay {...props} />)
-    //     const inst = wrapper.getInstance()
-    //     expect(inst.getProduct()).toMatchSnapshot()
-    // })
-
-    // it('test getVersion function', () => {
-    //     const wrapper = renderer.create(<AssemblyDisplay {...props} />)
-    //     const inst = wrapper.getInstance()
-    //     expect(inst.getVersion()).toMatchSnapshot()
-    // })
-
     it('test getVersionUUID function', () => {
         const wrapper = renderer.create(<AssemblyDisplay {...props} />)
         const inst = wrapper.getInstance()
