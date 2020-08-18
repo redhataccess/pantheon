@@ -63,6 +63,10 @@ public class PublishDraftVersion extends AbstractPostOperation {
         this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
 
+    private Document getDocument(SlingHttpServletRequest request) {
+        return request.getResource().adaptTo(Document.class);
+    }
+
     private Locale getLocale(SlingHttpServletRequest request) {
         return paramValueAsLocale(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE);
     }
@@ -79,7 +83,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
         if (response.getError() == null) {
             // call the extension point
             Locale locale = getLocale(request);
-            Document document = request.getResourceResolver().getResource(request.getResource().getPath()).adaptTo(Document.class);
+            Document document = getDocument(request);
             String variant = getVariant(request);
             DocumentVersion documentVersion = document.locale(locale).get()
                     .variants().get()
@@ -118,7 +122,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
             if(canPublish) {
                 serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
             }
-            Document document = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Document.class);
+            Document document = getDocument(request);
             Locale locale = getLocale(request);
             String variant = getVariant(request);
             // Get the draft version, there should be one
