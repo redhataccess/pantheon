@@ -2,12 +2,11 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
-import com.redhat.pantheon.extension.events.assembly.AssemblyVersionPublishedEvent;
-import com.redhat.pantheon.extension.events.module.ModuleVersionPublishedEvent;
+import com.redhat.pantheon.extension.events.assembly.AssemblyVersionUnpublishedEvent;
+import com.redhat.pantheon.extension.events.module.ModuleVersionUnpublishedEvent;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
@@ -27,7 +26,6 @@ import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
 import org.apache.sling.servlets.post.SlingPostProcessor;
-import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -91,18 +89,18 @@ public class UnpublishVersion extends AbstractPostOperation {
         if (response.getError() == null) {
             // call the extension point
             Locale locale = getLocale(request);
-            Optional<? extends Document> document = getDocument(request, request.getResourceResolver());
+            Document document = request.getResourceResolver().getResource(request.getResource().getPath()).adaptTo(Document.class);
             String variant = getVariant(request);
-            Optional<? extends DocumentVersion> documentVersion = Optional.of(document.get().locale(locale).get()
+            DocumentVersion documentVersion = document.locale(locale).get()
                     .variants().get()
                     .variant(variant).get()
-                    .draft().get());
+                    .draft().get();
 
             // TODO We need to change the event so that the right variant is processed
-            if(documentVersion.get() instanceof AssemblyVersion){
-                events.fireEvent(new AssemblyVersionPublishedEvent((AssemblyVersion) documentVersion.get()), 15);
+            if(PantheonConstants.RESOURCETYPE_ASSEMBLY.equals(document.getResourceType())){
+                events.fireEvent(new AssemblyVersionUnpublishedEvent(documentVersion.adaptTo(AssemblyVersion.class)), 15);
             }else{
-                events.fireEvent(new ModuleVersionPublishedEvent((ModuleVersion)documentVersion.get()), 15);
+                events.fireEvent(new ModuleVersionUnpublishedEvent(documentVersion.adaptTo(ModuleVersion.class)), 15);
             }
         }
         log.debug("Operation UnPublishinging draft version,  completed");
@@ -128,21 +126,12 @@ public class UnpublishVersion extends AbstractPostOperation {
             if(canUnPublish) {
                 serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
             }
-            Optional<? extends Document> document;
-            if(serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Document.class).getResourceType().equalsIgnoreCase("pantheon/assembly")){
-                Assembly assembly = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Assembly.class);
-                document = Optional.ofNullable(assembly);
-            }
-            else{
-                Module module = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Module.class);
-                document = Optional.ofNullable(module);
-
-            }
+            Document document = request.getResourceResolver().getResource(request.getResource().getPath()).adaptTo(Document.class);
             Locale locale = getLocale(request);
             String variant = getVariant(request);
 
             // Get the released version, there should be one
-            Optional<? extends DocumentVersion> foundVariant = document.get().getReleasedVersion(locale, variant);
+            Optional<? extends DocumentVersion> foundVariant = document.getReleasedVersion(locale, variant);
 
             if(!foundVariant.isPresent()) {
                 response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
@@ -153,15 +142,15 @@ public class UnpublishVersion extends AbstractPostOperation {
                         .getParent()
                         .revertReleased();
 
-                changes.add(Modification.onModified(document.get().getPath()));
+                changes.add(Modification.onModified(document.getPath()));
                 // Change source/released to source/draft
-                Optional<HashableFileResource> draftSource = traverseFrom(document.get())
-                        .toChild(m -> document.get().locale(locale))
+                Optional<HashableFileResource> draftSource = traverseFrom(document)
+                        .toChild(d -> d.locale(locale))
                         .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> sourceContent.draft())
                         .getAsOptional();
-                FileResource releasedSource = traverseFrom(document.get())
-                        .toChild(m -> document.get().locale(locale))
+                FileResource releasedSource = traverseFrom(document)
+                        .toChild(d -> d.locale(locale))
                         .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> sourceContent.released())
                         .get();
@@ -188,14 +177,5 @@ public class UnpublishVersion extends AbstractPostOperation {
         }catch (Exception ex){
             throw new RepositoryException(ex.getMessage());
         }
-    }
-    @NotNull
-    private Optional<? extends Document> getDocument(SlingHttpServletRequest request, ResourceResolver serviceResourceResolver) {
-        if(serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Document.class).getResourceType().equalsIgnoreCase("pantheon/assembly")){
-            Assembly assembly = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Assembly.class);
-            return Optional.ofNullable(assembly);
-        }
-        Module module = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Module.class);
-        return Optional.ofNullable(module);
     }
 }

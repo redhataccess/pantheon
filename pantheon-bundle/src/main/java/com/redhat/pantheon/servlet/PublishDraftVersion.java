@@ -8,7 +8,6 @@ import com.redhat.pantheon.extension.events.module.ModuleVersionPublishedEvent;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
@@ -24,7 +23,6 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.jcr.base.util.AccessControlUtil;
 import org.apache.sling.servlets.post.*;
-import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -81,20 +79,20 @@ public class PublishDraftVersion extends AbstractPostOperation {
         if (response.getError() == null) {
             // call the extension point
             Locale locale = getLocale(request);
-            Optional<? extends Document> document = getDocument(request, request.getResourceResolver());
+            Document document = request.getResourceResolver().getResource(request.getResource().getPath()).adaptTo(Document.class);
             String variant = getVariant(request);
-            Optional<? extends DocumentVersion> documentVersion = Optional.of(document.get().locale(locale).get()
+            DocumentVersion documentVersion = document.locale(locale).get()
                     .variants().get()
                     .variant(variant).get()
-                    .released().get());
+                    .released().get();
 
             // Regenerate the document once more
-            asciidoctorService.getModuleHtml(document.get(), locale, variant, false, new HashMap(), true);
+            asciidoctorService.getModuleHtml(document, locale, variant, false, new HashMap(), true);
 
-            if(documentVersion.get() instanceof AssemblyVersion){
-                events.fireEvent(new AssemblyVersionPublishedEvent((AssemblyVersion) documentVersion.get()), 15);
+            if(PantheonConstants.RESOURCETYPE_ASSEMBLY.equals(document.getResourceType())){
+                events.fireEvent(new AssemblyVersionPublishedEvent(documentVersion.adaptTo(AssemblyVersion.class)), 15);
             }else{
-                events.fireEvent(new ModuleVersionPublishedEvent((ModuleVersion)documentVersion.get()), 15);
+                events.fireEvent(new ModuleVersionPublishedEvent(documentVersion.adaptTo(ModuleVersion.class)), 15);
             }
         }
         log.debug("Operation Publishinging draft version,  completed");
@@ -120,11 +118,11 @@ public class PublishDraftVersion extends AbstractPostOperation {
             if(canPublish) {
                 serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
             }
-            Optional<? extends Document> document = getDocument(request, serviceResourceResolver);
+            Document document = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Document.class);
             Locale locale = getLocale(request);
             String variant = getVariant(request);
             // Get the draft version, there should be one
-            Optional<? extends DocumentVersion> versionToRelease = document.get().getDraftVersion(locale, variant);
+            Optional<? extends DocumentVersion> versionToRelease = document.getDraftVersion(locale, variant);
             if (!versionToRelease.isPresent()) {
                 response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
                         "The document doesn't have a draft version to be released");
@@ -137,22 +135,22 @@ public class PublishDraftVersion extends AbstractPostOperation {
                 return;
             } else {
                 // Draft becomes the new released version
-                DocumentVariant docVariant = traverseFrom(document.get())
-                        .toChild(m -> document.get().locale(locale))
+                DocumentVariant docVariant = traverseFrom(document)
+                        .toChild(d -> d.locale(locale))
                         .toChild(DocumentLocale::variants)
                         .toChild(variants -> variants.variant(variant))
                         .get();
                 docVariant.releaseDraft();
-                changes.add(Modification.onModified(document.get().getPath()));
+                changes.add(Modification.onModified(document.getPath()));
                 // source/draft becomes source/released
-                FileResource draftSource = traverseFrom(document.get())
-                        .toChild(m -> document.get().locale(locale))
+                FileResource draftSource = traverseFrom(document)
+                        .toChild(d -> d.locale(locale))
                         .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> sourceContent.draft())
                         .get();
                 // Check for released version
-                Optional<HashableFileResource> releasedSource = traverseFrom(document.get())
-                        .toChild(m -> document.get().locale(locale))
+                Optional<HashableFileResource> releasedSource = traverseFrom(document)
+                        .toChild(d -> d.locale(locale))
                         .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> sourceContent.released())
                         .getAsOptional();
@@ -178,15 +176,5 @@ public class PublishDraftVersion extends AbstractPostOperation {
         }catch (Exception ex){
             throw new RepositoryException(ex.getMessage());
         }
-    }
-
-    @NotNull
-    private Optional<? extends Document> getDocument(SlingHttpServletRequest request, ResourceResolver serviceResourceResolver) {
-        if(serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Document.class).getResourceType().equalsIgnoreCase("pantheon/assembly")){
-            Assembly assembly = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Assembly.class);
-            return Optional.ofNullable(assembly);
-        }
-            Module module = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Module.class);
-            return Optional.ofNullable(module);
     }
 }

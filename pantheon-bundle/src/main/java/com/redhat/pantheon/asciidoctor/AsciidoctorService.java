@@ -4,6 +4,7 @@ import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
@@ -179,7 +180,7 @@ public class AsciidoctorService {
         // Use a service-level resource resolver to build the module as it will require write access to the resources
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
 
-            Class cls = base instanceof Module ? Module.class : Assembly.class;
+            Class cls = base.getResourceType().equals(PantheonConstants.RESOURCETYPE_ASSEMBLY) ? Assembly.class : Module.class;
             Document serviceDocument = (Document) SlingModels.getModel(serviceResourceResolver, base.getPath(), cls);
 
             DocumentVariant documentVariant = serviceDocument.locale(locale).getOrCreate()

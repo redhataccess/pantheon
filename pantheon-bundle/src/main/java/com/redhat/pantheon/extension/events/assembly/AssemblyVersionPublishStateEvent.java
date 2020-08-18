@@ -12,13 +12,13 @@ import javax.annotation.Nonnull;
  */
 public class AssemblyVersionPublishStateEvent implements Event {
 
-    private final String moduleVersionPath;
+    private final String assemblyVersionPath;
 
     protected AssemblyVersionPublishStateEvent(@Nonnull AssemblyVersion assemblyVersion) {
-        this.moduleVersionPath = assemblyVersion.getPath();
+        this.assemblyVersionPath = assemblyVersion.getPath();
     }
 
     public String getAssemblyVersionPath() {
-        return moduleVersionPath;
+        return assemblyVersionPath;
     }
 }
