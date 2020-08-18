@@ -71,3 +71,7 @@ body {
     overflow-x: hidden !important;
     overflow-y: hidden !important;
 }
+
+.pf-c-card.pf-m-selectable.pf-m-selected:before {
+    background-color: var(--pf-c-card--m-selectable--m-selected--before--BackgroundColor, #5ba352) !important;
+}

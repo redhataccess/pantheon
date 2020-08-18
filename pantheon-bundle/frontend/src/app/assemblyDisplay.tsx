@@ -61,7 +61,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                     <Level>
                         <LevelItem>
                             <TextContent>
-                                <Text component={TextVariants.a} href="#">{this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)}</Text>
+                                <Text component={TextVariants.pre}>{this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)}</Text>
                             </TextContent>
                         </LevelItem>
                         <LevelItem />
@@ -69,7 +69,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                             {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                                 && this.state.variantUUID !== ""
                                 && this.state.portalHost !== ""
-                                && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                                && <span><a href={this.state.portalHost + '/guides/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                             }
                         </LevelItem>
                         <LevelItem>
@@ -112,7 +112,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                             </TextContent>
                         </LevelItem>
                         <LevelItem>{}</LevelItem>
-                        <LevelItem className="pf-u-text-align-left">
+                        <LevelItem>
                             <TextContent>
                                 <Text>
                                     <span>
@@ -123,16 +123,13 @@ class AssemblyDisplay extends Component<any, any, any> {
                                 </Text>
                             </TextContent>
                         </LevelItem>
-                        <LevelItem className="pf-u-text-align-left">
+                        <LevelItem>
                             <TextContent>
                                 <Text>
                                     <span>
                                         {this.state.releaseUpdateDate.trim() !== ""
                                             && this.state.releaseUpdateDate.length >= 15 ?
                                             new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.releaseUpdateDate)) : "--"}
-                                        {this.state.releaseUpdateDate.trim() !== ""
-                                            && this.state.releaseUpdateDate.length >= 15 ?
-                                            <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a> : ""}
                                     </span>
                                 </Text>
                             </TextContent>
@@ -316,7 +313,7 @@ class AssemblyDisplay extends Component<any, any, any> {
     private copyToClipboard = () => {
         const textField = document.createElement('textarea')
         if (this.state.variantUUID.trim() !== '') {
-            textField.value = this.state.portalHost + '/topics/en-us/' + this.state.variantUUID
+            textField.value = this.state.portalHost + '/guides/en-us/' + this.state.variantUUID
             document.body.appendChild(textField)
             textField.select()
             document.execCommand('copy')
@@ -344,7 +341,7 @@ class AssemblyDisplay extends Component<any, any, any> {
     private async getVariantParam() {
         const query = new URLSearchParams(this.props.location.search);
         const variantParam = query.get('variant')
-        // console.log("[moduleDisplay] variantParam => ", variantParam)
+        // console.log("[getVariantparam] variantParam => ", variantParam)
         if (variantParam !== 'undefined') {
             this.setState({ variant: variantParam })
         }
@@ -352,10 +349,7 @@ class AssemblyDisplay extends Component<any, any, any> {
 
     private fetchAttributesFilePath = async (data) => {
         await this.getVariantParam()
-        // console.log("[fetchAttributesFilePath] data=>", data)
-        console.log("[fetchAttributesFilePath] variant=>", this.state.variant)
         const path = data.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
-        console.log("[fetchAttributesFilePath] path =>", path)
         // path = '/repositories/test-repo/entities/.../assembly_access-control-list.adoc'
         let repo = ''
         const group = path.split("/")

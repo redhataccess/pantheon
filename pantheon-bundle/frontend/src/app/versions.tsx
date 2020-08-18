@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { Button, Level, LevelItem, Text, TextContent, TextVariants, CardHeaderMain, CardActions, Tooltip } from '@patternfly/react-core'
 import {
-    Alert, AlertActionCloseButton, BaseSizes, Card, CardTitle, CardHeader, CardBody, DataList, DataListItem, DataListItemRow,
-    DataListItemCells, DataListCell, DataListToggle, DataListContent, Dropdown, DropdownItem,
-    DropdownPosition, Form, FormGroup, FormSelect, FormSelectOption, Grid, GridItem, InputGroup, KebabToggle,
+    Alert, AlertActionCloseButton, BaseSizes, Card, CardHeader, CardBody,
+    Form, FormGroup, FormSelect, FormSelectOption, Grid, GridItem, InputGroup,
     Modal, InputGroupText, Title, TextInput
 } from '@patternfly/react-core'
 import CheckImage from '@app/images/check_image.jpg'
@@ -175,12 +174,12 @@ class Versions extends Component<IProps, IState> {
                                             <br />
                                             <TextContent>
                                                 {this.props.contentType === PantheonContentTypes.MODULE &&
-                                                 <Text><strong>Assemblies</strong></Text>
+                                                    <Text><strong>Assemblies</strong></Text>
                                                 }
 
                                                 {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
-                                                 <Text><strong>Modules</strong></Text>
-                                                }  
+                                                    <Text><strong>Modules</strong></Text>
+                                                }
                                                 <Text component={TextVariants.p}>{}</Text>
                                             </TextContent>
                                         </CardBody>
@@ -193,44 +192,46 @@ class Versions extends Component<IProps, IState> {
                         type.map((data, key2) => (
                             data.version !== '' && data.type === "release" && (
                                 <GridItem span={6}>
-                                    <Card>
-                                        <CardHeader>
-                                            <CardHeaderMain><strong><span id='span-source-type-version-published'>Published</span></strong></CardHeaderMain>
-                                            <CardActions>{}</CardActions>
-                                            <CardActions>
-                                                <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
-                                            </CardActions>
-                                            <CardActions>
-                                                <Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)}>Preview</Button>
-                                            </CardActions>
-                                            <CardActions>
-                                                <Button variant="secondary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
-                                            </CardActions>
-                                        </CardHeader>
+                                    <div className="pf-c-card pf-m-selectable pf-m-selected">
+                                        <Card className="pf-m-selected">
+                                            <CardHeader>
+                                                <CardHeaderMain><strong><span id='span-source-type-version-published'>Published</span></strong></CardHeaderMain>
+                                                <CardActions>{}</CardActions>
+                                                <CardActions>
+                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
+                                                </CardActions>
+                                                <CardActions>
+                                                    <Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)}>Preview</Button>
+                                                </CardActions>
+                                                <CardActions>
+                                                    <Button variant="secondary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
+                                                </CardActions>
+                                            </CardHeader>
 
-                                        <CardBody>
-                                            <TextContent>
-                                                <Text><strong>Upload time</strong></Text>
-                                                <Text component={TextVariants.p}>{data.draftUploadDate}</Text>
-                                            </TextContent>
-                                            <br />
-                                            <TextContent>
-                                                <Text><strong>Attribute file</strong></Text>
-                                                <Text component={TextVariants.p}>{this.props.attributesFilePath}</Text>
-                                            </TextContent>
-                                            <br />
-                                            <TextContent>
-                                            {this.props.contentType === PantheonContentTypes.MODULE &&
-                                                 <Text><strong>Assemblies</strong></Text>
-                                                }
-                                                {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
-                                                 <Text><strong>Modules</strong></Text>
-                                                }
-                                                <Text component={TextVariants.p}>{}</Text>
-                                            </TextContent>
-                                        </CardBody>
+                                            <CardBody>
+                                                <TextContent>
+                                                    <Text><strong>Upload time</strong></Text>
+                                                    <Text component={TextVariants.p}>{data.draftUploadDate}</Text>
+                                                </TextContent>
+                                                <br />
+                                                <TextContent>
+                                                    <Text><strong>Attribute file</strong></Text>
+                                                    <Text component={TextVariants.p}>{this.props.attributesFilePath}</Text>
+                                                </TextContent>
+                                                <br />
+                                                <TextContent>
+                                                    {this.props.contentType === PantheonContentTypes.MODULE &&
+                                                        <Text><strong>Assemblies</strong></Text>
+                                                    }
+                                                    {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
+                                                        <Text><strong>Modules</strong></Text>
+                                                    }
+                                                    <Text component={TextVariants.p}>{}</Text>
+                                                </TextContent>
+                                            </CardBody>
 
-                                    </Card>
+                                        </Card>
+                                    </div>
                                 </GridItem>)
                         ))
                     ))}
@@ -440,10 +441,11 @@ class Versions extends Component<IProps, IState> {
                 }).then(response => {
                     if (response.status === 201 || response.status === 200) {
                         console.log(buttonText + ' works: ' + response.status)
-                        this.setState({ 
+                        this.setState({
                             canChangePublishState: true,
                             publishAlertVisible: false,
-                            showMetadataAlertIcon: false })
+                            showMetadataAlertIcon: false
+                        })
                     } else {
                         console.log(buttonText + ' failed ' + response.status)
                         this.setState({ publishAlertVisible: true })
@@ -533,12 +535,12 @@ class Versions extends Component<IProps, IState> {
                 if (response.status === 201 || response.status === 200) {
                     // console.log('successful edit ', response.status)
                     this.handleModalClose()
-                    this.setState({ 
-                        canChangePublishState: true, 
-                        publishAlertVisible: false, 
+                    this.setState({
+                        canChangePublishState: true,
+                        publishAlertVisible: false,
                         showMetadataAlertIcon: false,
-                        successAlertVisible: true, 
-                     })
+                        successAlertVisible: true,
+                    })
                     this.props.onGetProduct(this.state.product.label)
                     this.props.onGetVersion(this.state.productVersion.label)
                 } else if (response.status === 500) {
@@ -666,7 +668,7 @@ class Versions extends Component<IProps, IState> {
                         })
                         if (metadataResults.productVersion !== undefined) {
                             this.getProductFromVersionUuid(metadataResults.productVersion)
-                            this.setState({showMetadataAlertIcon: false})
+                            this.setState({ showMetadataAlertIcon: false })
                         }
                     }
                 })
@@ -691,7 +693,7 @@ class Versions extends Component<IProps, IState> {
         // console.log("[handlePublishButton] productInfo =>", this.props.productInfo)
         if (this.props.productInfo !== undefined && this.props.productInfo.trim().length > 0) {
             this.setState({ showMetadataAlertIcon: false })
-        } 
+        }
     }
 }
 

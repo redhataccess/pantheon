@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 import { CopyIcon } from '@patternfly/react-icons';
-import { Level, LevelItem, Breadcrumb, BreadcrumbItem, Button, Divider, Title } from '@patternfly/react-core'
-import {
-    DataList, DataListItem, DataListItemRow, DataListItemCells,
-    DataListCell, Card, Text, TextContent, TextVariants
+import { 
+    Card, Text, TextContent, TextVariants, Level, LevelItem, Button, Divider, Title
 } from '@patternfly/react-core'
+
 import { Versions } from '@app/versions'
 import { Fields, PathPrefixes, PantheonContentTypes } from '@app/Constants'
-import { continueStatement } from '@babel/types';
+// import { continueStatement } from '@babel/types';
 
 class ModuleDisplay extends Component<any, any, any> {
 
@@ -63,7 +62,7 @@ class ModuleDisplay extends Component<any, any, any> {
                 <Level>
                     <LevelItem>
                         <TextContent>
-                            <Text component={TextVariants.a} href="#">{this.props.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length)}</Text>
+                            <Text component={TextVariants.pre}>{this.props.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length)}</Text>
                         </TextContent>
                     </LevelItem>
                     <LevelItem />

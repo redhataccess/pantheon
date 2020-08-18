@@ -27,8 +27,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
     <LevelItem>
       <TextContent>
         <Text
-          component="a"
-          href="#"
+          component="pre"
         >
           test
         </Text>
