@@ -134,7 +134,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                 resolver.commit();
 
                 Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
-                asciidoctorService.getModuleHtml(module, localeObj, module.getWorkspace().getCanonicalVariantName(),
+                asciidoctorService.getDocumentHtml(module, localeObj, module.getWorkspace().getCanonicalVariantName(),
                         true, context, true);
 
                 ModuleMetadata moduleMetadata = moduleLocale

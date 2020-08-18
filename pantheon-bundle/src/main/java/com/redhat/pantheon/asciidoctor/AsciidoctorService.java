@@ -89,12 +89,12 @@ public class AsciidoctorService {
      *                    the context into account
      * @return The document's html representation based on its current asciidoc content
      */
-    public String getModuleHtml(@Nonnull Document document,
-                                @Nonnull Locale locale,
-                                @Nonnull String variantName,
-                                boolean draft,
-                                Map<String, Object> context,
-                                boolean forceRegen) {
+    public String getDocumentHtml(@Nonnull Document document,
+                                  @Nonnull Locale locale,
+                                  @Nonnull String variantName,
+                                  boolean draft,
+                                  Map<String, Object> context,
+                                  boolean forceRegen) {
         ResourceTraversal<? extends DocumentVariant> traversal = document.locale(locale)
                 .traverse()
                 .toChild(DocumentLocale::variants)
@@ -177,7 +177,7 @@ public class AsciidoctorService {
                     + ",variant: " + variantName + ", draft: " + isDraft);
         }
 
-        // Use a service-level resource resolver to build the module as it will require write access to the resources
+        // Use a service-level resource resolver to build the module or assemblies as it will require write access to the resources
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
 
             Class cls = base.getResourceType().equals(PantheonConstants.RESOURCETYPE_ASSEMBLY) ? Assembly.class : Module.class;
