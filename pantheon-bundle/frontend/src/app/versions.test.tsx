@@ -3,7 +3,10 @@ import { Versions, IProps } from '@app/versions'
 import '@app/fetchMock'
 
 import { mount, shallow } from 'enzyme'
-import { Button, Card, DataList, DataListItem, DataListItemCells, DataListItemRow, DataListToggle, Dropdown, Form, FormGroup, FormSelect, FormSelectOption, InputGroup, InputGroupText, Modal, TextInput, DropdownItem, Title, Alert, AlertActionCloseButton, DataListContent, KebabToggle } from '@patternfly/react-core'
+import { 
+    Button, Form, FormGroup, FormSelect, FormSelectOption, InputGroup,
+    InputGroupText, Modal, Title, Alert, AlertActionCloseButton, Grid
+} from '@patternfly/react-core'
 import renderer from 'react-test-renderer'
 import sinon from 'sinon'
 import { any } from 'prop-types';
@@ -11,6 +14,8 @@ import { any } from 'prop-types';
 const anymatch = require('anymatch')
 
 const props = {
+    attributesFilePath: "/repositories/testRepo/attributes.adoc",
+    contentType: "module",
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
@@ -26,58 +31,17 @@ describe('Versions tests', () => {
         expect(view).toMatchSnapshot()
     })
 
-    it('should render a Button', () => {
-        const wrapper = mount(<Versions {...props} />)
-        const button = wrapper.find(Button)
-        expect(button.exists()).toBe(true)
-    })
-
-    it('should render a Card', () => {
-        const wrapper = mount(<Versions {...props} />)
-        const card = wrapper.find(Card)
-        expect(card.exists()).toBe(true)
-    })
-
-    it('should render a Data List', () => {
-        const wrapper = mount(<Versions {...props} />)
-        const dataList = wrapper.find(DataList)
-        expect(dataList.exists()).toBe(true)
-    })
-
-    it('should render a DataListItem', () => {
-        const wrapper = mount(<Versions {...props} />)
-        const dataListItem = wrapper.find(DataListItem)
-        expect(dataListItem.exists()).toBe(true)
-    })
-
-    it('should render a DataListItemCells Element', () => {
-        const wrapper = mount(<Versions {...props} />)
-        const dataListItemCells = wrapper.find(DataListItemCells)
-        expect(dataListItemCells.exists()).toBe(true)
-    })
-
-    it('should render a DataListItemRow element', () => {
-        const wrapper = mount(<Versions {...props} />)
-        const dataListItemRow = wrapper.find(DataListItemRow)
-        expect(dataListItemRow.exists()).toBe(true)
-    })
-
-    it('should render a DataListToggle', () => {
-        const wrapper = mount(<Versions {...props} />)
-        const dataListToggle = wrapper.find(DataListToggle)
-        expect(dataListToggle.exists()).toBe(true)
-    })
-
-    it('should render a DataListContent', () => {
-        const wrapper = mount(<Versions {...props} />)
-        const dataListContent = wrapper.find(DataListContent)
-        expect(dataListContent.exists()).toBe(true)
-    })
-
     it('should render a Modal', () => {
         const wrapper = mount(<Versions {...props} />)
+        // console.log(wrapper.debug())
         const modal = wrapper.find(Modal)
         expect(modal.exists()).toBe(true)
+    })
+
+    it('should render a Grid', () => {
+        const wrapper = mount(<Versions {...props} />)
+        const grid = wrapper.find(Grid)
+        expect(grid.exists()).toBe(true)
     })
 
     it('should render a Form', () => {
@@ -128,16 +92,6 @@ describe('Versions tests', () => {
         expect(alert.exists()).toBe(true)
     })
 
-    it('should render a KebabToggle element', () => {
-        const wrapper = mount(<Versions {...props} />)
-        wrapper.setState({ 'login': true })
-        wrapper.setState({
-            'results': [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]],
-        })
-        const kebabToggle = wrapper.find(KebabToggle)
-        expect(kebabToggle.exists()).toBe(true)
-    })
-
     it('test fetchVersions function', () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
@@ -148,32 +102,6 @@ describe('Versions tests', () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.changePublishState("Publish")).toMatchSnapshot()
-    })
-
-    it('test onArchiveSelect function', () => {
-        const wrapper = renderer.create(<Versions {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.onArchiveSelect()).toMatchSnapshot()
-    })
-
-    it('test onHeadingToggle function', () => {
-        const wrapper = renderer.create(<Versions {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.onHeadingToggle()).toMatchSnapshot()
-    })
-
-    it('test onExpandableToggle function', () => {
-        const wrapper = renderer.create(<Versions {...props} />)
-        const inst = wrapper.getInstance()
-        const data = [{ "isDropdownOpen": true }]
-        expect(inst.onExpandableToggle(data)).toMatchSnapshot()
-    })
-
-    it('test onArchiveToggle function', () => {
-        const wrapper = renderer.create(<Versions {...props} />)
-        const inst = wrapper.getInstance()
-        const data = [{ "isDropdownOpen": true }]
-        expect(inst.onArchiveToggle(data)).toMatchSnapshot()
     })
 
     it('test previewDoc function', () => {
@@ -244,40 +172,6 @@ describe('Versions tests', () => {
         expect(inst.hidePublishAlert()).toMatchSnapshot();
     });
 
-    test('Version Button click', () => {
-        const wrapper = shallow(<Versions {...props} />)
-        const instance = wrapper.instance()
-        const spy = sinon.spy(instance, 'onHeadingToggle')
-
-        wrapper.find(DataListToggle).simulate('click')
-        sinon.assert.called(spy)
-    })
-
-    // Value testing with Enzyme.
-    it('renders Version heading', () => {
-        const wrapper = mount(<Versions {...props} />)
-        const sourceTypeText = wrapper.find('#span-source-type-version').text()
-
-        // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("Version")
-    })
-
-    it('renders Published heading', () => {
-        const wrapper = mount(<Versions {...props} />)
-        const sourceTypeText = wrapper.find('#span-source-type-version-published').text()
-
-        // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("Published")
-    })
-
-    it('renders Draft Uploaded heading', () => {
-        const wrapper = mount(<Versions {...props} />)
-        const sourceTypeText = wrapper.find('#span-source-type-version-draft-uploaded').text()
-
-        // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("Draft Uploaded")
-    })
-
     it('has a props', () => {
         const versions = mount(<Versions {...props} />).matchesElement
         expect(versions.length === 1)
@@ -291,6 +185,8 @@ describe('Versions tests', () => {
 
     it('has a variantUUID of "1234"', () => {
         const state: IProps = {
+            attributesFilePath: "/repositories/testRepo/attributes.adoc",
+            contentType: "module",
             modulePath: "somePath",
             onGetProduct: (productValue) => anymatch,
             onGetVersion: (versionValue) => anymatch,

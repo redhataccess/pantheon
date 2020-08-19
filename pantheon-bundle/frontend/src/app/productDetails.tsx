@@ -49,7 +49,7 @@ class ProductDetails extends Component<IProps, IState> {
                     </Breadcrumb>
                 </div>
                 <div className="app-container">
-                    <Level gutter="md">
+                    <Level>
                         <LevelItem>
                             <TextContent>
                                 <Text component={TextVariants.h1}>{this.props.productName}{'  '}</Text>
@@ -82,7 +82,7 @@ class ProductDetails extends Component<IProps, IState> {
                                     <Alert
                                     variant="danger"
                                     title="Failed to create product version."
-                                    action={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                    actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                     >
                                     Please check if you are logged in as a publisher.
                                     </Alert>

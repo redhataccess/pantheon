@@ -5,24 +5,25 @@ exports[`User tests should render User component 1`] = `
   <Modal
     actions={
       Array [
-        <Unknown
+        <Button
           onClick={[Function]}
         >
           OK
-        </Unknown>,
+        </Button>,
       ]
     }
     appendTo={<body />}
-    ariaDescribedById=""
+    aria-describedby=""
+    aria-label=""
+    aria-labelledby=""
     className=""
-    hideTitle={false}
-    isFooterLeftAligned={false}
-    isLarge={false}
+    hasNoBodyWrapper={false}
     isOpen={false}
-    isSmall={false}
     onClose={[Function]}
+    ouiaSafe={true}
     showClose={true}
     title="Placeholder dialog"
+    variant="default"
     width="60%"
   >
     This feature has not yet been implemented.
@@ -49,14 +50,13 @@ exports[`User tests should render User component 1`] = `
     position="right"
     toggle={
       <DropdownToggle
-        iconComponent={null}
         onToggle={[Function]}
+        toggleIndicator={null}
       >
         <HelpIcon
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
       </DropdownToggle>
     }
