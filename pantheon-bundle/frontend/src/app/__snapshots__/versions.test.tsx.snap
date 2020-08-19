@@ -231,3 +231,27 @@ exports[`Versions tests should render Versions component 1`] = `
   </Modal>
 </Fragment>
 `;
+
+exports[`Versions tests test changePublishState function 1`] = `undefined`;
+
+exports[`Versions tests test dismissNotification function 1`] = `undefined`;
+
+exports[`Versions tests test fetchVersions function 1`] = `undefined`;
+
+exports[`Versions tests test getHarrayChildNamed function 1`] = `""`;
+
+exports[`Versions tests test getHarrayChildNamed function 2`] = `""`;
+
+exports[`Versions tests test handleURLInput function 1`] = `undefined`;
+
+exports[`Versions tests test hidePublishAlert function 1`] = `undefined`;
+
+exports[`Versions tests test hideSuccessAlert function 1`] = `undefined`;
+
+exports[`Versions tests test loginRedirect function 1`] = `""`;
+
+exports[`Versions tests test onChangeUsecase function 1`] = `undefined`;
+
+exports[`Versions tests test previewDoc function 1`] = `undefined`;
+
+exports[`Versions tests test saveMetadata function 1`] = `undefined`;
