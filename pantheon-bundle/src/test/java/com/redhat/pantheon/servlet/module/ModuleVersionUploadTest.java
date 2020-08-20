@@ -88,7 +88,6 @@ class ModuleVersionUploadTest {
         verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
-    //@Disabled("temporarily unblock QA deployment")
     @Test
     void createFirstVersionUnicodeIso() throws Exception {
         // Given
@@ -139,7 +138,7 @@ class ModuleVersionUploadTest {
         verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
-    //@Disabled("temporarily unblock QA deployment")
+    
     @Test
     void createFirstVersionUnicodeUtf() throws Exception {
         // Given
