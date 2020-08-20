@@ -31,3 +31,9 @@ export class PathPrefixes {
     public static MODULE_PATH_PREFIX = '/module'
     public static ASSEBMLY_PATH_PREFIX = '/assembly'
 }
+
+// tslint:disable-next-line: max-classes-per-file
+export class PantheonContentTypes {
+    public static MODULE = 'module'
+    public static ASSEMBLY = 'assembly'
+}

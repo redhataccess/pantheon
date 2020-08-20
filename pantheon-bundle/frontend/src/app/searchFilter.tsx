@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Button, ButtonVariant, TextInput, InputGroup, Chip, ChipGroup, ChipGroupToolbarItem, FormSelect, FormSelectOption
+  Button, ButtonVariant, TextInput, InputGroup, Chip, ChipGroup, FormSelect, FormSelectOption
 } from '@patternfly/react-core';
 import '@app/app.css';
 import { SearchIcon, SortAlphaDownIcon, SortAlphaUpIcon } from '@patternfly/react-icons';
@@ -101,17 +101,15 @@ class SearchFilter extends Component<any, any> {
 
 
         </div>
-        <ChipGroup withToolbar={true}>
-          {chipGroups.map(currentGroup => (
-            <ChipGroupToolbarItem key={currentGroup.category} categoryName={currentGroup.category}>
-              {currentGroup.chips.map(chip => (
-                <Chip key={chip} onClick={this.deleteItem(currentGroup.category, chip)}>
-                  {chip}
-                </Chip>
-              ))}
-            </ChipGroupToolbarItem>
-          ))}
-        </ChipGroup>
+        {chipGroups.map(currentGroup => (
+          <ChipGroup key={currentGroup.category} categoryName={currentGroup.category}>
+            {currentGroup.chips.map(chip => (
+              <Chip key={chip} onClick={this.deleteItem(currentGroup.category, chip)}>
+                {chip}
+              </Chip>
+            ))}
+          </ChipGroup>
+        ))}
       </React.Fragment>
 
     );

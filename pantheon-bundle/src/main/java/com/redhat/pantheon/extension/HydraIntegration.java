@@ -2,13 +2,11 @@ package com.redhat.pantheon.extension;
 
 import com.google.common.collect.Maps;
 import com.ibm.icu.util.ULocale;
-import com.redhat.pantheon.extension.events.ModuleVersionPublishStateEvent;
-import com.redhat.pantheon.extension.events.ModuleVersionPublishedEvent;
-import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
+import com.redhat.pantheon.extension.events.module.ModuleVersionPublishStateEvent;
+import com.redhat.pantheon.extension.events.module.ModuleVersionPublishedEvent;
+import com.redhat.pantheon.extension.events.module.ModuleVersionUnpublishedEvent;
 import com.redhat.pantheon.model.api.SlingModels;
-import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
-import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
 import org.apache.activemq.broker.SslContext;
@@ -33,7 +31,6 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Locale;
 
-import static com.redhat.pantheon.model.module.ModuleVariant.DEFAULT_VARIANT_NAME;
 import static com.redhat.pantheon.servlet.ServletUtils.toLanguageTag;
 
 /**

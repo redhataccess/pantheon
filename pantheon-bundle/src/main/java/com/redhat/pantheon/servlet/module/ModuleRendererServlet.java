@@ -90,7 +90,7 @@ public class ModuleRendererServlet extends SlingSafeMethodsServlet {
         Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
 
         // only allow forced rerendering if this is a draft version. Released and historical revs are written in stone.
-        String html = asciidoctorService.getModuleHtml(
+        String html = asciidoctorService.getDocumentHtml(
                 module, localeObj, variantName, draft, context, reRender && draft);
 
         response.setContentType("text/html");

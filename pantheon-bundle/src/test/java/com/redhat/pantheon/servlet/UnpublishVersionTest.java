@@ -1,8 +1,10 @@
-package com.redhat.pantheon.servlet.module;
+package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.extension.Events;
+import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.servlet.UnpublishVersion;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.servlets.post.HtmlResponse;
@@ -14,7 +16,6 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +48,7 @@ class UnpublishVersionTest {
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
                         "jcr:data", "Released content");
+        registerMockAdapter(Document.class, slingContext);
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
         ServiceResourceResolverProvider serviceResourceResolverProvider = Mockito.mock(ServiceResourceResolverProvider.class);
@@ -76,7 +78,7 @@ class UnpublishVersionTest {
 
     @Test
     @DisplayName("doRun for module with both released and draft version")
-    void doRunWithDraftVersoin() throws Exception {
+    void doRunWithDraftVersion() throws Exception {
         // Given
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released",
@@ -96,6 +98,7 @@ class UnpublishVersionTest {
         slingContext.create()
                 .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
                         "jcr:data", "Released content");
+        registerMockAdapter(Document.class, slingContext);
         registerMockAdapter(Module.class, slingContext);
         registerMockAdapter(ModuleVersion.class, slingContext);
         Events events = mock(Events.class);
@@ -132,6 +135,7 @@ class UnpublishVersionTest {
                 .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/metadata")
                 .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/cached_html/jcr:content")
                 .commit();
+        registerMockAdapter(Document.class, slingContext);
         registerMockAdapter(Module.class, slingContext);
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();

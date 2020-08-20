@@ -10,6 +10,7 @@ import org.apache.sling.api.resource.Resource;
 import org.asciidoctor.extension.Preprocessor;
 import org.asciidoctor.extension.PreprocessorReader;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +52,9 @@ public class XrefPreprocessor extends Preprocessor {
         while (matcher.find()) {
             String originalTarget = matcher.group("filepath");
             // Assume it's a relative path to a file in the same repo for now
-            Resource desiredTarget = documentVariant.getResourceResolver().getResource(documentVariant.getParentLocale().getParent().getParent().getPath() + "/" + originalTarget);
+            Resource containingFolder = documentVariant.getParentLocale().getParent().getParent();
+            String targetPath = containingFolder.getPath() + "/" + originalTarget;
+            Resource desiredTarget = documentVariant.getResourceResolver().getResource(targetPath);
             if (desiredTarget == null ||
                     (!PantheonConstants.RESOURCE_TYPE_ASSEMBLY.equals(desiredTarget.getResourceType())
                             && !PantheonConstants.RESOURCE_TYPE_MODULE.equals(desiredTarget.getResourceType()))) {

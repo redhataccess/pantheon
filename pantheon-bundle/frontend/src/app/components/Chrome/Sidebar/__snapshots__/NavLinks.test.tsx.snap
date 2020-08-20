@@ -5,10 +5,8 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
   <NavList
     ariaLeftScroll="Scroll left"
     ariaRightScroll="Scroll right"
-    className=""
     id="nav-primary-expandable"
     onSelect={[Function]}
-    variant="default"
   >
     <NavExpandable
       className=""

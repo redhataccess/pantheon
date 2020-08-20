@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import {
   Page,
   PageSection,
-  PageSectionVariants
+  PageSectionVariants,
+  PageSidebar
 } from '@patternfly/react-core'
 import { Header } from '@app/components/Chrome/Header/Header'
 import { Sidebar } from '@app/components/Chrome/Sidebar/Sidebar'
@@ -29,7 +30,7 @@ class App extends Component<any, IAppState> {
       isAdmin: false,
       isNavOpen: true,
       userAuthenticated: false,
-      username: App.ANON_USER
+      username: App.ANON_USER,
     };
     App.thisApp = this
   }

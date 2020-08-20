@@ -103,7 +103,7 @@ public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
 
         // only allow forced rerendering if this is a draft version. Released and historical revs are written in stone.
         boolean draft = latest && variant.hasDraft();
-        String html = asciidoctorService.getModuleHtml(
+        String html = asciidoctorService.getDocumentHtml(
                 variant.getParentLocale().getParent(),
                 LocaleUtils.toLocale(variant.getParentLocale().getName()),
                 variant.getName(),

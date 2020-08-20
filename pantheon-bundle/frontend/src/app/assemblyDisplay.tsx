@@ -1,26 +1,24 @@
 import React, { Component } from 'react'
 import { CopyIcon } from '@patternfly/react-icons';
-import { Level, LevelItem, Breadcrumb, BreadcrumbItem, Button } from '@patternfly/react-core'
 import {
-    DataList, DataListItem, DataListItemRow, DataListItemCells,
-    DataListCell, Card, Text, TextContent, TextVariants
+    Level, LevelItem, Button, Divider, Title, Card, Text, TextContent, TextVariants
 } from '@patternfly/react-core'
 import { Versions } from '@app/versions'
-import { Fields, PathPrefixes } from '@app/Constants'
-import { continueStatement } from '@babel/types';
+import { Fields, PathPrefixes, PantheonContentTypes } from '@app/Constants'
+// import { continueStatement } from '@babel/types';
 
 class AssemblyDisplay extends Component<any, any, any> {
 
     constructor(props) {
         super(props)
         this.state = {
+            attributesFilePath: '',
             copySuccess: '',
             draftPath: '',
             draftUpdateDate: '',
             modulePath: '',
             moduleTitle: "",
             moduleType: '',
-            variantUUID: '',
             portalHost: '',
             productValue: "",
             releasePath: '',
@@ -28,15 +26,16 @@ class AssemblyDisplay extends Component<any, any, any> {
             releaseVersion: '',
             results: {},
             variant: 'DEFAULT',
+            variantUUID: '',
             versionValue: ""
         }
     }
 
     public componentDidMount() {
-        // this.getVariantParam()
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
         this.getPortalUrl()
+        this.fetchAttributesFilePath(this.props)
     }
 
     public render() {
@@ -44,108 +43,120 @@ class AssemblyDisplay extends Component<any, any, any> {
         return (
             <React.Fragment>
                 <div>
-                    <div className="app-container">
-                        <Breadcrumb>
-                            <BreadcrumbItem ><a href="#/search">Assemblies</a></BreadcrumbItem>
-                            <BreadcrumbItem to="#" isActive={true}>{this.state.moduleTitle}</BreadcrumbItem>
-                        </Breadcrumb>
-                    </div>
-                    <br />
-                    <div>
-                        <Level gutter="md">
-                            <LevelItem>
-                                <TextContent>
-                                    <Text component={TextVariants.h1}>{this.state.moduleTitle}</Text>
-                                </TextContent>
-                            </LevelItem>
-                            <LevelItem />
-                        </Level>
-                    </div>
-                    <div>
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.variantUUID !== ""
-                            && this.state.portalHost !== ""
-                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
-                        }
-
-                        <span>&emsp;&emsp;</span>
-
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.variantUUID !== ""
-                            && this.state.portalHost !== ""
-                            && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
-                        }
-
-                        <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
-                    </div>
-                    <br />
-                    <Level gutter="md">
-                        <LevelItem>{}</LevelItem>
-                        <LevelItem>{}</LevelItem>
+                    <Level>
                         <LevelItem>
-                        <Button variant='primary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
+                            <Title headingLevel="h1" size="xl">{this.state.moduleTitle}</Title>
+                        </LevelItem>
+                        <LevelItem />
+                    </Level>
+                    <Level>
+                        <LevelItem>
+                            <TextContent>
+                                <Text component={TextVariants.small}>Assembly</Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem />
+                    </Level>
+
+                    <Level>
+                        <LevelItem>
+                            <TextContent>
+                                <Text component={TextVariants.pre}>{this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)}</Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem />
+                        <LevelItem>
+                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                                && this.state.variantUUID !== ""
+                                && this.state.portalHost !== ""
+                                && <span><a href={this.state.portalHost + '/guides/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                            }
+                        </LevelItem>
+                        <LevelItem>
+                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                                && this.state.variantUUID !== ""
+                                && this.state.portalHost !== ""
+                                && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
+                            }
+
+                            <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
+
                         </LevelItem>
                     </Level>
                     <br />
-                    <div>
-                        <DataList aria-label="single action data list">
-                            <DataListItem aria-labelledby="simple-item1">
-                                <DataListItemRow id="data-rows-header" >
-                                    <DataListItemCells
-                                        dataListCells={[
-                                            <DataListCell width={2} key="product">
-                                                <span className="sp-prop-nosort" id="span-source-type-product">Product</span>
-                                            </DataListCell>,
-                                            <DataListCell key="published">
-                                                <span className="sp-prop-nosort" id="span-source-type-published">Published</span>
-                                            </DataListCell>,
-                                            <DataListCell key="updated">
-                                                <span className="sp-prop-nosort" id="span-source-type-draft-uploaded">Draft Uploaded</span>
-                                            </DataListCell>,
-                                            <DataListCell key="module_type">
-                                                <span className="sp-prop-nosort" id="span-source-name-module-type">Module Type</span>
-                                            </DataListCell>
-                                        ]}
-                                    />
-                                </DataListItemRow>
-                                <DataListItemRow>
-                                    <DataListItemCells
-                                        dataListCells={[
-                                            <DataListCell width={2} key="product">
-                                                <span>{this.state.productValue + ' ' + this.state.versionValue}</span>
-                                            </DataListCell>,
-                                            <DataListCell key="published">
-                                                <span>
-                                                    {this.state.releaseUpdateDate.trim() !== ""
-                                                        && this.state.releaseUpdateDate.length >= 15 ?
-                                                        this.state.releaseUpdateDate : "-"} <br />
-                                                    {this.state.releaseUpdateDate.trim() !== "" &&
-                                                        <a href={this.state.releasePath} target="_blank">{this.state.releaseVersion}</a>}
-                                                </span>
-                                            </DataListCell>,
-                                            <DataListCell key="updated">
-                                                <span>
-                                                    {this.state.draftUpdateDate.trim() !== ""
-                                                        && this.state.draftUpdateDate.length >= 15 ?
-                                                        this.state.draftUpdateDate : "-"}
-                                                </span>
-                                            </DataListCell>,
-                                            <DataListCell key="module_type">
-                                                <span>{this.state.moduleType !== undefined ? this.state.moduleType : "-"}</span>
-                                            </DataListCell>,
-                                        ]}
-                                    />
-                                </DataListItemRow>
-                            </DataListItem>
-                        </DataList>
-                    </div>
+                    <Level>
+                        <LevelItem>
+                            <TextContent>
+                                <Text><strong><span id="span-source-type-product">Product</span></strong></Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem>{}</LevelItem>
+                        <LevelItem>
+                            <TextContent>
+                                <Text><strong><span id="span-source-type-draft-uploaded">Draft uploaded</span></strong></Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem>
+                            <TextContent>
+                                <Text><strong><span id="span-source-type-draft-published">Published</span></strong></Text>
+                            </TextContent>
+                        </LevelItem>
+                    </Level>
+
+                    <Level>
+                        <LevelItem>
+                            <TextContent>
+                                <Text>
+                                    <span>{this.state.productValue + ' ' + this.state.versionValue}</span>
+                                </Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem>{}</LevelItem>
+                        <LevelItem>
+                            <TextContent>
+                                <Text>
+                                    <span>
+                                        {this.state.draftUpdateDate.trim() !== ""
+                                            && this.state.draftUpdateDate.length >= 15 ?
+                                            new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.draftUpdateDate)) : "--"}
+                                    </span>
+                                </Text>
+                            </TextContent>
+                        </LevelItem>
+                        <LevelItem>
+                            <TextContent>
+                                <Text>
+                                    <span>
+                                        {this.state.releaseUpdateDate.trim() !== ""
+                                            && this.state.releaseUpdateDate.length >= 15 ?
+                                            new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.releaseUpdateDate)) : "--"}
+                                    </span>
+                                </Text>
+                            </TextContent>
+                        </LevelItem>
+                    </Level>
+
+                    <br />
+                    <Level>
+                        <LevelItem>{}</LevelItem>
+                        <LevelItem>{}</LevelItem>
+                        <LevelItem>
+                            <Button variant='secondary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
+                        </LevelItem>
+                    </Level>
+                    <br />
+
+                    <Divider />
+                    <br />
                     <div>
                         <Card>
                             <Versions
+                                contentType={PantheonContentTypes.ASSEMBLY}
                                 modulePath={this.state.modulePath}
                                 productInfo={this.state.productValue}
                                 versionModulePath={this.state.moduleTitle}
                                 variant={this.state.variant}
+                                attributesFilePath={this.state.attributesFilePath}
                                 updateDate={this.updateDate}
                                 onGetProduct={this.getProduct}
                                 onGetVersion={this.getVersion}
@@ -157,7 +168,7 @@ class AssemblyDisplay extends Component<any, any, any> {
         )
     }
     private generateDraftHtml = (pathname: any) => {
-        const docPath = '/content' + pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length) + '.preview?draft=true&variant=' + this.state.variant
+        const docPath = '/content' + pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length) + '.preview?draft=true&rerender=true&variant=' + this.state.variant
 
         // console.log('Preview path: ', docPath)
         return window.open(docPath)
@@ -172,7 +183,7 @@ class AssemblyDisplay extends Component<any, any, any> {
         })
     }
 
-    private fetchModuleDetails = async(data) => {
+    private fetchModuleDetails = async (data) => {
         await this.getVariantParam()
         const path = data.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
         this.setState({
@@ -302,7 +313,7 @@ class AssemblyDisplay extends Component<any, any, any> {
     private copyToClipboard = () => {
         const textField = document.createElement('textarea')
         if (this.state.variantUUID.trim() !== '') {
-            textField.value = this.state.portalHost + '/topics/en-us/' + this.state.variantUUID
+            textField.value = this.state.portalHost + '/guides/en-us/' + this.state.variantUUID
             document.body.appendChild(textField)
             textField.select()
             document.execCommand('copy')
@@ -330,12 +341,37 @@ class AssemblyDisplay extends Component<any, any, any> {
     private async getVariantParam() {
         const query = new URLSearchParams(this.props.location.search);
         const variantParam = query.get('variant')
-        // console.log("[moduleDisplay] variantParam => ", variantParam)
+        // console.log("[getVariantparam] variantParam => ", variantParam)
         if (variantParam !== 'undefined') {
             this.setState({ variant: variantParam })
         }
     }
 
+    private fetchAttributesFilePath = async (data) => {
+        await this.getVariantParam()
+        const path = data.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
+        // path = '/repositories/test-repo/entities/.../assembly_access-control-list.adoc'
+        let repo = ''
+        const group = path.split("/")
+        repo = group[2]
+
+        fetch('/content/repositories/' + repo + '/module_variants/' + this.state.variant + '.harray.json')
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error(response.statusText)
+                }
+            })
+            .then(responseJSON => {
+                if (responseJSON["pant:attributesFilePath"] !== undefined) {
+                    this.setState({ attributesFilePath: responseJSON["pant:attributesFilePath"] })
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
 }
 
 export { AssemblyDisplay }

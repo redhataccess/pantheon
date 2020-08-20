@@ -1,4 +1,4 @@
-package com.redhat.pantheon.extension.events;
+package com.redhat.pantheon.extension.events.module;
 
 import com.redhat.pantheon.model.module.ModuleVersion;
 

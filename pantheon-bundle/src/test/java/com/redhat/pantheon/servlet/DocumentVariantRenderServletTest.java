@@ -59,7 +59,7 @@ public class DocumentVariantRenderServletTest {
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module/en_US/variants/DEFAULT");
         slingContext.request().setResource(resource);
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Document.class),
                         any(Locale.class),
                         anyString(),
@@ -76,7 +76,7 @@ public class DocumentVariantRenderServletTest {
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(
+        verify(asciidoctorService).getDocumentHtml(
                 any(Document.class),
                 eq(Locale.US),
                 eq("DEFAULT"),
@@ -103,7 +103,7 @@ public class DocumentVariantRenderServletTest {
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module/en_US/variants/DEFAULT");
         slingContext.request().setResource(resource);
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Document.class),
                         any(Locale.class),
                         anyString(),
@@ -145,7 +145,7 @@ public class DocumentVariantRenderServletTest {
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module/en_US/variants/DEFAULT");
         slingContext.request().setResource(resource);
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Document.class),
                         any(Locale.class),
                         anyString(),
@@ -168,7 +168,7 @@ public class DocumentVariantRenderServletTest {
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(
+        verify(asciidoctorService).getDocumentHtml(
                 any(Document.class),
                 eq(Locale.US),
                 eq("DEFAULT"),
@@ -195,7 +195,7 @@ public class DocumentVariantRenderServletTest {
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module/en_US/variants/DEFAULT");
         slingContext.request().setResource(resource);
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Document.class),
                         any(Locale.class),
                         anyString(),
@@ -218,7 +218,7 @@ public class DocumentVariantRenderServletTest {
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(
+        verify(asciidoctorService).getDocumentHtml(
                 any(Document.class),
                 eq(Locale.US),
                 eq("DEFAULT"),
@@ -245,7 +245,7 @@ public class DocumentVariantRenderServletTest {
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module/en_US/variants/DEFAULT");
         slingContext.request().setResource(resource);
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Document.class),
                         any(Locale.class),
                         anyString(),
@@ -268,7 +268,7 @@ public class DocumentVariantRenderServletTest {
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(
+        verify(asciidoctorService).getDocumentHtml(
                 any(Document.class),
                 eq(Locale.US),
                 eq("DEFAULT"),
@@ -298,7 +298,7 @@ public class DocumentVariantRenderServletTest {
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module/en_US/variants/DEFAULT");
         slingContext.request().setResource(resource);
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Document.class),
                         any(Locale.class),
                         anyString(),
@@ -321,7 +321,7 @@ public class DocumentVariantRenderServletTest {
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(
+        verify(asciidoctorService).getDocumentHtml(
                 any(Document.class),
                 eq(Locale.US),
                 eq("DEFAULT"),
@@ -351,7 +351,7 @@ public class DocumentVariantRenderServletTest {
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module/en_US/variants/DEFAULT");
         slingContext.request().setResource(resource);
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Document.class),
                         any(Locale.class),
                         anyString(),
