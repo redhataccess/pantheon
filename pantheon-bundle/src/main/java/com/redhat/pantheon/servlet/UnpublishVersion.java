@@ -1,11 +1,16 @@
-package com.redhat.pantheon.servlet.module;
+package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
-import com.redhat.pantheon.extension.events.ModuleVersionUnpublishedEvent;
+import com.redhat.pantheon.extension.events.assembly.AssemblyVersionUnpublishedEvent;
+import com.redhat.pantheon.extension.events.module.ModuleVersionUnpublishedEvent;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.assembly.AssemblyVersion;
+import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentLocale;
+import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.document.DocumentVersion;
 import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
@@ -42,7 +47,7 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 
 /**
- * API action which unpublishes the latest released version for a module, if there is one.
+ * API action which unpublishes the latest released version for a document (Assembly/Module), if there is one.
  * This means the "released" pointer is set to null, and the version should no longer be
  * accessible through the rendering API.
  *
@@ -51,7 +56,7 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 @Component(
         service = PostOperation.class,
         property = {
-                Constants.SERVICE_DESCRIPTION + "=Unpublishes the latest released version of a module",
+                Constants.SERVICE_DESCRIPTION + "=Unpublishes the latest released version of a document (Assembly or Module)",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
                 PostOperation.PROP_OPERATION_NAME + "=pant:unpublish"
         })
@@ -68,8 +73,8 @@ public class UnpublishVersion extends AbstractPostOperation {
         this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
 
-    private Module getModule(SlingHttpServletRequest request) {
-        return request.getResource().adaptTo(Module.class);
+    private Document getDocument(SlingHttpServletRequest request) {
+        return request.getResource().adaptTo(Document.class);
     }
 
     private Locale getLocale(SlingHttpServletRequest request) {
@@ -77,7 +82,7 @@ public class UnpublishVersion extends AbstractPostOperation {
     }
 
     private String getVariant(SlingHttpServletRequest request) {
-        return paramValue(request, "variant", ModuleVariant.DEFAULT_VARIANT_NAME);
+        return paramValue(request, "variant", DocumentVariant.DEFAULT_VARIANT_NAME);
     }
 
     @Override
@@ -88,15 +93,19 @@ public class UnpublishVersion extends AbstractPostOperation {
         if (response.getError() == null) {
             // call the extension point
             Locale locale = getLocale(request);
-            Module module = getModule(request);
+            Document document = getDocument(request);
             String variant = getVariant(request);
-            ModuleVersion moduleVersion = module.locale(locale).get()
+            DocumentVersion documentVersion = document.locale(locale).get()
                     .variants().get()
                     .variant(variant).get()
                     .draft().get();
 
             // TODO We need to change the event so that the right variant is processed
-            events.fireEvent(new ModuleVersionUnpublishedEvent(moduleVersion), 15);
+            if(PantheonConstants.RESOURCETYPE_ASSEMBLY.equals(document.getResourceType())){
+                events.fireEvent(new AssemblyVersionUnpublishedEvent(documentVersion.adaptTo(AssemblyVersion.class)), 15);
+            }else{
+                events.fireEvent(new ModuleVersionUnpublishedEvent(documentVersion.adaptTo(ModuleVersion.class)), 15);
+            }
         }
         log.debug("Operation UnPublishinging draft version,  completed");
         long elapseTime = System.currentTimeMillis() - startTime;
@@ -121,32 +130,32 @@ public class UnpublishVersion extends AbstractPostOperation {
             if(canUnPublish) {
                 serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
             }
-            Module module = serviceResourceResolver.getResource(request.getResource().getPath()).adaptTo(Module.class);
+            Document document = getDocument(request);
             Locale locale = getLocale(request);
             String variant = getVariant(request);
 
             // Get the released version, there should be one
-            Optional<? extends DocumentVersion> foundVariant = module.getReleasedVersion(locale, variant);
+            Optional<? extends DocumentVersion> foundVariant = document.getReleasedVersion(locale, variant);
 
             if(!foundVariant.isPresent()) {
                 response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED,
-                        "The module is not released (published)");
+                        "The document is not released (published)");
                 return;
             } else {
                 foundVariant.get()
                         .getParent()
                         .revertReleased();
 
-                changes.add(Modification.onModified(module.getPath()));
+                changes.add(Modification.onModified(document.getPath()));
                 // Change source/released to source/draft
-                Optional<HashableFileResource> draftSource = traverseFrom(module)
-                        .toChild(m -> module.locale(locale))
-                        .toChild(ModuleLocale::source)
+                Optional<HashableFileResource> draftSource = traverseFrom(document)
+                        .toChild(d -> d.locale(locale))
+                        .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> sourceContent.draft())
                         .getAsOptional();
-                FileResource releasedSource = traverseFrom(module)
-                        .toChild(m -> module.locale(locale))
-                        .toChild(ModuleLocale::source)
+                FileResource releasedSource = traverseFrom(document)
+                        .toChild(d -> d.locale(locale))
+                        .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> sourceContent.released())
                         .get();
                 if (draftSource.isPresent()) {

@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.Locale;
 
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
@@ -51,7 +50,7 @@ public class AssemblyRenderServletTest {
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Assembly.class),
                         any(Locale.class),
                         anyString(),
@@ -70,7 +69,7 @@ public class AssemblyRenderServletTest {
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(
+        verify(asciidoctorService).getDocumentHtml(
                 any(Assembly.class),
                 eq(Locale.US),
                 eq("DEFAULT"),
@@ -106,7 +105,7 @@ public class AssemblyRenderServletTest {
                         .build()
         );
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Assembly.class),
                         any(Locale.class),
                         anyString(),
@@ -124,7 +123,7 @@ public class AssemblyRenderServletTest {
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(
+        verify(asciidoctorService).getDocumentHtml(
                 any(Assembly.class),
                 eq(Locale.US),
                 eq("DEFAULT"),
@@ -161,7 +160,7 @@ public class AssemblyRenderServletTest {
                         .build()
         );
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Assembly.class),
                         any(Locale.class),
                         anyString(),
@@ -180,7 +179,7 @@ public class AssemblyRenderServletTest {
         assertEquals(HttpServletResponse.SC_OK, slingContext.response().getStatus());
         assertTrue(slingContext.response().getOutputAsString().contains("A generated html string"));
         assertEquals("text/html", slingContext.response().getContentType());
-        verify(asciidoctorService).getModuleHtml(
+        verify(asciidoctorService).getDocumentHtml(
                 any(Assembly.class),
                 eq(Locale.US),
                 eq("variant1"), // non-default variant
@@ -212,7 +211,7 @@ public class AssemblyRenderServletTest {
                         .build()
         );
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Assembly.class),
                         any(Locale.class),
                         anyString(),
@@ -254,7 +253,7 @@ public class AssemblyRenderServletTest {
                         .build()
         );
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Assembly.class),
                         any(Locale.class),
                         anyString(),

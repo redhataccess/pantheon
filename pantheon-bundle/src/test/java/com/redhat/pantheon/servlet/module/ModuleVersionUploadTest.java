@@ -47,7 +47,7 @@ class ModuleVersionUploadTest {
                 .commit();
 
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
         registerMockAdapter(Workspace.class, slingContext);
@@ -85,7 +85,7 @@ class ModuleVersionUploadTest {
                         .draft().get()
                         .hash().get()
         );
-        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
+        verify(asciidoctorService).getDocumentHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -97,7 +97,7 @@ class ModuleVersionUploadTest {
                 .commit();
 
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
         registerMockAdapter(Workspace.class, slingContext);
@@ -135,7 +135,7 @@ class ModuleVersionUploadTest {
                         .draft().get()
                         .hash().get()
         );
-        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
+        verify(asciidoctorService).getDocumentHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     
@@ -148,7 +148,7 @@ class ModuleVersionUploadTest {
                 .commit();
 
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
         registerMockAdapter(Workspace.class, slingContext);
@@ -186,7 +186,7 @@ class ModuleVersionUploadTest {
                         .draft().get()
                         .hash().get()
         );
-        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
+        verify(asciidoctorService).getDocumentHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -203,7 +203,7 @@ class ModuleVersionUploadTest {
         // set the draft and released 'pointers'
 
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
         registerMockAdapter(Workspace.class, slingContext);
@@ -245,7 +245,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
-        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
+        verify(asciidoctorService).getDocumentHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -263,7 +263,7 @@ class ModuleVersionUploadTest {
                 .commit();
 
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
         registerMockAdapter(Workspace.class, slingContext);
@@ -305,7 +305,7 @@ class ModuleVersionUploadTest {
                         .jcrContent().get()
                         .jcrData().get()
         );
-        verify(asciidoctorService).getModuleHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
+        verify(asciidoctorService).getDocumentHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
     @Test
@@ -329,7 +329,7 @@ class ModuleVersionUploadTest {
                 .commit();
 
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
 

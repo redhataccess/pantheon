@@ -124,7 +124,7 @@ public class AssemblyVersionUpload extends AbstractPostOperation {
                 resolver.commit();
 
                 Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
-                asciidoctorService.getModuleHtml(assembly, localeObj, assembly.getWorkspace().getCanonicalVariantName(),
+                asciidoctorService.getDocumentHtml(assembly, localeObj, assembly.getWorkspace().getCanonicalVariantName(),
                         true, context, true);
 
                 AssemblyMetadata moduleMetadata = assemblyLocale

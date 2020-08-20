@@ -11,4 +11,6 @@ public class PantheonConstants {
     public static final String PARAM_VARIANT = "variant";
 
     public static final String PANTHEON_PUBLISHERS = "pantheon-publishers";
+
+    public static final String RESOURCETYPE_ASSEMBLY = "pantheon/assembly";
 }

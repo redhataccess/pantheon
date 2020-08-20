@@ -1,15 +1,12 @@
-package com.redhat.pantheon.servlet.module;
+package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.extension.Events;
-import com.redhat.pantheon.model.assembly.Assembly;
+import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.servlet.PublishDraftVersion;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
-import jdk.nashorn.internal.ir.annotations.Reference;
-import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ResourceResolverFactory;
-import org.apache.sling.resourceresolver.impl.ResourceResolverFactoryImpl;
 import org.apache.sling.servlets.post.HtmlResponse;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.ModificationType;
@@ -24,12 +21,10 @@ import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Locale;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
@@ -55,6 +50,7 @@ class PublishDraftVersionTest {
                 .resource("/content/repositories/repo/module/en_US/source/draft/jcr:content",
                         "jcr:data", "The draft content")
                 .commit();
+        registerMockAdapter(Document.class, slingContext);
         registerMockAdapter(Module.class, slingContext);
         Events events = mock(Events.class);
         HtmlResponse postResponse = new HtmlResponse();
@@ -98,6 +94,7 @@ class PublishDraftVersionTest {
                 .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
                         "jcr:data", "The released content")
                 .commit();
+        registerMockAdapter(Document.class, slingContext);
         registerMockAdapter(Module.class, slingContext);
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();

@@ -47,7 +47,7 @@ public class AssemblyVersionUploadTest {
                 .commit();
 
         lenient().when(
-                asciidoctorService.getModuleHtml(
+                asciidoctorService.getDocumentHtml(
                         any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
                 .thenReturn("A generated html string");
         registerMockAdapter(Workspace.class, slingContext);
@@ -85,6 +85,6 @@ public class AssemblyVersionUploadTest {
                         .draft().get()
                         .hash().get()
         );
-        verify(asciidoctorService).getModuleHtml(any(Assembly.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
+        verify(asciidoctorService).getDocumentHtml(any(Assembly.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 }
