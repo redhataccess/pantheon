@@ -33,20 +33,30 @@ func cloneBranch(w http.ResponseWriter, r *http.Request) {
 		var repo repository_and_branch
 		err = json.Unmarshal(body, &repo)
 
-		log.Println(repo.Repo)
-		log.Println(repo.Branch)
+		//check parsing error. If error is not null, log and return 400 if parse failed
+		if err != nil {
+			log.Printf("Error in unmarshalling request body %s", err)
+			//setting the response in JSON format for standardizing error responses
+			response := "{\"error\" : \"Error reading request body due to " + err.Error() + " \"}"
+			http.Error(w, response, http.StatusBadRequest)
+			return
+		}
+
+		log.Println("repo:  " + repo.Repo)
+		log.Println("branch: " + repo.Branch)
 
 		repository := repo.Repo
-		error_status := false
+
 		if repository == "" {
-			http.Error(w, "Error reading repository url", http.StatusInternalServerError)
-			error_status = true
+			//setting the response in JSON format for standardizing error responses
+			http.Error(w, "{\"error\" : \"Error reading repository url\"}", http.StatusInternalServerError)
+			// return after setting error response to avoid superfluous error header in logs
+			return
 		}
 		if !strings.Contains(strings.ToUpper(repository), "GIT") {
-			http.Error(w, "The repository entered does not look like a git repo.", http.StatusInternalServerError)
-			error_status = true
-		}
-		if error_status {
+			//setting the response in JSON format for standardizing error responses
+			http.Error(w, "{\"error\" : \"The repository entered does not look like a git repo\"}", http.StatusInternalServerError)
+			// return after setting error response to avoid superfluous error header in logs
 			return
 		}
 
@@ -61,7 +71,8 @@ func cloneBranch(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Fprint(w, "POST done")
 	} else {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		log.Println("Invalid request method " + r.Method)
+		http.Error(w, "{\"error\" : \"Invalid request method\"}", http.StatusMethodNotAllowed)
 	}
 }
 
