@@ -86,7 +86,7 @@ func getInfo(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Fprint(w, "COMMIT_HASH is : "+response)
 	} else {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		http.Error(w, "{\"error\" : \"Invalid request method\"}", http.StatusMethodNotAllowed)
 	}
 }
 
