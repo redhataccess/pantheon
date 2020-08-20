@@ -86,7 +86,7 @@ exports[`Search tests should render default Search component 1`] = `
         />
       </DataListItemRow>
       <Level
-        gutter="md"
+        hasGutter={true}
       >
         <LevelItem />
         <LevelItem>

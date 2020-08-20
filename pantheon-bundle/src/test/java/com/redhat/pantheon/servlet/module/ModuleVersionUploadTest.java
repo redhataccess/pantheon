@@ -10,6 +10,7 @@ import org.apache.sling.servlets.post.HtmlResponse;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -24,14 +25,8 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 class ModuleVersionUploadTest {
@@ -143,6 +138,7 @@ class ModuleVersionUploadTest {
         verify(asciidoctorService).getDocumentHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
+    
     @Test
     void createFirstVersionUnicodeUtf() throws Exception {
         // Given

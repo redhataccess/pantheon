@@ -15,25 +15,25 @@ describe('NavLinks tests', () => {
   })
 
   it('should render a NavList', () => {
-    const wrapper = mount(<Router><NavLinks {...mockStateUser} /></Router>)
+    const wrapper = shallow(<NavLinks {...mockStateUser} />)
     const navList = wrapper.find(NavList)
     expect(navList.exists()).toBe(true)
   })
 
   it('should render a NavItem', () => {
-    const wrapper = mount(<Router><NavLinks {...mockStateUser} /></Router>)
+    const wrapper = shallow(<NavLinks {...mockStateUser} />)
     const navItem = wrapper.find(NavItem)
     expect(navItem.exists()).toBe(true)
   })
 
   it('should render a Link component', () => {
-    const wrapper = mount(<Router><NavLinks {...mockStateUser} /></Router>)
+    const wrapper = shallow(<NavLinks {...mockStateUser} />)
     const navLinks = wrapper.find(Link)
     expect(navLinks.exists()).toBe(true)
   })
 
   it('should render an Expandable component', () => {
-    const wrapper = mount(<Router><NavLinks {...mockStateUser} /></Router>)
+    const wrapper = shallow(<NavLinks {...mockStateUser} />)
     const expandable = wrapper.find(NavExpandable)
     expect(expandable.exists()).toBe(true)
   })

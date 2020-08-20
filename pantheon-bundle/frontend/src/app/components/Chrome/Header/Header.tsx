@@ -26,7 +26,7 @@ export const Header: React.FunctionComponent<IHeaderProps> = ({
                 'style': {'maxWidth': '220px'}
                 }
             }
-            toolbar={<User {...appState} />}
+            headerTools={<User {...appState} />}
             showNavToggle={true}
             isNavOpen={isNavOpen}
             onNavToggle={onNavToggle}

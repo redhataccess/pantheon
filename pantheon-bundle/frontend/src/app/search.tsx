@@ -3,7 +3,7 @@ import {
   Alert, AlertActionCloseButton,
   DataList, DataListItem, DataListItemRow, DataListItemCells,
   DataListCell, Button, Modal,
-  Level, LevelItem, Checkbox
+  Level, LevelItem, Checkbox, ModalVariant
 } from '@patternfly/react-core'
 import '@app/app.css'
 import { BuildInfo } from './components/Chrome/Header/BuildInfo'
@@ -141,69 +141,69 @@ class Search extends Component<IAppState, ISearchState> {
                   </DataListCell>,
                 ]}
               />
-            </DataListItemRow>
-            {/* Delete button at the top */}
-            {
-              this.buildTransientPathArray().length > 0 ?
-              <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
-                <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
               </DataListItemRow>
-              : null
-            }
-            {this.state.displayLoadIcon && (
-              <Level gutter="md">
-                <LevelItem />
-                <LevelItem>
-                  <div className="notification-container">
-                    {/* @todo Take out these <br>s and replace it with CSS layout */}
-                    <br />
-                    <br />
-                      <img src={SpinImage} alt="Spinlogo"/>
-                    <br />
-                    <br />
-                  </div>
-                </LevelItem>
-                <LevelItem />
-              </Level>
-            )}
-            {!this.state.isEmptyResults && !this.state.displayLoadIcon && (this.state.results.map((data, key) => (
-              <DataListItemRow id="data-rows" key={key}>
-                {this.props.userAuthenticated && !this.state.isEmptyResults &&
-                  <Checkbox aria-labelledby="width-ex3-check1"
-                    className="checkbox"
-                    isChecked={data[Search.KEY_CHECKEDITEM]}
-                    checked={data[Search.KEY_CHECKEDITEM]}
-                    aria-label="controlled checkbox example"
-                    id={data[Search.KEY_TRANSIENTPATH]}
-                    name={data[Search.KEY_TRANSIENTPATH]}
-                    onChange={this.handleDeleteCheckboxChange}
-                    key={'checked_' + key}
-                  />}
-                <DataListItemCells key={"cells_" + key}
-                  dataListCells={[
-                    <DataListCell key={"title_" + key} width={2}>
-                      {this.props.userAuthenticated && data["jcr:title"] !== '-' &&
-                        <Link to={data['sling:resourceType'].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["jcr:title"]}</Link>}
-                      {this.props.userAuthenticated && data["jcr:title"] === '-' && data["pant:transientPath"] &&
-                        <Link to={data['sling:resourceType'].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["pant:transientPath"]}</Link>}
-                      {!this.props.userAuthenticated && data["jcr:title"] !== '-' &&
-                        <a href={"/" + data['pant:transientPath'] + ".preview" + "?variant=" + data.variant} target="_blank">{data["jcr:title"]}</a>}
-                      {!this.props.userAuthenticated && data["jcr:title"] === '-' && data["pant:transientPath"] &&
-                        <a href={"/" + data['pant:transientPath'] + ".preview" + "?variant=" + data.variant} target="_blank">{data["pant:transientPath"]}</a>}
-                    </DataListCell>,
-                    <DataListCell key={"published-date_" + key}>
-                      <span>{data[Fields.PANT_PUBLISHED_DATE]}</span>
-                    </DataListCell>,
-                    <DataListCell key={"date-uploaded_" + key}>
-                      <span>{data[Fields.PANT_DATE_UPLOADED]}</span>
-                    </DataListCell>,
-                    <DataListCell key={"module-type_" + key}>
-                      <span >{data[Fields.PANT_MODULE_TYPE]}</span>
-                    </DataListCell>
-                  ]}
-                />
-              </DataListItemRow>
-            )))}
+              {/* Delete button at the top */}
+              {
+                this.buildTransientPathArray().length > 0 ?
+                <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
+                  <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
+                </DataListItemRow>
+                  : null
+              } 
+              {this.state.displayLoadIcon && (
+                <Level hasGutter={true}>
+                  <LevelItem />
+                  <LevelItem>
+                      <div className="notification-container">
+                        {/* @todo Take out these <br>s and replace it with CSS layout */}
+                        <br />
+                        <br />
+                          <img src={SpinImage} alt="Spinlogo"/>
+                        <br />
+                        <br />
+                      </div>
+                    </LevelItem>
+                    <LevelItem />
+                  </Level>
+                )}                          
+                {!this.state.displayLoadIcon && (this.state.results.map((data, key) => (
+                  <DataListItemRow id="data-rows" key={key}>
+                    {this.props.userAuthenticated && !this.state.isEmptyResults &&
+                      <Checkbox aria-labelledby="width-ex3-check1"
+                        className="checkbox"
+                        isChecked={data[Search.KEY_CHECKEDITEM]}
+                        checked={data[Search.KEY_CHECKEDITEM]}
+                        aria-label="controlled checkbox example"
+                        id={data[Search.KEY_TRANSIENTPATH]}
+                        name={data[Search.KEY_TRANSIENTPATH]}
+                        onChange={this.handleDeleteCheckboxChange}
+                        key={'checked_' + key}
+                      />}
+                    <DataListItemCells key={"cells_" + key}
+                      dataListCells={[
+                        <DataListCell key={"title_" + key} width={2}>
+                          {this.props.userAuthenticated && data["jcr:title"] !== '-' &&
+                            <Link to={data['sling:resourceType'].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["jcr:title"]}</Link>}
+                          {this.props.userAuthenticated && data["jcr:title"] === '-' && data["pant:transientPath"] &&
+                            <Link to={data['sling:resourceType'].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["pant:transientPath"]}</Link>}
+                          {!this.props.userAuthenticated && data["jcr:title"] !== '-' &&
+                            <a href={"/" + data['pant:transientPath'] + ".preview" + "?variant=" + data.variant} target="_blank">{data["jcr:title"]}</a>}
+                          {!this.props.userAuthenticated && data["jcr:title"] === '-' && data["pant:transientPath"] &&
+                            <a href={"/" + data['pant:transientPath'] + ".preview" + "?variant=" + data.variant} target="_blank">{data["pant:transientPath"]}</a>}
+                        </DataListCell>,      
+                        <DataListCell key={"published-date_" + key}>                          
+                          <span>{data[Fields.PANT_PUBLISHED_DATE]}</span>
+                        </DataListCell>,
+                        <DataListCell key={"date-uploaded_" + key}>                              
+                          <span>{data[Fields.PANT_DATE_UPLOADED]}</span>
+                        </DataListCell>,
+                        <DataListCell key={"module-type_" + key}>
+                          <span >{data[Fields.PANT_MODULE_TYPE]}</span>
+                        </DataListCell>
+                      ]}
+                    />
+                  </DataListItemRow>
+                )))}
 
             {/* Delete button at the bottom */}
             <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
@@ -213,102 +213,102 @@ class Search extends Component<IAppState, ISearchState> {
                   : null
               }
 
-            </DataListItemRow>
-            {isEmptyResults && (
-              <Level gutter="md">
-                <LevelItem />
-                <LevelItem>
-                  <div className="notification-container">
-                    <br />
-                    <br />
-                    <Alert
-                      variant="warning"
-                      title={"No modules found with your search"}
-                      action={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                    />
-                    <br />
-                    <br />
-                  </div></LevelItem>
-                <LevelItem />
-              </Level>
+                </DataListItemRow>
+                {isEmptyResults && (
+                  <Level hasGutter={true}>
+                    <LevelItem />
+                    <LevelItem>
+                      <div className="notification-container">
+                        <br />
+                        <br />
+                        <Alert
+                          variant="warning"
+                          title={"No modules found with your search"}
+                          actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                        />
+                        <br />
+                        <br />
+                      </div></LevelItem>
+                    <LevelItem />
+                  </Level>
 
-            )}
-            {this.state.isSearchException && (
-              <Level gutter="md">
-                <LevelItem />
-                <LevelItem>
-                  <div className="notification-container">
-                    <br />
-                    <br />
-                    <Alert
-                      variant="danger"
-                      title={"Error in fetching search results"}
-                      action={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                    />
-                    <br />
-                    <br />
-                  </div>
-                </LevelItem>
-                <LevelItem />
-              </Level>
-            )}
-          </DataListItem>
-        </DataList>
-        <div className="notification-container">
-          <Pagination
-            handleMoveLeft={this.updatePageCounter("L")}
-            handleMoveRight={this.updatePageCounter("R")}
-            handleMoveToFirst={this.updatePageCounter("F")}
-            pageNumber={this.state.page}
-            nextPageRecordCount={this.state.nextPageRowCount}
-            handlePerPageLimit={this.changePerPageLimit}
-            perPageLimit={this.state.pageLimit}
-            showDropdownOptions={!this.state.showDropdownOptions}
-            bottom={true}
-          />
-          <BuildInfo />
-        </div>
-        {/* Alert for delete confirmation */}
-        <div className="alert">
-          {this.state.confirmDelete === true && <Modal
-            isSmall={true}
-            title="Confirmation"
-            isOpen={!this.state.isModalOpen}
-            onClose={this.hideAlertOne}
-            actions={[<Button key="yes" variant="primary" onClick={this.delete}>Yes</Button>,
-            <Button key="no" variant="secondary" onClick={this.cancelDeleteOperation}>No</Button>]}
-          >
-            Are you sure you want to delete the selected items?
-            </Modal>}
-          {/* Alerts after confirmation on delete */}
-          {this.state.deleteState === 'positive' && <Modal
-            isSmall={true}
-            title="Success"
-            isOpen={!this.state.isModalOpen}
-            onClose={this.hideAlertOne}
-            actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
-          >
-            Selected items were deleted.
-            </Modal>}
-          {this.state.deleteState === 'negative' && <Modal
-            isSmall={true}
-            title="Failure"
-            isOpen={!this.state.isModalOpen}
-            onClose={this.hideAlertOne}
-            actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
-          >
-            Selected items were not found.
-            </Modal>}
-          {this.state.deleteState === 'unknown' && <Modal
-            isSmall={true}
-            title="Error"
-            isOpen={!this.state.isModalOpen}
-            onClose={this.hideAlertOne}
-            actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
-          >
-            An unknown error occured, please check if you are logged in.
-            </Modal>}
-        </div>
+                )}
+                {this.state.isSearchException && (
+                  <Level hasGutter={true}>
+                    <LevelItem />
+                    <LevelItem>
+                      <div className="notification-container">
+                        <br />
+                        <br />
+                        <Alert
+                          variant="danger"
+                          title={"Error in fetching search results"}
+                          actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                        />
+                        <br />
+                        <br />
+                      </div>
+                      </LevelItem>
+                    <LevelItem />
+                  </Level>
+                )}
+              </DataListItem>
+            </DataList>
+            <div className="notification-container">
+              <Pagination
+                handleMoveLeft={this.updatePageCounter("L")}
+                handleMoveRight={this.updatePageCounter("R")}
+                handleMoveToFirst={this.updatePageCounter("F")}
+                pageNumber={this.state.page}
+                nextPageRecordCount={this.state.nextPageRowCount}
+                handlePerPageLimit={this.changePerPageLimit}
+                perPageLimit={this.state.pageLimit}
+                showDropdownOptions={!this.state.showDropdownOptions}
+                bottom={true}
+              />
+              <BuildInfo />
+            </div>
+            {/* Alert for delete confirmation */}
+            <div className="alert">
+              {this.state.confirmDelete === true && <Modal
+                variant={ModalVariant.small}
+                title="Confirmation"
+                isOpen={!this.state.isModalOpen}
+                onClose={this.hideAlertOne}
+                actions={[<Button key="yes" variant="primary" onClick={this.delete}>Yes</Button>,
+                <Button key="no" variant="secondary" onClick={this.cancelDeleteOperation}>No</Button>]}
+              >
+                Are you sure you want to delete the selected items?
+                </Modal>}
+              {/* Alerts after confirmation on delete */}
+              {this.state.deleteState === 'positive' && <Modal
+                variant={ModalVariant.small}
+                title="Success"
+                isOpen={!this.state.isModalOpen}
+                onClose={this.hideAlertOne}
+                actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
+              >
+                Selected items were deleted.
+                </Modal>}
+              {this.state.deleteState === 'negative' && <Modal
+                variant={ModalVariant.small}
+                title="Failure"
+                isOpen={!this.state.isModalOpen}
+                onClose={this.hideAlertOne}
+                actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
+              >
+                Selected items were not found.
+                </Modal>}
+              {this.state.deleteState === 'unknown' && <Modal
+                variant={ModalVariant.small}
+                title="Error"
+                isOpen={!this.state.isModalOpen}
+                onClose={this.hideAlertOne}
+                actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
+              >
+                An unknown error occured, please check if you are logged in.
+                </Modal>}
+            </div>
       </React.Fragment>
     );
   }

@@ -14,7 +14,7 @@ exports[`SearchFilter tests should render default Search component 1`] = `
         type="text"
         value=""
       />
-      <Component
+      <Button
         aria-label="search button for search input"
         variant="control"
       >
@@ -22,9 +22,8 @@ exports[`SearchFilter tests should render default Search component 1`] = `
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
-      </Component>
+      </Button>
     </InputGroup>
     <FormSelect
       aria-label="FormSelect Product"
@@ -32,10 +31,10 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       id="productForm"
       isDisabled={false}
       isRequired={false}
-      isValid={true}
       onBlur={[Function]}
       onChange={[Function]}
       onFocus={[Function]}
+      ouiaSafe={true}
       validated="default"
       value=""
     >
@@ -52,10 +51,10 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       id="productVersionForm"
       isDisabled={false}
       isRequired={false}
-      isValid={true}
       onBlur={[Function]}
       onChange={[Function]}
       onFocus={[Function]}
+      ouiaSafe={true}
       validated="default"
       value=""
     >
@@ -73,10 +72,10 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       id="moduleTypeForm"
       isDisabled={false}
       isRequired={false}
-      isValid={true}
       onBlur={[Function]}
       onChange={[Function]}
       onFocus={[Function]}
+      ouiaSafe={true}
       validated="default"
       value=""
     >
@@ -115,10 +114,10 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       id="sortForm"
       isDisabled={false}
       isRequired={false}
-      isValid={true}
       onBlur={[Function]}
       onChange={[Function]}
       onFocus={[Function]}
+      ouiaSafe={true}
       validated="default"
       value=""
     >
@@ -151,7 +150,7 @@ exports[`SearchFilter tests should render default Search component 1`] = `
         value="Module type"
       />
     </FormSelect>
-    <Component
+    <Button
       aria-label="search button for search input"
       onClick={[Function]}
       variant="control"
@@ -160,17 +159,8 @@ exports[`SearchFilter tests should render default Search component 1`] = `
         color="currentColor"
         noVerticalAlign={false}
         size="sm"
-        title={null}
       />
-    </Component>
+    </Button>
   </div>
-  <ChipGroup
-    className=""
-    collapsedText="\${remaining} more"
-    defaultIsOpen={false}
-    expandedText="Show Less"
-    numChips={3}
-    withToolbar={true}
-  />
 </Fragment>
 `;

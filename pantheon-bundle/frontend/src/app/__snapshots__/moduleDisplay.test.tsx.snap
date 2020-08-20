@@ -2,164 +2,168 @@
 
 exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
 <Fragment>
-  <div>
-    <div
-      className="app-container"
-    >
-      <Component>
-        <BreadcrumbItem>
-          <a
-            href="#/search"
-          >
-            Modules
-          </a>
-        </BreadcrumbItem>
-        <BreadcrumbItem
-          isActive={true}
-          to="#"
-        />
-      </Component>
-    </div>
-    <br />
-    <div>
-      <Level
-        gutter="md"
-      >
-        <LevelItem>
-          <TextContent>
-            <Text
-              component="h1"
-            />
-          </TextContent>
-        </LevelItem>
-        <LevelItem />
-      </Level>
-    </div>
-    <div>
-      <span>
-          
-      </span>
+  <Level>
+    <LevelItem>
+      <Title
+        headingLevel="h1"
+        size="xl"
+      />
+    </LevelItem>
+    <LevelItem />
+  </Level>
+  <Level>
+    <LevelItem>
+      <TextContent>
+        <Text
+          component="small"
+        >
+          Module
+        </Text>
+      </TextContent>
+    </LevelItem>
+    <LevelItem />
+  </Level>
+  <Level>
+    <LevelItem>
+      <TextContent>
+        <Text
+          component="pre"
+        >
+          test
+        </Text>
+      </TextContent>
+    </LevelItem>
+    <LevelItem />
+    <LevelItem />
+    <LevelItem>
       <span>
          
       </span>
-    </div>
-    <br />
-    <Level
-      gutter="md"
-    >
-      <LevelItem />
-      <LevelItem />
-      <LevelItem>
-        <Component
-          onClick={[Function]}
-          variant="primary"
-        >
-          Generate Draft Html
-        </Component>
-          
-      </LevelItem>
-    </Level>
-    <br />
-    <div>
-      <DataList
-        aria-label="single action data list"
+    </LevelItem>
+  </Level>
+  <br />
+  <Level>
+    <LevelItem>
+      <TextContent>
+        <Text>
+          <strong>
+            <span
+              id="span-source-type-product"
+            >
+              Product
+            </span>
+          </strong>
+        </Text>
+      </TextContent>
+    </LevelItem>
+    <LevelItem />
+    <LevelItem>
+      <TextContent>
+        <Text>
+          <strong>
+            <span
+              id="span-source-name-module-type"
+            >
+              Module type
+            </span>
+          </strong>
+        </Text>
+      </TextContent>
+    </LevelItem>
+    <LevelItem>
+      <TextContent>
+        <Text>
+          <strong>
+            <span
+              id="span-source-type-draft-uploaded"
+            >
+              Draft uploaded
+            </span>
+          </strong>
+        </Text>
+      </TextContent>
+    </LevelItem>
+    <LevelItem>
+      <TextContent>
+        <Text>
+          <strong>
+            <span
+              id="span-source-type-published"
+            >
+              Published
+            </span>
+          </strong>
+        </Text>
+      </TextContent>
+    </LevelItem>
+  </Level>
+  <Level>
+    <LevelItem>
+      <TextContent>
+        <Text>
+          <span>
+             
+          </span>
+        </Text>
+      </TextContent>
+    </LevelItem>
+    <LevelItem />
+    <LevelItem>
+      <TextContent>
+        <Text>
+          <span />
+        </Text>
+      </TextContent>
+    </LevelItem>
+    <LevelItem>
+      <TextContent>
+        <Text>
+          <span>
+            --
+          </span>
+        </Text>
+      </TextContent>
+    </LevelItem>
+    <LevelItem>
+      <TextContent>
+        <Text>
+          <span>
+            --
+          </span>
+        </Text>
+      </TextContent>
+    </LevelItem>
+  </Level>
+  <br />
+  <Level>
+    <LevelItem />
+    <LevelItem />
+    <LevelItem>
+      <Button
+        onClick={[Function]}
+        variant="secondary"
       >
-        <DataListItem
-          aria-labelledby="simple-item1"
-        >
-          <DataListItemRow
-            id="data-rows-header"
-          >
-            <DataListItemCells
-              dataListCells={
-                Array [
-                  <DataListCell
-                    width={2}
-                  >
-                    <span
-                      className="sp-prop-nosort"
-                      id="span-source-type-product"
-                    >
-                      Product
-                    </span>
-                  </DataListCell>,
-                  <DataListCell>
-                    <span
-                      className="sp-prop-nosort"
-                      id="span-source-type-published"
-                    >
-                      Published
-                    </span>
-                  </DataListCell>,
-                  <DataListCell>
-                    <span
-                      className="sp-prop-nosort"
-                      id="span-source-type-draft-uploaded"
-                    >
-                      Draft Uploaded
-                    </span>
-                  </DataListCell>,
-                  <DataListCell>
-                    <span
-                      className="sp-prop-nosort"
-                      id="span-source-name-module-type"
-                    >
-                      Module Type
-                    </span>
-                  </DataListCell>,
-                ]
-              }
-            />
-          </DataListItemRow>
-          <DataListItemRow>
-            <DataListItemCells
-              dataListCells={
-                Array [
-                  <DataListCell
-                    width={2}
-                  >
-                    <span>
-                       
-                    </span>
-                  </DataListCell>,
-                  <DataListCell>
-                    <span>
-                      -
-                       
-                      <br />
-                    </span>
-                  </DataListCell>,
-                  <DataListCell>
-                    <span>
-                      -
-                    </span>
-                  </DataListCell>,
-                  <DataListCell>
-                    <span>
-                      
-                    </span>
-                  </DataListCell>,
-                ]
-              }
-            />
-          </DataListItemRow>
-        </DataListItem>
-      </DataList>
-    </div>
-    <div>
-      <Card>
-        <Versions
-          modulePath=""
-          onGetProduct={[Function]}
-          onGetVersion={[Function]}
-          productInfo=""
-          updateDate={[Function]}
-          variant={null}
-          versionModulePath=""
-        />
-      </Card>
-    </div>
-  </div>
+        Generate Draft Html
+      </Button>
+        
+    </LevelItem>
+  </Level>
+  <br />
+  <Divider />
+  <br />
+  <Card>
+    <Versions
+      attributesFilePath=""
+      contentType="module"
+      modulePath=""
+      onGetProduct={[Function]}
+      onGetVersion={[Function]}
+      productInfo=""
+      updateDate={[Function]}
+      variant={null}
+      versionModulePath=""
+    />
+  </Card>
 </Fragment>
 `;
 
@@ -169,12 +173,6 @@ exports[`ModuleDisplay tests test fetchModuleDetails function 1`] = `Promise {}`
 
 exports[`ModuleDisplay tests test getPortalUrl function 1`] = `undefined`;
 
-exports[`ModuleDisplay tests test getProduct function 1`] = `undefined`;
-
 exports[`ModuleDisplay tests test getProductInitialLoad function 1`] = `undefined`;
 
-exports[`ModuleDisplay tests test getVersion function 1`] = `undefined`;
-
 exports[`ModuleDisplay tests test getVersionUUID function 1`] = `undefined`;
-
-exports[`ModuleDisplay tests test mouseLeave function 1`] = `undefined`;

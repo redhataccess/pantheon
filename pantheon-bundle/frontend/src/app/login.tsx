@@ -53,7 +53,7 @@ class Login extends Component<any, any, any> {
     return this.state.authMessage.length > 0 && <div className="notification-container">
       <Alert variant="danger"
         title={this.state.authMessage}
-        action={<AlertActionCloseButton onClose={this.resetAuthMessage} />} />
+        actionClose={<AlertActionCloseButton onClose={this.resetAuthMessage} />} />
     </div>
   }
 
