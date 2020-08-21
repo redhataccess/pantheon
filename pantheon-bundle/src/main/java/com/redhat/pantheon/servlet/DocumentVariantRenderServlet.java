@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
+import static com.redhat.pantheon.helper.PantheonConstants.*;
 
 /**
  * Renders an HTML preview for a single document variant.
@@ -47,14 +48,6 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
         methods = "GET",
         extensions = "preview")
 public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
-
-    private static final Set<String> RELEASED_SUFFIXES = new HashSet<>();
-    static {
-        RELEASED_SUFFIXES.add("/released");
-        RELEASED_SUFFIXES.add("/");
-        RELEASED_SUFFIXES.add("");
-        RELEASED_SUFFIXES.add(null);
-    }
 
     private final Logger log = LoggerFactory.getLogger(DocumentVariantRenderServlet.class);
 
@@ -80,7 +73,7 @@ public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
                          SlingHttpServletResponse response) throws ServletException, IOException {
         String suffix = getSuffix(request);
         boolean latest = false;
-        if ("/latest".equals(suffix)) {
+        if (LATEST_SUFFIX.equals(suffix)) {
             latest = true;
         } else if (!RELEASED_SUFFIXES.contains(suffix)) {
             throw new ServletException("Unrecognized suffix: " + suffix + ". Valid values are '/latest', '/released', and unspecified.");

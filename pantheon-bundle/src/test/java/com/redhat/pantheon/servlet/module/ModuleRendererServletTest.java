@@ -49,6 +49,11 @@ public class ModuleRendererServletTest {
         registerMockAdapter(Module.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
+        slingContext.request().setParameterMap(
+                ImmutableMap.<String, Object>builder()
+                        .put(PantheonConstants.PARAM_VARIANT, "DEFAULT")
+                        .build()
+        );
         lenient().when(
                 asciidoctorService.getDocumentHtml(
                         any(Module.class),
@@ -103,6 +108,7 @@ public class ModuleRendererServletTest {
                 ImmutableMap.<String, Object>builder()
                         .put(PantheonConstants.PARAM_DRAFT, "true")
                         .put(PantheonConstants.PARAM_RERENDER, "true")
+                        .put(PantheonConstants.PARAM_VARIANT, "DEFAULT")
                         .build()
         );
         lenient().when(
@@ -211,7 +217,7 @@ public class ModuleRendererServletTest {
                 ImmutableMap.<String, Object>builder()
                         .put(PantheonConstants.PARAM_DRAFT, "true")
                         .put(PantheonConstants.PARAM_RERENDER, "true")
-                        .put(PantheonConstants.PARAM_VARIANT, new String[]{"non_existing"})
+                        .put(PantheonConstants.PARAM_VARIANT, "non_existing")
                         .build()
         );
         lenient().when(
@@ -255,6 +261,7 @@ public class ModuleRendererServletTest {
                         .put(PantheonConstants.PARAM_DRAFT, "true")
                         .put(PantheonConstants.PARAM_RERENDER, "true")
                         .put(PantheonConstants.PARAM_LOCALE, new String[]{"ja_JP"})
+                        .put(PantheonConstants.PARAM_VARIANT, "DEFAULT")
                         .build()
         );
         lenient().when(

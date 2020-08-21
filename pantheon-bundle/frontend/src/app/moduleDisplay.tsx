@@ -170,6 +170,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         productInfo={this.state.productValue}
                         versionModulePath={this.state.moduleTitle}
                         variant={this.state.variant}
+                        variantUUID={this.state.variantUUID}
                         attributesFilePath={this.state.attributesFilePath}
                         updateDate={this.updateDate}
                         onGetProduct={this.getProduct}

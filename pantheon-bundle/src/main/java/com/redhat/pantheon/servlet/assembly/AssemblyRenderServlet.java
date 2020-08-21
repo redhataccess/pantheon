@@ -65,12 +65,14 @@ public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
     @Override
     public void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws IOException {
+        Assembly asm = request.getResource().adaptTo(Assembly.class);
+
         String locale = paramValue(request, PantheonConstants.PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
         boolean draft = paramValueAsBoolean(request, PantheonConstants.PARAM_DRAFT);
         boolean reRender = paramValueAsBoolean(request, PantheonConstants.PARAM_RERENDER);
-        String variantName = paramValue(request, PantheonConstants.PARAM_VARIANT, DEFAULT_VARIANT_NAME);
+        String variantName = Optional.ofNullable(paramValue(request, PantheonConstants.PARAM_VARIANT, null))
+                .orElseGet(() -> asm.getWorkspace().getCanonicalVariantName());
 
-        Assembly asm = request.getResource().adaptTo(Assembly.class);
         Locale localeObj = LocaleUtils.toLocale(locale);
 
         Optional<HashableFileResource> moduleVariantSource = null;

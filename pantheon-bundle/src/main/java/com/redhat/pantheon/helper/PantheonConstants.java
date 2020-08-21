@@ -1,5 +1,8 @@
 package com.redhat.pantheon.helper;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class PantheonConstants {
     public static final String PARAM_RERENDER = "rerender";
     public static final String PARAM_DRAFT = "draft";
@@ -14,4 +17,13 @@ public class PantheonConstants {
     public static final String JCR_TYPE_ASSEMBLY = "pant:assembly";
     public static final String JCR_TYPE_MODULEVARIANT = "pant:moduleVariant";
     public static final String JCR_TYPE_ASSEMBLYVARIANT = "pant:assemblyVariant";
+
+    public static final String LATEST_SUFFIX = "/latest";
+    public static final Set<String> RELEASED_SUFFIXES = new HashSet<>();
+    static {
+        RELEASED_SUFFIXES.add("/released");
+        RELEASED_SUFFIXES.add("/");
+        RELEASED_SUFFIXES.add("");
+        RELEASED_SUFFIXES.add(null);
+    }
 }
