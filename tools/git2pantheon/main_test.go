@@ -16,7 +16,7 @@ func TestCloneBranch(t *testing.T) {
 	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println(string(body))
 
-	if !strings.Contains(string(body), "Invalid request method") {
+	if !strings.Contains(string(body), "{\"error\" : \"Invalid request method\"}") {
 		t.Errorf("This method should only work with a POST. It worked with a GET.")
 	}
 
@@ -27,7 +27,16 @@ func TestCloneBranch(t *testing.T) {
 	body, _ = ioutil.ReadAll(resp.Body)
 	fmt.Println(string(body))
 
-	if !strings.Contains(string(body), "The repository entered does not look like a git repo.") {
+	if !strings.Contains(string(body), "{\"error\" : \"Error reading request body due to unexpected end of JSON input \"}") {
+		t.Errorf("The request body did not parse successfully.")
+	}
+	req = httptest.NewRequest("POST", "http://example.com/clone", strings.NewReader("{\"repo\": \"test\"}"))
+	w = httptest.NewRecorder()
+	cloneBranch(w, req)
+	resp = w.Result()
+	body, _ = ioutil.ReadAll(resp.Body)
+	fmt.Println(string(body))
+	if !strings.Contains(string(body), "{\"error\" : \"The repository entered does not look like a git repo\"}") {
 		t.Errorf("The request did not included a valid Repository but the system think it does.")
 	}
 }
@@ -51,7 +60,7 @@ func TestGetInfo(t *testing.T) {
 	body, _ = ioutil.ReadAll(resp.Body)
 	fmt.Println(string(body))
 
-	if !strings.Contains(string(body), "Invalid request method") {
+	if !strings.Contains(string(body), "{\"error\" : \"Invalid request method\"}") {
 		t.Errorf("This method should only work with a GET. It worked with a POST.")
 	}
 }
