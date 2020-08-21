@@ -41,7 +41,7 @@
 [pant:module] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified, pant:document
     - sling:resourceType (string) = 'pantheon/module' mandatory autocreated
 
-[pant:moduleVariant] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+[pant:moduleVariant] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified, pant:documentVariant
     - sling:resourceType (string) = 'pantheon/moduleVariant' mandatory autocreated
     
 [pant:moduleLocale] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
@@ -75,7 +75,7 @@
 [pant:assembly] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified, pant:document
     - sling:resourceType (string) = 'pantheon/assembly' mandatory autocreated
 
-[pant:assemblyVariant] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+[pant:assemblyVariant] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified, pant:documentVariant
     - sling:resourceType (string) = 'pantheon/assemblyVariant' mandatory autocreated
 
 [pant:assemblyLocale] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
@@ -91,6 +91,8 @@
 [pant:document] mixin
 
 [pant:documentLocale] mixin
+
+[pant:documentVariant] mixin
 
 // Base type for titles
 //[pant:title] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified

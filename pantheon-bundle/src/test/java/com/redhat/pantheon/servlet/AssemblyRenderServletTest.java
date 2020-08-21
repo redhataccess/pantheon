@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.assembly.Assembly;
+import com.redhat.pantheon.servlet.assembly.AssemblyRenderServlet;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -15,7 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,6 +52,11 @@ public class AssemblyRenderServletTest {
         registerMockAdapter(Assembly.class, slingContext);
         Resource resource = slingContext.resourceResolver().getResource("/repo/entities/module");
         slingContext.request().setResource(resource);
+        slingContext.request().setParameterMap(
+                ImmutableMap.<String, Object>builder()
+                        .put(PantheonConstants.PARAM_VARIANT, "DEFAULT")
+                        .build()
+        );
         lenient().when(
                 asciidoctorService.getDocumentHtml(
                         any(Assembly.class),
@@ -102,6 +110,7 @@ public class AssemblyRenderServletTest {
                 ImmutableMap.<String, Object>builder()
                         .put(PantheonConstants.PARAM_DRAFT, "true")
                         .put(PantheonConstants.PARAM_RERENDER, "true")
+                        .put(PantheonConstants.PARAM_VARIANT, "DEFAULT")
                         .build()
         );
         lenient().when(
@@ -156,7 +165,7 @@ public class AssemblyRenderServletTest {
                 ImmutableMap.<String, Object>builder()
                         .put(PantheonConstants.PARAM_DRAFT, "true")
                         .put(PantheonConstants.PARAM_RERENDER, "true")
-                        .put(PantheonConstants.PARAM_VARIANT, new String[]{"variant1"})
+                        .put(PantheonConstants.PARAM_VARIANT, "variant1")
                         .build()
         );
         lenient().when(
@@ -207,7 +216,7 @@ public class AssemblyRenderServletTest {
                 ImmutableMap.<String, Object>builder()
                         .put(PantheonConstants.PARAM_DRAFT, "true")
                         .put(PantheonConstants.PARAM_RERENDER, "true")
-                        .put(PantheonConstants.PARAM_VARIANT, new String[]{"non_existing"})
+                        .put(PantheonConstants.PARAM_VARIANT, "non_existing")
                         .build()
         );
         lenient().when(
@@ -250,6 +259,7 @@ public class AssemblyRenderServletTest {
                         .put(PantheonConstants.PARAM_DRAFT, "true")
                         .put(PantheonConstants.PARAM_RERENDER, "true")
                         .put(PantheonConstants.PARAM_LOCALE, new String[]{"ja_JP"})
+                        .put(PantheonConstants.PARAM_VARIANT, "DEFAULT")
                         .build()
         );
         lenient().when(

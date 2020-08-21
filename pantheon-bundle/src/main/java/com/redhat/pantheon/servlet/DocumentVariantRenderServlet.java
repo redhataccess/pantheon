@@ -2,10 +2,8 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.helper.PantheonConstants;
-import com.redhat.pantheon.model.assembly.Assembly;
-import com.redhat.pantheon.model.assembly.AssemblyLocale;
-import com.redhat.pantheon.model.HashableFileResource;
-import com.redhat.pantheon.model.document.SourceContent;
+import com.redhat.pantheon.model.document.DocumentVariant;
+import com.redhat.pantheon.model.document.DocumentVersion;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -19,20 +17,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
-import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
-import static com.redhat.pantheon.model.module.ModuleVariant.DEFAULT_VARIANT_NAME;
-import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
+import static com.redhat.pantheon.helper.PantheonConstants.*;
 
 /**
- * Renders an HTML preview for a single module.
+ * Renders an HTML preview for a single document variant.
  * To provide parameters to the asciidoc generation process, provide the parameters with their name prefixed
  * with "ctx_".
  *
@@ -46,60 +44,69 @@ import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
 @SlingServletResourceTypes(
-        resourceTypes = { "pantheon/assembly" },
+        resourceTypes = { "pantheon/moduleVariant", "pantheon/assemblyVariant" },
         methods = "GET",
         extensions = "preview")
-@SuppressWarnings("serial")
-public class AssemblyRenderServlet extends SlingSafeMethodsServlet {
+public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
 
-    private final Logger log = LoggerFactory.getLogger(AssemblyRenderServlet.class);
+    private final Logger log = LoggerFactory.getLogger(DocumentVariantRenderServlet.class);
 
     private AsciidoctorService asciidoctorService;
 
     @Activate
-    public AssemblyRenderServlet(
+    public DocumentVariantRenderServlet(
             @Reference AsciidoctorService asciidoctorService) {
         this.asciidoctorService = asciidoctorService;
     }
 
+    /**
+     * Exists only to be overridden by test class.
+     * @param request
+     * @return
+     */
+    protected String getSuffix(SlingHttpServletRequest request) {
+        return request.getRequestPathInfo().getSuffix();
+    }
+
     @Override
-    public void doGet(SlingHttpServletRequest request,
-            SlingHttpServletResponse response) throws IOException {
-        String locale = paramValue(request, PantheonConstants.PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
-        boolean draft = paramValueAsBoolean(request, PantheonConstants.PARAM_DRAFT);
+    protected void doGet(SlingHttpServletRequest request,
+                         SlingHttpServletResponse response) throws ServletException, IOException {
+        String suffix = getSuffix(request);
+        boolean latest = false;
+        if (LATEST_SUFFIX.equals(suffix)) {
+            latest = true;
+        } else if (!RELEASED_SUFFIXES.contains(suffix)) {
+            throw new ServletException("Unrecognized suffix: " + suffix + ". Valid values are '/latest', '/released', and unspecified.");
+        }
+
         boolean reRender = paramValueAsBoolean(request, PantheonConstants.PARAM_RERENDER);
-        String variantName = paramValue(request, PantheonConstants.PARAM_VARIANT, DEFAULT_VARIANT_NAME);
 
-        Assembly asm = request.getResource().adaptTo(Assembly.class);
-        Locale localeObj = LocaleUtils.toLocale(locale);
+        DocumentVariant variant = request.getResource().adaptTo(DocumentVariant.class);
 
-        Optional<HashableFileResource> moduleVariantSource = null;
-
-        moduleVariantSource = asm.locale(localeObj)
-                .traverse()
-                .toChild(AssemblyLocale::source)
-                .toChild(draft ? SourceContent::draft : SourceContent::released)
-                .getAsOptional();
-
-        if(!moduleVariantSource.isPresent()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, (draft ? "Draft " : "Released ")
-                    + "source content not found for " + variantName +  " module variant at "
+        if(!latest && variant.released().get() == null) { // This is presumably safe, at least one version should exist
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Released content not found for "
+                    + variant.getName()
+                    +  " module variant at "
                     + request.getResource().getPath());
             return;
         }
-
         // collect a list of parameter that traverseFrom with 'ctx_' as those will be used as asciidoctorj
         // parameters
         Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
 
         // only allow forced rerendering if this is a draft version. Released and historical revs are written in stone.
+        boolean draft = latest && variant.hasDraft();
         String html = asciidoctorService.getDocumentHtml(
-                asm, localeObj, variantName, draft, context, reRender && draft);
+                variant.getParentLocale().getParent(),
+                LocaleUtils.toLocale(variant.getParentLocale().getName()),
+                variant.getName(),
+                draft,
+                context,
+                reRender && draft);
 
         response.setContentType("text/html");
         Writer w = response.getWriter();
         w.write(html);
     }
-
 }
 

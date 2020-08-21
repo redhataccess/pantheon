@@ -143,6 +143,7 @@ exports[`AssemblyDisplay tests should render AssemblyDisplay component 1`] = `
           productInfo=""
           updateDate={[Function]}
           variant={null}
+          variantUUID=""
           versionModulePath=""
         />
       </Card>

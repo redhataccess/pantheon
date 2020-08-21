@@ -3,6 +3,7 @@ package com.redhat.pantheon.asciidoctor;
 import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
+import com.redhat.pantheon.asciidoctor.extension.XrefPreprocessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
@@ -180,7 +181,7 @@ public class AsciidoctorService {
         // Use a service-level resource resolver to build the module or assemblies as it will require write access to the resources
         try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
 
-            Class cls = base.getResourceType().equals(PantheonConstants.RESOURCETYPE_ASSEMBLY) ? Assembly.class : Module.class;
+            Class cls = base.getResourceType().equals(PantheonConstants.RESOURCE_TYPE_ASSEMBLY) ? Assembly.class : Module.class;
             Document serviceDocument = (Document) SlingModels.getModel(serviceResourceResolver, base.getPath(), cls);
 
             DocumentVariant documentVariant = serviceDocument.locale(locale).getOrCreate()
@@ -284,6 +285,10 @@ public class AsciidoctorService {
                 // extensions needed to generate a module's html
                 SlingResourceIncludeProcessor includeProcessor = new SlingResourceIncludeProcessor(base);
                 asciidoctor.javaExtensionRegistry().includeProcessor(includeProcessor);
+
+                asciidoctor.javaExtensionRegistry().preprocessor(
+                        new XrefPreprocessor(documentVariant, includeProcessor.getTableOfContents()));
+
                 asciidoctor.javaExtensionRegistry().postprocessor(
                         new HtmlModulePostprocessor(base));
 

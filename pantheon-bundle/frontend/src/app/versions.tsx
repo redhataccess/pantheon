@@ -17,6 +17,7 @@ export interface IProps {
     productInfo: string
     versionModulePath: string
     variant: string
+    variantUUID: string
     attributesFilePath: string
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
@@ -359,7 +360,7 @@ class Versions extends Component<IProps, IState> {
                     }
                     // process variantUUID
                     let variantUuid = ''
-                    if (firstVariant["jcr:primaryType"] !== "undefined" && firstVariant["jcr:primaryType"] === "pant:moduleVariant") {
+                    if (firstVariant["jcr:primaryType"] !== "undefined" && (firstVariant["jcr:primaryType"] === "pant:moduleVariant" || firstVariant["jcr:primaryType"] === "pant:assemblyVariant")) {
                         variantUuid = firstVariant["jcr:uuid"]
                     }
                     const versionCount = firstVariant.__children__.length
@@ -482,11 +483,7 @@ class Versions extends Component<IProps, IState> {
 
     private previewDoc = (buttonText) => {
         let docPath = ''
-        if (buttonText === 'Preview') {
-            docPath = '/content' + this.props.modulePath + '.preview?draft=true&variant=' + this.props.variant
-        } else {
-            docPath = '/content' + this.props.modulePath + '.preview?variant=' + this.props.variant
-        }
+        docPath = '/pantheon/preview/' + (buttonText === 'Preview' ? 'latest' : 'released') + '/' + this.props.variantUUID
         return window.open(docPath)
     }
 

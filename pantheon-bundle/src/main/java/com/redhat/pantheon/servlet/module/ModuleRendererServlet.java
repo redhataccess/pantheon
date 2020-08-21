@@ -1,4 +1,4 @@
-package com.redhat.pantheon.servlet;
+package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.helper.PantheonConstants;
@@ -47,9 +47,9 @@ import static java.util.stream.Collectors.toMap;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
 @SlingServletResourceTypes(
-        resourceTypes = { "pantheon/module"},
+        resourceTypes = { "pantheon/module" },
         methods = "GET",
-        extensions = "preview")
+        extensions = "preview" )
 public class ModuleRendererServlet extends SlingSafeMethodsServlet {
 
     private final Logger log = LoggerFactory.getLogger(ModuleRendererServlet.class);
@@ -65,13 +65,15 @@ public class ModuleRendererServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request,
                          SlingHttpServletResponse response) throws ServletException, IOException {
+        Module module = request.getResource().adaptTo(Module.class);
+
         String locale = paramValue(request, PantheonConstants.PARAM_LOCALE, DEFAULT_MODULE_LOCALE.toString());
         boolean draft = paramValueAsBoolean(request, PantheonConstants.PARAM_DRAFT);
         boolean reRender = paramValueAsBoolean(request, PantheonConstants.PARAM_RERENDER);
-        String variantName = paramValue(request, PantheonConstants.PARAM_VARIANT, DEFAULT_VARIANT_NAME);
-        Locale localeObj = LocaleUtils.toLocale(locale);
+        String variantName = Optional.ofNullable(paramValue(request, PantheonConstants.PARAM_VARIANT, null))
+                .orElseGet(() -> module.getWorkspace().getCanonicalVariantName());
 
-        Module module = request.getResource().adaptTo(Module.class);
+        Locale localeObj = LocaleUtils.toLocale(locale);
 
         Optional<HashableFileResource> moduleVariantSource = module.locale(localeObj)
                 .traverse()

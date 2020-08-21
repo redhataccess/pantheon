@@ -156,6 +156,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                                 productInfo={this.state.productValue}
                                 versionModulePath={this.state.moduleTitle}
                                 variant={this.state.variant}
+                                variantUUID={this.state.variantUUID}
                                 attributesFilePath={this.state.attributesFilePath}
                                 updateDate={this.updateDate}
                                 onGetProduct={this.getProduct}
@@ -168,7 +169,7 @@ class AssemblyDisplay extends Component<any, any, any> {
         )
     }
     private generateDraftHtml = (pathname: any) => {
-        const docPath = '/content' + pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length) + '.preview?draft=true&rerender=true&variant=' + this.state.variant
+        const docPath = '/pantheon/preview/latest/' + this.state.variantUUID + '?rerender=true'
 
         // console.log('Preview path: ', docPath)
         return window.open(docPath)

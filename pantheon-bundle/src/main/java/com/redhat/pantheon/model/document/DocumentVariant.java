@@ -2,6 +2,7 @@ package com.redhat.pantheon.model.document;
 
 import com.redhat.pantheon.jcr.JcrResources;
 import com.redhat.pantheon.model.api.Child;
+import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
@@ -10,6 +11,7 @@ import com.redhat.pantheon.model.api.SlingModel;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 
+import javax.inject.Named;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -29,6 +31,17 @@ public interface DocumentVariant extends WorkspaceChild {
     Child<? extends DocumentVersion> draft();
 
     Child<? extends DocumentVersion> released();
+
+    default boolean hasDraft() {
+        return draft().get() != null;
+    }
+
+    default Child<? extends  DocumentVersion> latestVersion() {
+        return hasDraft() ? draft() : released();
+    }
+
+    @Named("jcr:uuid")
+    Field<String> uuid();
 
     @Override
     DocumentVariants getParent();

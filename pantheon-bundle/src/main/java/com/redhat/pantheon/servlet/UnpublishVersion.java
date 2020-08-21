@@ -101,7 +101,7 @@ public class UnpublishVersion extends AbstractPostOperation {
                     .draft().get();
 
             // TODO We need to change the event so that the right variant is processed
-            if(PantheonConstants.RESOURCETYPE_ASSEMBLY.equals(document.getResourceType())){
+            if(PantheonConstants.RESOURCE_TYPE_ASSEMBLY.equals(document.getResourceType())){
                 events.fireEvent(new AssemblyVersionUnpublishedEvent(documentVersion.adaptTo(AssemblyVersion.class)), 15);
             }else{
                 events.fireEvent(new ModuleVersionUnpublishedEvent(documentVersion.adaptTo(ModuleVersion.class)), 15);
