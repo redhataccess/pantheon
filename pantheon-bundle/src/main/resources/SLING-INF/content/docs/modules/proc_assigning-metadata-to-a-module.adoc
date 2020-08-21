@@ -27,4 +27,4 @@ If you do not see the module listed, search for it using the search box.
 
 . Click *Save*.
 
-Metadata for the module is now assigned.
+The module now includes metadata.
