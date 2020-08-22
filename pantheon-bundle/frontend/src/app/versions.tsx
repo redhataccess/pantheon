@@ -131,10 +131,10 @@ class Versions extends Component<IProps, IState> {
 
                 {this.state.unpublishAlertForModuleVisible && <Alert
                     variant='info'
-                    title='Modules Included in Assembly'
+                    title='Unpublishing assembly'
                     actionClose={<AlertActionCloseButton onClose={this.hideUppublishAlertForModule} />}
                 >
-                     Unpublishing assembly. Included modules are not unpublished by this action.
+                     Included modules are not unpublished by this action.
                 </Alert>
                 }
 

@@ -172,6 +172,12 @@ describe('Versions tests', () => {
         expect(inst.hidePublishAlert()).toMatchSnapshot();
     });
 
+    it('test hideUppublishAlertForModule function', () => {
+    const wrapper = renderer.create(<Versions {...props} />)
+    const inst = wrapper.getInstance()
+    expect(inst.hideUppublishAlertForModule()).toMatchSnapshot()
+    })
+
     it('has a props', () => {
         const versions = mount(<Versions {...props} />).matchesElement
         expect(versions.length === 1)
