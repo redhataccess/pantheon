@@ -22,6 +22,7 @@ const props = {
     productInfo: "Red Hat Enterprise Linux",
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
     variant: "test",
+    variantUUID: "abcd-1234",
     versionModulePath: "/modules/test_module/en_US/variants/test/draft"
 }
 
@@ -199,6 +200,7 @@ describe('Versions tests', () => {
             productInfo: "Red Hat Enterprise Linux",
             updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
             variant: "DEFAULT",
+            variantUUID: "abcd-1234",
             versionModulePath: "versionPath"
         }
         state.updateDate("-", "-", 1, "1234")

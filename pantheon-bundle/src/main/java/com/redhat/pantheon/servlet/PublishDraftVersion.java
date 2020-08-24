@@ -93,7 +93,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
             // Regenerate the document once more
             asciidoctorService.getDocumentHtml(document, locale, variant, false, new HashMap(), true);
 
-            if(PantheonConstants.RESOURCETYPE_ASSEMBLY.equals(document.getResourceType())){
+            if(PantheonConstants.RESOURCE_TYPE_ASSEMBLY.equals(document.getResourceType())){
                 events.fireEvent(new AssemblyVersionPublishedEvent(documentVersion.adaptTo(AssemblyVersion.class)), 15);
             }else{
                 events.fireEvent(new ModuleVersionPublishedEvent(documentVersion.adaptTo(ModuleVersion.class)), 15);
