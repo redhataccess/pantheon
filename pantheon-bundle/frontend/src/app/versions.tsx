@@ -440,6 +440,7 @@ class Versions extends Component<IProps, IState> {
                     formData.append(':operation', 'pant:publish');
                     // console.log('Published file path:', this.props.modulePath)
                     this.draft[0].version = '';
+                    this.setState({ unpublishAlertForModuleVisible: false })
                 } else {
                     formData.append(':operation', 'pant:unpublish');
                     // console.log('Unpublished file path:', this.props.modulePath);
