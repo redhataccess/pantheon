@@ -40,6 +40,7 @@ interface IState {
     product: { label: string, value: string }
     productVersion: { label: string, uuid: string }
     publishAlertVisible: boolean
+    unpublishAlertForModuleVisible: boolean
     results: any
     showMetadataAlertIcon: boolean
     successAlertVisible: boolean
@@ -72,6 +73,7 @@ class Versions extends Component<IProps, IState> {
             product: { label: '', value: '' },
             productVersion: { label: '', uuid: '' },
             publishAlertVisible: false,
+            unpublishAlertForModuleVisible: false,
             results: [this.draft, this.release],
             showMetadataAlertIcon: true,
             successAlertVisible: false,
@@ -125,6 +127,15 @@ class Versions extends Component<IProps, IState> {
                         <li>Are you logged in as a publisher?</li>
                         <li>Does the module have all required metadata?</li>
                     </ul>
+                </Alert>
+                }
+
+                {this.state.unpublishAlertForModuleVisible && <Alert
+                    variant='info'
+                    title='Unpublishing assembly'
+                    actionClose={<AlertActionCloseButton onClose={this.hideUppublishAlertForModule} />}
+                >
+                     Included modules are not unpublished by this action.
                 </Alert>
                 }
 
@@ -429,10 +440,12 @@ class Versions extends Component<IProps, IState> {
                     formData.append(':operation', 'pant:publish');
                     // console.log('Published file path:', this.props.modulePath)
                     this.draft[0].version = '';
+                    this.setState({ unpublishAlertForModuleVisible: false })
                 } else {
                     formData.append(':operation', 'pant:unpublish');
                     // console.log('Unpublished file path:', this.props.modulePath);
                     this.release[0].version = '';
+                    this.setState({ unpublishAlertForModuleVisible: true })
                 }
                 formData.append('locale', 'en_US')
                 formData.append('variant', this.props.variant)
@@ -640,6 +653,10 @@ class Versions extends Component<IProps, IState> {
 
     private hidePublishAlert = () => {
         this.setState({ publishAlertVisible: false })
+    }
+
+    private hideUppublishAlertForModule = () => {
+        this.setState({ unpublishAlertForModuleVisible: false })
     }
 
     private getMetadata = (versionPath) => {

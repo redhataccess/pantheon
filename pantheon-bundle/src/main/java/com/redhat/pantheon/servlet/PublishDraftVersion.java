@@ -63,8 +63,8 @@ public class PublishDraftVersion extends AbstractPostOperation {
         this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
 
-    private Document getDocument(SlingHttpServletRequest request) {
-        return request.getResource().adaptTo(Document.class);
+    private Document getDocument(SlingHttpServletRequest request, ResourceResolver resourceResolver) {
+        return resourceResolver.getResource(request.getResource().getPath()).adaptTo(Document.class);
     }
 
     private Locale getLocale(SlingHttpServletRequest request) {
@@ -80,24 +80,30 @@ public class PublishDraftVersion extends AbstractPostOperation {
         logger.debug("Operation Publishinging draft version started");
         long startTime = System.currentTimeMillis();
         super.run(request, response, processors);
-        if (response.getError() == null) {
-            // call the extension point
-            Locale locale = getLocale(request);
-            Document document = getDocument(request);
-            String variant = getVariant(request);
-            DocumentVersion documentVersion = document.locale(locale).get()
-                    .variants().get()
-                    .variant(variant).get()
-                    .released().get();
+        try {
+            if (response.getError() == null) {
+                // call the extension point
+                Locale locale = getLocale(request);
+                Document document = UnpublishVersion.canUnPublish(request)
+                        ? getDocument(request, serviceResourceResolverProvider.getServiceResourceResolver())
+                        : getDocument(request, request.getResourceResolver());
+                String variant = getVariant(request);
+                DocumentVersion documentVersion = document.locale(locale).get()
+                        .variants().get()
+                        .variant(variant).get()
+                        .released().get();
 
-            // Regenerate the document once more
-            asciidoctorService.getDocumentHtml(document, locale, variant, false, new HashMap(), true);
+                // Regenerate the document once more
+                asciidoctorService.getDocumentHtml(document, locale, variant, false, new HashMap(), true);
 
-            if(PantheonConstants.RESOURCE_TYPE_ASSEMBLY.equals(document.getResourceType())){
-                events.fireEvent(new AssemblyVersionPublishedEvent(documentVersion.adaptTo(AssemblyVersion.class)), 15);
-            }else{
-                events.fireEvent(new ModuleVersionPublishedEvent(documentVersion.adaptTo(ModuleVersion.class)), 15);
+                if (PantheonConstants.RESOURCE_TYPE_ASSEMBLY.equals(document.getResourceType())) {
+                    events.fireEvent(new AssemblyVersionPublishedEvent(documentVersion.adaptTo(AssemblyVersion.class)), 15);
+                } else {
+                    events.fireEvent(new ModuleVersionPublishedEvent(documentVersion.adaptTo(ModuleVersion.class)), 15);
+                }
             }
+        }catch (RepositoryException ex){
+            logger.error("An error has occured ", ex.getMessage());
         }
         log.debug("Operation Publishinging draft version,  completed");
         long elapseTime = System.currentTimeMillis() - startTime;
@@ -107,22 +113,8 @@ public class PublishDraftVersion extends AbstractPostOperation {
     @Override
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws  RepositoryException{
         try {
-            boolean canPublish = false;
-            Session session = request.getResourceResolver().adaptTo(Session.class);
-            UserManager userManager = AccessControlUtil.getUserManager(session);
-            Iterator<Group> groupIterator = userManager.getAuthorizable(session.getUserID()).memberOf();
-            while (groupIterator.hasNext()) {
-                Authorizable group = groupIterator.next();
-                if (group.isGroup() && PantheonConstants.PANTHEON_PUBLISHERS.equalsIgnoreCase(group.getID())) {
-                    canPublish = true;
-                    break;
-                }
-            }
-            ResourceResolver serviceResourceResolver = request.getResourceResolver();
-            if(canPublish) {
-                serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
-            }
-            Document document = getDocument(request);
+            ResourceResolver serviceResourceResolver = UnpublishVersion.canUnPublish(request)? serviceResourceResolverProvider.getServiceResourceResolver():request.getResourceResolver();
+            Document document = getDocument(request, serviceResourceResolver);
             Locale locale = getLocale(request);
             String variant = getVariant(request);
             // Get the draft version, there should be one

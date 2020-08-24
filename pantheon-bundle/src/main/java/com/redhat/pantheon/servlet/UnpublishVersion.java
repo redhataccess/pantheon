@@ -73,8 +73,8 @@ public class UnpublishVersion extends AbstractPostOperation {
         this.serviceResourceResolverProvider = serviceResourceResolverProvider;
     }
 
-    private Document getDocument(SlingHttpServletRequest request) {
-        return request.getResource().adaptTo(Document.class);
+    private Document getDocument(SlingHttpServletRequest request, ResourceResolver resourceResolver) {
+        return resourceResolver.getResource(request.getResource().getPath()).adaptTo(Document.class);
     }
 
     private Locale getLocale(SlingHttpServletRequest request) {
@@ -90,22 +90,28 @@ public class UnpublishVersion extends AbstractPostOperation {
         logger.debug("Operation UnPublishinging draft version started");
         long startTime = System.currentTimeMillis();
         super.run(request, response, processors);
-        if (response.getError() == null) {
-            // call the extension point
-            Locale locale = getLocale(request);
-            Document document = getDocument(request);
-            String variant = getVariant(request);
-            DocumentVersion documentVersion = document.locale(locale).get()
-                    .variants().get()
-                    .variant(variant).get()
-                    .draft().get();
+        try {
+            if (response.getError() == null) {
+                // call the extension point
+                Locale locale = getLocale(request);
+                Document document = canUnPublish(request)
+                        ? getDocument(request, serviceResourceResolverProvider.getServiceResourceResolver())
+                        : getDocument(request, request.getResourceResolver());
+                String variant = getVariant(request);
+                DocumentVersion documentVersion = document.locale(locale).get()
+                        .variants().get()
+                        .variant(variant).get()
+                        .draft().get();
 
-            // TODO We need to change the event so that the right variant is processed
-            if(PantheonConstants.RESOURCE_TYPE_ASSEMBLY.equals(document.getResourceType())){
-                events.fireEvent(new AssemblyVersionUnpublishedEvent(documentVersion.adaptTo(AssemblyVersion.class)), 15);
-            }else{
-                events.fireEvent(new ModuleVersionUnpublishedEvent(documentVersion.adaptTo(ModuleVersion.class)), 15);
+                // TODO We need to change the event so that the right variant is processed
+                if (PantheonConstants.RESOURCE_TYPE_ASSEMBLY.equals(document.getResourceType())) {
+                    events.fireEvent(new AssemblyVersionUnpublishedEvent(documentVersion.adaptTo(AssemblyVersion.class)), 15);
+                } else {
+                    events.fireEvent(new ModuleVersionUnpublishedEvent(documentVersion.adaptTo(ModuleVersion.class)), 15);
+                }
             }
+        }catch (RepositoryException ex){
+            logger.error("An error has occured ", ex.getMessage());
         }
         log.debug("Operation UnPublishinging draft version,  completed");
         long elapseTime = System.currentTimeMillis() - startTime;
@@ -115,22 +121,8 @@ public class UnpublishVersion extends AbstractPostOperation {
     @Override
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException{
         try {
-            boolean canUnPublish = false;
-            Session session = request.getResourceResolver().adaptTo(Session.class);
-            UserManager userManager = AccessControlUtil.getUserManager(session);
-            Iterator<Group> groupIterator = userManager.getAuthorizable(session.getUserID()).memberOf();
-            while (groupIterator.hasNext()) {
-                Authorizable group = groupIterator.next();
-                if (group.isGroup() && PantheonConstants.PANTHEON_PUBLISHERS.equalsIgnoreCase(group.getID())) {
-                    canUnPublish = true;
-                    break;
-                }
-            }
-            ResourceResolver serviceResourceResolver = request.getResourceResolver();
-            if(canUnPublish) {
-                serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver();
-            }
-            Document document = getDocument(request);
+            ResourceResolver serviceResourceResolver = canUnPublish(request)? serviceResourceResolverProvider.getServiceResourceResolver():request.getResourceResolver();
+            Document document = getDocument(request,serviceResourceResolver);
             Locale locale = getLocale(request);
             String variant = getVariant(request);
 
@@ -181,5 +173,27 @@ public class UnpublishVersion extends AbstractPostOperation {
         }catch (Exception ex){
             throw new RepositoryException(ex.getMessage());
         }
+    }
+
+    /**
+     *  Method to check publish permissions for current user
+     *
+     * @param request
+     * @return
+     * @throws RepositoryException
+     */
+    protected static boolean canUnPublish(SlingHttpServletRequest request) throws RepositoryException {
+        boolean canUnPublish = false;
+        Session session = request.getResourceResolver().adaptTo(Session.class);
+        UserManager userManager = AccessControlUtil.getUserManager(session);
+        Iterator<Group> groupIterator = userManager.getAuthorizable(session.getUserID()).memberOf();
+        while (groupIterator.hasNext()) {
+            Authorizable group = groupIterator.next();
+            if (group.isGroup() && PantheonConstants.PANTHEON_PUBLISHERS.equalsIgnoreCase(group.getID())) {
+                canUnPublish = true;
+                break;
+            }
+        }
+        return canUnPublish;
     }
 }
