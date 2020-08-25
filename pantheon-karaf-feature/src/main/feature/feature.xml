@@ -18,7 +18,7 @@
     under the License.
 -->
 <features name="pantheon-features" xmlns="http://karaf.apache.org/xmlns/features/v1.5.0">
-    <repository>mvn:org.apache.sling/org.apache.sling.karaf-features/0.1.1-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.apache.sling/org.apache.sling.karaf-features/0.1.0-SNAPSHOT/xml/features</repository>
     <!-- Pantheon -->
     <feature name="pantheon-bundle" version="${project.version}">
         <feature>sling-models</feature>
