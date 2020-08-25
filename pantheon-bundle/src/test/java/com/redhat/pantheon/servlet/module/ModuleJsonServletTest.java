@@ -74,7 +74,8 @@ class ModuleJsonServletTest {
                         "jcr:primaryType", "pant:module")
                 .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/metadata",
                         "jcr:title", "A title",
-                        "jcr:description", "A description")
+                        "jcr:description", "A description",
+                        "pant:abstract", "The abstract")
                 .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
                         "jcr:data", "This is the source content")
                 .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
@@ -97,7 +98,7 @@ class ModuleJsonServletTest {
         assertTrue(map.containsKey("module"));
         assertTrue(moduleMap.containsKey("module_uuid"));
         assertTrue(moduleMap.containsKey("products"));
-        assertTrue(moduleMap.containsKey("description"));
+        assertEquals("The abstract", moduleMap.get("description"));
         assertTrue(moduleMap.containsKey("locale"));
         assertTrue(moduleMap.containsKey("title"));
         assertTrue(moduleMap.containsKey("body"));

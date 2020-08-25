@@ -43,4 +43,15 @@ public interface Field<T> extends Supplier<T>, Consumer<T> {
      * @return A new field which produces/consumes values of a different type
      */
     <R> Field<R> toFieldType(Class<R> newFieldType);
+
+    /**
+     * Executes a function if there is a value in the field.
+     * @param consumer The function to execute when the value if present.
+     */
+    default void ifPresent(Consumer<T> consumer) {
+        T fieldValue = get();
+        if(fieldValue != null) {
+            consumer.accept(fieldValue);
+        }
+    }
 }
