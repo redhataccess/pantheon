@@ -3,6 +3,7 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.servlet.PublishDraftVersion;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
@@ -20,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -56,6 +58,7 @@ class PublishDraftVersionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
+        slingContext.request().setParameterMap(Collections.singletonMap("variant", DocumentVariant.DEFAULT_VARIANT_NAME));
 
         ServiceResourceResolverProvider serviceResourceResolver = Mockito.mock(ServiceResourceResolverProvider.class);
         ResourceResolver resourceResolver = slingContext.request().getResourceResolver();
