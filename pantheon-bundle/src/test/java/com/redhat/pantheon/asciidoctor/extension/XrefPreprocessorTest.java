@@ -95,7 +95,7 @@ public class XrefPreprocessorTest {
 
         ModuleVariant variant = slingContext.resourceResolver().getResource("/moduleB/en_US/variants/test-atts").adaptTo(ModuleVariant.class);
         TableOfContents toc = new TableOfContents();
-        toc.addEntry(null, variant.getParentLocale().getParent());
+        toc.addEntry(0, variant.getParentLocale().getParent());
 
         //When
         XrefPreprocessor xp = new XrefPreprocessor(variant, toc);
