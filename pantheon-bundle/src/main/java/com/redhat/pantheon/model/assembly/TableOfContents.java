@@ -10,7 +10,7 @@ public class TableOfContents {
 
     private List<Entry> entryList = new LinkedList<>();
 
-    public void addEntry(String levelOffset, Module module) {
+    public void addEntry(int levelOffset, Module module) {
         entryList.add(new Entry(levelOffset, module, entryList.size()));
     }
 
@@ -19,17 +19,17 @@ public class TableOfContents {
     }
 
     public class Entry {
-        private String levelOffset;
+        private int levelOffset;
         private Module module;
         private int index;
 
-        public Entry (String levelOffset, Module module, int index) {
+        public Entry (int levelOffset, Module module, int index) {
             this.levelOffset = levelOffset;
             this.module = module;
             this.index = index;
         }
 
-        public String getLevelOffset() {
+        public int getLevelOffset() {
             return levelOffset;
         }
 

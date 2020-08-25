@@ -54,8 +54,8 @@ public class AssemblyVersionTest {
         String m2uuid = m2.uuid().get();
 
         TableOfContents toc = new TableOfContents();
-        toc.addEntry("+1", m1);
-        toc.addEntry(null, m2);
+        toc.addEntry(1, m1);
+        toc.addEntry(0, m2);
 
         // When
         assembly.locale(GlobalConfig.DEFAULT_MODULE_LOCALE).create()
@@ -76,9 +76,9 @@ public class AssemblyVersionTest {
         AssemblyPage p2 = SlingModels.getModel(
                 slingContext.resourceResolver().getResource("/content/assembly1/en_US/variants/DEFAULT/draft/content/1"),
                 AssemblyPage.class);
-        assertEquals("+1", p1.leveloffset().get());
+        assertEquals(1, p1.leveloffset().get());
         assertEquals(m1uuid, p1.module().get());
-        assertNull(p2.leveloffset().get());
+        assertEquals(0, p2.leveloffset().get());
         assertEquals(m2uuid, p2.module().get());
     }
 }

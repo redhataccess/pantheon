@@ -20,7 +20,7 @@ public interface AssemblyPage extends WorkspaceChild {
     Reference<Module> module();
 
     @Named("pant:leveloffset")
-    Field<String> leveloffset();
+    Field<Integer> leveloffset();
 
     @Named("cached_html")
     Child<FileResource> cachedHtml();
