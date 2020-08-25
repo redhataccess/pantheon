@@ -109,7 +109,7 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
         moduleMap.put("revision_id", releasedRevision.get().getName());
         moduleMap.put("title", releasedMetadata.get().title().get());
         moduleMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline().get() : "");
-        moduleMap.put("description", releasedMetadata.get().description().get());
+        releasedMetadata.get().mAbstract().ifPresent(s -> moduleMap.put("description", s));
         moduleMap.put("content_type", CONTENT_TYPE);
         moduleMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
         moduleMap.put("status", "published");
