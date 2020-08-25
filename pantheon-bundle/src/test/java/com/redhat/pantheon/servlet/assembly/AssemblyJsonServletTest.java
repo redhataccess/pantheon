@@ -89,6 +89,8 @@ class AssemblyJsonServletTest {
         assertTrue(map.containsKey("message"));
         assertTrue(map.containsKey("assembly"));
         assertTrue(assemblyMap.containsKey("assembly_uuid"));
+        // TODO Remove this check when assembly_uuid is removed
+        assertTrue(assemblyMap.get("assembly_uuid").equals(assemblyMap.get("uuid")));
         assertTrue(assemblyMap.containsKey("products"));
         assertTrue(assemblyMap.containsKey("locale"));
         assertTrue(assemblyMap.containsKey("title"));
