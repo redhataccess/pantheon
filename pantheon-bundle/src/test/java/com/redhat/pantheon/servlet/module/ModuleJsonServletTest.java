@@ -97,6 +97,8 @@ class ModuleJsonServletTest {
         assertTrue(map.containsKey("message"));
         assertTrue(map.containsKey("module"));
         assertTrue(moduleMap.containsKey("module_uuid"));
+        // TODO Remove this check when module_uuid is removed
+        assertTrue(moduleMap.get("module_uuid").equals(moduleMap.get("uuid")));
         assertTrue(moduleMap.containsKey("products"));
         assertEquals("The abstract", moduleMap.get("description"));
         assertTrue(moduleMap.containsKey("locale"));

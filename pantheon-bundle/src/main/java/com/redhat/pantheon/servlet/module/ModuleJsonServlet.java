@@ -119,7 +119,9 @@ public class ModuleJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Striping out the jcr: from key name
         String module_uuid = (String) moduleMap.remove("jcr:uuid");
+        // TODO: This is deprecated, but left for backwards compatibility
         moduleMap.put("module_uuid", module_uuid);
+        moduleMap.put("uuid", module_uuid);
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         moduleMap.put("date_modified", dateModified.toInstant().toString());

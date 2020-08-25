@@ -113,7 +113,9 @@ public class AssemblyJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Striping out the jcr: from key name
         String assemblyId = (String) assemblyMap.remove("jcr:uuid");
+        // TODO: This is deprecated, but left for backwards compatibility
         assemblyMap.put("assembly_uuid", assemblyId);
+        assemblyMap.put("uuid", assemblyId);
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         assemblyMap.put("date_modified", dateModified.toInstant().toString());
