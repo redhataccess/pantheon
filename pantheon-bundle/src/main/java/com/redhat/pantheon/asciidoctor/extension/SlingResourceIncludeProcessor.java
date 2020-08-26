@@ -62,6 +62,11 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             includeResource = resolveWithSymlinks(fixedTarget, parent);
         }
 
+        System.out.println("----");
+        for (Map.Entry<String, Object> entry : document.getAttributes().entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+
         if (includeResource != null) {
             SlingModel includedResourceAsModel = includeResource.adaptTo(SlingModel.class);
 
@@ -115,7 +120,9 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
 
     private int getOffset(Document document, Map<String, Object> attributes) {
         // Don't need to worry about relative vs absolute values here because asciidoctor evaluates that on our behalf
-        int docOffset = getInteger((String) document.getAttribute("leveloffset"));
+        String docOffsetStr = (String) document.getAttribute("leveloffset");
+        System.out.println("Doc offset: " + docOffsetStr);
+        int docOffset = getInteger(docOffsetStr);
 
         String offsetParam = (String) attributes.get("leveloffset");
         if (offsetParam == null) {
