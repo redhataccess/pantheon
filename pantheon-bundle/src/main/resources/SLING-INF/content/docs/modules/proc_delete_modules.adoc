@@ -6,7 +6,7 @@ Deleting a module in {ProductShortName}.
 
 .Prerequisites
 
-* You are assigned a publisher or admin role in {ProductShortName}.
+//* You are assigned a publisher or admin role in {ProductShortName}.
 * You are logged in.
 
 .Procedure
@@ -14,4 +14,4 @@ Deleting a module in {ProductShortName}.
 . Navigate to the link:{LinkToSearchPage}[Search page].
 . Select the check box of the module you want to publish.
 . Click *Delete*.
-. Confirm ??
+. Confirm.
