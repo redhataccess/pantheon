@@ -14,4 +14,4 @@ Deleting a module in {ProductShortName}.
 . Navigate to the link:{LinkToSearchPage}[Search page].
 . Select the check box of the module you want to publish.
 . Click *Delete*.
-. Confirm.
+. In the confirmation screen, click *OK* to confirm.
