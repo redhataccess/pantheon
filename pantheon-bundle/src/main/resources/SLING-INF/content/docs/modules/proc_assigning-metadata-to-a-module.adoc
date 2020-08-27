@@ -1,0 +1,30 @@
+[id="assigning-metadata-to-a-module_{context}"]
+= Assigning metadata to a module
+
+Assign metadata to a module to enable search engine optimization (SEO). SEO improves the findability of content.
+
+.Prerequisites
+
+* You are logged in.
+* The module to be assigned metadata has been imported to {ProductShortName}.
+
+.Procedure
+
+. Navigate to link:{LinkToSearchPage}[Search page].
+
+. Click the name of the module to which you want to assign metadata.
++
+If you do not see the module listed, search for it using the search box.
+
+. In the list of module versions, click the vertical ellipsis next to the version of the module you want to assign metadata.
+
+. Click *Edit metadata* to assign the following metadata: 
++
+* *Product Name* - Select the product and product version for the module.
+* *Document use case* - Select the verb that best describes the use case for the module.
+* *Vanity URL fragment* - (Optional) Enter a URL for the module.
+* *Search keywords* - (Optional) Enter any words or terms that users might use when searching for this content.
+
+. Click *Save*.
+
+The module now includes metadata.
