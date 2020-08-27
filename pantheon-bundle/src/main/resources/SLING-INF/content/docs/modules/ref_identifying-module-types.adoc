@@ -6,12 +6,12 @@ In Pantheon 2, each module must be identified by type: concept, procedure, or re
 
 Module types are described in https://redhat-documentation.github.io/modular-docs/#writing-mod-docs[Types of modules in Red Hat documentation].
 
-Identification is done by one or both of the following means:
+Identification is done by using either one or both of the following:
 
-* An attribute after the module's title
-* Use of the correct prefix in the module's name
+* The correct attribute after the module's title
+* The correct prefix in the module's name
 
-    Use of an attribute (preferred method)::
+Use of the correct attribute (preferred method)::
 
 One of the following attributes should be entered in the line immediately following the module's title:
 
@@ -20,11 +20,13 @@ One of the following attributes should be entered in the line immediately follow
 * `:pantheon-module-type: REFERENCE`
 
 ====
-.Example:
+.Example
 
 `= Identifying {ProductShortName} module types :pantheon-module-type: REFERENCE`
 
 ====
+
+Use of the correct prefix::
 
 Module titles should start with the appropriate choice among the following
 
@@ -33,7 +35,7 @@ Module titles should start with the appropriate choice among the following
 * `ref_`
 
 ====
-.Example:
+.Example
 
 `ref_identifying-module-types.adoc`
 
