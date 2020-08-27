@@ -77,7 +77,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
 
     @Override
     public void run(SlingHttpServletRequest request, PostResponse response, SlingPostProcessor[] processors) {
-        logger.debug("Operation Publishinging draft version started");
+        logger.debug("Operation Publishing draft version started");
         long startTime = System.currentTimeMillis();
         super.run(request, response, processors);
         try {
@@ -105,7 +105,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
         }catch (RepositoryException ex){
             logger.error("An error has occured ", ex.getMessage());
         }
-        log.debug("Operation Publishinging draft version,  completed");
+        log.debug("Operation Publishing draft version,  completed");
         long elapseTime = System.currentTimeMillis() - startTime;
         log.debug("Total elapsed http request/response time in milliseconds: " + elapseTime);
     }

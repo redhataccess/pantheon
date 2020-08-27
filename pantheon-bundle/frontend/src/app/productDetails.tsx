@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {
     ActionGroup, Alert, AlertActionCloseButton, Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Level, LevelItem, List, ListItem,
-    Text, TextContent, TextVariants, TextInput
+    Text, TextContent, TextVariants, TextInput, InputGroup
 } from '@patternfly/react-core'
 import { Fields, JcrTypes, SlingTypes } from '@app/Constants'
 import { tsObjectKeyword } from '@babel/types';
@@ -13,7 +13,9 @@ export interface IProps {
 interface IState {
     allVersionNames: any[]
     failedPost: boolean
+    isMissingFields: boolean
     newVersion: string
+    urlFragment: string
 }
 
 class ProductDetails extends Component<IProps, IState> {
@@ -24,7 +26,9 @@ class ProductDetails extends Component<IProps, IState> {
         this.state = {
             allVersionNames: [],
             failedPost: false,
-            newVersion: ''
+            isMissingFields: false,
+            newVersion: '',
+            urlFragment: ''
         }
     }
 
@@ -61,30 +65,47 @@ class ProductDetails extends Component<IProps, IState> {
                 {this.state.allVersionNames.length !== 0 && (
                     <div className="app-container">
                         Versions:
-                    <List>
+                        <List>
                             {this.state.allVersionNames.map((version) =>
                                 <ListItem key={version}>{version}</ListItem>
                             )}
                         </List>
                     </div>)}
-                <div className="app-container" />
-                <div className="app-container">
+                <br />
+                <div>
                     <Form>
-                        <div className="app-container">
+                        <div className="pant-form-width-md">
+                            {this.state.isMissingFields &&
+                                <div className="notification-container">
+                                    <Alert variant="warning"
+                                        title="Fields indicated by * are mandatory"
+                                        actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                    />
+                                </div>
+                            }
                             <FormGroup
                                 label="New Version:"
+                                isRequired={true}
                                 fieldId="new_version_name"
                             >
                                 <TextInput id="new_version_name_text" type="text" placeholder="New version name" onChange={this.handleTextInputChange} value={this.state.newVersion} />
                             </FormGroup>
+                            <br />
+                            <FormGroup
+                                label=" Url Fragment:"
+                                isRequired={true}
+                                fieldId="url_fragment"
+                            >
+                                <TextInput id="url_fragment_text" type="text" placeholder="Url fragment" onChange={this.handleUrlInputChange} value={this.state.urlFragment} />
+                            </FormGroup>
                             {this.state.failedPost &&
                                 <div className="notification-container">
                                     <Alert
-                                    variant="danger"
-                                    title="Failed to create product version."
-                                    actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                        variant="danger"
+                                        title="Failed to create product version."
+                                        actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                     >
-                                    Please check if you are logged in as a publisher.
+                                        Please check if you are logged in as a publisher.
                                     </Alert>
                                 </div>
                             }
@@ -99,7 +120,7 @@ class ProductDetails extends Component<IProps, IState> {
     }
 
     private dismissNotification = () => {
-        this.setState({ failedPost: false })
+        this.setState({ failedPost: false, isMissingFields: false })
     }
 
     private fetchProductDetails = (versionNames) => {
@@ -145,26 +166,35 @@ class ProductDetails extends Component<IProps, IState> {
         this.setState({ newVersion })
     }
 
-    private saveVersion = () => {
-        const formData = new FormData()
-        formData.append(Fields.NAME, this.state.newVersion)
-        formData.append(Fields.SLING_RESOURCETYPE, SlingTypes.PRODUCT_VERSION)
-        formData.append(Fields.JCR_PRIMARYTYPE, JcrTypes.PRODUCT_VERSION)
+    private handleUrlInputChange = urlFragment => {
+        this.setState({ urlFragment })
+    }
 
-        const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
-        const encodedVersion = this.state.newVersion.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
-        fetch(encodeURI('/content/products/' + urlFragment + '/versions/' + encodedVersion), {
-            body: formData,
-            method: 'post',
-        }).then(response => {
-            if (response.status === 200 || response.status === 201) {
-                this.setState({ newVersion: '' })
-                this.fetchProductDetails(this.state.allVersionNames)
-            } else {
-                this.setState({ failedPost: true })
-                console.log('Version adding failure')
-            }
-        })
+    private saveVersion = () => {
+        if (this.state.newVersion === '' || this.state.urlFragment === '') {
+            this.setState({ isMissingFields: true })
+        } else {
+            const formData = new FormData()
+            formData.append(Fields.NAME, this.state.newVersion)
+            formData.append(Fields.SLING_RESOURCETYPE, SlingTypes.PRODUCT_VERSION)
+            formData.append(Fields.JCR_PRIMARYTYPE, JcrTypes.PRODUCT_VERSION)
+            formData.append(Fields.URL_FRAGMENT, this.state.urlFragment)
+
+            const productUrlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
+            const encodedVersion = this.state.newVersion.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
+            fetch(encodeURI('/content/products/' + productUrlFragment + '/versions/' + encodedVersion), {
+                body: formData,
+                method: 'post',
+            }).then(response => {
+                if (response.status === 200 || response.status === 201) {
+                    this.setState({ newVersion: '', urlFragment: '' })
+                    this.fetchProductDetails(this.state.allVersionNames)
+                } else {
+                    this.setState({ failedPost: true, isMissingFields: false })
+                    console.log('Version adding failure')
+                }
+            })
+        }
 
     }
 

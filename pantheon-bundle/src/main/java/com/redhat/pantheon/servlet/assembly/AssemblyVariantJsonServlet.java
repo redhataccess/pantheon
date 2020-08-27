@@ -5,9 +5,14 @@ import com.ibm.icu.util.ULocale;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.assembly.AssemblyContent;
 import com.redhat.pantheon.model.assembly.AssemblyMetadata;
 import com.redhat.pantheon.model.assembly.AssemblyVariant;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
+import com.redhat.pantheon.model.document.DocumentMetadata;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
 import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.servlet.util.SlingPathSuffix;
@@ -26,6 +31,7 @@ import javax.servlet.Servlet;
 import java.util.*;
 
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
+import static com.redhat.pantheon.servlet.util.ServletHelper.getResourceByUuid;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 @Component(
@@ -38,12 +44,15 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @SlingServletPaths(value = "/api/assembly/variant")
 public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
     public static final String PRODUCT_VERSION = "product_version";
+    public static final String VERSION_URL_FRAGMENT = "version_url_fragment";
     public static final String PRODUCT_NAME = "product_name";
-    public static final String PRODUCT_LINK = "product_link";
+    public static final String PRODUCT_URL_FRAGMENT = "product_url_fragment";
     public static final String VANITY_URL_FRAGMENT = "vanity_url_fragment";
     public static final String SEARCH_KEYWORDS = "search_keywords";
     public static final String VIEW_URI = "view_uri";
     public static final String PORTAL_URL = "PORTAL_URL";
+    public static final String PANTHEON_HOST = "PANTHEON_HOST";
+    public static final String MODULE_VARIANT_API_PATH = "/api/module/variant.json";
 
     private final Logger log = LoggerFactory.getLogger(AssemblyVariantJsonServlet.class);
 
@@ -74,16 +83,16 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                                                 @NotNull Resource resource) throws RepositoryException {
         AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
         Optional<AssemblyMetadata> releasedMetadata = traverseFrom(assemblyVariant)
-                    .toChild(AssemblyVariant::released)
-                    .toChild(AssemblyVersion::metadata)
-                    .getAsOptional();
+                .toChild(AssemblyVariant::released)
+                .toChild(AssemblyVersion::metadata)
+                .getAsOptional();
         Optional<FileResource> releasedContent = traverseFrom(assemblyVariant)
-                    .toChild(AssemblyVariant::released)
-                    .toChild(AssemblyVersion::cachedHtml)
-                    .getAsOptional();
+                .toChild(AssemblyVariant::released)
+                .toChild(AssemblyVersion::cachedHtml)
+                .getAsOptional();
         Optional<AssemblyVersion> releasedRevision = traverseFrom(assemblyVariant)
-                    .toChild(AssemblyVariant::released)
-                    .getAsOptional();
+                .toChild(AssemblyVariant::released)
+                .getAsOptional();
 
         Map<String, Object> variantMap = super.resourceToMap(request, resource);
         Map<String, Object> variantDetails = new HashMap<>();
@@ -134,25 +143,26 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
             Map<String, String> productMap = new HashMap<>();
             productList.add(productMap);
             productMap.put(PRODUCT_VERSION, pv.name().get());
+            String versionUrlFragment = pv.getValueMap().containsKey("urlFragment") ? pv.urlFragment().get() : "";
+            productMap.put(VERSION_URL_FRAGMENT, versionUrlFragment);
+            String productUrlFragment = pv.getProduct().getValueMap().containsKey("urlFragment") ? pv.getProduct().urlFragment().get() : "";
             productMap.put(PRODUCT_NAME, pv.getProduct().name().get());
-            productMap.put(PRODUCT_LINK, "https://www.redhat.com/productlinkplaceholder");
+            productMap.put(PRODUCT_URL_FRAGMENT, productUrlFragment);
         }
 
         // Process url_fragment from metadata
         String urlFragment = releasedMetadata.get().urlFragment().get() != null ? releasedMetadata.get().urlFragment().get() : "";
         if (!urlFragment.isEmpty()) {
             variantMap.put(VANITY_URL_FRAGMENT, urlFragment);
-        }
-        else {
+        } else {
             variantMap.put(VANITY_URL_FRAGMENT, "");
         }
 
         String searchKeywords = releasedMetadata.get().searchKeywords().get();
         if (searchKeywords != null && !searchKeywords.isEmpty()) {
             variantMap.put(SEARCH_KEYWORDS, searchKeywords.split(", *"));
-        }
-        else {
-            variantMap.put(SEARCH_KEYWORDS, new String[] {});
+        } else {
+            variantMap.put(SEARCH_KEYWORDS, new String[]{});
         }
 
         // Process view_uri
@@ -162,11 +172,39 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                     + ServletUtils.toLanguageTag(locale)
                     + "/" + variant_uuid;
             variantMap.put(VIEW_URI, view_uri);
-        }
-        else {
+        } else {
             variantMap.put(VIEW_URI, "");
         }
 
+        List<Map> moduleList = new ArrayList<>();
+        variantMap.put("modules_included", moduleList);
+
+        AssemblyContent assemblyContent = assemblyVariant.released().get().content().get();
+
+        for (Resource childResource : assemblyContent.getChildren()) {
+            Map<String, String> moduleMap = new HashMap<>();
+            moduleList.add(moduleMap);
+
+            String moduleVariantUuid = childResource.getValueMap().containsKey("pant:moduleVariantUuid") ? childResource.getValueMap().get("pant:moduleVariantUuid").toString() : "";
+            moduleMap.put("module_variant_uuid", moduleVariantUuid);
+            // use module_variant_uuid to retrieve module_title from the module
+            Resource resourceByUuid = getResourceByUuid(request, moduleVariantUuid);
+            ModuleVariant moduleVariant = resourceByUuid.adaptTo(ModuleVariant.class);
+            moduleMap.put("module_title", getModuleTitleFromUuid(moduleVariant));
+            moduleMap.put("module_uuid", getModuleUuidFromVariant(moduleVariant));
+            moduleMap.put("module_level_offset",
+                    childResource.getValueMap().containsKey("pant:leveloffset") ? childResource.getValueMap().get("pant:leveloffset").toString() : "");
+            // TODO: check if the module is published
+            if (moduleVariant.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {
+                String module_url = System.getenv(PANTHEON_HOST)
+                        + MODULE_VARIANT_API_PATH
+                        + "/"
+                        + moduleVariantUuid;
+                moduleMap.put("module_url", module_url);
+            } else {
+                moduleMap.put("module_url", "");
+            }
+        }
         // remove unnecessary fields from the map
         variantMap.remove("jcr:lastModified");
         variantMap.remove("jcr:lastModifiedBy");
@@ -181,19 +219,46 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         return variantDetails;
     }
 
-    private String sanitizeSuffix( String suffix) {
+    private String sanitizeSuffix(String suffix) {
         // b537ef3c-5c7d-4280-91ce-e7e818e6cc11&proxyHost=<SOMEHOST>&proxyPort=8080&throwExceptionOnFailure=false
 
-        if(suffix.contains("&")) {
+        if (suffix.contains("&")) {
             String[] parts = suffix.split("\\&");
             suffix = parts[0];
         }
 
-        if(suffix.contains("?")) {
+        if (suffix.contains("?")) {
             String[] parts = suffix.split("\\?");
             suffix = parts[0];
         }
 
         return suffix;
+    }
+
+    private String getModuleTitleFromUuid(ModuleVariant moduleVariant) {
+        String moduleTitle;
+        if (moduleVariant.hasDraft()) {
+            moduleTitle = moduleVariant.draft()
+                    .traverse()
+                    .toChild(ModuleVersion::metadata)
+                    .toField(DocumentMetadata::title)
+                    .get();
+        } else if (moduleVariant.released().isPresent()) {
+            moduleTitle = moduleVariant.released()
+                    .traverse()
+                    .toChild(ModuleVersion::metadata)
+                    .toField(DocumentMetadata::title)
+                    .get();
+        } else {
+            moduleTitle = "";
+        }
+
+        return moduleTitle;
+    }
+
+    private String getModuleUuidFromVariant(ModuleVariant moduleVariant) {
+        Resource resource = moduleVariant.getParentLocale().getParent();
+        Module module = resource.adaptTo(Module.class);
+        return module.uuid().get();
     }
 }

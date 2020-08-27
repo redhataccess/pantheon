@@ -5,9 +5,11 @@ import com.redhat.pantheon.helper.Symlinks;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.assembly.TableOfContents;
+import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.document.SourceContent;
+import com.redhat.pantheon.model.module.ModuleVariant;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.asciidoctor.ast.Document;
@@ -21,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
@@ -70,10 +73,15 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             // Included resource might be a plain file or another module
             if( includedResourceAsModel.field(JCR_PRIMARYTYPE, String.class).get().equals("pant:module") ) {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
-                toc.addEntry((String) attributes.get("leveloffset"), module);
+                ModuleVariant moduleVariant = traverseFrom(module)
+                        .toChild(m -> m.locale(DEFAULT_MODULE_LOCALE))
+                        .toChild(ModuleLocale::variants)
+                        .toChild(variants -> variants.variant(module.getWorkspace().getCanonicalVariantName()))
+                        .get();
+                toc.addEntry((String) attributes.get("leveloffset"),
+                        moduleVariant);
                 // TODO, right now only default locale and latest (draft) version of the module are used
-                content = traverseFrom(module)
-                        .toChild(module1 -> module.locale(GlobalConfig.DEFAULT_MODULE_LOCALE))
+                content = traverseFrom(moduleVariant.getParent().getParent())
                         .toChild(ModuleLocale::source)
                         .toChild(SourceContent::draft)
                         .toChild(FileResource::jcrContent)
@@ -81,10 +89,10 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                         .get();
                 content = new StringBuilder()
                         .append(":pantheon_module_id: ")
-                        .append(module.uuid().get())
+                        .append(moduleVariant.uuid().get())
                         .append("\r\n")
                         .append("[[_")
-                        .append(module.uuid().get())
+                        .append(moduleVariant.uuid().get())
                         .append("]]\r\n")
                         .append(content)
                         .append("\r\n")

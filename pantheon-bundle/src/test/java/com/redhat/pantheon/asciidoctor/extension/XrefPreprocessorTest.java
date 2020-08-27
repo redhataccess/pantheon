@@ -76,16 +76,16 @@ public class XrefPreprocessorTest {
     }
 
     /**
-     * It is unusual for a module to xref to itself, but this is a good approximation for an inter-assembly xref
+     * It is unusual for a moduleVariant to xref to itself, but this is a good approximation for an inter-assembly xref
      * which is easier to construct and test.
      */
     @Test
-    void moduleToSelf() {
+    void moduleVariantToSelf() {
         //Given
         slingContext.build()
                 .resource("/moduleB",
                         "jcr:uuid", "abcd1234",
-                        "sling:resourceType", "pantheon/module")
+                        "sling:resourceType", "pantheon/moduleVariant")
                 .resource("/moduleB/en_US/variants/test-atts",
                         "jcr:uuid", "efgh5678")
                 .commit();
@@ -95,7 +95,7 @@ public class XrefPreprocessorTest {
 
         ModuleVariant variant = slingContext.resourceResolver().getResource("/moduleB/en_US/variants/test-atts").adaptTo(ModuleVariant.class);
         TableOfContents toc = new TableOfContents();
-        toc.addEntry(null, variant.getParentLocale().getParent());
+        toc.addEntry(null, (ModuleVariant) variant.getParentLocale().getParent());
 
         //When
         XrefPreprocessor xp = new XrefPreprocessor(variant, toc);

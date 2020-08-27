@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Bullseye, Button, Alert, AlertActionCloseButton, Form, FormGroup, TextInput, ActionGroup } from '@patternfly/react-core'
 import '@app/app.css'
 import { Redirect } from 'react-router-dom'
+import { Fields } from './Constants'
 
 interface IState {
     failedPost: boolean
@@ -9,6 +10,7 @@ interface IState {
     isMissingFields: boolean
     productDescription: string
     productName: string
+    productUrlFragment: string
     redirect: boolean
 }
 
@@ -21,6 +23,7 @@ class Product extends Component<any, IState> {
             isMissingFields: false,
             productDescription: '',
             productName: '',
+            productUrlFragment: '',
             redirect: false
         }
 
@@ -38,7 +41,7 @@ class Product extends Component<any, IState> {
                                 {this.state.isMissingFields &&
                                     <div className="notification-container">
                                         <Alert  variant="warning"
-                                                title="A Product name is required."
+                                                title="Fields indicated by * are mandatory"
                                                 actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                         />
                                     </div>
@@ -66,6 +69,13 @@ class Product extends Component<any, IState> {
                                         isRequired={true}
                                         fieldId="product-name" >
                                     <TextInput isRequired={true} id="product-name" type="text" placeholder="Product Name" value={this.state.productName} onChange={this.handleNameInput} />
+                                </FormGroup>
+                                <br />
+                                <FormGroup
+                                        label="Product UrlFragment"
+                                        isRequired={true}
+                                        fieldId="product-url-fragment" >
+                                    <TextInput isRequired={true} id="product-url-fragment" type="text" placeholder="Url Fragment" value={this.state.productUrlFragment} onChange={this.handleUrlInput} />
                                 </FormGroup>
                                 <br />
                                 <FormGroup
@@ -97,8 +107,12 @@ class Product extends Component<any, IState> {
         // console.log("Desc " + productDescription)
     }
 
+    private handleUrlInput = productUrlFragment => {
+        this.setState({ productUrlFragment })
+    }
+
     private saveProduct = () => {
-        if (this.state.productName === '') {
+        if (this.state.productName === ''|| this.state.productUrlFragment === '') {
             this.setState({ isMissingFields: true })
         } else {
             this.productExist().then(exist => {
@@ -116,7 +130,7 @@ class Product extends Component<any, IState> {
                     formData.append("jcr:primaryType", 'pant:product')
                     // currently we don't translate products in Customer Portal.
                     formData.append("locale", "en-US")
-                    formData.append("url", urlFragment)
+                    formData.append(Fields.URL_FRAGMENT, this.state.productUrlFragment)
                     // fetch makes the request to create a new product.
                     // transfor productName to lower case and replace special chars with _.
                     fetch(encodeURI('/content/products/' + urlFragment), {

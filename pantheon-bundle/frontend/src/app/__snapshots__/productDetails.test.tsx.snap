@@ -39,24 +39,35 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
       <LevelItem />
     </Level>
   </div>
-  <div
-    className="app-container"
-  />
-  <div
-    className="app-container"
-  >
+  <br />
+  <div>
     <Form>
       <div
-        className="app-container"
+        className="pant-form-width-md"
       >
         <FormGroup
           fieldId="new_version_name"
+          isRequired={true}
           label="New Version:"
         >
           <ForwardRef
             id="new_version_name_text"
             onChange={[Function]}
             placeholder="New version name"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <FormGroup
+          fieldId="url_fragment"
+          isRequired={true}
+          label=" Url Fragment:"
+        >
+          <ForwardRef
+            id="url_fragment_text"
+            onChange={[Function]}
+            placeholder="Url fragment"
             type="text"
             value=""
           />

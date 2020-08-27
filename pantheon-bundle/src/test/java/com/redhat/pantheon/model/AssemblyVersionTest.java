@@ -6,6 +6,7 @@ import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.assembly.AssemblyPage;
 import com.redhat.pantheon.model.assembly.TableOfContents;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.workspace.Workspace;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -48,8 +49,8 @@ public class AssemblyVersionTest {
         Assembly assembly =
                 SlingModels.getModel(slingContext.resourceResolver().getResource("/content/assembly1"),
                         Assembly.class);
-        Module m1 = SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module1"), Module.class);
-        Module m2 = SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module2"), Module.class);
+        ModuleVariant m1 = SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module1"), ModuleVariant.class);
+        ModuleVariant m2 = SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module2"), ModuleVariant.class);
         String m1uuid = m1.uuid().get();
         String m2uuid = m2.uuid().get();
 
@@ -77,8 +78,8 @@ public class AssemblyVersionTest {
                 slingContext.resourceResolver().getResource("/content/assembly1/en_US/variants/DEFAULT/draft/content/1"),
                 AssemblyPage.class);
         assertEquals("+1", p1.leveloffset().get());
-        assertEquals(m1uuid, p1.module().get());
+        assertEquals(m1uuid, p1.moduleVariant().get());
         assertNull(p2.leveloffset().get());
-        assertEquals(m2uuid, p2.module().get());
+        assertEquals(m2uuid, p2.moduleVariant().get());
     }
 }
