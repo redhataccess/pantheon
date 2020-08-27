@@ -27,6 +27,10 @@
     <packaging>pom</packaging>
 
     <modules>
+        <!-- Adding the following as a short term workaround -->
+        <module>sling-org-apache-sling-karaf-features</module>
+        <module>sling-org-apache-sling-karaf-configs</module>
+        <!-- Pantheon modules-->
         <module>pantheon-bundle</module>
         <module>pantheon-karaf-feature</module>
         <module>pantheon-karaf-dist</module>
