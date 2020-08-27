@@ -1,0 +1,44 @@
+[id='identifying-module-types_{context}']
+= Identifying {ProductShortName} module types
+:pantheon-module-type: REFERENCE
+
+In Pantheon 2, each module must be identified by type: concept, procedure, or reference.
+
+Module types are described in https://redhat-documentation.github.io/modular-docs/#writing-mod-docs[Types of modules in Red Hat documentation].
+
+Identification is done by one or both of the following means:
+
+* An attribute after the module's title
+* Use of the correct prefix in the module's name
+
+    Use of an attribute (preferred method)::
+
+One of the following attributes should be entered in the line immediately following the module's title:
+
+* `:pantheon-module-type: CONCEPT`
+* `:pantheon-module-type: PROCEDURE`
+* `:pantheon-module-type: REFERENCE`
+
+====
+.Example:
+
+`= Identifying {ProductShortName} module types :pantheon-module-type: REFERENCE`
+
+====
+
+Module titles should start with the appropriate choice among the following
+
+* `con_`
+* `proc_`
+* `ref_`
+
+====
+.Example:
+
+`ref_identifying-module-types.adoc`
+
+====
+
+How Pantheon 2 checks identifiers::
+
+Pantheon 2 first checks for the module's attribute. Any value than those specified is ignored. If there is no valid attribute, Pantheon 2 then checks the module's prefix. If both a valid attribute and prefix exist, Pantheon 2 defaults to the attribute.
