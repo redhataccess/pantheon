@@ -83,7 +83,6 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                 int originalOffset = getInteger(documentLeveloffset);
                 String attributeLeveloffset = (String) attributes.remove(ADOC_LEVELOFFSET);
                 int effectiveOffset = getOffset(originalOffset, attributeLeveloffset);
-                toc.addEntry(effectiveOffset, module);
 
                 StringBuilder finalContent = new StringBuilder();
                 boolean isLeveloffsetRelevant = documentLeveloffset != null || attributeLeveloffset != null;
@@ -97,6 +96,8 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                 if (attributeLeveloffset != null) {
                     finalContent.append(":leveloffset: " + attributeLeveloffset).append("\r\n");
                 }
+                finalContent.append("pantheon-include:").append(toc.getEntries().size()).append("[]\r\n\r\n");
+                toc.addEntry(effectiveOffset, module);
 
                 finalContent.append(":pantheon_module_id: ")
                         .append(module.uuid().get())

@@ -30,6 +30,8 @@ import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
+import org.asciidoctor.ast.ContentNode;
+import org.asciidoctor.extension.InlineMacroProcessor;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -283,11 +285,28 @@ public class AsciidoctorService {
             String html = "";
             try {
                 // extensions needed to generate a module's html
-                SlingResourceIncludeProcessor includeProcessor = new SlingResourceIncludeProcessor(base);
+                final SlingResourceIncludeProcessor includeProcessor = new SlingResourceIncludeProcessor(base);
                 asciidoctor.javaExtensionRegistry().includeProcessor(includeProcessor);
 
                 asciidoctor.javaExtensionRegistry().preprocessor(
                         new XrefPreprocessor(documentVariant, includeProcessor.getTableOfContents()));
+
+                asciidoctor.javaExtensionRegistry().inlineMacro(new InlineMacroProcessor("pantheon-include") {
+
+                    @Override
+                    public Object process(ContentNode contentNode, String s, Map<String, Object> map) {
+                        System.out.println(s);
+                        int index = Integer.valueOf(s);
+                        String docLeveloffset = (String) contentNode.getDocument().getAttribute("leveloffset");
+                        System.out.println("doc leveloffset: " + docLeveloffset);
+                        int realOffset = 0;
+                        try {
+                            realOffset = Integer.valueOf(docLeveloffset);
+                        } catch (NumberFormatException e) {}
+                        includeProcessor.getTableOfContents().getEntries().get(index).setLevelOffset(realOffset);
+                        return "";
+                    }
+                });
 
                 asciidoctor.javaExtensionRegistry().postprocessor(
                         new HtmlModulePostprocessor(base));
