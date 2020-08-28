@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet.assembly;
 
+import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.assembly.AssemblyVariant;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -53,17 +54,17 @@ class AssemblyVariantJsonServletTest {
     void resourceToMap() throws Exception {
         // Given
         slingContext.build()
-                .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes",
-                        "jcr:primaryType", "pant:assembly")
-//                .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/source/draft/jcr:content",
-//                        "jcr:data", "The draft content\ninclude:")
+                .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT",
+                        "jcr:primaryType", "pant:assemblyVariant")
+                .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released",
+                        "jcr:primaryType", "pant:assemblyVersion")
                 .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description")
-                .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released/jcr:content",
-                        "jcr:data", "This is the source content")
                 .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released/cached_html/jcr:content",
                         "jcr:data", testHTML)
+                .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released/content/0",
+                        "jcr:moduleVariantUuid", "1234-5678-9012")
                 .commit();
 
         registerMockAdapter(AssemblyVariant.class, slingContext);
@@ -115,7 +116,6 @@ class AssemblyVariantJsonServletTest {
                 .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released/cached_html/jcr:content",
                         "jcr:data", testHTML)
                 .commit();
-
         registerMockAdapter(AssemblyVariant.class, slingContext);
         AssemblyVariantJsonServlet servlet = new AssemblyVariantJsonServlet();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT") );
