@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -43,7 +44,15 @@ public class XrefPreprocessor extends Preprocessor {
 
     @Override
     public void process(org.asciidoctor.ast.Document adocDocument, @NotNull PreprocessorReader reader) {
-        reader.restoreLines(preprocess(reader.readLines()));
+//        reader.restoreLines(preprocess(reader.readLines()));
+        String line;
+        List<String> lines = new LinkedList<>();
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+            lines.add(line);
+        }
+        lines = preprocess(lines);
+        reader.restoreLines(lines);
     }
 
     private String processLineWithPattern(String line, Pattern pattern) {
@@ -116,7 +125,8 @@ public class XrefPreprocessor extends Preprocessor {
 
         List<String> output = new ArrayList<>();
 
-        lines.stream().map(line -> processLineWithPattern(line, XREF_PATTERN))
+        lines.stream()
+                .map(line -> processLineWithPattern(line, XREF_PATTERN))
                 .map(line -> processLineWithPattern(line, TRIANGLE_PATTERN))
                 .forEach(output::add);
 

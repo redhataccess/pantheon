@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.redhat.pantheon.helper.PantheonConstants.ADOC_LEVELOFFSET;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
@@ -62,20 +63,12 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             includeResource = resolveWithSymlinks(fixedTarget, parent);
         }
 
-        System.out.println("----");
-        for (Map.Entry<String, Object> entry : document.getAttributes().entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
-
         if (includeResource != null) {
             SlingModel includedResourceAsModel = includeResource.adaptTo(SlingModel.class);
 
             // Included resource might be a plain file or another module
             if (includedResourceAsModel.field(JCR_PRIMARYTYPE, String.class).get().equals("pant:module")) {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
-
-                int finalOffset = getOffset(document, attributes);
-                toc.addEntry(finalOffset, module);
 
                 // TODO, right now only default locale and latest (draft) version of the module are used
                 content = traverseFrom(module)
@@ -85,8 +78,27 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                         .toChild(FileResource::jcrContent)
                         .toField(FileResource.JcrContent::jcrData)
                         .get();
-                content = new StringBuilder()
-                        .append(":pantheon_module_id: ")
+
+                String documentLeveloffset = (String) document.getAttribute(ADOC_LEVELOFFSET);
+                int originalOffset = getInteger(documentLeveloffset);
+                String attributeLeveloffset = (String) attributes.remove(ADOC_LEVELOFFSET);
+                int effectiveOffset = getOffset(originalOffset, attributeLeveloffset);
+                toc.addEntry(effectiveOffset, module);
+
+                StringBuilder finalContent = new StringBuilder();
+                boolean isLeveloffsetRelevant = documentLeveloffset != null || attributeLeveloffset != null;
+                finalContent.append(":pantheon-leveloffset: {leveloffset}\r\n");
+//                if (isLeveloffsetRelevant) {
+//                    finalContent.append(":leveloffset: ")
+//                            .append(effectiveOffset)
+//                            .append("\r\n");
+//                }
+
+                if (attributeLeveloffset != null) {
+                    finalContent.append(":leveloffset: " + attributeLeveloffset).append("\r\n");
+                }
+
+                finalContent.append(":pantheon_module_id: ")
                         .append(module.uuid().get())
                         .append("\r\n")
                         .append("[[_")
@@ -95,8 +107,19 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                         .append(content)
                         .append("\r\n")
                         .append(":!pantheon_module_id:")
-                        .append("\r\n")
-                        .toString();
+                        .append("\r\n");
+//                if (isLeveloffsetRelevant) {
+//                    if (originalOffset == 0) {
+//                        finalContent.append(":!leveloffset:");
+//                    } else {
+//                        finalContent.append(":leveloffset: ")
+//                                .append(originalOffset);
+//                    }
+//                    finalContent.append("\r\n");
+//                }
+                finalContent.append(":leveloffset: {pantheon-leveloffset}\r\n");
+
+                content = finalContent.toString();
             } else {
                 // It's a plain file
                 FileResource file = includedResourceAsModel.adaptTo(FileResource.class);
@@ -118,22 +141,18 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
         }
     }
 
-    private int getOffset(Document document, Map<String, Object> attributes) {
-        // Don't need to worry about relative vs absolute values here because asciidoctor evaluates that on our behalf
-        String docOffsetStr = (String) document.getAttribute("leveloffset");
-        System.out.println("Doc offset: " + docOffsetStr);
-        int docOffset = getInteger(docOffsetStr);
-
-        String offsetParam = (String) attributes.get("leveloffset");
-        if (offsetParam == null) {
-            return docOffset;
+    private int getOffset(int leveloffsetDocument, String leveloffsetAttribute) {
+        // Don't need to worry about relative vs absolute values for document level because asciidoctor evaluates that
+        // on our behalf
+        if (leveloffsetAttribute == null) {
+            return leveloffsetDocument;
         }
 
-        boolean relative = offsetParam.startsWith("+") || offsetParam.startsWith("-");
+        boolean relative = leveloffsetAttribute.startsWith("+") || leveloffsetAttribute.startsWith("-");
         if (relative) {
-            return docOffset + getInteger(offsetParam.substring(1));
+            return leveloffsetDocument + getInteger(leveloffsetAttribute.substring(1));
         } else {
-            return getInteger(offsetParam);
+            return getInteger(leveloffsetAttribute);
         }
     }
 
