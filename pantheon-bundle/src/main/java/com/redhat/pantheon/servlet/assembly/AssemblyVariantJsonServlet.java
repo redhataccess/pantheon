@@ -194,7 +194,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                     ModuleVariant moduleVariant = resourceByUuid.adaptTo(ModuleVariant.class);
                     moduleMap.put("module_title", getModuleTitleFromUuid(moduleVariant));
                     moduleMap.put("module_uuid", getModuleUuidFromVariant(moduleVariant));
-                    // TODO: check if the module is published
+                    // check if the module is published
                     if (moduleVariant.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {
                         String module_url = System.getenv(PANTHEON_HOST)
                                 + MODULE_VARIANT_API_PATH
