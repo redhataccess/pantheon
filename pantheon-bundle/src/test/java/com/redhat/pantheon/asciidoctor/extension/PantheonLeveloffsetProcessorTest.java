@@ -13,7 +13,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-public class PantheonIncludeProcessorTest {
+public class PantheonLeveloffsetProcessorTest {
 
     @Test
     public void process() {
@@ -27,7 +27,7 @@ public class PantheonIncludeProcessorTest {
         lenient().when(doc.getAttribute(PantheonConstants.ADOC_LEVELOFFSET)).thenReturn("2");
 
         // When
-        PantheonIncludeProcessor proc = new PantheonIncludeProcessor(toc);
+        PantheonLeveloffsetProcessor proc = new PantheonLeveloffsetProcessor(toc);
         proc.process(node, "0", null);
 
         // Then

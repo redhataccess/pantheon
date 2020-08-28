@@ -2,7 +2,7 @@ package com.redhat.pantheon.asciidoctor;
 
 import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
-import com.redhat.pantheon.asciidoctor.extension.PantheonIncludeProcessor;
+import com.redhat.pantheon.asciidoctor.extension.PantheonLeveloffsetProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.XrefPreprocessor;
 import com.redhat.pantheon.conf.GlobalConfig;
@@ -32,8 +32,6 @@ import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
-import org.asciidoctor.ast.ContentNode;
-import org.asciidoctor.extension.InlineMacroProcessor;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -296,7 +294,7 @@ public class AsciidoctorService {
                         new XrefPreprocessor(documentVariant, tableOfContents));
 
                 asciidoctor.javaExtensionRegistry().inlineMacro(MACRO_INCLUDE,
-                        new PantheonIncludeProcessor(tableOfContents));
+                        new PantheonLeveloffsetProcessor(tableOfContents));
 
                 asciidoctor.javaExtensionRegistry().postprocessor(
                         new HtmlModulePostprocessor(base));

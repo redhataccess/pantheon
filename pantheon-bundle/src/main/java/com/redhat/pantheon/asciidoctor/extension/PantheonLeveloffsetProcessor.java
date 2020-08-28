@@ -12,11 +12,11 @@ import java.util.Map;
  * preprocessor is involved with the process, so this is part of the necessary mechanism to extract that information
  * at a later stage in the build process than we would otherwise have to.
  */
-public class PantheonIncludeProcessor extends InlineMacroProcessor {
+public class PantheonLeveloffsetProcessor extends InlineMacroProcessor {
 
     private TableOfContents toc;
 
-    public PantheonIncludeProcessor(TableOfContents toc) {
+    public PantheonLeveloffsetProcessor(TableOfContents toc) {
         this.toc = toc;
     }
 

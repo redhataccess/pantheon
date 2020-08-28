@@ -89,16 +89,16 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                 // bug.
                 String attributeLeveloffset = (String) attributes.remove(ADOC_LEVELOFFSET);
 
-                StringBuilder finalContent = new StringBuilder();
-                finalContent.append(":pantheon-leveloffset: {leveloffset}\r\n");
+                StringBuilder contentBuilder = new StringBuilder();
+                contentBuilder.append(":pantheon-leveloffset: {leveloffset}\r\n");
 
                 if (attributeLeveloffset != null) {
-                    finalContent.append(":leveloffset: ").append(attributeLeveloffset).append("\r\n");
+                    contentBuilder.append(":leveloffset: ").append(attributeLeveloffset).append("\r\n");
                 }
-                finalContent.append(MACRO_INCLUDE).append(":").append(toc.getEntries().size()).append("[]\r\n\r\n");
+                contentBuilder.append(MACRO_INCLUDE).append(":").append(toc.getEntries().size()).append("[]\r\n\r\n");
                 toc.addEntry(0, module); // Initial value of leveloffset does not matter
 
-                finalContent.append(":pantheon_module_id: ")
+                contentBuilder.append(":pantheon_module_id: ")
                         .append(module.uuid().get())
                         .append("\r\n")
                         .append("[[_")
@@ -108,10 +108,10 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                         .append("\r\n")
                         .append(":!pantheon_module_id:")
                         .append("\r\n");
-                finalContent.append(":leveloffset: {pantheon-leveloffset}\r\n");
-                finalContent.append(":!pantheon-leveloffset:\r\n");
+                contentBuilder.append(":leveloffset: {pantheon-leveloffset}\r\n");
+                contentBuilder.append(":!pantheon-leveloffset:\r\n");
 
-                content = finalContent.toString();
+                content = contentBuilder.toString();
             } else {
                 // It's a plain file
                 FileResource file = includedResourceAsModel.adaptTo(FileResource.class);
