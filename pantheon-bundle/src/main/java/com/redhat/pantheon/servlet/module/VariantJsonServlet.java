@@ -112,7 +112,9 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         String variant_uuid = (String) variantMap.remove("jcr:uuid");
         variantMap.put("variant_uuid", variant_uuid);
         // TODO: remove module_uuid after Hydra team releases UNIFIED-6570
+        // TODO: This is deprecated, but left for backwards compatibility
         variantMap.put("module_uuid", variant_uuid);
+        variantMap.put("uuid", variant_uuid);
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         variantMap.put("date_modified", dateModified.toInstant().toString());

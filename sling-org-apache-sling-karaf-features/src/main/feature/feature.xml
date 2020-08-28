@@ -1,0 +1,699 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<features name="sling-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.5.0">
+  <!-- Apache Sling -->
+  <feature name="sling" version="${project.version}">
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_resourceresolver">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_resourceresolver</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.api/2.22.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.auth.core/1.4.4</bundle>
+    <!-- next engine 2.6.22 has new requirements, FIX PAXWEB-1251 -->
+    <bundle>mvn:org.apache.sling/org.apache.sling.engine/2.6.20</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.resourceresolver/1.6.16</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.serviceusermapper/1.4.6</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.settings/1.3.10</bundle>
+    <!-- Apache Sling Commons -->
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.johnzon/1.2.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.mime/2.2.2</bundle>
+    <!-- dependencies -->
+    <feature>config</feature>
+    <feature>eventadmin</feature>
+    <feature>scr</feature>
+    <feature>management</feature>
+    <feature>http</feature>
+    <feature>http-whiteboard</feature>
+    <feature version="${project.version}">sling-commons-fsclassloader</feature>
+    <feature version="${project.version}">sling-commons-osgi</feature>
+    <feature version="${project.version}">sling-commons-scheduler</feature>
+    <feature version="${project.version}">sling-commons-threads</feature>
+    <bundle dependency="true">mvn:commons-codec/commons-codec/1.14</bundle>
+    <bundle dependency="true">mvn:commons-collections/commons-collections/3.2.2</bundle>
+    <bundle dependency="true">mvn:commons-fileupload/commons-fileupload/1.4</bundle>
+    <bundle dependency="true">mvn:commons-io/commons-io/2.6</bundle>
+    <bundle dependency="true">mvn:commons-lang/commons-lang/2.6</bundle>
+    <bundle dependency="true">mvn:org.apache.commons/commons-collections4/4.4</bundle>
+    <bundle dependency="true">mvn:org.apache.commons/commons-lang3/3.10</bundle>
+    <bundle dependency="true">mvn:org.apache.commons/commons-math/2.2</bundle>
+    <bundle dependency="true">mvn:org.apache.felix/org.apache.felix.converter/1.0.12</bundle>
+  </feature>
+  <!-- Apache Sling Auth -->
+  <feature name="sling-auth-form" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.auth.form/1.0.16</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <bundle dependency="true">mvn:javax.jcr/jcr/2.0</bundle>
+  </feature>
+  <!-- Apache Sling Commons -->
+  <feature name="sling-commons-clam" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.clam/2.0.0</bundle>
+    <!-- dependencies -->
+    <feature>scr</feature>
+    <bundle dependency="true">mvn:commons-io/commons-io/2.6</bundle>
+  </feature>
+  <feature name="sling-commons-compiler" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.compiler/2.3.6</bundle>
+    <!-- dependencies -->
+    <feature>scr</feature>
+    <feature version="${project.version}">sling-commons-classloader</feature>
+  </feature>
+  <feature name="sling-commons-classloader" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.classloader/1.4.4</bundle>
+  </feature>
+  <feature name="sling-commons-crypto" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.crypto/1.0.0</bundle>
+    <!-- dependencies -->
+    <feature>scr</feature>
+    <bundle dependency="true">mvn:org.apache.commons/commons-lang3/3.10</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jasypt/1.9.3_1</bundle>
+  </feature>
+  <feature name="sling-commons-fsclassloader" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.fsclassloader/1.0.12</bundle>
+    <!-- dependencies -->
+    <feature>scr</feature>
+    <feature>webconsole</feature>
+    <feature version="${project.version}">sling-commons-classloader</feature>
+    <feature version="${project.version}">sling-commons-osgi</feature>
+    <bundle dependency="true">mvn:commons-io/commons-io/2.6</bundle>
+    <bundle dependency="true">mvn:org.apache.commons/commons-lang3/3.10</bundle>
+  </feature>
+  <feature name="sling-commons-html" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.html/1.1.0</bundle>
+    <!-- dependencies -->
+    <feature>scr</feature>
+    <feature version="${project.version}">sling-commons-osgi</feature>
+  </feature>
+  <feature name="sling-commons-messaging" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.messaging/1.0.0</bundle>
+  </feature>
+  <feature name="sling-commons-messaging-mail" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.messaging.mail/1.0.0</bundle>
+    <!-- dependencies -->
+    <feature>scr</feature>
+    <feature version="${project.version}">sling-commons-crypto</feature>
+    <feature version="${project.version}">sling-commons-messaging</feature>
+    <feature version="${project.version}">sling-commons-threads</feature>
+    <bundle dependency="true">mvn:com.sun.mail/jakarta.mail/1.6.5</bundle>
+    <bundle dependency="true">mvn:jakarta.mail/jakarta.mail-api/1.6.5</bundle>
+    <bundle dependency="true">mvn:org.apache.commons/commons-lang3/3.10</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/2.9.0</bundle>
+  </feature>
+  <feature name="sling-commons-metrics" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.metrics/1.2.8</bundle>
+    <!-- dependencies -->
+    <feature>scr</feature>
+    <bundle dependency="true">mvn:io.dropwizard.metrics/metrics-core/3.2.6</bundle>
+  </feature>
+  <feature name="sling-commons-osgi" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.osgi/2.4.0</bundle>
+    <feature>eventadmin</feature>
+  </feature>
+  <feature name="sling-commons-scheduler" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.scheduler/2.7.6</bundle>
+    <!-- dependencies -->
+    <feature>scr</feature>
+    <feature version="${project.version}">sling-commons-metrics</feature>
+    <feature version="${project.version}">sling-commons-threads</feature>
+    <bundle dependency="true">mvn:javax.servlet/javax.servlet-api/3.1.0</bundle>
+    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+  </feature>
+  <feature name="sling-commons-threads" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.commons.threads/3.2.20</bundle>
+    <!-- dependencies -->
+    <feature>config</feature>
+    <feature version="${project.version}">sling-commons-metrics</feature>
+  </feature>
+  <!-- Apache Sling Extensions -->
+  <feature name="sling-adapter" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.adapter/2.1.10</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+  </feature>
+  <feature name="sling-bundleresource" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.bundleresource.impl/2.3.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+  </feature>
+  <feature name="sling-caconfig" version="${project.version}">
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_caconfig">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_caconfig</config>
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_caconfig">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_caconfig</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.caconfig.api/1.2.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.caconfig.impl/1.5.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.caconfig.spi/1.3.4</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-scripting</feature>
+    <feature version="${project.version}">sling-xss</feature>
+    <feature>webconsole</feature>
+  </feature>
+  <feature name="sling-clam" version="${project.version}">
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_clam">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_clam</config>
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_clam">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_clam</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.clam/1.1.0</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-commons-clam</feature>
+    <feature version="${project.version}">sling-event</feature>
+    <feature version="${project.version}">sling-jcr</feature>
+  </feature>
+  <feature name="sling-discovery" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.discovery.api/1.0.4</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.discovery.support/1.0.4</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+  </feature>
+  <feature name="sling-discovery-oak" version="${project.version}">
+    <config external="true" name="org.apache.sling.jcr.base.internal.LoginAdminWhitelist.fragment-sling_discovery">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.base.internal.LoginAdminWhitelist.fragment-sling_discovery</config>
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_discovery">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_discovery</config>
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_discovery">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_discovery</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.discovery.base/2.0.8</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.discovery.commons/1.0.20</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.discovery.oak/1.2.28</bundle>
+    <!-- dependencies -->
+    <feature>webconsole</feature>
+    <feature version="${project.version}">sling-discovery</feature>
+    <feature version="${project.version}">sling-healthcheck</feature>
+    <feature version="${project.version}">httpcomponents-client</feature>
+    <bundle dependency="true">mvn:javax.jcr/jcr/2.0</bundle>
+  </feature>
+  <feature name="sling-discovery-standalone" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.discovery.standalone/1.0.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling-discovery</feature>
+  </feature>
+  <feature name="sling-distribution" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.distribution.api/0.4.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.distribution.core/0.4.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-jcr</feature>
+    <feature version="${project.version}">sling-event</feature>
+    <feature version="${project.version}">sling-healthcheck</feature>
+    <feature version="${project.version}">httpcomponents-client</feature>
+    <feature version="${project.version}">jackrabbit-vault</feature>
+  </feature>
+  <feature name="sling-event" version="${project.version}">
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_event">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_event</config>
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_event">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_event</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.event/4.2.12</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.event.dea/1.1.4</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-discovery</feature>
+    <bundle dependency="true">mvn:org.apache.felix/org.apache.felix.inventory/1.0.6</bundle>
+  </feature>
+  <feature name="sling-featureflags" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.featureflags/1.2.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+  </feature>
+  <feature name="sling-fsresource" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.fsresource/2.1.16</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">jackrabbit-vault</feature>
+    <bundle dependency="true">mvn:javax.jcr/jcr/2.0</bundle>
+    <bundle dependency="true">mvn:com.google.guava/guava/15.0</bundle>
+    <bundle dependency="true">mvn:org.apache.jackrabbit/oak-jackrabbit-api/1.26.0</bundle>
+    <bundle dependency="true">mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/2.20.0</bundle>
+  </feature>
+  <feature name="sling-healthcheck" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.hc.api/1.0.4</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.hc.support/1.0.6</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">felix-healthcheck</feature>
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-jcr</feature>
+    <feature version="${project.version}">sling-scripting</feature>
+  </feature>
+  <feature name="sling-i18n" version="${project.version}">
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_i18n">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_i18n</config>
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_i18n">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_i18n</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.i18n/2.5.14</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+  </feature>
+  <feature name="sling-jmx-provider" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.jmx.provider/1.0.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+  </feature>
+  <feature name="sling-models" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.models.api/1.3.8</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.models.impl/1.4.12</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-adapter</feature>
+    <feature version="${project.version}">sling-scripting</feature>
+  </feature>
+  <feature name="sling-models-jacksonexporter" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.models.jacksonexporter/1.0.8</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling-models</feature>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-annotations/2.10.3</bundle>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-core/2.10.3</bundle>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-databind/2.10.3</bundle>
+  </feature>
+  <feature name="sling-pipes" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.pipes/3.1.0</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">jackrabbit</feature>
+    <feature version="${project.version}">jackrabbit-vault</feature>
+    <feature version="${project.version}">sling-event</feature>
+    <feature version="${project.version}">sling-models</feature>
+    <feature version="${project.version}">sling-query</feature>
+    <bundle dependency="true">mvn:org.apache.geronimo.bundles/commons-httpclient/3.1_2</bundle>
+  </feature>
+  <feature name="sling-query" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.query/4.0.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <bundle dependency="true">mvn:javax.jcr/jcr/2.0</bundle>
+  </feature>
+  <feature name="sling-resource-inventory" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.resource.inventory/1.0.8</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <bundle dependency="true">mvn:org.apache.felix/org.apache.felix.inventory/1.0.6</bundle>
+  </feature>
+  <feature name="sling-resource-presence" version="${project.version}">
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_resource_presence">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_resource_presence</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.resource.presence/0.0.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+  </feature>
+  <feature name="sling-resourcemerger" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.resourcemerger/1.3.10</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+  </feature>
+  <feature name="sling-rewriter" version="${project.version}">
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_rewriter">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_rewriter</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.rewriter/1.2.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-commons-html</feature>
+  </feature>
+  <feature name="sling-security" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.security/1.1.12</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+  </feature>
+  <feature name="sling-urlrewriter" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.urlrewriter/0.0.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.urlrewritefilter/4.0.4_1</bundle>
+  </feature>
+  <feature name="sling-validation" version="${project.version}">
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_validation">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_validation</config>
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_validation">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_validation</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.validation.api/1.0.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.validation.core/1.0.4</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-i18n</feature>
+    <feature version="${project.version}">sling-servlets</feature>
+  </feature>
+  <feature name="sling-xss" version="${project.version}">
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_xss">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_xss</config>
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_xss">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_xss</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.xss/2.2.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">httpcomponents-client</feature>
+  </feature>
+  <!-- Apache Sling Installer -->
+  <feature name="sling-installer" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.installer.console/1.1.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.installer.core/3.11.0</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+  </feature>
+  <feature name="sling-installer-factory-configuration" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.installer.factory.configuration/1.3.0</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling-installer</feature>
+  </feature>
+  <feature name="sling-installer-factory-packages" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.installer.factory.packages/1.0.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling-installer</feature>
+    <feature version="${project.version}">sling-jcr</feature>
+    <feature version="${project.version}">jackrabbit-vault</feature>
+  </feature>
+  <feature name="sling-installer-healthcheck" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.installer.hc/2.0.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling-installer</feature>
+    <feature version="${project.version}">sling-healthcheck</feature>
+  </feature>
+  <feature name="sling-installer-provider-file" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.installer.provider.file/1.2.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling-installer</feature>
+  </feature>
+  <feature name="sling-installer-provider-jcr" version="${project.version}">
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_installer_jcr">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_installer_jcr</config>
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_installer_jcr">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_installer_jcr</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.installer.provider.jcr/3.2.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling-installer</feature>
+    <feature version="${project.version}">sling-jcr</feature>
+  </feature>
+  <!-- Apache Sling JCR -->
+  <feature name="sling-jcr" version="${project.version}">
+    <config external="true" name="org.apache.sling.jcr.base.internal.LoginAdminWhitelist.fragment-sling_jcr">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.base.internal.LoginAdminWhitelist.fragment-sling_jcr</config>
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_jcr_resource">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_jcr_resource</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.api/2.4.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.base/3.1.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.contentloader/2.3.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.davex/1.3.10</bundle>
+    <!-- (not using org.apache.sling.jcr.jcr-wrapper) -->
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.resource/3.0.20</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.webconsole/1.0.2</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.webdav/2.3.8</bundle>
+    <!-- dependencies -->
+    <feature>webconsole</feature>
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">jackrabbit</feature>
+    <feature version="${project.version}">jackrabbit-oak</feature>
+    <feature version="${project.version}">tika</feature>
+  </feature>
+  <feature name="sling-jcr-compiler" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.compiler/2.1.0</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-jcr</feature>
+    <feature version="${project.version}">sling-commons-compiler</feature>
+  </feature>
+  <feature name="sling-jcr-jackrabbit-security" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.jackrabbit.accessmanager/3.0.4</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.jackrabbit.usermanager/2.2.8</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling-jcr</feature>
+    <feature version="${project.version}">sling-servlets</feature>
+  </feature>
+  <feature name="sling-jcr-repoinit" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.repoinit/1.1.24</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-jcr</feature>
+    <feature version="${project.version}">sling-jcr-jackrabbit-security</feature>
+    <bundle dependency="true">mvn:org.apache.sling/org.apache.sling.repoinit.parser/1.6.2</bundle>
+    <bundle dependency="true">mvn:org.apache.sling/org.apache.sling.provisioning.model/1.8.4</bundle>
+  </feature>
+  <!-- Apache Sling Quickstart -->
+  <feature name="sling-quickstart-oak" version="${project.version}"><!-- hidden="true" -->
+    <!-- Sling with Oak Repository and Felix Web Console -->
+    <!-- http://jackrabbit.apache.org/oak/docs/osgi_config.html -->
+    <config external="true" name="org.apache.felix.jaas.Configuration.factory-GuestLoginModule">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.felix.jaas.Configuration.factory-GuestLoginModule</config>
+    <config external="true" name="org.apache.felix.jaas.Configuration.factory-LoginModuleImpl">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.felix.jaas.Configuration.factory-LoginModuleImpl</config>
+    <config external="true" name="org.apache.felix.jaas.Configuration.factory-TokenLoginModule">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.felix.jaas.Configuration.factory-TokenLoginModule</config>
+    <config external="true" name="org.apache.felix.jaas.ConfigurationSpi">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.felix.jaas.ConfigurationSpi</config>
+    <config external="true" name="org.apache.jackrabbit.oak.security.authentication.AuthenticationConfigurationImpl">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.jackrabbit.oak.security.authentication.AuthenticationConfigurationImpl</config>
+    <config external="true" name="org.apache.jackrabbit.oak.security.user.UserConfigurationImpl">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.jackrabbit.oak.security.user.UserConfigurationImpl</config>
+    <config external="true" name="org.apache.jackrabbit.oak.security.user.RandomAuthorizableNodeName">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.jackrabbit.oak.security.user.RandomAuthorizableNodeName</config>
+    <config external="true" name="org.apache.jackrabbit.oak.spi.security.user.action.DefaultAuthorizableActionProvider">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.jackrabbit.oak.spi.security.user.action.DefaultAuthorizableActionProvider</config>
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling</config>
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_mapping">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_mapping</config>
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_readall">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_readall</config>
+    <!-- dependencies -->
+    <feature>webconsole</feature>
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-servlets</feature>
+    <!-- ... -->
+    <feature version="${project.version}">sling-jcr</feature>
+    <feature version="${project.version}">sling-jcr-repoinit</feature>
+    <feature version="${project.version}">sling-adapter</feature>
+    <feature version="${project.version}">sling-bundleresource</feature>
+    <feature version="${project.version}">sling-discovery-standalone</feature>
+    <feature version="${project.version}">sling-healthcheck</feature>
+    <bundle dependency="true">mvn:org.apache.felix/org.apache.felix.prefs/1.1.0</bundle>
+    <bundle>mvn:org.apache.felix/org.apache.felix.webconsole.plugins.memoryusage/1.0.10</bundle>
+    <bundle>mvn:org.apache.felix/org.apache.felix.webconsole.plugins.packageadmin/1.0.4</bundle>
+  </feature>
+  <feature name="sling-quickstart-oak-tar" version="${project.version}">
+    <config external="true" name="org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProviderService">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProviderService</config>
+    <config external="true" name="org.apache.jackrabbit.oak.segment.SegmentNodeStoreService">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.jackrabbit.oak.segment.SegmentNodeStoreService</config>
+    <feature version="${project.version}">sling-quickstart-oak</feature>
+    <bundle>mvn:org.apache.jackrabbit/oak-lucene/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-segment-tar/1.26.0</bundle>
+    <!-- OAK-7263 oak-lucene should not depend on oak-store-document -->
+    <bundle>mvn:org.apache.jackrabbit/oak-store-document/1.26.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.oak.server/1.2.4</bundle>
+    <!-- capabilities -->
+    <!-- OAK-7380 Add missing OSGi capabilities -->
+    <capability>
+      osgi.service;objectClass=org.apache.jackrabbit.oak.plugins.document.DocumentNodeStore,
+      osgi.service;objectClass=org.apache.jackrabbit.oak.segment.SegmentNodeStoreStatsMBean,
+      osgi.service;objectClass=org.apache.jackrabbit.oak.segment.SegmentStoreProvider,
+      osgi.service;objectClass=org.apache.jackrabbit.oak.spi.blob.BlobStore
+    </capability>
+  </feature>
+  <feature name="sling-quickstart-oak-mongo" version="${project.version}">
+    <config external="true" name="org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProviderService">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProviderService</config>
+    <config external="true" name="org.apache.jackrabbit.oak.plugins.document.DocumentNodeStoreService">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.jackrabbit.oak.plugins.document.DocumentNodeStoreService</config>
+    <feature version="${project.version}">sling-quickstart-oak</feature>
+    <bundle>mvn:org.apache.jackrabbit/oak-lucene/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-store-document/1.26.0</bundle>
+    <bundle>mvn:com.h2database/h2-mvstore/1.4.200</bundle>
+    <bundle>mvn:org.mongodb/mongo-java-driver/3.8.2</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.jcr.oak.server/1.2.4</bundle>
+    <!-- capabilities -->
+    <!-- OAK-7380 Add missing OSGi capabilities -->
+    <capability>
+      osgi.service;objectClass=org.apache.jackrabbit.oak.plugins.document.DocumentNodeStore,
+      osgi.service;objectClass=org.apache.jackrabbit.oak.spi.blob.BlobStore
+    </capability>
+  </feature>
+  <!-- Apache Sling Scripting -->
+  <feature name="sling-scripting" version="${project.version}">
+    <config external="true" name="org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_scripting">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-sling_scripting</config>
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_scripting">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_scripting</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.api/2.2.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.core/2.2.0</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature>webconsole</feature>
+  </feature>
+  <feature name="sling-scripting-freemarker" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.freemarker/1.0.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-adapter</feature>
+    <feature version="${project.version}">sling-scripting</feature>
+    <bundle dependency="true">mvn:org.freemarker/freemarker/2.3.30</bundle>
+  </feature>
+  <feature name="sling-scripting-groovy" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.groovy/1.2.0</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-scripting</feature>
+    <bundle dependency="true">mvn:org.codehaus.groovy/groovy/3.0.1</bundle>
+    <bundle dependency="true">mvn:org.codehaus.groovy/groovy-json/3.0.1</bundle>
+    <bundle dependency="true">mvn:org.codehaus.groovy/groovy-templates/3.0.1</bundle>
+  </feature>
+  <feature name="sling-scripting-java" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.java/2.1.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-scripting</feature>
+    <feature version="${project.version}">sling-commons-compiler</feature>
+  </feature>
+  <feature name="sling-scripting-javascript" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.javascript/3.1.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling-scripting</feature>
+    <bundle dependency="true">mvn:javax.jcr/jcr/2.0</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/1.7.12_1</bundle>
+  </feature>
+  <feature name="sling-scripting-jsp" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.jsp/2.4.2</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.jsp.taglib/2.4.0</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling-scripting</feature>
+    <feature version="${project.version}">sling-commons-compiler</feature>
+    <feature version="${project.version}">sling-caconfig</feature>
+  </feature>
+  <feature name="sling-scripting-htl" version="${project.version}">
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_scripting_htl">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_scripting_htl</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.sightly/1.3.2-1.4.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.sightly.compiler/1.2.4-1.4.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.sightly.compiler.java/1.1.4-1.4.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.sightly.js.provider/1.1.0</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.sightly.models.provider/1.0.10</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.sightly.runtime/1.2.0-1.4.0</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-jcr</feature>
+    <feature version="${project.version}">sling-scripting</feature>
+    <feature version="${project.version}">sling-scripting-javascript</feature>
+    <feature version="${project.version}">sling-i18n</feature>
+    <feature version="${project.version}">sling-models</feature>
+    <feature version="${project.version}">sling-xss</feature>
+    <feature version="${project.version}">sling-commons-compiler</feature>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/1.7.12_1</bundle>
+    <bundle dependency="true">mvn:org.antlr/antlr4-runtime/4.8-1</bundle>
+  </feature>
+  <feature name="sling-scripting-thymeleaf" version="${project.version}">
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_scripting_thymeleaf">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_scripting_thymeleaf</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.scripting.thymeleaf/2.0.2</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">thymeleaf</feature>
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-scripting</feature>
+    <feature version="${project.version}">sling-i18n</feature>
+  </feature>
+  <!-- Apache Sling Servlets -->
+  <feature name="sling-servlets" version="${project.version}">
+    <config external="true" name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_servlets">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-sling_servlets</config>
+    <bundle>mvn:org.apache.sling/org.apache.sling.servlets.get/2.1.40</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.servlets.post/2.3.36</bundle>
+    <bundle>mvn:org.apache.sling/org.apache.sling.servlets.resolver/2.6.4</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-scripting</feature>
+    <feature version="${project.version}">sling-xss</feature>
+  </feature>
+  <!-- Apache Sling Starter -->
+  <feature name="sling-starter-content" version="${project.version}">
+    <bundle>mvn:org.apache.sling/org.apache.sling.starter.content/1.0.8</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-auth-form</feature>
+    <feature version="${project.version}">sling-scripting-javascript</feature>
+    <feature version="${project.version}">composum-nodes</feature>
+  </feature>
+  <!-- Apache Felix Healthcheck -->
+  <feature name="felix-healthcheck" version="${project.version}">
+    <bundle>mvn:org.apache.felix/org.apache.felix.healthcheck.api/2.0.2</bundle>
+    <bundle>mvn:org.apache.felix/org.apache.felix.healthcheck.core/2.0.6</bundle>
+    <bundle>mvn:org.apache.felix/org.apache.felix.healthcheck.generalchecks/2.0.4</bundle>
+    <bundle>mvn:org.apache.felix/org.apache.felix.healthcheck.webconsoleplugin/2.0.0</bundle>
+    <!-- dependencies -->
+    <feature>scr</feature>
+    <feature>webconsole</feature>
+    <bundle dependency="true">mvn:org.apache.commons/commons-lang3/3.10</bundle>
+  </feature>
+  <!-- Apache HttpComponents Client -->
+  <feature name="httpcomponents-client" version="${project.version}">
+    <bundle>mvn:org.apache.httpcomponents/httpclient-osgi/4.5.12</bundle>
+    <!-- dependencies -->
+    <feature>config</feature>
+    <bundle dependency="true">mvn:org.apache.httpcomponents/httpcore-osgi/4.4.13</bundle>
+  </feature>
+  <!-- Apache Jackrabbit -->
+  <feature name="jackrabbit" version="${project.version}">
+    <bundle>mvn:org.apache.jackrabbit/oak-jackrabbit-api/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/jackrabbit-data/2.20.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/2.20.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/jackrabbit-jcr-rmi/2.20.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/jackrabbit-spi/2.20.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/jackrabbit-spi-commons/2.20.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/jackrabbit-webdav/2.20.0</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">httpcomponents-client</feature>
+    <bundle dependency="true">mvn:javax.jcr/jcr/2.0</bundle>
+    <bundle dependency="true">mvn:javax.servlet/javax.servlet-api/3.1.0</bundle>
+    <bundle dependency="true">mvn:commons-codec/commons-codec/1.14</bundle>
+    <bundle dependency="true">mvn:commons-collections/commons-collections/3.2.2</bundle>
+    <bundle dependency="true">mvn:commons-fileupload/commons-fileupload/1.4</bundle>
+    <bundle dependency="true">mvn:commons-io/commons-io/2.6</bundle>
+    <bundle dependency="true">mvn:commons-lang/commons-lang/2.6</bundle>
+    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-atinject_1.0_spec/1.1</bundle>
+    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-el_2.2_spec/1.1</bundle>
+    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-interceptor_1.1_spec/1.0</bundle>
+    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jcdi_1.0_spec/1.0</bundle>
+    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+  </feature>
+  <feature name="jackrabbit-oak" version="${project.version}">
+    <bundle>mvn:org.apache.jackrabbit/oak-api/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-blob/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-blob-plugins/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-commons/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-core/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-core-spi/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-jcr/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-query-spi/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-security-spi/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-store-composite/1.26.0</bundle>
+    <bundle>mvn:org.apache.jackrabbit/oak-store-spi/1.26.0</bundle>
+    <!-- dependencies -->
+    <feature>scr</feature>
+    <feature version="${project.version}">sling-commons-metrics</feature>
+    <feature version="${project.version}">sling-commons-threads</feature>
+    <feature version="${project.version}">jackrabbit</feature>
+    <feature version="${project.version}">tika</feature>
+    <bundle dependency="true">mvn:com.google.guava/guava/15.0</bundle>
+    <bundle>mvn:org.apache.felix/org.apache.felix.jaas/1.0.2</bundle>
+    <!-- capabilities -->
+    <!-- OAK-7380 Add missing OSGi capabilities -->
+    <capability>
+      osgi.service;objectClass=org.apache.jackrabbit.oak.api.jmx.CacheStatsMBean,
+      osgi.service;objectClass=org.apache.jackrabbit.oak.api.jmx.QueryEngineSettingsMBean,
+      osgi.service;objectClass=org.apache.jackrabbit.oak.spi.mount.MountInfoProvider,
+      osgi.service;objectClass=org.apache.jackrabbit.oak.spi.security.SecurityProvider,
+      osgi.service;objectClass=org.apache.jackrabbit.oak.spi.state.NodeStore,
+      osgi.service;objectClass=org.apache.jackrabbit.oak.spi.state.NodeStoreProvider,
+      osgi.service;objectClass=org.apache.jackrabbit.oak.stats.StatisticsProvider
+    </capability>
+  </feature>
+  <feature name="jackrabbit-vault" version="${project.version}">
+    <bundle>mvn:org.apache.jackrabbit.vault/org.apache.jackrabbit.vault/3.4.0</bundle>
+    <!-- dependencies -->
+    <feature>scr</feature>
+    <feature version="${project.version}">jackrabbit</feature>
+  </feature>
+  <!-- Apache Tika -->
+  <feature name="tika" version="${project.version}">
+    <bundle>mvn:org.apache.tika/tika-core/1.24</bundle>
+    <bundle>mvn:org.apache.tika/tika-parsers/1.24</bundle>
+    <bundle>mvn:org.apache.pdfbox/pdfbox/2.0.19</bundle>
+    <bundle>mvn:org.apache.pdfbox/fontbox/2.0.19</bundle>
+    <bundle>mvn:org.apache.pdfbox/jempbox/1.8.16</bundle>
+  </feature>
+  <!-- Apache Sling Samples -->
+  <!-- Composum -->
+  <feature name="composum-nodes" version="${project.version}">
+    <config external="true" name="org.apache.sling.jcr.base.internal.LoginAdminWhitelist.fragment-composum_nodes">mvn:org.apache.sling/org.apache.sling.karaf-configs/${project.version}/config/org.apache.sling.jcr.base.internal.LoginAdminWhitelist.fragment-composum_nodes</config>
+    <bundle>mvn:com.composum.sling.core/composum-sling-core-commons/1.12.1</bundle>
+    <bundle>mvn:com.composum.sling.core/composum-sling-core-config/1.12.1</bundle>
+    <bundle>mvn:com.composum.sling.core/composum-sling-core-console/1.12.1</bundle>
+    <bundle>mvn:com.composum.sling.core/composum-sling-core-jslibs/1.12.1</bundle>
+    <bundle>mvn:com.composum.sling.core/composum-sling-user-management/1.12.1</bundle>
+    <bundle>mvn:com.composum.sling.core/composum-sling-package-manager/1.12.1</bundle>
+    <!-- dependencies -->
+    <feature version="${project.version}">sling</feature>
+    <feature version="${project.version}">sling-i18n</feature>
+    <feature version="${project.version}">sling-jcr</feature>
+    <feature version="${project.version}">sling-scripting-jsp</feature>
+    <feature version="${project.version}">sling-servlets</feature>
+    <feature version="${project.version}">sling-event</feature>
+    <feature version="${project.version}">jackrabbit-vault</feature>
+  </feature>
+  <!-- Thymeleaf -->
+  <feature name="thymeleaf" version="${project.version}">
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.thymeleaf/3.0.11.RELEASE_1</bundle>
+    <bundle dependency="true">mvn:org.attoparser/attoparser/2.0.5.RELEASE</bundle>
+    <bundle dependency="true">mvn:org.unbescape/unbescape/1.1.6.RELEASE</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/3.2.1_1</bundle>
+    <bundle dependency="true">mvn:org.javassist/javassist/3.27.0-GA</bundle>
+  </feature>
+</features>

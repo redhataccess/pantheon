@@ -130,7 +130,7 @@ class Versions extends Component<IProps, IState> {
                 </Alert>
                 }
 
-                {this.state.unpublishAlertForModuleVisible && <Alert
+                {this.props.contentType === PantheonContentTypes.ASSEMBLY && this.state.unpublishAlertForModuleVisible && <Alert
                     variant='info'
                     title='Unpublishing assembly'
                     actionClose={<AlertActionCloseButton onClose={this.hideUppublishAlertForModule} />}

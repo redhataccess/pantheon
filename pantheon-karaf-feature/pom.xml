@@ -75,6 +75,7 @@
                 <updatePolicy>daily</updatePolicy>
             </snapshots>
         </repository>
+        <!-- Commented out for till long term plan is implemented -->
 <!--        <repository>-->
 <!--            <id>apache-snapshots</id>-->
 <!--            <name>Apache SNAPSHOT Repository</name>-->
