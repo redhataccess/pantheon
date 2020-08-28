@@ -2,6 +2,7 @@ package com.redhat.pantheon.asciidoctor;
 
 import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
+import com.redhat.pantheon.asciidoctor.extension.PantheonIncludeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.XrefPreprocessor;
 import com.redhat.pantheon.conf.GlobalConfig;
@@ -294,22 +295,8 @@ public class AsciidoctorService {
                 asciidoctor.javaExtensionRegistry().preprocessor(
                         new XrefPreprocessor(documentVariant, tableOfContents));
 
-                asciidoctor.javaExtensionRegistry().inlineMacro(new InlineMacroProcessor(MACRO_INCLUDE) {
-
-                    @Override
-                    public Object process(ContentNode contentNode, String s, Map<String, Object> map) {
-                        System.out.println(s);
-                        int index = Integer.valueOf(s);
-                        String docLeveloffset = (String) contentNode.getDocument().getAttribute("leveloffset");
-                        System.out.println("doc leveloffset: " + docLeveloffset);
-                        int realOffset = 0;
-                        try {
-                            realOffset = Integer.valueOf(docLeveloffset);
-                        } catch (NumberFormatException e) {}
-                        tableOfContents.getEntries().get(index).setLevelOffset(realOffset);
-                        return "";
-                    }
-                });
+                asciidoctor.javaExtensionRegistry().inlineMacro(
+                        new PantheonIncludeProcessor(tableOfContents));
 
                 asciidoctor.javaExtensionRegistry().postprocessor(
                         new HtmlModulePostprocessor(base));

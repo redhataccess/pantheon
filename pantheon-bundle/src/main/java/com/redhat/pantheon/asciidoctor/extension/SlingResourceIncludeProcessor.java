@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.redhat.pantheon.helper.PantheonConstants.ADOC_LEVELOFFSET;
+import static com.redhat.pantheon.helper.PantheonConstants.JCR_TYPE_MODULE;
 import static com.redhat.pantheon.helper.PantheonConstants.MACRO_INCLUDE;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -69,7 +70,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             SlingModel includedResourceAsModel = includeResource.adaptTo(SlingModel.class);
 
             // Included resource might be a plain file or another module
-            if (includedResourceAsModel.field(JCR_PRIMARYTYPE, String.class).get().equals("pant:module")) {
+            if (includedResourceAsModel.field(JCR_PRIMARYTYPE, String.class).get().equals(JCR_TYPE_MODULE)) {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
 
                 // TODO, right now only default locale and latest (draft) version of the module are used
