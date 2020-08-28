@@ -95,7 +95,7 @@ public class XrefPreprocessorTest {
 
         ModuleVariant variant = slingContext.resourceResolver().getResource("/moduleB/en_US/variants/test-atts").adaptTo(ModuleVariant.class);
         TableOfContents toc = new TableOfContents();
-        toc.addEntry(0, (ModuleVariant) variant.getParentLocale().getParent());
+        toc.addEntry(0, variant);
 
         //When
         XrefPreprocessor xp = new XrefPreprocessor(variant, toc);
@@ -104,7 +104,7 @@ public class XrefPreprocessorTest {
                 "<<moduleB,Link Label B2>>"));
 
         //Then
-        assertEquals("xref:#_abcd1234[Link Label B1]", output.get(0));
-        assertEquals("xref:#_abcd1234[Link Label B2]", output.get(1));
+        assertEquals("xref:moduleB[Link Label B1]", output.get(0));
+        assertEquals("<<moduleB,Link Label B2>>", output.get(1));
     }
 }

@@ -181,28 +181,30 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         AssemblyContent assemblyContent = assemblyVariant.released().get().content().get();
 
-        for (Resource childResource : assemblyContent.getChildren()) {
-            Map<String, String> moduleMap = new HashMap<>();
-            moduleList.add(moduleMap);
+        if (assemblyContent != null & assemblyContent.getChildren() != null) {
+            for (Resource childResource : assemblyContent.getChildren()) {
+                Map<String, String> moduleMap = new HashMap<>();
+                moduleList.add(moduleMap);
 
-            String moduleVariantUuid = childResource.getValueMap().containsKey("pant:moduleVariantUuid") ? childResource.getValueMap().get("pant:moduleVariantUuid").toString() : "";
-            moduleMap.put("module_variant_uuid", moduleVariantUuid);
-            // use module_variant_uuid to retrieve module_title from the module
-            Resource resourceByUuid = getResourceByUuid(request, moduleVariantUuid);
-            ModuleVariant moduleVariant = resourceByUuid.adaptTo(ModuleVariant.class);
-            moduleMap.put("module_title", getModuleTitleFromUuid(moduleVariant));
-            moduleMap.put("module_uuid", getModuleUuidFromVariant(moduleVariant));
-            moduleMap.put("module_level_offset",
-                    childResource.getValueMap().containsKey("pant:leveloffset") ? childResource.getValueMap().get("pant:leveloffset").toString() : "");
-            // TODO: check if the module is published
-            if (moduleVariant.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {
-                String module_url = System.getenv(PANTHEON_HOST)
-                        + MODULE_VARIANT_API_PATH
-                        + "/"
-                        + moduleVariantUuid;
-                moduleMap.put("module_url", module_url);
-            } else {
-                moduleMap.put("module_url", "");
+                String moduleVariantUuid = childResource.getValueMap().containsKey("pant:moduleVariantUuid") ? childResource.getValueMap().get("pant:moduleVariantUuid").toString() : "";
+                moduleMap.put("module_variant_uuid", moduleVariantUuid);
+                // use module_variant_uuid to retrieve module_title from the module
+                Resource resourceByUuid = getResourceByUuid(request, moduleVariantUuid);
+                ModuleVariant moduleVariant = resourceByUuid.adaptTo(ModuleVariant.class);
+                moduleMap.put("module_title", getModuleTitleFromUuid(moduleVariant));
+                moduleMap.put("module_uuid", getModuleUuidFromVariant(moduleVariant));
+                moduleMap.put("module_level_offset",
+                        childResource.getValueMap().containsKey("pant:leveloffset") ? childResource.getValueMap().get("pant:leveloffset").toString() : "");
+                // TODO: check if the module is published
+                if (moduleVariant.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {
+                    String module_url = System.getenv(PANTHEON_HOST)
+                            + MODULE_VARIANT_API_PATH
+                            + "/"
+                            + moduleVariantUuid;
+                    moduleMap.put("module_url", module_url);
+                } else {
+                    moduleMap.put("module_url", "");
+                }
             }
         }
         // remove unnecessary fields from the map

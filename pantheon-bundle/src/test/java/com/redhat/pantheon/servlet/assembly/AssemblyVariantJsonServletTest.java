@@ -55,6 +55,8 @@ class AssemblyVariantJsonServletTest {
         slingContext.build()
                 .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes",
                         "jcr:primaryType", "pant:assembly")
+//                .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/source/draft/jcr:content",
+//                        "jcr:data", "The draft content\ninclude:")
                 .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description")
@@ -92,6 +94,8 @@ class AssemblyVariantJsonServletTest {
         assertTrue(assemblyMap.containsKey("assembly_url_fragment"));
         assertTrue(assemblyMap.containsKey("revision_id"));
         assertTrue(assemblyMap.containsKey("context_url_fragment"));
+        assertTrue(assemblyMap.containsKey("uuid"));
+        assertTrue(assemblyMap.containsKey("modules_included"));
         assertEquals((map.get("message")), "Assembly Found");
         assertEquals((map.get("status")), SC_OK);
     }
