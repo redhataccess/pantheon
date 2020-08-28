@@ -82,15 +82,12 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                         .toField(FileResource.JcrContent::jcrData)
                         .get();
 
-                String documentLeveloffset = (String) document.getAttribute(ADOC_LEVELOFFSET);
-                int originalOffset = getInteger(documentLeveloffset);
                 // This next line is important - it fixes an asciidoctor glitch. If you have a preprocessor doing
                 // *anything at all* as part of your build, then a leveloffset brought in as an include parameter is
                 // injected directly as a document-wide attribute by asciidoctor. However, the logic that performs that
                 // is flawed. We have to remove the attribute from the map and handle it ourselves to work around the
                 // bug.
                 String attributeLeveloffset = (String) attributes.remove(ADOC_LEVELOFFSET);
-                int effectiveOffset = getOffset(originalOffset, attributeLeveloffset);
 
                 StringBuilder finalContent = new StringBuilder();
                 finalContent.append(":pantheon-leveloffset: {leveloffset}\r\n");
@@ -99,7 +96,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                     finalContent.append(":leveloffset: ").append(attributeLeveloffset).append("\r\n");
                 }
                 finalContent.append(MACRO_INCLUDE).append(":").append(toc.getEntries().size()).append("[]\r\n\r\n");
-                toc.addEntry(effectiveOffset, module);
+                toc.addEntry(0, module); // Initial value of leveloffset does not matter
 
                 finalContent.append(":pantheon_module_id: ")
                         .append(module.uuid().get())
@@ -126,29 +123,6 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
         }
 
         reader.push_include(content, target, target, 1, attributes);
-    }
-
-    private int getInteger(String str) {
-        try {
-            return Optional.ofNullable(str).map(s -> Integer.parseInt(s)).orElse(0);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
-    }
-
-    private int getOffset(int leveloffsetDocument, String leveloffsetAttribute) {
-        // Don't need to worry about relative vs absolute values for document level because asciidoctor evaluates that
-        // on our behalf
-        if (leveloffsetAttribute == null) {
-            return leveloffsetDocument;
-        }
-
-        boolean relative = leveloffsetAttribute.startsWith("+") || leveloffsetAttribute.startsWith("-");
-        if (relative) {
-            return leveloffsetDocument + getInteger(leveloffsetAttribute.substring(1));
-        } else {
-            return getInteger(leveloffsetAttribute);
-        }
     }
 
     private Resource resolveWithSymlinks(String path, Resource pathParent) {

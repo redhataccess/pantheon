@@ -287,7 +287,7 @@ public class AsciidoctorService {
             Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
             String html = "";
             try {
-                final TableOfContents tableOfContents = new TableOfContents();
+                TableOfContents tableOfContents = new TableOfContents();
                 // extensions needed to generate a module's html
                 asciidoctor.javaExtensionRegistry().includeProcessor(
                         new SlingResourceIncludeProcessor(base, tableOfContents));
