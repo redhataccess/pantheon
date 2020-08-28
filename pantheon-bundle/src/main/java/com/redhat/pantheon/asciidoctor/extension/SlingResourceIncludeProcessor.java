@@ -80,12 +80,14 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                 toc.addEntry(finalOffset, moduleVariant);
 
                 // TODO, right now only default locale and latest (draft) version of the module are used
-                content = traverseFrom(moduleVariant.getParent().getParent())
-                        .toChild(ModuleLocale::source)
-                        .toChild(SourceContent::draft)
-                        .toChild(FileResource::jcrContent)
-                        .toField(FileResource.JcrContent::jcrData)
-                        .get();
+                content = String.valueOf(moduleVariant.getParent()
+                        .getParent()
+                        .source()
+                        .getOrCreate()
+                        .draft()
+                        .getOrCreate()
+                        .jcrContent()
+                        .get());
                 content = new StringBuilder()
                         .append(":pantheon_module_id: ")
                         .append(moduleVariant.uuid().get())
