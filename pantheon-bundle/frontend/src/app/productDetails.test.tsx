@@ -91,6 +91,12 @@ describe('ProductDetails tests', () => {
     // expect(inst.handleTextInputChange("1.1")).toMatchSnapshot()
   })
 
+  it('test handleUrlInputChange function', () => {
+    const wrapper = renderer.create(<ProductDetails {...props} />)
+    const inst = wrapper.getInstance()
+    expect(inst.handleUrlInputChange()).toMatchSnapshot()
+  })
+
   it('test saveVersion function', () => {
     const wrapper = renderer.create(<ProductDetails {...props} />)
     const inst = wrapper.getInstance()
