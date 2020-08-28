@@ -9,7 +9,7 @@ import javax.jcr.Session;
 
 public class ServletHelper {
 
-    private ServletHelper() {}
+    public ServletHelper() {}
 
     /**
      * Returns a Resource given uuid
