@@ -13,6 +13,7 @@ import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.util.ResourceTraversal;
 import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
+import com.redhat.pantheon.model.assembly.TableOfContents;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.document.DocumentMetadata;
@@ -47,6 +48,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.redhat.pantheon.helper.PantheonConstants.MACRO_INCLUDE;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static java.util.stream.Collectors.toMap;
 
@@ -284,14 +286,15 @@ public class AsciidoctorService {
             Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
             String html = "";
             try {
+                final TableOfContents tableOfContents = new TableOfContents();
                 // extensions needed to generate a module's html
-                final SlingResourceIncludeProcessor includeProcessor = new SlingResourceIncludeProcessor(base);
-                asciidoctor.javaExtensionRegistry().includeProcessor(includeProcessor);
+                asciidoctor.javaExtensionRegistry().includeProcessor(
+                        new SlingResourceIncludeProcessor(base, tableOfContents));
 
                 asciidoctor.javaExtensionRegistry().preprocessor(
-                        new XrefPreprocessor(documentVariant, includeProcessor.getTableOfContents()));
+                        new XrefPreprocessor(documentVariant, tableOfContents));
 
-                asciidoctor.javaExtensionRegistry().inlineMacro(new InlineMacroProcessor("pantheon-include") {
+                asciidoctor.javaExtensionRegistry().inlineMacro(new InlineMacroProcessor(MACRO_INCLUDE) {
 
                     @Override
                     public Object process(ContentNode contentNode, String s, Map<String, Object> map) {
@@ -303,7 +306,7 @@ public class AsciidoctorService {
                         try {
                             realOffset = Integer.valueOf(docLeveloffset);
                         } catch (NumberFormatException e) {}
-                        includeProcessor.getTableOfContents().getEntries().get(index).setLevelOffset(realOffset);
+                        tableOfContents.getEntries().get(index).setLevelOffset(realOffset);
                         return "";
                     }
                 });
@@ -321,14 +324,14 @@ public class AsciidoctorService {
                 if (attributesFilePath.isPresent() && !isNullOrEmpty(attributesFilePath.get())) {
                     content.append("include::")
                             .append("{attsFile}")
-                            .append("[]\n");
+                            .append("[]\r\n");
                 }
                 content.append(sourceFile.get()
                         .jcrContent().get()
                         .jcrData().get());
                 html = asciidoctor.convert(content.toString(), ob.get());
                 if (documentVersion instanceof AssemblyVersion) {
-                    ((AssemblyVersion) documentVersion).consumeTableOfContents(includeProcessor.getTableOfContents());
+                    ((AssemblyVersion) documentVersion).consumeTableOfContents(tableOfContents);
                 }
                 cacheContent(documentVersion, html);
 

@@ -4,6 +4,7 @@ import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.api.SlingModels;
+import com.redhat.pantheon.model.assembly.TableOfContents;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
@@ -64,7 +65,7 @@ public class SlingResourceIncludeProcessorTest {
         slingContext.registerAdapter(Resource.class, SlingModel.class, model);
 
         //When
-        SlingResourceIncludeProcessor proc = new SlingResourceIncludeProcessor(docResource);
+        SlingResourceIncludeProcessor proc = new SlingResourceIncludeProcessor(docResource, new TableOfContents());
         proc.process(doc, reader, "/symlink/testFile", null);
 
         //Then
