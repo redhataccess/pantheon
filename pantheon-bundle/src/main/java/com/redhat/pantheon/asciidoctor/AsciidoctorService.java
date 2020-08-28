@@ -295,7 +295,7 @@ public class AsciidoctorService {
                 asciidoctor.javaExtensionRegistry().preprocessor(
                         new XrefPreprocessor(documentVariant, tableOfContents));
 
-                asciidoctor.javaExtensionRegistry().inlineMacro(
+                asciidoctor.javaExtensionRegistry().inlineMacro(MACRO_INCLUDE,
                         new PantheonIncludeProcessor(tableOfContents));
 
                 asciidoctor.javaExtensionRegistry().postprocessor(

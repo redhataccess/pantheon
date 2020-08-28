@@ -96,7 +96,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                 finalContent.append(":pantheon-leveloffset: {leveloffset}\r\n");
 
                 if (attributeLeveloffset != null) {
-                    finalContent.append(":leveloffset: " + attributeLeveloffset).append("\r\n");
+                    finalContent.append(":leveloffset: ").append(attributeLeveloffset).append("\r\n");
                 }
                 finalContent.append(MACRO_INCLUDE).append(":").append(toc.getEntries().size()).append("[]\r\n\r\n");
                 toc.addEntry(effectiveOffset, module);

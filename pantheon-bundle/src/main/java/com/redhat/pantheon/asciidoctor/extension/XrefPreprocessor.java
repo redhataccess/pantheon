@@ -44,15 +44,7 @@ public class XrefPreprocessor extends Preprocessor {
 
     @Override
     public void process(org.asciidoctor.ast.Document adocDocument, @NotNull PreprocessorReader reader) {
-//        reader.restoreLines(preprocess(reader.readLines()));
-        String line;
-        List<String> lines = new LinkedList<>();
-        while ((line = reader.readLine()) != null) {
-            System.out.println(line);
-            lines.add(line);
-        }
-        lines = preprocess(lines);
-        reader.restoreLines(lines);
+        reader.restoreLines(preprocess(reader.readLines()));
     }
 
     private String processLineWithPattern(String line, Pattern pattern) {
