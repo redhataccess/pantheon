@@ -76,16 +76,16 @@ public class XrefPreprocessorTest {
     }
 
     /**
-     * It is unusual for a module to xref to itself, but this is a good approximation for an inter-assembly xref
+     * It is unusual for a moduleVariant to xref to itself, but this is a good approximation for an inter-assembly xref
      * which is easier to construct and test.
      */
     @Test
-    void moduleToSelf() {
+    void moduleVariantToSelf() {
         //Given
         slingContext.build()
                 .resource("/moduleB",
                         "jcr:uuid", "abcd1234",
-                        "sling:resourceType", "pantheon/module")
+                        "sling:resourceType", "pantheon/moduleVariant")
                 .resource("/moduleB/en_US/variants/test-atts",
                         "jcr:uuid", "efgh5678")
                 .commit();
@@ -95,7 +95,7 @@ public class XrefPreprocessorTest {
 
         ModuleVariant variant = slingContext.resourceResolver().getResource("/moduleB/en_US/variants/test-atts").adaptTo(ModuleVariant.class);
         TableOfContents toc = new TableOfContents();
-        toc.addEntry(0, variant.getParentLocale().getParent());
+        toc.addEntry(0, variant);
 
         //When
         XrefPreprocessor xp = new XrefPreprocessor(variant, toc);
@@ -104,7 +104,7 @@ public class XrefPreprocessorTest {
                 "<<moduleB,Link Label B2>>"));
 
         //Then
-        assertEquals("xref:#_abcd1234[Link Label B1]", output.get(0));
-        assertEquals("xref:#_abcd1234[Link Label B2]", output.get(1));
+        assertEquals("xref:moduleB[Link Label B1]", output.get(0));
+        assertEquals("<<moduleB,Link Label B2>>", output.get(1));
     }
 }

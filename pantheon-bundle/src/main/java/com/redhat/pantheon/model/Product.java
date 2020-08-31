@@ -47,4 +47,9 @@ public interface Product extends SlingModel {
      * Represents the product's description.
      */
     Field<String> description();
+
+    /**
+     * Represents the product's urlFragment.
+     */
+    Field<String> urlFragment();
 }

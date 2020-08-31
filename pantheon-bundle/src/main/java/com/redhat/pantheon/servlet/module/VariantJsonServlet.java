@@ -39,14 +39,15 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @SlingServletPaths(value = "/api/module/variant")
 public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
     public static final String PRODUCT_VERSION = "product_version";
+    public static final String VERSION_URL_FRAGMENT = "version_url_fragment";
     public static final String PRODUCT_NAME = "product_name";
-    public static final String PRODUCT_LINK = "product_link";
+    public static final String PRODUCT_URL_FRAGMENT = "product_url_fragment";
     public static final String VANITY_URL_FRAGMENT = "vanity_url_fragment";
     public static final String SEARCH_KEYWORDS = "search_keywords";
     public static final String VIEW_URI = "view_uri";
     public static final String PORTAL_URL = "PORTAL_URL";
 
-    private final Logger log = LoggerFactory.getLogger(ModuleJsonServlet.class);
+    private final Logger log = LoggerFactory.getLogger(VariantJsonServlet.class);
 
     private final SlingPathSuffix suffix = new SlingPathSuffix("/{variantUuid}");
 
@@ -137,8 +138,11 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
             Map<String, String> productMap = new HashMap<>();
             productList.add(productMap);
             productMap.put(PRODUCT_VERSION, pv.name().get());
+            String versionUrlFragment = pv.getValueMap().containsKey("urlFragment") ? pv.urlFragment().get() : "";
+            productMap.put(VERSION_URL_FRAGMENT, versionUrlFragment);
+            String productUrlFragment = pv.getProduct().getValueMap().containsKey("urlFragment") ? pv.getProduct().urlFragment().get(): "";
             productMap.put(PRODUCT_NAME, pv.getProduct().name().get());
-            productMap.put(PRODUCT_LINK, "https://www.redhat.com/productlinkplaceholder");
+            productMap.put(PRODUCT_URL_FRAGMENT, productUrlFragment);
         }
 
         // Process url_fragment from metadata
