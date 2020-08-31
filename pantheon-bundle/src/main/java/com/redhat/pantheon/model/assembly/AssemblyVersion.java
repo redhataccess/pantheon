@@ -46,17 +46,15 @@ public interface AssemblyVersion extends DocumentVersion {
         int i = 0;
         for (TableOfContents.Entry entry : toc.getEntries()) {
             AssemblyPage p = asmContent.page(i++).getOrCreate();
-            p.title().set(entry.getModule().getName());
-            String title = entry.getModule().locale(GlobalConfig.DEFAULT_MODULE_LOCALE).getOrCreate()
-                    .variants().getOrCreate()
-                    .canonicalVariant().getOrCreate()
+            p.title().set(entry.getModuleVariant().getName());
+            String title = entry.getModuleVariant()
                     .draft().getOrCreate()
                     .metadata().getOrCreate()
                     .title().get();
             if (title != null && !title.isEmpty()) {
                 p.title().set(title);
             }
-            p.module().set(entry.getModule().uuid().get());
+            p.moduleVariant().set(entry.getModuleVariant().uuid().get());
             p.leveloffset().set(entry.getLevelOffset());
         }
     }

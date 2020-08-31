@@ -6,6 +6,8 @@ import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.ModuleVariant;
 import org.apache.sling.api.resource.Resource;
 import org.asciidoctor.extension.Preprocessor;
 import org.asciidoctor.extension.PreprocessorReader;
@@ -110,7 +112,9 @@ public class XrefPreprocessor extends Preprocessor {
      */
     public List<String> preprocess(@NotNull List<String> lines) {
         toc.getEntries().stream()
-                .map(TableOfContents.Entry::getModule)
+                .map(TableOfContents.Entry::getModuleVariant)
+                .map(ModuleVariant::getParentLocale)
+                .map(ModuleLocale::getParent)
                 .map(Module::getPath)
                 .forEach(modulePaths::add);
 

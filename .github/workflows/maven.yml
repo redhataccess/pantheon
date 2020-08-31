@@ -36,7 +36,7 @@ jobs:
           ${{ runner.os }}-maven-
     
     - name: Build with Maven
-      run: ./mvnw clean install -pl pantheon-bundle,pantheon-karaf-feature,pantheon-karaf-dist
+      run: ./mvnw clean install -pl sling-org-apache-sling-karaf-features,sling-org-apache-sling-karaf-configs,pantheon-bundle,pantheon-karaf-feature,pantheon-karaf-dist
 
     - name: Install Go dependencies
       working-directory: tools/git2pantheon

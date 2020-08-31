@@ -216,14 +216,15 @@
                 <updatePolicy>daily</updatePolicy>
             </snapshots>
         </repository>
-        <repository>
+        <!-- Commented out for till long term plan is implemented -->
+        <!--<repository>
             <id>apache-snapshots</id>
             <name>Apache SNAPSHOT Repository</name>
             <url>https://repository.apache.org/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
-        </repository>
+        </repository>-->
     </repositories>
     <pluginRepositories>
         <pluginRepository>

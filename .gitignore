@@ -10,3 +10,11 @@ uploader/.idea
 tools/git2pantheon/git2pantheon
 tools/git2pantheon/pantheon.py
 RH-IT-Root-CA.crt
+sling-org-apache-sling-karaf-configs/org.apache.sling.karaf-configs.iml
+sling-org-apache-sling-karaf-configs/.idea
+sling-org-apache-sling-karaf-configs/.classpath
+sling-org-apache-sling-karaf-configs/.settings
+
+
+/sling-org-apache-sling-karaf-features/.idea/
+/sling-org-apache-sling-karaf-features/.idea/
