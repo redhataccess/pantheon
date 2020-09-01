@@ -14,6 +14,7 @@ interface IState {
     allVersionNames: any[]
     failedPost: boolean
     isMissingFields: boolean
+    isUrlFragmentValid: boolean
     newVersion: string
     urlFragment: string
 }
@@ -27,8 +28,9 @@ class ProductDetails extends Component<IProps, IState> {
             allVersionNames: [],
             failedPost: false,
             isMissingFields: false,
+            isUrlFragmentValid: true,
             newVersion: '',
-            urlFragment: ''
+            urlFragment: '',
         }
     }
 
@@ -79,6 +81,14 @@ class ProductDetails extends Component<IProps, IState> {
                                 <div className="notification-container">
                                     <Alert variant="warning"
                                         title="Fields indicated by * are mandatory"
+                                        actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                    />
+                                </div>
+                            }
+                            {!this.state.isUrlFragmentValid &&
+                                <div className="notification-container">
+                                    <Alert variant="warning"
+                                        title="Allowed input for ulrFragment: alphanumeric, - or _"
                                         actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                     />
                                 </div>
@@ -167,7 +177,11 @@ class ProductDetails extends Component<IProps, IState> {
     }
 
     private handleUrlInputChange = urlFragment => {
-        this.setState({ urlFragment })
+        if (/^[-\w]+$/.test(urlFragment)) {
+            this.setState({ urlFragment, isUrlFragmentValid: true })
+        } else {
+            this.setState({ isUrlFragmentValid: false})
+        }
     }
 
     private saveVersion = () => {

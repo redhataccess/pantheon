@@ -8,6 +8,7 @@ interface IState {
     failedPost: boolean
     isDup: boolean
     isMissingFields: boolean
+    isUrlFragmentValid: boolean
     productDescription: string
     productName: string
     productUrlFragment: string
@@ -21,6 +22,7 @@ class Product extends Component<any, IState> {
             failedPost: false,
             isDup: false,
             isMissingFields: false,
+            isUrlFragmentValid: true,
             productDescription: '',
             productName: '',
             productUrlFragment: '',
@@ -54,6 +56,14 @@ class Product extends Component<any, IState> {
                                         />
                                     </div>
                                 }
+                                {!this.state.isUrlFragmentValid &&
+                                <div className="notification-container">
+                                    <Alert variant="warning"
+                                        title="Allowed input for Product ulrFragment: alphanumeric, - or _"
+                                        actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                                    />
+                                </div>
+                                }
                                 {this.state.failedPost &&
                                     <div className="notification-container">
                                         <Alert  variant="danger"
@@ -74,8 +84,8 @@ class Product extends Component<any, IState> {
                                 <FormGroup
                                         label="Product UrlFragment"
                                         isRequired={true}
-                                        fieldId="product-url-fragment" >
-                                    <TextInput isRequired={true} id="product-url-fragment" type="text" placeholder="Url Fragment" value={this.state.productUrlFragment} onChange={this.handleUrlInput} />
+                                        fieldId="product_url_fragment" >
+                                    <TextInput isRequired={true} id="product_url_fragment_text" type="text" placeholder="Url Fragment" value={this.state.productUrlFragment} onChange={this.handleUrlInput} />
                                 </FormGroup>
                                 <br />
                                 <FormGroup
@@ -108,7 +118,11 @@ class Product extends Component<any, IState> {
     }
 
     private handleUrlInput = productUrlFragment => {
-        this.setState({ productUrlFragment })
+        if (/^[-\w]+$/.test(productUrlFragment)) {
+            this.setState({ productUrlFragment, isUrlFragmentValid: true })
+        } else {
+            this.setState({ isUrlFragmentValid: false})
+        }
     }
 
     private saveProduct = () => {
