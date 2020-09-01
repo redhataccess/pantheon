@@ -77,8 +77,8 @@ class Product extends Component<any, IState> {
                                 <FormGroup
                                         label="Product Name"
                                         isRequired={true}
-                                        fieldId="product-name" >
-                                    <TextInput isRequired={true} id="product-name" type="text" placeholder="Product Name" value={this.state.productName} onChange={this.handleNameInput} />
+                                        fieldId="product_name" >
+                                    <TextInput isRequired={true} id="product_name_text" type="text" placeholder="Product Name" value={this.state.productName} onChange={this.handleNameInput} />
                                 </FormGroup>
                                 <br />
                                 <FormGroup
@@ -90,8 +90,8 @@ class Product extends Component<any, IState> {
                                 <br />
                                 <FormGroup
                                         label="Product Description"
-                                        fieldId="product-description" >
-                                    <TextInput id="product-description" type="text" placeholder="Product Description" value={this.state.productDescription} onChange={this.handleProductInput} />
+                                        fieldId="product_description" >
+                                    <TextInput id="product_description_text" type="text" placeholder="Product Description" value={this.state.productDescription} onChange={this.handleProductInput} />
                                 </FormGroup>
                                 <br />
                                 <ActionGroup>
