@@ -9,12 +9,12 @@ exports[`Product tests should render Product component 1`] = `
       >
         <div>
           <FormGroup
-            fieldId="product-name"
+            fieldId="product_name"
             isRequired={true}
             label="Product Name"
           >
             <ForwardRef
-              id="product-name"
+              id="product_name_text"
               isRequired={true}
               onChange={[Function]}
               placeholder="Product Name"
@@ -24,12 +24,12 @@ exports[`Product tests should render Product component 1`] = `
           </FormGroup>
           <br />
           <FormGroup
-            fieldId="product-url-fragment"
+            fieldId="product_url_fragment"
             isRequired={true}
             label="Product UrlFragment"
           >
             <ForwardRef
-              id="product-url-fragment"
+              id="product_url_fragment_text"
               isRequired={true}
               onChange={[Function]}
               placeholder="Url Fragment"
@@ -39,11 +39,11 @@ exports[`Product tests should render Product component 1`] = `
           </FormGroup>
           <br />
           <FormGroup
-            fieldId="product-description"
+            fieldId="product_description"
             label="Product Description"
           >
             <ForwardRef
-              id="product-description"
+              id="product_description_text"
               onChange={[Function]}
               placeholder="Product Description"
               type="text"
