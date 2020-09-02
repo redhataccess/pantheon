@@ -139,13 +139,15 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         List<Map> productList = new ArrayList<>();
         variantMap.put("products", productList);
         ProductVersion pv = releasedMetadata.get().productVersion().getReference();
+        String productUrlFragment = "";
+        String versionUrlFragment = "";
         if (pv != null) {
             Map<String, String> productMap = new HashMap<>();
             productList.add(productMap);
             productMap.put(PRODUCT_VERSION, pv.name().get());
-            String versionUrlFragment = pv.getValueMap().containsKey("urlFragment") ? pv.urlFragment().get() : "";
+            versionUrlFragment = pv.getValueMap().containsKey("urlFragment") ? pv.urlFragment().get() : "";
             productMap.put(VERSION_URL_FRAGMENT, versionUrlFragment);
-            String productUrlFragment = pv.getProduct().getValueMap().containsKey("urlFragment") ? pv.getProduct().urlFragment().get() : "";
+            productUrlFragment = pv.getProduct().getValueMap().containsKey("urlFragment") ? pv.getProduct().urlFragment().get() : "";
             productMap.put(PRODUCT_NAME, pv.getProduct().name().get());
             productMap.put(PRODUCT_URL_FRAGMENT, productUrlFragment);
         }
@@ -168,9 +170,12 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
             String view_uri = System.getenv(PORTAL_URL)
-                    + "/guides/"
+                    +"/documentation/"
                     + ServletUtils.toLanguageTag(locale)
-                    + "/" + variant_uuid;
+                    + "/guide/"
+                    + productUrlFragment + "/"
+                    + versionUrlFragment + "/"
+                    + variant_uuid;
             variantMap.put(VIEW_URI, view_uri);
         } else {
             variantMap.put(VIEW_URI, "");

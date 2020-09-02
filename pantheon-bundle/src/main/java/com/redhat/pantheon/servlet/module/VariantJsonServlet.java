@@ -52,6 +52,8 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
     private final SlingPathSuffix suffix = new SlingPathSuffix("/{variantUuid}");
 
     @Override
+
+
     protected String getQuery(SlingHttpServletRequest request) {
         // Get the query parameter(s)
         Map<String, String> parameters = suffix.getParameters(request);
@@ -134,13 +136,15 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         List<Map> productList = new ArrayList<>();
         variantMap.put("products", productList);
         ProductVersion pv = releasedMetadata.get().productVersion().getReference();
+        String versionUrlFragment = "";
+        String productUrlFragment = "";
         if (pv != null) {
             Map<String, String> productMap = new HashMap<>();
             productList.add(productMap);
             productMap.put(PRODUCT_VERSION, pv.name().get());
-            String versionUrlFragment = pv.getValueMap().containsKey("urlFragment") ? pv.urlFragment().get() : "";
+            versionUrlFragment = pv.getValueMap().containsKey("urlFragment") ? pv.urlFragment().get() : "";
             productMap.put(VERSION_URL_FRAGMENT, versionUrlFragment);
-            String productUrlFragment = pv.getProduct().getValueMap().containsKey("urlFragment") ? pv.getProduct().urlFragment().get(): "";
+            productUrlFragment = pv.getProduct().getValueMap().containsKey("urlFragment") ? pv.getProduct().urlFragment().get(): "";
             productMap.put(PRODUCT_NAME, pv.getProduct().name().get());
             productMap.put(PRODUCT_URL_FRAGMENT, productUrlFragment);
         }
@@ -165,9 +169,12 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
             String view_uri = System.getenv(PORTAL_URL)
-                    + "/topics/"
+                    +"/documentation/"
                     + ServletUtils.toLanguageTag(locale)
-                    + "/" + variant_uuid;
+                    + "/topic/"
+                    + productUrlFragment + "/"
+                    + versionUrlFragment + "/"
+                    + variant_uuid;
             variantMap.put(VIEW_URI, view_uri);
         }
         else {
