@@ -183,7 +183,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         //get the assemblies and iterate over them
 
-        helper.query("/jcr:root/content/(repositories | assemblies | variants)//element(*, pant:assemblyVariant)[(released/content/*/@pant:moduleUuid='"+moduleVariant.getParent().getParent().getParent().uuid().get()+"')]"
+        helper.query("/jcr:root/content/(repositories | assemblies | variants)//element(*, pant:assemblyVariant)[(released/content/*/@pant:moduleVariantUuid='"+moduleVariant.uuid().get()+"')]"
                 ,1000L, 0L, Query.XPATH)
                 .forEach(a->setAssemblyData(a,includeAssemblies));
         variantMap.put("included_in_guides", includeAssemblies);
