@@ -59,7 +59,7 @@ class Product extends Component<any, IState> {
                                 {!this.state.isUrlFragmentValid &&
                                 <div className="notification-container">
                                     <Alert variant="warning"
-                                        title="Allowed input for Product ulrFragment: alphanumeric, - or _"
+                                        title="Allowed input for Product ulrFragment: alphanumeric, hyphen, period and underscore"
                                         actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
                                     />
                                 </div>
@@ -118,7 +118,7 @@ class Product extends Component<any, IState> {
     }
 
     private handleUrlInput = productUrlFragment => {
-        if (/^[-\w]+$/.test(productUrlFragment)) {
+        if (/^[-.\w]+$/.test(productUrlFragment)) {
             this.setState({ productUrlFragment, isUrlFragmentValid: true })
         } else {
             this.setState({ isUrlFragmentValid: false})
