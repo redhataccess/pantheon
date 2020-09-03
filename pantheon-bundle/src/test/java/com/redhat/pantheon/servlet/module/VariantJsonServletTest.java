@@ -112,6 +112,7 @@ public class VariantJsonServletTest {
         assertTrue(moduleMap.containsKey("revision_id"));
         assertTrue(moduleMap.containsKey("context_url_fragment"));
         assertTrue(moduleMap.containsKey("included_in_guides"));
+        assertTrue(moduleMap.containsKey("isPartOf"));
         assertEquals((map.get("message")), "Module Found");
         assertEquals((map.get("status")), SC_OK);
     }
