@@ -329,7 +329,7 @@ class ModuleDisplay extends Component<any, any, any> {
     private copyToClipboard = () => {
         const textField = document.createElement('textarea')
         if (this.state.variantUUID.trim() !== '') {
-            textField.value = this.state.portalHost + '/topics/en-us/' + this.state.variantUUID
+            textField.value = this.state.portalHost + '/documentation/en-us/topic/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/' + this.state.variantUUID
             document.body.appendChild(textField)
             textField.select()
             document.execCommand('copy')
