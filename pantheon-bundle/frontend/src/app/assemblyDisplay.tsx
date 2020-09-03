@@ -69,7 +69,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                             {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                                 && this.state.variantUUID !== ""
                                 && this.state.portalHost !== ""
-                                && <span><a href={this.state.portalHost + '/guides/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                                && <span><a href={this.state.portalHost + '/documentation/en-us/guide/' + this.state.urlFragment + '/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                             }
                         </LevelItem>
                         <LevelItem>
