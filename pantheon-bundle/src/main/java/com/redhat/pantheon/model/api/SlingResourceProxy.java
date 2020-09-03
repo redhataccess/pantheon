@@ -1,6 +1,6 @@
 package com.redhat.pantheon.model.api;
 
-import com.redhat.pantheon.util.function.Memoizer;
+import com.redhat.pantheon.model.api.util.Memoizer;
 import org.apache.sling.api.resource.Resource;
 
 import javax.inject.Named;
