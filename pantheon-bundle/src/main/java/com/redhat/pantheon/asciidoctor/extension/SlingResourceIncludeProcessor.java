@@ -17,9 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.Optional;
 
-import static com.redhat.pantheon.helper.PantheonConstants.ADOC_LEVELOFFSET;
 import static com.redhat.pantheon.helper.PantheonConstants.JCR_TYPE_MODULE;
 import static com.redhat.pantheon.helper.PantheonConstants.MACRO_INCLUDE;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
@@ -32,11 +30,13 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
     private final ResourceResolver resolver;
     private final Resource parent;
     private final TableOfContents toc;
+    private final PantheonXrefProcessor xrefProcessor;
 
-    public SlingResourceIncludeProcessor(Resource resource, TableOfContents toc) {
+    public SlingResourceIncludeProcessor(Resource resource, TableOfContents toc, PantheonXrefProcessor xrefProcessor) {
         this.resolver = resource.getResourceResolver();
         this.parent = resource.getParent();
         this.toc = toc;
+        this.xrefProcessor = xrefProcessor;
     }
 
     @Override
@@ -82,34 +82,29 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                         .toField(FileResource.JcrContent::jcrData)
                         .get();
 
-                // This next line is important - it fixes an asciidoctor glitch. If you have a preprocessor doing
-                // *anything at all* as part of your build, then a leveloffset brought in as an include parameter is
-                // injected directly as a document-wide attribute by asciidoctor. However, the logic that performs that
-                // is flawed. We have to remove the attribute from the map and handle it ourselves to work around the
-                // bug.
-                String attributeLeveloffset = (String) attributes.remove(ADOC_LEVELOFFSET);
-
                 StringBuilder contentBuilder = new StringBuilder();
-                contentBuilder.append(":pantheon-leveloffset: {leveloffset}\r\n");
 
-                if (attributeLeveloffset != null) {
-                    contentBuilder.append(":leveloffset: ").append(attributeLeveloffset).append("\r\n");
-                }
-                contentBuilder.append(MACRO_INCLUDE).append(":").append(toc.getEntries().size()).append("[]\r\n\r\n");
+                contentBuilder
+                        .append(MACRO_INCLUDE)
+                        .append(":")
+                        .append(toc.getEntries().size())
+                        .append("[]")
+                        .append(System.lineSeparator())
+                        .append(System.lineSeparator());
                 toc.addEntry(0, module); // Initial value of leveloffset does not matter
 
                 contentBuilder.append(":pantheon_module_id: ")
                         .append(module.uuid().get())
-                        .append("\r\n")
+                        .append(System.lineSeparator())
                         .append("[[_")
                         .append(module.uuid().get())
-                        .append("]]\r\n")
-                        .append(content)
-                        .append("\r\n")
+                        .append("]]")
+                        .append(System.lineSeparator())
+                        .append(xrefProcessor.preprocess(content))
+                        .append(System.lineSeparator())
+                        .append(System.lineSeparator())
                         .append(":!pantheon_module_id:")
-                        .append("\r\n");
-                contentBuilder.append(":leveloffset: {pantheon-leveloffset}\r\n");
-                contentBuilder.append(":!pantheon-leveloffset:\r\n");
+                        .append(System.lineSeparator());
 
                 content = contentBuilder.toString();
             } else {

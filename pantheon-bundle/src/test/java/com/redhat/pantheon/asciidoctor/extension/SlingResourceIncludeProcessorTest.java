@@ -65,7 +65,7 @@ public class SlingResourceIncludeProcessorTest {
         slingContext.registerAdapter(Resource.class, SlingModel.class, model);
 
         //When
-        SlingResourceIncludeProcessor proc = new SlingResourceIncludeProcessor(docResource, new TableOfContents());
+        SlingResourceIncludeProcessor proc = new SlingResourceIncludeProcessor(docResource, new TableOfContents(), null);
         proc.process(doc, reader, "/symlink/testFile", null);
 
         //Then

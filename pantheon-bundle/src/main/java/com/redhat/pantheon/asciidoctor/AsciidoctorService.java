@@ -4,7 +4,7 @@ import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.PantheonLeveloffsetProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
-import com.redhat.pantheon.asciidoctor.extension.XrefPreprocessor;
+import com.redhat.pantheon.asciidoctor.extension.PantheonXrefProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
@@ -286,15 +286,17 @@ public class AsciidoctorService {
             String html = "";
             try {
                 TableOfContents tableOfContents = new TableOfContents();
+                PantheonXrefProcessor xrefProcessor = new PantheonXrefProcessor(documentVariant, tableOfContents
+                );
                 // extensions needed to generate a module's html
                 asciidoctor.javaExtensionRegistry().includeProcessor(
-                        new SlingResourceIncludeProcessor(base, tableOfContents));
-
-                asciidoctor.javaExtensionRegistry().preprocessor(
-                        new XrefPreprocessor(documentVariant, tableOfContents));
+                        new SlingResourceIncludeProcessor(base, tableOfContents, xrefProcessor));
 
                 asciidoctor.javaExtensionRegistry().inlineMacro(MACRO_INCLUDE,
                         new PantheonLeveloffsetProcessor(tableOfContents));
+
+                asciidoctor.javaExtensionRegistry().inlineMacro(PantheonXrefProcessor.MACRO_PREFIX,
+                        xrefProcessor);
 
                 asciidoctor.javaExtensionRegistry().postprocessor(
                         new HtmlModulePostprocessor(base));
@@ -309,11 +311,14 @@ public class AsciidoctorService {
                 if (attributesFilePath.isPresent() && !isNullOrEmpty(attributesFilePath.get())) {
                     content.append("include::")
                             .append("{attsFile}")
-                            .append("[]\r\n");
+                            .append("[]")
+                            .append(System.lineSeparator());
                 }
-                content.append(sourceFile.get()
+                String rawContent = sourceFile.get()
                         .jcrContent().get()
-                        .jcrData().get());
+                        .jcrData().get();
+                content.append(xrefProcessor.preprocess(rawContent));
+
                 html = asciidoctor.convert(content.toString(), ob.get());
                 if (documentVersion instanceof AssemblyVersion) {
                     ((AssemblyVersion) documentVersion).consumeTableOfContents(tableOfContents);
