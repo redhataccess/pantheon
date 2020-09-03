@@ -36,12 +36,17 @@ public class ResourceDecorator implements SlingModel {
     }
 
     @Override
+    public <T extends SlingModel> Reference<T> reference(String name, Class<T> type) {
+        return new ReferenceFieldImpl<>(name, type, this);
+    }
+
+    @Override
     public void delete() throws PersistenceException {
         wrapped.getResourceResolver().delete(this);
     }
 
     /*
-     * The methods below are all delgate methods around the wrapped resource
+     * The methods below are all delegate methods around the wrapped resource
      * to make sure SlingResource conforms to the Resource interface.
      */
 

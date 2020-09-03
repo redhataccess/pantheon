@@ -29,7 +29,7 @@ import static com.redhat.pantheon.model.api.SlingModels.getModel;
 class SlingResourceProxy extends ResourceDecorator implements InvocationHandler {
 
     private enum MethodType {
-        Default,
+        DefaultInterfaceMethod,
         EnumFieldAccessor,
         FieldAccessor,
         ChildAccessor,
@@ -49,7 +49,7 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         MethodType methodType = methodClassifier.apply(method);
         switch (methodType) {
-            case Default: {
+            case DefaultInterfaceMethod: {
                 // FIXME This will need to change in Java8+ versions
                 // See: https://blog.jooq.org/2018/03/28/correct-reflective-access-to-interface-default-methods-in-java-8-9-10/
                 final Class<?> declaringClass = method.getDeclaringClass();
@@ -72,19 +72,19 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
             case FieldAccessor: {
                 String fieldName = extractFieldName(method);
                 Class fieldType = extractParameterizedReturnType(method);
-                return new FieldImpl(fieldName, fieldType, this);
+                return this.field(fieldName, fieldType);
             }
 
             case ChildAccessor: {
                 String childName = extractFieldName(method);
                 Class childType = extractParameterizedReturnType(method);
-                return new ChildImpl(childName, childType, this);
+                return this.child(childName, childType);
             }
 
             case ReferenceFieldAccessor: {
                 String referenceName = extractFieldName(method);
                 Class referenceType = extractParameterizedReturnType(method);
-                return new ReferenceFieldImpl(referenceName, referenceType, this);
+                return this.reference(referenceName, referenceType);
             }
 
             case ParentAccessorOverride: {
@@ -142,7 +142,7 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
         // default interface methods
         // (default methods declared in the SlingModel interface themselves)
         if( method.isDefault() ) {
-            return MethodType.Default;
+            return MethodType.DefaultInterfaceMethod;
         }
         // methods which access an enum Field
         else if( isEnumFieldAccessor(method) ) {
