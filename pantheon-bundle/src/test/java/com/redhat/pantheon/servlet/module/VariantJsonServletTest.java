@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet.module;
 
+import com.redhat.pantheon.model.assembly.AssemblyVariant;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -52,25 +53,41 @@ public class VariantJsonServletTest {
     void resourceToMap() throws Exception {
         // Given
         slingContext.build()
-                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT",
+                .resource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT",
                         "jcr:primaryType", "pant:moduleVariant")
-                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/metadata",
+                .resource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT/released/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description")
-                .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
+                .resource("/content/repositories/repo/entities/enterprise/module/en_US/source/released/jcr:content",
                         "jcr:data", "This is the source content")
-                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
+                .resource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
                         "jcr:data", testHTML)
+                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT",
+                        "jcr:primaryType", "pant:assemblyVariant")
+                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/released",
+                        "jcr:primaryType", "pant:assemblyVersion")
+                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/released/metadata",
+                        "jcr:title", "A title",
+                        "jcr:description", "A description")
+                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/released/cached_html/jcr:content",
+                        "jcr:data", testHTML)
+                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/released/content/0",
+                        "jcr:moduleVariantUuid", slingContext.resourceResolver()
+                                .getResource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT")
+                                .getValueMap()
+                                .get("jcr:uuid")
+                                .toString())
                 .commit();
 
         registerMockAdapter(ModuleVariant.class, slingContext);
+        registerMockAdapter(AssemblyVariant.class,slingContext);
         VariantJsonServlet servlet = new VariantJsonServlet();
-        slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT") );
+        slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT") );
 
         // When
         Map<String, Object> map = servlet.resourceToMap(
                 slingContext.request(),
-                slingContext.resourceResolver().getResource("/content/repositories/repo/module/en_US/variants/DEFAULT"));
+                slingContext.resourceResolver().getResource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT"));
         Map<String, Object> moduleMap = (Map<String, Object>)map.get("module");
 
         // Then
@@ -94,6 +111,7 @@ public class VariantJsonServletTest {
         assertTrue(moduleMap.containsKey("module_url_fragment"));
         assertTrue(moduleMap.containsKey("revision_id"));
         assertTrue(moduleMap.containsKey("context_url_fragment"));
+        assertTrue(moduleMap.containsKey("included_in_guides"));
         assertEquals((map.get("message")), "Module Found");
         assertEquals((map.get("status")), SC_OK);
     }
