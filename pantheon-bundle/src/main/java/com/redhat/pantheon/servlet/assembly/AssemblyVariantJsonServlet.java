@@ -182,6 +182,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         }
 
         List<Map> moduleList = new ArrayList<>();
+        List<Map<String, String>> publishedModuleList = new ArrayList<>();
         variantMap.put("modules_included", moduleList);
 
         AssemblyContent assemblyContent = assemblyVariant.released().get().content().get();
@@ -214,6 +215,14 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                         childResource.getValueMap().containsKey("pant:leveloffset") ? childResource.getValueMap().get("pant:leveloffset").toString() : "");
 
             }
+            for (Map<String, String> entry: moduleList) {
+                for (String key : entry.keySet()) {
+                    if (key == "module_url" && !entry.get(key).isEmpty()) {
+                        publishedModuleList.add(entry);
+                    }
+                }
+            }
+            variantMap.put("hasPart", publishedModuleList);
         }
         // remove unnecessary fields from the map
         variantMap.remove("jcr:lastModified");
