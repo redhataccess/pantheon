@@ -48,9 +48,6 @@ exports[`Versions tests should render Versions component 1`] = `
     width="60%"
   >
     <div />
-    <div
-      className="app-container"
-    />
     <Form
       id="edit_metadata"
       isHorizontal={true}
