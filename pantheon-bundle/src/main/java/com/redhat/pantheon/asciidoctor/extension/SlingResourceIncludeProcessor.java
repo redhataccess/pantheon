@@ -1,5 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
+import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.helper.Symlinks;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
@@ -80,14 +81,13 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                 toc.addEntry(finalOffset, moduleVariant);
 
                 // TODO, right now only default locale and latest (draft) version of the module are used
-                content = String.valueOf(moduleVariant.getParent()
-                        .getParent()
-                        .source()
-                        .getOrCreate()
-                        .draft()
-                        .getOrCreate()
-                        .jcrContent()
-                        .get());
+                content = traverseFrom(module)
+                        .toChild(module1 -> module.locale(GlobalConfig.DEFAULT_MODULE_LOCALE))
+                        .toChild(ModuleLocale::source)
+                        .toChild(SourceContent::draft)
+                        .toChild(FileResource::jcrContent)
+                        .toField(FileResource.JcrContent::jcrData)
+                        .get();
                 content = new StringBuilder()
                         .append(":pantheon_module_id: ")
                         .append(moduleVariant.uuid().get())
