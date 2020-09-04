@@ -22,6 +22,8 @@ class ModuleDisplay extends Component<any, any, any> {
             moduleType: '',
             portalHost: '',
             productValue: "",
+            productUrlFragment: "",
+            versionUrlFragment: "",
             releasePath: '',
             releaseUpdateDate: '',
             releaseVersion: '',
@@ -70,7 +72,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
                             && this.state.variantUUID !== ""
                             && this.state.portalHost !== ""
-                            && <span><a href={this.state.portalHost + '/topics/en-us/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                            && <span><a href={this.state.portalHost + '/documentation/en-us/topic/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                         }
                     </LevelItem>
                     <LevelItem>
@@ -315,7 +317,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         }
                         for (const productVersion of productChild.__children__) {
                             if (productVersion[Fields.JCR_UUID] === uuid) {
-                                this.setState({ productValue: product.name, versionValue: productVersion.name })
+                                this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
                                 break
                             }
                         }
@@ -327,7 +329,7 @@ class ModuleDisplay extends Component<any, any, any> {
     private copyToClipboard = () => {
         const textField = document.createElement('textarea')
         if (this.state.variantUUID.trim() !== '') {
-            textField.value = this.state.portalHost + '/topics/en-us/' + this.state.variantUUID
+            textField.value = this.state.portalHost + '/documentation/en-us/topic/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/' + this.state.variantUUID
             document.body.appendChild(textField)
             textField.select()
             document.execCommand('copy')

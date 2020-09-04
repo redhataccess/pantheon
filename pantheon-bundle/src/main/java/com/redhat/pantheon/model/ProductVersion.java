@@ -45,6 +45,11 @@ public interface ProductVersion extends SlingModel {
     Field<String> name();
 
     /**
+     * Represents the productVersions's urlFragment.
+     */
+    Field<String> urlFragment();
+
+    /**
      * Get Product object from Version.
      * @return Product
      */

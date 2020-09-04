@@ -3,8 +3,10 @@ package com.redhat.pantheon.servlet.module;
 import com.google.common.base.Charsets;
 import com.ibm.icu.util.ULocale;
 import com.redhat.pantheon.html.Html;
+import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
+import com.redhat.pantheon.model.assembly.*;
 import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
@@ -22,12 +24,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 import java.util.*;
 
 import static com.redhat.pantheon.conf.GlobalConfig.CONTENT_TYPE;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.apache.sling.query.SlingQuery.$;
 
 @Component(
         service = Servlet.class,
@@ -39,18 +43,22 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @SlingServletPaths(value = "/api/module/variant")
 public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
     public static final String PRODUCT_VERSION = "product_version";
+    public static final String VERSION_URL_FRAGMENT = "version_url_fragment";
     public static final String PRODUCT_NAME = "product_name";
-    public static final String PRODUCT_LINK = "product_link";
+    public static final String PRODUCT_URL_FRAGMENT = "product_url_fragment";
     public static final String VANITY_URL_FRAGMENT = "vanity_url_fragment";
     public static final String SEARCH_KEYWORDS = "search_keywords";
     public static final String VIEW_URI = "view_uri";
     public static final String PORTAL_URL = "PORTAL_URL";
-
-    private final Logger log = LoggerFactory.getLogger(ModuleJsonServlet.class);
+    public static final String PANTHEON_HOST = "PANTHEON_HOST";
+    public static final String ASSEMBLY_VARIANT_API_PATH = "/api/assembly/variant.json";
+    private final Logger log = LoggerFactory.getLogger(VariantJsonServlet.class);
 
     private final SlingPathSuffix suffix = new SlingPathSuffix("/{variantUuid}");
 
     @Override
+
+
     protected String getQuery(SlingHttpServletRequest request) {
         // Get the query parameter(s)
         Map<String, String> parameters = suffix.getParameters(request);
@@ -89,6 +97,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         Map<String, Object> variantMap = super.resourceToMap(request, resource);
         Map<String, Object> variantDetails = new HashMap<>();
+        JcrQueryHelper helper = new JcrQueryHelper(request.getResourceResolver());
 
         variantDetails.put("status", SC_OK);
         variantDetails.put("message", "Module Found");
@@ -133,12 +142,17 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         List<Map> productList = new ArrayList<>();
         variantMap.put("products", productList);
         ProductVersion pv = releasedMetadata.get().productVersion().getReference();
+        String versionUrlFragment = "";
+        String productUrlFragment = "";
         if (pv != null) {
             Map<String, String> productMap = new HashMap<>();
             productList.add(productMap);
             productMap.put(PRODUCT_VERSION, pv.name().get());
+            versionUrlFragment = pv.getValueMap().containsKey("urlFragment") ? pv.urlFragment().get() : "";
+            productMap.put(VERSION_URL_FRAGMENT, versionUrlFragment);
+            productUrlFragment = pv.getProduct().getValueMap().containsKey("urlFragment") ? pv.getProduct().urlFragment().get(): "";
             productMap.put(PRODUCT_NAME, pv.getProduct().name().get());
-            productMap.put(PRODUCT_LINK, "https://www.redhat.com/productlinkplaceholder");
+            productMap.put(PRODUCT_URL_FRAGMENT, productUrlFragment);
         }
 
         // Process url_fragment from metadata
@@ -161,15 +175,26 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
             String view_uri = System.getenv(PORTAL_URL)
-                    + "/topics/"
+                    +"/documentation/"
                     + ServletUtils.toLanguageTag(locale)
-                    + "/" + variant_uuid;
+                    + "/topic/"
+                    + productUrlFragment + "/"
+                    + versionUrlFragment + "/"
+                    + variant_uuid;
             variantMap.put(VIEW_URI, view_uri);
         }
         else {
             variantMap.put(VIEW_URI, "");
         }
+        List<HashMap<String, String>>includeAssemblies = new ArrayList<>();
 
+        //get the assemblies and iterate over them
+
+        helper.query("/jcr:root/content/(repositories | assemblies | variants)//element(*, pant:assemblyVariant)[(released/content/*/@pant:moduleVariantUuid='"+moduleVariant.uuid().get()+"')]"
+                ,1000L, 0L, Query.XPATH)
+                .forEach(a->setAssemblyData(a,includeAssemblies));
+        variantMap.put("included_in_guides", includeAssemblies);
+        variantMap.put("isPartOf", includeAssemblies);
         // remove unnecessary fields from the map
         variantMap.remove("jcr:lastModified");
         variantMap.remove("jcr:lastModifiedBy");
@@ -183,6 +208,28 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         return variantDetails;
     }
+
+    private void setAssemblyData(Resource resource, List<HashMap<String, String>> includeAssemblies) {
+        AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
+        HashMap<String,String> assemblyVariantDetails = new HashMap<>();
+
+        Optional<AssemblyMetadata> releasedMetadata = traverseFrom(assemblyVariant)
+                .toChild(AssemblyVariant::released)
+                .toChild(AssemblyVersion::metadata)
+                .getAsOptional();
+        assemblyVariantDetails.put("uuid", assemblyVariant.uuid().get());
+        assemblyVariantDetails.put("title", releasedMetadata.get().title().get());
+        if(assemblyVariant.released().isPresent()&& System.getenv(PANTHEON_HOST) != null){
+            String assemblyUrl = System.getenv(PANTHEON_HOST)
+                    + ASSEMBLY_VARIANT_API_PATH
+                    + "/"
+                    + assemblyVariant.uuid().get();
+            assemblyVariantDetails.put("url", assemblyUrl);
+        }
+        includeAssemblies.add(assemblyVariantDetails);
+
+    }
+
 
     private String sanitizeSuffix( String suffix) {
         // b537ef3c-5c7d-4280-91ce-e7e818e6cc11&proxyHost=<SOMEHOST>&proxyPort=8080&throwExceptionOnFailure=false

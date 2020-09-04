@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.UnpublishVersion;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -60,6 +62,7 @@ class UnpublishVersionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
+        slingContext.request().setParameterMap(Collections.singletonMap("variant", DocumentVariant.DEFAULT_VARIANT_NAME));
         UnpublishVersion operation = new UnpublishVersion(events, serviceResourceResolverProvider);
 
         // When
@@ -110,6 +113,7 @@ class UnpublishVersionTest {
         HtmlResponse postResponse = new HtmlResponse();
         List<Modification> changes = newArrayList();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/repo/module") );
+        slingContext.request().setParameterMap(Collections.singletonMap("variant", DocumentVariant.DEFAULT_VARIANT_NAME));
         UnpublishVersion operation = new UnpublishVersion(events,serviceResourceResolverProvider);
 
         // When

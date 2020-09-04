@@ -2,14 +2,14 @@ ifdef::context[:parent-context: {context}]
 
 include::../attributes.adoc[]
 
-[id="help"]
-= Help
+[id="help-getting-started-with-pantheon"]
+=  Help: Getting started with Pantheon
 
-:context: assembly-pantheon-help
+:context: assembly-help-getting-started-with-pantheon
 
 Welcome to {ProductShortName} help.
 
-This document describes the main concepts, requirements, and actions in {ProductShortName}.
+Learn the main concepts, requirements, and actions that you can perform in {ProductShortName}.
 
 include::modules/con_about_pantheon.adoc[leveloffset=+1]
 
