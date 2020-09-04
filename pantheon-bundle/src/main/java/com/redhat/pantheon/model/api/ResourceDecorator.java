@@ -32,7 +32,16 @@ public class ResourceDecorator implements SlingModel {
 
     @Override
     public <T> Field<T> field(String name, Class<T> type) {
+        if(type.isEnum()) {
+            // NOTE: This is some ugly casting magic so that the method is able to
+            // return the right types
+            return (Field<T>) enumField(name, (Class<? extends Enum>)type);
+        }
         return new FieldImpl<>(name, type, this);
+    }
+
+    private Field<? extends Enum> enumField(String name, Class<? extends Enum> type) {
+        return new EnumFieldImpl<>(name, type, this);
     }
 
     @Override

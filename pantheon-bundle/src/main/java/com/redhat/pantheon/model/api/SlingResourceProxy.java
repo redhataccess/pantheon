@@ -30,7 +30,6 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
 
     private enum MethodType {
         DefaultInterfaceMethod,
-        EnumFieldAccessor,
         FieldAccessor,
         ChildAccessor,
         ReferenceFieldAccessor,
@@ -63,12 +62,6 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
                         .invokeWithArguments(args);
             }
 
-            case EnumFieldAccessor: {
-                String fieldName = extractFieldName(method);
-                Class fieldType = extractParameterizedReturnType(method);
-                return new EnumFieldImpl(fieldName, fieldType, this);
-            }
-
             case FieldAccessor: {
                 String fieldName = extractFieldName(method);
                 Class fieldType = extractParameterizedReturnType(method);
@@ -94,10 +87,6 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
             default:
                 return method.invoke(this, args);
         }
-    }
-
-    private static boolean isEnumFieldAccessor(Method method) {
-        return isFieldAccessor(method) && Enum.class.isAssignableFrom(extractParameterizedReturnType(method));
     }
 
     private static boolean isChildAccessor(Method method) {
@@ -143,10 +132,6 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
         // (default methods declared in the SlingModel interface themselves)
         if( method.isDefault() ) {
             return MethodType.DefaultInterfaceMethod;
-        }
-        // methods which access an enum Field
-        else if( isEnumFieldAccessor(method) ) {
-            return MethodType.EnumFieldAccessor;
         }
         // methods which access a Field
         else if( isFieldAccessor(method) ) {
