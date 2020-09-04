@@ -16,17 +16,18 @@ import java.util.function.Function;
 import static com.redhat.pantheon.model.api.SlingModels.getModel;
 
 /**
- * A specialized {@link ResourceDecorator} extension which also acts as an {@link InvocationHandler}
- * to provide additional methods in {@link SlingModel} interfaces. It provides all the existing
- * methods in the base class, plus the ability to process additional ones which conform to the
- * model contract.
+ * A specialized proxy {@link InvocationHandler} which translates all invocations from the model
+ * interfaces to the actual sling {@link Resource} objects backing them.
+ * It provides the ability to add methods on interfaces which conform to the Model object contract.
  *
  * The {@link InvocationHandler}'s invoke method is responsible for handling all the additional
  * methods which might come from the specific model interface.
  *
  * @author Carlos Munoz
  */
-class SlingResourceProxy extends ResourceDecorator implements InvocationHandler {
+class SlingResourceProxy implements InvocationHandler {
+
+    private ResourceDecorator resourceDecorator;
 
     private enum MethodType {
         DefaultInterfaceMethod,
@@ -41,7 +42,7 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
             = Memoizer.memoize(method -> getMethodType(method));
 
     public SlingResourceProxy(Resource wrapped) {
-        super(wrapped);
+        this.resourceDecorator = new ResourceDecorator(wrapped);
     }
 
     @Override
@@ -65,27 +66,27 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
             case FieldAccessor: {
                 String fieldName = extractFieldName(method);
                 Class fieldType = extractParameterizedReturnType(method);
-                return this.field(fieldName, fieldType);
+                return resourceDecorator.field(fieldName, fieldType);
             }
 
             case ChildAccessor: {
                 String childName = extractFieldName(method);
                 Class childType = extractParameterizedReturnType(method);
-                return this.child(childName, childType);
+                return resourceDecorator.child(childName, childType);
             }
 
             case ReferenceFieldAccessor: {
                 String referenceName = extractFieldName(method);
                 Class referenceType = extractParameterizedReturnType(method);
-                return this.reference(referenceName, referenceType);
+                return resourceDecorator.reference(referenceName, referenceType);
             }
 
             case ParentAccessorOverride: {
-                return getModel(getParent(), (Class<? extends SlingModel>) method.getReturnType());
+                return getModel(resourceDecorator.getParent(), (Class<? extends SlingModel>) method.getReturnType());
             }
 
             default:
-                return method.invoke(this, args);
+                return method.invoke(resourceDecorator, args);
         }
     }
 
