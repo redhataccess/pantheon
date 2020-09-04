@@ -1,25 +1,18 @@
 package com.redhat.pantheon.model.document;
 
-import com.redhat.pantheon.jcr.JcrResources;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.SlingModels;
-import com.redhat.pantheon.model.api.WorkspaceChild;
-import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
-import com.redhat.pantheon.model.api.Reference;
-import com.redhat.pantheon.model.api.SlingModel;
+import com.redhat.pantheon.model.workspace.WorkspaceChild;
 import org.apache.sling.api.resource.PersistenceException;
-import org.apache.sling.api.resource.Resource;
 
 import javax.inject.Named;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import java.util.Calendar;
 
 import static com.google.common.collect.Streams.stream;
 import static com.redhat.pantheon.jcr.JcrResources.rename;
-import static java.util.stream.Collectors.counting;
 
 /**
  * A specific Document variant node which houses all the versions for a specific language in the Document.
