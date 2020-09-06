@@ -1,10 +1,10 @@
 [id='identifying-module-types_{context}']
-= Identifying {ProductShortName} module types
+= Identifying {ProductShortName} {ProductNumber} module types
 :pantheon-module-type: REFERENCE
 
-In Pantheon 2, each module must be identified by type: concept, procedure, or reference.
+In {ProductShortName} {ProductNumber}, each module must be identified by type: concept, procedure, or reference.
 
-Module types are described in https://redhat-documentation.github.io/modular-docs/#writing-mod-docs[Types of modules in Red Hat documentation].
+For information about module types, see https://redhat-documentation.github.io/modular-docs/#writing-mod-docs[Types of modules in Red Hat documentation].
 
 Identification is done by using either one or both of the following:
 
@@ -28,7 +28,7 @@ One of the following attributes should be entered in the line immediately follow
 
 Use of the correct prefix::
 
-Module titles should start with the appropriate choice among the following
+File names of modules should start with the appropriate choice among the following
 
 * `con_`
 * `proc_`
@@ -41,6 +41,6 @@ Module titles should start with the appropriate choice among the following
 
 ====
 
-How Pantheon 2 checks identifiers::
+How {ProductShortName} {ProductNumber}  checks identifiers::
 
-Pantheon 2 first checks for the module's attribute. Any value than those specified is ignored. If there is no valid attribute, Pantheon 2 then checks the module's prefix. If both a valid attribute and prefix exist, Pantheon 2 defaults to the attribute.
+{ProductShortName} {ProductNumber} first checks for the module's attribute. Any value other than those specified is ignored. If there is no valid attribute, {ProductShortName} {ProductNumber} then checks the module's prefix. If both a valid attribute and prefix exist, {ProductShortName} {ProductNumber}  uses the attribute.
