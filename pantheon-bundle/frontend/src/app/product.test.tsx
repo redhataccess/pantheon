@@ -78,4 +78,10 @@ describe('Product tests', () => {
     const inst = wrapper.getInstance()
     expect(inst.handleProductInput("Linux Platform")).toMatchSnapshot()
   })
+
+  it('test handleUrlInput function', () => {
+    const wrapper = renderer.create(<Product />)
+    const inst = wrapper.getInstance()
+    expect(inst.handleUrlInput("red_hat")).toMatchSnapshot()
+  })
 })

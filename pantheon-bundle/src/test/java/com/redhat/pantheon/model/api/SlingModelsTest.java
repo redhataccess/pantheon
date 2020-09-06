@@ -72,6 +72,7 @@ class SlingModelsTest {
         assertEquals(new Long(20), model.longField().get());
         assertArrayEquals(arrayValue, model.stringArrayField().get());
         assertEquals(TestResource.Value.VALUE_2, model.enumField().get());
+        assertEquals(TestResource.Value.VALUE_2.name(), model.field("enumField", String.class).get());
     }
 
     @Test
@@ -101,6 +102,7 @@ class SlingModelsTest {
         assertEquals(new Long(20), model.longField().get());
         assertArrayEquals(arrayValue, model.stringArrayField().get());
         assertEquals(TestResource.Value.VALUE_2, model.enumField().get());
+        assertEquals(TestResource.Value.VALUE_2.name(), model.field("enumField", String.class).get());
     }
 
     @Test

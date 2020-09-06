@@ -7,7 +7,7 @@ import javax.inject.Named;
 import org.apache.jackrabbit.JcrConstants;
 
 import com.redhat.pantheon.model.api.Field;
-import com.redhat.pantheon.model.api.WorkspaceChild;
+import com.redhat.pantheon.model.workspace.WorkspaceChild;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 
 @JcrPrimaryType("pant:acknowledgment")

@@ -30,6 +30,15 @@ public interface SlingModel extends Resource {
     <T> Field<T> field(String name, Class<T> type);
 
     /**
+     * Returns a {@link Reference} field from this model object
+     * @param name The name of the reference field
+     * @param type The model type of the Resource being referenced by this field
+     * @param <T>
+     * @return The {@link Reference} object
+     */
+    <T extends SlingModel> Reference<T> reference(String name, Class<T> type);
+
+    /**
      * Deletes this resource from the repository.
      * @throws PersistenceException If there was a problem deleting the node, such as a failed constraing validation
      */

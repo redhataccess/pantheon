@@ -9,12 +9,12 @@ exports[`Product tests should render Product component 1`] = `
       >
         <div>
           <FormGroup
-            fieldId="product-name"
+            fieldId="product_name"
             isRequired={true}
             label="Product Name"
           >
             <ForwardRef
-              id="product-name"
+              id="product_name_text"
               isRequired={true}
               onChange={[Function]}
               placeholder="Product Name"
@@ -24,11 +24,26 @@ exports[`Product tests should render Product component 1`] = `
           </FormGroup>
           <br />
           <FormGroup
-            fieldId="product-description"
+            fieldId="product_url_fragment"
+            isRequired={true}
+            label="Product URL Fragment"
+          >
+            <ForwardRef
+              id="product_url_fragment_text"
+              isRequired={true}
+              onChange={[Function]}
+              placeholder="URL Fragment"
+              type="text"
+              value=""
+            />
+          </FormGroup>
+          <br />
+          <FormGroup
+            fieldId="product_description"
             label="Product Description"
           >
             <ForwardRef
-              id="product-description"
+              id="product_description_text"
               onChange={[Function]}
               placeholder="Product Description"
               type="text"
@@ -59,6 +74,8 @@ exports[`Product tests test dismissNotification function 1`] = `[Function]`;
 exports[`Product tests test handleNameInput function 1`] = `undefined`;
 
 exports[`Product tests test handleProductInput function 1`] = `undefined`;
+
+exports[`Product tests test handleUrlInput function 1`] = `undefined`;
 
 exports[`Product tests test loginRedirect function 1`] = `undefined`;
 

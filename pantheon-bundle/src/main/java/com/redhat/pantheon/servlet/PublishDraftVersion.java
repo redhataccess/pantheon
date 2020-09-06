@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
@@ -72,12 +73,17 @@ public class PublishDraftVersion extends AbstractPostOperation {
     }
 
     private String getVariant(SlingHttpServletRequest request) {
-        return paramValue(request, "variant", DocumentVariant.DEFAULT_VARIANT_NAME);
+        return paramValue(request, "variant", null);
     }
 
     @Override
     public void run(SlingHttpServletRequest request, PostResponse response, SlingPostProcessor[] processors) {
-        logger.debug("Operation Publishinging draft version started");
+        logger.debug("Operation Publishing draft version started");
+        String variant = getVariant(request);
+        if (variant == null) {
+            response.setError(new ServletException("The 'variant' paramter is required."));
+            return;
+        }
         long startTime = System.currentTimeMillis();
         super.run(request, response, processors);
         try {
@@ -87,7 +93,6 @@ public class PublishDraftVersion extends AbstractPostOperation {
                 Document document = UnpublishVersion.canUnPublish(request)
                         ? getDocument(request, serviceResourceResolverProvider.getServiceResourceResolver())
                         : getDocument(request, request.getResourceResolver());
-                String variant = getVariant(request);
                 DocumentVersion documentVersion = document.locale(locale).get()
                         .variants().get()
                         .variant(variant).get()
@@ -105,7 +110,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
         }catch (RepositoryException ex){
             logger.error("An error has occured ", ex.getMessage());
         }
-        log.debug("Operation Publishinging draft version,  completed");
+        log.debug("Operation Publishing draft version,  completed");
         long elapseTime = System.currentTimeMillis() - startTime;
         log.debug("Total elapsed http request/response time in milliseconds: " + elapseTime);
     }

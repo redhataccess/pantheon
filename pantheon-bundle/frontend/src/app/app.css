@@ -87,3 +87,10 @@ body {
 .pf-c-card.pf-m-selectable.pf-m-selected:before {
     background-color: #5ba352 !important;
 }
+
+
+/* Set form group to medium size */
+
+.pant-form-width-md {
+    max-width: 45em;
+}

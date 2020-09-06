@@ -4,10 +4,7 @@ import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
-import com.redhat.pantheon.model.api.SlingModels;
-import com.redhat.pantheon.model.api.WorkspaceChild;
-import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
-import org.apache.sling.api.resource.Resource;
+import com.redhat.pantheon.model.workspace.WorkspaceChild;
 
 import javax.inject.Named;
 

@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PantheonConstants {
+    public static final String ADOC_LEVELOFFSET = "leveloffset";
+    public static final String MACRO_INCLUDE = "pantheon-include";
     public static final String PARAM_RERENDER = "rerender";
     public static final String PARAM_DRAFT = "draft";
     public static final String PARAM_LOCALE = "locale";

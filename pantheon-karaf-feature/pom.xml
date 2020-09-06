@@ -75,14 +75,15 @@
                 <updatePolicy>daily</updatePolicy>
             </snapshots>
         </repository>
-        <repository>
-            <id>apache-snapshots</id>
-            <name>Apache SNAPSHOT Repository</name>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+        <!-- Commented out for till long term plan is implemented -->
+<!--        <repository>-->
+<!--            <id>apache-snapshots</id>-->
+<!--            <name>Apache SNAPSHOT Repository</name>-->
+<!--            <url>https://repository.apache.org/content/repositories/snapshots/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
     </repositories>
     <pluginRepositories>
         <pluginRepository>

@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
  *
  * @author Carlos Munoz
  */
-public class EnumFieldImpl<T extends Enum> extends FieldImpl<T> {
+public class EnumFieldImpl<T extends Enum<T>> extends FieldImpl<T> {
 
     private final SlingModel owner;
 
@@ -21,15 +21,15 @@ public class EnumFieldImpl<T extends Enum> extends FieldImpl<T> {
 
     @Override
     public void set(@Nullable T value) {
-        new FieldImpl<>(getName(), String.class, owner).set( value == null ? null : value.name() );
+        owner.field(getName(), String.class).set( value == null ? null : value.name() );
     }
 
     @Override
     public T get() {
-        FieldImpl<String> fieldImpl = new FieldImpl<>(getName(), String.class, owner);
-        if(fieldImpl.get() == null) {
+        Field<String> field = owner.field(getName(), String.class);
+        if(field.get() == null) {
             return null;
         }
-        return (T)Enum.valueOf(getType(), fieldImpl.get());
+        return (T)Enum.valueOf(getType(), field.get());
     }
 }

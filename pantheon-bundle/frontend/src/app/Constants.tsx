@@ -9,6 +9,7 @@ export class Fields {
     public static PANT_DATE_UPLOADED = 'pant:dateUploaded'
     public static SLING_RESOURCETYPE = 'sling:resourceType'
     public static PANT_PRODUCT_VERSION_REF = 'productVersion'
+    public static URL_FRAGMENT = 'urlFragment'
 }
 
 // tslint:disable-next-line: max-classes-per-file
