@@ -12,7 +12,7 @@ Deleting a module in {ProductShortName}.
 .Procedure
 
 . Navigate to the link:{LinkToSearchPage}[Search page].
-. Select the check box of the module you want to delete.
+. Select the modules you want to delete.
 . Click *Delete*.
 . In the confirmation screen, click *OK* to confirm.
 
