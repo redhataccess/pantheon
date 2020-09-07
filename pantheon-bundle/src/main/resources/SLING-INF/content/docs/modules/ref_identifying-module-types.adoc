@@ -6,14 +6,14 @@ In {ProductShortName} {ProductNumber}, each module must be identified by type: c
 
 For information about module types, see https://redhat-documentation.github.io/modular-docs/#writing-mod-docs[Types of modules in Red Hat documentation].
 
-Identification is done by using either one or both of the following:
+Identify the module type by using either one or both of the following:
 
 * The correct attribute after the module's title
 * The correct prefix in the module's name
 
-Use of the correct attribute (preferred method)::
+Using the correct attribute (preferred method)::
 
-One of the following attributes should be entered in the line immediately following the module's title:
+Enter the correct attribute in the line immediately following the module's title, choosing among the following:
 
 * `:pantheon-module-type: CONCEPT`
 * `:pantheon-module-type: PROCEDURE`
@@ -26,9 +26,9 @@ One of the following attributes should be entered in the line immediately follow
 
 ====
 
-Use of the correct prefix::
+Using the correct prefix::
 
-File names of modules should start with the appropriate choice among the following
+Begin the file names of modules with the correct prefix, choosing among the following:
 
 * `con_`
 * `proc_`
