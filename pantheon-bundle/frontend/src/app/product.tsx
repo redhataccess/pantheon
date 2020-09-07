@@ -82,10 +82,10 @@ class Product extends Component<any, IState> {
                                 </FormGroup>
                                 <br />
                                 <FormGroup
-                                        label="Product UrlFragment"
+                                        label="Product URL Fragment"
                                         isRequired={true}
                                         fieldId="product_url_fragment" >
-                                    <TextInput isRequired={true} id="product_url_fragment_text" type="text" placeholder="Url Fragment" value={this.state.productUrlFragment} onChange={this.handleUrlInput} />
+                                    <TextInput isRequired={true} id="product_url_fragment_text" type="text" placeholder="URL Fragment" value={this.state.productUrlFragment} onChange={this.handleUrlInput} />
                                 </FormGroup>
                                 <br />
                                 <FormGroup

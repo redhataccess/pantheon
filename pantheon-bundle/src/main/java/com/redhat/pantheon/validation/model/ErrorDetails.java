@@ -39,6 +39,6 @@ public class ErrorDetails {
      * @return the string
      */
     public String getDetails(){
-        return String.join("\n", details);
+        return String.join(System.lineSeparator(), details);
     }
 }

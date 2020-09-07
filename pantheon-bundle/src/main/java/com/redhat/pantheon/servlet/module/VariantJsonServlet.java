@@ -194,6 +194,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
                 ,1000L, 0L, Query.XPATH)
                 .forEach(a->setAssemblyData(a,includeAssemblies));
         variantMap.put("included_in_guides", includeAssemblies);
+        variantMap.put("isPartOf", includeAssemblies);
         // remove unnecessary fields from the map
         variantMap.remove("jcr:lastModified");
         variantMap.remove("jcr:lastModifiedBy");

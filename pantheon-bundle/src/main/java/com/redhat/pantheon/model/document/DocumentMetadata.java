@@ -3,8 +3,7 @@ package com.redhat.pantheon.model.document;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.Reference;
-import com.redhat.pantheon.model.api.SlingModel;
-import com.redhat.pantheon.model.api.WorkspaceChild;
+import com.redhat.pantheon.model.workspace.WorkspaceChild;
 import org.apache.jackrabbit.JcrConstants;
 
 import javax.inject.Named;

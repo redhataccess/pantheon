@@ -102,7 +102,7 @@ class ProductDetails extends Component<IProps, IState> {
                             </FormGroup>
                             <br />
                             <FormGroup
-                                label=" Url Fragment:"
+                                label=" URL Fragment:"
                                 isRequired={true}
                                 fieldId="url_fragment"
                             >

@@ -62,7 +62,7 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
         <FormGroup
           fieldId="url_fragment"
           isRequired={true}
-          label=" Url Fragment:"
+          label=" URL Fragment:"
         >
           <ForwardRef
             id="url_fragment_text"

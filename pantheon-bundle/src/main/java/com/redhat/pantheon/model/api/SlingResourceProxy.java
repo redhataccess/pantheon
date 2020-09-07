@@ -1,6 +1,6 @@
 package com.redhat.pantheon.model.api;
 
-import com.redhat.pantheon.util.function.Memoizer;
+import com.redhat.pantheon.model.api.util.Memoizer;
 import org.apache.sling.api.resource.Resource;
 
 import javax.inject.Named;
@@ -16,21 +16,21 @@ import java.util.function.Function;
 import static com.redhat.pantheon.model.api.SlingModels.getModel;
 
 /**
- * A specialized {@link ResourceDecorator} extension which also acts as an {@link InvocationHandler}
- * to provide additional methods in {@link SlingModel} interfaces. It provides all the existing
- * methods in the base class, plus the ability to process additional ones which conform to the
- * model contract.
+ * A specialized proxy {@link InvocationHandler} which translates all invocations from the model
+ * interfaces to the actual sling {@link Resource} objects backing them.
+ * It provides the ability to add methods on interfaces which conform to the Model object contract.
  *
  * The {@link InvocationHandler}'s invoke method is responsible for handling all the additional
  * methods which might come from the specific model interface.
  *
  * @author Carlos Munoz
  */
-class SlingResourceProxy extends ResourceDecorator implements InvocationHandler {
+class SlingResourceProxy implements InvocationHandler {
+
+    private ResourceDecorator resourceDecorator;
 
     private enum MethodType {
-        Default,
-        EnumFieldAccessor,
+        DefaultInterfaceMethod,
         FieldAccessor,
         ChildAccessor,
         ReferenceFieldAccessor,
@@ -42,14 +42,14 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
             = Memoizer.memoize(method -> getMethodType(method));
 
     public SlingResourceProxy(Resource wrapped) {
-        super(wrapped);
+        this.resourceDecorator = new ResourceDecorator(wrapped);
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         MethodType methodType = methodClassifier.apply(method);
         switch (methodType) {
-            case Default: {
+            case DefaultInterfaceMethod: {
                 // FIXME This will need to change in Java8+ versions
                 // See: https://blog.jooq.org/2018/03/28/correct-reflective-access-to-interface-default-methods-in-java-8-9-10/
                 final Class<?> declaringClass = method.getDeclaringClass();
@@ -63,41 +63,31 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
                         .invokeWithArguments(args);
             }
 
-            case EnumFieldAccessor: {
-                String fieldName = extractFieldName(method);
-                Class fieldType = extractParameterizedReturnType(method);
-                return new EnumFieldImpl(fieldName, fieldType, this);
-            }
-
             case FieldAccessor: {
                 String fieldName = extractFieldName(method);
                 Class fieldType = extractParameterizedReturnType(method);
-                return new FieldImpl(fieldName, fieldType, this);
+                return resourceDecorator.field(fieldName, fieldType);
             }
 
             case ChildAccessor: {
                 String childName = extractFieldName(method);
                 Class childType = extractParameterizedReturnType(method);
-                return new ChildImpl(childName, childType, this);
+                return resourceDecorator.child(childName, childType);
             }
 
             case ReferenceFieldAccessor: {
                 String referenceName = extractFieldName(method);
                 Class referenceType = extractParameterizedReturnType(method);
-                return new ReferenceFieldImpl(referenceName, referenceType, this);
+                return resourceDecorator.reference(referenceName, referenceType);
             }
 
             case ParentAccessorOverride: {
-                return getModel(getParent(), (Class<? extends SlingModel>) method.getReturnType());
+                return getModel(resourceDecorator.getParent(), (Class<? extends SlingModel>) method.getReturnType());
             }
 
             default:
-                return method.invoke(this, args);
+                return method.invoke(resourceDecorator, args);
         }
-    }
-
-    private static boolean isEnumFieldAccessor(Method method) {
-        return isFieldAccessor(method) && Enum.class.isAssignableFrom(extractParameterizedReturnType(method));
     }
 
     private static boolean isChildAccessor(Method method) {
@@ -142,11 +132,7 @@ class SlingResourceProxy extends ResourceDecorator implements InvocationHandler 
         // default interface methods
         // (default methods declared in the SlingModel interface themselves)
         if( method.isDefault() ) {
-            return MethodType.Default;
-        }
-        // methods which access an enum Field
-        else if( isEnumFieldAccessor(method) ) {
-            return MethodType.EnumFieldAccessor;
+            return MethodType.DefaultInterfaceMethod;
         }
         // methods which access a Field
         else if( isFieldAccessor(method) ) {

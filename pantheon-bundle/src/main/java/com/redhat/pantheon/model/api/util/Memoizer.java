@@ -1,4 +1,4 @@
-package com.redhat.pantheon.util.function;
+package com.redhat.pantheon.model.api.util;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
