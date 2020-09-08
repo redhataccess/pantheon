@@ -132,9 +132,7 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
         return Optional.ofNullable(modulePaths).orElseGet(() -> {
             modulePaths = new HashSet<>();
             toc.getEntries().stream()
-                    .map(TableOfContents.Entry::getModuleVariant)
-                    .map(ModuleVariant::getParentLocale)
-                    .map(ModuleLocale::getParent)
+                    .map(TableOfContents.Entry::getModule)
                     .map(Module::getPath)
                     .forEach(modulePaths::add);
             return modulePaths;

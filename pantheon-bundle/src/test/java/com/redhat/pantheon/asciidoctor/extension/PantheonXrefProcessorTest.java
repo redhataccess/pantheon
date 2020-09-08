@@ -96,7 +96,7 @@ public class PantheonXrefProcessorTest {
 
         ModuleVariant variant = slingContext.resourceResolver().getResource("/moduleB/en_US/variants/test-atts").adaptTo(ModuleVariant.class);
         TableOfContents toc = new TableOfContents();
-        toc.addEntry(0, variant);
+        toc.addEntry(0, variant.getParentLocale().getParent());
 
         //When
         PantheonXrefProcessor xp = new PantheonXrefProcessor(variant, toc);

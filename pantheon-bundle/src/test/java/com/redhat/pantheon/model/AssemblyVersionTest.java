@@ -49,8 +49,8 @@ public class AssemblyVersionTest {
         Assembly assembly =
                 SlingModels.getModel(slingContext.resourceResolver().getResource("/content/assembly1"),
                         Assembly.class);
-        ModuleVariant m1 = SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module1"), ModuleVariant.class);
-        ModuleVariant m2 = SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module2"), ModuleVariant.class);
+        Module m1 = SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module1"), Module.class);
+        Module m2 = SlingModels.getModel(slingContext.resourceResolver().getResource("/content/module2"), Module.class);
         String m1uuid = m1.uuid().get();
         String m2uuid = m2.uuid().get();
 
@@ -79,8 +79,8 @@ public class AssemblyVersionTest {
                 AssemblyPage.class);
 
         assertEquals(1, p1.leveloffset().get());
-        assertEquals(m1uuid, p1.moduleVariant().get());
+        assertEquals(m1uuid, p1.module().get());
         assertEquals(0, p2.leveloffset().get());
-        assertEquals(m2uuid, p2.moduleVariant().get());
+        assertEquals(m2uuid, p2.module().get());
     }
 }
