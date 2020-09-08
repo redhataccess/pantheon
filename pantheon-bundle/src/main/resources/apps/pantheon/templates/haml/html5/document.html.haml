@@ -51,7 +51,7 @@
         };
       %script(src="https://access.redhat.com/webassets/avalon/j/lib/require.js")
       :javascript
-        chrometwo_require(["wc"], wc => wc.include("cp-documentation/dist/cp-documentation.umd.min"));
+        chrometwo_require(["wc"], wc => wc.include("@cpelements/cp-documentation/dist/cp-documentation.umd.min"));
 
 
   %body{:id => @id, :class=>[doctype, 'pantheon-render', ((attr? :toc) && (attr? 'toc-placement', 'auto') ? "has-toc toc-#{attr 'toc-position', 'left'}" : nil)]}
