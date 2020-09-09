@@ -177,6 +177,7 @@ class ModuleDisplay extends Component<any, any, any> {
                         updateDate={this.updateDate}
                         onGetProduct={this.getProduct}
                         onGetVersion={this.getVersion}
+                        onPublishEvent={this.onPublishEvent}
                     />
                 </Card>
 
@@ -262,6 +263,10 @@ class ModuleDisplay extends Component<any, any, any> {
 
     private getVersion = (version) => {
         this.setState({ versionValue: version })
+    }
+
+    private onPublishEvent = () => {
+        this.getVersionUUID(this.props.location.pathname)
     }
 
     private getVersionUUID = (path) => {
