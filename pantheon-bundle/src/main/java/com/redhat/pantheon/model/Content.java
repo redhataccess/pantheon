@@ -2,6 +2,7 @@ package com.redhat.pantheon.model;
 
 import com.redhat.pantheon.model.api.*;
 import com.redhat.pantheon.model.module.ModuleVersion;
+import com.redhat.pantheon.model.workspace.WorkspaceChild;
 
 import javax.inject.Named;
 

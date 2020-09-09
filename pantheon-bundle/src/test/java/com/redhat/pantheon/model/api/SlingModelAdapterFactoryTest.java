@@ -24,7 +24,8 @@ class SlingModelAdapterFactoryTest {
 
     private final SlingContext slingContext = new SlingContext();
 
-    SlingModelAdapterFactory modelAdapterFactory = new SlingModelAdapterFactory();
+    SlingModelAdapterFactory modelAdapterFactory = new SlingModelAdapterFactory() {
+    };
 
     @Test
     void getAdapter() {

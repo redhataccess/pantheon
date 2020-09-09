@@ -119,7 +119,7 @@ class GitImport extends Component {
                     } else if (response.status === 500) {
                       console.log(" Failed " + response.status)
                       response.text().then((text) => {
-                        this.setState({ submitMsg: text })
+                        this.setState({ submitMsg: JSON.parse(text).error })
                       });
                     } else {
                       this.setState({ isSucess: false, msgType: "danger", submitMsg: "The git import submission has failed." })

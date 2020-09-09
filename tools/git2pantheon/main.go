@@ -26,7 +26,7 @@ func cloneBranch(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		if err != nil {
-			http.Error(w, "Error reading request body",
+			http.Error(w, "{\"error\" : \"Error reading request body\"} ",
 				http.StatusInternalServerError)
 		}
 
