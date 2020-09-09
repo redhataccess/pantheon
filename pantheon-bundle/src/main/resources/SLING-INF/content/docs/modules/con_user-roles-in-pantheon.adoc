@@ -1,0 +1,20 @@
+[id="user-roles-in-pantheon_{context}"]
+= User roles in {ProductShortName}
+
+In {ProductShortName}, each user is assigned a role, which determines the actions the user can perform.
+
+There are two user roles defined in {ProductShortName} - `Author` and `Publisher`. The following permissions are associated with the roles:
+
+`Author`::
+
+* Use Git to import their modules files into {ProductShortName}.
+* Revise existing modules.
+* Preview and stage modules.
+* Search and sort any modules imported into {ProductShortName}.
+* Manage module metadata that is configurable in the user interface.
+ 
+`Publisher`::
+* All the permissions associated with the `Author` role.
+* Publish modules to the {PublishingPortal} (including CPSearch). 
+* Unpublish modules from the {PublishingPortal} (including CPSearch).
+* Create and manage `Product` and `Product Version`.
