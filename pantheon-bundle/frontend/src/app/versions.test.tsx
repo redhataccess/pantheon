@@ -130,12 +130,6 @@ describe('Versions tests', () => {
         expect(inst.handleURLInput()).toMatchSnapshot()
     })
 
-    it('test loginRedirect function', () => {
-        const wrapper = renderer.create(<Versions {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.loginRedirect()).toMatchSnapshot()
-    })
-
     it('test dismissNotification function', () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()

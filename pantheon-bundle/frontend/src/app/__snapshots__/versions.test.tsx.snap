@@ -47,7 +47,6 @@ exports[`Versions tests should render Versions component 1`] = `
     variant="default"
     width="60%"
   >
-    <div />
     <Form
       id="edit_metadata"
       isHorizontal={true}
@@ -246,8 +245,6 @@ exports[`Versions tests test hidePublishAlert function 1`] = `undefined`;
 exports[`Versions tests test hideSuccessAlert function 1`] = `undefined`;
 
 exports[`Versions tests test hideUppublishAlertForModule function 1`] = `undefined`;
-
-exports[`Versions tests test loginRedirect function 1`] = `""`;
 
 exports[`Versions tests test onChangeUsecase function 1`] = `undefined`;
 

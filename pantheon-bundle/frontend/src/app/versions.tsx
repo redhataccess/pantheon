@@ -273,22 +273,17 @@ class Versions extends Component<IProps, IState> {
             </Button>
                     ]}
                 >
-                    {/* <div>
-                        {this.loginRedirect()}
-                    </div> */}
-                    <div>
 
-                        {this.state.isMissingFields && (
-                            <div className='notification-container'>
-                                <Alert
-                                    variant='warning'
-                                    title='Fields indicated by * are mandatory'
-                                    actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                                />
-                                <br />
-                            </div>
-                        )}
-                    </div>
+                    {this.state.isMissingFields && (
+                        <div className='notification-container'>
+                            <Alert
+                                variant='warning'
+                                title='Fields indicated by * are mandatory'
+                                actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                            />
+                            <br />
+                        </div>
+                    )}
                     <Form isHorizontal={true} id='edit_metadata'>
                         <FormGroup
                             label='Product Name'
@@ -619,14 +614,6 @@ class Versions extends Component<IProps, IState> {
                 console.log(error)
             })
         return products
-    }
-
-    private loginRedirect = () => {
-        if (this.state.login) {
-            return <Redirect to='/login' />
-        } else {
-            return ''
-        }
     }
 
     private dismissNotification = () => {
