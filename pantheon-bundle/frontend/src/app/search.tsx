@@ -136,7 +136,7 @@ class Search extends Component<IAppState, ISearchState> {
                   </DataListCell>,
                   <DataListCell key="upload time">
                     <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">
-                      Module Type
+                      Content Type
                     </span>
                   </DataListCell>,
                 ]}

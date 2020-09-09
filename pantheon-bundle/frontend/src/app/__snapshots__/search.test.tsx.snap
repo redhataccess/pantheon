@@ -78,7 +78,7 @@ exports[`Search tests should render default Search component 1`] = `
                   className="sp-prop-nosort"
                   id="span-upload-time"
                 >
-                  Module Type
+                  Content Type
                 </span>
               </DataListCell>,
             ]
