@@ -1,7 +1,7 @@
 [id="user-roles-in-pantheon_{context}"]
 = User roles in {ProductShortName}
 
-In {ProductShortName}, each user is assigned a role, which determines the actions the user can perform.
+In {ProductShortName}, each user is assigned a role that determines the actions the user can perform.
 
 There are two user roles defined in {ProductShortName} - `Author` and `Publisher`. The following permissions are associated with the roles:
 
@@ -15,6 +15,6 @@ There are two user roles defined in {ProductShortName} - `Author` and `Publisher
  
 `Publisher`::
 * All the permissions associated with the `Author` role.
-* Publish modules to the {PublishingPortal} (including CPSearch). 
-* Unpublish modules from the {PublishingPortal} (including CPSearch).
+* Publish modules to the {PublishingPortal} and the {PublishingPortalSearh}. 
+* Unpublish modules from the {PublishingPortal} and the {PublishingPortalSearh}.
 * Create and manage `Product` and `Product Version`.
