@@ -163,6 +163,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                                 updateDate={this.updateDate}
                                 onGetProduct={this.getProduct}
                                 onGetVersion={this.getVersion}
+                                onPublishEvent={this.onPublishEvent}
                             />
                         </Card>
                     </div>
@@ -250,6 +251,10 @@ class AssemblyDisplay extends Component<any, any, any> {
     private getVersion = (version) => {
         this.setState({ versionValue: version })
     }
+
+    private onPublishEvent = () => {
+          this.fetchModuleDetails(this.props)
+     }
 
     private getVersionUUID = (path) => {
         // Remove /assembly from path
