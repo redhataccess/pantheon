@@ -2,25 +2,25 @@
 
 = The {ProductShortName} configuration file
 
-You need to create a configuration file, named `pantheon2.yml`, in the root directory of your repository, to enable a Git repository as a source that {ProductShortName} can use to import content. This yaml file provides necessary information that {ProductShortName} uses to interact with files in the repository.
+You must create a configuration file, named `pantheon2.yml`, in the root directory of your repository. You use this file to designate a Git repository as a source that {ProductShortName} can use to import content. This configuration file provides the information necessary for {ProductShortName} to interact with files in the repository.
 
-The configuration file enables the following:
+The configuration file allows you to perform the following actions:
 
-* Importing content from a Git repository into {ProductShortName}
-* Uploading modules into {ProductShortName} using the Uploader tool
+* Import content from a Git repository into {ProductShortName}
+* Upload modules into {ProductShortName} using the Uploader tool
 
-The configuration file defines the following:
+Use the configuration file to define the following parameters:
 
 `server`:: The URL of the {ProductShortName} server.
-`repositories`:: a multi-valued structure with the following child members:
+`repositories`:: A multi-valued structure with the following child members:
 +
 `name`:: A unique ID that appears in URLs on the {ProductShortName} site when you view modules and assemblies. For example, if you specify `name: rhel_docs`, and one of your modules is named [filename]`foo.adoc`, the module's URL in {ProductShortName} is:
 `http://<_{ProductShortName}__url>/content/repositories/**rhel_docs**/entities/modules/getting_started/foo.adoc.preview`
 `modules`:: Patterns for modules that show up in the search results on {ProductShortName}.
 `resources`:: Image files, legal information or other content that is not a complete module or assembly.
-`attributes`:: a path to the repository-wide attributes file that your documents may depend on.
+`attributes`:: A path to the repository-wide attributes file that your documents might depend on.
 
-You need to define the values for `server` and `repository`.
+You must define the values for `server` and `repository`.
 
 .Example configuration file
 
