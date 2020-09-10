@@ -113,18 +113,16 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             queryFilters.add(productVersionCondition);
         }
 
-        // Module type filter
+        // Content type filter
         if(!Strings.isNullOrEmpty(type)) {
-            StringBuilder moduleTypeCondition;
+            StringBuilder contentTypeCondition = new StringBuilder();
             if (type.equalsIgnoreCase("assembly")) {
-                moduleTypeCondition = new StringBuilder()
-                        .append("@jcr:primaryType = 'pant:assembly'");
+                contentTypeCondition.append("@jcr:primaryType = 'pant:assembly'");
             } else {
-                moduleTypeCondition = new StringBuilder()
-                        .append("*/*/*/*/metadata/@pant:moduleType = '" + type + "'");
+                contentTypeCondition.append("*/*/*/*/metadata/@pant:moduleType = '" + type + "'");
             }
 
-            queryFilters.add(moduleTypeCondition);
+            queryFilters.add(contentTypeCondition);
         }
 
         // join all the available conditions
