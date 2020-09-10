@@ -163,6 +163,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                                 updateDate={this.updateDate}
                                 onGetProduct={this.getProduct}
                                 onGetVersion={this.getVersion}
+                                onPublishEvent={this.onPublishEvent}
                             />
                         </Card>
                     </div>
@@ -251,6 +252,10 @@ class AssemblyDisplay extends Component<any, any, any> {
         this.setState({ versionValue: version })
     }
 
+    private onPublishEvent = () => {
+        this.getVersionUUID(this.props.location.pathname)
+    }
+
     private getVersionUUID = (path) => {
         // Remove /assembly from path
         path = path.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
@@ -302,10 +307,12 @@ class AssemblyDisplay extends Component<any, any, any> {
                         if (productChild.__name__ !== 'versions') {
                             continue
                         }
-                        for (const productVersion of productChild.__children__) {
-                            if (productVersion[Fields.JCR_UUID] === uuid) {
-                                this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
-                                break
+                        if (productChild.__children__) {
+                            for (const productVersion of productChild.__children__) {
+                                if (productVersion[Fields.JCR_UUID] === uuid) {
+                                    this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
+                                    break
+                                }
                             }
                         }
                     }

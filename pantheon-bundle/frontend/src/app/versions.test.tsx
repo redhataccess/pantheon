@@ -23,7 +23,8 @@ const props = {
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
     variant: "test",
     variantUUID: "abcd-1234",
-    versionModulePath: "/modules/test_module/en_US/variants/test/draft"
+    versionModulePath: "/modules/test_module/en_US/variants/test/draft",
+    onPublishEvent: () => anymatch
 }
 
 describe('Versions tests', () => {
@@ -129,12 +130,6 @@ describe('Versions tests', () => {
         expect(inst.handleURLInput()).toMatchSnapshot()
     })
 
-    it('test loginRedirect function', () => {
-        const wrapper = renderer.create(<Versions {...props} />)
-        const inst = wrapper.getInstance()
-        expect(inst.loginRedirect()).toMatchSnapshot()
-    })
-
     it('test dismissNotification function', () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
@@ -201,7 +196,8 @@ describe('Versions tests', () => {
             updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
             variant: "DEFAULT",
             variantUUID: "abcd-1234",
-            versionModulePath: "versionPath"
+            versionModulePath: "versionPath",
+            onPublishEvent: () => anymatch
         }
         state.updateDate("-", "-", 1, "1234")
         expect(state.modulePath).toEqual('somePath')

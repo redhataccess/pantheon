@@ -88,6 +88,13 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       />
       <FormSelectOption
         isDisabled={false}
+        key="ASSEMBLY"
+        label="Assembly"
+        required={false}
+        value="ASSEMBLY"
+      />
+      <FormSelectOption
+        isDisabled={false}
         key="CONCEPT"
         label="Concept"
         required={false}

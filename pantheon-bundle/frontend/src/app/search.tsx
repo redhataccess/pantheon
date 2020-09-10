@@ -18,9 +18,7 @@ export interface ISearchState {
   alertOneVisible: boolean
   checkNextPageRow: string
   columns: string[]
-  confirmDelete: boolean
   contentType: string
-  deleteState: string
   filterQuery: string
   isEmptyResults: boolean
   isModalOpen: boolean
@@ -52,9 +50,7 @@ class Search extends Component<IAppState, ISearchState> {
       alertOneVisible: true,
       checkNextPageRow: "",
       columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
-      confirmDelete: false,
       contentType: "module",
-      deleteState: '',
       displayLoadIcon: true,
       filterQuery: '',
       isEmptyResults: false,
@@ -108,7 +104,7 @@ class Search extends Component<IAppState, ISearchState> {
         <DataList aria-label="Search results Headings" >
           <DataListItem aria-labelledby="span-name">
             <DataListItemRow id="data-rows-header" >
-              {this.props.userAuthenticated && !this.state.isEmptyResults &&
+              {/* {this.props.userAuthenticated && !this.state.isEmptyResults &&
                 <Checkbox aria-labelledby="width-ex1-check1"
                   className="checkbox"
                   isChecked={this.state.selectAllCheckValue}
@@ -116,7 +112,7 @@ class Search extends Component<IAppState, ISearchState> {
                   aria-label="controlled checkbox example"
                   id="check"
                   onChange={this.handleSelectAll}
-                />}
+                />} */}
               <DataListItemCells
                 dataListCells={[
                   <DataListCell width={2} key="title">
@@ -136,20 +132,12 @@ class Search extends Component<IAppState, ISearchState> {
                   </DataListCell>,
                   <DataListCell key="upload time">
                     <span className="sp-prop-nosort" id="span-upload-time" aria-label="column upload time">
-                      Module Type
+                      Content Type
                     </span>
                   </DataListCell>,
                 ]}
               />
               </DataListItemRow>
-              {/* Delete button at the top */}
-              {
-                this.buildTransientPathArray().length > 0 ?
-                <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
-                  <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
-                </DataListItemRow>
-                  : null
-              } 
               {this.state.displayLoadIcon && (
                 <Level hasGutter={true}>
                   <LevelItem />
@@ -168,17 +156,6 @@ class Search extends Component<IAppState, ISearchState> {
                 )}                          
                 {!this.state.displayLoadIcon && (this.state.results.map((data, key) => (
                   <DataListItemRow id="data-rows" key={key}>
-                    {this.props.userAuthenticated && !this.state.isEmptyResults &&
-                      <Checkbox aria-labelledby="width-ex3-check1"
-                        className="checkbox"
-                        isChecked={data[Search.KEY_CHECKEDITEM]}
-                        checked={data[Search.KEY_CHECKEDITEM]}
-                        aria-label="controlled checkbox example"
-                        id={data[Search.KEY_TRANSIENTPATH]}
-                        name={data[Search.KEY_TRANSIENTPATH]}
-                        onChange={this.handleDeleteCheckboxChange}
-                        key={'checked_' + key}
-                      />}
                     <DataListItemCells key={"cells_" + key}
                       dataListCells={[
                         <DataListCell key={"title_" + key} width={2}>
@@ -205,15 +182,6 @@ class Search extends Component<IAppState, ISearchState> {
                   </DataListItemRow>
                 )))}
 
-            {/* Delete button at the bottom */}
-            <DataListItemRow id="data-rows" key={this.state.results[Search.KEY_TRANSIENTPATH]}>
-              {
-                this.buildTransientPathArray().length > 0 ?
-                  <Button variant="primary" onClick={this.confirmDeleteOperation}>Delete</Button>
-                  : null
-              }
-
-                </DataListItemRow>
                 {isEmptyResults && (
                   <Level hasGutter={true}>
                     <LevelItem />
@@ -268,47 +236,6 @@ class Search extends Component<IAppState, ISearchState> {
               />
               <BuildInfo />
             </div>
-            {/* Alert for delete confirmation */}
-            <div className="alert">
-              {this.state.confirmDelete === true && <Modal
-                variant={ModalVariant.small}
-                title="Confirmation"
-                isOpen={!this.state.isModalOpen}
-                onClose={this.hideAlertOne}
-                actions={[<Button key="yes" variant="primary" onClick={this.delete}>Yes</Button>,
-                <Button key="no" variant="secondary" onClick={this.cancelDeleteOperation}>No</Button>]}
-              >
-                Are you sure you want to delete the selected items?
-                </Modal>}
-              {/* Alerts after confirmation on delete */}
-              {this.state.deleteState === 'positive' && <Modal
-                variant={ModalVariant.small}
-                title="Success"
-                isOpen={!this.state.isModalOpen}
-                onClose={this.hideAlertOne}
-                actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
-              >
-                Selected items were deleted.
-                </Modal>}
-              {this.state.deleteState === 'negative' && <Modal
-                variant={ModalVariant.small}
-                title="Failure"
-                isOpen={!this.state.isModalOpen}
-                onClose={this.hideAlertOne}
-                actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
-              >
-                Selected items were not found.
-                </Modal>}
-              {this.state.deleteState === 'unknown' && <Modal
-                variant={ModalVariant.small}
-                title="Error"
-                isOpen={!this.state.isModalOpen}
-                onClose={this.hideAlertOne}
-                actions={[<Button key="cancel" variant="primary" onClick={this.hideAlertOne}>OK</Button>]}
-              >
-                An unknown error occured, please check if you are logged in.
-                </Modal>}
-            </div>
       </React.Fragment>
     );
   }
@@ -324,43 +251,6 @@ class Search extends Component<IAppState, ISearchState> {
       results: newResults,
       selectAllCheckValue: checked
     })
-  }
-
-  private handleDeleteCheckboxChange = (checked: boolean, event: FormEvent<HTMLInputElement>) => {
-    const newResults: any[] = []
-    const nameStr = 'name'
-    this.state.results.map(data => {
-      newResults.push(JSON.parse(JSON.stringify(data))) // clones the object
-      if (data[Search.KEY_TRANSIENTPATH] === event.target[nameStr]) {
-        newResults[newResults.length - 1][Search.KEY_CHECKEDITEM] = checked
-      }
-    })
-
-    this.setState({
-      results: newResults,
-      selectAllCheckValue: false
-    })
-  };
-
-  private delete = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const formData = new FormData()
-    const keydata = this.buildTransientPathArray()
-    formData.append(':operation', 'delete')
-    for (const item of keydata) {
-      formData.append(':applyTo', '/content/' + item)
-    }
-    fetch('/content/' + keydata[0], {
-      body: formData,
-      method: 'post'
-    }).then(response => {
-      if (response.status === 200) {
-        this.setState({ deleteState: 'positive' })
-      } else if (response.status === 403) {
-        this.setState({ deleteState: 'negative' })
-      } else {
-        this.setState({ deleteState: 'unknown' })
-      }
-    });
   }
 
   private getRows = (event) => {
@@ -428,18 +318,6 @@ class Search extends Component<IAppState, ISearchState> {
     }
     return backend
   }
-
-  private hideAlertOne = () => this.setState({ alertOneVisible: false }, () => {
-    this.setState({
-      confirmDelete: false,
-      deleteState: '',
-      page: 1
-    }, () => { this.doSearch() });
-  });
-
-  private confirmDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete })
-
-  private cancelDeleteOperation = () => this.setState({ confirmDelete: !this.state.confirmDelete })
 
   private updatePageCounter = (direction: string) => () => {
     if (direction === "L" && this.state.page > 1) {
