@@ -253,8 +253,8 @@ class AssemblyDisplay extends Component<any, any, any> {
     }
 
     private onPublishEvent = () => {
-          this.fetchModuleDetails(this.props)
-     }
+        this.getVersionUUID(this.props.location.pathname)
+    }
 
     private getVersionUUID = (path) => {
         // Remove /assembly from path
