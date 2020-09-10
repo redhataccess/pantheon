@@ -32,7 +32,7 @@ class NavLinks extends Component<IAppState, any> {
     return (
       <React.Fragment>
         <NavList onSelect={this.onExpandableSelect} id="nav-primary-expandable">
-          <NavExpandable title="Modules" groupId="grp-1" isActive={this.state.activeGroup === 'grp-1'} isExpanded={true} data-testid="navLink_modules">
+          <NavExpandable title="Contents" groupId="grp-1" isActive={this.state.activeGroup === 'grp-1'} isExpanded={true} data-testid="navLink_contents">
             <NavItem
               groupId="grp-1"
               itemId="grp-1_itm-1"
