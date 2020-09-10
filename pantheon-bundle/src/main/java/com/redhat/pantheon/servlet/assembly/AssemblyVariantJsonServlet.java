@@ -7,6 +7,7 @@ import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.assembly.AssemblyContent;
 import com.redhat.pantheon.model.assembly.AssemblyMetadata;
+import com.redhat.pantheon.model.assembly.AssemblyPage;
 import com.redhat.pantheon.model.assembly.AssemblyVariant;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
 import com.redhat.pantheon.model.document.DocumentMetadata;
@@ -53,6 +54,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
     public static final String PORTAL_URL = "PORTAL_URL";
     public static final String PANTHEON_HOST = "PANTHEON_HOST";
     public static final String MODULE_VARIANT_API_PATH = "/api/module/variant.json";
+    public static final String VARIANT_URL = "variant_url";
 
     private final Logger log = LoggerFactory.getLogger(AssemblyVariantJsonServlet.class);
 
@@ -181,7 +183,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
             variantMap.put(VIEW_URI, "");
         }
 
-        List<Map> moduleList = new ArrayList<>();
+        List<Map<String, String>> moduleList = new ArrayList<>();
         List<Map<String, String>> publishedModuleList = new ArrayList<>();
         variantMap.put("modules_included", moduleList);
 
@@ -189,39 +191,35 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         if (assemblyContent != null & assemblyContent.getChildren() != null) {
             for (Resource childResource : assemblyContent.getChildren()) {
+                AssemblyPage page = childResource.adaptTo(AssemblyPage.class);
                 Map<String, String> moduleMap = new HashMap<>();
                 moduleList.add(moduleMap);
 
-                String moduleVariantUuid = childResource.getValueMap().containsKey("pant:moduleVariantUuid") ? childResource.getValueMap().get("pant:moduleVariantUuid").toString() : "";
-                moduleMap.put("module_variant_uuid", moduleVariantUuid);
-                // use module_variant_uuid to retrieve module_title from the module
-                if (!moduleVariantUuid.isEmpty()) {
-                    Resource resourceByUuid = getResourceByUuid(request, moduleVariantUuid);
-                    ModuleVariant moduleVariant = resourceByUuid.adaptTo(ModuleVariant.class);
-                    moduleMap.put("module_title", getModuleTitleFromUuid(moduleVariant));
-                    moduleMap.put("module_uuid", getModuleUuidFromVariant(moduleVariant));
-                    // check if the module is published
-                    if (moduleVariant.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {
-                        String module_url = System.getenv(PANTHEON_HOST)
-                                + MODULE_VARIANT_API_PATH
-                                + "/"
-                                + moduleVariantUuid;
-                        moduleMap.put("module_url", module_url);
-                    } else {
-                        moduleMap.put("module_url", "");
-                    }
+                String moduleUuid = page.module().get();
+                Module module = getResourceByUuid(request, moduleUuid).adaptTo(Module.class);
+                ModuleVariant canonical = module
+                        .locale(assemblyVariant.getParentLocale().getName()).get()
+                        .variants().get()
+                        .canonicalVariant().get();
+                moduleMap.put("module_variant_uuid", canonical.uuid().get());
+                moduleMap.put("module_title", page.title().get());
+                moduleMap.put("module_uuid", module.uuid().get());
+                // check if the module is published
+                if (canonical.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {
+                    String variantUrl = System.getenv(PANTHEON_HOST)
+                            + MODULE_VARIANT_API_PATH
+                            + "/"
+                            + canonical.uuid().get();
+                    moduleMap.put(VARIANT_URL, variantUrl);
+                } else {
+                    moduleMap.put(VARIANT_URL, "");
                 }
-                moduleMap.put("module_level_offset",
-                        childResource.getValueMap().containsKey("pant:leveloffset") ? childResource.getValueMap().get("pant:leveloffset").toString() : "");
+                moduleMap.put("module_level_offset", String.valueOf(page.leveloffset().get()));
 
             }
-            for (Map<String, String> entry: moduleList) {
-                for (String key : entry.keySet()) {
-                    if (key == "module_url" && !entry.get(key).isEmpty()) {
-                        publishedModuleList.add(entry);
-                    }
-                }
-            }
+            moduleList.stream().filter(map -> map.containsKey(VARIANT_URL))
+                    .filter(map -> !map.get(VARIANT_URL).isEmpty())
+                    .forEach(publishedModuleList::add);
             variantMap.put("hasPart", publishedModuleList);
         }
         // remove unnecessary fields from the map
