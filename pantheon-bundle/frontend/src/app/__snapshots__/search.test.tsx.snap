@@ -31,17 +31,6 @@ exports[`Search tests should render default Search component 1`] = `
       <DataListItemRow
         id="data-rows-header"
       >
-        <Checkbox
-          aria-label="controlled checkbox example"
-          aria-labelledby="width-ex1-check1"
-          checked={false}
-          className="checkbox"
-          id="check"
-          isChecked={false}
-          isDisabled={false}
-          isValid={true}
-          onChange={[Function]}
-        />
         <DataListItemCells
           dataListCells={
             Array [
@@ -105,9 +94,6 @@ exports[`Search tests should render default Search component 1`] = `
         </LevelItem>
         <LevelItem />
       </Level>
-      <DataListItemRow
-        id="data-rows"
-      />
     </DataListItem>
   </DataList>
   <div
@@ -126,9 +112,6 @@ exports[`Search tests should render default Search component 1`] = `
     />
     <BuildInfo />
   </div>
-  <div
-    className="alert"
-  />
 </Fragment>
 `;
 
@@ -136,13 +119,7 @@ exports[`Search tests test buildSearchUrl function 1`] = `undefined`;
 
 exports[`Search tests test buildTransientPathArray function 1`] = `undefined`;
 
-exports[`Search tests test cancelDeleteOperation function 1`] = `undefined`;
-
 exports[`Search tests test changePerPageLimit function 1`] = `undefined`;
-
-exports[`Search tests test confirmDeleteOperation function 1`] = `undefined`;
-
-exports[`Search tests test delete function 1`] = `undefined`;
 
 exports[`Search tests test dismissNotification function 1`] = `undefined`;
 
@@ -151,8 +128,6 @@ exports[`Search tests test doSearch function 1`] = `undefined`;
 exports[`Search tests test fetchTimeout function 1`] = `undefined`;
 
 exports[`Search tests test getRows function 1`] = `undefined`;
-
-exports[`Search tests test handleDeleteCheckboxChange function 1`] = `undefined`;
 
 exports[`Search tests test handleSelectAll function 1`] = `undefined`;
 
