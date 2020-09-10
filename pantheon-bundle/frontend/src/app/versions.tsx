@@ -109,35 +109,42 @@ class Versions extends Component<IProps, IState> {
 
         return (
             <React.Fragment>
-                {this.state.successAlertVisible && <Alert
-                    variant='success'
-                    title='Edit Metadata'
-                    actionClose={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
-                >
-                    Update Successful!
-          </Alert>
+                {this.state.successAlertVisible && <div className='notification-container pant-notification-container-md'>
+                    <Alert
+                        variant='success'
+                        title='Edit Metadata'
+                        actionClose={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
+                    >
+                        Update Successful!
+                    </Alert>
+                </div>
                 }
 
-                {this.state.publishAlertVisible && <Alert
-                    variant='warning'
-                    title='Module Versions'
-                    actionClose={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
-                >
-                    Module failed to publish. Check the following:
-                    <ul>
-                        <li>Are you logged in as a publisher?</li>
-                        <li>Does the module have all required metadata?</li>
-                    </ul>
-                </Alert>
+                {this.state.publishAlertVisible && <div className='notification-container pant-notification-container-md'>
+                    <Alert
+                        variant='warning'
+                        title='Module Versions'
+                        actionClose={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
+                    >
+                        Module failed to publish. Check the following:
+                        <ul>
+                            <li>Are you logged in as a publisher?</li>
+                            <li>Does the module have all required metadata?</li>
+                        </ul>
+                    </Alert>
+                </div>
                 }
 
-                {this.props.contentType === PantheonContentTypes.ASSEMBLY && this.state.unpublishAlertForModuleVisible && <Alert
-                    variant='info'
-                    title='Unpublishing assembly'
-                    actionClose={<AlertActionCloseButton onClose={this.hideUppublishAlertForModule} />}
-                >
-                     Included modules are not unpublished by this action.
-                </Alert>
+                {this.props.contentType === PantheonContentTypes.ASSEMBLY && this.state.unpublishAlertForModuleVisible &&
+                    <div className='notification-container pant-notification-container-md'>
+                        <Alert
+                            variant='info'
+                            title='Unpublishing assembly'
+                            actionClose={<AlertActionCloseButton onClose={this.hideUppublishAlertForModule} />}
+                        >
+                            Included modules are not unpublished by this action.
+                        </Alert>
+                    </div>
                 }
 
                 <Grid hasGutter={true}>
@@ -266,22 +273,17 @@ class Versions extends Component<IProps, IState> {
             </Button>
                     ]}
                 >
-                    <div>
-                        {this.loginRedirect()}
-                    </div>
-                    <div className='app-container'>
 
-                        {this.state.isMissingFields && (
-                            <div className='notification-container'>
-                                <Alert
-                                    variant='warning'
-                                    title='Fields indicated by * are mandatory'
-                                    actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                                />
-                                <br />
-                            </div>
-                        )}
-                    </div>
+                    {this.state.isMissingFields && (
+                        <div className='notification-container'>
+                            <Alert
+                                variant='warning'
+                                title='Fields indicated by * are mandatory'
+                                actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                            />
+                            <br />
+                        </div>
+                    )}
                     <Form isHorizontal={true} id='edit_metadata'>
                         <FormGroup
                             label='Product Name'
@@ -473,30 +475,6 @@ class Versions extends Component<IProps, IState> {
         }
     }
 
-    private onArchiveSelect = event => {
-        this.setState({
-            isArchiveDropDownOpen: !this.state.isArchiveDropDownOpen
-        })
-    }
-
-    private onArchiveToggle = (data) => {
-        data.isArchiveDropDownOpen = !data.isArchiveDropDownOpen
-        this.setState({
-            isArchiveDropDownOpen: this.state.isArchiveDropDownOpen
-        })
-    }
-
-    private onExpandableToggle = (data) => {
-        data.isDropdownOpen = !data.isDropdownOpen
-        this.forceUpdate()
-    }
-
-    private onHeadingToggle = () => {
-        this.setState({
-            isHeadingToggle: !this.state.isHeadingToggle
-        })
-    }
-
     private previewDoc = (buttonText) => {
         let docPath = ''
         docPath = '/pantheon/preview/' + (buttonText === 'Preview' ? 'latest' : 'released') + '/' + this.props.variantUUID
@@ -636,14 +614,6 @@ class Versions extends Component<IProps, IState> {
                 console.log(error)
             })
         return products
-    }
-
-    private loginRedirect = () => {
-        if (this.state.login) {
-            return <Redirect to='/login' />
-        } else {
-            return ''
-        }
     }
 
     private dismissNotification = () => {

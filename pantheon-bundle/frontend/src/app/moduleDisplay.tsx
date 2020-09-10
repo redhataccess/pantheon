@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { CopyIcon } from '@patternfly/react-icons';
-import { 
+import {
     Card, Text, TextContent, TextVariants, Level, LevelItem, Button, Divider, Title
 } from '@patternfly/react-core'
 
@@ -320,10 +320,12 @@ class ModuleDisplay extends Component<any, any, any> {
                         if (productChild.__name__ !== 'versions') {
                             continue
                         }
-                        for (const productVersion of productChild.__children__) {
-                            if (productVersion[Fields.JCR_UUID] === uuid) {
-                                this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
-                                break
+                        if (productChild.__children__) {
+                            for (const productVersion of productChild.__children__) {
+                                if (productVersion[Fields.JCR_UUID] === uuid) {
+                                    this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
+                                    break
+                                }
                             }
                         }
                     }

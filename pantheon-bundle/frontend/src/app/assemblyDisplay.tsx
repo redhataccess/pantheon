@@ -307,10 +307,12 @@ class AssemblyDisplay extends Component<any, any, any> {
                         if (productChild.__name__ !== 'versions') {
                             continue
                         }
-                        for (const productVersion of productChild.__children__) {
-                            if (productVersion[Fields.JCR_UUID] === uuid) {
-                                this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
-                                break
+                        if (productChild.__children__) {
+                            for (const productVersion of productChild.__children__) {
+                                if (productVersion[Fields.JCR_UUID] === uuid) {
+                                    this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
+                                    break
+                                }
                             }
                         }
                     }
