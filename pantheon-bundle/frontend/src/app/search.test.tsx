@@ -112,18 +112,6 @@ describe('Search tests', () => {
     expect(inst.hideAlertOne).toMatchSnapshot()
   })
 
-  it('test confirmDeleteOperation function', () => {
-    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-    const inst = wrapper.getInstance()
-    expect(inst.confirmDeleteOperation).toMatchSnapshot()
-  })
-
-  it('test cancelDeleteOperation function', () => {
-    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-    const inst = wrapper.getInstance()
-    expect(inst.cancelDeleteOperation).toMatchSnapshot()
-  })
-
   it('test sortByUploadTime function', () => {
     const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
     const inst = wrapper.getInstance()
@@ -158,18 +146,6 @@ describe('Search tests', () => {
     const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
     const inst = wrapper.getInstance()
     expect(inst.newSearch).toMatchSnapshot()
-  })
-
-  it('test delete function', () => {
-    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-    const inst = wrapper.getInstance()
-    expect(inst.delete).toMatchSnapshot()
-  })
-
-  it('test handleDeleteCheckboxChange function', () => {
-    const wrapper = renderer.create(<Router><Search {...mockStateUser} /></Router>)
-    const inst = wrapper.getInstance()
-    expect(inst.handleDeleteCheckboxChange).toMatchSnapshot()
   })
 
   it('test handleSelectAll function', () => {

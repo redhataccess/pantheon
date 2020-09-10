@@ -45,8 +45,9 @@ class SearchFilter extends Component<any, any> {
       verOptions = this.state.allProducts[this.state.productValue]
     }
 
-    const moduleTypeItems = [
+    const contentTypeItems = [
       { value: 'All', label: 'All', disabled: false },
+      { value: 'ASSEMBLY', label: 'Assembly', disabled: false },
       { value: 'CONCEPT', label: 'Concept', disabled: false },
       { value: 'PROCEDURE', label: 'Procedure', disabled: false },
       { value: 'REFERENCE', label: 'Reference', disabled: false }
@@ -84,7 +85,7 @@ class SearchFilter extends Component<any, any> {
           </FormSelect>
 
           <FormSelect className="small-margin" value={this.state.moduleTypeValue} onChange={this.onChangeModuleType} aria-label="FormSelect ModuleType" id="moduleTypeForm">
-            {moduleTypeItems.map((option) => (
+            {contentTypeItems.map((option) => (
               <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} required={false} />
             ))}
           </FormSelect>
@@ -384,7 +385,6 @@ class SearchFilter extends Component<any, any> {
     if (searchQuery.includes("&&")) {
       searchQuery = searchQuery.replace('&&', '&')
     }
-
     this.props.filterQuery(searchQuery)
   }
 }
