@@ -151,10 +151,10 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       />
       <FormSelectOption
         isDisabled={false}
-        key="Content type"
+        key="Module type"
         label="Content type"
         required={false}
-        value="Content type"
+        value="Module type"
       />
     </FormSelect>
     <Button

@@ -57,7 +57,7 @@ class SearchFilter extends Component<any, any> {
       { value: 'Uploaded date', label: 'Uploaded date', disabled: false },
       { value: 'Title', label: 'Title', disabled: false },
       { value: 'Updated date', label: 'Updated date', disabled: false },
-      { value: 'Content type', label: 'Content type', disabled: false }
+      { value: 'Module type', label: 'Content type', disabled: false }
     ]
 
 
