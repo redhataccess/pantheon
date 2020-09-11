@@ -67,9 +67,9 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       />
     </FormSelect>
     <FormSelect
-      aria-label="FormSelect ModuleType"
+      aria-label="FormSelect cType"
       className="small-margin"
-      id="moduleTypeForm"
+      id="contentTypeForm"
       isDisabled={false}
       isRequired={false}
       onBlur={[Function]}
@@ -151,10 +151,10 @@ exports[`SearchFilter tests should render default Search component 1`] = `
       />
       <FormSelectOption
         isDisabled={false}
-        key="Module type"
-        label="Module type"
+        key="Content type"
+        label="Content type"
         required={false}
-        value="Module type"
+        value="Content type"
       />
     </FormSelect>
     <Button

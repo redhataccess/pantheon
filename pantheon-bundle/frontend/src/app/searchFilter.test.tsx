@@ -50,11 +50,11 @@ describe('SearchFilter tests', () => {
   })
 
 
-  it('test onChangeModuleType function', () => {
+  it('test onChangeContentType function', () => {
     const wrapper = renderer.create(<SearchFilter {...props} />)
     const inst = wrapper.getInstance()
-    const spy = sinon.spy(inst, 'onChangeModuleType')
-    inst.onChangeModuleType("type")
+    const spy = sinon.spy(inst, 'onChangeContentType')
+    inst.onChangeContentType("type")
     sinon.assert.called(spy)
   })
 
