@@ -54,7 +54,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
     public static final String PORTAL_URL = "PORTAL_URL";
     public static final String PANTHEON_HOST = "PANTHEON_HOST";
     public static final String MODULE_VARIANT_API_PATH = "/api/module/variant.json";
-    public static final String VARIANT_URL = "variant_url";
+    public static final String VARIANT_URL = "url";
 
     private final Logger log = LoggerFactory.getLogger(AssemblyVariantJsonServlet.class);
 
@@ -77,6 +77,9 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
     protected boolean isValidResource(@Nonnull SlingHttpServletRequest request, @Nonnull Resource resource) {
         AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
         Optional<AssemblyVersion> releasedRevision = assemblyVariant != null ? Optional.ofNullable(assemblyVariant.released().get()) : Optional.empty();
+        if (!releasedRevision.isPresent()) {
+            setCustomErrorMessage("Released assembly version not found for provided variant uuid " + suffix.getParameters(request).get("variantUuid"));
+        }
         return releasedRevision.isPresent();
     }
 
@@ -201,8 +204,8 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                         .locale(assemblyVariant.getParentLocale().getName()).get()
                         .variants().get()
                         .canonicalVariant().get();
-                moduleMap.put("module_variant_uuid", canonical.uuid().get());
-                moduleMap.put("module_title", page.title().get());
+                moduleMap.put("canonical_uuid", canonical.uuid().get());
+                moduleMap.put("title", page.title().get());
                 moduleMap.put("module_uuid", module.uuid().get());
                 // check if the module is published
                 if (canonical.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {
@@ -214,7 +217,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                 } else {
                     moduleMap.put(VARIANT_URL, "");
                 }
-                moduleMap.put("module_level_offset", String.valueOf(page.leveloffset().get()));
+                moduleMap.put("level_offset", String.valueOf(page.leveloffset().get()));
 
             }
             moduleList.stream().filter(map -> map.containsKey(VARIANT_URL))
