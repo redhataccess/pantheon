@@ -11,8 +11,8 @@ class SearchFilter extends Component<any, any> {
     this.state = {
       allProducts: [],
       chipGroups: [],
+      contentTypeValue: '',
       isSortedUp: true,
-      moduleTypeValue: '',
       productOptions: [
         { value: '', label: 'Select a Product', disabled: false },
       ],
@@ -57,7 +57,7 @@ class SearchFilter extends Component<any, any> {
       { value: 'Uploaded date', label: 'Uploaded date', disabled: false },
       { value: 'Title', label: 'Title', disabled: false },
       { value: 'Updated date', label: 'Updated date', disabled: false },
-      { value: 'Module type', label: 'Module type', disabled: false }
+      { value: 'Module type', label: 'Content type', disabled: false }
     ]
 
 
@@ -84,7 +84,7 @@ class SearchFilter extends Component<any, any> {
             ))}
           </FormSelect>
 
-          <FormSelect className="small-margin" value={this.state.moduleTypeValue} onChange={this.onChangeModuleType} aria-label="FormSelect ModuleType" id="moduleTypeForm">
+          <FormSelect className="small-margin" value={this.state.contentTypeValue} onChange={this.onChangeContentType} aria-label="FormSelect cType" id="contentTypeForm">
             {contentTypeItems.map((option) => (
               <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} required={false} />
             ))}
@@ -220,8 +220,8 @@ class SearchFilter extends Component<any, any> {
       this.setQuery();
     });
   }
-  private onChangeModuleType = (moduleTypeValue) => {
-    this.setState({ moduleTypeValue }, () => {
+  private onChangeContentType = (contentTypeValue) => {
+    this.setState({ contentTypeValue }, () => {
       this.setQuery();
     });
   }
@@ -359,11 +359,11 @@ class SearchFilter extends Component<any, any> {
     }
 
     // Default is All and should not add to the filter.
-    if (this.state.moduleTypeValue.trim() !== "" && this.state.moduleTypeValue.trim() !== "All") {
+    if (this.state.contentTypeValue.trim() !== "" && this.state.contentTypeValue.trim() !== "All") {
       if (searchQuery.trim() !== "") {
         searchQuery += "&"
       }
-      searchQuery += "type=" + this.state.moduleTypeValue
+      searchQuery += "type=" + this.state.contentTypeValue
     }
 
     // Default key is Uploaded
