@@ -97,7 +97,13 @@ public class HydraIntegration implements EventProcessingExtension {
             return false;
         }
 
-        return ModuleVersionPublishStateEvent.class.isAssignableFrom(event.getClass());
+        if (ModuleVersionPublishStateEvent.class.isAssignableFrom(event.getClass())
+                || AssemblyVersionPublishStateEvent.class.isAssignableFrom(event.getClass())) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**
@@ -267,7 +273,7 @@ public class HydraIntegration implements EventProcessingExtension {
 
     private String getPortalGuideUri(AssemblyVersion assemblyVersion) throws RepositoryException {
         final String uriTemplate = System.getenv(PORTAL_URL)
-                    + "/documentation/${localeId}/guide/"
+                    + "/documentation/${localeId}/guide"
                     + "/${productUrlFragment}/${versionUrlFragment}"
                     + "/${variantUuid}";
 
@@ -314,8 +320,8 @@ public class HydraIntegration implements EventProcessingExtension {
             AssemblyVersionPublishStateEvent publishStateEvent = (AssemblyVersionPublishStateEvent) event;
             assemblyVersion = SlingModels.getModel(serviceResourceResolverProvider.getServiceResourceResolver(),
                     publishStateEvent.getAssemblyVersionPath(), AssemblyVersion.class);
-            eventValue = AssemblyVersionUnpublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
-            idValue = AssemblyVersionPublishStateEvent.class.equals(event.getClass()) ? buildDocumentVersionUri(assemblyVersion) : "";
+            eventValue = AssemblyVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
+            idValue = AssemblyVersionPublishedEvent.class.equals(event.getClass()) ? buildDocumentVersionUri(assemblyVersion) : "";
         } else {
             log.warn("[" + HydraIntegration.class.getSimpleName() + "] unhandled event type: " + event.getClass());
         }
@@ -340,8 +346,8 @@ public class HydraIntegration implements EventProcessingExtension {
                         + ID_KEY + "\":" + "\"" + idValue +"\","
                         + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\","
                         + "\"" + URI_KEY + "\":" + "\"" + uriValue + "\"}";
-                log.info("[" + HydraIntegration.class.getSimpleName() + "] unpublish message: " + msg);
             }
+            log.info("[" + HydraIntegration.class.getSimpleName() + "] pantheon message: " + msg);
         } else {
             log.warn("[" + HydraIntegration.class.getSimpleName() + "] unhandled event type: " + event.getClass());
         }
