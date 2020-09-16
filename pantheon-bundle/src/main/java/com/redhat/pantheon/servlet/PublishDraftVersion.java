@@ -81,7 +81,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
         logger.debug("Operation Publishing draft version started");
         String variant = getVariant(request);
         if (variant == null) {
-            response.setError(new ServletException("The 'variant' paramter is required."));
+            response.setError(new ServletException("The 'variant' parameter is required."));
             return;
         }
         long startTime = System.currentTimeMillis();

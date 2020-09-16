@@ -2,10 +2,16 @@ package com.redhat.pantheon.extension;
 
 import com.google.common.collect.Maps;
 import com.ibm.icu.util.ULocale;
+import com.redhat.pantheon.extension.events.assembly.AssemblyVersionPublishStateEvent;
+import com.redhat.pantheon.extension.events.assembly.AssemblyVersionPublishedEvent;
+import com.redhat.pantheon.extension.events.assembly.AssemblyVersionUnpublishedEvent;
 import com.redhat.pantheon.extension.events.module.ModuleVersionPublishStateEvent;
 import com.redhat.pantheon.extension.events.module.ModuleVersionPublishedEvent;
 import com.redhat.pantheon.extension.events.module.ModuleVersionUnpublishedEvent;
+import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.SlingModels;
+import com.redhat.pantheon.model.assembly.AssemblyVersion;
+import com.redhat.pantheon.model.document.DocumentVersion;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
@@ -19,6 +25,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.RepositoryException;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -37,10 +44,10 @@ import static com.redhat.pantheon.servlet.ServletUtils.toLanguageTag;
  * A Hydra message producer for Module post publish events.
  * 
  * A sample message for publish event:
- * {"id":"https://example.com/api/module?locale=en-us&module_id=fb8f7586-1b68-437c-94d9-bfc4f85866ed&variant=DEFAULT","event":"publish"}
+ * {"id":"https://example.com/api/module/variant.json/fb8f7586-1b68-437c-94d9-bfc4f85866ed","event":"publish"}
  *
  * A sample message for unpublish event:
- * {"id":"","event":"unpublish", "view_uri":"https://example.com/topics/en-us/fb8f7586-1b68-437c-94d9-bfc4f85866ed?variant=DEFAULT"}
+ * {"id":"","event":"unpublish", "view_uri":"https://example.com/topics/en-us/fb8f7586-1b68-437c-94d9-bfc4f85866ed"}
  *
  * @author Lisa Davidson
  */
@@ -56,6 +63,7 @@ public class HydraIntegration implements EventProcessingExtension {
 
     //@TODO: externalize the variables
     private static final String PANTHEON_MODULE_VERSION_API_PATH = "/api/module/variant.json/${variantUuid}";
+    private static final String PANTHEON_ASSEMBLY_VERSION_API_PATH = "/api/assembly/variant.json/${variantUuid}";
     private static final String TLS_VERSION = "TLSv1.2";
     private static final String UUID_FIELD = "jcr:uuid";
     private static final String HYDRA_TOPIC = "VirtualTopic.eng.pantheon2.notifications";
@@ -93,13 +101,10 @@ public class HydraIntegration implements EventProcessingExtension {
     }
 
     /**
-     * Process ModuleVersionPublishedEvent. It sends a simple text message to the Message Broker.
+     * Process a PublishedEvent. It sends a simple text message to the Message Broker.
      *
      */
     public void processEvent(Event event) throws Exception {
-        ModuleVersionPublishStateEvent publishedEvent = (ModuleVersionPublishStateEvent) event;
-        ModuleVersion moduleVersion = SlingModels.getModel(serviceResourceResolverProvider.getServiceResourceResolver(),
-                publishedEvent.getModuleVersionPath(), ModuleVersion.class);
 
         Connection connection = createConnectionFactory().createConnection();
         try {
@@ -112,29 +117,8 @@ public class HydraIntegration implements EventProcessingExtension {
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageProducer producer = session.createProducer(session.createTopic(HYDRA_TOPIC));
 
-        String eventValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
-        String idValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? buildModuleVersionUri(moduleVersion) : "";
-        String uriValue = "";
-        String msg = "";
+        String msg = buildEventMessage(event);
 
-        if (ModuleVersionPublishedEvent.class.equals(event.getClass())) {
-            // TODO Use a json generation api for this
-            msg = "{\""
-                    + ID_KEY + "\":" + "\"" + idValue +"\","
-                    + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\"}";
-        } else if (ModuleVersionUnpublishedEvent.class.equals(event.getClass())){
-            if (System.getenv(PORTAL_URL) != null) {
-                uriValue = getPortalUri(moduleVersion);
-
-                // TODO Use a json generation api for this
-                msg = "{\""
-                    + ID_KEY + "\":" + "\"" + idValue +"\","
-                    + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\","
-                    + "\"" + URI_KEY + "\":" + "\"" + uriValue + "\"}";
-            }
-        } else {
-            log.warn("[" + HydraIntegration.class.getSimpleName() + "] unhandled event type: " + event.getClass());
-        }
         if (!msg.isEmpty()) {
             producer.send(session.createTextMessage(msg));
             log.info("[" + HydraIntegration.class.getSimpleName() + "] message sent: " + session.createTextMessage(msg) );
@@ -236,30 +220,131 @@ public class HydraIntegration implements EventProcessingExtension {
         return factory;
     }
 
-    private String buildModuleVersionUri(ModuleVersion moduleVersion) {
+    private String buildDocumentVersionUri(DocumentVersion documentVersion) {
         HashMap values = Maps.newHashMap();
-        values.put("variantUuid", moduleVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
-                moduleVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
+        String replacedUri = "";
+        values.put("variantUuid", documentVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
+                documentVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
         StringSubstitutor strSubs = new StringSubstitutor(values);
 
-        String replacedUri = strSubs.replace(PANTHEON_MODULE_VERSION_API_PATH);
+        if (documentVersion.isResourceType("pantheon/moduleVersion")) {
+            replacedUri = strSubs.replace(PANTHEON_MODULE_VERSION_API_PATH);
+        } else {
+            replacedUri = strSubs.replace(PANTHEON_ASSEMBLY_VERSION_API_PATH);
+        }
+
         return this.getPantheonHost() + replacedUri;
     }
 
 
-    private String getPortalUri(ModuleVersion moduleVersion) {
-        final String uriTemplate = System.getenv(PORTAL_URL) + "/topics/${localeId}/${variantUuid}";
+    private String getPortalTopicUri(ModuleVersion moduleVersion) throws RepositoryException {
+        final String uriTemplate = System.getenv(PORTAL_URL)
+                    + "/documentation/${localeId}/topic"
+                    + "/${productUrlFragment}/${versionUrlFragment}"
+                    + "/${variantUuid}";
 
         HashMap values = Maps.newHashMap();
         // TODO Clean this up, lots of locale transformations to make sure this aligns
+        ProductVersion productVersion = moduleVersion.metadata().get().productVersion().getReference();
+        String versionUrlFragment = "";
+        String productUrlFragment = "";
+        if (productVersion != null) {
+            versionUrlFragment = productVersion.getValueMap().containsKey("urlFragment") ? productVersion.urlFragment().get() : "";
+            productUrlFragment = productVersion.getProduct().getValueMap().containsKey("urlFragment") ? productVersion.getProduct().urlFragment().get(): "";
+        }
         values.put("localeId", toLanguageTag(
                 ULocale.createCanonical(
                         moduleVersion.getParent().getParent().getParent().getName())
                         .toLocale()));
+        values.put("productUrlFragment", productUrlFragment);
+        values.put("versionUrlFragment", versionUrlFragment);
         values.put("variantUuid", moduleVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
                 moduleVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
         StringSubstitutor strSubs = new StringSubstitutor(values);
 
         return strSubs.replace(uriTemplate);
+    }
+
+    private String getPortalGuideUri(AssemblyVersion assemblyVersion) throws RepositoryException {
+        final String uriTemplate = System.getenv(PORTAL_URL)
+                    + "/documentation/${localeId}/guide/"
+                    + "/${productUrlFragment}/${versionUrlFragment}"
+                    + "/${variantUuid}";
+
+
+        HashMap values = Maps.newHashMap();
+        // TODO Clean this up, lots of locale transformations to make sure this aligns
+        ProductVersion productVersion = assemblyVersion.metadata().get().productVersion().getReference();
+        String versionUrlFragment = "";
+        String productUrlFragment = "";
+        if (productVersion != null) {
+            versionUrlFragment = productVersion.getValueMap().containsKey("urlFragment") ? productVersion.urlFragment().get() : "";
+            productUrlFragment = productVersion.getProduct().getValueMap().containsKey("urlFragment") ? productVersion.getProduct().urlFragment().get(): "";
+        }
+        values.put("localeId", toLanguageTag(
+                ULocale.createCanonical(
+                        assemblyVersion.getParent().getParent().getParent().getName())
+                        .toLocale()));
+        values.put("productUrlFragment", productUrlFragment);
+        values.put("versionUrlFragment", versionUrlFragment);
+        values.put("variantUuid", assemblyVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
+                assemblyVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
+        StringSubstitutor strSubs = new StringSubstitutor(values);
+
+        return strSubs.replace(uriTemplate);
+    }
+
+    private String buildEventMessage(Event event) throws RepositoryException {
+        String msg = "";
+        String eventValue = "";
+        String idValue = "";
+        String uriValue = "";
+        ModuleVersion moduleVersion = null;
+        AssemblyVersion assemblyVersion = null;
+
+        if (ModuleVersionPublishedEvent.class.equals(event.getClass()) ||
+                ModuleVersionUnpublishedEvent.class.equals(event.getClass())){
+            ModuleVersionPublishStateEvent publishStateEvent = (ModuleVersionPublishStateEvent) event;
+            moduleVersion = SlingModels.getModel(serviceResourceResolverProvider.getServiceResourceResolver(),
+                    publishStateEvent.getModuleVersionPath(), ModuleVersion.class);
+            eventValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
+            idValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? buildDocumentVersionUri(moduleVersion) : "";
+        } else if(AssemblyVersionPublishedEvent.class.equals(event.getClass()) ||
+            AssemblyVersionUnpublishedEvent.class.equals(event.getClass())) {
+            AssemblyVersionPublishStateEvent publishStateEvent = (AssemblyVersionPublishStateEvent) event;
+            assemblyVersion = SlingModels.getModel(serviceResourceResolverProvider.getServiceResourceResolver(),
+                    publishStateEvent.getAssemblyVersionPath(), AssemblyVersion.class);
+            eventValue = AssemblyVersionUnpublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
+            idValue = AssemblyVersionPublishStateEvent.class.equals(event.getClass()) ? buildDocumentVersionUri(assemblyVersion) : "";
+        } else {
+            log.warn("[" + HydraIntegration.class.getSimpleName() + "] unhandled event type: " + event.getClass());
+        }
+
+        if (ModuleVersionPublishedEvent.class.equals(event.getClass()) ||
+                AssemblyVersionPublishedEvent.class.equals(event.getClass())) {
+            // TODO Use a json generation api for this
+            msg = "{\""
+                    + ID_KEY + "\":" + "\"" + idValue +"\","
+                    + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\"}";
+        } else if (ModuleVersionUnpublishedEvent.class.equals(event.getClass()) ||
+                AssemblyVersionUnpublishedEvent.class.equals(event.getClass())){
+            if (System.getenv(PORTAL_URL) != null) {
+                if (ModuleVersionUnpublishedEvent.class.equals(event.getClass())) {
+                    uriValue = getPortalTopicUri(moduleVersion);
+                } else if (AssemblyVersionUnpublishedEvent.class.equals(event.getClass())) {
+                    uriValue = getPortalGuideUri(assemblyVersion);
+                }
+
+                // TODO Use a json generation api for this
+                msg = "{\""
+                        + ID_KEY + "\":" + "\"" + idValue +"\","
+                        + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\","
+                        + "\"" + URI_KEY + "\":" + "\"" + uriValue + "\"}";
+                log.info("[" + HydraIntegration.class.getSimpleName() + "] unpublish message: " + msg);
+            }
+        } else {
+            log.warn("[" + HydraIntegration.class.getSimpleName() + "] unhandled event type: " + event.getClass());
+        }
+        return msg;
     }
 }
