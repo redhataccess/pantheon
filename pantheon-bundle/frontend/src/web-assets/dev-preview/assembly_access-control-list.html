@@ -14,7 +14,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/custom-elements-es5-adapter.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/webcomponents-bundle.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
-<script src="/node_modules/cp-documentation/dist/cp-documentation.js" type="module"></script>
+<script src="/node_modules/@cpelements/cp-documentation/dist/cp-documentation.js" type="module"></script>
+<script>
+  window.addEventListener('load', function() {
+    var cpDocumentations = document.querySelectorAll('cp-documentation');
+    for (let index = 0; index < cpDocumentations.length; index++) {
+      const cpDocumentation = cpDocumentations[index];
+      cpDocumentation.setAttribute('pfe-c-non-prod', '');
+    }
+  });
+</script>
 </head>
 <body class="article pantheon-render" id="access-control-list_{context}">
 <cp-documentation>
@@ -141,7 +150,7 @@
 </article>
 <footer class="rhdocs-footer" id="rhdocs-footer">
 <div class="rhdocs-footer-text" id="rhdocs-footer-text">
-Last updated 2020-07-09 13:50:14 EDT
+Last updated 2020-09-14 15:14:38 EDT
 </div>
 </footer>
 </cp-documentation>
