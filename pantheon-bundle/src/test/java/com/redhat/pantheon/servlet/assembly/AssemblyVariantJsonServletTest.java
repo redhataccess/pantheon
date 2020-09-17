@@ -83,7 +83,6 @@ class AssemblyVariantJsonServletTest {
         assertTrue(map.containsKey("status"));
         assertTrue(map.containsKey("message"));
         assertTrue(map.containsKey("assembly"));
-        assertTrue(assemblyMap.containsKey("assembly_uuid"));
         assertTrue(assemblyMap.containsKey("products"));
         assertTrue(assemblyMap.containsKey("locale"));
         assertTrue(assemblyMap.containsKey("title"));
