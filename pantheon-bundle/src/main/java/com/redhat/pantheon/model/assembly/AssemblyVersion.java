@@ -7,9 +7,7 @@ import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import com.redhat.pantheon.model.document.AckStatus;
-import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.document.DocumentVersion;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Named;
 
@@ -46,15 +44,18 @@ public interface AssemblyVersion extends DocumentVersion {
         int i = 0;
         for (TableOfContents.Entry entry : toc.getEntries()) {
             AssemblyPage p = asmContent.page(i++).getOrCreate();
-            p.title().set(entry.getModuleVariant().getName());
-            String title = entry.getModuleVariant()
+            p.title().set(entry.getModule().getName());
+            String title = entry.getModule()
+                    .locale(GlobalConfig.DEFAULT_MODULE_LOCALE).getOrCreate()
+                    .variants().getOrCreate()
+                    .canonicalVariant().getOrCreate()
                     .draft().getOrCreate()
                     .metadata().getOrCreate()
                     .title().get();
             if (title != null && !title.isEmpty()) {
                 p.title().set(title);
             }
-            p.moduleVariant().set(entry.getModuleVariant().uuid().get());
+            p.module().set(entry.getModule().uuid().get());
             p.leveloffset().set(entry.getLevelOffset());
         }
     }

@@ -9,7 +9,6 @@ import com.redhat.pantheon.model.assembly.TableOfContents;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.document.SourceContent;
-import com.redhat.pantheon.model.module.ModuleVariant;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -23,7 +22,6 @@ import java.util.Map;
 
 import static com.redhat.pantheon.helper.PantheonConstants.JCR_TYPE_MODULE;
 import static com.redhat.pantheon.helper.PantheonConstants.MACRO_INCLUDE;
-import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
@@ -77,15 +75,9 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
             if (includedResourceAsModel.field(JCR_PRIMARYTYPE, String.class).get().equals(JCR_TYPE_MODULE)) {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
 
-                ModuleVariant moduleVariant = traverseFrom(module)
-                        .toChild(m -> m.locale(DEFAULT_MODULE_LOCALE))
-                        .toChild(ModuleLocale::variants)
-                        .toChild(variants -> variants.variant(module.getWorkspace().getCanonicalVariantName()))
-                        .get();
-
                 // TODO, right now only default locale and latest (draft) version of the module are used
                 content = traverseFrom(module)
-                        .toChild(module1 -> module.locale(GlobalConfig.DEFAULT_MODULE_LOCALE))
+                        .toChild(m -> m.locale(GlobalConfig.DEFAULT_MODULE_LOCALE))
                         .toChild(ModuleLocale::source)
                         .toChild(SourceContent::draft)
                         .toChild(FileResource::jcrContent)
@@ -101,14 +93,16 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                         .append("[]")
                         .append(System.lineSeparator())
                         .append(System.lineSeparator());
-                toc.addEntry(0, moduleVariant); // Initial value of leveloffset does not matter
+                toc.addEntry(0, module); // Initial value of leveloffset does not matter
 
                 contentBuilder.append(":pantheon_module_id: ")
-                        .append(moduleVariant.uuid().get())
+                        .append(module.uuid().get())
                         .append(System.lineSeparator())
-                        .append("[[_")
-                        .append(moduleVariant.uuid().get())
-                        .append("]]")
+                        .append(PantheonXrefTargetProcessor.MACRO_PREFIX)
+                        .append(":_")
+                        .append(module.uuid().get())
+                        .append("[]")
+                        .append(System.lineSeparator())
                         .append(System.lineSeparator())
                         .append(xrefProcessor.preprocess(content))
                         .append(System.lineSeparator())

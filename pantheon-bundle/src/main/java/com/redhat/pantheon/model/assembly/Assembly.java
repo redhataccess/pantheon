@@ -17,7 +17,11 @@ public interface Assembly extends Document {
     Field<String> uuid();
 
     default Child<AssemblyLocale> locale(Locale locale) {
-        return child(locale.toString(), AssemblyLocale.class);
+        return locale(locale.toString());
+    }
+
+    default Child<AssemblyLocale> locale(String locale) {
+        return child(locale, AssemblyLocale.class);
     }
 
     default Optional<AssemblyVersion> getDraftVersion(@Nonnull final Locale locale,

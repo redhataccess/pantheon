@@ -32,6 +32,16 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  */
 public abstract class AbstractJsonSingleQueryServlet extends SlingSafeMethodsServlet {
 
+    private String customErrorMessage = null;
+
+    protected void setCustomErrorMessage(String message) {
+        customErrorMessage = message;
+    }
+
+    protected String getCustomErrorMessage(String defaultMessage) {
+        return Optional.ofNullable(customErrorMessage).orElse(defaultMessage);
+    }
+
     /**
      * Returns the query to execute. The query may be modified depending on the provided
      * parameters in the request.
@@ -80,10 +90,10 @@ public abstract class AbstractJsonSingleQueryServlet extends SlingSafeMethodsSer
                     writeAsJson(response, resourceToMap(request, firstResource.get()));
                 }
                 else {
-                    response.sendError(SC_NOT_FOUND, "Requested resource was invalid.");
+                    response.sendError(SC_NOT_FOUND, getCustomErrorMessage("Requested resource was invalid."));
                 }
             } else {
-                response.sendError(SC_NOT_FOUND, "Requested content not found.");
+                response.sendError(SC_NOT_FOUND, getCustomErrorMessage("Requested content not found."));
             }
 
         } catch (RepositoryException e) {

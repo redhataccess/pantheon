@@ -24,6 +24,7 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.Assembly",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.AssemblyLocale",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.AssemblyMetadata",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.AssemblyPage",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.AssemblyVariant",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.AssemblyVariants",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.AssemblyVersion",
