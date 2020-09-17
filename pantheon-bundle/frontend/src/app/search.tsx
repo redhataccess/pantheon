@@ -159,14 +159,16 @@ class Search extends Component<IAppState, ISearchState> {
                     <DataListItemCells key={"cells_" + key}
                       dataListCells={[
                         <DataListCell key={"title_" + key} width={2}>
-                          {this.props.userAuthenticated && data["jcr:title"] !== '-' &&
-                            <Link to={data['sling:resourceType'].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["jcr:title"]}</Link>}
-                          {this.props.userAuthenticated && data["jcr:title"] === '-' && data["pant:transientPath"] &&
-                            <Link to={data['sling:resourceType'].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>{data["pant:transientPath"]}</Link>}
-                          {!this.props.userAuthenticated && data["jcr:title"] !== '-' &&
-                            <a href={"/" + data['pant:transientPath'] + ".preview" + "?variant=" + data.variant} target="_blank">{data["jcr:title"]}</a>}
-                          {!this.props.userAuthenticated && data["jcr:title"] === '-' && data["pant:transientPath"] &&
-                            <a href={"/" + data['pant:transientPath'] + ".preview" + "?variant=" + data.variant} target="_blank">{data["pant:transientPath"]}</a>}
+                          {this.props.userAuthenticated &&
+                            <Link to={data['sling:resourceType'].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>
+                              {data["jcr:title"] !== '-' ? data["jcr:title"] : data["pant:transientPath"]}
+                            </Link>
+                          }
+                          {!this.props.userAuthenticated &&
+                            <a href={'/pantheon/preview/released/' + data["jcr:uuid"]} target="_blank">
+                              {data["jcr:title"] !== '-' ? data["jcr:title"] : data["pant:transientPath"]}
+                            </a>
+                          }
                         </DataListCell>,      
                         <DataListCell key={"published-date_" + key}>                          
                           <span>{data[Fields.PANT_PUBLISHED_DATE]}</span>
