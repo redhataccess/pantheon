@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet.assembly;
 
 import com.google.common.base.Charsets;
 import com.ibm.icu.util.ULocale;
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
@@ -128,6 +129,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Return the body content of the assembly ONLY
         variantMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
+                        .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider()))
                         .andThen(Html.getBody())
                         .apply(releasedContent.get().jcrContent().get().jcrData().get()));
 
