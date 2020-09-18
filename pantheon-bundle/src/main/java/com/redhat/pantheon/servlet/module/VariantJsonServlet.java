@@ -174,13 +174,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
-            String view_uri = System.getenv(PORTAL_URL)
-                    +"/documentation/"
-                    + ServletUtils.toLanguageTag(locale)
-                    + "/topic/"
-                    + productUrlFragment + "/"
-                    + versionUrlFragment + "/"
-                    + variant_uuid;
+            String view_uri = new CustomerPortalUrlUuidProvider().generateUrlString(moduleVariant);
             variantMap.put(VIEW_URI, view_uri);
         }
         else {
