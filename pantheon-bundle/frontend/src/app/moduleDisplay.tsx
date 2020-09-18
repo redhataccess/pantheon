@@ -8,7 +8,28 @@ import { Versions } from '@app/versions'
 import { Fields, PathPrefixes, PantheonContentTypes } from '@app/Constants'
 // import { continueStatement } from '@babel/types';
 
-class ModuleDisplay extends Component<any, any, any> {
+export interface IModuleDisplayState {
+    attributesFilePath: string
+    copySuccess: string
+    draftPath: string
+    draftUpdateDate: string
+    modulePath: string
+    moduleTitle: string
+    moduleType: string
+    portalUrl: string
+    productValue: string
+    productUrlFragment: string
+    versionUrlFragment: string
+    releasePath: string
+    releaseUpdateDate: string
+    releaseVersion: string
+    results: any
+    variant: string
+    variantUUID: string
+    versionValue: string
+}
+
+class ModuleDisplay extends Component<any, IModuleDisplayState> {
 
     constructor(props) {
         super(props)
@@ -18,26 +39,25 @@ class ModuleDisplay extends Component<any, any, any> {
             draftPath: '',
             draftUpdateDate: '',
             modulePath: '',
-            moduleTitle: "",
+            moduleTitle: '',
             moduleType: '',
-            portalHost: '',
-            productValue: "",
-            productUrlFragment: "",
-            versionUrlFragment: "",
+            portalUrl: '',
+            productValue: '',
+            productUrlFragment: '',
+            versionUrlFragment: '',
             releasePath: '',
             releaseUpdateDate: '',
             releaseVersion: '',
             results: {},
             variant: 'DEFAULT',
             variantUUID: '',
-            versionValue: ""
+            versionValue: ''
         }
     }
 
     public componentDidMount() {
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
-        this.getPortalUrl()
         this.fetchAttributesFilePath(this.props)
     }
 
@@ -48,7 +68,7 @@ class ModuleDisplay extends Component<any, any, any> {
 
                 <Level>
                     <LevelItem>
-                        <Title headingLevel="h1" size="xl">{this.state.moduleTitle}</Title>
+                        <Title headingLevel='h1' size='xl'>{this.state.moduleTitle}</Title>
                     </LevelItem>
                     <LevelItem />
                 </Level>
@@ -69,17 +89,17 @@ class ModuleDisplay extends Component<any, any, any> {
                     </LevelItem>
                     <LevelItem />
                     <LevelItem>
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.variantUUID !== ""
-                            && this.state.portalHost !== ""
-                            && <span><a href={this.state.portalHost + '/documentation/en-us/topic/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                        {this.state.releaseUpdateDate.trim() !== '' && this.state.releaseUpdateDate !== '-'
+                            && this.state.variantUUID !== ''
+                            && this.state.portalUrl !== ''
+                            && <span><a href={this.state.portalUrl} target='_blank'>View on Customer Portal  <i className='fa pf-icon-arrow' /></a> </span>
                         }
                     </LevelItem>
                     <LevelItem>
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
-                            && this.state.variantUUID !== ""
-                            && this.state.portalHost !== ""
-                            && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
+                        {this.state.releaseUpdateDate.trim() !== '' && this.state.releaseUpdateDate !== '-'
+                            && this.state.variantUUID !== ''
+                            && this.state.portalUrl !== ''
+                            && <span><a id='permanentURL' onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
                         }
 
                         <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
@@ -90,23 +110,23 @@ class ModuleDisplay extends Component<any, any, any> {
                 <Level>
                     <LevelItem>
                         <TextContent>
-                            <Text><strong><span id="span-source-type-product">Product</span></strong></Text>
+                            <Text><strong><span id='span-source-type-product'>Product</span></strong></Text>
                         </TextContent>
                     </LevelItem>
                     <LevelItem>{}</LevelItem>
                     <LevelItem>
                         <TextContent>
-                            <Text><strong><span id="span-source-name-module-type">Module type</span></strong></Text>
+                            <Text><strong><span id='span-source-name-module-type'>Module type</span></strong></Text>
                         </TextContent>
                     </LevelItem>
                     <LevelItem>
                         <TextContent>
-                            <Text><strong><span id="span-source-type-draft-uploaded">Draft uploaded</span></strong></Text>
+                            <Text><strong><span id='span-source-type-draft-uploaded'>Draft uploaded</span></strong></Text>
                         </TextContent>
                     </LevelItem>
                     <LevelItem>
                         <TextContent>
-                            <Text><strong><span id="span-source-type-published">Published</span></strong></Text>
+                            <Text><strong><span id='span-source-type-published'>Published</span></strong></Text>
                         </TextContent>
                     </LevelItem>
                 </Level>
@@ -122,8 +142,8 @@ class ModuleDisplay extends Component<any, any, any> {
                         <TextContent>
                             <Text>
                                 <span>
-                                    {this.state.moduleType.trim() !== "" ?
-                                        this.state.moduleType : ""}
+                                    {this.state.moduleType.trim() !== '' ?
+                                        this.state.moduleType : ''}
                                 </span>
                             </Text>
                         </TextContent>
@@ -132,9 +152,9 @@ class ModuleDisplay extends Component<any, any, any> {
                         <TextContent>
                             <Text>
                                 <span>
-                                    {this.state.draftUpdateDate.trim() !== ""
+                                    {this.state.draftUpdateDate.trim() !== ''
                                         && this.state.draftUpdateDate.length >= 15 ?
-                                        new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.draftUpdateDate)) : "--"}
+                                        new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.draftUpdateDate)) : '--'}
                                 </span>
                             </Text>
                         </TextContent>
@@ -143,9 +163,9 @@ class ModuleDisplay extends Component<any, any, any> {
                         <TextContent>
                             <Text>
                                 <span>
-                                    {this.state.releaseUpdateDate.trim() !== ""
+                                    {this.state.releaseUpdateDate.trim() !== ''
                                         && this.state.releaseUpdateDate.length >= 15 ?
-                                        new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.releaseUpdateDate)) : "--"}
+                                        new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.releaseUpdateDate)) : '--'}
                                 </span>
                             </Text>
                         </TextContent>
@@ -205,8 +225,10 @@ class ModuleDisplay extends Component<any, any, any> {
         const path = data.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
         this.setState({
             modulePath: path,
-            releasePath: "/content" + path + ".preview?variant=" + this.state.variant
+            releasePath: '/content' + path + '.preview?variant=' + this.state.variant
         })
+
+        this.getPortalUrl(path, this.state.variant)
 
         fetch(path + '/en_US.harray.4.json')
             .then(response => response.json())
@@ -223,8 +245,7 @@ class ModuleDisplay extends Component<any, any, any> {
                             continue
                         }
                         if (myChild.__name__ === 'draft') {
-
-                            this.setState({ draftUpdateDate: myChild["jcr:created"] })
+                            this.setState({ draftUpdateDate: myChild['jcr:created'] })
                         }
                         for (const myGrandchild of myChild.__children__) {
                             if (!myGrandchild.__children__) {
@@ -240,10 +261,10 @@ class ModuleDisplay extends Component<any, any, any> {
                                             moduleTitle: offspring[Fields.JCR_TITLE],
                                         })
                                     }
-                                    if (offspring["pant:moduleType"] !== undefined) {
+                                    if (offspring['pant:moduleType'] !== undefined) {
 
                                         this.setState({
-                                            moduleType: offspring["pant:moduleType"],
+                                            moduleType: offspring['pant:moduleType'],
 
                                         })
                                     }
@@ -272,8 +293,8 @@ class ModuleDisplay extends Component<any, any, any> {
     private getVersionUUID = (path) => {
         // remove /module from path
         path = path.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
-        // path = "/content" + path + "/en_US/1/metadata.json"
-        path = "/content" + path + "/en_US.harray.4.json"
+        // path = '/content' + path + '/en_US/1/metadata.json'
+        path = '/content' + path + '/en_US.harray.4.json'
         fetch(path)
             .then(response => response.json())
             .then((responseJSON) => {
@@ -336,7 +357,7 @@ class ModuleDisplay extends Component<any, any, any> {
     private copyToClipboard = () => {
         const textField = document.createElement('textarea')
         if (this.state.variantUUID.trim() !== '') {
-            textField.value = this.state.portalHost + '/documentation/en-us/topic/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/' + this.state.variantUUID
+            textField.value = this.state.portalUrl
             document.body.appendChild(textField)
             textField.select()
             document.execCommand('copy')
@@ -349,13 +370,13 @@ class ModuleDisplay extends Component<any, any, any> {
         this.setState({ copySuccess: '' })
     }
 
-    private getPortalUrl = () => {
-        fetch('/conf/pantheon/pant:portalUrl')
+    private getPortalUrl = (path, variant) => {
+        const variantPath = '/content' + path + '/en_US/variants/' + variant + '.url.txt'
+        fetch(variantPath)
             .then(resp => {
                 if (resp.ok) {
                     resp.text().then(text => {
-                        this.setState({ portalHost: text })
-                        // console.log("set portalHost: " + this.state.portalHost)
+                        this.setState({ portalUrl: text })
                     })
                 }
             })
@@ -364,8 +385,8 @@ class ModuleDisplay extends Component<any, any, any> {
     private async getVariantParam() {
         const query = new URLSearchParams(this.props.location.search);
         const variantParam = query.get('variant')
-        // console.log("[moduleDisplay] variantParam => ", variantParam)
-        if (variantParam !== 'undefined') {
+        // console.log('[moduleDisplay] variantParam => ', variantParam)
+        if (variantParam !== 'undefined' && variantParam !== null) {
             this.setState({ variant: variantParam })
         }
     }
@@ -373,9 +394,9 @@ class ModuleDisplay extends Component<any, any, any> {
     private fetchAttributesFilePath = async (data) => {
         await this.getVariantParam()
         const path = data.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
-        // console.log("[fetchAttributesFilePath] path =>", path)
+        // console.log('[fetchAttributesFilePath] path =>', path)
         let repo = ''
-        const group = path.split("/")
+        const group = path.split('/')
         repo = group[2]
         fetch('/content/repositories/' + repo + '/module_variants/' + this.state.variant + '.harray.json')
             .then((response) => {
@@ -386,8 +407,8 @@ class ModuleDisplay extends Component<any, any, any> {
                 }
             })
             .then(responseJSON => {
-                if (responseJSON["pant:attributesFilePath"] !== undefined) {
-                    this.setState({ attributesFilePath: responseJSON["pant:attributesFilePath"] })
+                if (responseJSON['pant:attributesFilePath'] !== undefined) {
+                    this.setState({ attributesFilePath: responseJSON['pant:attributesFilePath'] })
                 }
             })
             .catch((error) => {
