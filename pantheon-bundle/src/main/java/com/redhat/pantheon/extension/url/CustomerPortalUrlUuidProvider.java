@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class CustomerPortalUrlUuidProvider extends CustomerPortalUrlProvider {
 
@@ -27,14 +25,10 @@ public class CustomerPortalUrlUuidProvider extends CustomerPortalUrlProvider {
             ProductVersion pv = metadata.productVersion().getReference();
             StringBuilder sb = new StringBuilder(getHost(variant.getResourceResolver()));
             sb.append(URL_PREFIX)
-                    .append(getLocale(variant))
-                    .append("/")
-                    .append(getDocumentType(variant))
-                    .append("/")
-                    .append(pv.getProduct().urlFragment().get())
-                    .append("/")
-                    .append(pv.urlFragment().get())
-                    .append("/")
+                    .append(getLocale(variant)).append("/")
+                    .append(getDocumentType(variant)).append("/")
+                    .append(pv.getProduct().urlFragment().get()).append("/")
+                    .append(pv.urlFragment().get()).append("/")
                     .append(variant.uuid().get());
             return sb.toString();
         } catch (RepositoryException | NullPointerException e) {

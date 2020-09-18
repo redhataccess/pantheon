@@ -8,6 +8,8 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,6 +32,8 @@ public class Html {
 
     private static final String UUID_HREF_REGEX = "(?<uuid>[\\w]{8}-[\\w]{4}-[\\w]{4}-[\\w]{4}-[\\w]{12})(?:\\.html?)?";
     private static final Pattern UUID_HREF_PATTERN = Pattern.compile(UUID_HREF_REGEX);
+
+    private static final Logger log = LoggerFactory.getLogger(Html.class);
 
     private Html() {
     }
@@ -76,7 +80,7 @@ public class Html {
                                 String url = provider.generateUrlString(variant);
                                 link.attr("href", url);
                             } catch (RepositoryException e) {
-                                e.printStackTrace();
+                                log.warn("Attempted to rewrite URL for link target " + uuid + " but was unsuccessful.", e);
                             }
                         }
                     });
