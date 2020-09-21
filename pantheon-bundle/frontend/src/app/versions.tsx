@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Level, LevelItem, Text, TextContent, TextVariants, CardHeaderMain, CardActions, Tooltip } from '@patternfly/react-core'
+import { Button, Level, LevelItem, Text, TextContent, TextVariants, CardHeaderMain, CardActions, Tooltip, SimpleListItem, SimpleList } from '@patternfly/react-core'
 import {
     Alert, AlertActionCloseButton, BaseSizes, Card, CardHeader, CardBody,
     Form, FormGroup, FormSelect, FormSelectOption, Grid, GridItem, InputGroup,
@@ -89,6 +89,7 @@ class Versions extends Component<IProps, IState> {
         this.fetchProducts()
         this.fetchVersions()
         this.handlePublishButton()
+        this.getDocumentsIncluded(this.props.variantUUID)
     }
 
     public componentDidUpdate(prevProps) {
@@ -107,6 +108,15 @@ class Versions extends Component<IProps, IState> {
             </React.Fragment>
         )
 
+        const items = [
+            <SimpleListItem key="item1" isCurrent={true}>
+                List item 1
+            </SimpleListItem>,
+            <SimpleListItem key="item2" component="a" href="#">
+                List item 2
+            </SimpleListItem>,
+            <SimpleListItem key="item3">List item 3</SimpleListItem>
+        ];
         return (
             <React.Fragment>
                 {this.state.successAlertVisible && <div className='notification-container pant-notification-container-md'>
@@ -200,7 +210,11 @@ class Versions extends Component<IProps, IState> {
                                                 {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
                                                     <Text><strong>Modules</strong></Text>
                                                 }
-                                                <Text component={TextVariants.p}>{}</Text>
+                                                <Text component={TextVariants.p}>
+                                                    <SimpleList onSelect={this.onSelect} aria-label="Simple List Example">
+                                                        {items}
+                                                    </SimpleList>
+                                                </Text>
                                             </TextContent>
                                         </CardBody>
 
@@ -683,18 +697,24 @@ class Versions extends Component<IProps, IState> {
         }
     }
 
-    private getDocumentIncluded = (variantUuid) {
+    private getDocumentsIncluded = (variantUuid) => {
         fetch('/pantheon/internal/assembly/includes.json/' + variantUuid)
             .then(response => response.json())
             .then(responseJSON => {
-                this.setState({
-                    product: { label: responseJSON.ancestors[1].name, value: responseJSON.ancestors[1].__name__ },
-                    productVersion: { label: responseJSON.name, uuid: responseJSON['jcr:uuid'] }
-                })
-                this.populateProductVersions(this.state.product.value)
-                this.props.onGetProduct(this.state.product.label)
-                this.props.onGetVersion(this.state.productVersion.label)
+                console.log("[getDocumentsIncluded] responseJSON=> ", responseJSON)
+                for (const document of responseJSON.includes) {
+                    // if (document) {
+
+                    // }
+                }
+                // this.setState({
+                // })
+
             })
+    }
+
+    private onSelect(currentItem, currentItemProps) {
+        console.log('new selection', currentItem, currentItemProps);
     }
 }
 
