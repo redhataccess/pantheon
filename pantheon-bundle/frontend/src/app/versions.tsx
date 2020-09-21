@@ -682,6 +682,20 @@ class Versions extends Component<IProps, IState> {
             this.setState({ showMetadataAlertIcon: false })
         }
     }
+
+    private getDocumentIncluded = (variantUuid) {
+        fetch('/pantheon/internal/assembly/includes.json/' + variantUuid)
+            .then(response => response.json())
+            .then(responseJSON => {
+                this.setState({
+                    product: { label: responseJSON.ancestors[1].name, value: responseJSON.ancestors[1].__name__ },
+                    productVersion: { label: responseJSON.name, uuid: responseJSON['jcr:uuid'] }
+                })
+                this.populateProductVersions(this.state.product.value)
+                this.props.onGetProduct(this.state.product.label)
+                this.props.onGetVersion(this.state.productVersion.label)
+            })
+    }
 }
 
 export { Versions }
