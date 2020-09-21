@@ -21,10 +21,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.redhat.pantheon.servlet.util.ServletHelper.getResourceByUuid;
 
@@ -85,8 +82,8 @@ public class DocumentIncludedServlet extends AbstractJsonSingleQueryServlet {
         Map<String, Object> variantMap = super.resourceToMap(request, resource);
         Map<String, Object> documentIncluded = new HashMap<>();
 
-        List<Map<String, String>> documentList = new ArrayList<>();
-        variantMap.put("documents", documentList);
+        LinkedHashMap<Integer, Object> documents = new LinkedHashMap<>();
+        variantMap.put("documents", documents);
 
         AssemblyContent assemblyContent = assemblyVariant.released().get().content().get();
 
@@ -94,8 +91,7 @@ public class DocumentIncludedServlet extends AbstractJsonSingleQueryServlet {
             for (Resource childResource : assemblyContent.getChildren()) {
                 AssemblyPage page = childResource.adaptTo(AssemblyPage.class);
                 Map<String, String> documentMap = new HashMap<>();
-                documentList.add(documentMap);
-
+                documents.put(documents.size(), documentMap);
                 String moduleUuid = page.module().get();
                 Module module = getResourceByUuid(request, moduleUuid).adaptTo(Module.class);
                 ModuleVariant canonical = module
@@ -107,7 +103,7 @@ public class DocumentIncludedServlet extends AbstractJsonSingleQueryServlet {
                 documentMap.put("title", getModuleTitleFromUuid(canonical));
             }
             // Show number of documents included
-            variantMap.put("document_count", documentList.size());
+            variantMap.put("document_count", documents.size());
         }
 
         // remove unnecessary fields from the map
