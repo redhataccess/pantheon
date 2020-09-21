@@ -106,10 +106,6 @@ class Versions extends Component<IProps, IState> {
     }
 
     public componentDidUpdate(prevProps) {
-       // if(this.props.assemblies){
-       //     this.setState({assemblyData: this.props.assemblies})
-       // }
-        console.log('in version='+this.props.assemblies)
         if (this.props.modulePath !== prevProps.modulePath) {
             this.fetchVersions()
         }

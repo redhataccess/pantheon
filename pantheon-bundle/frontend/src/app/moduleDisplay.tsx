@@ -216,7 +216,7 @@ class ModuleDisplay extends Component<any, any, any> {
         fetch(path + '/en_US.harray.4.json')
             .then(response => response.json())
             .then(responseJSON => {
-                 console.log('fetch results:', responseJSON)
+                 // console.log('fetch results:', responseJSON)
                 // TODO: refactor for loops
                 for (const sourceVariant of responseJSON.__children__) {
                     if (!sourceVariant.__children__) {
@@ -411,7 +411,6 @@ class ModuleDisplay extends Component<any, any, any> {
     }
 
     private fetchIncludedInAssembliesDetails =  (data) => {
-        console.log('data='+data)
         fetch('/module/assemblies.json/'+data)
             .then((response) => {
                 if (response.ok) {

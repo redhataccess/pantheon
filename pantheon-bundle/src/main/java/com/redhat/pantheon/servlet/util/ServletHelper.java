@@ -110,12 +110,12 @@ public class ServletHelper {
         AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
         HashMap<String,String> assemblyVariantDetails = new HashMap<>();
 
-        Optional<AssemblyMetadata> releasedMetadata = traverseFrom(assemblyVariant)
-                .toChild(canHaveDraft?AssemblyVariant::draft:AssemblyVariant::released)
+        Optional<AssemblyMetadata> metadata = traverseFrom(assemblyVariant)
+                .toChild(canHaveDraft&&assemblyVariant.hasDraft()?AssemblyVariant::draft:AssemblyVariant::released)
                 .toChild(AssemblyVersion::metadata)
                 .getAsOptional();
         assemblyVariantDetails.put("uuid", assemblyVariant.uuid().get());
-        assemblyVariantDetails.put("title", releasedMetadata.get().title().get());
+        assemblyVariantDetails.put("title", metadata.get().title().get());
         if(assemblyVariant.released().isPresent()&& System.getenv(PANTHEON_HOST) != null){
             String assemblyUrl = System.getenv(PANTHEON_HOST)
                     + ASSEMBLY_VARIANT_API_PATH
