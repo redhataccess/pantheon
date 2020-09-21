@@ -111,7 +111,7 @@ public class ServletHelper {
         HashMap<String,String> assemblyVariantDetails = new HashMap<>();
 
         Optional<AssemblyMetadata> metadata = traverseFrom(assemblyVariant)
-                .toChild(canHaveDraft&&assemblyVariant.hasDraft()?AssemblyVariant::draft:AssemblyVariant::released)
+                .toChild(assemblyVariant.hasDraft()&&canHaveDraft?AssemblyVariant::draft:AssemblyVariant::released)
                 .toChild(AssemblyVersion::metadata)
                 .getAsOptional();
         assemblyVariantDetails.put("uuid", assemblyVariant.uuid().get());
