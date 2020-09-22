@@ -109,7 +109,10 @@ public class ServletHelper {
     public static void setAssemblyData(Resource resource, List<HashMap<String, String>> includeAssemblies, boolean addPath, boolean canHaveDraft) {
         AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
         HashMap<String,String> assemblyVariantDetails = new HashMap<>();
-
+        // if draft version cannot be added, however only draft exists, then just return
+        if(!canHaveDraft&&assemblyVariant.hasDraft()){
+            return;
+        }
         Optional<AssemblyMetadata> metadata = traverseFrom(assemblyVariant)
                 .toChild(assemblyVariant.hasDraft()&&canHaveDraft?AssemblyVariant::draft:AssemblyVariant::released)
                 .toChild(AssemblyVersion::metadata)
