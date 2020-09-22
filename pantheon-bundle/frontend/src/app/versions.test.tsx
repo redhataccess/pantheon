@@ -14,6 +14,7 @@ import { any } from 'prop-types';
 const anymatch = require('anymatch')
 
 const props = {
+    assemblies: [],
     attributesFilePath: "/repositories/testRepo/attributes.adoc",
     contentType: "module",
     modulePath: "/modules/test",

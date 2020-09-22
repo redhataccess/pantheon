@@ -2,6 +2,10 @@ package com.redhat.pantheon.servlet.module;
 
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
+import com.redhat.pantheon.servlet.util.ServletHelper;
+import com.redhat.pantheon.servlet.util.SlingPathSuffix;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -17,12 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
@@ -32,69 +31,46 @@ import static com.redhat.pantheon.servlet.ServletUtils.writeAsJson;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
- * Get operation to render a Released Module's related assembly list in JSON format.
- * Only two parameters are expected in the Get request:
- * 1. locale - Optional; indicates the locale that the module content is in, defaulted to en-US
- * 2. module_id - indicates the uuid string which uniquely identifies a module
+ * Get operation to render a Module's related assembly list in JSON format.
  *
  * The url to GET a request from the server is /api/module/assemblies
- * Example: <server_url>/api/module/assemblies?locale=en-us&module_id=xyz
- * The said url is accessible outside of the system without any authentication.
+ * Example: <server_url>/module/assemblies.json/b537ef3c-5c7d-4280-91ce-e7e818e6cc11
  *
- * @author Ben Radey
+ * @author A.P. Rajshekhar
  */
 @Component(
         service = Servlet.class,
         property = {
-                Constants.SERVICE_DESCRIPTION + "=Servlet to facilitate GET operation which accepts locale and module uuid to output module assemblies",
+                Constants.SERVICE_DESCRIPTION + "=Servlet to facilitate GET operation which accepts the module variant uuid to output module assemblies",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
-@SlingServletPaths(value = "/api/module/assemblies")
-public class IncludedInAssembliesServlet extends SlingSafeMethodsServlet {
+@SlingServletPaths(value = "/module/assemblies")
+public class IncludedInAssembliesServlet extends AbstractJsonSingleQueryServlet {
 
     private final Logger log = LoggerFactory.getLogger(IncludedInAssembliesServlet.class);
+    private final SlingPathSuffix suffix = new SlingPathSuffix("/{variantUuid}");
 
     @Override
-    protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) throws ServletException, IOException {
-        Locale locale = paramValueAsLocale(request, "locale", DEFAULT_MODULE_LOCALE);
-        String uuidParam = paramValue(request, "module_id", "");
-
-        StringBuilder query = new StringBuilder("select * from [pant:module] as module WHERE module.[jcr:uuid] = '")
-                .append(uuidParam)
+    protected String getQuery(SlingHttpServletRequest request) {
+        Map<String, String> parameters = suffix.getParameters(request);
+        String uuid = parameters.get("variantUuid");
+        // Hydra fetch calls look like this:
+        // Calling pantheon2 with url https://<HOST>/module/assemblies.json/b537ef3c-5c7d-4280-91ce-e7e818e6cc11&proxyHost=<SOMEHOST>&proxyPort=8080&throwExceptionOnFailure=false
+        StringBuilder query = new StringBuilder("select * from [pant:moduleVariant] as moduleVariant WHERE moduleVariant.[jcr:uuid] = '")
+                .append(ServletHelper.sanitizeSuffix(uuid))
                 .append("'");
+        return query.toString();
+    }
 
-        JcrQueryHelper queryHelper = new JcrQueryHelper(request.getResourceResolver());
-        try {
-            Stream<Resource> resultStream = queryHelper.query(query.toString());
-
-            Optional<Resource> firstResource = resultStream.findFirst();
-            if(!firstResource.isPresent()) {
-                response.sendError(SC_NOT_FOUND, "Requested content not found.");
-            }
-
-            resultStream = queryHelper.query("select * from [pant:module] as module", 3, 0);
-
-            List<Map> assemblies = new ArrayList<>();
-            resultStream.map(r -> r.adaptTo(Module.class))
-                    .forEach(module -> {
-                            Map<String, String> m = new HashMap<>();
-                            m.put("title", module.locale(locale).get()
-                                    .variants().get()
-                                    .defaultVariant().get()
-                                    .released().get()
-                                    .metadata().get()
-                                    .title().get());
-                            m.put("url", "https://www.redhat.com/assemblyplaceholder");
-                            m.put("uuid", module.uuid().get());
-                        assemblies.add(m);
-            });
-
-            Map result = new HashMap();
-            result.put("assemblies", assemblies);
-
-            writeAsJson(response, result);
-        } catch (RepositoryException e) {
-            throw new ServletException(e);
-        }
+    @Override
+    protected Map<String, Object> resourceToMap(@NotNull SlingHttpServletRequest request, @NotNull Resource resource) throws RepositoryException {
+        ModuleVariant moduleVariant = resource.adaptTo(ModuleVariant.class);
+        Map<String, Object> details = new HashMap<>();
+        List<HashMap<String, String>>includeAssemblies = new ArrayList<>();
+        ServletHelper.addAssemblyDetails(ServletHelper.getModuleUuidFromVariant(moduleVariant),
+                includeAssemblies, request, true, true);
+        details.put("assemblies",includeAssemblies);
+        details.put("status","200");
+        return details;
     }
 }
