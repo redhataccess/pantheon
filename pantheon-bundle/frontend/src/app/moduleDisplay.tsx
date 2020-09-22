@@ -9,6 +9,9 @@ import { Fields, PathPrefixes, PantheonContentTypes } from '@app/Constants'
 // import { continueStatement } from '@babel/types';
 
 export interface IModuleDisplayState {
+    assemblyData: any
+    assemblyTitle: string
+    assemblyPath: string
     attributesFilePath: string
     copySuccess: string
     draftPath: string
@@ -51,7 +54,10 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
             results: {},
             variant: 'DEFAULT',
             variantUUID: '',
-            versionValue: ''
+            versionValue: '',
+            assemblyData: [],
+            assemblyTitle: '',
+            assemblyPath: ''
         }
     }
 
@@ -59,6 +65,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
         this.fetchAttributesFilePath(this.props)
+
     }
 
     public render() {
@@ -194,6 +201,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                         variant={this.state.variant}
                         variantUUID={this.state.variantUUID}
                         attributesFilePath={this.state.attributesFilePath}
+                        assemblies={this.state.assemblyData}
                         updateDate={this.updateDate}
                         onGetProduct={this.getProduct}
                         onGetVersion={this.getVersion}
@@ -233,7 +241,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
         fetch(path + '/en_US.harray.4.json')
             .then(response => response.json())
             .then(responseJSON => {
-                // console.log('fetch results:', responseJSON)
+                 // console.log('fetch results:', responseJSON)
                 // TODO: refactor for loops
                 for (const sourceVariant of responseJSON.__children__) {
                     if (!sourceVariant.__children__) {
@@ -247,6 +255,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                         if (myChild.__name__ === 'draft') {
                             this.setState({ draftUpdateDate: myChild['jcr:created'] })
                         }
+
                         for (const myGrandchild of myChild.__children__) {
                             if (!myGrandchild.__children__) {
                                 continue
@@ -271,6 +280,15 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                                 }
                             }
 
+                        }
+                    }
+
+                }
+                // get the variant UUID
+                for (const variants of responseJSON.__children__){
+                    if(variants.__name__ === 'variants'){
+                        for (const variant of variants.__children__){
+                            this.fetchIncludedInAssembliesDetails(variant[Fields.JCR_UUID])
                         }
                     }
                 }
@@ -414,6 +432,22 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
             .catch((error) => {
                 console.log(error)
             })
+    }
+
+    private fetchIncludedInAssembliesDetails =  (data) => {
+        fetch('/module/assemblies.json/'+data)
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                }else {
+                    throw new Error(response.statusText)
+                }
+            })
+            .then(responseJSON => {
+                    this.setState({assemblyData: responseJSON.assemblies})
+                }
+
+            )
     }
 
 }

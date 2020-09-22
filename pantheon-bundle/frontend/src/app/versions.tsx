@@ -1,5 +1,16 @@
 import React, { Component } from 'react'
-import { Button, Level, LevelItem, Text, TextContent, TextVariants, CardHeaderMain, CardActions, Tooltip } from '@patternfly/react-core'
+import {
+    Button,
+    Level,
+    LevelItem,
+    Text,
+    TextContent,
+    TextVariants,
+    CardHeaderMain,
+    CardActions,
+    Tooltip,
+    TextList, TextListItem, TextListVariants, TextListItemVariants
+} from '@patternfly/react-core'
 import {
     Alert, AlertActionCloseButton, BaseSizes, Card, CardHeader, CardBody,
     Form, FormGroup, FormSelect, FormSelectOption, Grid, GridItem, InputGroup,
@@ -9,7 +20,7 @@ import CheckImage from '@app/images/check_image.jpg'
 import BlankImage from '@app/images/blank.jpg'
 import { Redirect } from 'react-router-dom'
 import { ExclamationTriangleIcon, TimesIcon, PlusCircleIcon } from '@patternfly/react-icons'
-import { PantheonContentTypes } from './Constants'
+import {PantheonContentTypes, PathPrefixes} from './Constants'
 
 export interface IProps {
     contentType: string
@@ -19,6 +30,7 @@ export interface IProps {
     variant: string
     variantUUID: string
     attributesFilePath: string
+    assemblies?: any
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
@@ -46,7 +58,8 @@ interface IState {
     showMetadataAlertIcon: boolean
     successAlertVisible: boolean
     usecaseOptions: any
-    usecaseValue: string,
+    usecaseValue: string
+    assemblyData: [],
 }
 
 class Versions extends Component<IProps, IState> {
@@ -82,6 +95,7 @@ class Versions extends Component<IProps, IState> {
                 { value: '', label: 'Select Use Case', disabled: false }
             ],
             usecaseValue: '',
+            assemblyData: [],
         }
     }
 
@@ -195,12 +209,22 @@ class Versions extends Component<IProps, IState> {
                                             <TextContent>
                                                 {this.props.contentType === PantheonContentTypes.MODULE &&
                                                     <Text><strong>Assemblies</strong></Text>
+
                                                 }
 
                                                 {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
                                                     <Text><strong>Modules</strong></Text>
                                                 }
-                                                <Text component={TextVariants.p}>{}</Text>
+                                            </TextContent>
+                                            <TextContent>
+                                                {this.props.assemblies&&this.props.assemblies.map(item=>(
+                                                    <TextList component={TextListVariants.ul}>
+                                                        <TextListItem component={TextListItemVariants.li}>
+                                                            <a href={'/pantheon/#/assembly'+item.path.substring("/content".length)+"?variant="+this.props.variant}> {item.title}</a>
+                                                        </TextListItem>
+                                                    </TextList>))
+
+                                                }
                                             </TextContent>
                                         </CardBody>
 
@@ -246,7 +270,17 @@ class Versions extends Component<IProps, IState> {
                                                     {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
                                                         <Text><strong>Modules</strong></Text>
                                                     }
-                                                    <Text component={TextVariants.p}>{}</Text>
+
+                                                </TextContent>
+                                                <TextContent>
+                                                    {this.props.assemblies&&this.props.assemblies.map(item=>(
+                                                        <TextList component={TextListVariants.ul}>
+                                                            <TextListItem component={TextListItemVariants.li}>
+                                                                <a href={'/pantheon/#/assembly'+item.path.substring("/content".length)+"?variant="+this.props.variant}> {item.title}</a>
+                                                            </TextListItem>
+                                                        </TextList>))
+
+                                                    }
                                                 </TextContent>
                                             </CardBody>
 
