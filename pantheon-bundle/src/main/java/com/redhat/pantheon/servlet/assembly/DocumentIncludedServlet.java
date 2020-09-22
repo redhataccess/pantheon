@@ -85,6 +85,7 @@ public class DocumentIncludedServlet extends AbstractJsonSingleQueryServlet {
         LinkedHashMap<Integer, Object> documents = new LinkedHashMap<>();
         variantMap.put("documents", documents);
 
+        //if (assemblyVariant.released()) {}
         AssemblyContent assemblyContent = assemblyVariant.released().get().content().get();
 
         if (assemblyContent != null & assemblyContent.getChildren() != null) {

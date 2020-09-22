@@ -89,7 +89,7 @@ class Versions extends Component<IProps, IState> {
         this.fetchProducts()
         this.fetchVersions()
         this.handlePublishButton()
-        this.getDocumentsIncluded(this.props.variantUUID)
+        console.log("[componentDidMount] props=>", this.props)
     }
 
     public componentDidUpdate(prevProps) {
@@ -363,6 +363,8 @@ class Versions extends Component<IProps, IState> {
 
     private fetchVersions = () => {
         // TODO: need a better fix for the 404 error.
+        console.log("[fetchVersions] modulePath=>", this.props.modulePath)
+        console.log("[fetchVersions] props => ", this.props)
         if (this.props.modulePath !== '') {
             // fetchpath needs to start from modulePath instead of modulePath/en_US.
             // We need extact the module uuid for customer portal url to the module.
@@ -429,6 +431,7 @@ class Versions extends Component<IProps, IState> {
                         this.setState({ metadataPath: this.release[0].path })
                     }
                     this.getMetadata(this.state.metadataPath)
+                    this.getDocumentsIncluded(variantUuid)
                 })
         }
     }
