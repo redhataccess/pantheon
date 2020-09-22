@@ -21,7 +21,7 @@ const
   sourceMaps = require('gulp-sourcemaps'),
   sass = require('gulp-sass'),
   // sassGlobbing = require('gulp-sass-globbing'),
-  sassLint = require('gulp-sass-lint'),
+  sassLint = require('gulp-sass-lint'), // @todo move to Stylelint since sass lint is deprected. Good example config in ux.redhat.com's code
   postCss = require('gulp-postcss'),
   autoprefixer = require('autoprefixer'),
   cssNano = require('cssnano'),

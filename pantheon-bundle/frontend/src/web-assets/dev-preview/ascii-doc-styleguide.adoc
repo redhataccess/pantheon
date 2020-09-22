@@ -36,8 +36,9 @@ v1.0.3, 2014-12-28
 
 * link:/dev-preview/assembly_access-control-list.html[Short Assembly Demo]
 
-// Stolen and modified from: 
+// Stolen and modified from:
 // https://gist.github.com/mojavelinux/8198e5a5ac2570a0cf30
+
 
 AsciiDoc is a mature, lightweight markup language for authoring notes, articles, documentation, books, web pages, slide decks and man pages in plain text.
 {description}
@@ -49,6 +50,18 @@ AsciiDoc produces complementary output when generating DocBook.
 
 Most features labeled "`Asciidoctor only`" can be made available to the native AsciiDoc processor by using https://github.com/asciidoctor/asciidoctor/blob/master/compat/asciidoc.conf[this AsciiDoc configuration file] from the Asciidoctor project.
 ====
+
+== Pantheon Specific Elements
+
+[.additional-resources]
+.Additional resources
+
+* link:https://access.redhat.com/articles/3131341[Support Policies for RHEL High Availability Clusters - Microsoft Azure Virtual Machines as Cluster Members]
+* link:https://access.redhat.com/articles/3071021[Support Policies for RHEL High Availability clusters - Transport Protocols]
+* link:https://cloud.google.com/vpc/docs/vpc[VPC network overview]
+* link:https://access.redhat.com/articles/2679211[Exploring RHEL High Availability's Components, Concepts, and Features - Overview of Transport Protocols]
+* link:https://access.redhat.com/articles/2679251[Design Guidance for RHEL High Availability Clusters - Selecting the Transport Protocol]
+
 
 == Paragraphs
 
