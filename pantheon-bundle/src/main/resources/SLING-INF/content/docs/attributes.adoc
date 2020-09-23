@@ -11,6 +11,6 @@
 
 // Publishing
 :PublishingPortal: Customer Portal
-:PublishingPortalSearh: Customer Portal Search
+:PublishingPortalSearch: Customer Portal Search
 
 :imagesdir: images
