@@ -3,11 +3,8 @@ package com.redhat.pantheon.servlet.assembly;
 import com.redhat.pantheon.model.assembly.AssemblyContent;
 import com.redhat.pantheon.model.assembly.AssemblyPage;
 import com.redhat.pantheon.model.assembly.AssemblyVariant;
-import com.redhat.pantheon.model.assembly.AssemblyVersion;
-import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVariant;
-import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
 import com.redhat.pantheon.servlet.util.ServletHelper;
 import com.redhat.pantheon.servlet.util.SlingPathSuffix;
@@ -26,6 +23,7 @@ import javax.servlet.Servlet;
 import java.util.*;
 
 import static com.redhat.pantheon.servlet.util.ServletHelper.getResourceByUuid;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 /**
  * Get operation to render documents included assembly list in JSON format.
@@ -45,12 +43,12 @@ import static com.redhat.pantheon.servlet.util.ServletHelper.getResourceByUuid;
         })
 // /pantheon/internal/assembly/includes.json/${variantUuid}
 @SlingServletPaths(value = "/pantheon/internal/assembly/includes")
-public class DocumentIncludedServlet extends AbstractJsonSingleQueryServlet {
+public class AssemblyIncludesServlet extends AbstractJsonSingleQueryServlet {
     public static final String PORTAL_URL = "PORTAL_URL";
     public static final String PANTHEON_HOST = "PANTHEON_HOST";
     public static final String MODULE_VARIANT_API_PATH = "/api/module/variant.json";
     public static final String VARIANT_URL = "url";
-    private final Logger log = LoggerFactory.getLogger(DocumentIncludedServlet.class);
+    private final Logger log = LoggerFactory.getLogger(AssemblyIncludesServlet.class);
 
     private final SlingPathSuffix suffix = new SlingPathSuffix("/{variantUuid}");
 
@@ -101,7 +99,7 @@ public class DocumentIncludedServlet extends AbstractJsonSingleQueryServlet {
                         .variants().get()
                         .canonicalVariant().get();
                 documentMap.put("canonical_uuid", canonical.uuid().get());
-                documentMap.put("variant_path", canonical.getPath());
+                documentMap.put("path", module.getPath());
                 documentMap.put("title", ServletHelper.getModuleTitleFromUuid(canonical));
             }
             // Show number of documents included
@@ -118,6 +116,7 @@ public class DocumentIncludedServlet extends AbstractJsonSingleQueryServlet {
         variantMap.remove("jcr:uuid");
         // Adding variantMap to a parent documentIncluded map
         documentIncluded.put("includes", variantMap);
+        documentIncluded.put("status", SC_OK);
 
         return documentIncluded;
     }

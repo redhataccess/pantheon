@@ -4,8 +4,10 @@ import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.assembly.AssemblyMetadata;
 import com.redhat.pantheon.model.assembly.AssemblyVariant;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
+import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.jetbrains.annotations.NotNull;
@@ -153,5 +155,31 @@ public class ServletHelper {
         }
 
         return suffix;
+    }
+
+    /**
+     * Get Module Title From moduleVariant UUID.
+     * @param moduleVariant
+     * @return the String
+     */
+    public static String getModuleTitleFromUuid(ModuleVariant moduleVariant) {
+        String moduleTitle;
+        if (moduleVariant.hasDraft()) {
+            moduleTitle = moduleVariant.draft()
+                    .traverse()
+                    .toChild(ModuleVersion::metadata)
+                    .toField(DocumentMetadata::title)
+                    .get();
+        } else if (moduleVariant.released().isPresent()) {
+            moduleTitle = moduleVariant.released()
+                    .traverse()
+                    .toChild(ModuleVersion::metadata)
+                    .toField(DocumentMetadata::title)
+                    .get();
+        } else {
+            moduleTitle = "";
+        }
+
+        return moduleTitle;
     }
 }

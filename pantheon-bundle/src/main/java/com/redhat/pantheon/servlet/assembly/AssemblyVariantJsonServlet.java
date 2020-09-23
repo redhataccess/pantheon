@@ -252,27 +252,6 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         return suffix;
     }
 
-    private String getModuleTitleFromUuid(ModuleVariant moduleVariant) {
-        String moduleTitle;
-        if (moduleVariant.hasDraft()) {
-            moduleTitle = moduleVariant.draft()
-                    .traverse()
-                    .toChild(ModuleVersion::metadata)
-                    .toField(DocumentMetadata::title)
-                    .get();
-        } else if (moduleVariant.released().isPresent()) {
-            moduleTitle = moduleVariant.released()
-                    .traverse()
-                    .toChild(ModuleVersion::metadata)
-                    .toField(DocumentMetadata::title)
-                    .get();
-        } else {
-            moduleTitle = "";
-        }
-
-        return moduleTitle;
-    }
-
     private String getModuleUuidFromVariant(ModuleVariant moduleVariant) {
         Resource resource = moduleVariant.getParentLocale().getParent();
         Module module = resource.adaptTo(Module.class);
