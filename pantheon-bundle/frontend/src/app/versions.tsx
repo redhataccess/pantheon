@@ -1,15 +1,22 @@
 import React, { Component } from 'react'
-import { Button, Level, LevelItem, Text, TextContent, TextVariants, CardHeaderMain, CardActions, Tooltip, SimpleListItem, SimpleList } from '@patternfly/react-core'
 import {
-    Alert, AlertActionCloseButton, BaseSizes, Card, CardHeader, CardBody,
-    Form, FormGroup, FormSelect, FormSelectOption, Grid, GridItem, InputGroup,
-    Modal, InputGroupText, Title, TextInput
+    Alert, AlertActionCloseButton, 
+    BaseSizes,
+    Button,
+    Card, CardHeader, CardBody, CardHeaderMain, 
+    Form, FormGroup, FormSelect, FormSelectOption, CardActions,
+    Grid, GridItem,
+    InputGroup, InputGroupText, 
+    Modal,
+    Text, TextContent, TextInput, TextVariants, TextList, TextListItem, TextListVariants, TextListItemVariants,
+    Title,
+    Tooltip,
 } from '@patternfly/react-core'
 import CheckImage from '@app/images/check_image.jpg'
 import BlankImage from '@app/images/blank.jpg'
 import { Redirect } from 'react-router-dom'
 import { ExclamationTriangleIcon, TimesIcon, PlusCircleIcon } from '@patternfly/react-icons'
-import { PantheonContentTypes } from './Constants'
+import {PantheonContentTypes, PathPrefixes} from './Constants'
 
 export interface IProps {
     contentType: string
@@ -19,6 +26,7 @@ export interface IProps {
     variant: string
     variantUUID: string
     attributesFilePath: string
+    assemblies?: any
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
@@ -29,6 +37,7 @@ interface IState {
     allProducts: any
     allProductVersions: any
     canChangePublishState: boolean
+    documentsIncluded: []
     isArchiveDropDownOpen: boolean
     isDropDownOpen: boolean
     isHeadingToggle: boolean
@@ -46,7 +55,8 @@ interface IState {
     showMetadataAlertIcon: boolean
     successAlertVisible: boolean
     usecaseOptions: any
-    usecaseValue: string,
+    usecaseValue: string
+    assemblyData: [],
 }
 
 class Versions extends Component<IProps, IState> {
@@ -62,6 +72,7 @@ class Versions extends Component<IProps, IState> {
             // tslint:disable-next-line: object-literal-sort-keys
             allProductVersions: [],
             canChangePublishState: true,
+            documentsIncluded: [],
             isArchiveDropDownOpen: false,
             isDropDownOpen: false,
             isHeadingToggle: true,
@@ -82,6 +93,7 @@ class Versions extends Component<IProps, IState> {
                 { value: '', label: 'Select Use Case', disabled: false }
             ],
             usecaseValue: '',
+            assemblyData: [],
         }
     }
 
@@ -108,15 +120,6 @@ class Versions extends Component<IProps, IState> {
             </React.Fragment>
         )
 
-        const items = [
-            <SimpleListItem key="item1" isCurrent={true}>
-                List item 1
-            </SimpleListItem>,
-            <SimpleListItem key="item2" component="a" href="#">
-                List item 2
-            </SimpleListItem>,
-            <SimpleListItem key="item3">List item 3</SimpleListItem>
-        ];
         return (
             <React.Fragment>
                 {this.state.successAlertVisible && <div className='notification-container pant-notification-container-md'>
@@ -205,16 +208,22 @@ class Versions extends Component<IProps, IState> {
                                             <TextContent>
                                                 {this.props.contentType === PantheonContentTypes.MODULE &&
                                                     <Text><strong>Assemblies</strong></Text>
+
                                                 }
 
                                                 {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
                                                     <Text><strong>Modules</strong></Text>
                                                 }
-                                                <Text component={TextVariants.p}>
-                                                    <SimpleList onSelect={this.onSelect} aria-label="Simple List Example">
-                                                        {items}
-                                                    </SimpleList>
-                                                </Text>
+                                            </TextContent>
+                                            <TextContent>
+                                                {this.props.assemblies&&this.props.assemblies.map(item=>(
+                                                    <TextList component={TextListVariants.ul}>
+                                                        <TextListItem component={TextListItemVariants.li}>
+                                                            <a href={'/pantheon/#/assembly'+item.path.substring("/content".length)+"?variant="+this.props.variant}> {item.title}</a>
+                                                        </TextListItem>
+                                                    </TextList>))
+
+                                                }
                                             </TextContent>
                                         </CardBody>
 
@@ -260,7 +269,29 @@ class Versions extends Component<IProps, IState> {
                                                     {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
                                                         <Text><strong>Modules</strong></Text>
                                                     }
-                                                    <Text component={TextVariants.p}>{}</Text>
+
+                                                </TextContent>
+                                                <TextContent>
+                                                    {this.props.assemblies&&this.props.assemblies.map(item=>(
+                                                        <TextList component={TextListVariants.ul}>
+                                                            <TextListItem component={TextListItemVariants.li}>
+                                                                <a href={'/pantheon/#/assembly'+item.path.substring("/content".length)+"?variant="+this.props.variant}> {item.title}</a>
+                                                            </TextListItem>
+                                                        </TextList>))
+
+                                                    }
+                                                </TextContent>
+                                                <TextContent>
+                                                    {this.state.documentsIncluded && this.state.documentsIncluded.map(item=>(
+                                                        // <TextList component={TextListVariants.ul}>
+                                                        //     <TextListItem component={TextListItemVariants.li}>
+                                                        //         <a href={'/pantheon/#/module'+item.path.substring("/content".length)+"?variant="+this.props.variant}> {item.title}</a>
+                                                        //     </TextListItem>
+                                                        // </TextList>
+                                                        console.log("[documentsIncluded] map item =>", item)
+                                                        ))
+
+                                                    }
                                                 </TextContent>
                                             </CardBody>
 
@@ -701,23 +732,18 @@ class Versions extends Component<IProps, IState> {
     }
 
     private getDocumentsIncluded = (variantUuid) => {
-        fetch('/pantheon/internal/assembly/includes.json/' + variantUuid)
-            .then(response => response.json())
-            .then(responseJSON => {
-                console.log("[getDocumentsIncluded] responseJSON=> ", responseJSON)
-                for (const document of responseJSON.includes) {
-                    // if (document) {
-
-                    // }
-                }
-                // this.setState({
-                // })
+        if (variantUuid) {
+            fetch('/pantheon/internal/assembly/includes.json/' + variantUuid)
+                .then(response => response.json())
+                .then(responseJSON => {
+                    console.log("[getDocumentsIncluded] responseJSON=> ", responseJSON)
+                    if (responseJSON.includes.documents !== undefined) {
+                        this.setState({documentsIncluded: responseJSON.includes.documents})
+                        console.log("[documents] documentsIncluded=>", this.state.documentsIncluded)
+                    }
 
             })
-    }
-
-    private onSelect(currentItem, currentItemProps) {
-        console.log('new selection', currentItem, currentItemProps);
+        }    
     }
 }
 

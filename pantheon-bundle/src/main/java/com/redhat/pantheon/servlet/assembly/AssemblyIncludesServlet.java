@@ -3,11 +3,13 @@ package com.redhat.pantheon.servlet.assembly;
 import com.redhat.pantheon.model.assembly.AssemblyContent;
 import com.redhat.pantheon.model.assembly.AssemblyPage;
 import com.redhat.pantheon.model.assembly.AssemblyVariant;
+import com.redhat.pantheon.model.assembly.AssemblyVersion;
 import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
+import com.redhat.pantheon.servlet.util.ServletHelper;
 import com.redhat.pantheon.servlet.util.SlingPathSuffix;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -85,9 +87,8 @@ public class DocumentIncludedServlet extends AbstractJsonSingleQueryServlet {
         LinkedHashMap<Integer, Object> documents = new LinkedHashMap<>();
         variantMap.put("documents", documents);
 
-        //if (assemblyVariant.released()) {}
-        AssemblyContent assemblyContent = assemblyVariant.released().get().content().get();
-
+        AssemblyContent assemblyContent =
+                assemblyVariant.released().isPresent() ? assemblyVariant.released().get().content().get() : assemblyVariant.draft().get().content().get();
         if (assemblyContent != null & assemblyContent.getChildren() != null) {
             for (Resource childResource : assemblyContent.getChildren()) {
                 AssemblyPage page = childResource.adaptTo(AssemblyPage.class);
@@ -101,7 +102,7 @@ public class DocumentIncludedServlet extends AbstractJsonSingleQueryServlet {
                         .canonicalVariant().get();
                 documentMap.put("canonical_uuid", canonical.uuid().get());
                 documentMap.put("variant_path", canonical.getPath());
-                documentMap.put("title", getModuleTitleFromUuid(canonical));
+                documentMap.put("title", ServletHelper.getModuleTitleFromUuid(canonical));
             }
             // Show number of documents included
             variantMap.put("document_count", documents.size());
@@ -119,26 +120,5 @@ public class DocumentIncludedServlet extends AbstractJsonSingleQueryServlet {
         documentIncluded.put("includes", variantMap);
 
         return documentIncluded;
-    }
-
-    private String getModuleTitleFromUuid(ModuleVariant moduleVariant) {
-        String moduleTitle;
-        if (moduleVariant.hasDraft()) {
-            moduleTitle = moduleVariant.draft()
-                    .traverse()
-                    .toChild(ModuleVersion::metadata)
-                    .toField(DocumentMetadata::title)
-                    .get();
-        } else if (moduleVariant.released().isPresent()) {
-            moduleTitle = moduleVariant.released()
-                    .traverse()
-                    .toChild(ModuleVersion::metadata)
-                    .toField(DocumentMetadata::title)
-                    .get();
-        } else {
-            moduleTitle = "";
-        }
-
-        return moduleTitle;
     }
 }

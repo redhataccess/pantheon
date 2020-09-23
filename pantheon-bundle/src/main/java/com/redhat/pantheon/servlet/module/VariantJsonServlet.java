@@ -12,6 +12,7 @@ import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
 import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.servlet.util.ServletHelper;
 import com.redhat.pantheon.servlet.util.SlingPathSuffix;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -66,7 +67,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Hydra fetch calls look like this:
         // Calling pantheon2 with url https://<HOST>/api/module/variant.json/b537ef3c-5c7d-4280-91ce-e7e818e6cc11&proxyHost=<SOMEHOST>&proxyPort=8080&throwExceptionOnFailure=false
         StringBuilder query = new StringBuilder("select * from [pant:moduleVariant] as moduleVariant WHERE moduleVariant.[jcr:uuid] = '")
-                .append(sanitizeSuffix(uuid))
+                .append(ServletHelper.sanitizeSuffix(uuid))
                 .append("'");
         return query.toString();
     }
@@ -97,7 +98,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         Map<String, Object> variantMap = super.resourceToMap(request, resource);
         Map<String, Object> variantDetails = new HashMap<>();
-        JcrQueryHelper helper = new JcrQueryHelper(request.getResourceResolver());
+        //JcrQueryHelper helper = new JcrQueryHelper(request.getResourceResolver());
 
         variantDetails.put("status", SC_OK);
         variantDetails.put("message", "Module Found");
@@ -188,10 +189,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         //get the assemblies and iterate over them
 
-        String moduleUuid = moduleVariant.getParentLocale().getParent().uuid().get();
-        helper.query("/jcr:root/content/(repositories | assemblies | variants)//element(*, pant:assemblyVariant)[(released/content/*/@pant:moduleUuid='"+ moduleUuid + "')]"
-                ,1000L, 0L, Query.XPATH)
-                .forEach(a->setAssemblyData(a,includeAssemblies));
+        ServletHelper.addAssemblyDetails(ServletHelper.getModuleUuidFromVariant(moduleVariant),includeAssemblies,request,false,false);
         variantMap.put("included_in_guides", includeAssemblies);
         variantMap.put("isPartOf", includeAssemblies);
         // remove unnecessary fields from the map
@@ -206,27 +204,6 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantDetails.put("module", variantMap);
 
         return variantDetails;
-    }
-
-    private void setAssemblyData(Resource resource, List<HashMap<String, String>> includeAssemblies) {
-        AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
-        HashMap<String,String> assemblyVariantDetails = new HashMap<>();
-
-        Optional<AssemblyMetadata> releasedMetadata = traverseFrom(assemblyVariant)
-                .toChild(AssemblyVariant::released)
-                .toChild(AssemblyVersion::metadata)
-                .getAsOptional();
-        assemblyVariantDetails.put("uuid", assemblyVariant.uuid().get());
-        assemblyVariantDetails.put("title", releasedMetadata.get().title().get());
-        if(assemblyVariant.released().isPresent()&& System.getenv(PANTHEON_HOST) != null){
-            String assemblyUrl = System.getenv(PANTHEON_HOST)
-                    + ASSEMBLY_VARIANT_API_PATH
-                    + "/"
-                    + assemblyVariant.uuid().get();
-            assemblyVariantDetails.put("url", assemblyUrl);
-        }
-        includeAssemblies.add(assemblyVariantDetails);
-
     }
 
 
