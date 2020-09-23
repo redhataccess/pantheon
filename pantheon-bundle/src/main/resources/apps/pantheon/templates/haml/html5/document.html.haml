@@ -70,17 +70,35 @@
       - unless noheader
         -# Set some simple vars so our if statements aren't gross
         - hasTitle = !(notitle) && (@header != nil) && (@header&.title != nil)
-        - hasHeaderMetadata = (attr? :author) || (attr? :pantheonproduct) || (attr? :pantheonupdateddate) || (attr? :pantheonpublisheddate)
+        - hasPrimaryHeaderWrapper = hasTitle || (attr? :pantheonproduct)
+        - hasHeaderMetadata = (attr? :pantheonupdateddate) || (attr? :pantheonpublisheddate)
 
         -# Only print header if we have something to put in it
-        - if hasTitle || hasHeaderMetadata
+        - if hasPrimaryHeaderWrapper || hasHeaderMetadata
           %header#rhdocs-header.rhdocs-header
-            - if hasTitle
-              %h1=@header.title
+            -if hasPrimaryHeaderWrapper
+              .rhdocs__header__primary-wrapper
+                - if hasTitle
+                  %h1=@header.title
+
+                - if (attr :pantheondoctype)
+                  .rhdocs-content-type
+                    - if (attr :pantheondoctype) == "assembly"
+                      Guide
+                    - else
+                      Topic
+
+                -# Product metadata
+                - if (attr? :pantheonproduct)
+                  .rhdocs-products
+                    %span.rhdocs-product-name=attr :pantheonproduct
+                    - if (attr? :pantheonversion)
+                      %span.rhdocs-product-version=attr :pantheonversion
+
 
             - if hasHeaderMetadata
               -# Wrapper for Metadata
-              %ul.rhdocs-details
+              %ul.rhdocs__header__secondary-wrapper
                 -# Author list, commented out for now, doesn't appear in this part of the mockup
                 -# - if (attr? :author)
                 -#   %li.rhdocs-details-item
@@ -94,12 +112,6 @@
                 -#           - if attr? "email_#{idx}"
                 -#             %dd{:id=>"email#{idx}", :class=>"email"}= sub_macros(attr "email_#{idx}")
 
-                -# Product metadata
-                - if (attr? :pantheonproduct)
-                  %li.rh-docs-details-item.rhdocs-products
-                    %span.rhdocs-product-name=attr :pantheonproduct
-                    - if (attr? :pantheonversion)
-                      %span.rhdocs-product-version=attr :pantheonversion
                 -# Last Updated metadata
                 - if (attr? :pantheonupdateddate)
                   %li.rh-docs-details-item.rhdocs-updated-date Updated #{attr :pantheonupdateddate}
