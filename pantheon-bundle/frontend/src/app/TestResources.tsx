@@ -1,4 +1,4 @@
-import { IAppState } from './app';
+import { IAppState } from "./app";
 
 const mockStateUser: IAppState = {
     isAdmin: false,

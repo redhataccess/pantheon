@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 class BuildInfo extends Component {
     public state = {
-        buildDate: '',
-        commitHash: '',
-        commitText: ''
+        buildDate: "",
+        commitHash: "",
+        commitText: ""
     };
 
     public componentDidMount() {
@@ -28,7 +28,7 @@ class BuildInfo extends Component {
 
     public getBuildInfo() {
         const backend = "/pantheon/builddate.json"
-        if (this.state.buildDate === '') {
+        if (this.state.buildDate === "") {
             fetch(backend)
                 .then(response => response.json())
                 .then(responseJSON => this.setState({ buildDate: "Build Date: " + responseJSON.buildDate, commitHash: responseJSON.commitHash }))

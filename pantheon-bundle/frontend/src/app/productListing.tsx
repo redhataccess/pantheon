@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   DataList, DataListItem, DataListCell, DataListItemRow, DataListItemCells, DataListAction, FormGroup,
   OptionsMenu, OptionsMenuItem, OptionsMenuToggle, TextInput
-} from '@patternfly/react-core';
-import '@app/app.css';
-import { ProductDetails } from '@app/productDetails';
-import { CaretDownIcon } from '@patternfly/react-icons';
+} from "@patternfly/react-core";
+import "@app/app.css";
+import { ProductDetails } from "@app/productDetails";
+import { CaretDownIcon } from "@patternfly/react-icons";
 
 class ProductListing extends Component<any, any, any> {
 
@@ -13,11 +13,11 @@ class ProductListing extends Component<any, any, any> {
     super(props);
     this.state = {
       allProducts: [],
-      input: '',
+      input: "",
       isEmptyResults: false,
       isOpen: false,
       isProductDetails: false,
-      productName: '',
+      productName: "",
       redirect: false,
       results: []
     };
@@ -94,11 +94,11 @@ class ProductListing extends Component<any, any, any> {
                           >
                             <OptionsMenu
                               isPlain={true}
-                              id={data['jcr:uuid']}
+                              id={data["jcr:uuid"]}
                               menuItems={[
                                 <OptionsMenuItem onSelect={this.onSelect(event, data)} key="dropdown">Product Details</OptionsMenuItem>]}
                               isOpen={data.isOpen}
-                              toggle={<OptionsMenuToggle onToggle={this.onToggle(data['jcr:uuid'])} toggleTemplate={<CaretDownIcon aria-hidden="true" />} aria-label="Sort by" hideCaret={true} />} />
+                              toggle={<OptionsMenuToggle onToggle={this.onToggle(data["jcr:uuid"])} toggleTemplate={<CaretDownIcon aria-hidden="true" />} aria-label="Sort by" hideCaret={true} />} />
                           </DataListAction>
                         </DataListCell>
                       ]}
@@ -157,7 +157,7 @@ class ProductListing extends Component<any, any, any> {
 
   private onToggle = (id) => (event: any) => {
     this.state.results.map(data => {
-      if (data['jcr:uuid'] === id) {
+      if (data["jcr:uuid"] === id) {
         (data.isOpen as any) = !data.isOpen
         this.setState({ isProductDetails: false })
       }
@@ -173,10 +173,10 @@ class ProductListing extends Component<any, any, any> {
 
   private setInput = input => {
     const versions: string[] = [];
-    let searchString = '';
+    let searchString = "";
     this.setState({ input })
     this.state.allProducts.map(data => {
-      searchString = '' + data.name
+      searchString = "" + data.name
       if (searchString.toLowerCase().includes(input.toLowerCase())) {
         versions.push(data)
       }

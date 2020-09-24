@@ -1,34 +1,34 @@
-import React, { Component } from 'react'
-import { CopyIcon } from '@patternfly/react-icons';
+import React, { Component } from "react"
+import { CopyIcon } from "@patternfly/react-icons";
 import {
     Level, LevelItem, Button, Divider, Title, Card, Text, TextContent, TextVariants
-} from '@patternfly/react-core'
-import { Versions } from '@app/versions'
-import { Fields, PathPrefixes, PantheonContentTypes } from '@app/Constants'
-// import { continueStatement } from '@babel/types';
+} from "@patternfly/react-core"
+import { Versions } from "@app/versions"
+import { Fields, PathPrefixes, PantheonContentTypes } from "@app/Constants"
+// import { continueStatement } from "@babel/types";
 
 class AssemblyDisplay extends Component<any, any, any> {
 
     constructor(props) {
         super(props)
         this.state = {
-            attributesFilePath: '',
-            copySuccess: '',
-            draftPath: '',
-            draftUpdateDate: '',
-            modulePath: '',
+            attributesFilePath: "",
+            copySuccess: "",
+            draftPath: "",
+            draftUpdateDate: "",
+            modulePath: "",
             moduleTitle: "",
-            moduleType: '',
-            portalHost: '',
+            moduleType: "",
+            portalHost: "",
             productValue: "",
             productUrlFragment: "",
             versionUrlFragment: "",
-            releasePath: '',
-            releaseUpdateDate: '',
-            releaseVersion: '',
+            releasePath: "",
+            releaseUpdateDate: "",
+            releaseVersion: "",
             results: {},
-            variant: 'DEFAULT',
-            variantUUID: '',
+            variant: "DEFAULT",
+            variantUUID: "",
             versionValue: ""
         }
     }
@@ -41,7 +41,7 @@ class AssemblyDisplay extends Component<any, any, any> {
     }
 
     public render() {
-        // console.log('Props: ', this.props)
+        // console.log("Props: ", this.props)
         return (
             <React.Fragment>
                 <div>
@@ -68,20 +68,20 @@ class AssemblyDisplay extends Component<any, any, any> {
                         </LevelItem>
                         <LevelItem />
                         <LevelItem>
-                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== "-"
                                 && this.state.variantUUID !== ""
                                 && this.state.portalHost !== ""
-                                && <span><a href={this.state.portalHost + '/documentation/en-us/guide/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/' + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                                && <span><a href={this.state.portalHost + "/documentation/en-us/guide/" + this.state.productUrlFragment + "/" + this.state.versionUrlFragment + "/" + this.state.variantUUID} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                             }
                         </LevelItem>
                         <LevelItem>
-                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== '-'
+                            {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== "-"
                                 && this.state.variantUUID !== ""
                                 && this.state.portalHost !== ""
                                 && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
                             }
 
-                            <span>&emsp;{this.state.copySuccess !== '' && this.state.copySuccess}</span>
+                            <span>&emsp;{this.state.copySuccess !== "" && this.state.copySuccess}</span>
 
                         </LevelItem>
                     </Level>
@@ -109,7 +109,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                         <LevelItem>
                             <TextContent>
                                 <Text>
-                                    <span>{this.state.productValue + ' ' + this.state.versionValue}</span>
+                                    <span>{this.state.productValue + " " + this.state.versionValue}</span>
                                 </Text>
                             </TextContent>
                         </LevelItem>
@@ -120,7 +120,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                                     <span>
                                         {this.state.draftUpdateDate.trim() !== ""
                                             && this.state.draftUpdateDate.length >= 15 ?
-                                            new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.draftUpdateDate)) : "--"}
+                                            new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.draftUpdateDate)) : "--"}
                                     </span>
                                 </Text>
                             </TextContent>
@@ -131,7 +131,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                                     <span>
                                         {this.state.releaseUpdateDate.trim() !== ""
                                             && this.state.releaseUpdateDate.length >= 15 ?
-                                            new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(this.state.releaseUpdateDate)) : "--"}
+                                            new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.releaseUpdateDate)) : "--"}
                                     </span>
                                 </Text>
                             </TextContent>
@@ -143,7 +143,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                         <LevelItem>{}</LevelItem>
                         <LevelItem>{}</LevelItem>
                         <LevelItem>
-                            <Button variant='secondary' onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{'  '}
+                            <Button variant="secondary" onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{"  "}
                         </LevelItem>
                     </Level>
                     <br />
@@ -172,9 +172,9 @@ class AssemblyDisplay extends Component<any, any, any> {
         )
     }
     private generateDraftHtml = (pathname: any) => {
-        const docPath = '/pantheon/preview/latest/' + this.state.variantUUID + '?rerender=true'
+        const docPath = "/pantheon/preview/latest/" + this.state.variantUUID + "?rerender=true"
 
-        // console.log('Preview path: ', docPath)
+        // console.log("Preview path: ", docPath)
         return window.open(docPath)
     }
 
@@ -195,10 +195,10 @@ class AssemblyDisplay extends Component<any, any, any> {
             releasePath: "/content" + path + ".preview?variant=" + this.state.variant
         })
 
-        fetch(path + '/en_US.harray.4.json')
+        fetch(path + "/en_US.harray.4.json")
             .then(response => response.json())
             .then(responseJSON => {
-                // console.log('fetch results:', responseJSON)
+                // console.log("fetch results:", responseJSON)
                 // TODO: refactor for loops
                 for (const sourceVariant of responseJSON.__children__) {
                     if (!sourceVariant.__children__) {
@@ -209,7 +209,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                         if (!myChild.__children__) {
                             continue
                         }
-                        if (myChild.__name__ === 'draft') {
+                        if (myChild.__name__ === "draft") {
 
                             this.setState({ draftUpdateDate: myChild["jcr:created"] })
                         }
@@ -219,7 +219,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                             }
 
                             for (const offspring of myGrandchild.__children__) {
-                                if (offspring.__name__ === 'metadata') {
+                                if (offspring.__name__ === "metadata") {
 
                                     if (offspring[Fields.JCR_TITLE] !== undefined) {
 
@@ -279,7 +279,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                             }
 
                             for (const offspring of variant.__children__) {
-                                if (offspring.__name__ === 'metadata') {
+                                if (offspring.__name__ === "metadata") {
 
                                     if (offspring[Fields.PANT_PRODUCT_VERSION_REF] !== undefined) {
 
@@ -295,7 +295,7 @@ class AssemblyDisplay extends Component<any, any, any> {
     }
 
     private getProductInitialLoad = (uuid) => {
-        const path = '/content/products.harray.3.json'
+        const path = "/content/products.harray.3.json"
         fetch(path)
             .then(response => response.json())
             .then(responseJSON => {
@@ -304,7 +304,7 @@ class AssemblyDisplay extends Component<any, any, any> {
                         continue
                     }
                     for (const productChild of product.__children__) {
-                        if (productChild.__name__ !== 'versions') {
+                        if (productChild.__name__ !== "versions") {
                             continue
                         }
                         if (productChild.__children__) {
@@ -321,23 +321,23 @@ class AssemblyDisplay extends Component<any, any, any> {
     }
 
     private copyToClipboard = () => {
-        const textField = document.createElement('textarea')
-        if (this.state.variantUUID.trim() !== '') {
-            textField.value = this.state.portalHost + '/documentation/en-us/guide/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/' + this.state.variantUUID
+        const textField = document.createElement("textarea")
+        if (this.state.variantUUID.trim() !== "") {
+            textField.value = this.state.portalHost + "/documentation/en-us/guide/" + this.state.productUrlFragment + "/" + this.state.versionUrlFragment + "/" + this.state.variantUUID
             document.body.appendChild(textField)
             textField.select()
-            document.execCommand('copy')
+            document.execCommand("copy")
             textField.remove()
-            this.setState({ copySuccess: 'Copied!' })
+            this.setState({ copySuccess: "Copied!" })
         }
     }
 
     private mouseLeave = () => {
-        this.setState({ copySuccess: '' })
+        this.setState({ copySuccess: "" })
     }
 
     private getPortalUrl = () => {
-        fetch('/conf/pantheon/pant:portalUrl')
+        fetch("/conf/pantheon/pant:portalUrl")
             .then(resp => {
                 if (resp.ok) {
                     resp.text().then(text => {
@@ -350,9 +350,9 @@ class AssemblyDisplay extends Component<any, any, any> {
 
     private async getVariantParam() {
         const query = new URLSearchParams(this.props.location.search);
-        const variantParam = query.get('variant')
+        const variantParam = query.get("variant")
         // console.log("[getVariantparam] variantParam => ", variantParam)
-        if (variantParam !== 'undefined') {
+        if (variantParam !== "undefined") {
             this.setState({ variant: variantParam })
         }
     }
@@ -360,12 +360,12 @@ class AssemblyDisplay extends Component<any, any, any> {
     private fetchAttributesFilePath = async (data) => {
         await this.getVariantParam()
         const path = data.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
-        // path = '/repositories/test-repo/entities/.../assembly_access-control-list.adoc'
-        let repo = ''
+        // path = "/repositories/test-repo/entities/.../assembly_access-control-list.adoc"
+        let repo = ""
         const group = path.split("/")
         repo = group[2]
 
-        fetch('/content/repositories/' + repo + '/module_variants/' + this.state.variant + '.harray.json')
+        fetch("/content/repositories/" + repo + "/module_variants/" + this.state.variant + ".harray.json")
             .then((response) => {
                 if (response.ok) {
                     return response.json()

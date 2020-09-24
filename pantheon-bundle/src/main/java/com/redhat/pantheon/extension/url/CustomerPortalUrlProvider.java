@@ -7,6 +7,14 @@ import org.apache.sling.api.resource.ResourceResolver;
 
 import java.util.Optional;
 
+/**
+ * Provides information on Customer Portal view url path.
+ * This class provides the following url fragments for Customer Portal view url.
+ *      URL_PRFIX,
+ *      document type
+ *      document locale
+ *      customer portal host
+ */
 public abstract class CustomerPortalUrlProvider implements UrlProvider {
 
     protected static final String URL_PREFIX = "/documentation/";

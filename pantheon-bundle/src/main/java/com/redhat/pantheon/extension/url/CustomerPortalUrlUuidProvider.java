@@ -8,6 +8,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 
+/**
+ * Provides Customer Portal url with uuid.
+ * This class generates a Customer Portal url with a UUID suffix.
+ *
+ */
 public class CustomerPortalUrlUuidProvider extends CustomerPortalUrlProvider {
 
     private final Logger log = LoggerFactory.getLogger(CustomerPortalUrlUuidProvider.class);
