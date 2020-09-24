@@ -31,10 +31,12 @@
   // UI / Links
   a {
     color: $color--link;
+    text-decoration: none;
 
     &:hover,
     &:focus {
       color: darken($color--link, 20%);
+      text-decoration: underline;
     }
   }
 
