@@ -3,7 +3,6 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.document.DocumentVariant;
-import com.redhat.pantheon.model.document.DocumentVersion;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -21,13 +20,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
+import static com.redhat.pantheon.helper.PantheonConstants.LATEST_SUFFIX;
+import static com.redhat.pantheon.helper.PantheonConstants.RELEASED_SUFFIXES;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
-import static com.redhat.pantheon.helper.PantheonConstants.*;
 
 /**
  * Renders an HTML preview for a single document variant.

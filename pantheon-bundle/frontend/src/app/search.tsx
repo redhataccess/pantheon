@@ -1,18 +1,18 @@
-import React, { Component, FormEvent } from 'react'
+import React, { Component, FormEvent } from "react"
 import {
   Alert, AlertActionCloseButton,
   DataList, DataListItem, DataListItemRow, DataListItemCells,
   DataListCell, Button, Modal,
   Level, LevelItem, Checkbox, ModalVariant
-} from '@patternfly/react-core'
-import '@app/app.css'
-import { BuildInfo } from './components/Chrome/Header/BuildInfo'
-import { Pagination } from '@app/Pagination'
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
-import { IAppState } from '@app/app'
-import { SearchFilter } from '@app/searchFilter';
-import SpinImage from '@app/images/spin.gif';
-import { Fields, SlingTypesPrefixes } from '@app/Constants';
+} from "@patternfly/react-core"
+import "@app/app.css"
+import { BuildInfo } from "./components/Chrome/Header/BuildInfo"
+import { Pagination } from "@app/Pagination"
+import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom"
+import { IAppState } from "@app/app"
+import { SearchFilter } from "@app/searchFilter";
+import SpinImage from "@app/images/spin.gif";
+import { Fields, SlingTypesPrefixes } from "@app/Constants";
 
 export interface ISearchState {
   alertOneVisible: boolean
@@ -49,26 +49,26 @@ class Search extends Component<IAppState, ISearchState> {
     this.state = {
       alertOneVisible: true,
       checkNextPageRow: "",
-      columns: ['Name', 'Description', 'Source Type', 'Source Name', 'Upload Time'],
+      columns: ["Name", "Description", "Source Type", "Source Name", "Upload Time"],
       contentType: "module",
       displayLoadIcon: true,
-      filterQuery: '',
+      filterQuery: "",
       isEmptyResults: false,
       isModalOpen: false,
       isSearchException: false,
-      moduleName: '',
-      modulePath: '',
-      moduleType: '',
-      moduleUpdatedDate: '',
+      moduleName: "",
+      modulePath: "",
+      moduleType: "",
+      moduleUpdatedDate: "",
       nextPageRowCount: 1,
       page: 1,
       pageLimit: 25,
       redirect: false,
-      redirectLocation: '',
-      results: [{ "pant:transientPath": '', "pant:dateUploaded": '', "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false,"publishedDate": "-","pant:moduleType": "-", "variant": ""}],
+      redirectLocation: "",
+      results: [{ "pant:transientPath": "", "pant:dateUploaded": "", "name": "", "jcr:title": "", "jcr:description": "", "sling:transientSource": "", "pant:transientSourceName": "", "checkedItem": false,"publishedDate": "-","pant:moduleType": "-", "variant": ""}],
       selectAllCheckValue: false,
       showDropdownOptions: true,
-      sortKey: ''
+      sortKey: ""
     };
   }
 
@@ -160,13 +160,13 @@ class Search extends Component<IAppState, ISearchState> {
                       dataListCells={[
                         <DataListCell key={"title_" + key} width={2}>
                           {this.props.userAuthenticated &&
-                            <Link to={data['sling:resourceType'].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data['pant:transientPath'] + "?variant=" + data.variant} key={"link_" + key}>
-                              {data["jcr:title"] !== '-' ? data["jcr:title"] : data["pant:transientPath"]}
+                            <Link to={data["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data["pant:transientPath"] + "?variant=" + data.variant} key={"link_" + key}>
+                              {data["jcr:title"] !== "-" ? data["jcr:title"] : data["pant:transientPath"]}
                             </Link>
                           }
                           {!this.props.userAuthenticated &&
-                            <a href={'/pantheon/preview/released/' + data["jcr:uuid"]} target="_blank">
-                              {data["jcr:title"] !== '-' ? data["jcr:title"] : data["pant:transientPath"]}
+                            <a href={"/pantheon/preview/released/" + data["jcr:uuid"]} target="_blank">
+                              {data["jcr:title"] !== "-" ? data["jcr:title"] : data["pant:transientPath"]}
                             </a>
                           }
                         </DataListCell>,      
@@ -256,7 +256,7 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   private getRows = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       this.newSearch()
     }
   };
@@ -315,7 +315,7 @@ class Search extends Component<IAppState, ISearchState> {
       backend += "&"
     }
     backend += "offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
-    if (!backend.includes("Uploaded") && !backend.includes('direction')) {
+    if (!backend.includes("Uploaded") && !backend.includes("direction")) {
       backend += "&key=Uploaded&direction=desc"
     }
     return backend

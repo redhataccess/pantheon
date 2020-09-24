@@ -2,6 +2,9 @@ package com.redhat.pantheon.html;
 
 import com.google.common.base.Charsets;
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.extension.url.UrlProvider;
+import com.redhat.pantheon.model.document.DocumentVariant;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -69,7 +72,7 @@ class HtmlTest {
     }
 
     @Test
-    void dereferenceAllHyperlinks() {
+    void rewriteUuidUrls() {
         // Given
         sCtx.create().resource("/test",
                 "name", "a-name",
@@ -86,14 +89,22 @@ class HtmlTest {
                 "<head><title>This is the head</title></head>" +
                 "<body>This is the body" +
                 "<a href='1234'>vanilla hyperlink</a>" +
-                "<a href='abcd'><!-- " + resourceUuid + " -->link with a valid uuid</a>" +
-                "<a href='xyz'><!-- 123e4567-e89b-12d3-a456-426655440000 -->link with a random uuid</a>" +
+                "<a href='" + resourceUuid + "'>link with a valid uuid</a>" +
+                "<a href='" + resourceUuid + ".htm'>link with a valid suffix</a>" +
+                "<a href='" + resourceUuid + ".html'>link with a valid suffix</a>" +
+                "<a href='" + resourceUuid + ".xml'>link with an invalid suffix</a>" +
                 "</body>" +
                 "</html>";
 
         // When
         String transformedHtml = Html.parse(Charsets.UTF_8.name())
-                .andThen(Html.dereferenceAllHyperlinks(sCtx.resourceResolver()))
+                .andThen(Html.rewriteUuidUrls(sCtx.resourceResolver(), new UrlProvider() {
+
+                    @Override
+                    public String generateUrlString(DocumentVariant variant) {
+                        return "someTestString";
+                    }
+                }))
                 .andThen(doc -> doc.toString())
                 .apply(html);
 
@@ -102,8 +113,10 @@ class HtmlTest {
         List<Element> elms = doc.select("a").stream().collect(Collectors.toList());
         assertFalse(elms.isEmpty());
         assertTrue("1234".equals(elms.get(0).attr("href")));
-        assertFalse("abcd".equals(elms.get(1).attr("href")));
-        assertTrue("xyz".equals(elms.get(2).attr("href")));
+        assertTrue("someTestString".equals(elms.get(1).attr("href")));
+        assertTrue("someTestString".equals(elms.get(2).attr("href")));
+        assertTrue("someTestString".equals(elms.get(3).attr("href")));
+        assertTrue((resourceUuid + ".xml").equals(elms.get(4).attr("href")));
     }
 
     @Test

@@ -1,17 +1,17 @@
-import React from 'react'
-import { Versions, IProps } from '@app/versions'
-import '@app/fetchMock'
+import React from "react"
+import { Versions, IProps } from "@app/versions"
+import "@app/fetchMock"
 
-import { mount, shallow } from 'enzyme'
+import { mount, shallow } from "enzyme"
 import { 
     Button, Form, FormGroup, FormSelect, FormSelectOption, InputGroup,
     InputGroupText, Modal, Title, Alert, AlertActionCloseButton, Grid
-} from '@patternfly/react-core'
-import renderer from 'react-test-renderer'
-import sinon from 'sinon'
-import { any } from 'prop-types';
+} from "@patternfly/react-core"
+import renderer from "react-test-renderer"
+import sinon from "sinon"
+import { any } from "prop-types";
 
-const anymatch = require('anymatch')
+const anymatch = require("anymatch")
 
 const props = {
     assemblies: [],
@@ -28,165 +28,165 @@ const props = {
     onPublishEvent: () => anymatch
 }
 
-describe('Versions tests', () => {
-    test('should render Versions component', () => {
+describe("Versions tests", () => {
+    test("should render Versions component", () => {
         const view = shallow(<Versions {...props} />)
         expect(view).toMatchSnapshot()
     })
 
-    it('should render a Modal', () => {
+    it("should render a Modal", () => {
         const wrapper = mount(<Versions {...props} />)
         // console.log(wrapper.debug())
         const modal = wrapper.find(Modal)
         expect(modal.exists()).toBe(true)
     })
 
-    it('should render a Grid', () => {
+    it("should render a Grid", () => {
         const wrapper = mount(<Versions {...props} />)
         const grid = wrapper.find(Grid)
         expect(grid.exists()).toBe(true)
     })
 
-    it('should render a Form', () => {
+    it("should render a Form", () => {
         const wrapper = shallow(<Versions {...props} />)
-        wrapper.setState({ 'login': true })
-        wrapper.setState({ 'isModalOpen': true })
+        wrapper.setState({ "login": true })
+        wrapper.setState({ "isModalOpen": true })
         const form = wrapper.find(Form)
         expect(form.exists()).toBe(true)
     })
 
-    it('should render a FormGroup', () => {
+    it("should render a FormGroup", () => {
         const wrapper = shallow(<Versions {...props} />)
-        wrapper.setState({ 'login': true })
-        wrapper.setState({ 'isModalOpen': true })
+        wrapper.setState({ "login": true })
+        wrapper.setState({ "isModalOpen": true })
         const formGroup = wrapper.find(FormGroup)
         expect(formGroup.exists()).toBe(true)
     })
 
-    it('should render a FormSelect', () => {
+    it("should render a FormSelect", () => {
         const wrapper = shallow(<Versions {...props} />)
-        wrapper.setState({ 'login': true })
-        wrapper.setState({ 'isModalOpen': true })
+        wrapper.setState({ "login": true })
+        wrapper.setState({ "isModalOpen": true })
         const formSelect = wrapper.find(FormSelect)
         expect(formSelect.exists()).toBe(true)
     })
 
-    it('should render a FormSelectOption', () => {
+    it("should render a FormSelectOption", () => {
         const wrapper = shallow(<Versions {...props} />)
-        wrapper.setState({ 'login': true })
-        wrapper.setState({ 'isModalOpen': true })
+        wrapper.setState({ "login": true })
+        wrapper.setState({ "isModalOpen": true })
         const formSelectOption = wrapper.find(FormSelectOption)
         expect(formSelectOption.exists()).toBe(true)
     })
 
-    it('should render a InputGroup', () => {
+    it("should render a InputGroup", () => {
         const wrapper = shallow(<Versions {...props} />)
-        wrapper.setState({ 'login': true })
-        wrapper.setState({ 'isModalOpen': true })
+        wrapper.setState({ "login": true })
+        wrapper.setState({ "isModalOpen": true })
         const inputGroup = wrapper.find(InputGroup)
         expect(inputGroup.exists()).toBe(true)
     })
 
-    it('should render a success Alert', () => {
+    it("should render a success Alert", () => {
         const wrapper = shallow(<Versions {...props} />)
-        wrapper.setState({ 'login': true })
-        wrapper.setState({ 'successAlertVisible': true })
+        wrapper.setState({ "login": true })
+        wrapper.setState({ "successAlertVisible": true })
         const alert = wrapper.find(Alert)
         expect(alert.exists()).toBe(true)
     })
 
-    it('test fetchVersions function', () => {
+    it("test fetchVersions function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.fetchVersions()).toMatchSnapshot()
     })
 
-    it('test changePublishState function', () => {
+    it("test changePublishState function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.changePublishState("Publish")).toMatchSnapshot()
     })
 
-    it('test previewDoc function', () => {
+    it("test previewDoc function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.previewDoc()).toMatchSnapshot()
     })
 
-    it('test saveMetadata function', () => {
+    it("test saveMetadata function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.saveMetadata()).toMatchSnapshot()
     })
 
-    it('test onChangeUsecase function', () => {
+    it("test onChangeUsecase function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.onChangeUsecase()).toMatchSnapshot()
     })
 
-    it('test handleURLInput function', () => {
+    it("test handleURLInput function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.handleURLInput()).toMatchSnapshot()
     })
 
-    it('test dismissNotification function', () => {
+    it("test dismissNotification function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.dismissNotification()).toMatchSnapshot()
     })
 
-    it('test getMetadata function', () => {
+    it("test getMetadata function", () => {
         const wrapper = shallow(<Versions {...props} />)
         const instance = wrapper.instance()
-        wrapper.setState({ 'login': true })
-        wrapper.setState({ 'isModalOpen': true })
+        wrapper.setState({ "login": true })
+        wrapper.setState({ "isModalOpen": true })
         // Assuming metadata exists
-        const spy = sinon.spy(instance, 'saveMetadata')
-        const urlFragment = wrapper.find('input')
+        const spy = sinon.spy(instance, "saveMetadata")
+        const urlFragment = wrapper.find("input")
         expect(urlFragment.exists()).toBe(true)
 
-        const useCaseValue = wrapper.find('[aria-label="FormSelect Usecase"]').simulate('change', { target: { value: 'Administer' } })
+        const useCaseValue = wrapper.find("[aria-label='FormSelect Usecase']").simulate("change", { target: { value: "Administer" } })
         expect(useCaseValue.exists()).toBe(true)
     })
 
-    it('test getHarrayChildNamed function', () => {
+    it("test getHarrayChildNamed function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.getHarrayChildNamed("__children__")).toMatchSnapshot()
     })
 
-    it('test hideSuccessAlert function', () => {
+    it("test hideSuccessAlert function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
         expect(inst.hideSuccessAlert()).toMatchSnapshot()
     })
 
-    it('test hidePublishAlert function', () => {
+    it("test hidePublishAlert function", () => {
         const wrapper = renderer.create(<Versions {...props} />);
         const inst = wrapper.getInstance();
         expect(inst.hidePublishAlert()).toMatchSnapshot();
     });
 
-    it('test hideUppublishAlertForModule function', () => {
+    it("test hideUppublishAlertForModule function", () => {
     const wrapper = renderer.create(<Versions {...props} />)
     const inst = wrapper.getInstance()
     expect(inst.hideUppublishAlertForModule()).toMatchSnapshot()
     })
 
-    it('has a props', () => {
+    it("has a props", () => {
         const versions = mount(<Versions {...props} />).matchesElement
         expect(versions.length === 1)
     })
 
-    it('test getHarrayChildNamed function', () => {
+    it("test getHarrayChildNamed function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
-        expect(inst.getHarrayChildNamed(anymatch, 'metadata')).toMatchSnapshot()
+        expect(inst.getHarrayChildNamed(anymatch, "metadata")).toMatchSnapshot()
     })
 
-    it('has a variantUUID of "1234"', () => {
+    it("has a variantUUID of '1234'", () => {
         const state: IProps = {
             attributesFilePath: "/repositories/testRepo/attributes.adoc",
             contentType: "module",
@@ -201,42 +201,42 @@ describe('Versions tests', () => {
             onPublishEvent: () => anymatch
         }
         state.updateDate("-", "-", 1, "1234")
-        expect(state.modulePath).toEqual('somePath')
-        expect(state.versionModulePath).toEqual('versionPath')
+        expect(state.modulePath).toEqual("somePath")
+        expect(state.versionModulePath).toEqual("versionPath")
     })
 
-    test('changePublishState click', () => {
+    test("changePublishState click", () => {
         const wrapper = mount(<Versions {...props} />)
         const instance = wrapper.instance()
-        wrapper.setState({ 'login': true })
+        wrapper.setState({ "login": true })
         wrapper.setState({
-            'results': [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": 'Not published', "updatedDate": "", "firstButtonType": 'primary', "secondButtonType": 'secondary', "firstButtonText": 'Publish', "secondButtonText": 'Preview', "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": '' }]],
+            "results": [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Not published", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": "" }]],
         })
-        const spy = sinon.spy(instance, 'changePublishState')
-        wrapper.find(Button).at(2).simulate('click')
+        const spy = sinon.spy(instance, "changePublishState")
+        wrapper.find(Button).at(2).simulate("click")
         sinon.assert.called(spy)
     })
 
-    it('test fetchProducts function', () => {
+    it("test fetchProducts function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
-        const spy = sinon.spy(inst, 'fetchProducts')
+        const spy = sinon.spy(inst, "fetchProducts")
         inst.componentDidMount()
         sinon.assert.called(spy)
     })
 
-    it('test fetchVersions function', () => {
+    it("test fetchVersions function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
-        const spy = sinon.spy(inst, 'fetchVersions')
+        const spy = sinon.spy(inst, "fetchVersions")
         inst.fetchVersions()
         sinon.assert.called(spy)
     })
 
-    it('test changePublishState function', () => {
+    it("test changePublishState function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
-        const spy = sinon.spy(inst, 'changePublishState')
+        const spy = sinon.spy(inst, "changePublishState")
         inst.changePublishState("ds")
         sinon.assert.called(spy)
     })

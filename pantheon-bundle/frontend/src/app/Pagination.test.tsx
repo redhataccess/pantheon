@@ -1,13 +1,13 @@
-import React from 'react'
-import { Pagination } from '@app/Pagination'
-import '@app/fetchMock'
+import React from "react"
+import { Pagination } from "@app/Pagination"
+import "@app/fetchMock"
 
-import { mount, shallow } from 'enzyme'
-import { LevelItem } from '@patternfly/react-core'
+import { mount, shallow } from "enzyme"
+import { LevelItem } from "@patternfly/react-core"
 
-describe('Tests for Pagination', () => {
+describe("Tests for Pagination", () => {
 
-  test('should render Pagination component', () => {
+  test("should render Pagination component", () => {
     const view = shallow(<Pagination 
     handleMoveLeft={move}
     handleMoveRight={move}
@@ -22,7 +22,7 @@ describe('Tests for Pagination', () => {
     expect(view).toMatchSnapshot()
   })
 
-  it('should render Badge for displaying page number', () => {
+  it("should render Badge for displaying page number", () => {
     const wrapper = mount(<Pagination 
       handleMoveLeft={move}
       handleMoveRight={move}

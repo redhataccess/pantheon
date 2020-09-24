@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react';
-import { Level, LevelItem } from '@patternfly/react-core';
-import { ContextSelector, ContextSelectorItem } from '@patternfly/react-core';
-import { Dropdown } from '@app/Dropdown';
+import React, { Fragment } from "react";
+import { Level, LevelItem } from "@patternfly/react-core";
+import { ContextSelector, ContextSelectorItem } from "@patternfly/react-core";
+import { Dropdown } from "@app/Dropdown";
 
 export interface IProps {
   handleMoveLeft: () => any
@@ -18,10 +18,10 @@ export interface IProps {
 class Pagination extends React.Component<IProps> {
 
   public dropdownItems = [
-    '25 items per page',
-    '50 items per page',
-    '75 items per page',
-    '100 items per page'
+    "25 items per page",
+    "50 items per page",
+    "75 items per page",
+    "100 items per page"
     ];
 
   public state = {
@@ -30,7 +30,7 @@ class Pagination extends React.Component<IProps> {
     isOpen: false,
     itemsPerPage: 25,
     renderSearch: false,
-    searchValue: '',
+    searchValue: "",
     selected: this.dropdownItems[0]
 
   };
@@ -117,7 +117,7 @@ class Pagination extends React.Component<IProps> {
   private dropDownValue = (value) => {
     this.setState({
       isOpen: !this.state.isOpen,
-      itemsPerPage: Number(value.substr(0,value.indexOf(' '))),
+      itemsPerPage: Number(value.substr(0,value.indexOf(" "))),
       selected: value
     },()=>{
       this.props.handlePerPageLimit(this.state.itemsPerPage)

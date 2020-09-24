@@ -1,23 +1,23 @@
 package com.redhat.pantheon.servlet.util;
 
+
+import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
+import com.redhat.pantheon.model.ModelException;
 import com.redhat.pantheon.model.assembly.AssemblyMetadata;
 import com.redhat.pantheon.model.assembly.AssemblyVariant;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
-import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.jetbrains.annotations.NotNull;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 
@@ -33,6 +33,15 @@ public class ServletHelper {
      * The constant ASSEMBLY_VARIANT_API_PATH.
      */
     public static final String ASSEMBLY_VARIANT_API_PATH = "/api/assembly/variant.json";
+
+    private static final Set<String> DOCUMENT_TYPES = new HashSet<>();
+    private static final Set<String> VARIANT_TYPES = new HashSet<>();
+    static {
+        DOCUMENT_TYPES.add(PantheonConstants.RESOURCE_TYPE_ASSEMBLY);
+        DOCUMENT_TYPES.add(PantheonConstants.RESOURCE_TYPE_MODULE);
+        VARIANT_TYPES.add(PantheonConstants.RESOURCE_TYPE_ASSEMBLYVARIANT);
+        VARIANT_TYPES.add(PantheonConstants.RESOURCE_TYPE_MODULEVARIANT);
+    }
 
     /**
      * Instantiates a new Servlet helper.
@@ -57,6 +66,22 @@ public class ServletHelper {
                 .getResource(foundNode.getPath());
 
         return foundResource;
+    }
+
+    /**
+     * Tranform resource path to model.
+     * @param r     a JCR resource
+     * @return
+     */
+    public static Object resourceToModel(Resource r) {
+        String resourceType = r.getResourceType();
+        if (DOCUMENT_TYPES.contains(resourceType)) {
+            return r.adaptTo(Document.class);
+        } else if (VARIANT_TYPES.contains(resourceType)) {
+            return r.adaptTo(DocumentVariant.class);
+        } else {
+            throw new ModelException("Attempted to transform " + r.getPath() + " into model class, but resource type was " + resourceType);
+        }
     }
 
     /**

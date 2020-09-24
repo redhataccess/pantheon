@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import '@app/app.css';
+import React, { Component } from "react";
+import "@app/app.css";
 
 export interface IProps {
     perPageValue: (itemsPerPage) => any
@@ -9,10 +9,10 @@ export interface IProps {
 class Dropdown extends Component<IProps> {
 
   public dropdownItems = [
-        '25 items per page',
-        '50 items per page',
-        '75 items per page',
-        '100 items per page'
+        "25 items per page",
+        "50 items per page",
+        "75 items per page",
+        "100 items per page"
     ];
     
   public state = {
