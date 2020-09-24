@@ -22,14 +22,15 @@
         column-gap: 0;
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0 2em;
+        // This property isn't misspelled, sasslint doesn't have the latest and greatest CSS Spec
+        gap: 0 2em; // sass-lint:disable-line no-misspelled-properties
       }
     }
   }
 
   li {
     box-sizing: content-box;
-    margin: 0 0 ;
+    margin: 0;
     padding: 16px 24px 16px 0;
     border-bottom: 1px solid #d2d2d2;
     break-inside: avoid;

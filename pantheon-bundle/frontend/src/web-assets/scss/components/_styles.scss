@@ -3,7 +3,7 @@
   // max-width: 65em; // Optimal line-length for best legibility.
 
   :host & {
-    padding: 0; // No padding when in the web component
+    padding: 24px;
   }
 
   .has-toc.toc-left & {
@@ -58,22 +58,70 @@
   list-style: none;
 }
 
-.rh-docs-details-item {
-  $font-size: 16px;
-  $line-height: 24px / $font-size; // Getting unitless line-height
-  margin: 0 0 8px;
-  font-size: $font-size;
-  line-height: #{ $line-height };
+
+.rhdocs__header {
+  margin: 0 -24px 24px;
+  padding: 0 24px 1px; // Bottom margin is so margin is kept inside this wrapper
+  font-size: 14px;
+  line-height: #{(17px / 14px)};
+  // Design calls for box-shadow, but that causes issues
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.08));
+  background-size: 100% 3px;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  @media (min-width: 992px) {
+    display: flex;
+  }
+
+  h1 {
+    margin: 0 0 4px;
+    padding: 0;
+    font-size: 28px;
+    line-height: (34px / 28px);
+    color: #151515;
+  }
+}
+
+.rhdocs__header__primary-wrapper {
+  margin-bottom: 24px;
+  @media (min-width: 992px) {
+    flex-grow: 1;
+  }
+}
+
+.rhdocs__header__secondary-wrapper[class] {
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+  @media (min-width: 992px) {
+    min-width: 150px;
+    margin-left: 2em;
+  }
+
+  li {
+    margin: 0;
+    margin-bottom: #{4px / 14px * 1em};
+    padding: 0;
+    font-size: inherit;
+    line-height: inherit;
+    @media (min-width: 992px) {
+      margin-bottom: #{8px / 14px * 1em};
+    }
+  }
+}
+
+.rhdocs-content-type {
+  margin-bottom: 8px;
+  color: #6a6e73;
 }
 
 .rhdocs-products {
-  $font-size: 24px;
-  $line-height: 31px / $font-size; // Getting unitless line-height
   margin: 0 0 16px;
-  font-size: 24px;
-  line-height: #{ $line-height };
-  font-weight: bold;
-  text-transform: uppercase;
+  font-size: 16px;
+  line-height: #{(19px / 16px)}; // Getting unitless line-height
+  @media (min-width: 992px) {
+    margin-bottom: 0;
+  }
 }
 
 // .rhdocs-product-name {}
@@ -432,4 +480,8 @@
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+.rh-docs-legal-notice {
+  margin-top: 4em;
 }
