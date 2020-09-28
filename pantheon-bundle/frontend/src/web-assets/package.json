@@ -7,7 +7,7 @@
     "node": ">=8.x.x"
   },
   "devDependencies": {
-    "@cpelements/cp-documentation": "^0.1.9",
+    "@cpelements/cp-documentation": "^0.1.12",
     "autoprefixer": "^9.4.2",
     "browser-sync": "^2.26.7",
     "browserslist": "^4.8.7",
