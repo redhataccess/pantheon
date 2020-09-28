@@ -26,7 +26,7 @@ import static com.redhat.pantheon.servlet.util.ServletHelper.getResourceByUuid;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 /**
- * Get operation to render documents included assembly list in JSON format.
+ * Get operation to render documents(published/unpublished) included assembly list in JSON format.
  * Only one parameter is expected in the Get request:
  * 1. variantUuid - required; indicates the uuid string which uniquely identified an assembly variant
  *
@@ -82,7 +82,7 @@ public class AssemblyIncludesServlet extends AbstractJsonSingleQueryServlet {
         Map<String, Object> variantMap = super.resourceToMap(request, resource);
         Map<String, Object> documentIncluded = new HashMap<>();
 
-        LinkedHashMap<Integer, Object> documents = new LinkedHashMap<>();
+        List<Map<String, String>> documents = new ArrayList<>();
         variantMap.put("documents", documents);
 
         AssemblyContent assemblyContent =
@@ -91,7 +91,7 @@ public class AssemblyIncludesServlet extends AbstractJsonSingleQueryServlet {
             for (Resource childResource : assemblyContent.getChildren()) {
                 AssemblyPage page = childResource.adaptTo(AssemblyPage.class);
                 Map<String, String> documentMap = new HashMap<>();
-                documents.put(documents.size(), documentMap);
+                documents.add(documentMap);
                 String moduleUuid = page.module().get();
                 Module module = getResourceByUuid(request, moduleUuid).adaptTo(Module.class);
                 ModuleVariant canonical = module

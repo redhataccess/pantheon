@@ -1,13 +1,13 @@
-import React from 'react'
-import { Dropdown } from '@app/Dropdown'
-import '@app/fetchMock'
-import { mount, shallow } from 'enzyme'
-import sinon from 'sinon'
-import renderer from 'react-test-renderer'
+import React from "react"
+import { Dropdown } from "@app/Dropdown"
+import "@app/fetchMock"
+import { mount, shallow } from "enzyme"
+import sinon from "sinon"
+import renderer from "react-test-renderer"
 
-describe('Tests for Dropdown', () => {
+describe("Tests for Dropdown", () => {
 
-  test('should render Dropdown component', () => {
+  test("should render Dropdown component", () => {
     const view = shallow(<Dropdown
         perPageValue={move}
         newPerPagevalue={"25 items per page"}
@@ -16,7 +16,7 @@ describe('Tests for Dropdown', () => {
     expect(view).toMatchSnapshot()
   })
 
-  it('should render dropdown list', () => {
+  it("should render dropdown list", () => {
     const wrapper = mount(<Dropdown
         perPageValue={move}
         newPerPagevalue={"25 items per page"}
@@ -24,17 +24,17 @@ describe('Tests for Dropdown', () => {
     )
   })
 
-  it('test changeSelection function', () => {
+  it("test changeSelection function", () => {
     const wrapper = renderer.create(<Dropdown
       perPageValue={move}
       newPerPagevalue={"25 items per page"}
     />)
     const inst = wrapper.getInstance()
-    const spy = sinon.spy(inst, 'changeSelection')
+    const spy = sinon.spy(inst, "changeSelection")
     inst.changeSelection(wrapper)
     sinon.assert.called(spy)
 
-    const spy2 = sinon.spy(inst, 'changeExpandState')
+    const spy2 = sinon.spy(inst, "changeExpandState")
     inst.changeExpandState()
     sinon.assert.called(spy2)
   })

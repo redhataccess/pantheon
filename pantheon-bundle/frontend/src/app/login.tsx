@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { Bullseye, Button, Alert, AlertActionCloseButton, FormGroup, TextInput } from '@patternfly/react-core';
-import '@app/app.css';
+import React, { Component } from "react";
+import { Bullseye, Button, Alert, AlertActionCloseButton, FormGroup, TextInput } from "@patternfly/react-core";
+import "@app/app.css";
 
 class Login extends Component<any, any, any> {
   constructor(props) {
     super(props)
     this.state = {
-      authMessage: '',
-      password: '',
-      username: ''
+      authMessage: "",
+      password: "",
+      username: ""
     };
   }
 
@@ -44,7 +44,7 @@ class Login extends Component<any, any, any> {
   }
 
   private onLoginKeyPress = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       this.login()
     }
   }
@@ -58,7 +58,7 @@ class Login extends Component<any, any, any> {
   }
 
   private resetAuthMessage = () => {
-    this.setState({ authMessage: '' })
+    this.setState({ authMessage: "" })
   }
 
   private onUsernameChange = username => {
@@ -74,9 +74,9 @@ class Login extends Component<any, any, any> {
     formData.append("j_username", this.state.username)
     formData.append("j_password", this.state.password)
 
-    fetch('/j_security_check', {
+    fetch("/j_security_check", {
       body: formData,
-      method: 'post',
+      method: "post",
     }).then(response => {
       if (response.status === 200) {
         console.log(" Works " + response.status)

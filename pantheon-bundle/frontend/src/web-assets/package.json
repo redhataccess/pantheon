@@ -1,7 +1,7 @@
 {
   "name": "pantheon-front-end",
   "description": "Front-end for https://github.com/redhataccess/pantheon",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "license": "MIT",
   "engines": {
     "node": ">=8.x.x"

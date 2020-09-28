@@ -8,6 +8,8 @@ import com.redhat.pantheon.extension.events.assembly.AssemblyVersionUnpublishedE
 import com.redhat.pantheon.extension.events.module.ModuleVersionPublishStateEvent;
 import com.redhat.pantheon.extension.events.module.ModuleVersionPublishedEvent;
 import com.redhat.pantheon.extension.events.module.ModuleVersionUnpublishedEvent;
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.extension.url.UrlProvider;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
@@ -242,64 +244,6 @@ public class HydraIntegration implements EventProcessingExtension {
         return this.getPantheonHost() + replacedUri;
     }
 
-
-    private String getPortalTopicUri(ModuleVersion moduleVersion) throws RepositoryException {
-        final String uriTemplate = System.getenv(PORTAL_URL)
-                    + "/documentation/${localeId}/topic"
-                    + "/${productUrlFragment}/${versionUrlFragment}"
-                    + "/${variantUuid}";
-
-        HashMap values = Maps.newHashMap();
-        // TODO Clean this up, lots of locale transformations to make sure this aligns
-        ProductVersion productVersion = moduleVersion.metadata().get().productVersion().getReference();
-        String versionUrlFragment = "";
-        String productUrlFragment = "";
-        if (productVersion != null) {
-            versionUrlFragment = productVersion.getValueMap().containsKey("urlFragment") ? productVersion.urlFragment().get() : "";
-            productUrlFragment = productVersion.getProduct().getValueMap().containsKey("urlFragment") ? productVersion.getProduct().urlFragment().get(): "";
-        }
-        values.put("localeId", toLanguageTag(
-                ULocale.createCanonical(
-                        moduleVersion.getParent().getParent().getParent().getName())
-                        .toLocale()));
-        values.put("productUrlFragment", productUrlFragment);
-        values.put("versionUrlFragment", versionUrlFragment);
-        values.put("variantUuid", moduleVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
-                moduleVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
-        StringSubstitutor strSubs = new StringSubstitutor(values);
-
-        return strSubs.replace(uriTemplate);
-    }
-
-    private String getPortalGuideUri(AssemblyVersion assemblyVersion) throws RepositoryException {
-        final String uriTemplate = System.getenv(PORTAL_URL)
-                    + "/documentation/${localeId}/guide"
-                    + "/${productUrlFragment}/${versionUrlFragment}"
-                    + "/${variantUuid}";
-
-
-        HashMap values = Maps.newHashMap();
-        // TODO Clean this up, lots of locale transformations to make sure this aligns
-        ProductVersion productVersion = assemblyVersion.metadata().get().productVersion().getReference();
-        String versionUrlFragment = "";
-        String productUrlFragment = "";
-        if (productVersion != null) {
-            versionUrlFragment = productVersion.getValueMap().containsKey("urlFragment") ? productVersion.urlFragment().get() : "";
-            productUrlFragment = productVersion.getProduct().getValueMap().containsKey("urlFragment") ? productVersion.getProduct().urlFragment().get(): "";
-        }
-        values.put("localeId", toLanguageTag(
-                ULocale.createCanonical(
-                        assemblyVersion.getParent().getParent().getParent().getName())
-                        .toLocale()));
-        values.put("productUrlFragment", productUrlFragment);
-        values.put("versionUrlFragment", versionUrlFragment);
-        values.put("variantUuid", assemblyVersion.getParent().getValueMap().containsKey(JcrConstants.JCR_UUID) ?
-                assemblyVersion.getParent().getValueMap().get(JcrConstants.JCR_UUID) : "");
-        StringSubstitutor strSubs = new StringSubstitutor(values);
-
-        return strSubs.replace(uriTemplate);
-    }
-
     private String buildEventMessage(Event event) throws RepositoryException {
         String msg = "";
         String eventValue = "";
@@ -336,9 +280,9 @@ public class HydraIntegration implements EventProcessingExtension {
                 AssemblyVersionUnpublishedEvent.class.equals(event.getClass())){
             if (System.getenv(PORTAL_URL) != null) {
                 if (ModuleVersionUnpublishedEvent.class.equals(event.getClass())) {
-                    uriValue = getPortalTopicUri(moduleVersion);
+                    uriValue = new CustomerPortalUrlUuidProvider().generateUrlString(moduleVersion.getParent());
                 } else if (AssemblyVersionUnpublishedEvent.class.equals(event.getClass())) {
-                    uriValue = getPortalGuideUri(assemblyVersion);
+                    uriValue = new CustomerPortalUrlUuidProvider().generateUrlString(assemblyVersion.getParent());
                 }
 
                 // TODO Use a json generation api for this

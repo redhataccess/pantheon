@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
-import { Bullseye, Button, Alert, Modal, AlertActionCloseButton, FormGroup, TextInput, ModalVariant } from '@patternfly/react-core';
-import '@app/app.css';
-import { Redirect } from 'react-router-dom'
+import React, { Component } from "react";
+import { Bullseye, Button, Alert, Modal, AlertActionCloseButton, FormGroup, TextInput, ModalVariant } from "@patternfly/react-core";
+import "@app/app.css";
+import { Redirect } from "react-router-dom"
 
 class GitImport extends Component {
   public state = {
-    branch: '',
-    git2pantheonURL: '',
+    branch: "",
+    git2pantheonURL: "",
     isFormSubmitted: false,
     isMissingFields: false,
     isSucess: false,
     redirect: false,
-    repository: '',
-    submitMsg: ''
+    repository: "",
+    submitMsg: ""
   };
 
   public render() {
@@ -91,7 +91,7 @@ class GitImport extends Component {
     if (this.state.repository === "") {
       this.setState({ isMissingFields: true })
     } else {
-      fetch('/conf/pantheon/pant:syncServiceUrl')
+      fetch("/conf/pantheon/pant:syncServiceUrl")
         .then((resp => {
           if (!resp.ok) {
             this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, could not find the git2pantheon URL configuration." })
@@ -143,7 +143,7 @@ class GitImport extends Component {
 
   private renderRedirect = () => {
     if (this.state.redirect) {
-      return <Redirect to='/' />
+      return <Redirect to="/" />
     } else {
       return ""
     }

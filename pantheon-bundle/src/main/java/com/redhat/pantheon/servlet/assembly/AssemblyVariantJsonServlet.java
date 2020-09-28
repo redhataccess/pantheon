@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet.assembly;
 
 import com.google.common.base.Charsets;
 import com.ibm.icu.util.ULocale;
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
@@ -128,6 +129,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Return the body content of the assembly ONLY
         variantMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
+                        .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider()))
                         .andThen(Html.getBody())
                         .apply(releasedContent.get().jcrContent().get().jcrData().get()));
 
@@ -171,13 +173,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
-            String view_uri = System.getenv(PORTAL_URL)
-                    +"/documentation/"
-                    + ServletUtils.toLanguageTag(locale)
-                    + "/guide/"
-                    + productUrlFragment + "/"
-                    + versionUrlFragment + "/"
-                    + variant_uuid;
+            String view_uri = new CustomerPortalUrlUuidProvider().generateUrlString(assemblyVariant);
             variantMap.put(VIEW_URI, view_uri);
         } else {
             variantMap.put(VIEW_URI, "");
