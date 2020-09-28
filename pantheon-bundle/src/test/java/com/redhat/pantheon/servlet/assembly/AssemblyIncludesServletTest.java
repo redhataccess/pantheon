@@ -99,7 +99,7 @@ public class AssemblyIncludesServletTest {
         assertTrue(documents.stream().allMatch(value -> value.containsKey("canonical_uuid")));
         assertTrue(documents.stream().allMatch(value -> value.containsKey("path")));
         assertTrue(documents.stream().allMatch(value -> value.containsKey("title")));
-        assertFalse(documents.stream().allMatch(value -> value.containsKey("NONE")));
+        assertFalse(documents.stream().allMatch(value -> value.containsKey("bad_value")));
         assertEquals((map.get("status")), SC_OK);
     }
 }
