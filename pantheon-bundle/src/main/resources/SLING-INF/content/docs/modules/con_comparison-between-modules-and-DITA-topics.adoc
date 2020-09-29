@@ -33,6 +33,5 @@ a|
 The most important distinction is that modules cannot be nested like DITA topics.
 
 .Additional Resources
-* DITA Topics - link:https://docs.oasis-open.org/dita/v1.0/archspec/topics.htmll[What are topics?] 
-* AsciiDoc home page - link:http://asciidoc.org[AsciiDoc
-Text based document generation]
+* DITA Topics - link:https://docs.oasis-open.org/dita/v1.0/archspec/topics.html[What are topics?] 
+* AsciiDoc home page - link:http://asciidoc.org[AsciiDoc Text based document generation]
