@@ -240,4 +240,13 @@ describe("Versions tests", () => {
         inst.changePublishState("ds")
         sinon.assert.called(spy)
     })
+
+    it("test getDocumentsIncluded function", () => {
+        const wrapper = renderer.create(<Versions {...props} />)
+        const inst = wrapper.getInstance()
+        const spy = sinon.spy(inst, "getDocumentsIncluded")
+        inst.getDocumentsIncluded()
+        sinon.assert.called(spy)
+    })
+    
 })
