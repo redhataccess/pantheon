@@ -17,6 +17,7 @@ const
     watch,
   } = require('gulp'),
   shell = require('gulp-shell'),
+  rename = require('gulp-rename'),
   // gulpIf = require('gulp-if'),
   sourceMaps = require('gulp-sourcemaps'),
   sass = require('gulp-sass'),
@@ -32,15 +33,25 @@ const
 const
   cssSource = 'scss/**/*.scss',
   cssOutput = '../../../src/main/resources/SLING-INF/content/static/',
-  asciiDocTemplates = '../../../src/main/resources/apps/pantheon/templates/haml/html5';
+  asciiDocTemplates = '../../../src/main/resources/apps/pantheon/templates/haml/html5',
+  rhdocsCss = 'node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css';
 
 task(
   'compileAsciiDocs',
   parallel(
     shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets dev-preview/ascii-doc-styleguide.adoc`),
-    shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets 'dev-preview/assembly_access-control-list.adoc'`),
+    shell.task(`asciidoctor -T ${asciiDocTemplates} -a pantheonenv=localwebassets 'dev-preview/assembly_access-control-list.adoc'`)
   )
 );
+
+// /home/wruvalca/dev/pantheon/pantheon-bundle/frontend/src/web-assets/dev-preview/rhdocs.css
+// /home/wruvalca/dev/pantheon/pantheon-bundle/src/main/resources/SLING-INF/content/static/rhdocs.css
+const copyRhdocsCss = () => {
+  return src(rhdocsCss)
+    .pipe(rename('rhdocs.css'))
+    .pipe(dest(`${cssOutput}`))
+    .pipe(dest('dev-preview'));
+};
 
 /**
  * CSS Compilation
@@ -120,15 +131,28 @@ const watchTasks = () => {
  * Gulp tasks
  */
 // Builds dev assets in dev-preview and prod CSS in to the correct folder (see cssOutput variable)
-task('default', parallel(compileCSS, 'compileAsciiDocs'));
+task('default',
+  parallel(
+    copyRhdocsCss,
+    compileCSS,
+    'compileAsciiDocs'
+  )
+);
 
-task('build:dev', parallel(compileCSS, 'compileAsciiDocs'));
+task('build:dev',
+  parallel(
+    compileCSS,
+    copyRhdocsCss,
+    'compileAsciiDocs'
+  )
+);
 
 // Starts browsersync, watches project for changes and reloads all browsers
 task('watch',
   series(
     parallel(
       compileCSS,
+      copyRhdocsCss,
       'compileAsciiDocs'
     ),
     parallel(
