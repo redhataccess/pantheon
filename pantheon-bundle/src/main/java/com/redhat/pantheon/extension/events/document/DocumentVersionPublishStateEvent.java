@@ -13,24 +13,13 @@ import javax.annotation.Nonnull;
  */
 public class DocumentVersionPublishStateEvent implements Event {
 
-    enum Doctype {
-        MODULE,
-        ASSEMBLY
-    }
-
     private final String documentVersionPath;
-    private final Doctype doctype;
 
     protected DocumentVersionPublishStateEvent(@Nonnull DocumentVersion documentVersion) {
         this.documentVersionPath = documentVersion.getPath();
-        this.doctype = PantheonConstants.RESOURCE_TYPE_ASSEMBLYVERSION.equals(documentVersion.getResourceType()) ? Doctype.ASSEMBLY : Doctype.MODULE;
     }
 
     public String getDocumentVersionPath() {
         return documentVersionPath;
-    }
-
-    public Doctype getDoctype() {
-        return doctype;
     }
 }
