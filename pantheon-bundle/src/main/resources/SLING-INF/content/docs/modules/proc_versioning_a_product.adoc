@@ -12,7 +12,7 @@ A product must have at least one product version assigned to it.
 
 . Navigate to menu:Products[Product Listing].
 
-. Find the product and click the dropdown arrow>Product Details.
+. Find the product and click the drop-down arrow>Product Details.
 
 . Enter the following information:
   New Version:: This is the text that appears in {ProductShortName}, and the document preview.
