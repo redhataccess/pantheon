@@ -7,7 +7,6 @@
     "node": ">=8.x.x"
   },
   "devDependencies": {
-    "@cpelements/cp-documentation": "^0.1.9",
     "autoprefixer": "^9.4.2",
     "browser-sync": "^2.26.7",
     "browserslist": "^4.8.7",
@@ -34,9 +33,13 @@
     "watch": "yarn run gulp watch",
     "dev": "yarn run gulp watch",
     "clean": "rm -rf node_modules && rm dev-preview/*.css && rm dev-preview/*.html",
-    "start": "yarn run watch"
+    "start": "yarn run watch",
+    "postinstall": "yarn run build"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@cpelements/cp-documentation": "^0.1.15",
+    "gulp-rename": "^2.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/redhataccess/pantheon",

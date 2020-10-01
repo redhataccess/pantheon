@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@cpelements/cp-documentation@^0.1.9":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@cpelements/cp-documentation/-/cp-documentation-0.1.9.tgz#6c2cdb8bfe37bbcf8d4fe67ba0a8b94bd0c98f3e"
-  integrity sha512-hD7A930xn9+8U06Ex3FVHyCbW174Sm6KbOGV2kOVsqw3PPZ2Hdw1dlUWKJe4pe5NI+0AE0VyQb3kTgm7arPKbg==
+"@cpelements/cp-documentation@^0.1.15":
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/@cpelements/cp-documentation/-/cp-documentation-0.1.15.tgz#08fc88d0f2058669e5bc98a5e23b958394d5fc0d"
+  integrity sha512-OX/aL3+wTgtg+rmT6kxkegrnKVwxMen6y31K4oT6ecQZ0SVDmODrEL6Axn2hmigw9bxAhsRq93vKCtfVMje4bQ==
   dependencies:
     "@patternfly/pfelement" "1.0.0-prerelease.45"
 
@@ -2430,6 +2430,11 @@ gulp-postcss@^8.0.0:
     postcss "^7.0.2"
     postcss-load-config "^2.0.0"
     vinyl-sourcemaps-apply "^0.2.1"
+
+gulp-rename@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/gulp-rename/-/gulp-rename-2.0.0.tgz#9bbc3962b0c0f52fc67cd5eaff6c223ec5b9cf6c"
+  integrity sha512-97Vba4KBzbYmR5VBs9mWmK+HwIf5mj+/zioxfZhOKeXtx5ZjBk57KFlePf5nxq9QsTtFl0ejnHE3zTC9MHXqyQ==
 
 gulp-sass-globbing@0.0.2:
   version "0.0.2"
