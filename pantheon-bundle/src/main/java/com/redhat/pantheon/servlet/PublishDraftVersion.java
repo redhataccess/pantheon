@@ -3,26 +3,22 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
-import com.redhat.pantheon.extension.events.assembly.AssemblyVersionPublishedEvent;
-import com.redhat.pantheon.extension.events.module.ModuleVersionPublishedEvent;
-import com.redhat.pantheon.helper.PantheonConstants;
+import com.redhat.pantheon.extension.events.document.DocumentVersionPublishedEvent;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.assembly.AssemblyVersion;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.document.DocumentVersion;
-import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
-import org.apache.jackrabbit.api.security.user.Authorizable;
-import org.apache.jackrabbit.api.security.user.Group;
-import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.jcr.base.util.AccessControlUtil;
-import org.apache.sling.servlets.post.*;
+import org.apache.sling.servlets.post.AbstractPostOperation;
+import org.apache.sling.servlets.post.Modification;
+import org.apache.sling.servlets.post.PostOperation;
+import org.apache.sling.servlets.post.PostResponse;
+import org.apache.sling.servlets.post.SlingPostProcessor;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -31,10 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 import static com.redhat.pantheon.jcr.JcrResources.rename;
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
@@ -100,12 +98,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
 
                 // Regenerate the document once more
                 asciidoctorService.getDocumentHtml(document, locale, variant, false, new HashMap(), true);
-
-                if (PantheonConstants.RESOURCE_TYPE_ASSEMBLY.equals(document.getResourceType())) {
-                    events.fireEvent(new AssemblyVersionPublishedEvent(documentVersion.adaptTo(AssemblyVersion.class)), 15);
-                } else {
-                    events.fireEvent(new ModuleVersionPublishedEvent(documentVersion.adaptTo(ModuleVersion.class)), 15);
-                }
+                events.fireEvent(new DocumentVersionPublishedEvent(documentVersion), 15);
             }
         }catch (RepositoryException ex){
             logger.error("An error has occured ", ex.getMessage());

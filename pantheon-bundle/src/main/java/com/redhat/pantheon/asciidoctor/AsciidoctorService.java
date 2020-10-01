@@ -236,6 +236,8 @@ public class AsciidoctorService {
                     .attribute("pantheonversion", productVersion.isPresent() ? productVersion.get().name().get() : "")
                     // Shows custom rendering attribute to Haml
                     .attribute("pantheonenv", "preview")
+                    // signal which environment we are in, to aid in frontend development
+                    .attribute("portalhost", System.getenv("PORTAL_HOST"))
                     // we want to avoid the footer on the generated html
                     .noFooter(true)
                     // link the css instead of embedding it

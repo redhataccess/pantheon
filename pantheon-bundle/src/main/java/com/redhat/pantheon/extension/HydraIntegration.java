@@ -1,20 +1,11 @@
 package com.redhat.pantheon.extension;
 
 import com.google.common.collect.Maps;
-import com.ibm.icu.util.ULocale;
-import com.redhat.pantheon.extension.events.assembly.AssemblyVersionPublishStateEvent;
-import com.redhat.pantheon.extension.events.assembly.AssemblyVersionPublishedEvent;
-import com.redhat.pantheon.extension.events.assembly.AssemblyVersionUnpublishedEvent;
-import com.redhat.pantheon.extension.events.module.ModuleVersionPublishStateEvent;
-import com.redhat.pantheon.extension.events.module.ModuleVersionPublishedEvent;
-import com.redhat.pantheon.extension.events.module.ModuleVersionUnpublishedEvent;
-import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
-import com.redhat.pantheon.extension.url.UrlProvider;
-import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.extension.events.document.DocumentVersionPublishStateEvent;
+import com.redhat.pantheon.extension.events.document.DocumentVersionPublishedEvent;
+import com.redhat.pantheon.extension.events.document.DocumentVersionUnpublishedEvent;
 import com.redhat.pantheon.model.api.SlingModels;
-import com.redhat.pantheon.model.assembly.AssemblyVersion;
 import com.redhat.pantheon.model.document.DocumentVersion;
-import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
 import org.apache.activemq.broker.SslContext;
@@ -39,8 +30,6 @@ import javax.net.ssl.X509TrustManager;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Locale;
-
-import static com.redhat.pantheon.servlet.ServletUtils.toLanguageTag;
 
 /**
  * A Hydra message producer for Module post publish events.
@@ -92,20 +81,14 @@ public class HydraIntegration implements EventProcessingExtension {
      */
     public boolean canProcessEvent(Event event) {
         // Stop processEvent if broker properties are missing
-        if (System.getenv("MESSAGE_BROKER_URL") == null 
-                || System.getenv("HYDRA_USER") == null 
-                || System.getenv("HYDRA_USER_PASS") == null 
+        if (System.getenv("MESSAGE_BROKER_URL") == null
+                || System.getenv("HYDRA_USER") == null
+                || System.getenv("HYDRA_USER_PASS") == null
                 || System.getenv("PANTHEON_HOST") == null){
             return false;
         }
 
-        if (ModuleVersionPublishStateEvent.class.isAssignableFrom(event.getClass())
-                || AssemblyVersionPublishStateEvent.class.isAssignableFrom(event.getClass())) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return DocumentVersionPublishStateEvent.class.isAssignableFrom(event.getClass());
     }
 
     /**
@@ -249,48 +232,32 @@ public class HydraIntegration implements EventProcessingExtension {
         String eventValue = "";
         String idValue = "";
         String uriValue = "";
-        ModuleVersion moduleVersion = null;
-        AssemblyVersion assemblyVersion = null;
+        DocumentVersion documentVersion = null;
 
-        if (ModuleVersionPublishedEvent.class.equals(event.getClass()) ||
-                ModuleVersionUnpublishedEvent.class.equals(event.getClass())){
-            ModuleVersionPublishStateEvent publishStateEvent = (ModuleVersionPublishStateEvent) event;
-            moduleVersion = SlingModels.getModel(serviceResourceResolverProvider.getServiceResourceResolver(),
-                    publishStateEvent.getModuleVersionPath(), ModuleVersion.class);
-            eventValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
-            idValue = ModuleVersionPublishedEvent.class.equals(event.getClass()) ? buildDocumentVersionUri(moduleVersion) : "";
-        } else if(AssemblyVersionPublishedEvent.class.equals(event.getClass()) ||
-            AssemblyVersionUnpublishedEvent.class.equals(event.getClass())) {
-            AssemblyVersionPublishStateEvent publishStateEvent = (AssemblyVersionPublishStateEvent) event;
-            assemblyVersion = SlingModels.getModel(serviceResourceResolverProvider.getServiceResourceResolver(),
-                    publishStateEvent.getAssemblyVersionPath(), AssemblyVersion.class);
-            eventValue = AssemblyVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
-            idValue = AssemblyVersionPublishedEvent.class.equals(event.getClass()) ? buildDocumentVersionUri(assemblyVersion) : "";
+        if (DocumentVersionPublishedEvent.class.equals(event.getClass()) ||
+                DocumentVersionUnpublishedEvent.class.equals(event.getClass())){
+            DocumentVersionPublishStateEvent publishStateEvent = (DocumentVersionPublishStateEvent) event;
+            documentVersion = SlingModels.getModel(serviceResourceResolverProvider.getServiceResourceResolver(),
+                    publishStateEvent.getDocumentVersionPath(), DocumentVersion.class);
+            eventValue = DocumentVersionPublishedEvent.class.equals(event.getClass()) ? EVENT_PUBLISH_VALUE : EVENT_UNPUBLISH_VALUE;
+            idValue = DocumentVersionPublishedEvent.class.equals(event.getClass()) ? buildDocumentVersionUri(documentVersion) : "";
         } else {
             log.warn("[" + HydraIntegration.class.getSimpleName() + "] unhandled event type: " + event.getClass());
         }
 
-        if (ModuleVersionPublishedEvent.class.equals(event.getClass()) ||
-                AssemblyVersionPublishedEvent.class.equals(event.getClass())) {
+        if (DocumentVersionPublishedEvent.class.equals(event.getClass())) {
             // TODO Use a json generation api for this
             msg = "{\""
                     + ID_KEY + "\":" + "\"" + idValue +"\","
                     + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\"}";
-        } else if (ModuleVersionUnpublishedEvent.class.equals(event.getClass()) ||
-                AssemblyVersionUnpublishedEvent.class.equals(event.getClass())){
-            if (System.getenv(PORTAL_URL) != null) {
-                if (ModuleVersionUnpublishedEvent.class.equals(event.getClass())) {
-                    uriValue = new CustomerPortalUrlUuidProvider().generateUrlString(moduleVersion.getParent());
-                } else if (AssemblyVersionUnpublishedEvent.class.equals(event.getClass())) {
-                    uriValue = new CustomerPortalUrlUuidProvider().generateUrlString(assemblyVersion.getParent());
-                }
+        } else if (DocumentVersionUnpublishedEvent.class.equals(event.getClass())) {
+            uriValue = ((DocumentVersionUnpublishedEvent) event).getPublishedUrl();
 
-                // TODO Use a json generation api for this
-                msg = "{\""
-                        + ID_KEY + "\":" + "\"" + idValue +"\","
-                        + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\","
-                        + "\"" + URI_KEY + "\":" + "\"" + uriValue + "\"}";
-            }
+            // TODO Use a json generation api for this
+            msg = "{\""
+                    + ID_KEY + "\":" + "\"" + idValue +"\","
+                    + "\"" + EVENT_KEY + "\":" + "\"" + eventValue + "\","
+                    + "\"" + URI_KEY + "\":" + "\"" + uriValue + "\"}";
             log.info("[" + HydraIntegration.class.getSimpleName() + "] pantheon message: " + msg);
         } else {
             log.warn("[" + HydraIntegration.class.getSimpleName() + "] unhandled event type: " + event.getClass());
