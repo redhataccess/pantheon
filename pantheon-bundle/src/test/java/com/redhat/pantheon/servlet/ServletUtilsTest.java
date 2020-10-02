@@ -1,22 +1,42 @@
 package com.redhat.pantheon.servlet;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.request.RequestParameter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
+import java.util.stream.Stream;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ServletUtilsTest {
@@ -189,5 +209,41 @@ class ServletUtilsTest {
         assertEquals("fr", ServletUtils.toLanguageTag(Locale.FRENCH));
         assertEquals("ja-jp", ServletUtils.toLanguageTag(Locale.JAPAN));
         assertEquals("es", ServletUtils.toLanguageTag(new Locale("es")));
+    }
+
+    private String readInputStream(InputStream is, Charset encoding) {
+        try {
+            return IOUtils.toString(is, encoding).trim();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @ParameterizedTest(name = "streaming param with value ''{0}'' and charset {1}")
+    @ArgumentsSource(EncodingArgsProvider.class)
+    void handleParamWithEncoding(String string, Charset encoding) throws Exception {
+        // Given
+        SlingHttpServletRequest slingReq = mock(SlingHttpServletRequest.class);
+        RequestParameter rp = mock(RequestParameter.class);
+        when(rp.getInputStream()).thenReturn(new ByteArrayInputStream(encoding.encode(string).array()));
+        when(slingReq.getRequestParameter("str")).thenReturn(rp);
+
+        // When
+
+        // Then
+        assertEquals(string,
+                ServletUtils.handleParamAsStream(slingReq, "str", encoding.name(), is -> readInputStream(is, encoding))
+        );
+    }
+
+    public static class EncodingArgsProvider implements ArgumentsProvider {
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+            return Stream.of(
+                    Arguments.of("Entwickeln Sie mit Vergnügen", StandardCharsets.UTF_8),
+                    Arguments.of("abc+<>@", StandardCharsets.ISO_8859_1),
+                    Arguments.of("私の犬は私の宿題を食べました", StandardCharsets.UTF_8)
+            );
+        }
     }
 }

@@ -154,14 +154,11 @@ public final class ServletUtils {
                                             @Nonnull final String charsetEncoding,
                                             @Nonnull final Function<InputStream, R> handler)
             throws IOException {
-        return handleParamAsStream(request, paramName,
-                inputStream -> {
-                    try(ReaderInputStream ris = new ReaderInputStream(new InputStreamReader(inputStream), charsetEncoding)) {
-                        return handler.apply(ris);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        ReaderInputStream ris;
+        try (InputStream stream = request.getRequestParameter(paramName).getInputStream()) {
+            ris = new ReaderInputStream(new InputStreamReader(stream), charsetEncoding);
+            return handler.apply(ris);
+        }
     }
 
     /**
@@ -179,11 +176,9 @@ public final class ServletUtils {
                                             @Nonnull final String paramName,
                                             @Nonnull final Function<InputStream, R> handler)
             throws IOException {
-        ReaderInputStream ris;
         try (InputStream stream = request.getRequestParameter(paramName).getInputStream()) {
-            ris = new ReaderInputStream(new InputStreamReader(stream), StandardCharsets.UTF_8);
+            return handler.apply(stream);
         }
-        return handler.apply(ris);
     }
 
     /**
