@@ -73,11 +73,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
 
         try {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
-            String encoding = request.getCharacterEncoding();
-            if (encoding == null) {
-                encoding = StandardCharsets.UTF_8.name();
-            }
-
+            String encoding = ServletUtils.paramValue(request, "Content-Type", StandardCharsets.UTF_8.name());
             String path = request.getResource().getPath();
 
             log.debug("Pushing new module version at: " + path + " with locale: " + locale);
