@@ -106,7 +106,7 @@ class ModuleVersionUploadTest {
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.SIMPLIFIED_CHINESE.toString());
         params.put("asciidoc", "å\u008D\u0097äº¬é\u0098²ç\u0096«ç\u008E°å\u009Cº");
-        params.put("Content-Type", StandardCharsets.ISO_8859_1.toString());
+        params.put("encoding", StandardCharsets.ISO_8859_1.toString());
         slingContext.request().setParameterMap(params);
         slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/proc_module"));
         HtmlResponse response = new HtmlResponse();
@@ -205,7 +205,7 @@ class ModuleVersionUploadTest {
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.SIMPLIFIED_CHINESE.toString());
         params.put("asciidoc", "南京防疫现场");
-        params.put("Content-Type", StandardCharsets.UTF_8.toString());
+        params.put("encoding", StandardCharsets.UTF_8.toString());
         slingContext.request().setParameterMap(params);
         slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/proc_module"));
         HtmlResponse response = new HtmlResponse();
