@@ -1,4 +1,4 @@
-[id="importing-modules-into-pantheon__{context}"]
+[id="importing-modules-into-pantheon_{context}"]
 
 = Importing modules into {ProductShortName}
 
