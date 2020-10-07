@@ -23,7 +23,7 @@ exports[`Versions tests should render Versions component 1`] = `
         </Button>,
       ]
     }
-    appendTo={<body />}
+    appendTo={[Function]}
     aria-describedby=""
     aria-label="Edit metadata"
     aria-labelledby=""
