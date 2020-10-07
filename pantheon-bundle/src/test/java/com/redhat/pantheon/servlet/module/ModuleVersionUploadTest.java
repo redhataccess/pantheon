@@ -89,56 +89,6 @@ class ModuleVersionUploadTest {
     }
 
     @Test
-    void createFirstVersionUnicodeIso() throws Exception {
-        // Given
-        slingContext.build()
-                .resource("/content/repositories/test_workspace",
-                        "jcr:primaryType", "pant:workspace")
-                .commit();
-
-        lenient().when(
-                asciidoctorService.getDocumentHtml(
-                        any(Module.class), any(Locale.class), anyString(), anyBoolean(), anyMap(), anyBoolean()))
-                .thenReturn("A generated html string");
-        registerMockAdapter(Workspace.class, slingContext);
-
-        ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
-        Map<String, Object> params = newHashMap();
-        params.put("locale", Locale.SIMPLIFIED_CHINESE.toString());
-        params.put("asciidoc", "å\u008D\u0097äº¬é\u0098²ç\u0096«ç\u008E°å\u009Cº");
-        params.put("encoding", StandardCharsets.ISO_8859_1.toString());
-        slingContext.request().setParameterMap(params);
-        slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/proc_module"));
-        HtmlResponse response = new HtmlResponse();
-
-        // when
-        upload.doRun(slingContext.request(), response, null);
-
-        // Then
-        assertEquals(HttpServletResponse.SC_CREATED, response.getStatusCode());
-
-        Module module =
-                SlingModels.getModel(
-                        slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module"),
-                        Module.class);
-        assertEquals("南京防疫现场",
-                module
-                        .locale(Locale.SIMPLIFIED_CHINESE).get()
-                        .source().get()
-                        .draft().get()
-                        .jcrContent().get()
-                        .jcrData().get()
-        );
-        assertNotNull(
-                module.locale(Locale.SIMPLIFIED_CHINESE).get()
-                        .source().get()
-                        .draft().get()
-                        .hash().get()
-        );
-        verify(asciidoctorService).getDocumentHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
-    }
-
-    @Test
     void createFirstVersionAccentedCharacter() throws Exception {
         // Given
         slingContext.build()
@@ -205,7 +155,6 @@ class ModuleVersionUploadTest {
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.SIMPLIFIED_CHINESE.toString());
         params.put("asciidoc", "南京防疫现场");
-        params.put("encoding", StandardCharsets.UTF_8.toString());
         slingContext.request().setParameterMap(params);
         slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/proc_module"));
         HtmlResponse response = new HtmlResponse();

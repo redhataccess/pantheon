@@ -73,7 +73,6 @@ public class ModuleVersionUpload extends AbstractPostOperation {
 
         try {
             String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
-            String encoding = ServletUtils.paramValue(request, "encoding", StandardCharsets.UTF_8.name());
             String path = request.getResource().getPath();
 
             log.debug("Pushing new module version at: " + path + " with locale: " + locale);
@@ -115,7 +114,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
             if(incomingSrcHash.toString().equals( storedSrcHash )) {
                 responseCode = HttpServletResponse.SC_NOT_MODIFIED;
             } else {
-                ServletUtils.handleParamAsStream(request, "asciidoc", encoding,
+                ServletUtils.handleParamAsStream(request, "asciidoc",
                         inputStream -> {
                             Session session = resolver.adaptTo(Session.class);
                             draftSrc.jcrContent().getOrCreate()
