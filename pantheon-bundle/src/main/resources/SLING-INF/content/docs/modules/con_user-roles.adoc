@@ -1,6 +1,7 @@
-[id="user-roles-in-pantheon_{context}"]
-= User roles in {ProductShortName}
+[id="user-roles_{context}"]
+= User roles
 
+[role="_abstract"]
 As a {ProductShortName} user, you are assigned a role that determines what actions you can perform.
 
 There are two user roles defined in {ProductShortName} - *Author* and *Publisher*. The following permissions are associated with the roles:
