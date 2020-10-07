@@ -250,7 +250,6 @@ def process_file(path, filetype):
         data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type='nt:file')
         # This is needed to add a new module version, otherwise it won't be handled
         data[':operation'] = 'pant:newModuleVersion'
-        data['encoding'] = 'UTF-8'
         files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
 
         # Minor question: which is correct, text/asciidoc or text/x-asciidoc?
@@ -296,7 +295,6 @@ def process_file(path, filetype):
         logger.debug('url: %s', url)
         jcr_primary_type = 'pant:assembly'
         data = _generate_data(jcr_primary_type, base_name, path.name, asccidoc_type='nt:file')
-        data['encoding'] = 'UTF-8'
         # This is needed to add a new module version, otherwise it won't be handled
         data[':operation'] = 'pant:newAssemblyVersion'
         files = {'asciidoc': ('asciidoc', open(path, 'rb'), 'text/x-asciidoc')}
