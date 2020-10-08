@@ -18,9 +18,9 @@ The following table describes features that {ProductShortName} does and does not
 |{ProductShortName} provides: |{ProductShortName} does not provide:
 
 a|* A Graphical User Interface (GUI) for managing modules and assemblies. You can search for specific content. {ProductShortName} {ProductNumber} also has better workflow features than {ProductShortName} {ProductNumberPrevious}.
-* Metadata editing so that you can optimize content for search engines.
-* A module library that enables content reuse.
-* A visual preview of a module, so that you can see how it displays on the Customer Portal.
+* Metadata editing, to optimize content for search engines.
+* Content reuse, to avoid duplicating effort.
+* A visual preview of a module, to see how content appears to users.
 
 a|* A way to define the appearance of content.
 * Source control. Git is the source control system.
