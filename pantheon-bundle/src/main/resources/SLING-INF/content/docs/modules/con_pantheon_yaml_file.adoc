@@ -1,10 +1,10 @@
 [id='pantheon-yaml-file_{context}']
-
 = The {ProductShortName} configuration file
 
+[role="_abstract"]
 You must create a configuration file, named `pantheon2.yml`, in the root directory of your repository. You use this file to designate a Git repository as a source that {ProductShortName} can use to import content. This configuration file provides the information necessary for {ProductShortName} to interact with files in the repository.
 
-The configuration file allows you to perform the following actions:
+The configuration file enables you to perform the following actions:
 
 * Import content from a Git repository into {ProductShortName}
 * Upload modules into {ProductShortName} using the Uploader tool

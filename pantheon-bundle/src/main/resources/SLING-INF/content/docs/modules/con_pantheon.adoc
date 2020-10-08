@@ -1,12 +1,13 @@
-[id='about-pantheon_{context}']
-= About {ProductShortName}
+[id='pantheon_{context}']
+= {ProductShortName}
 
+[role="_abstract"]
 {ProductShortName} is a content-management system and publishing platform developed by Red Hat.
 You can use it to publish documents based on AsciiDoc source.
 After adding your modules and assemblies to {ProductShortName}, you can do the following, depending on the permissions of your assigned role:
 
 . Add metadata
-. Preview your content as it displays on the Customer Portal
+. Preview your content as it appears on the Customer Portal
 . Associate modules and assemblies with a product
 . Publish and unpublish your content
 
@@ -16,7 +17,7 @@ The following table describes features that {ProductShortName} does and does not
 |===
 |{ProductShortName} provides: |{ProductShortName} does not provide:
 
-a|* A Graphical User Interface (GUI) for managing modules and assemblies. You can now search for specific content. {ProductShortName} {ProductNumber} also has better workflow features than {ProductShortName} {ProductNumberPrevious}.
+a|* A Graphical User Interface (GUI) for managing modules and assemblies. You can search for specific content. {ProductShortName} {ProductNumber} also has better workflow features than {ProductShortName} {ProductNumberPrevious}.
 * Metadata editing so that you can optimize content for search engines.
 * A module library that enables content reuse.
 * A visual preview of a module, so that you can see how it displays on the Customer Portal.

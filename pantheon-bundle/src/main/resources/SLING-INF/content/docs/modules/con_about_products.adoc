@@ -1,7 +1,7 @@
 [id='about-products_{context}']
 = About Products in {ProductName}
 
-A _product_ in Pantheon is a category that corresponds to a product in the conventional meaning of the word. For example: Red Hat Enterprise Linux (RHEL) is a Red Hat product. There is also a product in {ProductName} named Red Hat Enterprise Linux that contains the modules and assemblies for RHEL documentation.
+A _product_ in {ProductName} is a category that corresponds to an actual product in the Red Hat portfolio. For example: Red Hat Enterprise Linux (RHEL) is a Red Hat product. There is also a {ProductName} product named Red Hat Enterprise Linux that contains the modules and assemblies for RHEL documentation.
 
 You associate a module or assembly with a product by assigning the product name and version in the metadata of a module or assembly. That module or assembly then appears in the search results for that product.
 

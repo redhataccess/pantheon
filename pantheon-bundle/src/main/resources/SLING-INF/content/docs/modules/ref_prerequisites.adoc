@@ -9,9 +9,9 @@
 
 // The ID is used as an anchor for linking to the module. Avoid changing it after the module has been published to ensure existing links are not broken.
 [id='ref_prerequisites_{context}']
-
 = Prerequisites
 
+[role="_abstract"]
 You must have the following environment to use {ProductName}. 
 
 .Operating Systems
