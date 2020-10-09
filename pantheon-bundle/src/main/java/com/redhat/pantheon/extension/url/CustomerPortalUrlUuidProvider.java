@@ -30,7 +30,7 @@ public class CustomerPortalUrlUuidProvider extends CustomerPortalUrlProvider {
             ProductVersion pv = metadata.productVersion().getReference();
             StringBuilder sb = new StringBuilder(getHost(variant.getResourceResolver()));
             sb.append(URL_PREFIX)
-                    .append(getLocale(variant)).append("/")
+                    .append(getLocale(variant).replaceAll("_", "-").toLowerCase()).append("/") // turns en_US into en-us which is likely a customer portal requirement (need to confirm)
                     .append(pv.getProduct().urlFragment().get()).append("/")
                     .append(pv.urlFragment().get()).append("/")
                     .append(getDocumentType(variant)).append("/")
