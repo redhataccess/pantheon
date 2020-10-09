@@ -3,6 +3,7 @@ package com.redhat.pantheon.extension.url;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.model.document.DocumentVariant;
+import com.redhat.pantheon.servlet.ServletUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,10 +31,10 @@ public class CustomerPortalUrlUuidProvider extends CustomerPortalUrlProvider {
             ProductVersion pv = metadata.productVersion().getReference();
             StringBuilder sb = new StringBuilder(getHost(variant.getResourceResolver()));
             sb.append(URL_PREFIX)
-                    .append(getLocale(variant)).append("/")
-                    .append(getDocumentType(variant)).append("/")
+                    .append(ServletUtils.toLanguageTag(getLocale(variant))).append("/") // turns en_US into en-us which is likely a customer portal requirement (need to confirm)
                     .append(pv.getProduct().urlFragment().get()).append("/")
                     .append(pv.urlFragment().get()).append("/")
+                    .append(getDocumentType(variant)).append("/")
                     .append(variant.uuid().get());
             return sb.toString();
         } catch (RepositoryException | NullPointerException e) {
