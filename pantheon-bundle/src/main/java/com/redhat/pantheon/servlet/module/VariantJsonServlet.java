@@ -105,8 +105,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantDetails.put("message", "Module Found");
 
         String resourcePath = resource.getPath();
-        Locale locale = ULocale.createCanonical(moduleVariant.getParentLocale().getName()).toLocale();
-        variantMap.put("locale", ServletUtils.toLanguageTag(locale));
+        variantMap.put("locale", ServletUtils.toLanguageTag(moduleVariant.getParentLocale().getName()));
         variantMap.put("revision_id", releasedRevision.get().getName());
         variantMap.put("title", releasedMetadata.get().title().get());
         variantMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline().get() : "");
