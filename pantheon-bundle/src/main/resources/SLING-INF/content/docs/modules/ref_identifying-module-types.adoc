@@ -1,8 +1,9 @@
 [id='identifying-module-types_{context}']
-= Identifying {ProductShortName} {ProductNumber} module types
+= Identifying {ProductShortName} module types
 :pantheon-module-type: REFERENCE
 
-In {ProductShortName} {ProductNumber}, each module must be identified by type: concept, procedure, or reference.
+[role="_abstract"]
+In {ProductShortName}, each module must be identified by type: concept, procedure, or reference.
 
 For information about module types, see https://redhat-documentation.github.io/modular-docs/#writing-mod-docs[Types of modules in Red Hat documentation].
 
