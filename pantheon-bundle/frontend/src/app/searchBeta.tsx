@@ -17,14 +17,11 @@ import {
     DropdownSeparator,
     KebabToggle,
     TreeView, TreeViewDataItem,
-    Toolbar,
-  ToolbarItem,
-  ToolbarContent,
-  ToolbarFilter,
-  ToolbarToggleGroup,
-  ToolbarGroup,
-  TextInput,
-  SelectVariant
+    Toolbar, ToolbarItem, ToolbarContent, ToolbarFilter, ToolbarToggleGroup, ToolbarGroup,
+    TextInput,
+    SelectVariant,
+    ExpandableSection,
+    Checkbox,
 } from "@patternfly/react-core";
 
 import "@app/app.css";
@@ -123,10 +120,17 @@ class SearchBeta extends Component<any, ISearchState> {
                     <DrawerActions>
                         <DrawerCloseButton onClick={this.onCloseClick} />
                     </DrawerActions>
-                    By {filterLabel}
+                    {/* By {filterLabel} */}
+                    {/* By {filterLabel} */}
+                    <ExpandableSection toggleText="By repo" isExpanded={true}>
+                              {/* <React.Fragment> */}
+                                <Checkbox label="ceph storage commons" aria-label="uncontrolled checkbox" id="check-6" />
+                                <Checkbox label="red-hat-cost-management" aria-label="uncontrolled checkbox" id="check-7" />
+                                <Checkbox label="rhel-8-docs" aria-label="uncontrolled checkbox" id="check-5" />
+                              {/* </React.Fragment> */}
+                            </ExpandableSection>
                 </DrawerHead>
-                <DrawerPanelBody hasNoPadding={true}>drawer-panel with no padding</DrawerPanelBody>
-                <DrawerPanelBody>drawer-panel</DrawerPanelBody>
+                {/* <DrawerPanelBody>drawer-panel</DrawerPanelBody> */}
             </DrawerPanelContent>
         );
         const drawerContent = "";
@@ -180,7 +184,7 @@ class SearchBeta extends Component<any, ISearchState> {
                 </Select>
               </ToolbarFilter>
               {/* <ToolbarFilter chips={filters.risk} deleteChip={this.onDelete} categoryName="Risk"> */}
-              <ToolbarFilter chips={filters.risk} categoryName="Risk"></ToolbarFilter>  
+              <ToolbarFilter chips={filters.risk} categoryName="Risk" >
                 <Select
                   variant={SelectVariant.checkbox}
                   aria-label="Risk"
@@ -231,7 +235,6 @@ class SearchBeta extends Component<any, ISearchState> {
                 <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
                     <DrawerContent panelContent={panelContent}>
                         <DrawerContentBody>
-                            By {filterLabel}
                             
                             {/* <TreeView data={mapped} activeItems={activeItems} onSelect={this.onClickTree} onCheck={this.onCheckTree} hasChecks={true} /> */}
                             </DrawerContentBody>
@@ -261,6 +264,7 @@ class SearchBeta extends Component<any, ISearchState> {
                 this.setState({
                     repositories: repos
                 })
+                console.log("[getRepositories] repositories=>", this.state.repositories)
             })
             .catch((error) => {
                 console.log(error)
