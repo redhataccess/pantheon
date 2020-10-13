@@ -5,6 +5,6 @@ A _product_ in Pantheon is a category that corresponds to a product in the conve
 
 You assign the product name and version in the metadata of a module or assembly. That module or assembly then appears in the search results for that product.
 
-{ProductShortName} does not allow you to add a product name if that name already exists.
+When you create a new product, {ProductShortName} does not allow you to use a product name if a product with that name already exists. Only a Publisher can create a new product.
 
 The value for the product version can be any string, it is not limited to numbers.
