@@ -46,6 +46,7 @@ import static java.util.stream.Collectors.toList;
 public class MetadataExtractorTreeProcessor extends Treeprocessor {
 
     private final static String MODULE_TYPE_ATT_NAME = "pantheon-module-type";
+    public static final String ROLE_ABSTRACT = "_abstract";
 
     private final Logger log = LoggerFactory.getLogger(MetadataExtractorTreeProcessor.class);
 
@@ -112,7 +113,7 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                 allNodes.stream()
                         .filter(block -> {
                             try {
-                                return block.getRoles().contains("system:abstract");
+                                return block.getRoles().contains(ROLE_ABSTRACT);
                             } catch (Exception e) {
                                 // Asciidoctor (the Ruby code) throws certain exceptions when properties are not available.
                                 // In this case 'context' might not be available, and so the filter should just
