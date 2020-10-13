@@ -59,7 +59,7 @@ class ProductListing extends Component<any, any, any> {
                 <TextInput id="search" type="text" onChange={this.setInput} placeholder="Type product name to search" value={this.state.input} />
               </div>
             </FormGroup>
-            <DataList aria-label="single action data list example ">
+            <DataList aria-label="single action data list">
               {!this.state.isEmptyResults && (
                 <DataListItem aria-labelledby="single-action-item1">
                   <DataListItemRow>
