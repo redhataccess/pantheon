@@ -33,14 +33,12 @@ class PantheonRepositoryInitializerTest {
         // partial mock
         pri = spy(pri);
         when(pri.getSyncServiceUrl()).thenReturn("http://localhost:8080");
-        when(pri.getPortalUrl()).thenReturn("https://example.com");
 
         // When
         pri.processRepository(mock(SlingRepository.class));
 
         // Then
         verify(mvm).put(eq("pant:syncServiceUrl"), eq("http://localhost:8080"));
-        verify(mvm).put(eq("pant:portalUrl"), eq("https://example.com"));
     }
 
     @Test
