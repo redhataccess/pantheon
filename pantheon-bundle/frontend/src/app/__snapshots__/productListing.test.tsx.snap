@@ -20,7 +20,7 @@ exports[`ProductListing tests should render ProductListing component 1`] = `
       </div>
     </FormGroup>
     <DataList
-      aria-label="single action data list example "
+      aria-label="single action data list"
     >
       <DataListItem
         aria-labelledby="single-action-item1"

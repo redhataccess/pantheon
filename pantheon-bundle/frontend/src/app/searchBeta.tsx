@@ -21,16 +21,6 @@ import {
   SelectVariant,
   ExpandableSection,
   Checkbox,
-  DataList,
-  DataListItem,
-  DataListItemRow,
-  DataListCell,
-  DataListCheck,
-  DataListAction,
-  DataListToggle,
-  DataListContent,
-  DataListItemCells,
-  DropdownPosition,
   Divider,
   SimpleListItem,
   SimpleList,
@@ -38,27 +28,21 @@ import {
 
 } from "@patternfly/react-core";
 
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  sortable,
-  SortByDirection,
-  headerCol,
-  TableVariant,
-  expandable,
-  cellWidth
-} from '@patternfly/react-table';
+import { SearchResults } from "@app/searchResults";
 
 import "@app/app.css";
 import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 // import TextInput from "@patternfly/react-icons/dist/js/icons/text-input";
 import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
-import { ProductHuntIconConfig } from "@patternfly/react-icons";
+
 
 export interface ISearchState {
   filterLabel: string
   isExpanded: boolean
+  isExpandedAssemblies: boolean
+  isExpandedModules: boolean
+  isExpandedProductFilter: boolean
+  isExpandedRepoFilter: boolean
   repositories: Array<{ name: string, id: "" }>
 
   inputValue: string,
@@ -69,25 +53,9 @@ export interface ISearchState {
     status: any
   },
   kebabIsOpen: boolean,
-  columns: [
-    { title: string, cellTransforms: any },
-    'Branches',
-    { title: string },
-    'Workspaces',
-    'Last Commit'
-  ],
-  rows: [
-    { cells: string[] },
-    {
-      cells: string[],
-    },
-    {
-      cells: string[]
-    }
-  ],
-  canSelectAll: true
+
   filterValue: string
-  
+
 
 }
 class SearchBeta extends Component<any, ISearchState> {
@@ -99,40 +67,24 @@ class SearchBeta extends Component<any, ISearchState> {
       // states for drawer
       filterLabel: "repo",
       isExpanded: true,
+      isExpandedAssemblies: true,
+      isExpandedModules: true,
+      isExpandedProductFilter: true,
+      isExpandedRepoFilter: true,
       repositories: [{ name: "", id: "" }],
       // states for toolbar
-      inputValue: '',
+      inputValue: "",
       statusIsExpanded: false,
       riskIsExpanded: false,
       filters: {
-        risk: ['Low'],
-        status: ['New', 'Pending']
+        risk: ["Low"],
+        status: ["New", "Pending"]
       },
       kebabIsOpen: false,
-      // states for table
-      columns: [
-        { title: "Repositories", cellTransforms: [headerCol()] },
-        'Branches',
-        { title: "Pull requests" },
-        'Workspaces',
-        'Last Commit'
-      ],
-      rows: [
-        {
-          cells: ["one", 'two', 'a', 'four', 'five']
-        },
-        {
-          cells: ['a', 'two', 'k', 'four', 'five']
 
-        },
-        {
-          cells: ['p', 'two', 'b', 'four', 'five']
-        }
-      ],
-      canSelectAll: true,
       // filters
       filterValue: "",
-      
+
     };
     this.drawerRef = React.createRef();
 
@@ -141,16 +93,19 @@ class SearchBeta extends Component<any, ISearchState> {
   public componentDidMount() {
     // tree inside the drawer
     this.getRepositories()
+    // TODO: enable resize
     // toolbar
-    // window.addEventListener('resize', this.closeExpandableContent);
+    // window.addEventListener("resize", this.closeExpandableContent);
   }
 
   public componentWillUnmount() {
+    // TODO: enable resize
     // toolbar
-    // window.removeEventListener('resize', this.closeExpandableContent);
+    // window.removeEventListener("resize", this.closeExpandableContent);
   }
   public render() {
-    const { filterLabel, isExpanded, repositories, inputValue, filters, statusIsExpanded, riskIsExpanded, kebabIsOpen, columns, rows, canSelectAll } = this.state;
+    const { filterLabel, isExpanded, isExpandedProductFilter, isExpandedRepoFilter, repositories, inputValue, filters, statusIsExpanded, riskIsExpanded, kebabIsOpen } = this.state;
+    // TODO: load real data
     const repoList = [
       <SimpleListItem key="repo1">
         <Checkbox label="ceph storage commons" aria-label="uncontrolled checkbox" id="check-repo-1" />
@@ -159,10 +114,11 @@ class SearchBeta extends Component<any, ISearchState> {
         <Checkbox label="red-hat-cost-management" aria-label="uncontrolled checkbox" id="check-repo-2" />
       </SimpleListItem>,
       <SimpleListItem key="repo3">
-          <Checkbox label="rhel-8-docs" aria-label="uncontrolled checkbox" id="check-repo-3" />
+        <Checkbox label="rhel-8-docs" aria-label="uncontrolled checkbox" id="check-repo-3" />
       </SimpleListItem>
     ];
 
+    // TODO: load real data
     const productList = [
       <SimpleListItem key="product1">
         <Checkbox label="Ceph Storage Commmons" aria-label="uncontrolled checkbox" id="check-product-1" />
@@ -171,47 +127,59 @@ class SearchBeta extends Component<any, ISearchState> {
         <Checkbox label="Cost Management" aria-label="uncontrolled checkbox" id="check-product-2" />
       </SimpleListItem>,
       <SimpleListItem key="product3">
-          <Checkbox label="Red Hat Enterprise Linux" aria-label="uncontrolled checkbox" id="check-product-3" />
+        <Checkbox label="Red Hat Enterprise Linux" aria-label="uncontrolled checkbox" id="check-product-3" />
       </SimpleListItem>
     ];
     const panelContent = (
-      <DrawerPanelContent widths={{ lg: 'width_25' }}>
+      <DrawerPanelContent widths={{ lg: "width_25" }}>
         <DrawerHead>
           <span className="pf-c-title pf-m-2xl" tabIndex={isExpanded ? 0 : -1} ref={this.drawerRef}>Filters</span>
           <DrawerActions>
             <DrawerCloseButton onClick={this.onCloseClick} />
           </DrawerActions>
           {/* By {filterLabel} */}
-          <ExpandableSection toggleText="By repo" isExpanded={true}>
+          <ExpandableSection toggleText="By repo" isActive={true}>
             <SearchInput
-              placeholder='Filter'
+              placeholder="Filter"
               value={this.state.filterValue}
               onChange={this.onChangeFilter}
-              onClear={(evt) => this.onChangeFilter('', evt)}
-            />  
-          <SimpleList aria-label="Repository List">
-            {repoList}
-          </SimpleList>
-            
+              onClear={(evt) => this.onChangeFilter("", evt)}
+            />
+            <SimpleList aria-label="Repository List">
+              {repoList}
+            </SimpleList>
+
           </ExpandableSection>
           <br />
-          <ExpandableSection toggleText="By product" isExpanded>
-          <SearchInput
-              placeholder='Filter'
+          <ExpandableSection toggleText="By product" isActive={true}>
+            <SearchInput
+              placeholder="Filter"
               value={this.state.filterValue}
               onChange={this.onChangeFilter}
-              onClear={(evt) => this.onChangeFilter('', evt)}
+              onClear={(evt) => this.onChangeFilter("", evt)}
             />
-          <SimpleList aria-label="Product List">
-            {productList}
-          </SimpleList>
-            
+            <SimpleList aria-label="Product List">
+              {productList}
+            </SimpleList>
+
           </ExpandableSection>
         </DrawerHead>
-        {/* <DrawerPanelBody>drawer-panel</DrawerPanelBody> */}
       </DrawerPanelContent>
     );
-    const drawerContent = "";
+    const drawerContent = (
+      <React.Fragment>
+        <ExpandableSection toggleText="Modules" className="pf-c-title pf-m-2xl" isActive={true}>
+          <SearchResults />
+
+        </ExpandableSection>
+        <br />
+        <ExpandableSection toggleText="Assemblies" className="pf-c-title pf-m-2xl" isActive={true}>
+          <SearchResults />
+
+        </ExpandableSection>
+      </React.Fragment>
+    );
+
     const statusMenuItems = [
       <SelectOption key="statusNew" value="New" />,
       <SelectOption key="statusPending" value="Pending" />,
@@ -330,56 +298,10 @@ class SearchBeta extends Component<any, ISearchState> {
           <ToolbarContent>{toolbarItems}</ToolbarContent>
         </Toolbar>
         <Divider />
-        {/* <Button variant="tertiary" aria-expanded={isExpanded} onClick={this.onClick} icon={<FilterIcon />} /> */}
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody>
-              <ExpandableSection toggleText="Modules" className="pf-c-title pf-m-2xl">
-
-                <div>
-                  <Checkbox
-                    label=""
-                    className="pf-u-mb-lg"
-                    isChecked={canSelectAll}
-                    onChange={this.toggleSelectTable}
-                    aria-label="toggle select all modules checkbox"
-                    id="toggle-select-all-modules"
-                    name="toggle-select-all-modules"
-                  />
-                  <Table
-                    onSelect={this.onSelectTable}
-                    canSelectAll={canSelectAll}
-                    aria-label="Selectable Table"
-                    cells={columns}
-                    rows={rows}>
-                    <TableHeader />
-                    <TableBody />
-                  </Table>
-                </div>
-              </ExpandableSection>
-              <ExpandableSection toggleText="Assemblies" className="pf-c-title pf-m-2xl">
-                
-                <div>
-                  <Checkbox
-                    label=""
-                    className="pf-u-mb-lg"
-                    isChecked={canSelectAll}
-                    onChange={this.toggleSelectTable}
-                    aria-label="toggle select all assemblies checkbox"
-                    id="toggle-select-all-assemblies"
-                    name="toggle-select-all-assemblies"
-                  />
-                  <Table
-                    onSelect={this.onSelectTable}
-                    canSelectAll={canSelectAll}
-                    aria-label="Selectable Table"
-                    cells={columns}
-                    rows={rows}>
-                    <TableHeader />
-                    <TableBody />
-                  </Table>
-                </div>
-              </ExpandableSection>
+              {drawerContent}
             </DrawerContentBody>
           </DrawerContent>
         </Drawer>
@@ -419,6 +341,20 @@ class SearchBeta extends Component<any, ISearchState> {
     this.drawerRef.current && this.drawerRef.current.focus()
   };
 
+  private onClickRepoFilter = () => {
+    const isExpandedRepoFilter = !this.state.isExpandedRepoFilter;
+    this.setState({
+      isExpandedRepoFilter
+    });
+  };
+
+  private onClickProductFilter = () => {
+    const isExpandedProductFilter = !this.state.isExpandedProductFilter;
+    this.setState({
+      isExpandedProductFilter
+    });
+  };
+
   private onClick = () => {
     const isExpanded = !this.state.isExpanded;
     this.setState({
@@ -451,14 +387,14 @@ class SearchBeta extends Component<any, ISearchState> {
   };
 
   private onStatusSelect = (event, selection) => {
-    this.onSelect('status', event, selection);
+    this.onSelect("status", event, selection);
   };
 
   private onRiskSelect = (event, selection) => {
-    this.onSelect('risk', event, selection);
+    this.onSelect("risk", event, selection);
   };
 
-  private onDelete = (type = '', id = '') => {
+  private onDelete = (type = "", id = "") => {
     if (type) {
       this.setState(prevState => {
         const newState = Object.assign(prevState);
@@ -502,29 +438,6 @@ class SearchBeta extends Component<any, ISearchState> {
       kebabIsOpen: isOpen
     });
   };
-  // methods for table(search results)
-  private onSelectTable(event, isSelected, rowId) {
-    let rows;
-    // if (rowId === -1) {
-    //   rows = this.state.rows.map(oneRow => {
-    //     oneRow.selected = isSelected;
-    //     // oneRow.cells.selected = isSelected;
-    //     return oneRow;
-    //   });
-    // } else {
-    rows = [...this.state.rows];
-    rows[rowId].selected = isSelected;
-    // }
-    this.setState({
-      rows
-    });
-  }
-
-  private toggleSelectTable(checked) {
-    this.setState({
-      canSelectAll: checked
-    });
-  }
 
   // methods for filter search
   private onChangeFilter = (value, event) => {
@@ -532,7 +445,7 @@ class SearchBeta extends Component<any, ISearchState> {
       filterValue: value
     });
   };
-  
+
 }
 
 
