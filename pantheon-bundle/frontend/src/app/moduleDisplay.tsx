@@ -21,8 +21,6 @@ export interface IModuleDisplayState {
     moduleType: string
     portalUrl: string
     productValue: string
-    productUrlFragment: string
-    versionUrlFragment: string
     releasePath: string
     releaseUpdateDate: string
     releaseVersion: string
@@ -46,8 +44,6 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
             moduleType: "",
             portalUrl: "",
             productValue: "",
-            productUrlFragment: "",
-            versionUrlFragment: "",
             releasePath: "",
             releaseUpdateDate: "",
             releaseVersion: "",
@@ -362,7 +358,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                         if (productChild.__children__) {
                             for (const productVersion of productChild.__children__) {
                                 if (productVersion[Fields.JCR_UUID] === uuid) {
-                                    this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
+                                    this.setState({ productValue: product.name, versionValue: productVersion.name })
                                     break
                                 }
                             }

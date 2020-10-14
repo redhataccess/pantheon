@@ -126,7 +126,7 @@ describe("AssemblyDisplay tests", () => {
         wrapper.setState({ "login": true })
         wrapper.setState({ "releaseUpdateDate": "Fri Oct 18 2019 17:35:50 GMT-0400" })
         wrapper.setState({ "variantUUID": "123" })
-        wrapper.setState({ "portalHost": "https://example.com" })
+        wrapper.setState({ "portalUrl": "https://example.com" })
         const sourceTypeText = wrapper.find("a").at(0).text()
 
         // ensure it matches what is expected

@@ -28,9 +28,6 @@ public abstract class CustomerPortalUrlProvider implements UrlProvider {
     }
 
     public String getHost(ResourceResolver resolver) {
-        Optional<Resource> conf = Optional.ofNullable(resolver.getResource("/conf/pantheon"));
-        return conf.map(Resource::getValueMap)
-                .map(m -> m.get("pant:portalUrl", String.class))
-                .orElse("");
+        return Optional.ofNullable(System.getenv("PORTAL_URL")).orElse("");
     }
 }
