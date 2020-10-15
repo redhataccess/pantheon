@@ -1,22 +1,24 @@
 //include::../attributes.adoc[]
-[id="unpublishing-a-module-in-pantheon_{context}"]
-= Unpublishing a module in {ProductShortName}
+[id="unpublishing-content-in-pantheon_{context}"]
+= Unpublishing {content}
 
-Unpublish a module in {ProductShortName} from the Customer Portal.
+[role=_abstract]
+
+You need to unpublish a module or assembly when you want to remove it from the {PublishingPortal}.
 
 .Prerequisites
 
-* You are assigned the publisher role in {ProductShortName}.
+* You are assigned the publisher role.
 * You are logged in.
 
 .Procedure
 
 . Navigate to link:{LinkToSearchPage}[Search page].
 
-. Click the name of the module you want to unpublish.
+. Click the name of the {content} you want to unpublish.
 +
-If you do not see the module listed, search for the modules using the search box.
+If you do not see the {content} listed, search for it using the search box.
 
-. Click *Unpublish* next to the version of the module you want to unpublish.
+. Click *Unpublish* next to the version you want to unpublish.
 +
-Once a module is unpublished, it is no longer available on the Customer Portal. However, the module is still available in {ProductShortName}.
+Once unpublished, the {content} is no longer available on the {PublishingPortal}. However, the {content} is still available in {ProductShortName}.
