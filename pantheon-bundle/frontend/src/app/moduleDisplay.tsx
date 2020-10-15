@@ -302,6 +302,10 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
 
     private onPublishEvent = () => {
         this.getVersionUUID(this.props.location.pathname)
+
+        setTimeout(()=> {
+            this.getPortalUrl(this.props.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length), this.state.variant)
+        }, 500)
     }
 
     private getVersionUUID = (path) => {
