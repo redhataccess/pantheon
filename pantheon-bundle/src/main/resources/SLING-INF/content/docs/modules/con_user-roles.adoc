@@ -18,4 +18,4 @@ There are two user roles defined in {ProductShortName} - *Author* and *Publisher
 * All the permissions associated with the *Author* role.
 * Publish content to the {PublishingPortal} and the {PublishingPortalSearch}. 
 * Unpublish content from the {PublishingPortal} and the {PublishingPortalSearch}.
-* Create and manage product and product version.
+* Create and manage {ProductShortName} product and product version.
