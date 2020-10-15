@@ -13,3 +13,4 @@
 :PublishingPortal: Customer Portal
 
 :imagesdir: images
+:content: content
