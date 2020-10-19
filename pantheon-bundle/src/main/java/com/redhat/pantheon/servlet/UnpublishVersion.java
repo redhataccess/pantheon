@@ -2,17 +2,15 @@ package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
-import com.redhat.pantheon.extension.events.assembly.AssemblyVersionUnpublishedEvent;
-import com.redhat.pantheon.extension.events.module.ModuleVersionUnpublishedEvent;
+import com.redhat.pantheon.extension.events.document.DocumentVersionUnpublishedEvent;
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.assembly.AssemblyVersion;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.document.DocumentVersion;
-import com.redhat.pantheon.model.module.*;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.apache.jackrabbit.api.security.user.Group;
@@ -88,14 +86,13 @@ public class UnpublishVersion extends AbstractPostOperation {
 
     @Override
     public void run(SlingHttpServletRequest request, PostResponse response, SlingPostProcessor[] processors) {
-        logger.debug("Operation UnPublishinging draft version started");
+        logger.debug("Operation UnPublishing draft version started");
         String variant = getVariant(request);
         if (variant == null) {
             response.setError(new ServletException("The 'variant' parameter is required."));
             return;
         }
         long startTime = System.currentTimeMillis();
-        super.run(request, response, processors);
         try {
             if (response.getError() == null) {
                 // call the extension point
@@ -103,19 +100,21 @@ public class UnpublishVersion extends AbstractPostOperation {
                 Document document = canUnPublish(request)
                         ? getDocument(request, serviceResourceResolverProvider.getServiceResourceResolver())
                         : getDocument(request, request.getResourceResolver());
-                DocumentVersion documentVersion = document.locale(locale).get()
+                DocumentVariant docVariant = document.locale(locale).get()
                         .variants().get()
-                        .variant(variant).get()
-                        .draft().get();
+                        .variant(variant).get();
+
+                // Need to cache the URL now because once the document is unpublished, it can no longer be constructed
+                String publishedUrl = new CustomerPortalUrlUuidProvider().generateUrlString(docVariant);
+
+                super.run(request, response, processors);
+
+                DocumentVersion documentVersion = docVariant.draft().get();
 
                 // TODO We need to change the event so that the right variant is processed
-                if (PantheonConstants.RESOURCE_TYPE_ASSEMBLY.equals(document.getResourceType())) {
-                    events.fireEvent(new AssemblyVersionUnpublishedEvent(documentVersion.adaptTo(AssemblyVersion.class)), 15);
-                } else {
-                    events.fireEvent(new ModuleVersionUnpublishedEvent(documentVersion.adaptTo(ModuleVersion.class)), 15);
-                }
+                events.fireEvent(new DocumentVersionUnpublishedEvent(documentVersion, publishedUrl), 15); // FIXME - URL is lost to hydra when this actually fires because we generated from the no-longer-existing released version
             }
-        }catch (RepositoryException ex){
+        } catch (RepositoryException ex) {
             logger.error("An error has occured ", ex.getMessage());
         }
         log.debug("Operation UnPublishinging draft version,  completed");
@@ -124,7 +123,7 @@ public class UnpublishVersion extends AbstractPostOperation {
     }
 
     @Override
-    protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException{
+    protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
         try {
             ResourceResolver serviceResourceResolver = canUnPublish(request)? serviceResourceResolverProvider.getServiceResourceResolver():request.getResourceResolver();
             Document document = getDocument(request,serviceResourceResolver);

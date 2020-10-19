@@ -1,47 +1,47 @@
-import React from 'react'
-import { Login } from '@app/login'
-import '@app/fetchMock'
+import React from "react"
+import { Login } from "@app/login"
+import "@app/fetchMock"
 
-import { mount, shallow } from 'enzyme'
-import { Bullseye, TextInput, FormGroup, Button } from '@patternfly/react-core'
+import { mount, shallow } from "enzyme"
+import { Bullseye, TextInput, FormGroup, Button } from "@patternfly/react-core"
 
-import renderer from 'react-test-renderer'
-import sinon from 'sinon'
+import renderer from "react-test-renderer"
+import sinon from "sinon"
 
-describe('Login tests', () => {
-  test('should render Login component', () => {
+describe("Login tests", () => {
+  test("should render Login component", () => {
     const view = shallow(<Login />)
     expect(view).toMatchSnapshot()
   })
 
-  it('should render a form group', () => {
+  it("should render a form group", () => {
     const wrapper = mount(<Login />)
     const formGroup = wrapper.find(FormGroup)
     expect(formGroup.exists()).toBe(true)
   })
 
-  it('should render a text input', () => {
+  it("should render a text input", () => {
     const wrapper = mount(<Login />)
     const textInput = wrapper.find(TextInput)
     expect(textInput.exists()).toBe(true)
   })
 
-  it('should render a Button', () => {
+  it("should render a Button", () => {
     const wrapper = mount(<Login />)
     const button = wrapper.find(Button)
     expect(button.exists()).toBe(true)
   })
 
-  it('should render a Bullseye layout', () => {
+  it("should render a Bullseye layout", () => {
     const wrapper = mount(<Login />)
     const bullseyeLayout = wrapper.find(Bullseye)
     expect(bullseyeLayout.exists()).toBe(true)
   })
 
-  it('test login function', () => {
+  it("test login function", () => {
     const wrapper = renderer.create(<Login />)
     const inst = wrapper.getInstance()
-    const spy = sinon.spy(inst, 'login')
+    const spy = sinon.spy(inst, "login")
     inst.login()
     sinon.assert.called(spy)
 })

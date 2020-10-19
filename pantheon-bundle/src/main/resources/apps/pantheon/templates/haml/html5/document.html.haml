@@ -33,7 +33,7 @@
       %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/custom-elements-es5-adapter.js")
       %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/webcomponents-bundle.js")
       %script(src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js")
-      %script(type="module" src="/node_modules/cp-documentation/dist/cp-documentation.js")
+      %script(type="module" src="/node_modules/@cpelements/cp-documentation/dist/cp-documentation.js")
 
     - else
       - # Dummy cp chrome code
@@ -42,7 +42,7 @@
           analytics : {},
           host      : "https://access.redhat.com",
           idp_url   : "https://sso.redhat.com",
-          lang      : "en",  
+          lang      : "en",
           version   : "7b09880",
           builddate : "2020-06-10T14:50:01.831Z",
           fetchdate : "2020-06-10T14:50:04-0400",
@@ -53,6 +53,14 @@
       :javascript
         chrometwo_require(["wc"], wc => wc.include("@cpelements/cp-documentation/dist/cp-documentation.umd.min"));
 
+    :javascript
+      window.addEventListener('load', function() {
+        var cpDocumentations = document.querySelectorAll('cp-documentation');
+        for (let index = 0; index < cpDocumentations.length; index++) {
+          const cpDocumentation = cpDocumentations[index];
+          cpDocumentation.setAttribute('pfe-c-non-prod', '');
+        }
+      });
 
   %body{:id => @id, :class=>[doctype, 'pantheon-render', ((attr? :toc) && (attr? 'toc-placement', 'auto') ? "has-toc toc-#{attr 'toc-position', 'left'}" : nil)]}
     -# Begin main document
@@ -62,17 +70,35 @@
       - unless noheader
         -# Set some simple vars so our if statements aren't gross
         - hasTitle = !(notitle) && (@header != nil) && (@header&.title != nil)
-        - hasHeaderMetadata = (attr? :author) || (attr? :pantheonproduct) || (attr? :pantheonupdateddate) || (attr? :pantheonpublisheddate)
+        - hasPrimaryHeaderWrapper = hasTitle || (attr? :pantheonproduct)
+        - hasHeaderMetadata = (attr? :pantheonupdateddate) || (attr? :pantheonpublisheddate)
 
         -# Only print header if we have something to put in it
-        - if hasTitle || hasHeaderMetadata
-          %header#rhdocs-header.rhdocs-header
-            - if hasTitle
-              %h1=@header.title
+        - if hasPrimaryHeaderWrapper || hasHeaderMetadata
+          %header#rhdocs-header.rhdocs__header
+            -if hasPrimaryHeaderWrapper
+              .rhdocs__header__primary-wrapper
+                - if hasTitle
+                  %h1=@header.title
+
+                - if (attr :pantheondoctype)
+                  .rhdocs-content-type
+                    - if (attr :pantheondoctype) == "assembly"
+                      Guide
+                    - else
+                      Topic
+
+                -# Product metadata
+                - if (attr? :pantheonproduct)
+                  .rhdocs-products
+                    %span.rhdocs-product-name=attr :pantheonproduct
+                    - if (attr? :pantheonversion)
+                      %span.rhdocs-product-version=attr :pantheonversion
+
 
             - if hasHeaderMetadata
               -# Wrapper for Metadata
-              %ul.rhdocs-details
+              %ul.rhdocs__header__secondary-wrapper
                 -# Author list, commented out for now, doesn't appear in this part of the mockup
                 -# - if (attr? :author)
                 -#   %li.rhdocs-details-item
@@ -86,12 +112,6 @@
                 -#           - if attr? "email_#{idx}"
                 -#             %dd{:id=>"email#{idx}", :class=>"email"}= sub_macros(attr "email_#{idx}")
 
-                -# Product metadata
-                - if (attr? :pantheonproduct)
-                  %li.rh-docs-details-item.rhdocs-products
-                    %span.rhdocs-product-name=attr :pantheonproduct
-                    - if (attr? :pantheonversion)
-                      %span.rhdocs-product-version=attr :pantheonversion
                 -# Last Updated metadata
                 - if (attr? :pantheonupdateddate)
                   %li.rh-docs-details-item.rhdocs-updated-date Updated #{attr :pantheonupdateddate}

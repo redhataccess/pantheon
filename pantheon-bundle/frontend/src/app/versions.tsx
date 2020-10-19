@@ -1,15 +1,23 @@
-import React, { Component } from 'react'
-import { Button, Level, LevelItem, Text, TextContent, TextVariants, CardHeaderMain, CardActions, Tooltip } from '@patternfly/react-core'
+import React, { Component } from "react"
 import {
-    Alert, AlertActionCloseButton, BaseSizes, Card, CardHeader, CardBody,
-    Form, FormGroup, FormSelect, FormSelectOption, Grid, GridItem, InputGroup,
-    Modal, InputGroupText, Title, TextInput
-} from '@patternfly/react-core'
-import CheckImage from '@app/images/check_image.jpg'
-import BlankImage from '@app/images/blank.jpg'
-import { Redirect } from 'react-router-dom'
-import { ExclamationTriangleIcon, TimesIcon, PlusCircleIcon } from '@patternfly/react-icons'
-import { PantheonContentTypes } from './Constants'
+    Alert, AlertActionCloseButton,
+    BaseSizes,
+    Button,
+    Card, CardHeader, CardBody, CardHeaderMain,
+    Form, FormGroup, FormSelect, FormSelectOption, CardActions,
+    Grid, GridItem,
+    InputGroup, InputGroupText,
+    Modal,
+    Text, TextContent, TextInput, TextVariants, TextList, TextListItem, TextListVariants, TextListItemVariants,
+    Title,
+    Tooltip,
+} from "@patternfly/react-core"
+
+import CheckImage from "@app/images/check_image.jpg"
+import BlankImage from "@app/images/blank.jpg"
+import { Redirect } from "react-router-dom"
+import { ExclamationTriangleIcon, TimesIcon, PlusCircleIcon } from "@patternfly/react-icons"
+import { PantheonContentTypes, PathPrefixes } from "./Constants"
 
 export interface IProps {
     contentType: string
@@ -19,6 +27,7 @@ export interface IProps {
     variant: string
     variantUUID: string
     attributesFilePath: string
+    assemblies?: any
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
@@ -29,6 +38,7 @@ interface IState {
     allProducts: any
     allProductVersions: any
     canChangePublishState: boolean
+    documentsIncluded: Array<{ canonical_uuid: string, path: string, title: string }>
     isArchiveDropDownOpen: boolean
     isDropDownOpen: boolean
     isHeadingToggle: boolean
@@ -46,14 +56,15 @@ interface IState {
     showMetadataAlertIcon: boolean
     successAlertVisible: boolean
     usecaseOptions: any
-    usecaseValue: string,
+    usecaseValue: string
+    assemblyData: [],
 }
 
 class Versions extends Component<IProps, IState> {
-    private static USE_CASES = ['Select Use Case', 'Administer', 'Deploy', 'Develop', 'Install', 'Migrate', 'Monitor', 'Network', 'Plan', 'Provision', 'Release', 'Troubleshoot', 'Optimize']
+    private static USE_CASES = ["Select Use Case", "Administer", "Deploy", "Develop", "Install", "Migrate", "Monitor", "Network", "Plan", "Provision", "Release", "Troubleshoot", "Optimize"]
 
-    public draft = [{ 'type': 'draft', 'icon': BlankImage, 'path': '', 'version': '', 'publishedState': 'Not published', 'updatedDate': '', 'firstButtonType': 'primary', 'secondButtonType': 'secondary', 'firstButtonText': 'Publish', 'secondButtonText': 'Preview', 'isDropdownOpen': false, 'isArchiveDropDownOpen': false, 'metadata': '' }]
-    public release = [{ 'type': 'release', 'icon': CheckImage, 'path': '', 'version': '', 'publishedState': 'Released', 'updatedDate': '', 'firstButtonType': 'secondary', 'secondButtonType': 'primary', 'firstButtonText': 'Unpublish', 'secondButtonText': 'View', 'isDropdownOpen': false, 'isArchiveDropDownOpen': false, 'metadata': '', 'draftUploadDate': '' }]
+    public draft = [{ type: "draft", icon: BlankImage, path: "", version: "", publishedState: "Not published", updatedDate: "", firstButtonType: "primary", secondButtonType: "secondary", firstButtonText: "Publish", secondButtonText: "Preview", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: "" }]
+    public release = [{ type: "release", icon: CheckImage, "path": "", version: "", publishedState: "Released", updatedDate: "", firstButtonType: "secondary", secondButtonType: "primary", firstButtonText: "Unpublish", secondButtonText: "View", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: "", draftUploadDate: "" }]
 
     constructor(props) {
         super(props)
@@ -62,26 +73,28 @@ class Versions extends Component<IProps, IState> {
             // tslint:disable-next-line: object-literal-sort-keys
             allProductVersions: [],
             canChangePublishState: true,
+            documentsIncluded: [],
             isArchiveDropDownOpen: false,
             isDropDownOpen: false,
             isHeadingToggle: true,
             isMissingFields: false,
             isModalOpen: false,
-            keywords: '',
+            keywords: "",
             login: false,
-            metadataPath: '',
-            moduleUrl: '',
-            product: { label: '', value: '' },
-            productVersion: { label: '', uuid: '' },
+            metadataPath: "",
+            moduleUrl: "",
+            product: { label: "", value: "" },
+            productVersion: { label: "", uuid: "" },
             publishAlertVisible: false,
             unpublishAlertForModuleVisible: false,
             results: [this.draft, this.release],
             showMetadataAlertIcon: true,
             successAlertVisible: false,
             usecaseOptions: [
-                { value: '', label: 'Select Use Case', disabled: false }
+                { value: "", label: "Select Use Case", disabled: false }
             ],
-            usecaseValue: '',
+            usecaseValue: "",
+            assemblyData: [],
         }
     }
 
@@ -101,7 +114,7 @@ class Versions extends Component<IProps, IState> {
 
         const header = (
             <React.Fragment>
-                <Title headingLevel="h1" size={BaseSizes['2xl']}>
+                <Title headingLevel="h1" size={BaseSizes["2xl"]}>
                     Edit Metadata
               </Title>
             </React.Fragment>
@@ -109,42 +122,49 @@ class Versions extends Component<IProps, IState> {
 
         return (
             <React.Fragment>
-                {this.state.successAlertVisible && <Alert
-                    variant='success'
-                    title='Edit Metadata'
-                    actionClose={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
-                >
-                    Update Successful!
-          </Alert>
+                {this.state.successAlertVisible && <div className="notification-container pant-notification-container-md">
+                    <Alert
+                        variant="success"
+                        title="Edit Metadata"
+                        actionClose={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
+                    >
+                        Update Successful!
+                    </Alert>
+                </div>
                 }
 
-                {this.state.publishAlertVisible && <Alert
-                    variant='warning'
-                    title='Module Versions'
-                    actionClose={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
-                >
-                    Module failed to publish. Check the following:
-                    <ul>
-                        <li>Are you logged in as a publisher?</li>
-                        <li>Does the module have all required metadata?</li>
-                    </ul>
-                </Alert>
+                {this.state.publishAlertVisible && <div className="notification-container pant-notification-container-md">
+                    <Alert
+                        variant="warning"
+                        title="Module Versions"
+                        actionClose={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
+                    >
+                        Module failed to publish. Check the following:
+                        <ul>
+                            <li>Are you logged in as a publisher?</li>
+                            <li>Does the module have all required metadata?</li>
+                        </ul>
+                    </Alert>
+                </div>
                 }
 
-                {this.props.contentType === PantheonContentTypes.ASSEMBLY && this.state.unpublishAlertForModuleVisible && <Alert
-                    variant='info'
-                    title='Unpublishing assembly'
-                    actionClose={<AlertActionCloseButton onClose={this.hideUppublishAlertForModule} />}
-                >
-                     Included modules are not unpublished by this action.
-                </Alert>
+                {this.props.contentType === PantheonContentTypes.ASSEMBLY && this.state.unpublishAlertForModuleVisible &&
+                    <div className="notification-container pant-notification-container-md">
+                        <Alert
+                            variant="info"
+                            title="Unpublishing assembly"
+                            actionClose={<AlertActionCloseButton onClose={this.hideUppublishAlertForModule} />}
+                        >
+                            Included modules are not unpublished by this action.
+                        </Alert>
+                    </div>
                 }
 
                 <Grid hasGutter={true}>
-                    {/* {console.log('[results]', this.state.results)} */}
+                    {/* {console.log("[results]", this.state.results)} */}
                     {this.state.results.map((type, key1) => (
                         type.map((data, key2) => (
-                            data.version !== '' && data.type === "draft" && (
+                            data.version !== "" && data.type === "draft" && (
                                 <GridItem span={6}>
                                     <Card className="pf-m-light pf-site-background-medium pf-c-card-draft">
                                         <CardHeader>
@@ -188,27 +208,42 @@ class Versions extends Component<IProps, IState> {
                                             <TextContent>
                                                 {this.props.contentType === PantheonContentTypes.MODULE &&
                                                     <Text><strong>Assemblies</strong></Text>
+
                                                 }
 
                                                 {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
                                                     <Text><strong>Modules</strong></Text>
                                                 }
-                                                <Text component={TextVariants.p}>{}</Text>
+                                            </TextContent>
+                                            <TextContent>
+                                                {this.props.assemblies && this.props.assemblies.map(item => (
+                                                    <TextList component={TextListVariants.ul}>
+                                                        <TextListItem component={TextListItemVariants.li}>
+                                                            <a href={"/pantheon/#/assembly" + item.path.substring("/content".length) + "?variant=" + this.props.variant}> {item.title}</a>
+                                                        </TextListItem>
+                                                    </TextList>))}
+                                            </TextContent>
+                                            <TextContent>
+                                                {this.state.documentsIncluded.length > 0 && this.state.documentsIncluded.map((item) => (
+                                                    <TextList component={TextListVariants.ul}>
+                                                        <TextListItem component={TextListItemVariants.li}>
+                                                            <a href={"/pantheon/#/module" + item.path.substring("/content".length) + "?variant=" + this.props.variant}> {item.title}</a>
+                                                        </TextListItem>
+                                                    </TextList>))}
                                             </TextContent>
                                         </CardBody>
-
                                     </Card>
                                 </GridItem>)
                         ))
                     ))}
                     {this.state.results.map((type, key1) => (
                         type.map((data, key2) => (
-                            data.version !== '' && data.type === "release" && (
+                            data.version !== "" && data.type === "release" && (
                                 <GridItem span={6}>
                                     <div className="pf-c-card pf-m-selectable pf-m-selected">
                                         <Card className="pf-m-selected">
                                             <CardHeader>
-                                                <CardHeaderMain><strong><span id='span-source-type-version-published'>Published</span></strong></CardHeaderMain>
+                                                <CardHeaderMain><strong><span id="span-source-type-version-published">Published</span></strong></CardHeaderMain>
                                                 <CardActions>{}</CardActions>
                                                 <CardActions>
                                                     <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
@@ -239,7 +274,25 @@ class Versions extends Component<IProps, IState> {
                                                     {this.props.contentType === PantheonContentTypes.ASSEMBLY &&
                                                         <Text><strong>Modules</strong></Text>
                                                     }
-                                                    <Text component={TextVariants.p}>{}</Text>
+
+                                                </TextContent>
+                                                <TextContent>
+                                                    {this.props.assemblies && this.props.assemblies.map(item => (
+                                                        <TextList component={TextListVariants.ul}>
+                                                            <TextListItem component={TextListItemVariants.li}>
+                                                                <a href={"/pantheon/#/assembly" + item.path.substring("/content".length) + "?variant=" + this.props.variant}> {item.title}</a>
+                                                            </TextListItem>
+                                                        </TextList>))
+                                                    }
+                                                </TextContent>
+                                                <TextContent>
+                                                    {this.state.documentsIncluded.length > 0 && this.state.documentsIncluded.map((item) => (
+                                                        <TextList component={TextListVariants.ul}>
+                                                            <TextListItem component={TextListItemVariants.li}>
+                                                                <a href={"/pantheon/#/module" + item.path.substring("/content".length) + "?variant=" + this.props.variant}> {item.title}</a>
+                                                            </TextListItem>
+                                                        </TextList>
+                                                    ))}
                                                 </TextContent>
                                             </CardBody>
 
@@ -251,92 +304,87 @@ class Versions extends Component<IProps, IState> {
                 </Grid>
 
                 <Modal
-                    width={'60%'}
-                    title='Edit metadata'
+                    width={"60%"}
+                    title="Edit metadata"
                     isOpen={this.state.isModalOpen}
                     header={header}
                     aria-label="Edit metadata"
                     onClose={this.handleModalClose}
                     actions={[
-                        <Button form='edit_metadata' key='confirm' variant='primary' onClick={this.saveMetadata}>
+                        <Button form="edit_metadata" key="confirm" variant="primary" onClick={this.saveMetadata}>
                             Save
           </Button>,
-                        <Button key='cancel' variant='secondary' onClick={this.handleModalToggle}>
+                        <Button key="cancel" variant="secondary" onClick={this.handleModalToggle}>
                             Cancel
             </Button>
                     ]}
                 >
-                    <div>
-                        {this.loginRedirect()}
-                    </div>
-                    <div className='app-container'>
 
-                        {this.state.isMissingFields && (
-                            <div className='notification-container'>
-                                <Alert
-                                    variant='warning'
-                                    title='Fields indicated by * are mandatory'
-                                    actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                                />
-                                <br />
-                            </div>
-                        )}
-                    </div>
-                    <Form isHorizontal={true} id='edit_metadata'>
+                    {this.state.isMissingFields && (
+                        <div className="notification-container">
+                            <Alert
+                                variant="warning"
+                                title="Fields indicated by * are mandatory"
+                                actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                            />
+                            <br />
+                        </div>
+                    )}
+                    <Form isHorizontal={true} id="edit_metadata">
                         <FormGroup
-                            label='Product Name'
+                            label="Product Name"
                             isRequired={true}
-                            fieldId='product-name'
+                            fieldId="product-name"
                         >
                             <InputGroup>
-                                <FormSelect value={this.state.product.value} onChange={this.onChangeProduct} aria-label='FormSelect Product'>
-                                    <FormSelectOption label='Select a Product' />
+                                <FormSelect value={this.state.product.value} onChange={this.onChangeProduct} aria-label="FormSelect Product">
+                                    <FormSelectOption label="Select a Product" />
                                     {this.state.allProducts.map((option, key) => (
                                         <FormSelectOption key={key} value={option.value} label={option.label} />
                                     ))}
                                 </FormSelect>
-                                <FormSelect value={this.state.productVersion.uuid} onChange={this.onChangeVersion} aria-label='FormSelect Version' id='productVersion'>
-                                    <FormSelectOption label='Select a Version' />
+                                <FormSelect value={this.state.productVersion.uuid} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
+                                    <FormSelectOption label="Select a Version" />
                                     {this.state.allProductVersions.map((option, key) => (
-                                        <FormSelectOption key={key} value={option['jcr:uuid']} label={option.name} />
+                                        <FormSelectOption key={key} value={option["jcr:uuid"]} label={option.name} />
                                     ))}
                                 </FormSelect>
                             </InputGroup>
                         </FormGroup>
                         <FormGroup
-                            label='Document use case'
+                            label="Document use case"
                             isRequired={true}
-                            fieldId='document-usecase'
+                            fieldId="document-usecase"
                             helperText="Explanations of document user cases included in documentation."
                         >
-                            <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label='FormSelect Usecase'>
+                            <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
                                 {Versions.USE_CASES.map((option, key) => (
-                                    <FormSelectOption key={'usecase_' + key} value={option} label={option} />
+                                    <FormSelectOption key={"usecase_" + key} value={option} label={option} />
                                 ))}
                             </FormSelect>
                         </FormGroup>
                         <FormGroup
-                            label='Vanity URL fragment'
-                            fieldId='url-fragment'
+                            label="Vanity URL fragment"
+                            fieldId="url-fragment"
                         >
                             <InputGroup>
-                                <InputGroupText id='slash' aria-label='/'>
+                                <InputGroupText id="slash" aria-label="/">
                                     <span>/</span>
                                 </InputGroupText>
-                                <TextInput isRequired={false} id='url-fragment' type='text' placeholder='Enter URL' value={this.state.moduleUrl} onChange={this.handleURLInput} />
+                                <TextInput isRequired={false} id="url-fragment" type="text" placeholder="Enter URL" value={this.state.moduleUrl} onChange={this.handleURLInput} />
                             </InputGroup>
                         </FormGroup>
                         <FormGroup
-                            label='Search keywords'
+                            label="Search keywords"
                             isRequired={false}
-                            fieldId='search-keywords'
+                            fieldId="search-keywords"
                         >
                             <InputGroup>
-                                <TextInput isRequired={false} id='search-keywords' type='text' placeholder='cat, dog, bird...' value={this.state.keywords} onChange={this.handleKeywordsInput} />
+                                <TextInput isRequired={false} id="search-keywords" type="text" placeholder="cat, dog, bird..." value={this.state.keywords} onChange={this.handleKeywordsInput} />
                             </InputGroup>
                         </FormGroup>
                         <div>
-                            <input name='productVersion@TypeHint' type='hidden' value='Reference' />
+                            <input name="productVersion@TypeHint" type="hidden" value="Reference" />
                         </div>
                     </Form>
                 </Modal>
@@ -347,31 +395,31 @@ class Versions extends Component<IProps, IState> {
 
     private fetchVersions = () => {
         // TODO: need a better fix for the 404 error.
-        if (this.props.modulePath !== '') {
+        if (this.props.modulePath !== "") {
             // fetchpath needs to start from modulePath instead of modulePath/en_US.
             // We need extact the module uuid for customer portal url to the module.
-            const fetchpath = '/content' + this.props.modulePath + '.harray.5.json'
+            const fetchpath = "/content" + this.props.modulePath + ".harray.5.json"
             fetch(fetchpath)
                 .then(response => response.json())
                 .then(responseJSON => {
-                    const en_US = this.getHarrayChildNamed(responseJSON, 'en_US')
-                    const source = this.getHarrayChildNamed(en_US, 'source')
-                    const variants = this.getHarrayChildNamed(en_US, 'variants')
+                    const en_US = this.getHarrayChildNamed(responseJSON, "en_US")
+                    const source = this.getHarrayChildNamed(en_US, "source")
+                    const variants = this.getHarrayChildNamed(en_US, "variants")
 
                     const firstVariant = this.getHarrayChildNamed(variants, this.props.variant)
                     // process draftUpdateDate from source/draft
-                    let draftDate = ''
-                    if (source !== 'undefined' && source.__name__ === 'source') {
+                    let draftDate = ""
+                    if (source !== "undefined" && source.__name__ === "source") {
                         for (const childNode of source.__children__) {
-                            if (childNode.__name__ === 'draft') {
+                            if (childNode.__name__ === "draft") {
                                 draftDate = childNode["jcr:created"]
-                            } else if (childNode.__name__ === 'released') {
+                            } else if (childNode.__name__ === "released") {
                                 draftDate = childNode["jcr:created"]
                             }
                         }
                     }
                     // process variantUUID
-                    let variantUuid = ''
+                    let variantUuid = ""
                     if (firstVariant["jcr:primaryType"] !== "undefined" && (firstVariant["jcr:primaryType"] === "pant:moduleVariant" || firstVariant["jcr:primaryType"] === "pant:assemblyVariant")) {
                         variantUuid = firstVariant["jcr:uuid"]
                     }
@@ -380,28 +428,28 @@ class Versions extends Component<IProps, IState> {
                         const moduleVersion = firstVariant.__children__[i]
                         let variantReleased = false
                         // console.log("[versions] moduleVersion => ", moduleVersion)
-                        if (moduleVersion.__name__ === 'draft') {
-                            this.draft[0].version = 'Version ' + moduleVersion.__name__
-                            this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
+                        if (moduleVersion.__name__ === "draft") {
+                            this.draft[0].version = "Version " + moduleVersion.__name__
+                            this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
                             // get created date from source/draft
-                            this.draft[0].updatedDate = draftDate !== undefined ? draftDate : ''
+                            this.draft[0].updatedDate = draftDate !== undefined ? draftDate : ""
                             // this.props.modulePath starts with a slash
-                            this.draft[0].path = '/content' + this.props.modulePath + '/en_US/variants/' + firstVariant.__name__ + '/' + moduleVersion.__name__
+                            this.draft[0].path = "/content" + this.props.modulePath + "/en_US/variants/" + firstVariant.__name__ + "/" + moduleVersion.__name__
                         }
-                        if (moduleVersion.__name__ === 'released') {
-                            this.release[0].version = 'Version ' + moduleVersion.__name__
-                            this.release[0].metadata = this.getHarrayChildNamed(moduleVersion, 'metadata')
-                            this.release[0].updatedDate = this.release[0].metadata['pant:datePublished'] !== undefined ? this.release[0].metadata['pant:datePublished'] : ''
+                        if (moduleVersion.__name__ === "released") {
+                            this.release[0].version = "Version " + moduleVersion.__name__
+                            this.release[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
+                            this.release[0].updatedDate = this.release[0].metadata["pant:datePublished"] !== undefined ? this.release[0].metadata["pant:datePublished"] : ""
                             // get created date from source/draft
-                            this.release[0].draftUploadDate = draftDate !== undefined ? draftDate : ''
+                            this.release[0].draftUploadDate = draftDate !== undefined ? draftDate : ""
                             // this.props.modulePath starts with a slash
-                            this.release[0].path = '/content' + this.props.modulePath + '/en_US/variants/' + firstVariant.__name__ + '/' + moduleVersion.__name__
+                            this.release[0].path = "/content" + this.props.modulePath + "/en_US/variants/" + firstVariant.__name__ + "/" + moduleVersion.__name__
                             variantReleased = true
                         }
                         if (!variantReleased) {
-                            this.release[0].updatedDate = '-'
+                            this.release[0].updatedDate = "-"
                         }
-                        this.props.updateDate((draftDate !== '' ? draftDate : ''), this.release[0].updatedDate, this.release[0].version, variantUuid)
+                        this.props.updateDate((draftDate !== "" ? draftDate : ""), this.release[0].updatedDate, this.release[0].version, variantUuid)
                     }
                     this.setState({
                         results: [this.draft, this.release],
@@ -413,6 +461,10 @@ class Versions extends Component<IProps, IState> {
                         this.setState({ metadataPath: this.release[0].path })
                     }
                     this.getMetadata(this.state.metadataPath)
+                    // Get documents included in assembly
+                    if (this.props.contentType === "assembly") {
+                        this.getDocumentsIncluded(variantUuid)
+                    }
                 })
         }
     }
@@ -426,45 +478,45 @@ class Versions extends Component<IProps, IState> {
                 }
             }
         }
-        return ''
+        return ""
     }
 
     private changePublishState = (buttonText) => {
         // Validate productValue before Publish
-        if (this.props.productInfo !== undefined && this.props.productInfo.trim() === '' && buttonText === 'Publish') {
+        if (this.props.productInfo !== undefined && this.props.productInfo.trim() === "" && buttonText === "Publish") {
             this.setState({ canChangePublishState: false, publishAlertVisible: true })
         } else {
 
             if (this.state.canChangePublishState === true) {
                 const formData = new FormData();
-                if (buttonText === 'Publish') {
-                    formData.append(':operation', 'pant:publish');
-                    // console.log('Published file path:', this.props.modulePath)
-                    this.draft[0].version = '';
+                if (buttonText === "Publish") {
+                    formData.append(":operation", "pant:publish");
+                    // console.log("Published file path:", this.props.modulePath)
+                    this.draft[0].version = "";
                     this.setState({ unpublishAlertForModuleVisible: false })
                     this.props.onPublishEvent()
                 } else {
-                    formData.append(':operation', 'pant:unpublish');
-                    // console.log('Unpublished file path:', this.props.modulePath);
-                    this.release[0].version = '';
+                    formData.append(":operation", "pant:unpublish");
+                    // console.log("Unpublished file path:", this.props.modulePath);
+                    this.release[0].version = "";
                     this.setState({ unpublishAlertForModuleVisible: true })
                     this.props.onPublishEvent()
                 }
-                formData.append('locale', 'en_US')
-                formData.append('variant', this.props.variant)
-                fetch('/content' + this.props.modulePath, {
+                formData.append("locale", "en_US")
+                formData.append("variant", this.props.variant)
+                fetch("/content" + this.props.modulePath, {
                     body: formData,
-                    method: 'post'
+                    method: "post"
                 }).then(response => {
                     if (response.status === 201 || response.status === 200) {
-                        console.log(buttonText + ' works: ' + response.status)
+                        console.log(buttonText + " works: " + response.status)
                         this.setState({
                             canChangePublishState: true,
                             publishAlertVisible: false,
                             showMetadataAlertIcon: false
                         })
                     } else {
-                        console.log(buttonText + ' failed ' + response.status)
+                        console.log(buttonText + " failed " + response.status)
                         this.setState({ publishAlertVisible: true })
                     }
                     this.fetchVersions()
@@ -473,33 +525,9 @@ class Versions extends Component<IProps, IState> {
         }
     }
 
-    private onArchiveSelect = event => {
-        this.setState({
-            isArchiveDropDownOpen: !this.state.isArchiveDropDownOpen
-        })
-    }
-
-    private onArchiveToggle = (data) => {
-        data.isArchiveDropDownOpen = !data.isArchiveDropDownOpen
-        this.setState({
-            isArchiveDropDownOpen: this.state.isArchiveDropDownOpen
-        })
-    }
-
-    private onExpandableToggle = (data) => {
-        data.isDropdownOpen = !data.isDropdownOpen
-        this.forceUpdate()
-    }
-
-    private onHeadingToggle = () => {
-        this.setState({
-            isHeadingToggle: !this.state.isHeadingToggle
-        })
-    }
-
     private previewDoc = (buttonText) => {
-        let docPath = ''
-        docPath = '/pantheon/preview/' + (buttonText === 'Preview' ? 'latest' : 'released') + '/' + this.props.variantUUID
+        let docPath = ""
+        docPath = "/pantheon/preview/" + (buttonText === "Preview" ? "latest" : "released") + "/" + this.props.variantUUID
         return window.open(docPath)
     }
 
@@ -523,30 +551,30 @@ class Versions extends Component<IProps, IState> {
 
     private saveMetadata = (event) => {
         // save form data
-        if (this.state.product.value === undefined || this.state.product.value === 'Select a Product' || this.state.product.value === ''
-            || this.state.productVersion.uuid === undefined || this.state.productVersion.label === 'Select a Version' || this.state.productVersion.uuid === ''
-            || this.state.usecaseValue === undefined || this.state.usecaseValue === 'Select Use Case' || this.state.usecaseValue === '') {
+        if (this.state.product.value === undefined || this.state.product.value === "Select a Product" || this.state.product.value === ""
+            || this.state.productVersion.uuid === undefined || this.state.productVersion.label === "Select a Version" || this.state.productVersion.uuid === ""
+            || this.state.usecaseValue === undefined || this.state.usecaseValue === "Select Use Case" || this.state.usecaseValue === "") {
 
             this.setState({ isMissingFields: true })
         } else {
             const hdrs = {
-                'Accept': 'application/json',
-                'cache-control': 'no-cache'
+                "Accept": "application/json",
+                "cache-control": "no-cache"
             }
 
             const formData = new FormData(event.target.form)
-            formData.append('productVersion', this.state.productVersion.uuid)
-            formData.append('documentUsecase', this.state.usecaseValue)
-            formData.append('urlFragment', this.state.moduleUrl.trim().length > 0 ? '/' + this.state.moduleUrl.trim() : '')
-            formData.append('searchKeywords', this.state.keywords === undefined ? '' : this.state.keywords)
+            formData.append("productVersion", this.state.productVersion.uuid)
+            formData.append("documentUsecase", this.state.usecaseValue)
+            formData.append("urlFragment", this.state.moduleUrl.trim().length > 0 ? "/" + this.state.moduleUrl.trim() : "")
+            formData.append("searchKeywords", this.state.keywords === undefined ? "" : this.state.keywords)
 
-            fetch(this.state.metadataPath + '/metadata', {
+            fetch(this.state.metadataPath + "/metadata", {
                 body: formData,
                 headers: hdrs,
-                method: 'post'
+                method: "post"
             }).then(response => {
                 if (response.status === 201 || response.status === 200) {
-                    // console.log('successful edit ', response.status)
+                    // console.log("successful edit ", response.status)
                     this.handleModalClose()
                     this.setState({
                         canChangePublishState: true,
@@ -557,29 +585,29 @@ class Versions extends Component<IProps, IState> {
                     this.props.onGetProduct(this.state.product.label)
                     this.props.onGetVersion(this.state.productVersion.label)
                 } else if (response.status === 500) {
-                    // console.log(' Needs login ' + response.status)
+                    // console.log(" Needs login " + response.status)
                     this.setState({ login: true })
                 }
             })
         }
     }
     private onChangeProduct = (productValue: string, event: React.FormEvent<HTMLSelectElement>) => {
-        let productLabel = ''
+        let productLabel = ""
         const target = event.nativeEvent.target
         if (target !== null) {
             // Necessary because target.selectedOptions produces a compiler error but is valid
             // tslint:disable-next-line: no-string-literal
-            productLabel = target['selectedOptions'][0].label
+            productLabel = target["selectedOptions"][0].label
         }
         this.setState({
             product: { label: productLabel, value: productValue },
-            productVersion: { label: '', uuid: '' }
+            productVersion: { label: "", uuid: "" }
         })
         this.populateProductVersions(productValue)
     }
 
     private populateProductVersions(productValue) {
-        fetch('/content/products/' + productValue + '/versions.harray.1.json')
+        fetch("/content/products/" + productValue + "/versions.harray.1.json")
             .then(response => response.json())
             .then(json => {
                 this.setState({ allProductVersions: json.__children__ })
@@ -590,7 +618,7 @@ class Versions extends Component<IProps, IState> {
         if (event.target !== null) {
             // Necessary because target.selectedOptions produces a compiler error but is valid
             // tslint:disable-next-line: no-string-literal
-            const selectedOption = event.target['selectedOptions'][0]
+            const selectedOption = event.target["selectedOptions"][0]
             if (this.state.productVersion.uuid !== selectedOption.value) {
                 this.setState({
                     productVersion: { label: selectedOption.label, uuid: selectedOption.value }
@@ -613,7 +641,7 @@ class Versions extends Component<IProps, IState> {
 
     private fetchProducts = () => {
 
-        const path = '/content/products.harray.1.json'
+        const path = "/content/products.harray.1.json"
         const products = new Array()
 
         fetch(path)
@@ -638,14 +666,6 @@ class Versions extends Component<IProps, IState> {
         return products
     }
 
-    private loginRedirect = () => {
-        if (this.state.login) {
-            return <Redirect to='/login' />
-        } else {
-            return ''
-        }
-    }
-
     private dismissNotification = () => {
         this.setState({ isMissingFields: false })
     }
@@ -663,24 +683,24 @@ class Versions extends Component<IProps, IState> {
     }
 
     private getMetadata = (versionPath) => {
-        if (versionPath.trim() !== '') {
-            fetch(versionPath + '/metadata.json')
+        if (versionPath.trim() !== "") {
+            fetch(versionPath + "/metadata.json")
                 .then(response => response.json())
                 .then(metadataResults => {
-                    if (JSON.stringify(metadataResults) !== '[]') {
+                    if (JSON.stringify(metadataResults) !== "[]") {
                         // Process results
                         // Remove leading slash.
                         if (metadataResults.urlFragment) {
                             let url = metadataResults.urlFragment
-                            if (url.indexOf('/') === 0) {
-                                url = url.replace('/', '')
+                            if (url.indexOf("/") === 0) {
+                                url = url.replace("/", "")
 
                             }
                             this.setState({ moduleUrl: url })
                         }
                         this.setState({
                             keywords: metadataResults.searchKeywords,
-                            productVersion: { label: '', uuid: metadataResults.productVersion },
+                            productVersion: { label: "", uuid: metadataResults.productVersion },
                             usecaseValue: metadataResults.documentUsecase
                         })
                         if (metadataResults.productVersion !== undefined) {
@@ -693,12 +713,12 @@ class Versions extends Component<IProps, IState> {
     }
 
     private getProductFromVersionUuid(versionUuid) {
-        fetch('/pantheon/internal/node.json?ancestors=2&uuid=' + versionUuid)
+        fetch("/pantheon/internal/node.json?ancestors=2&uuid=" + versionUuid)
             .then(response => response.json())
             .then(responseJSON => {
                 this.setState({
                     product: { label: responseJSON.ancestors[1].name, value: responseJSON.ancestors[1].__name__ },
-                    productVersion: { label: responseJSON.name, uuid: responseJSON['jcr:uuid'] }
+                    productVersion: { label: responseJSON.name, uuid: responseJSON["jcr:uuid"] }
                 })
                 this.populateProductVersions(this.state.product.value)
                 this.props.onGetProduct(this.state.product.label)
@@ -710,6 +730,18 @@ class Versions extends Component<IProps, IState> {
         // console.log("[handlePublishButton] productInfo =>", this.props.productInfo)
         if (this.props.productInfo !== undefined && this.props.productInfo.trim().length > 0) {
             this.setState({ showMetadataAlertIcon: false })
+        }
+    }
+
+    private getDocumentsIncluded = (variantUuid) => {
+        if (variantUuid) {
+            fetch('/pantheon/internal/assembly/includes.json/' + variantUuid)
+                .then(response => response.json())
+                .then(responseJSON => {
+                    if (responseJSON.includes.documents !== undefined) {
+                        this.setState({ documentsIncluded: responseJSON.includes.documents })
+                    }
+                })
         }
     }
 }

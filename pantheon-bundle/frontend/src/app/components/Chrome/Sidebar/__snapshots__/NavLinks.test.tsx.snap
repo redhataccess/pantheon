@@ -10,13 +10,13 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
   >
     <NavExpandable
       className=""
-      data-testid="navLink_modules"
+      data-testid="navLink_contents"
       groupId="grp-1"
       id=""
       isActive={false}
       isExpanded={true}
       srText=""
-      title="Modules"
+      title="Contents"
     >
       <NavItem
         groupId="grp-1"

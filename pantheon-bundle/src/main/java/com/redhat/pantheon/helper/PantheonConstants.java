@@ -14,7 +14,9 @@ public class PantheonConstants {
     public static final String RESOURCE_TYPE_MODULE = "pantheon/module";
     public static final String RESOURCE_TYPE_ASSEMBLY = "pantheon/assembly";
     public static final String RESOURCE_TYPE_MODULEVARIANT = "pantheon/moduleVariant";
+    public static final String RESOURCE_TYPE_MODULEVERSION = "pantheon/moduleVersion";
     public static final String RESOURCE_TYPE_ASSEMBLYVARIANT = "pantheon/assemblyVariant";
+    public static final String RESOURCE_TYPE_ASSEMBLYVERSION = "pantheon/assemblyVersion";
     public static final String JCR_TYPE_MODULE = "pant:module";
     public static final String JCR_TYPE_ASSEMBLY = "pant:assembly";
     public static final String JCR_TYPE_MODULEVARIANT = "pant:moduleVariant";

@@ -25,7 +25,6 @@ public class HtmlModulePostprocessor extends Postprocessor {
     public String process(Document document, String output) {
         return Html.parse(Charsets.UTF_8.name())
                 .andThen(Html.encodeAllImageLocations(module))
-                .andThen(Html.dereferenceAllHyperlinks(module.getResourceResolver()))
                 .apply(output)
                 .toString();
     }

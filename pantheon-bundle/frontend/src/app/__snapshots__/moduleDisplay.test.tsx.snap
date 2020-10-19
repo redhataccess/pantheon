@@ -153,6 +153,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
   <br />
   <Card>
     <Versions
+      assemblies={Array []}
       attributesFilePath=""
       contentType="module"
       modulePath=""
@@ -161,7 +162,7 @@ exports[`ModuleDisplay tests should render ModuleDisplay component 1`] = `
       onPublishEvent={[Function]}
       productInfo=""
       updateDate={[Function]}
-      variant={null}
+      variant="DEFAULT"
       variantUUID=""
       versionModulePath=""
     />
