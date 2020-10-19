@@ -1,6 +1,6 @@
 //include::../attributes.adoc[]
 [id="unpublishing-content-in-pantheon_{context}"]
-= Unpublishing {content}
+= Unpublishing {ContentTerm}
 
 [role=_abstract]
 
@@ -15,10 +15,10 @@ You need to unpublish a module or assembly when you want to remove it from the {
 
 . Navigate to link:{LinkToSearchPage}[Search page].
 
-. Click the name of the {content} you want to unpublish.
+. Click the name of the {ContentTerm} you want to unpublish.
 +
-If you do not see the {content} listed, search for it using the search box.
+If you do not see the {ContentTerm} listed, search for it using the search box.
 
 . Click *Unpublish* next to the version you want to unpublish.
 +
-Once unpublished, the {content} is no longer available on the {PublishingPortal}. However, the {content} is still available in {ProductShortName}.
+Once unpublished, the {ContentTerm} is no longer available on the {PublishingPortal}. However, the {ContentTerm} is still available in {ProductShortName}.
