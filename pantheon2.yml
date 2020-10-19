@@ -5,6 +5,6 @@ variants:
     path: pantheon-bundle/src/main/resources/SLING-INF/content/docs/attributes.adoc
     canonical: true
 assemblies:
-  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/assemblies/*.adoc
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/assemblies/assembly-pantheon-help.adoc
 modules:
-  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/*.adoc
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/ref_prerequisites.adoc
