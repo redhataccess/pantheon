@@ -302,10 +302,10 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
 
     private onPublishEvent = () => {
         this.getVersionUUID(this.props.location.pathname)
-        // this is a dirty fix since useEffect hook cannot be used with class based components
-        while (this.state.portalUrl===""){
+
+        setTimeout(()=> {
             this.getPortalUrl(this.props.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length), this.state.variant)
-        }
+        }, 500)
     }
 
     private getVersionUUID = (path) => {
