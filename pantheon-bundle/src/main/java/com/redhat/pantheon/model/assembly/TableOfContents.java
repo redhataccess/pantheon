@@ -1,17 +1,17 @@
 package com.redhat.pantheon.model.assembly;
 
-import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.model.module.Module;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 public class TableOfContents {
 
-    private List<Entry> entryList = new LinkedList<>();
+    private List<Entry> entryList = new ArrayList<>();
 
-    public void addEntry(int levelOffset, ModuleVariant moduleVariant) {
-        entryList.add(new Entry(levelOffset, moduleVariant, entryList.size()));
+    public void addEntry(int levelOffset, Module module) {
+        entryList.add(new Entry(levelOffset, module, entryList.size()));
     }
 
     public List<Entry> getEntries() {
@@ -20,12 +20,12 @@ public class TableOfContents {
 
     public class Entry {
         private int levelOffset;
-        private ModuleVariant moduleVariant;
+        private Module module;
         private int index;
 
-        public Entry (int levelOffset, ModuleVariant moduleVariant, int index) {
+        public Entry (int levelOffset, Module module, int index) {
             this.levelOffset = levelOffset;
-            this.moduleVariant = moduleVariant;
+            this.module = module;
             this.index = index;
         }
 
@@ -33,8 +33,12 @@ public class TableOfContents {
             return levelOffset;
         }
 
-        public ModuleVariant getModuleVariant() {
-            return moduleVariant;
+        public void setLevelOffset(int levelOffset) {
+            this.levelOffset = levelOffset;
+        }
+
+        public Module getModule() {
+            return module;
         }
 
         public int getIndex() {

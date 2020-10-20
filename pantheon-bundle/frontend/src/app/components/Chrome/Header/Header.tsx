@@ -1,9 +1,9 @@
-import React from 'react'
-import { PageHeader, Brand } from '@patternfly/react-core'
-// import { Brand } from '../Header/Brand/Brand'
-import { User }  from '../Header/User'
-import { IAppState } from '@app/app'
-import logo from '../../../images/Pantheon2-logo-white.png';
+import React from "react"
+import { PageHeader, Brand } from "@patternfly/react-core"
+// import { Brand } from "../Header/Brand/Brand"
+import { User }  from "../Header/User"
+import { IAppState } from "@app/app"
+import logo from "../../../images/Pantheon2-logo-white.png";
 
 export interface IHeaderProps {
     isNavOpen: boolean
@@ -21,9 +21,9 @@ export const Header: React.FunctionComponent<IHeaderProps> = ({
             logo={<Brand src={logo} alt="Pantheon" className="PageHeader__Brand" />}
             logoProps={
                 {
-                'href': '/',
+                "href": "/",
                 // @todo Replace in CSS file when a project stylesheet has been setup
-                'style': {'maxWidth': '220px'}
+                "style": {"maxWidth": "220px"}
                 }
             }
             headerTools={<User {...appState} />}

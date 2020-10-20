@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
+import React, { Component } from "react"
 import {
     ActionGroup, Alert, AlertActionCloseButton, Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Level, LevelItem, List, ListItem,
     Text, TextContent, TextVariants, TextInput, InputGroup
-} from '@patternfly/react-core'
-import { Fields, JcrTypes, SlingTypes } from '@app/Constants'
-import { tsObjectKeyword } from '@babel/types';
+} from "@patternfly/react-core"
+import { Fields, JcrTypes, SlingTypes } from "@app/Constants"
+import { tsObjectKeyword } from "@babel/types";
 
 export interface IProps {
     productName: string
@@ -29,14 +29,14 @@ class ProductDetails extends Component<IProps, IState> {
             failedPost: false,
             isMissingFields: false,
             isUrlFragmentValid: true,
-            newVersion: '',
-            urlFragment: '',
+            newVersion: "",
+            urlFragment: "",
         }
     }
 
     public componentWillReceiveProps(nextProps) {
         // allow page load from productDetails to products listing
-        if (nextProps.productName !== undefined && nextProps.productName.trim() !== '') {
+        if (nextProps.productName !== undefined && nextProps.productName.trim() !== "") {
             return window.location.reload(false)
         }
     }
@@ -58,7 +58,7 @@ class ProductDetails extends Component<IProps, IState> {
                     <Level>
                         <LevelItem>
                             <TextContent>
-                                <Text component={TextVariants.h1}>{this.props.productName}{'  '}</Text>
+                                <Text component={TextVariants.h1}>{this.props.productName}{"  "}</Text>
                             </TextContent>
                         </LevelItem>
                         <LevelItem />
@@ -102,7 +102,7 @@ class ProductDetails extends Component<IProps, IState> {
                             </FormGroup>
                             <br />
                             <FormGroup
-                                label=" Url Fragment:"
+                                label=" URL Fragment:"
                                 isRequired={true}
                                 fieldId="url_fragment"
                             >
@@ -136,7 +136,7 @@ class ProductDetails extends Component<IProps, IState> {
     private fetchProductDetails = (versionNames) => {
         // setup url fragment
         const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
-        const path = '/content/products/' + urlFragment + '/versions.2.json'
+        const path = "/content/products/" + urlFragment + "/versions.2.json"
         let key
         versionNames = []
 
@@ -185,7 +185,7 @@ class ProductDetails extends Component<IProps, IState> {
     }
 
     private saveVersion = () => {
-        if (this.state.newVersion === '' || this.state.urlFragment === '') {
+        if (this.state.newVersion === "" || this.state.urlFragment === "") {
             this.setState({ isMissingFields: true })
         } else {
             const formData = new FormData()
@@ -196,16 +196,16 @@ class ProductDetails extends Component<IProps, IState> {
 
             const productUrlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
             const encodedVersion = this.state.newVersion.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
-            fetch(encodeURI('/content/products/' + productUrlFragment + '/versions/' + encodedVersion), {
+            fetch(encodeURI("/content/products/" + productUrlFragment + "/versions/" + encodedVersion), {
                 body: formData,
-                method: 'post',
+                method: "post",
             }).then(response => {
                 if (response.status === 200 || response.status === 201) {
-                    this.setState({ newVersion: '', urlFragment: '' })
+                    this.setState({ newVersion: "", urlFragment: "" })
                     this.fetchProductDetails(this.state.allVersionNames)
                 } else {
                     this.setState({ failedPost: true, isMissingFields: false })
-                    console.log('Version adding failure')
+                    console.log("Version adding failure")
                 }
             })
         }
@@ -215,14 +215,14 @@ class ProductDetails extends Component<IProps, IState> {
     private createVersionsPath = () => {
         const formData = new FormData()
         const urlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
-        fetch(encodeURI('/content/products/' + urlFragment + '/versions'), {
+        fetch(encodeURI("/content/products/" + urlFragment + "/versions"), {
             body: formData,
-            method: 'post',
+            method: "post",
         }).then(response => {
             if (response.status === 200 || response.status === 201) {
                 console.log(" Created versions path " + response.status)
             } else {
-                console.log(' Created versions path  failed!')
+                console.log(" Created versions path  failed!")
 
             }
         })

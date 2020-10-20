@@ -1,13 +1,19 @@
 package com.redhat.pantheon.html;
 
+import com.redhat.pantheon.extension.url.UrlProvider;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
+import com.redhat.pantheon.model.document.DocumentVariant;
 import org.apache.jackrabbit.oak.commons.PathUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.function.Function;
@@ -24,7 +30,10 @@ import static com.redhat.pantheon.conf.GlobalConfig.IMAGE_PATH_PREFIX;
  */
 public class Html {
 
-    private static final Pattern UUID_PATTERN = Pattern.compile("([\\w]{8}-[\\w]{4}-[\\w]{4}-[\\w]{4}-[\\w]{12})");
+    private static final String UUID_HREF_REGEX = "(?<uuid>[\\w]{8}-[\\w]{4}-[\\w]{4}-[\\w]{4}-[\\w]{12})(?:\\.html?)?";
+    private static final Pattern UUID_HREF_PATTERN = Pattern.compile(UUID_HREF_REGEX);
+
+    private static final Logger log = LoggerFactory.getLogger(Html.class);
 
     private Html() {
     }
@@ -56,25 +65,24 @@ public class Html {
         };
     }
 
-    public static Function<Document, Document> dereferenceAllHyperlinks(ResourceResolver resolver) {
-        JcrQueryHelper qh = new JcrQueryHelper(resolver);
+    public static Function<Document, Document> rewriteUuidUrls(ResourceResolver resolver, UrlProvider provider) {
         return document -> {
-            document.select("a")
-                    .forEach(hyperlink -> {
-                        hyperlink.childNodes().stream()
-                                .filter(child -> "#comment".equals(child.nodeName()))
-                                .map(child -> UUID_PATTERN.matcher(child.outerHtml()))
-                                .filter(matcher -> matcher.find())
-                                .map(matcher -> matcher.group())
-                                .forEach(uuid -> {
-                                    try {
-                                        qh.query("select * from [pant:module] as module WHERE module.[jcr:uuid] = '" + uuid + "'")
-                                                .findFirst()
-                                                .ifPresent(resource -> hyperlink.attr("href", resource.getPath() + ".preview"));
-                                    } catch (RepositoryException e) {
-                                        e.printStackTrace();
-                                    }
-                                });
+            document.select("a").stream()
+                    .filter(link -> link.attributes().hasKey("href"))
+                    .forEach(link -> {
+                        String href = link.attributes().get("href");
+                        Matcher m = UUID_HREF_PATTERN.matcher(href);
+                        if (m.matches()) {
+                            String uuid = m.group("uuid"); // uuid to a document variant
+                            try {
+                                Resource resource = resolver.getResource(resolver.adaptTo(Session.class).getNodeByIdentifier(uuid).getPath());
+                                DocumentVariant variant = resource.adaptTo(DocumentVariant.class);
+                                String url = provider.generateUrlString(variant);
+                                link.attr("href", url);
+                            } catch (RepositoryException e) {
+                                log.warn("Attempted to rewrite URL for link target " + uuid + " but was unsuccessful.", e);
+                            }
+                        }
                     });
             return document;
         };

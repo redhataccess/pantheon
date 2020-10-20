@@ -1,7 +1,12 @@
 package com.redhat.pantheon.servlet.assembly;
 
 import com.redhat.pantheon.model.assembly.Assembly;
+import com.redhat.pantheon.model.assembly.AssemblyPage;
 import com.redhat.pantheon.model.assembly.AssemblyVariant;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.model.workspace.Workspace;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -19,6 +24,7 @@ import java.util.Map;
 import static com.redhat.pantheon.util.TestUtils.registerMockAdapter;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith({SlingContextExtension.class})
 class AssemblyVariantJsonServletTest {
@@ -54,6 +60,12 @@ class AssemblyVariantJsonServletTest {
     void resourceToMap() throws Exception {
         // Given
         slingContext.build()
+                .resource("/content/repositories/rhel-8-docs",
+                        "jcr:primaryType", "pant:workspace")
+                .resource("/content/repositories/rhel-8-docs/entities/modules/name",
+                        "jcr:primaryType", "pant:module")
+                .resource("/content/repositories/rhel-8-docs/entities/modules/name/en_US/variants/DEFAULT",
+                        "jcr:primaryType", "pant:moduleVariant")
                 .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT",
                         "jcr:primaryType", "pant:assemblyVariant")
                 .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released",
@@ -63,11 +75,16 @@ class AssemblyVariantJsonServletTest {
                         "jcr:description", "A description")
                 .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released/cached_html/jcr:content",
                         "jcr:data", testHTML)
-                .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released/content/0",
-                        "jcr:moduleVariantUuid", "1234-5678-9012")
                 .commit();
+        String moduleUuid = (String) slingContext.resourceResolver().getResource("/content/repositories/rhel-8-docs/entities/modules/name").getValueMap().get("jcr:uuid");
+        slingContext.create()
+                .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released/content/0",
+                        "pant:moduleUuid", moduleUuid);
 
         registerMockAdapter(AssemblyVariant.class, slingContext);
+        registerMockAdapter(AssemblyPage.class, slingContext);
+        registerMockAdapter(Module.class, slingContext);
+        registerMockAdapter(Workspace.class, slingContext);
         AssemblyVariantJsonServlet servlet = new AssemblyVariantJsonServlet();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT") );
 
@@ -81,7 +98,6 @@ class AssemblyVariantJsonServletTest {
         assertTrue(map.containsKey("status"));
         assertTrue(map.containsKey("message"));
         assertTrue(map.containsKey("assembly"));
-        assertTrue(assemblyMap.containsKey("assembly_uuid"));
         assertTrue(assemblyMap.containsKey("products"));
         assertTrue(assemblyMap.containsKey("locale"));
         assertTrue(assemblyMap.containsKey("title"));
@@ -115,8 +131,17 @@ class AssemblyVariantJsonServletTest {
                         "jcr:data", "This is the source content")
                 .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released/cached_html/jcr:content",
                         "jcr:data", testHTML)
+                .resource("/content/repositories/rhel-8-docs/entities/module/en_US/variants/DEFAULT",
+                        "jcr:primaryType", "pant:moduleVariant")
+                .resource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT/released/content/0",
+                        "jcr:moduleVariantUuid", slingContext.resourceResolver()
+                                .getResource("/content/repositories/rhel-8-docs/entities/module/en_US/variants/DEFAULT")
+                                .getValueMap()
+                                .get("jcr:uuid")
+                                .toString())
                 .commit();
         registerMockAdapter(AssemblyVariant.class, slingContext);
+        registerMockAdapter(ModuleVariant.class, slingContext);
         AssemblyVariantJsonServlet servlet = new AssemblyVariantJsonServlet();
         slingContext.request().setResource( slingContext.resourceResolver().getResource("/content/repositories/rhel-8-docs/entities/assemblies/changes/en_US/variants/DEFAULT") );
 
@@ -128,5 +153,19 @@ class AssemblyVariantJsonServletTest {
 
         //Then
         assertTrue(assemblyMap.containsKey("view_uri"));
+        assertTrue(assemblyMap.containsKey("uuid"));
+        assertTrue(assemblyMap.containsKey("products"));
+        assertTrue(assemblyMap.containsKey("description"));
+        assertTrue(assemblyMap.containsKey("locale"));
+        assertTrue(assemblyMap.containsKey("title"));
+        assertTrue(assemblyMap.containsKey("body"));
+        assertTrue(assemblyMap.containsKey("content_type"));
+        assertTrue(assemblyMap.containsKey("date_modified"));
+        assertTrue(assemblyMap.containsKey("date_published"));
+        assertTrue(assemblyMap.containsKey("status"));
+        assertTrue(assemblyMap.containsKey("modules_included"));
+        assertTrue(assemblyMap.containsKey("hasPart"));
+        assertEquals((map.get("status")), SC_OK);
+
     }
 }

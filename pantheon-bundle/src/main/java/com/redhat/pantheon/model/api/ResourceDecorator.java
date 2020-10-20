@@ -32,7 +32,21 @@ public class ResourceDecorator implements SlingModel {
 
     @Override
     public <T> Field<T> field(String name, Class<T> type) {
+        if(type.isEnum()) {
+            // NOTE: This is some ugly casting magic so that the method is able to
+            // return the right types
+            return (Field<T>) enumField(name, (Class<? extends Enum>)type);
+        }
         return new FieldImpl<>(name, type, this);
+    }
+
+    private Field<? extends Enum> enumField(String name, Class<? extends Enum> type) {
+        return new EnumFieldImpl<>(name, type, this);
+    }
+
+    @Override
+    public <T extends SlingModel> Reference<T> reference(String name, Class<T> type) {
+        return new ReferenceFieldImpl<>(name, type, this);
     }
 
     @Override
@@ -41,7 +55,7 @@ public class ResourceDecorator implements SlingModel {
     }
 
     /*
-     * The methods below are all delgate methods around the wrapped resource
+     * The methods below are all delegate methods around the wrapped resource
      * to make sure SlingResource conforms to the Resource interface.
      */
 

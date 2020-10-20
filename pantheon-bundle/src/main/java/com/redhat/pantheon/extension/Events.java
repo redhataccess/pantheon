@@ -32,7 +32,8 @@ public class Events {
         this.jobManager = jobManager;
     }
 
-    public void fireEvent(Event evt, int delayInsecs) {
+    public void
+    fireEvent(Event evt, int delayInsecs) {
         final long delay = delayInsecs * 1000;
         final Date fireDate = new Date();
         fireDate.setTime(System.currentTimeMillis() + delay);

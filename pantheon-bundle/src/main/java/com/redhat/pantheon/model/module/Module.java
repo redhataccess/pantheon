@@ -42,7 +42,11 @@ public interface Module extends Document {
     Field<String> uuid();
 
     default Child<ModuleLocale> locale(Locale locale) {
-        return child(locale.toString(), ModuleLocale.class);
+        return locale(locale.toString());
+    }
+
+    default Child<ModuleLocale> locale(String locale) {
+        return child(locale, ModuleLocale.class);
     }
 
     default Optional<ModuleVersion> getDraftVersion(@Nonnull final Locale locale,

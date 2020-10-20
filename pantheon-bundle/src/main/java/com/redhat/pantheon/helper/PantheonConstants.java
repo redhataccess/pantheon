@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PantheonConstants {
+    public static final String ADOC_LEVELOFFSET = "leveloffset";
+    public static final String MACRO_INCLUDE = "pantheon-include";
     public static final String PARAM_RERENDER = "rerender";
     public static final String PARAM_DRAFT = "draft";
     public static final String PARAM_LOCALE = "locale";
@@ -12,7 +14,9 @@ public class PantheonConstants {
     public static final String RESOURCE_TYPE_MODULE = "pantheon/module";
     public static final String RESOURCE_TYPE_ASSEMBLY = "pantheon/assembly";
     public static final String RESOURCE_TYPE_MODULEVARIANT = "pantheon/moduleVariant";
+    public static final String RESOURCE_TYPE_MODULEVERSION = "pantheon/moduleVersion";
     public static final String RESOURCE_TYPE_ASSEMBLYVARIANT = "pantheon/assemblyVariant";
+    public static final String RESOURCE_TYPE_ASSEMBLYVERSION = "pantheon/assemblyVersion";
     public static final String JCR_TYPE_MODULE = "pant:module";
     public static final String JCR_TYPE_ASSEMBLY = "pant:assembly";
     public static final String JCR_TYPE_MODULEVARIANT = "pant:moduleVariant";

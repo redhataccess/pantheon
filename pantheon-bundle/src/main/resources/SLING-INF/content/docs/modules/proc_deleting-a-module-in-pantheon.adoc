@@ -1,0 +1,19 @@
+[id="deleting-a-module-in-pantheon_{context}"]
+
+= Deleting a module in {ProductShortName}
+
+Deleting a module in {ProductShortName}.
+
+.Prerequisites
+
+//* You are assigned a publisher or admin role in {ProductShortName}.
+* You are logged in.
+
+.Procedure
+
+. Navigate to the link:{LinkToSearchPage}[Search page].
+. Select the modules you want to delete.
+. Click *Delete*.
+. In the confirmation screen, click *OK* to confirm.
+
+The module is deleted, and is no longer available in the *Modules* tab.

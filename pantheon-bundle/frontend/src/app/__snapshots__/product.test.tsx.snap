@@ -26,13 +26,13 @@ exports[`Product tests should render Product component 1`] = `
           <FormGroup
             fieldId="product_url_fragment"
             isRequired={true}
-            label="Product UrlFragment"
+            label="Product URL Fragment"
           >
             <ForwardRef
               id="product_url_fragment_text"
               isRequired={true}
               onChange={[Function]}
-              placeholder="Url Fragment"
+              placeholder="URL Fragment"
               type="text"
               value=""
             />

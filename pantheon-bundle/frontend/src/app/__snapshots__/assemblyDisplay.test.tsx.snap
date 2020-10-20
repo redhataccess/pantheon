@@ -140,9 +140,10 @@ exports[`AssemblyDisplay tests should render AssemblyDisplay component 1`] = `
           modulePath=""
           onGetProduct={[Function]}
           onGetVersion={[Function]}
+          onPublishEvent={[Function]}
           productInfo=""
           updateDate={[Function]}
-          variant={null}
+          variant="DEFAULT"
           variantUUID=""
           versionModulePath=""
         />

@@ -3,7 +3,7 @@ package com.redhat.pantheon.model.document;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.api.WorkspaceChild;
+import com.redhat.pantheon.model.workspace.WorkspaceChild;
 
 import javax.annotation.Nonnull;
 import javax.inject.Named;
@@ -18,7 +18,11 @@ public interface Document extends WorkspaceChild {
     Field<String> uuid();
 
     default Child<? extends DocumentLocale> locale(Locale locale) {
-        return child(locale.toString(), DocumentLocale.class);
+        return locale(locale.toString());
+    }
+
+    default Child<? extends DocumentLocale> locale(String locale) {
+        return child(locale, DocumentLocale.class);
     }
 
     default Optional<? extends DocumentVersion> getDraftVersion(@Nonnull final Locale locale,

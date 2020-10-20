@@ -1,6 +1,6 @@
-package com.redhat.pantheon.model.api;
+package com.redhat.pantheon.model.workspace;
 
-import com.redhat.pantheon.model.workspace.Workspace;
+import com.redhat.pantheon.model.api.SlingModel;
 import org.apache.sling.api.resource.Resource;
 
 public interface WorkspaceChild extends SlingModel {

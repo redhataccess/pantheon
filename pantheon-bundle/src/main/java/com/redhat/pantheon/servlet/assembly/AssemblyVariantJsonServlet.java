@@ -2,11 +2,13 @@ package com.redhat.pantheon.servlet.assembly;
 
 import com.google.common.base.Charsets;
 import com.ibm.icu.util.ULocale;
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.assembly.AssemblyContent;
 import com.redhat.pantheon.model.assembly.AssemblyMetadata;
+import com.redhat.pantheon.model.assembly.AssemblyPage;
 import com.redhat.pantheon.model.assembly.AssemblyVariant;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
 import com.redhat.pantheon.model.document.DocumentMetadata;
@@ -53,6 +55,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
     public static final String PORTAL_URL = "PORTAL_URL";
     public static final String PANTHEON_HOST = "PANTHEON_HOST";
     public static final String MODULE_VARIANT_API_PATH = "/api/module/variant.json";
+    public static final String VARIANT_URL = "url";
 
     private final Logger log = LoggerFactory.getLogger(AssemblyVariantJsonServlet.class);
 
@@ -75,6 +78,9 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
     protected boolean isValidResource(@Nonnull SlingHttpServletRequest request, @Nonnull Resource resource) {
         AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
         Optional<AssemblyVersion> releasedRevision = assemblyVariant != null ? Optional.ofNullable(assemblyVariant.released().get()) : Optional.empty();
+        if (!releasedRevision.isPresent()) {
+            setCustomErrorMessage("Released assembly version not found for provided variant uuid " + suffix.getParameters(request).get("variantUuid"));
+        }
         return releasedRevision.isPresent();
     }
 
@@ -116,9 +122,6 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Striping out the jcr: from key name
         String variant_uuid = (String) variantMap.remove("jcr:uuid");
-        variantMap.put("variant_uuid", variant_uuid);
-        // TODO: remove assembly_uuid after Hydra team releases UNIFIED-6570
-        variantMap.put("assembly_uuid", variant_uuid);
         variantMap.put("uuid", variant_uuid);
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
@@ -126,6 +129,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Return the body content of the assembly ONLY
         variantMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
+                        .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider()))
                         .andThen(Html.getBody())
                         .apply(releasedContent.get().jcrContent().get().jcrData().get()));
 
@@ -169,51 +173,50 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
-            String view_uri = System.getenv(PORTAL_URL)
-                    +"/documentation/"
-                    + ServletUtils.toLanguageTag(locale)
-                    + "/guide/"
-                    + productUrlFragment + "/"
-                    + versionUrlFragment + "/"
-                    + variant_uuid;
+            String view_uri = new CustomerPortalUrlUuidProvider().generateUrlString(assemblyVariant);
             variantMap.put(VIEW_URI, view_uri);
         } else {
             variantMap.put(VIEW_URI, "");
         }
 
-        List<Map> moduleList = new ArrayList<>();
+        List<Map<String, String>> moduleList = new ArrayList<>();
+        List<Map<String, String>> publishedModuleList = new ArrayList<>();
         variantMap.put("modules_included", moduleList);
 
         AssemblyContent assemblyContent = assemblyVariant.released().get().content().get();
 
         if (assemblyContent != null & assemblyContent.getChildren() != null) {
             for (Resource childResource : assemblyContent.getChildren()) {
+                AssemblyPage page = childResource.adaptTo(AssemblyPage.class);
                 Map<String, String> moduleMap = new HashMap<>();
                 moduleList.add(moduleMap);
 
-                String moduleVariantUuid = childResource.getValueMap().containsKey("pant:moduleVariantUuid") ? childResource.getValueMap().get("pant:moduleVariantUuid").toString() : "";
-                moduleMap.put("module_variant_uuid", moduleVariantUuid);
-                // use module_variant_uuid to retrieve module_title from the module
-                if (!moduleVariantUuid.isEmpty()) {
-                    Resource resourceByUuid = getResourceByUuid(request, moduleVariantUuid);
-                    ModuleVariant moduleVariant = resourceByUuid.adaptTo(ModuleVariant.class);
-                    moduleMap.put("module_title", getModuleTitleFromUuid(moduleVariant));
-                    moduleMap.put("module_uuid", getModuleUuidFromVariant(moduleVariant));
-                    // check if the module is published
-                    if (moduleVariant.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {
-                        String module_url = System.getenv(PANTHEON_HOST)
-                                + MODULE_VARIANT_API_PATH
-                                + "/"
-                                + moduleVariantUuid;
-                        moduleMap.put("module_url", module_url);
-                    } else {
-                        moduleMap.put("module_url", "");
-                    }
+                String moduleUuid = page.module().get();
+                Module module = getResourceByUuid(request, moduleUuid).adaptTo(Module.class);
+                ModuleVariant canonical = module
+                        .locale(assemblyVariant.getParentLocale().getName()).get()
+                        .variants().get()
+                        .canonicalVariant().get();
+                moduleMap.put("canonical_uuid", canonical.uuid().get());
+                moduleMap.put("title", page.title().get());
+                moduleMap.put("module_uuid", module.uuid().get());
+                // check if the module is published
+                if (canonical.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {
+                    String variantUrl = System.getenv(PANTHEON_HOST)
+                            + MODULE_VARIANT_API_PATH
+                            + "/"
+                            + canonical.uuid().get();
+                    moduleMap.put(VARIANT_URL, variantUrl);
+                } else {
+                    moduleMap.put(VARIANT_URL, "");
                 }
-                moduleMap.put("module_level_offset",
-                        childResource.getValueMap().containsKey("pant:leveloffset") ? childResource.getValueMap().get("pant:leveloffset").toString() : "");
+                moduleMap.put("level_offset", String.valueOf(page.leveloffset().get()));
 
             }
+            moduleList.stream().filter(map -> map.containsKey(VARIANT_URL))
+                    .filter(map -> !map.get(VARIANT_URL).isEmpty())
+                    .forEach(publishedModuleList::add);
+            variantMap.put("hasPart", publishedModuleList);
         }
         // remove unnecessary fields from the map
         variantMap.remove("jcr:lastModified");
@@ -243,27 +246,6 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         }
 
         return suffix;
-    }
-
-    private String getModuleTitleFromUuid(ModuleVariant moduleVariant) {
-        String moduleTitle;
-        if (moduleVariant.hasDraft()) {
-            moduleTitle = moduleVariant.draft()
-                    .traverse()
-                    .toChild(ModuleVersion::metadata)
-                    .toField(DocumentMetadata::title)
-                    .get();
-        } else if (moduleVariant.released().isPresent()) {
-            moduleTitle = moduleVariant.released()
-                    .traverse()
-                    .toChild(ModuleVersion::metadata)
-                    .toField(DocumentMetadata::title)
-                    .get();
-        } else {
-            moduleTitle = "";
-        }
-
-        return moduleTitle;
     }
 
     private String getModuleUuidFromVariant(ModuleVariant moduleVariant) {
