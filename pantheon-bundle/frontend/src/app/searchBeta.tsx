@@ -34,7 +34,7 @@ import "@app/app.css";
 import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 // import TextInput from "@patternfly/react-icons/dist/js/icons/text-input";
 import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
-
+import { Pagination } from "@app/Pagination"
 
 export interface ISearchState {
   filterLabel: string
@@ -43,7 +43,8 @@ export interface ISearchState {
   isExpandedModules: boolean
   isExpandedProductFilter: boolean
   isExpandedRepoFilter: boolean
-  repositories: Array<{ name: string, id: "" }>
+  products: Array<{ name: string, id: string }>
+  repositories: Array<{ name: string, id: string, selected: boolean }>
 
   inputValue: string,
   statusIsExpanded: boolean,
@@ -54,9 +55,12 @@ export interface ISearchState {
   },
   kebabIsOpen: boolean,
 
-  filterValue: string
-
-
+  productFilterValue: string
+  repoFilterValue: string
+  
+  keyword: string
+  productsSelected: string[]
+  repositoriesSelected: string[]
 }
 class SearchBeta extends Component<any, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
@@ -71,7 +75,8 @@ class SearchBeta extends Component<any, ISearchState> {
       isExpandedModules: true,
       isExpandedProductFilter: true,
       isExpandedRepoFilter: true,
-      repositories: [{ name: "", id: "" }],
+      products: [{ name: "", id: "" }],
+      repositories: [{ name: "", id: "", selected: false }],
       // states for toolbar
       inputValue: "",
       statusIsExpanded: false,
@@ -83,16 +88,23 @@ class SearchBeta extends Component<any, ISearchState> {
       kebabIsOpen: false,
 
       // filters
-      filterValue: "",
+      productFilterValue: "",
+      repoFilterValue: "",
 
+      // search
+      keyword: "",
+      productsSelected: [],
+      repositoriesSelected: ["rhel-8-docs-test", "rhel-8-docs-10122020"],
     };
     this.drawerRef = React.createRef();
 
   }
 
   public componentDidMount() {
-    // tree inside the drawer
+    // list repos inside the drawer
     this.getRepositories()
+    this.getProducts()
+
     // TODO: enable resize
     // toolbar
     // window.addEventListener("resize", this.closeExpandableContent);
@@ -105,31 +117,7 @@ class SearchBeta extends Component<any, ISearchState> {
   }
   public render() {
     const { filterLabel, isExpanded, isExpandedProductFilter, isExpandedRepoFilter, repositories, inputValue, filters, statusIsExpanded, riskIsExpanded, kebabIsOpen } = this.state;
-    // TODO: load real data
-    const repoList = [
-      <SimpleListItem key="repo1">
-        <Checkbox label="ceph storage commons" aria-label="uncontrolled checkbox" id="check-repo-1" />
-      </SimpleListItem>,
-      <SimpleListItem key="repo2">
-        <Checkbox label="red-hat-cost-management" aria-label="uncontrolled checkbox" id="check-repo-2" />
-      </SimpleListItem>,
-      <SimpleListItem key="repo3">
-        <Checkbox label="rhel-8-docs" aria-label="uncontrolled checkbox" id="check-repo-3" />
-      </SimpleListItem>
-    ];
-
-    // TODO: load real data
-    const productList = [
-      <SimpleListItem key="product1">
-        <Checkbox label="Ceph Storage Commmons" aria-label="uncontrolled checkbox" id="check-product-1" />
-      </SimpleListItem>,
-      <SimpleListItem key="product2">
-        <Checkbox label="Cost Management" aria-label="uncontrolled checkbox" id="check-product-2" />
-      </SimpleListItem>,
-      <SimpleListItem key="product3">
-        <Checkbox label="Red Hat Enterprise Linux" aria-label="uncontrolled checkbox" id="check-product-3" />
-      </SimpleListItem>
-    ];
+    
     const panelContent = (
       <DrawerPanelContent widths={{ lg: "width_25" }}>
         <DrawerHead>
@@ -137,29 +125,36 @@ class SearchBeta extends Component<any, ISearchState> {
           <DrawerActions>
             <DrawerCloseButton onClick={this.onCloseClick} />
           </DrawerActions>
-          {/* By {filterLabel} */}
           <ExpandableSection toggleText="By repo" isActive={true}>
             <SearchInput
               placeholder="Filter"
-              value={this.state.filterValue}
-              onChange={this.onChangeFilter}
-              onClear={(evt) => this.onChangeFilter("", evt)}
+              value={this.state.repoFilterValue}
+              onChange={this.onChangeRepoFilter}
+              onClear={(evt) => this.onChangeRepoFilter("", evt)}
             />
             <SimpleList aria-label="Repository List">
-              {repoList}
+              {this.state.repositories.map((data) => (
+                <SimpleListItem key={data.id}>
+                  <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onChange={this.onSelectRepositories}/>
+                </SimpleListItem>
+              ))}
             </SimpleList>
 
           </ExpandableSection>
           <br />
-          <ExpandableSection toggleText="By product" isActive={true}>
+          <ExpandableSection toggleText="By product">
             <SearchInput
               placeholder="Filter"
-              value={this.state.filterValue}
-              onChange={this.onChangeFilter}
-              onClear={(evt) => this.onChangeFilter("", evt)}
+              value={this.state.productFilterValue}
+              onChange={this.onChangeProductFilter}
+              onClear={(evt) => this.onChangeProductFilter("", evt)}
             />
             <SimpleList aria-label="Product List">
-              {productList}
+            {this.state.products.map((data) => (
+                <SimpleListItem key={data.id}>
+                  <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} />
+                </SimpleListItem>
+              ))}
             </SimpleList>
 
           </ExpandableSection>
@@ -168,13 +163,24 @@ class SearchBeta extends Component<any, ISearchState> {
     );
     const drawerContent = (
       <React.Fragment>
-        <ExpandableSection toggleText="Modules" className="pf-c-title pf-m-2xl" isActive={true}>
-          <SearchResults />
+        {/* <ExpandableSection toggleText="Modules" className="pf-c-title pf-m-2xl" isActive={true}> */}
+        <ExpandableSection toggleText="Modules" className="pf-c-title" isActive={true}>
+          <SearchResults
+            contentType="module"
+            keyWord={this.state.keyword}
+            repositoriesSelected={this.state.repositoriesSelected}
+            productsSelected={this.state.productsSelected}
+          />
 
         </ExpandableSection>
         <br />
-        <ExpandableSection toggleText="Assemblies" className="pf-c-title pf-m-2xl" isActive={true}>
-          <SearchResults />
+        <ExpandableSection toggleText="Assemblies" className="pf-c-title" isActive={true}>
+          <SearchResults
+            contentType="assembly"
+            keyWord={this.state.keyword}
+            repositoriesSelected={this.state.repositoriesSelected}
+            productsSelected={this.state.productsSelected}
+          />
 
         </ExpandableSection>
       </React.Fragment>
@@ -204,7 +210,7 @@ class SearchBeta extends Component<any, ISearchState> {
               name="textInput2"
               id="textInput2"
               type="search"
-              aria-label="search input example"
+              aria-label="search input"
               onChange={this.onInputChange}
               value={inputValue}
             />
@@ -328,8 +334,7 @@ class SearchBeta extends Component<any, ISearchState> {
         }
         this.setState({
           repositories: repos
-        })
-        console.log("[getRepositories] repositories=>", this.state.repositories)
+        })        
       })
       .catch((error) => {
         console.log(error)
@@ -337,6 +342,28 @@ class SearchBeta extends Component<any, ISearchState> {
 
   }
 
+  private getProducts = () => {
+    const path = "/content/products.harray.1.json"
+    const products = new Array()
+    fetch(path)
+      .then((response) => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error(response.statusText)
+        }
+      })
+      .then(responseJSON => {
+        for (const product of responseJSON.__children__) {
+          products.push({ name: product.__name__, id: product["jcr:uuid"] })
+        }
+        this.setState({ products })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+
+  }
   private onExpand = () => {
     this.drawerRef.current && this.drawerRef.current.focus()
   };
@@ -440,12 +467,65 @@ class SearchBeta extends Component<any, ISearchState> {
   };
 
   // methods for filter search
-  private onChangeFilter = (value, event) => {
+  private onChangeRepoFilter = (value, event) => {
     this.setState({
-      filterValue: value
+      repoFilterValue: value
     });
+
+    if(value) {
+      let inputString = "";
+      const matchFound = [{ name: "", id: "", selected: false }];
+      
+      this.state.repositories.map(data => {
+        inputString = "" + data.name
+        if (inputString.toLowerCase().includes(value.toLowerCase())) {
+          matchFound.push(data)
+        }
+      });
+      this.setState({ repositories: matchFound })
+    } else {
+      this.getRepositories()
+    }
   };
 
+  private onChangeProductFilter = (value, event) => {
+    this.setState({
+      productFilterValue: value
+    });
+
+    if(value) {
+      let inputString = "";
+      const matchFound = [{ name: "", id: "" }];
+      
+      this.state.products.map(data => {
+        inputString = "" + data.name
+        if (inputString.toLowerCase().includes(value.toLowerCase())) {
+          matchFound.push(data)
+        }
+      });
+      this.setState({ products: matchFound })
+    } else {
+      this.getProducts()
+    }
+  };
+
+  private onSelectRepositories = (event) => {
+    const checked = event.target.checked;
+    console.log("[onSelectRepositories] checked =>", checked)
+    let repositories;
+    // if (rowId === -1) {
+      repositories = this.state.repositories.map(item => {
+        item.selected = checked;
+        return item;
+      });
+    // } else {
+    //   repositories = [...this.state.repositories];
+    //   repositories[rowId].selected = checked;
+    // }
+    this.setState({
+      repositories
+    });
+  }
 }
 
 

@@ -1,6 +1,7 @@
 package com.redhat.pantheon.servlet;
 
 import com.google.common.base.Strings;
+import com.redhat.pantheon.extension.HydraIntegration;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.module.*;
@@ -57,7 +58,9 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String directionParam = paramValue(request, "direction");
         String[] productIds = request.getParameterValues("product");
         String[] productVersionIds = request.getParameterValues("productversion");
-        String type = paramValue(request, "type");        
+        String type = paramValue(request, "type");
+        String[] repoParam = request.getParameterValues("repo");
+        String contentTypeParam = paramValue(request, "ctype");
 
         if(keyParam==null || keyParam.contains("Uploaded")){
             keyParam = "pant:dateUploaded";
@@ -69,6 +72,15 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             keyParam = "pant:moduleType";
         } else if (keyParam.contains("Updated")){
             keyParam = JcrConstants.JCR_LASTMODIFIED;
+        }
+
+        // Transform contentTypeParam to map the JCR type
+        if (contentTypeParam != null) {
+            if (contentTypeParam.toLowerCase().contains("module")) {
+                contentTypeParam = "pant:module";
+            } else if (contentTypeParam.toLowerCase().contains("assembly")) {
+                contentTypeParam = "pant:assembly";
+            }
         }
 
         if ("desc".equals(directionParam)) {
@@ -85,8 +97,18 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             throw new RuntimeException(e);
         }
 
-        StringBuilder queryBuilder = new StringBuilder()
-                .append("/jcr:root/content/(repositories | modules)//element(*, pant:document)");
+        StringBuilder queryBuilder = null;
+        if (repoParam != null) {
+            String repos = String.join(" | ", repoParam);
+            log.info("[" + ModuleListingServlet.class.getSimpleName() + "] repos: " + repos);
+            String contentType = contentTypeParam != null ? contentTypeParam : "pant:document";
+
+            queryBuilder = new StringBuilder()
+                    .append("/jcr:root/content/repositories/(" + repos + ")//element(*, " + contentType + ")");
+        } else {
+            queryBuilder = new StringBuilder()
+                    .append("/jcr:root/content/repositories//element(*, pant:document)");
+        }
 
         List<StringBuilder> queryFilters = newArrayListWithCapacity(5);
 
