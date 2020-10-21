@@ -30,7 +30,7 @@
     <packaging>karaf-assembly</packaging>
 
     <properties>
-        <karaf.version>4.2.8</karaf.version>
+        <karaf.version>4.3.0.RC1</karaf.version>
     </properties>
 
     <dependencies>
