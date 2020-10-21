@@ -119,9 +119,10 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Striping out the jcr: from key name
         String variant_uuid = (String) variantMap.remove("jcr:uuid");
+        // TODO: remove uuid when there are no more consumers for it (Solr, Hydra, Customer Portal)
         variantMap.put("uuid", variant_uuid);
-        // TODO: remove variant_uuid when Customer Portal no longer consumes variant_uuid.
         variantMap.put("variant_uuid", variant_uuid);
+        variantMap.put("document_uuid", moduleVariant.getParentLocale().getParent().uuid().get());
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         variantMap.put("date_modified", dateModified.toInstant().toString());
