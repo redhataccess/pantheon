@@ -73,3 +73,11 @@ include::adoc-includes/proc_setting-the-acl.adoc[leveloffset=+1]
 
 ifdef::parent-context-of-access-control-list[:context: {parent-context-of-access-control-list}]
 ifndef::parent-context-of-access-control-list[:!context:]
+
+[role="_additional-resources"]
+== Additional resources
+* link:https://access.redhat.com/articles/3131341[Support Policies for RHEL High Availability Clusters - Microsoft Azure Virtual Machines as Cluster Members]
+* link:https://access.redhat.com/articles/3071021[Support Policies for RHEL High Availability clusters - Transport Protocols]
+* link:https://cloud.google.com/vpc/docs/vpc[VPC network overview]
+* link:https://access.redhat.com/articles/2679211[Exploring RHEL High Availability's Components, Concepts, and Features - Overview of Transport Protocols]
+* link:https://access.redhat.com/articles/2679251[Design Guidance for RHEL High Availability Clusters - Selecting the Transport Protocol]
