@@ -1,7 +1,7 @@
 !!! 5
 -# Set path to CSS
 - rhDocsCssPath = '/static/rhdocs.css'
-- pantheonCssPath = '/static/pantheon.css'
+- pantheonCssPath = '//access.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css'
 
 - if (@document.attr :pantheonenv) == 'localwebassets'
   - rhDocsCssPath = '/dev-preview/rhdocs.css'
@@ -51,7 +51,7 @@
         };
       %script(src="https://access.redhat.com/webassets/avalon/j/lib/require.js")
       :javascript
-        chrometwo_require(["wc"], wc => wc.include("@cpelements/cp-documentation/dist/cp-documentation.umd.min"));
+        chrometwo_require(["//access.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js"]);
 
     :javascript
       window.addEventListener('load', function() {
@@ -62,7 +62,7 @@
         }
       });
 
-  %body{:id => @id, :class=>[doctype, 'pantheon-render', ((attr? :toc) && (attr? 'toc-placement', 'auto') ? "has-toc toc-#{attr 'toc-position', 'left'}" : nil)]}
+  %body{:id => @id, :class=>[doctype, 'pantheon-render', 'rhdocs', ((attr? :toc) && (attr? 'toc-placement', 'auto') ? "has-toc toc-#{attr 'toc-position', 'left'}" : nil)]}
     -# Begin main document
 
     -# %cp-documentation#rhdocs.rhdocs
