@@ -4,12 +4,8 @@ import org.apache.sling.api.adapter.AdapterFactory;
 import org.apache.sling.api.resource.Resource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES;
-import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
 
 /**
  * An adapter factory for model objects of type {@link SlingModel}. This component makes sure that
@@ -21,43 +17,12 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
  *
  * @author Carlos Munoz
  */
-@Component(
-        name = "Pantheon - SlingModel Adapter Factory",
-        service = AdapterFactory.class,
-        property = {
-                ADAPTABLE_CLASSES + "=org.apache.sling.api.resource.Resource",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.Content",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.Product",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.ProductVersion",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.api.SlingModel",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.api.FileResource",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.Assembly",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.AssemblyLocale",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.AssemblyMetadata",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.AssemblyVariant",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.AssemblyVariants",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.assembly.AssemblyVersion",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.document.Document",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.document.DocumentLocale",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.document.DocumentMetadata",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.document.DocumentVariant",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.document.DocumentVariants",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.document.DocumentVersion",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.Module",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleLocale",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleMetadata",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleVariant",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleVariants",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleVersion",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.workspace.Workspace"
-        }
-)
-public class SlingModelAdapterFactory implements AdapterFactory {
+public abstract class SlingModelAdapterFactory implements AdapterFactory {
 
     private static final Logger log = LoggerFactory.getLogger(SlingModelAdapterFactory.class);
 
     @Override
-    public <AdapterType> @Nullable AdapterType getAdapter(@NotNull Object adaptable, @NotNull Class<AdapterType> type) {
+    public final <AdapterType> @Nullable AdapterType getAdapter(@NotNull Object adaptable, @NotNull Class<AdapterType> type) {
         // ensure the adapter type is a subclass of SlingResource
         if(!SlingModel.class.isAssignableFrom(type)) {
             log.error("Error in " + this.getClass().getSimpleName() + ": adapter type not a SlingModel interface ("

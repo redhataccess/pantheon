@@ -18,7 +18,11 @@ public interface Document extends WorkspaceChild {
     Field<String> uuid();
 
     default Child<? extends DocumentLocale> locale(Locale locale) {
-        return child(locale.toString(), DocumentLocale.class);
+        return locale(locale.toString());
+    }
+
+    default Child<? extends DocumentLocale> locale(String locale) {
+        return child(locale, DocumentLocale.class);
     }
 
     default Optional<? extends DocumentVersion> getDraftVersion(@Nonnull final Locale locale,

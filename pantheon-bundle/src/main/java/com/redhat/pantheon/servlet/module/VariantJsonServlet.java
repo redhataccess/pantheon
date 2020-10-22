@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet.module;
 
 import com.google.common.base.Charsets;
 import com.ibm.icu.util.ULocale;
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.ProductVersion;
@@ -12,6 +13,7 @@ import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
 import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.servlet.util.ServletHelper;
 import com.redhat.pantheon.servlet.util.SlingPathSuffix;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -66,7 +68,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Hydra fetch calls look like this:
         // Calling pantheon2 with url https://<HOST>/api/module/variant.json/b537ef3c-5c7d-4280-91ce-e7e818e6cc11&proxyHost=<SOMEHOST>&proxyPort=8080&throwExceptionOnFailure=false
         StringBuilder query = new StringBuilder("select * from [pant:moduleVariant] as moduleVariant WHERE moduleVariant.[jcr:uuid] = '")
-                .append(sanitizeSuffix(uuid))
+                .append(ServletHelper.sanitizeSuffix(uuid))
                 .append("'");
         return query.toString();
     }
@@ -97,14 +99,13 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         Map<String, Object> variantMap = super.resourceToMap(request, resource);
         Map<String, Object> variantDetails = new HashMap<>();
-        JcrQueryHelper helper = new JcrQueryHelper(request.getResourceResolver());
+        //JcrQueryHelper helper = new JcrQueryHelper(request.getResourceResolver());
 
         variantDetails.put("status", SC_OK);
         variantDetails.put("message", "Module Found");
 
         String resourcePath = resource.getPath();
-        Locale locale = ULocale.createCanonical(moduleVariant.getParentLocale().getName()).toLocale();
-        variantMap.put("locale", ServletUtils.toLanguageTag(locale));
+        variantMap.put("locale", ServletUtils.toLanguageTag(moduleVariant.getParentLocale().getName()));
         variantMap.put("revision_id", releasedRevision.get().getName());
         variantMap.put("title", releasedMetadata.get().title().get());
         variantMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline().get() : "");
@@ -118,17 +119,17 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Striping out the jcr: from key name
         String variant_uuid = (String) variantMap.remove("jcr:uuid");
-        variantMap.put("variant_uuid", variant_uuid);
-        // TODO: remove module_uuid after Hydra team releases UNIFIED-6570
-        // TODO: This is deprecated, but left for backwards compatibility
-        variantMap.put("module_uuid", variant_uuid);
+        // TODO: remove uuid when there are no more consumers for it (Solr, Hydra, Customer Portal)
         variantMap.put("uuid", variant_uuid);
+        variantMap.put("variant_uuid", variant_uuid);
+        variantMap.put("document_uuid", moduleVariant.getParentLocale().getParent().uuid().get());
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         variantMap.put("date_modified", dateModified.toInstant().toString());
         // Return the body content of the module ONLY
         variantMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
+                        .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider()))
                         .andThen(Html.getBody())
                         .apply(releasedContent.get().jcrContent().get().jcrData().get()));
 
@@ -174,13 +175,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
-            String view_uri = System.getenv(PORTAL_URL)
-                    +"/documentation/"
-                    + ServletUtils.toLanguageTag(locale)
-                    + "/topic/"
-                    + productUrlFragment + "/"
-                    + versionUrlFragment + "/"
-                    + variant_uuid;
+            String view_uri = new CustomerPortalUrlUuidProvider().generateUrlString(moduleVariant);
             variantMap.put(VIEW_URI, view_uri);
         }
         else {
@@ -190,9 +185,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         //get the assemblies and iterate over them
 
-        helper.query("/jcr:root/content/(repositories | assemblies | variants)//element(*, pant:assemblyVariant)[(released/content/*/@pant:moduleVariantUuid='"+moduleVariant.uuid().get()+"')]"
-                ,1000L, 0L, Query.XPATH)
-                .forEach(a->setAssemblyData(a,includeAssemblies));
+        ServletHelper.addAssemblyDetails(ServletHelper.getModuleUuidFromVariant(moduleVariant),includeAssemblies,request,false,false);
         variantMap.put("included_in_guides", includeAssemblies);
         variantMap.put("isPartOf", includeAssemblies);
         // remove unnecessary fields from the map
@@ -207,27 +200,6 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantDetails.put("module", variantMap);
 
         return variantDetails;
-    }
-
-    private void setAssemblyData(Resource resource, List<HashMap<String, String>> includeAssemblies) {
-        AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
-        HashMap<String,String> assemblyVariantDetails = new HashMap<>();
-
-        Optional<AssemblyMetadata> releasedMetadata = traverseFrom(assemblyVariant)
-                .toChild(AssemblyVariant::released)
-                .toChild(AssemblyVersion::metadata)
-                .getAsOptional();
-        assemblyVariantDetails.put("uuid", assemblyVariant.uuid().get());
-        assemblyVariantDetails.put("title", releasedMetadata.get().title().get());
-        if(assemblyVariant.released().isPresent()&& System.getenv(PANTHEON_HOST) != null){
-            String assemblyUrl = System.getenv(PANTHEON_HOST)
-                    + ASSEMBLY_VARIANT_API_PATH
-                    + "/"
-                    + assemblyVariant.uuid().get();
-            assemblyVariantDetails.put("url", assemblyUrl);
-        }
-        includeAssemblies.add(assemblyVariantDetails);
-
     }
 
 

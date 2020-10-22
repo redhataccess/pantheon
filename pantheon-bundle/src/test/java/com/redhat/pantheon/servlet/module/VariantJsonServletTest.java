@@ -94,9 +94,7 @@ public class VariantJsonServletTest {
         assertTrue(map.containsKey("status"));
         assertTrue(map.containsKey("message"));
         assertTrue(map.containsKey("module"));
-        // TODO Remove this check when module_uuid is removed
         assertTrue(moduleMap.containsKey("uuid"));
-        assertTrue(moduleMap.containsKey("variant_uuid"));
         assertTrue(moduleMap.containsKey("products"));
         assertTrue(moduleMap.containsKey("description"));
         assertTrue(moduleMap.containsKey("locale"));

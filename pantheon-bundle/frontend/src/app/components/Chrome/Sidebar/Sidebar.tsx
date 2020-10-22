@@ -1,7 +1,7 @@
-import * as React from 'react'
-import { PageSidebar, Nav, NavList } from '@patternfly/react-core'
-import { NavLinks }  from './NavLinks'
-import { IAppState } from '@app/app'
+import * as React from "react"
+import { PageSidebar, Nav, NavList } from "@patternfly/react-core"
+import { NavLinks }  from "./NavLinks"
+import { IAppState } from "@app/app"
 
 export interface ISideBarProps {
   isNavOpen: boolean

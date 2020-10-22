@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
-import { Bullseye, Button, Alert, AlertActionCloseButton, Form, FormGroup, TextInput, ActionGroup } from '@patternfly/react-core'
-import '@app/app.css'
-import { Redirect } from 'react-router-dom'
-import { Fields } from './Constants'
+import React, { Component } from "react"
+import { Bullseye, Button, Alert, AlertActionCloseButton, Form, FormGroup, TextInput, ActionGroup } from "@patternfly/react-core"
+import "@app/app.css"
+import { Redirect } from "react-router-dom"
+import { Fields } from "./Constants"
 
 interface IState {
     failedPost: boolean
@@ -23,9 +23,9 @@ class Product extends Component<any, IState> {
             isDup: false,
             isMissingFields: false,
             isUrlFragmentValid: true,
-            productDescription: '',
-            productName: '',
-            productUrlFragment: '',
+            productDescription: "",
+            productName: "",
+            productUrlFragment: "",
             redirect: false
         }
 
@@ -126,14 +126,14 @@ class Product extends Component<any, IState> {
     }
 
     private saveProduct = () => {
-        if (this.state.productName === ''|| this.state.productUrlFragment === '') {
+        if (this.state.productName === ""|| this.state.productUrlFragment === "") {
             this.setState({ isMissingFields: true })
         } else {
             this.productExist().then(exist => {
                 if (!exist) {
                     const hdrs = {
-                        'Accept': 'application/json',
-                        'cache-control': 'no-cache'
+                        "Accept": "application/json",
+                        "cache-control": "no-cache"
                     }
                     // setup url fragment
                     const urlFragment = this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
@@ -141,16 +141,16 @@ class Product extends Component<any, IState> {
                     formData.append("name", this.state.productName)
                     formData.append("description", this.state.productDescription)
                     formData.append("sling:resourceType", "pantheon/product")
-                    formData.append("jcr:primaryType", 'pant:product')
-                    // currently we don't translate products in Customer Portal.
+                    formData.append("jcr:primaryType", "pant:product")
+                    // currently we don"t translate products in Customer Portal.
                     formData.append("locale", "en-US")
                     formData.append(Fields.URL_FRAGMENT, this.state.productUrlFragment)
                     // fetch makes the request to create a new product.
                     // transfor productName to lower case and replace special chars with _.
-                    fetch(encodeURI('/content/products/' + urlFragment), {
+                    fetch(encodeURI("/content/products/" + urlFragment), {
                         body: formData,
                         headers: hdrs,
-                        method: 'post'
+                        method: "post"
                     }).then(response => {
                         if (response.status === 201 || response.status === 200) {
                             this.setState({ redirect: true })
@@ -166,7 +166,7 @@ class Product extends Component<any, IState> {
 
     private renderRedirect = () => {
         if (this.state.redirect) {
-            return <Redirect to='/products' />
+            return <Redirect to="/products" />
         } else {
             return ""
         }
@@ -182,7 +182,7 @@ class Product extends Component<any, IState> {
 
     private productExist = () => {
         let exists = false
-        const backend = '/content/products/' + this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_") + '.json'
+        const backend = "/content/products/" + this.state.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_") + ".json"
         return fetch(backend)
             .then(response => {
                 if (response.status === 200) {

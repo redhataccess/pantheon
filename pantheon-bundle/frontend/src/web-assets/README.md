@@ -16,7 +16,7 @@ To build CSS use:
 yarn run build
 ```
 
-This builds the dev and prod versions of the CSS. Dev version is inside this folder `./rhdocs.css`, the prod version is in `GITROOT/pantheon-bundle/frontend/src/web-assets/rhdocs.css`.
+This process builds the Sass specific to Pantheon's previews and brings in rhdocs.css from @cp-elements/cp-documentation and puts it in the right places for the preview to pick up.
 
 ## Dev Watch Process
 To work on the Sass/CSS, use:
@@ -26,10 +26,10 @@ yarn run dev
 
 This will start a local browser-sync server that:
 * Automatically loads the `a-doc-styleguide.html`, which is generated from Pantheon's templates
-* Will watch and compile the dev and prod versions of the Scss, and watch for changes in HTML
+* Will watch and compile the dev and prod versions of the Scss, and watch for changes in HTML (from Haml updates)
 * Will watch for any changes in the adocs in the dev-preview folder
-* Reload the page anything changes
-* It will run on a port that will show up in command line
+* Reload the page if anything changes
+* It will run on a port from your localhost that will show up in command line
 
 ## Build for CSS Development
 This is the same as `yarn run dev` but without the watch process.

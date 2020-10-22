@@ -3,6 +3,7 @@ package com.redhat.pantheon.asciidoctor;
 import com.redhat.pantheon.asciidoctor.extension.HtmlModulePostprocessor;
 import com.redhat.pantheon.asciidoctor.extension.MetadataExtractorTreeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.PantheonLeveloffsetProcessor;
+import com.redhat.pantheon.asciidoctor.extension.PantheonXrefTargetProcessor;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.asciidoctor.extension.PantheonXrefProcessor;
 import com.redhat.pantheon.conf.GlobalConfig;
@@ -297,6 +298,9 @@ public class AsciidoctorService {
 
                 asciidoctor.javaExtensionRegistry().inlineMacro(PantheonXrefProcessor.MACRO_PREFIX,
                         xrefProcessor);
+
+                asciidoctor.javaExtensionRegistry().inlineMacro(PantheonXrefTargetProcessor.MACRO_PREFIX,
+                        new PantheonXrefTargetProcessor());
 
                 asciidoctor.javaExtensionRegistry().postprocessor(
                         new HtmlModulePostprocessor(base));

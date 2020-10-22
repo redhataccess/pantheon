@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   Button, ButtonVariant, TextInput, InputGroup, Chip, ChipGroup, FormSelect, FormSelectOption
-} from '@patternfly/react-core';
-import '@app/app.css';
-import { SearchIcon, SortAlphaDownIcon, SortAlphaUpIcon } from '@patternfly/react-icons';
+} from "@patternfly/react-core";
+import "@app/app.css";
+import { SearchIcon, SortAlphaDownIcon, SortAlphaUpIcon } from "@patternfly/react-icons";
 
 class SearchFilter extends Component<any, any> {
   constructor(props) {
@@ -11,24 +11,24 @@ class SearchFilter extends Component<any, any> {
     this.state = {
       allProducts: [],
       chipGroups: [],
+      contentTypeValue: "",
       isSortedUp: true,
-      moduleTypeValue: '',
       productOptions: [
-        { value: '', label: 'Select a Product', disabled: false },
+        { value: "", label: "Select a Product", disabled: false },
       ],
-      productValue: '',
-      productsQueryParam: '',
+      productValue: "",
+      productsQueryParam: "",
       productsToQuery: [],
       productsUUID: [],
-      productversionsQueryParam: '',
-      searchText: '',
-      sortByValue: '',
+      productversionsQueryParam: "",
+      searchText: "",
+      sortByValue: "",
       versionOptions: [
-        { value: '', label: 'Select a Version', disabled: false },
+        { value: "", label: "Select a Version", disabled: false },
       ],
-      versionSelected: '',
-      versionUUID: '',
-      versionValue: '',
+      versionSelected: "",
+      versionUUID: "",
+      versionValue: "",
       versionsToQuery: [],
     };
   }
@@ -45,18 +45,19 @@ class SearchFilter extends Component<any, any> {
       verOptions = this.state.allProducts[this.state.productValue]
     }
 
-    const moduleTypeItems = [
-      { value: 'All', label: 'All', disabled: false },
-      { value: 'CONCEPT', label: 'Concept', disabled: false },
-      { value: 'PROCEDURE', label: 'Procedure', disabled: false },
-      { value: 'REFERENCE', label: 'Reference', disabled: false }
+    const contentTypeItems = [
+      { value: "All", label: "All", disabled: false },
+      { value: "ASSEMBLY", label: "Assembly", disabled: false },
+      { value: "CONCEPT", label: "Concept", disabled: false },
+      { value: "PROCEDURE", label: "Procedure", disabled: false },
+      { value: "REFERENCE", label: "Reference", disabled: false }
     ]
 
     const sortItems = [
-      { value: 'Uploaded date', label: 'Uploaded date', disabled: false },
-      { value: 'Title', label: 'Title', disabled: false },
-      { value: 'Updated date', label: 'Updated date', disabled: false },
-      { value: 'Module type', label: 'Module type', disabled: false }
+      { value: "Uploaded date", label: "Uploaded date", disabled: false },
+      { value: "Title", label: "Title", disabled: false },
+      { value: "Updated date", label: "Updated date", disabled: false },
+      { value: "Module type", label: "Content type", disabled: false }
     ]
 
 
@@ -83,8 +84,8 @@ class SearchFilter extends Component<any, any> {
             ))}
           </FormSelect>
 
-          <FormSelect className="small-margin" value={this.state.moduleTypeValue} onChange={this.onChangeModuleType} aria-label="FormSelect ModuleType" id="moduleTypeForm">
-            {moduleTypeItems.map((option) => (
+          <FormSelect className="small-margin" value={this.state.contentTypeValue} onChange={this.onChangeContentType} aria-label="FormSelect cType" id="contentTypeForm">
+            {contentTypeItems.map((option) => (
               <FormSelectOption isDisabled={false} key={option.value} value={option.value} label={option.label} required={false} />
             ))}
           </FormSelect>
@@ -127,7 +128,7 @@ class SearchFilter extends Component<any, any> {
 
   private fetchProductVersionDetails = () => {
 
-    const path = '/content/products.3.json'
+    const path = "/content/products.3.json"
     let key
     const products = new Array()
     const prodUUID = new Array()
@@ -148,18 +149,18 @@ class SearchFilter extends Component<any, any> {
           const nameKey = "name"
           const versionKey = "versions"
           const uuidKey = "jcr:uuid";
-          if ((key !== 'jcr:primaryType')) {
+          if ((key !== "jcr:primaryType")) {
             if (responseJSON[key][nameKey] !== undefined) {
               const pName = responseJSON[key][nameKey]
               const versionObj = responseJSON[key][versionKey]
               const productUUID = responseJSON[key][uuidKey]
               if (versionObj) {
                 let vKey;
-                const versions = [{ value: '', label: 'Select a Version', disabled: false }, { value: 'All', label: 'All', disabled: false },]
+                const versions = [{ value: "", label: "Select a Version", disabled: false }, { value: "All", label: "All", disabled: false },]
                 for (const item in Object.keys(versionObj)) {
                   if (Object.keys(versionObj)[item] !== undefined) {
                     vKey = Object.keys(versionObj)[item]
-                    if (vKey !== 'jcr:primaryType') {
+                    if (vKey !== "jcr:primaryType") {
                       if (versionObj[vKey][nameKey]) {
                         versions.push({ value: versionObj[vKey][uuidKey], label: versionObj[vKey][nameKey], disabled: false })
                       }
@@ -178,7 +179,7 @@ class SearchFilter extends Component<any, any> {
         })
 
         if (products) {
-          const productItems = [{ value: 'Select a Product', label: 'Select a Product', disabled: false },]
+          const productItems = [{ value: "Select a Product", label: "Select a Product", disabled: false },]
           // tslint:disable-next-line: forin
           for (const item in products) {
             productItems.push({ value: item, label: item, disabled: false })
@@ -219,8 +220,8 @@ class SearchFilter extends Component<any, any> {
       this.setQuery();
     });
   }
-  private onChangeModuleType = (moduleTypeValue) => {
-    this.setState({ moduleTypeValue }, () => {
+  private onChangeContentType = (contentTypeValue) => {
+    this.setState({ contentTypeValue }, () => {
       this.setQuery();
     });
   }
@@ -249,14 +250,14 @@ class SearchFilter extends Component<any, any> {
     const productUUID = this.state.productsUUID[product]
     if (versionUUID.trim() === "All") {
       let prodQuery = this.state.productsQueryParam
-      prodQuery = prodQuery.replace("product=" + productUUID, '')
-      if (prodQuery === '&') {
-        prodQuery = ''
+      prodQuery = prodQuery.replace("product=" + productUUID, "")
+      if (prodQuery === "&") {
+        prodQuery = ""
       }
       if (prodQuery.includes("&&")) {
-        prodQuery = prodQuery.replace('&&', '&')
+        prodQuery = prodQuery.replace("&&", "&")
       }
-      if (prodQuery.startsWith('&')) {
+      if (prodQuery.startsWith("&")) {
         prodQuery = prodQuery.substr(1)
       }
       this.setState({ chipGroups: copyOfChipGroups, productsQueryParam: prodQuery }, () => {
@@ -264,14 +265,14 @@ class SearchFilter extends Component<any, any> {
       });
     } else {
       let verQuery = this.state.productversionsQueryParam
-      verQuery = verQuery.replace("productversion=" + versionUUID, '')
-      if (verQuery === '&') {
-        verQuery = ''
+      verQuery = verQuery.replace("productversion=" + versionUUID, "")
+      if (verQuery === "&") {
+        verQuery = ""
       }
       if (verQuery.includes("&&")) {
-        verQuery = verQuery.replace('&&', '&')
+        verQuery = verQuery.replace("&&", "&")
       }
-      if (verQuery.startsWith('&')) {
+      if (verQuery.startsWith("&")) {
         verQuery = verQuery.substr(1)
       }
       this.setState({ chipGroups: copyOfChipGroups, productversionsQueryParam: verQuery }, () => {
@@ -318,20 +319,20 @@ class SearchFilter extends Component<any, any> {
     let verQuery = this.state.productversionsQueryParam
     if (versionUUID.trim() === "All") {
       if (this.state.productsQueryParam.trim() !== "") {
-        prodQuery += '&'
+        prodQuery += "&"
       }
       if (!prodQuery.includes(this.state.productsUUID[this.state.productValue])) {
         prodQuery += "product=" + this.state.productsUUID[this.state.productValue]
       }
     } else if (versionUUID.trim() !== "") {
       if (this.state.productversionsQueryParam.trim() !== "") {
-        verQuery += '&'
+        verQuery += "&"
       }
       if (!verQuery.includes(versionUUID)) {
         verQuery += "productversion=" + versionUUID
       }
     }
-    this.setState({ chipGroups: copyOfChipGroups, productsQueryParam: prodQuery, productversionsQueryParam: verQuery, productValue: '', versionSelected: '', versionUUID: '', versionValue: '' }, () => {
+    this.setState({ chipGroups: copyOfChipGroups, productsQueryParam: prodQuery, productversionsQueryParam: verQuery, productValue: "", versionSelected: "", versionUUID: "", versionValue: "" }, () => {
       this.setQuery();
     });
   };
@@ -358,11 +359,11 @@ class SearchFilter extends Component<any, any> {
     }
 
     // Default is All and should not add to the filter.
-    if (this.state.moduleTypeValue.trim() !== "" && this.state.moduleTypeValue.trim() !== "All") {
+    if (this.state.contentTypeValue.trim() !== "" && this.state.contentTypeValue.trim() !== "All") {
       if (searchQuery.trim() !== "") {
         searchQuery += "&"
       }
-      searchQuery += "type=" + this.state.moduleTypeValue
+      searchQuery += "type=" + this.state.contentTypeValue
     }
 
     // Default key is Uploaded
@@ -382,9 +383,8 @@ class SearchFilter extends Component<any, any> {
     searchQuery += "direction=" + (this.state.isSortedUp ? "desc" : "asc")
 
     if (searchQuery.includes("&&")) {
-      searchQuery = searchQuery.replace('&&', '&')
+      searchQuery = searchQuery.replace("&&", "&")
     }
-
     this.props.filterQuery(searchQuery)
   }
 }

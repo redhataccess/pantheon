@@ -1,14 +1,14 @@
-import React, { Component } from 'react'
+import React, { Component } from "react"
 import {
   Page,
   PageSection,
   PageSectionVariants,
   PageSidebar
-} from '@patternfly/react-core'
-import { Header } from '@app/components/Chrome/Header/Header'
-import { Sidebar } from '@app/components/Chrome/Sidebar/Sidebar'
-import { Routes } from '@app/routes'
-import '@app/app.css'
+} from "@patternfly/react-core"
+import { Header } from "@app/components/Chrome/Header/Header"
+import { Sidebar } from "@app/components/Chrome/Sidebar/Sidebar"
+import { Routes } from "@app/routes"
+import "@app/app.css"
 
 export interface IAppState {
   isAdmin: boolean
@@ -18,8 +18,8 @@ export interface IAppState {
 }
 
 class App extends Component<any, IAppState> {
-  public static ANON_USER = 'anonymous'
-  public static ADMIN_USER = 'admin'
+  public static ANON_USER = "anonymous"
+  public static ADMIN_USER = "admin"
 
   public static thisApp: App
 
@@ -49,7 +49,7 @@ class App extends Component<any, IAppState> {
 
   public onNavToggle() {
     // No idea why this roundabout setState is necessary, but if we replace this with the simpler "this.setState",
-    // then we get a console error saying "`this` is undefined" - which I don't even understand how that's
+    // then we get a console error saying "`this` is undefined" - which I don"t even understand how that"s
     // possible - but this works around it.
     App.thisApp.setState({
       isNavOpen: !App.thisApp.state.isNavOpen

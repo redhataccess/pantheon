@@ -1,13 +1,13 @@
-import React, { Component } from 'react'
-import { Route, RouteComponentProps, Switch } from 'react-router-dom'
-import { Search } from '@app/search'
-import { Product } from '@app/product'
-import { ProductListing } from '@app/productListing'
-import { Login } from '@app/login'
-import { GitImport } from './gitImport'
-import { ModuleDisplay } from '@app/moduleDisplay'
-import { AssemblyDisplay } from '@app/assemblyDisplay'
-import { IAppState } from './app'
+import React, { Component } from "react"
+import { Route, RouteComponentProps, Switch } from "react-router-dom"
+import { Search } from "@app/search"
+import { Product } from "@app/product"
+import { ProductListing } from "@app/productListing"
+import { Login } from "@app/login"
+import { GitImport } from "./gitImport"
+import { ModuleDisplay } from "@app/moduleDisplay"
+import { AssemblyDisplay } from "@app/assemblyDisplay"
+import { IAppState } from "./app"
 
 interface IAppRoute {
   label: string
@@ -26,56 +26,56 @@ class Routes extends Component<IAppState> {
         component: (routeProps) => <Search {...this.props} />,
         exact: true,
         icon: null,
-        label: 'Search',
-        path: '/search',
+        label: "Search",
+        path: "/search",
         requiresLogin: false
       },
       {
         component: (routeProps) => <Product />,
         exact: true,
         icon: null,
-        label: '',
-        path: '/product',
+        label: "",
+        path: "/product",
         requiresLogin: true
       },
       {
         component: (routeProps) => <ProductListing />,
         exact: true,
         icon: null,
-        label: '',
-        path: '/products',
+        label: "",
+        path: "/products",
         requiresLogin: true
       },
       {
         component: (routeProps) => <GitImport />,
         exact: true,
         icon: null,
-        label: '',
-        path: '/git',
+        label: "",
+        path: "/git",
         requiresLogin: true
       },
       {
         component: (routeProps) => <Login />,
         exact: true,
         icon: null,
-        label: '', // Empty because we are using the Brand component to render the text.
-        path: '/login',
+        label: "", // Empty because we are using the Brand component to render the text.
+        path: "/login",
         requiresLogin: false
       },
       {
         component: (routeProps) => <ModuleDisplay {...routeProps} />,
         exact: false,
         icon: null,
-        label: '', // Empty because we are using the Brand component to render the text.
-        path: '/module/:data',
+        label: "", // Empty because we are using the Brand component to render the text.
+        path: "/module/:data",
         requiresLogin: true
       },
       {
         component: (routeProps) => <AssemblyDisplay {...routeProps} />,
         exact: false,
         icon: null,
-        label: '', // Empty because we are using the Brand component to render the text.
-        path: '/assembly/:data',
+        label: "", // Empty because we are using the Brand component to render the text.
+        path: "/assembly/:data",
         requiresLogin: true
       }
     ]

@@ -94,3 +94,10 @@ body {
 .pant-form-width-md {
     max-width: 45em;
 }
+
+
+/* Set max width for notification-container */
+
+.pant-notification-container-md {
+    max-width: 44em;
+}

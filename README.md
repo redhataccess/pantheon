@@ -106,7 +106,7 @@ The build script provided in _scripts_ directory makes use of _PANTHEON_CODEBASE
 The scripts folder contains _pantheon_karaf.exports_ file. It contains the values required for the pantheon karaf distribution. If you are running MongoDB on a different port then
 - Make a copy of _pantheon_karaf.exports_ file
 - Place it in _.pantheon_ directory under your home directory
-- Update the _MONGO_DB_URI_ variable
+- In `~/.pantheon/pantheon_karaf.exports`, update the _MONGO_DB_URI_ variable
 
 ### Building the application
 _(All commands from here on will be assumed to be run from the project's root directory)_

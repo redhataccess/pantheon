@@ -31,7 +31,6 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
     @Override
     public void processRepository(SlingRepository slingRepository) throws Exception {
         setSyncServiceUrl();
-        setPortalUrl();
         setFrontEndRedirect();
     }
 
@@ -63,32 +62,10 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
         }
     }
 
-    private void setPortalUrl() throws RepositoryException, PersistenceException {
-        try (ResourceResolver resourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
-            String portalUrl = getPortalUrl();
-            if (portalUrl != null) {
-                resourceResolver.getResource("/conf/pantheon")
-                        .adaptTo(ModifiableValueMap.class)
-                        .put("pant:portalUrl", portalUrl);
-                resourceResolver.commit();
-                log.info("Portal URL: " + portalUrl);
-            } else {
-                log.info("Environment Variable PORTAL_URL is not set.");
-            }
-        }
-    }
-
     /**
      * Retrieves the environment variable value for the sync service url
      */
     String getSyncServiceUrl() {
         return System.getenv("SYNC_SERVICE_URL");
-    }
-    
-    /**
-     * Retrieves the environment variable value for the portal url
-     */
-    String getPortalUrl() {
-        return System.getenv("PORTAL_URL");
     }
 }
