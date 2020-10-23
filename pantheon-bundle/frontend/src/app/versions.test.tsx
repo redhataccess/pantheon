@@ -248,5 +248,13 @@ describe("Versions tests", () => {
         inst.getDocumentsIncluded()
         sinon.assert.called(spy)
     })
+
+    it("test capitalize function", () => {
+        const wrapper = renderer.create(<Versions {...props} />)
+        const inst = wrapper.getInstance()
+        const spy = sinon.spy(inst, "capitalize")
+        inst.capitalize()
+        sinon.assert.called(spy)
+    })
     
 })
