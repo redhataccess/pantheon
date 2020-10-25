@@ -1,0 +1,20 @@
+[id="importing-(ContentTerm}_{context}"]
+
+= Importing {ContentTerm}
+
+[role="_abstract"]
+You can import modules and assemblies into {ProductShortName} from either GitHub or GitLab.
+
+.Prerequisites
+
+//* You are assigned a publisher or author role in {ProductShortName}.
+* You are logged in.
+* You obtained the Git repository URL for the {ContentTerm} you want to import (For example, https://github.com/openshift/openshift-docs).
+
+.Procedure
+
+. Navigate to the link:{LinkToGitImportPage}[Git Import page].
+. Enter the Git repository URL for the {ContentTerm} you want to import.
+. By default, this procedure imports the "master" branch of the {ContentTerm} repository, but you can enter a specific branch to import instead if you prefer. 
+. Click *Submit*.
+. Click *Yes* to confirm and return to the link:{LinkToSearchPage}[Search page], or *No* to remain on the Git Import page.
