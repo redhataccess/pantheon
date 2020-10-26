@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>org.apache.sling.karaf-features</artifactId>
-  <version>0.1.2-SNAPSHOT</version>
+  <version>0.1.1-SNAPSHOT</version>
   <packaging>feature</packaging>
 
   <name>Apache Sling - Karaf Features</name>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.apache.sling</groupId>
       <artifactId>org.apache.sling.karaf-configs</artifactId>
-      <version>0.1.2-SNAPSHOT</version>
+      <version>0.1.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
