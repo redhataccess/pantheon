@@ -257,11 +257,11 @@ describe("Versions tests", () => {
         sinon.assert.called(spy)
     })
 
-    it("test getAlertTitle function", () => {
+    it("test setAlertTitle function", () => {
         const wrapper = renderer.create(<Versions {...props} />)
         const inst = wrapper.getInstance()
-        const spy = sinon.spy(inst, "getAlertTitle")
-        inst.getAlertTitle()
+        const spy = sinon.spy(inst, "setAlertTitle")
+        inst.setAlertTitle()
         sinon.assert.called(spy)
     })
 })

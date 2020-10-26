@@ -35,7 +35,7 @@ export interface IProps {
 }
 
 interface IState {
-    alertTitle: any
+    alertTitle: string
     allProducts: any
     allProductVersions: any
     canChangePublishState: boolean
@@ -520,7 +520,7 @@ class Versions extends Component<IProps, IState> {
                     } else {
                         console.log(buttonText + " failed " + response.status)
                         this.setState({ publishAlertVisible: true })
-                        this.getAlertTitle()
+                        this.setAlertTitle()
                     }
                     this.fetchVersions()
                 });
@@ -755,7 +755,7 @@ class Versions extends Component<IProps, IState> {
         return str.charAt(0).toUpperCase() + str.slice(1)
     }
 
-    private getAlertTitle = () => {
+    private setAlertTitle = () => {
         const alertTitle = "Publishing " + this.props.contentType
         this.setState({ alertTitle })
     }
