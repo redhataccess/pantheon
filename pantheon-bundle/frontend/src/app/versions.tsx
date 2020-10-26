@@ -35,6 +35,7 @@ export interface IProps {
 }
 
 interface IState {
+    alertTitle: any
     allProducts: any
     allProductVersions: any
     canChangePublishState: boolean
@@ -69,6 +70,7 @@ class Versions extends Component<IProps, IState> {
     constructor(props) {
         super(props)
         this.state = {
+            alertTitle: "",
             allProducts: [],
             // tslint:disable-next-line: object-literal-sort-keys
             allProductVersions: [],
@@ -136,7 +138,7 @@ class Versions extends Component<IProps, IState> {
                 {this.state.publishAlertVisible && <div className="notification-container pant-notification-container-md">
                     <Alert
                         variant="warning"
-                        title="Publishing Document"
+                        title={this.state.alertTitle}
                         actionClose={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
                     >
                         {this.capitalize(this.props.contentType)} failed to publish. Check the following:
@@ -518,6 +520,7 @@ class Versions extends Component<IProps, IState> {
                     } else {
                         console.log(buttonText + " failed " + response.status)
                         this.setState({ publishAlertVisible: true })
+                        this.getAlertTitle()
                     }
                     this.fetchVersions()
                 });
@@ -750,6 +753,11 @@ class Versions extends Component<IProps, IState> {
             return
         }
         return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+
+    private getAlertTitle = () => {
+        const alertTitle = "Publishing " + this.props.contentType
+        this.setState({ alertTitle })
     }
 }
 
