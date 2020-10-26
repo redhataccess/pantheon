@@ -1,0 +1,35 @@
+[id="creating-a-product_{context}"]
+= Creating a product
+
+A product must exist in {ProductName} before you can assign a product name to the metadata of a module or assembly. If the product doesn't already exist, you need to create one.
+
+.Prerequisites
+
+* You are logged in.
+* You have Publisher permissions.
+
+.Procedure
+
+. Navigate to menu:Products[New Product].
+
+. Enter the following information:
+  Product Name:: The text that appears in {ProductShortName}, the document preview, and in user-facing content.
+  Product UrlFragment:: This string appears in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
+  Product Description (optional):: A description of the product.
+
+. Click btn:[Save].
+
+After creating a product, you need to create a product version.
+
+.Example
+
+Product Name:: .NET Core
+Product UrlFragment:: `net_core`
+Product Description:: Documentation for the .NET Core framework.
+
+Entering the above information creates a {ProductShortName} product named `.NET Core`. The URL for documentation that is associated with this product includes `net_core` to identify the product. For example, after creating the product version `4.4-beta` and assigning a module the `*.NET Core*` product and version `*4.4-beta*`, the resulting URL for that module is:
+
+`\https://access.stage.redhat.com/documentation/en-us/topic/net_core/4.4-beta/_module-UUID_`
+
+// .Additional resources
+// link:placeholder.url.com[Creating a product version]

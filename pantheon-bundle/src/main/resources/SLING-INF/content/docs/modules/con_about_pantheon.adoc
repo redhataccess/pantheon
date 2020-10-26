@@ -3,7 +3,7 @@
 
 {ProductShortName} is a content-management system and publishing platform developed by Red Hat.
 You can use it to publish documents based on AsciiDoc source.
-After adding your modules and assemblies to {ProductShortName}, you can do the following:
+After adding your modules and assemblies to {ProductShortName}, you can do the following, depending on the permissions of your assigned role:
 
 . Add metadata
 . Preview your content using the look and feel of the Customer Portal
