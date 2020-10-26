@@ -1,6 +1,7 @@
 package com.redhat.pantheon.servlet.util;
 
 
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.ModelException;
@@ -31,6 +32,10 @@ public class ServletHelper {
      * The constant PANTHEON_HOST.
      */
     public static final String PANTHEON_HOST = "PANTHEON_HOST";
+    /**
+     * The constant PORTAL_URL.
+     */
+    public static final String PORTAL_URL = "PORTAL_URL";
     /**
      * The constant ASSEMBLY_VARIANT_API_PATH.
      */
@@ -152,6 +157,11 @@ public class ServletHelper {
                     + "/"
                     + assemblyVariant.uuid().get();
             assemblyVariantDetails.put("url", assemblyUrl);
+        }
+        if (assemblyVariant.released().isPresent() && System.getenv(PORTAL_URL) != null) {
+            // Add Customer Portal view_uri
+            String view_uri = new CustomerPortalUrlUuidProvider().generateUrlString(assemblyVariant);
+            assemblyVariantDetails.put("view_uri", view_uri);
         }
         if(addPath){
             assemblyVariantDetails.put("path", assemblyVariant.getParentLocale().getParent().getPath());
