@@ -62,6 +62,7 @@ exports[`User tests should render User component 1`] = `
     }
   />
   <Link
+    className="p2-header__login"
     onClick={[Function]}
     to=""
   >

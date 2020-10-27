@@ -24,27 +24,32 @@ module.exports = {
 
     "/content": {
       host: {
-        local: "http://localhost:8181"
+        local: "https://pantheon.corp.qa.redhat.com"
       }
     },
     "/system": {
       host: {
-        local: "http://localhost:8181"
+        local: "https://pantheon.corp.qa.redhat.com"
       }
     },
-    "/pantheon": {
+    "/pantheon/builddate.json": {
       host: {
-        local: "http://localhost:8181"
+        local: "https://pantheon.corp.qa.redhat.com"
+      }
+    },
+    "/pantheon/internal/modules.json": {
+      host: {
+        local: "https://pantheon.corp.qa.redhat.com"
       }
     },
     "/conf": {
       host: {
-        local: "http://localhost:8181"
+        local: "https://pantheon.corp.qa.redhat.com"
       }
     },
     "/j_security_check": {
       host: {
-        local: "http://localhost:8181"
+        local: "https://pantheon.corp.qa.redhat.com"
       }
     }
     // Route a URL path to an app server, and watch local files for changes.
