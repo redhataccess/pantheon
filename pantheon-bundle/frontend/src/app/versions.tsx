@@ -35,6 +35,7 @@ export interface IProps {
 }
 
 interface IState {
+    alertTitle: string
     allProducts: any
     allProductVersions: any
     canChangePublishState: boolean
@@ -69,6 +70,7 @@ class Versions extends Component<IProps, IState> {
     constructor(props) {
         super(props)
         this.state = {
+            alertTitle: "",
             allProducts: [],
             // tslint:disable-next-line: object-literal-sort-keys
             allProductVersions: [],
@@ -136,13 +138,13 @@ class Versions extends Component<IProps, IState> {
                 {this.state.publishAlertVisible && <div className="notification-container pant-notification-container-md">
                     <Alert
                         variant="warning"
-                        title="Module Versions"
+                        title={this.state.alertTitle}
                         actionClose={<AlertActionCloseButton onClose={this.hidePublishAlert} />}
                     >
-                        Module failed to publish. Check the following:
+                        {this.capitalize(this.props.contentType)} failed to publish. Check the following:
                         <ul>
                             <li>Are you logged in as a publisher?</li>
-                            <li>Does the module have all required metadata?</li>
+                            <li>Does the {this.props.contentType} have all required metadata?</li>
                         </ul>
                     </Alert>
                 </div>
@@ -518,6 +520,7 @@ class Versions extends Component<IProps, IState> {
                     } else {
                         console.log(buttonText + " failed " + response.status)
                         this.setState({ publishAlertVisible: true })
+                        this.setAlertTitle()
                     }
                     this.fetchVersions()
                 });
@@ -743,6 +746,18 @@ class Versions extends Component<IProps, IState> {
                     }
                 })
         }
+    }
+
+    private capitalize = (str) => {
+        if (str === undefined || str.trim().length === 0) {
+            return
+        }
+        return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+
+    private setAlertTitle = () => {
+        const alertTitle = "Publishing " + this.props.contentType
+        this.setState({ alertTitle })
     }
 }
 
