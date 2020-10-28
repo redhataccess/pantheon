@@ -1,6 +1,7 @@
 [id="versioning-a-product_{context}"]
-= Creating a product
+= Versioning a product
 
+[role="_abstract"]
 A product must have at least one product version assigned to it.
 
 .Prerequisites
@@ -17,12 +18,12 @@ A product must have at least one product version assigned to it.
 . Enter the following information:
   New Version:: This is the text that appears in {ProductShortName}, and the document preview.
   URL Fragment:: This string appears in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
-  
+
 . Click btn:[Save].
 
 .Example
 
 New Version:: 4.4 Beta
-URL Fragment:: `4.4-beta` 
+URL Fragment:: `4.4-beta`
 
 After creating a product version `4.4-beta` and assigning a module the .NET Core product and version 4.4-beta, the resulting URL for that module is: `https://access.stage.redhat.com/documentation/en-us/topic/net_core/4.4-beta/_module-UUID_`
