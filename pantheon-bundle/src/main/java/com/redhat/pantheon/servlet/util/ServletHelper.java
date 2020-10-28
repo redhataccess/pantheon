@@ -142,7 +142,7 @@ public class ServletHelper {
         AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
         HashMap<String,String> assemblyVariantDetails = new HashMap<>();
         // if draft version cannot be added, however only draft exists, then just return
-        if(!canHaveDraft&&assemblyVariant.hasDraft()){
+        if(!canHaveDraft&&assemblyVariant.hasDraft()&&!assemblyVariant.released().isPresent()){
             return;
         }
         Optional<AssemblyMetadata> metadata = traverseFrom(assemblyVariant)
