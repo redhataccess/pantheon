@@ -1,5 +1,5 @@
 //include::../attributes.adoc[]
-[id="publishing-content-in-pantheon_{context}"]
+[id="publishing-content_{context}"]
 = Publishing {ContentTerm}
 
 [role=_abstract]

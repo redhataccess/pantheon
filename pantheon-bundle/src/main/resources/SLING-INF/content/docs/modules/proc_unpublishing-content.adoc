@@ -1,5 +1,5 @@
 //include::../attributes.adoc[]
-[id="unpublishing-content-in-pantheon_{context}"]
+[id="unpublishing-content_{context}"]
 = Unpublishing {ContentTerm}
 
 [role=_abstract]
