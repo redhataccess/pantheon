@@ -313,9 +313,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
 
     private onPublishEvent = () => {
         // try to get the url from api only if the component has been published
-        if (this.state.releaseUpdateDate.trim() !== ""
-            && this.state.releaseUpdateDate.length >= 15 ?
-                new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.releaseUpdateDate)) : "--") {
+        if (this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== "-") {
             this.getPortalUrl(this.props.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length), this.state.variant)
         }
     }
@@ -435,7 +433,6 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                             this.setState({portalUrl: text})
                         }else{
                             // if portal url is empty, assemble the URL at client side
-                            console.log("API returned empty string for URL. Constructing the URL at client side")
                             this.getVersionUUID(this.props.location.pathname)
                         }
                     })

@@ -282,9 +282,7 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
 
     private onPublishEvent = () => {
         // try to get the url from api only if the component has been published
-        if (this.state.releaseUpdateDate.trim() !== ""
-        && this.state.releaseUpdateDate.length >= 15 ?
-            new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.releaseUpdateDate)) : "--") {
+        if (this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== "-") {
             this.getPortalUrl(this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length), this.state.variant)
         }
 
@@ -402,7 +400,6 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
                         if (text.trim()!=="") {
                             this.setState({portalUrl: text})
                         } else {
-                            console.log("API returned empty string for URL. Constructing the URL at client side")
                             this.getVersionUUID(this.props.location.pathname)
                         }
                     })
