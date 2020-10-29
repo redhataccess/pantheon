@@ -517,6 +517,7 @@ class Versions extends Component<IProps, IState> {
                             publishAlertVisible: false,
                             showMetadataAlertIcon: false
                         })
+                        this.props.onPublishEvent()
                     } else {
                         console.log(buttonText + " failed " + response.status)
                         this.setState({ publishAlertVisible: true })

@@ -24,6 +24,10 @@ export interface IAssemblyDisplayState {
         variant: string
         variantUUID: string
         versionValue: string
+        portalHostUrl: string
+        productUrlFragment: string
+        versionUrlFragment: string
+        locale: string
 }
 
 class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
@@ -46,7 +50,11 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
             results: {},
             variant: "DEFAULT",
             variantUUID: "",
-            versionValue: ""
+            versionValue: "",
+            portalHostUrl: "",
+            productUrlFragment: "",
+            versionUrlFragment: "",
+            locale: ""
         }
     }
 
@@ -54,6 +62,8 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
         this.fetchAttributesFilePath(this.props)
+        this.getLocale(this.props.location.pathname)
+        this.getPortalHostUrl()
     }
 
     public render() {
@@ -271,10 +281,33 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
     }
 
     private onPublishEvent = () => {
-        this.getVersionUUID(this.props.location.pathname)
-        setTimeout(()=> {
-            this.getPortalUrl(this.props.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length), this.state.variant)
-        }, 500)
+        // try to get the url from api only if the component has been published
+        if (this.state.releaseUpdateDate.trim() !== ""
+        && this.state.releaseUpdateDate.length >= 15 ?
+            new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.releaseUpdateDate)) : "--") {
+            this.getPortalUrl(this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length), this.state.variant)
+        }
+
+    }
+
+    private getLocale = (path) =>{
+        // remove /module from path
+        path = path.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length)
+        // path = "/content" + path + "/en_US/1/metadata.json"
+        path = "/content" + path + ".harray.1.json"
+        fetch(path)
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                }else {
+                    throw new Error(response.statusText)
+                }
+            })
+            .then(responseJSON => {
+                    this.setState({locale: responseJSON.__children__[0].__name__})
+                }
+
+            )
     }
 
     private getVersionUUID = (path) => {
@@ -331,7 +364,10 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
                         if (productChild.__children__) {
                             for (const productVersion of productChild.__children__) {
                                 if (productVersion[Fields.JCR_UUID] === uuid) {
-                                    this.setState({ productValue: product.name, versionValue: productVersion.name })
+                                    // this.setState({ productValue: product.name, versionValue: productVersion.name })
+                                    this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
+                                    const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase()+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/guide/' + this.state.variantUUID
+                                    this.setState({ portalUrl: url})
                                     break
                                 }
                             }
@@ -363,7 +399,12 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
             .then(resp => {
                 if (resp.ok) {
                     resp.text().then(text => {
-                        this.setState({ portalUrl: text })
+                        if (text.trim()!=="") {
+                            this.setState({portalUrl: text})
+                        } else {
+                            console.log("API returned empty string for URL. Constructing the URL at client side")
+                            this.getVersionUUID(this.props.location.pathname)
+                        }
                     })
                 }
             })
@@ -401,6 +442,17 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
             })
             .catch((error) => {
                 console.log(error)
+            })
+    }
+    private getPortalHostUrl = () => {
+        fetch('/conf/pantheon/pant:portalUrl')
+            .then(resp => {
+                if (resp.ok) {
+                    resp.text().then(text => {
+                        this.setState({ portalHostUrl: text })
+                        // console.log("set portalHost: " + this.state.portalHost)
+                    })
+                }
             })
     }
 }

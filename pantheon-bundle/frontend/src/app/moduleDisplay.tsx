@@ -28,6 +28,10 @@ export interface IModuleDisplayState {
     variant: string
     variantUUID: string
     versionValue: string
+    portalHostUrl: string
+    productUrlFragment: string
+    versionUrlFragment: string
+    locale: string
 }
 
 class ModuleDisplay extends Component<any, IModuleDisplayState> {
@@ -53,7 +57,11 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
             versionValue: "",
             assemblyData: [],
             assemblyTitle: "",
-            assemblyPath: ""
+            assemblyPath: "",
+            portalHostUrl: "",
+            productUrlFragment: "",
+            versionUrlFragment: "",
+            locale: ""
         }
     }
 
@@ -61,6 +69,9 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
         this.fetchAttributesFilePath(this.props)
+        this.getVersionUUID(this.props.location.pathname)
+        this.getPortalHostUrl()
+        this.getLocale(this.props.location.pathname)
 
     }
 
@@ -301,13 +312,33 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
     }
 
     private onPublishEvent = () => {
-        this.getVersionUUID(this.props.location.pathname)
-
-        setTimeout(()=> {
+        // try to get the url from api only if the component has been published
+        if (this.state.releaseUpdateDate.trim() !== ""
+            && this.state.releaseUpdateDate.length >= 15 ?
+                new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.releaseUpdateDate)) : "--") {
             this.getPortalUrl(this.props.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length), this.state.variant)
-        }, 500)
+        }
     }
 
+    private getLocale = (path) =>{
+        // remove /module from path
+        path = path.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
+        // path = "/content" + path + "/en_US/1/metadata.json"
+        path = "/content" + path + ".harray.1.json"
+        fetch(path)
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                }else {
+                    throw new Error(response.statusText)
+                }
+            })
+            .then(responseJSON => {
+                    this.setState({locale: responseJSON.__children__[0].__name__})
+                }
+
+            )
+    }
     private getVersionUUID = (path) => {
         // remove /module from path
         path = path.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
@@ -362,7 +393,11 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                         if (productChild.__children__) {
                             for (const productVersion of productChild.__children__) {
                                 if (productVersion[Fields.JCR_UUID] === uuid) {
-                                    this.setState({ productValue: product.name, versionValue: productVersion.name })
+                                    this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
+                                    const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase().replace("_","-")+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/topic/' + this.state.variantUUID
+                                    if(this.state.productUrlFragment!==""){
+                                        this.setState({ portalUrl: url})
+                                    }
                                     break
                                 }
                             }
@@ -370,6 +405,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                     }
                 }
             })
+
     }
 
     private copyToClipboard = () => {
@@ -394,7 +430,14 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
             .then(resp => {
                 if (resp.ok) {
                     resp.text().then(text => {
-                        this.setState({ portalUrl: text })
+                        // get portal url from api and set it only if it is not empty
+                        if(text.trim() !== "") {
+                            this.setState({portalUrl: text})
+                        }else{
+                            // if portal url is empty, assemble the URL at client side
+                            console.log("API returned empty string for URL. Constructing the URL at client side")
+                            this.getVersionUUID(this.props.location.pathname)
+                        }
                     })
                 }
             })
@@ -448,6 +491,17 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                 }
 
             )
+    }
+    private getPortalHostUrl = () => {
+        fetch('/conf/pantheon/pant:portalUrl')
+            .then(resp => {
+                if (resp.ok) {
+                    resp.text().then(text => {
+                        this.setState({ portalHostUrl: text })
+                        // console.log("set portalHost: " + this.state.portalHost)
+                    })
+                }
+            })
     }
 
 }
