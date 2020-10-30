@@ -364,7 +364,7 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
                                 if (productVersion[Fields.JCR_UUID] === uuid) {
                                     // this.setState({ productValue: product.name, versionValue: productVersion.name })
                                     this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
-                                    const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase()+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/guide/' + this.state.variantUUID
+                                    const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase().replace("_","-")+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/guide/' + this.state.variantUUID
                                     this.setState({ portalUrl: url})
                                     break
                                 }
@@ -400,6 +400,7 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
                         if (text.trim()!=="") {
                             this.setState({portalUrl: text})
                         } else {
+                            console.log("GetPortalURI API returned empty URI. Falling back to url construction at UI")
                             this.getVersionUUID(this.props.location.pathname)
                         }
                     })
