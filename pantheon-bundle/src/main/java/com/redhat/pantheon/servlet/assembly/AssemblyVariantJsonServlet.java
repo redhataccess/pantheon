@@ -17,6 +17,7 @@ import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
 import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.servlet.util.ServletHelper;
 import com.redhat.pantheon.servlet.util.SlingPathSuffix;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -201,7 +202,10 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                         .variants().get()
                         .canonicalVariant().get();
                 moduleMap.put("canonical_uuid", canonical.uuid().get());
-                moduleMap.put("title", page.title().get());
+                // Get the current title from module instead of using the stored value in the content node
+                // When module title is modified, the value stored in content node becomes stale.
+                // Sometime, the title stored in content node shows filename instead of title.
+                moduleMap.put("title", ServletHelper.getModuleTitleFromUuid(canonical));
                 moduleMap.put("module_uuid", module.uuid().get());
                 // check if the module is published
                 if (canonical.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {
