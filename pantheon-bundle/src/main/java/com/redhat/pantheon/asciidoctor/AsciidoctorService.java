@@ -236,6 +236,8 @@ public class AsciidoctorService {
                     .attribute("pantheonversion", productVersion.isPresent() ? productVersion.get().name().get() : "")
                     // Shows custom rendering attribute to Haml
                     .attribute("pantheonenv", "preview")
+                    // Provide doctype for haml use
+                    .attribute("pantheondoctype", Assembly.class.equals(cls) ? "assembly" : "module")
                     // we want to avoid the footer on the generated html
                     .noFooter(true)
                     // link the css instead of embedding it
