@@ -433,6 +433,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                             this.setState({portalUrl: text})
                         }else{
                             // if portal url is empty, assemble the URL at client side
+                            console.log("GetPortalURI API returned empty URI. Falling back to url construction at UI")
                             this.getVersionUUID(this.props.location.pathname)
                         }
                     })
