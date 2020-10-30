@@ -281,10 +281,8 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
     }
 
     private onPublishEvent = () => {
-        // try to get the url from api only if the component has been published
-        if (this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== "-") {
-            this.getPortalUrl(this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length), this.state.variant)
-        }
+        // the published state cannot be ascertained correctly when moving from one page to another
+        this.getPortalUrl(this.props.location.pathname.substring(PathPrefixes.ASSEBMLY_PATH_PREFIX.length), this.state.variant)
 
     }
 
@@ -302,7 +300,9 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
                 }
             })
             .then(responseJSON => {
-                    this.setState({locale: responseJSON.__children__[0].__name__})
+                    const locale = responseJSON.__children__[0].__name__
+                    const localeFinal = locale.replace("_","-")
+                    this.setState({locale: localeFinal})
                 }
 
             )
@@ -364,7 +364,8 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
                                 if (productVersion[Fields.JCR_UUID] === uuid) {
                                     // this.setState({ productValue: product.name, versionValue: productVersion.name })
                                     this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
-                                    const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase().replace("_","-")+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/guide/' + this.state.variantUUID
+                                    const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase()+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/guide/' + this.state.variantUUID
+                                    console.log("Constructed url="+url)
                                     this.setState({ portalUrl: url})
                                     break
                                 }
@@ -404,6 +405,10 @@ class AssemblyDisplay extends Component<any, IAssemblyDisplayState> {
                             this.getVersionUUID(this.props.location.pathname)
                         }
                     })
+                }else{
+                    // construct locally if call fails
+                    console.log("GetPortalURI API returned error. Falling back to url construction at UI")
+                    this.getVersionUUID(this.props.location.pathname)
                 }
             })
     }
