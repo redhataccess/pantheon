@@ -2,8 +2,7 @@
 [id="publishing-content_{context}"]
 = Publishing {ContentTerm}
 
-[role=_abstract]
-
+[role="_abstract"]
 You need to publish a module or assembly when you want it to appear on the {PublishingPortal}.
 
 .Prerequisites
@@ -29,5 +28,6 @@ After publishing, you can view the module or assembly at the following URL:
 +
 where, __PRODUCT_URL__ is the URL for the product, and __UUID__ is the auto-generated unique identifier for the {ContentTerm}.
 
+[role="_additional-resources"]
 .Additional Resources
 * link:<LinkToHowToSearchModules>[How To Search Modules]
