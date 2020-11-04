@@ -15,6 +15,8 @@ You can import modules and assemblies into {ProductShortName} from either GitHub
 
 . Navigate to the link:{LinkToGitImportPage}[Git Import page].
 . Enter the Git repository URL for the {ContentTerm} you want to import.
-. By default, this procedure imports the "master" branch of the {ContentTerm} repository, but you can enter a specific branch to import instead if you prefer. 
+. By default, this procedure imports the "master" branch of the {ContentTerm} repository, but you can enter a specific branch to import instead if you prefer.
 . Click *Submit*.
 . Click *Yes* to confirm and return to the link:{LinkToSearchPage}[Search page], or *No* to remain on the Git Import page.
++
+Note that it takes {ProductShortName} some time to synchronize its database and the UI following the import. Therefore your files may not be immediately available when you are redirected in the UI,
