@@ -14,6 +14,7 @@ import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
 
 import javax.jcr.Node;
@@ -50,10 +51,34 @@ public class ServletHelper {
         VARIANT_TYPES.add(PantheonConstants.RESOURCE_TYPE_MODULEVARIANT);
     }
 
+    private static final Set<String> METADATA_COPY_EXCLUDES = Collections.unmodifiableSet(
+            new HashSet<>(
+                    Arrays.asList(
+                            "jcr:description",
+                            "jcr:lastModified",
+                            "jcr:primaryType",
+                            "jcr:title",
+                            "pant:dateUploaded",
+                            "pant:datePublished"
+                    )));
+
     /**
      * Instantiates a new Servlet helper.
      */
     public ServletHelper() {}
+
+    public static void copyMetadataFromReleased(DocumentMetadata draftMetadata,
+                                                Document document,
+                                                Locale locale,
+                                                String variant) {
+        ModifiableValueMap draftMap = draftMetadata.adaptTo(ModifiableValueMap.class);
+
+        // Need to copy metadata from released onto draft
+        document.getReleasedMetadata(locale, variant).ifPresent(releasedMetadata ->
+                releasedMetadata.getValueMap().entrySet().stream()
+                        .filter(entry -> !METADATA_COPY_EXCLUDES.contains(entry.getKey()))
+                        .forEach(entry -> draftMap.put(entry.getKey(), entry.getValue())));
+    }
 
     /**
      * Returns a Resource given uuid

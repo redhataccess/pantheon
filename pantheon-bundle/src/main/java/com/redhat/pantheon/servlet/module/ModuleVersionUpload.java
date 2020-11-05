@@ -4,6 +4,7 @@ import com.google.common.hash.HashCode;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.jcr.JcrResources;
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.module.Module;
@@ -11,14 +12,17 @@ import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.ModuleType;
 import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.servlet.util.ServletHelper;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -32,10 +36,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Post operation to add a new Module version to the system.
@@ -126,24 +135,30 @@ public class ModuleVersionUpload extends AbstractPostOperation {
                 draftSrc.jcrContent().getOrCreate()
                         .mimeType().set("text/x-asciidoc");
 
+                String variantName = moduleLocale.getWorkspace().getCanonicalVariantName();
+                Child<ModuleMetadata> metadataChild = moduleLocale
+                        .variants().getOrCreate()
+                        .variant(variantName)
+                        .getOrCreate()
+                        .draft().getOrCreate()
+                        .metadata();
+                ModuleMetadata draftMetadata = Optional.ofNullable(metadataChild.get()).orElseGet(() -> {
+                    ModuleMetadata draftMeta = metadataChild.create();
+                    ServletHelper.copyMetadataFromReleased(draftMeta, module, localeObj, variantName);
+                    return draftMeta;
+                });
+                draftMetadata.dateModified().set(Calendar.getInstance());
+
                 resolver.commit();
 
                 Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
                 asciidoctorService.getDocumentHtml(module, localeObj, module.getWorkspace().getCanonicalVariantName(),
                         true, context, true);
 
-                ModuleMetadata moduleMetadata = moduleLocale
-                        .variants().getOrCreate()
-                        .variant(
-                                moduleLocale.getWorkspace().getCanonicalVariantName())
-                        .getOrCreate()
-                        .draft().getOrCreate()
-                        .metadata().getOrCreate();
-                moduleMetadata.dateModified().set(Calendar.getInstance());
                 // Generate a module type based on the file name ONLY after asciidoc generation, so that the
                 // attribute-based logic takes precedence
-                if(moduleMetadata.moduleType().get() == null) {
-                    moduleMetadata.moduleType().set(determineModuleType(module));
+                if(draftMetadata.moduleType().get() == null) {
+                    draftMetadata.moduleType().set(determineModuleType(module));
                 }
             }
 

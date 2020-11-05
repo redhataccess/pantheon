@@ -37,6 +37,9 @@ public interface DocumentMetadata extends WorkspaceChild {
     @Named("pant:datePublished")
     Field<Calendar> datePublished();
 
+    @Named("pant:dateFirstPublished")
+    Field<Calendar> dateFirstPublished();
+
     @Deprecated
     @Named("pant:dateUploaded")
     Field<Calendar> dateUploaded();
