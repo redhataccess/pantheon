@@ -44,7 +44,7 @@ export interface ISearchState {
   isExpandedProductFilter: boolean
   isExpandedRepoFilter: boolean
   products: Array<{ name: string, id: string }>
-  repositories: Array<{ name: string, id: string, selected: boolean }>
+  repositories: Array<{ name: string, id: string, checked: boolean }>
 
   inputValue: string,
   statusIsExpanded: boolean,
@@ -76,7 +76,7 @@ class SearchBeta extends Component<any, ISearchState> {
       isExpandedProductFilter: true,
       isExpandedRepoFilter: true,
       products: [{ name: "", id: "" }],
-      repositories: [{ name: "", id: "", selected: false }],
+      repositories: [{ name: "", id: "", checked: false }],
       // states for toolbar
       inputValue: "",
       statusIsExpanded: false,
@@ -94,7 +94,7 @@ class SearchBeta extends Component<any, ISearchState> {
       // search
       keyword: "",
       productsSelected: [],
-      repositoriesSelected: ["rhel-8-docs-test", "rhel-8-docs-10122020"],
+      repositoriesSelected: ["rhel-8-docs-test", "rhel-8-docs"],
     };
     this.drawerRef = React.createRef();
 
@@ -135,7 +135,7 @@ class SearchBeta extends Component<any, ISearchState> {
             <SimpleList aria-label="Repository List">
               {this.state.repositories.map((data) => (
                 <SimpleListItem key={data.id}>
-                  <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onChange={this.onSelectRepositories}/>
+                  <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onClick={this.onSelectRepositories}/>
                 </SimpleListItem>
               ))}
             </SimpleList>
@@ -474,7 +474,7 @@ class SearchBeta extends Component<any, ISearchState> {
 
     if(value) {
       let inputString = "";
-      const matchFound = [{ name: "", id: "", selected: false }];
+      const matchFound = [{ name: "", id: "", checked: false }];
       
       this.state.repositories.map(data => {
         inputString = "" + data.name
@@ -510,21 +510,31 @@ class SearchBeta extends Component<any, ISearchState> {
   };
 
   private onSelectRepositories = (event) => {
+    console.log("[onSelectRepositories] event.target id =>", event.target.id)
     const checked = event.target.checked;
     console.log("[onSelectRepositories] checked =>", checked)
-    let repositories;
-    // if (rowId === -1) {
-      repositories = this.state.repositories.map(item => {
-        item.selected = checked;
-        return item;
-      });
-    // } else {
-    //   repositories = [...this.state.repositories];
-    //   repositories[rowId].selected = checked;
-    // }
-    this.setState({
-      repositories
+    let repositoriesSelected = new Array()
+    let repositories
+
+    repositories = this.state.repositories.map(item => {
+      if (item.id === event.target.id) {
+        item.checked = checked;
+      }
+      return item;
     });
+
+    repositoriesSelected = repositories.map(item => {
+      if (item.checked !== undefined && item.checked === true) {
+        if (item.name !== undefined) {
+          return item.name
+        }
+      }
+    })
+    this.setState({
+      repositories,
+      repositoriesSelected
+    });
+    
   }
 }
 
