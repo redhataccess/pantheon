@@ -13,6 +13,7 @@ import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.ModuleType;
 import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.servlet.util.ServletHelper;
+import com.redhat.pantheon.servlet.util.VersionUploadHelper;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ModifiableValueMap;
@@ -81,89 +82,12 @@ public class ModuleVersionUpload extends AbstractPostOperation {
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
 
         try {
-            String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
-            String path = request.getResource().getPath();
-
-            log.debug("Pushing new module version at: " + path + " with locale: " + locale);
-            int responseCode = HttpServletResponse.SC_OK;
-
-            // Try to find the module
-            ResourceResolver resolver = request.getResourceResolver();
-            Resource moduleResource = resolver.getResource(path);
-            Module module;
-            if(moduleResource == null) {
-                module =
-                        SlingModels.createModel(
-                                resolver,
-                                path,
-                                Module.class);
-                responseCode = HttpServletResponse.SC_CREATED;
-            } else {
-                module = moduleResource.adaptTo(Module.class);
-            }
-
-            Locale localeObj = LocaleUtils.toLocale(locale);
-            ModuleLocale moduleLocale = module.locale(localeObj).getOrCreate();
-            HashableFileResource draftSrc = moduleLocale
-                    .source().getOrCreate()
-                    .draft().getOrCreate();
-
-            // Check if the content is the same as what is hashed already
-            HashCode incomingSrcHash =
-                ServletUtils.handleParamAsStream(request, "asciidoc",
-                        inputStream -> {
-                            try {
-                                return JcrResources.hash(inputStream);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-            String storedSrcHash = draftSrc.hash().get();
-            // If the source content is the same, don't update it
-            if(incomingSrcHash.toString().equals( storedSrcHash )) {
-                responseCode = HttpServletResponse.SC_NOT_MODIFIED;
-            } else {
-                ServletUtils.handleParamAsStream(request, "asciidoc",
-                        inputStream -> {
-                            Session session = resolver.adaptTo(Session.class);
-                            draftSrc.jcrContent().getOrCreate()
-                                    .jcrData().toFieldType(InputStream.class)
-                                    .set(inputStream);
-                            return null;
-                        });
-                draftSrc.hash().set( incomingSrcHash.toString() );
-                draftSrc.jcrContent().getOrCreate()
-                        .mimeType().set("text/x-asciidoc");
-
-                String variantName = moduleLocale.getWorkspace().getCanonicalVariantName();
-                Child<ModuleMetadata> metadataChild = moduleLocale
-                        .variants().getOrCreate()
-                        .variant(variantName)
-                        .getOrCreate()
-                        .draft().getOrCreate()
-                        .metadata();
-                ModuleMetadata draftMetadata = Optional.ofNullable(metadataChild.get()).orElseGet(() -> {
-                    ModuleMetadata draftMeta = metadataChild.create();
-                    ServletHelper.copyMetadataFromReleased(draftMeta, module, localeObj, variantName);
-                    return draftMeta;
-                });
-                draftMetadata.dateModified().set(Calendar.getInstance());
-
-                resolver.commit();
-
-                Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
-                asciidoctorService.getDocumentHtml(module, localeObj, module.getWorkspace().getCanonicalVariantName(),
-                        true, context, true);
-
-                // Generate a module type based on the file name ONLY after asciidoc generation, so that the
-                // attribute-based logic takes precedence
-                if(draftMetadata.moduleType().get() == null) {
-                    draftMetadata.moduleType().set(determineModuleType(module));
+            VersionUploadHelper.doRun(request, response, asciidoctorService, Module.class, (document, draftMetadata) -> {
+                ModuleMetadata meta = (ModuleMetadata) draftMetadata;
+                if(meta.moduleType().get() == null) {
+                    meta.moduleType().set(determineModuleType((Module) document));
                 }
-            }
-
-            resolver.commit();
-            response.setStatus(responseCode, "");
+            });
         } catch (Exception e) {
             throw new RepositoryException("Error uploading a module version", e);
         }

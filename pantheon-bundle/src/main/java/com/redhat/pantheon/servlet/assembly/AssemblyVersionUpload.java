@@ -11,6 +11,7 @@ import com.redhat.pantheon.model.assembly.AssemblyLocale;
 import com.redhat.pantheon.model.assembly.AssemblyMetadata;
 import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.servlet.module.ModuleVersionUpload;
+import com.redhat.pantheon.servlet.util.VersionUploadHelper;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -59,81 +60,7 @@ public class AssemblyVersionUpload extends AbstractPostOperation {
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
 
         try {
-            String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
-            String path = request.getResource().getPath();
-
-            log.debug("Pushing new version at: " + path + " with locale: " + locale);
-            int responseCode = HttpServletResponse.SC_OK;
-
-            // Try to find the resource
-            ResourceResolver resolver = request.getResourceResolver();
-            Resource resource = resolver.getResource(path);
-            // TODO: need make it more generic so that it can create both module and assemly contentTypes
-            Assembly assembly;
-            if (resource == null) {
-                assembly =
-                        SlingModels.createModel(
-                                resolver,
-                                path,
-                                Assembly.class);
-                responseCode = HttpServletResponse.SC_CREATED;
-            } else {
-                assembly = resource.adaptTo(Assembly.class);
-            }
-
-            Locale localeObj = LocaleUtils.toLocale(locale);
-            AssemblyLocale assemblyLocale = assembly.locale(localeObj).getOrCreate();
-            HashableFileResource draftSrc = assemblyLocale
-                    .source().getOrCreate()
-                    .draft().getOrCreate();
-
-            // Check if the content is the same as what is hashed already
-            HashCode incomingSrcHash =
-                    ServletUtils.handleParamAsStream(request, "asciidoc",
-                            inputStream -> {
-                                try {
-                                    return JcrResources.hash(inputStream);
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            });
-            String storedSrcHash = draftSrc.hash().get();
-            // If the source content is the same, don't update it
-            if (incomingSrcHash.toString().equals(storedSrcHash)) {
-                responseCode = HttpServletResponse.SC_NOT_MODIFIED;
-            } else {
-                ServletUtils.handleParamAsStream(request, "asciidoc",
-                        inputStream -> {
-                            Session session = resolver.adaptTo(Session.class);
-                            draftSrc.jcrContent().getOrCreate()
-                                    .jcrData().toFieldType(InputStream.class)
-                                    .set(inputStream);
-                            return null;
-                        });
-                draftSrc.hash().set( incomingSrcHash.toString() );
-                draftSrc.jcrContent().getOrCreate()
-                        .mimeType().set("text/x-asciidoc");
-
-                resolver.commit();
-
-                Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
-                asciidoctorService.getDocumentHtml(assembly, localeObj, assembly.getWorkspace().getCanonicalVariantName(),
-                        true, context, true);
-
-                AssemblyMetadata moduleMetadata = assemblyLocale
-                        .variants().getOrCreate()
-                        .variant(
-                                assemblyLocale.getWorkspace().getCanonicalVariantName())
-                        .getOrCreate()
-                        .draft().getOrCreate()
-                        .metadata().getOrCreate();
-                moduleMetadata.dateModified().set(Calendar.getInstance());
-            }
-
-            resolver.commit();
-
-            // TODO: trigger an event to generate the html asynchronous
-            response.setStatus(responseCode, "");
+            VersionUploadHelper.doRun(request, response, asciidoctorService, Assembly.class, null);
         } catch (Exception e) {
             throw new RepositoryException("Error uploading an assembly version", e);
         }
