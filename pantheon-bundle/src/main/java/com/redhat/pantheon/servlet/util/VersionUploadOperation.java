@@ -16,6 +16,7 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.PostResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +33,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
-public class VersionUploadHelper {
-    private static final Logger log = LoggerFactory.getLogger(VersionUploadHelper.class);
+public abstract class VersionUploadOperation extends AbstractPostOperation {
+
+    private static final Logger log = LoggerFactory.getLogger(VersionUploadOperation.class);
 
     private static final Set<String> METADATA_COPY_EXCLUDES = Collections.unmodifiableSet(
             new HashSet<>(
@@ -48,11 +49,10 @@ public class VersionUploadHelper {
                             "pant:datePublished"
                     )));
 
-    public static void doRun(SlingHttpServletRequest request,
+    protected void runCommon(SlingHttpServletRequest request,
                             PostResponse response,
                             AsciidoctorService asciidoctorService,
-                            Class<? extends Document> doctype,
-                            BiConsumer<Document, DocumentMetadata> doctypeExtras) throws IOException {
+                            Class<? extends Document> doctype) throws IOException {
         String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
         String path = request.getResource().getPath();
 
@@ -127,16 +127,16 @@ public class VersionUploadHelper {
             asciidoctorService.getDocumentHtml(document, localeObj, document.getWorkspace().getCanonicalVariantName(),
                     true, context, true);
 
-            DocumentMetadata documentMetadata = documentLocale
+            draftMetadata = documentLocale
                     .variants().getOrCreate()
                     .variant(
                             documentLocale.getWorkspace().getCanonicalVariantName())
                     .getOrCreate()
                     .draft().getOrCreate()
                     .metadata().getOrCreate();
-            documentMetadata.dateModified().set(Calendar.getInstance());
+            draftMetadata.dateModified().set(Calendar.getInstance());
 
-            Optional.ofNullable(doctypeExtras).ifPresent(extras -> extras.accept(document, documentMetadata));
+            performTypeSpecficExtras(document, draftMetadata);
         }
 
         // TODO: trigger an event to generate the html asynchronous
@@ -156,4 +156,6 @@ public class VersionUploadHelper {
                         .filter(entry -> !METADATA_COPY_EXCLUDES.contains(entry.getKey()))
                         .forEach(entry -> draftMap.put(entry.getKey(), entry.getValue())));
     }
+
+    protected abstract void performTypeSpecficExtras(Document document, DocumentMetadata draftMetadata);
 }

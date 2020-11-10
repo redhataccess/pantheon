@@ -1,29 +1,16 @@
 package com.redhat.pantheon.servlet.module;
 
-import com.google.common.hash.HashCode;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
-import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.jcr.JcrResources;
-import com.redhat.pantheon.model.api.Child;
-import com.redhat.pantheon.model.api.SlingModels;
-import com.redhat.pantheon.model.HashableFileResource;
+import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.ModuleType;
-import com.redhat.pantheon.servlet.ServletUtils;
-import com.redhat.pantheon.servlet.util.ServletHelper;
-import com.redhat.pantheon.servlet.util.VersionUploadHelper;
-import org.apache.commons.lang3.LocaleUtils;
+import com.redhat.pantheon.servlet.util.VersionUploadOperation;
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.ModifiableValueMap;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
-import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -32,20 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * Post operation to add a new Module version to the system.
@@ -66,9 +40,7 @@ import java.util.Set;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
                 PostOperation.PROP_OPERATION_NAME + "=pant:newModuleVersion"
         })
-public class ModuleVersionUpload extends AbstractPostOperation {
-
-    private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
+public class ModuleVersionUpload extends VersionUploadOperation {
 
     private AsciidoctorService asciidoctorService;
 
@@ -82,12 +54,7 @@ public class ModuleVersionUpload extends AbstractPostOperation {
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
 
         try {
-            VersionUploadHelper.doRun(request, response, asciidoctorService, Module.class, (document, draftMetadata) -> {
-                ModuleMetadata meta = (ModuleMetadata) draftMetadata;
-                if(meta.moduleType().get() == null) {
-                    meta.moduleType().set(determineModuleType((Module) document));
-                }
-            });
+            runCommon(request, response, asciidoctorService, Module.class);
         } catch (Exception e) {
             throw new RepositoryException("Error uploading a module version", e);
         }
@@ -112,6 +79,14 @@ public class ModuleVersionUpload extends AbstractPostOperation {
         }
         else {
             return null;
+        }
+    }
+
+    @Override
+    protected void performTypeSpecficExtras(Document document, DocumentMetadata draftMetadata) {
+        ModuleMetadata meta = (ModuleMetadata) draftMetadata;
+        if(meta.moduleType().get() == null) {
+            meta.moduleType().set(determineModuleType((Module) document));
         }
     }
 }

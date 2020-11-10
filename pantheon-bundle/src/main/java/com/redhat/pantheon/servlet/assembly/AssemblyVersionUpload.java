@@ -1,22 +1,12 @@
 package com.redhat.pantheon.servlet.assembly;
 
-import com.google.common.hash.HashCode;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
-import com.redhat.pantheon.conf.GlobalConfig;
-import com.redhat.pantheon.jcr.JcrResources;
-import com.redhat.pantheon.model.HashableFileResource;
-import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.assembly.Assembly;
-import com.redhat.pantheon.model.assembly.AssemblyLocale;
-import com.redhat.pantheon.model.assembly.AssemblyMetadata;
-import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.servlet.module.ModuleVersionUpload;
-import com.redhat.pantheon.servlet.util.VersionUploadHelper;
-import org.apache.commons.lang3.LocaleUtils;
+import com.redhat.pantheon.servlet.util.VersionUploadOperation;
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.servlets.post.AbstractPostOperation;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.PostOperation;
 import org.apache.sling.servlets.post.PostResponse;
@@ -28,15 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 @Component(
         service = PostOperation.class,
@@ -45,8 +27,7 @@ import java.util.Map;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
                 PostOperation.PROP_OPERATION_NAME + "=pant:newAssemblyVersion"
         })
-public class AssemblyVersionUpload extends AbstractPostOperation {
-    private static final Logger log = LoggerFactory.getLogger(ModuleVersionUpload.class);
+public class AssemblyVersionUpload extends VersionUploadOperation {
 
     private AsciidoctorService asciidoctorService;
 
@@ -60,9 +41,12 @@ public class AssemblyVersionUpload extends AbstractPostOperation {
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
 
         try {
-            VersionUploadHelper.doRun(request, response, asciidoctorService, Assembly.class, null);
+            runCommon(request, response, asciidoctorService, Assembly.class);
         } catch (Exception e) {
             throw new RepositoryException("Error uploading an assembly version", e);
         }
     }
+
+    @Override
+    protected void performTypeSpecficExtras(Document document, DocumentMetadata draftMetadata) {}
 }
