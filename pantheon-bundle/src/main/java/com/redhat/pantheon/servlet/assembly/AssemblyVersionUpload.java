@@ -4,7 +4,6 @@ import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentMetadata;
-import com.redhat.pantheon.servlet.module.ModuleVersionUpload;
 import com.redhat.pantheon.servlet.util.VersionUploadOperation;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.servlets.post.Modification;
@@ -14,8 +13,6 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import java.util.List;
@@ -41,7 +38,7 @@ public class AssemblyVersionUpload extends VersionUploadOperation {
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
 
         try {
-            runCommon(request, response, asciidoctorService, Assembly.class);
+            versionUpload(request, response, asciidoctorService, Assembly.class);
         } catch (Exception e) {
             throw new RepositoryException("Error uploading an assembly version", e);
         }

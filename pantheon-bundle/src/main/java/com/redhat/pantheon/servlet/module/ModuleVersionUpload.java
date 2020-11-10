@@ -15,8 +15,6 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import java.util.List;
@@ -54,7 +52,7 @@ public class ModuleVersionUpload extends VersionUploadOperation {
     protected void doRun(SlingHttpServletRequest request, PostResponse response, List<Modification> changes) throws RepositoryException {
 
         try {
-            runCommon(request, response, asciidoctorService, Module.class);
+            versionUpload(request, response, asciidoctorService, Module.class);
         } catch (Exception e) {
             throw new RepositoryException("Error uploading a module version", e);
         }

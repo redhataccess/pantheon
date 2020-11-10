@@ -49,10 +49,10 @@ public abstract class VersionUploadOperation extends AbstractPostOperation {
                             "pant:datePublished"
                     )));
 
-    protected void runCommon(SlingHttpServletRequest request,
-                            PostResponse response,
-                            AsciidoctorService asciidoctorService,
-                            Class<? extends Document> doctype) throws IOException {
+    protected void versionUpload(SlingHttpServletRequest request,
+                                 PostResponse response,
+                                 AsciidoctorService asciidoctorService,
+                                 Class<? extends Document> doctype) throws IOException {
         String locale = ServletUtils.paramValue(request, "locale", GlobalConfig.DEFAULT_MODULE_LOCALE.toString());
         String path = request.getResource().getPath();
 

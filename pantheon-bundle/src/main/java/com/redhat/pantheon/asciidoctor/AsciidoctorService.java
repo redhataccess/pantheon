@@ -248,21 +248,21 @@ public class AsciidoctorService {
                 atts.attribute("attsFile", PathUtils.concat(entitiesPath, attributesFilePath.get()));
             }
 
-//            Calendar updatedDate = documentVersion.metadata().get().datePublished().get();
-//            if (updatedDate != null) {
-//                // show pantheonupdateddate on generated html. Base the value from metadata.
-//                atts.attribute("pantheonupdateddate", dateFormat.format(updatedDate.getTime()));
-//
-//                // This is for docs that were published before we changed the date logic, and therefore do not have
-//                // "first published" metadata.
-//                atts.attribute("pantheonpublisheddate", dateFormat.format(updatedDate.getTime()));
-//            }
-//
-//            Calendar publishedDate = documentVersion.metadata().get().dateFirstPublished().get();
-//            if (publishedDate != null) {
-//                // show pantheonpublisheddate on generated html. Base the value from metadata.
-//                atts.attribute("pantheonpublisheddate", dateFormat.format(publishedDate.getTime()));
-//            }
+            Calendar updatedDate = documentVersion.metadata().get().datePublished().get();
+            if (updatedDate != null) {
+                // show pantheonupdateddate on generated html. Base the value from metadata.
+                atts.attribute("pantheonupdateddate", dateFormat.format(updatedDate.getTime()));
+
+                // This is for docs that were published before we changed the date logic, and therefore do not have
+                // "first published" metadata.
+                atts.attribute("pantheonpublisheddate", dateFormat.format(updatedDate.getTime()));
+            }
+
+            Calendar publishedDate = documentVersion.metadata().get().dateFirstPublished().get();
+            if (publishedDate != null) {
+                // show pantheonpublisheddate on generated html. Base the value from metadata.
+                atts.attribute("pantheonpublisheddate", dateFormat.format(publishedDate.getTime()));
+            }
 
             // Add the context as attributes to the generation process
             context.entrySet().stream().forEach(entry -> {
