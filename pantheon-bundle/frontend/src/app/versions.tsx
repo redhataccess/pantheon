@@ -174,23 +174,23 @@ class Versions extends Component<IProps, IState> {
                                             <CardActions>{}</CardActions>
                                             {data.metadata !== undefined && !this.state.showMetadataAlertIcon &&
                                                 <CardActions>
-                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
+                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="draft">Add metadata</Button>
                                                 </CardActions>}
                                             {data.metadata !== undefined && this.state.showMetadataAlertIcon &&
                                                 <CardActions><i className="pf-icon pf-icon-warning-triangle" />
-                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
+                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="draft">Add metadata</Button>
                                                 </CardActions>}
-                                            <CardActions><Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)}>Preview</Button>
+                                            <CardActions><Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)} id="draftPreview">Preview</Button>
                                             </CardActions>
                                             {data.metadata !== undefined && !this.state.showMetadataAlertIcon &&
                                                 <CardActions>
-                                                    <Button variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
+                                                    <Button variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)} id="publishButton">{data.firstButtonText}</Button>
                                                 </CardActions>
                                             }
                                             {data.metadata !== undefined && this.state.showMetadataAlertIcon &&
                                                 <CardActions>
                                                     <Tooltip content="Add metadata to publish">
-                                                        <Button isAriaDisabled={true} variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
+                                                        <Button isAriaDisabled={true} variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)} id="publishButton">{data.firstButtonText}</Button>
                                                     </Tooltip>
                                                 </CardActions>
                                             }
@@ -248,13 +248,13 @@ class Versions extends Component<IProps, IState> {
                                                 <CardHeaderMain><strong><span id="span-source-type-version-published">Published</span></strong></CardHeaderMain>
                                                 <CardActions>{}</CardActions>
                                                 <CardActions>
-                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
+                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="released">Add metadata</Button>
                                                 </CardActions>
                                                 <CardActions>
-                                                    <Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)}>Preview</Button>
+                                                    <Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)} id="releasedPreview">Preview</Button>
                                                 </CardActions>
                                                 <CardActions>
-                                                    <Button variant="secondary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
+                                                    <Button variant="secondary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)} id="unpublishbutton">{data.firstButtonText}</Button>
                                                 </CardActions>
                                             </CardHeader>
 
@@ -457,10 +457,11 @@ class Versions extends Component<IProps, IState> {
                         results: [this.draft, this.release],
                     })
 
-                    if (this.draft && this.draft[0].version.length > 0) {
-                        this.setState({ metadataPath: this.draft[0].path })
-                    } else if (this.release && this.release[0].version.length > 0) {
+                    if (this.release && this.release[0].version.length > 0) {
                         this.setState({ metadataPath: this.release[0].path })
+                    }
+                    else if (this.draft && this.draft[0].version.length > 0) {
+                        this.setState({ metadataPath: this.draft[0].path })
                     }
                     this.getMetadata(this.state.metadataPath)
                     // Get documents included in assembly
@@ -543,7 +544,13 @@ class Versions extends Component<IProps, IState> {
         // process path
         const target = event.nativeEvent.target
         if (target.id !== undefined && target.id.trim().length > 0) {
-            this.setState({ metadataPath: target.id })
+
+            const lastSlash = this.state.metadataPath.lastIndexOf("/")
+            if (this.state.metadataPath.substring(lastSlash + 1) !== target.id) {
+                const incompletePath = this.state.metadataPath.substring(0,
+                    this.state.metadataPath.lastIndexOf("/"))
+                this.setState({ metadataPath: incompletePath + "/" + target.id })
+            }
         }
     }
 
@@ -731,7 +738,6 @@ class Versions extends Component<IProps, IState> {
     }
 
     private handlePublishButton = () => {
-        // console.log("[handlePublishButton] productInfo =>", this.props.productInfo)
         if (this.props.productInfo !== undefined && this.props.productInfo.trim().length > 0) {
             this.setState({ showMetadataAlertIcon: false })
         }
