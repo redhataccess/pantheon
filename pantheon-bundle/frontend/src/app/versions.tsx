@@ -48,6 +48,7 @@ interface IState {
     keywords: string
     login: boolean
     metadataPath: string
+    variantPath: string
     moduleUrl: string
     product: { label: string, value: string }
     productVersion: { label: string, uuid: string }
@@ -84,6 +85,7 @@ class Versions extends Component<IProps, IState> {
             keywords: "",
             login: false,
             metadataPath: "",
+            variantPath: "",
             moduleUrl: "",
             product: { label: "", value: "" },
             productVersion: { label: "", uuid: "" },
@@ -429,7 +431,7 @@ class Versions extends Component<IProps, IState> {
                     for (let i = 0; i < versionCount; i++) {
                         const moduleVersion = firstVariant.__children__[i]
                         let variantReleased = false
-                        // console.log("[versions] moduleVersion => ", moduleVersion)
+
                         if (moduleVersion.__name__ === "draft") {
                             this.draft[0].version = "Version " + moduleVersion.__name__
                             this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
@@ -455,15 +457,15 @@ class Versions extends Component<IProps, IState> {
                     }
                     this.setState({
                         results: [this.draft, this.release],
+                        variantPath: "/content" + this.props.modulePath + "/en_US/variants/" + this.props.variant
                     })
 
-                    if (this.release && this.release[0].version.length > 0) {
-                        this.setState({ metadataPath: this.release[0].path })
-                    }
-                    else if (this.draft && this.draft[0].version.length > 0) {
+                    // Check metadata for draft. Show warning icon if metadata missing for draft
+                    if (this.draft && this.draft[0].version.length > 0) {
                         this.setState({ metadataPath: this.draft[0].path })
+                        this.getMetadata(event)
                     }
-                    this.getMetadata(this.state.metadataPath)
+
                     // Get documents included in assembly
                     if (this.props.contentType === "assembly") {
                         this.getDocumentsIncluded(variantUuid)
@@ -544,13 +546,7 @@ class Versions extends Component<IProps, IState> {
         // process path
         const target = event.nativeEvent.target
         if (target.id !== undefined && target.id.trim().length > 0) {
-
-            const lastSlash = this.state.metadataPath.lastIndexOf("/")
-            if (this.state.metadataPath.substring(lastSlash + 1) !== target.id) {
-                const incompletePath = this.state.metadataPath.substring(0,
-                    this.state.metadataPath.lastIndexOf("/"))
-                this.setState({ metadataPath: incompletePath + "/" + target.id })
-            }
+            this.getMetadata(event)
         }
     }
 
@@ -693,34 +689,38 @@ class Versions extends Component<IProps, IState> {
         this.setState({ unpublishAlertForModuleVisible: false })
     }
 
-    private getMetadata = (versionPath) => {
-        if (versionPath.trim() !== "") {
-            fetch(versionPath + "/metadata.json")
-                .then(response => response.json())
-                .then(metadataResults => {
-                    if (JSON.stringify(metadataResults) !== "[]") {
-                        // Process results
-                        // Remove leading slash.
-                        if (metadataResults.urlFragment) {
-                            let url = metadataResults.urlFragment
-                            if (url.indexOf("/") === 0) {
-                                url = url.replace("/", "")
-
-                            }
-                            this.setState({ moduleUrl: url })
-                        }
-                        this.setState({
-                            keywords: metadataResults.searchKeywords,
-                            productVersion: { label: "", uuid: metadataResults.productVersion },
-                            usecaseValue: metadataResults.documentUsecase
-                        })
-                        if (metadataResults.productVersion !== undefined) {
-                            this.getProductFromVersionUuid(metadataResults.productVersion)
-                            this.setState({ showMetadataAlertIcon: false })
-                        }
-                    }
-                })
+    private getMetadata = (event) => {
+        let versionValue = ""
+        if (event !== undefined && event.target.id !== undefined) {
+            versionValue = event.target.id
+        } else {
+            versionValue = "draft"
         }
+        this.setState({ metadataPath: `${this.state.variantPath}/${versionValue}` })
+        fetch(`${this.state.variantPath}/${versionValue}/metadata.json`)
+            .then(response => response.json())
+            .then(metadataResults => {
+                if (JSON.stringify(metadataResults) !== "[]") {
+                    // Process results
+                    // Remove leading slash.
+                    if (metadataResults.urlFragment) {
+                        let url = metadataResults.urlFragment
+                        if (url.indexOf("/") === 0) {
+                            url = url.replace("/", "")
+                        }
+                        this.setState({ moduleUrl: url })
+                    }
+                    this.setState({
+                        keywords: metadataResults.searchKeywords,
+                        productVersion: { label: "", uuid: metadataResults.productVersion },
+                        usecaseValue: metadataResults.documentUsecase
+                    })
+                    if (metadataResults.productVersion !== undefined) {
+                        this.getProductFromVersionUuid(metadataResults.productVersion)
+                        this.setState({ showMetadataAlertIcon: false })
+                    }
+                }
+            })
     }
 
     private getProductFromVersionUuid(versionUuid) {
