@@ -85,7 +85,7 @@ class SearchResults extends Component<IProps, ISearchState> {
     }
 
     public componentDidMount() {
-        // this.buildSearchQuery()
+        this.buildSearchQuery()
         // this.getResults()
         this.doSearch()
     }
@@ -174,7 +174,7 @@ class SearchResults extends Component<IProps, ISearchState> {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
             const cellItem = new Array()
             cellItem.push(item["jcr:title"] )
-            cellItem.push("")
+            cellItem.push(item["pant:transientSourceName"])
             cellItem.push(item["pant:dateUploaded"])
             cellItem.push(publishedDate)
             
