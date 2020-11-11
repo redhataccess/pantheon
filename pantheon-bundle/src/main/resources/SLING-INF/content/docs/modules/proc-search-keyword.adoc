@@ -7,5 +7,5 @@ The *Search* tab allows you to enter keywords or free text to search for content
 
 .Procedure
 
-. In the search bar at top right, enter a free text phrase or keywords.
+. In the search bar at top left, enter a free text phrase or keywords.
 . Click the search icon to initiate the search.

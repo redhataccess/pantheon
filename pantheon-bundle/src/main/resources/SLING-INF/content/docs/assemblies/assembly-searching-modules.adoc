@@ -3,7 +3,7 @@
 = Searching for content
 
 [role="_abstract"]
-The *Content* tab allows you to search for content in {ProductShortName} by simple keyword or free text search, and by applying a number of different filters to search and to sort the results.
+The *{ContentTerm}* tab allows you to search for content in {ProductShortName} by simple keyword or free text search, and by applying a number of different filters to search and to sort the results.
 
 include::../modules/proc-search-keyword.adoc[]
 include::../modules/proc-search-filters.adoc[]

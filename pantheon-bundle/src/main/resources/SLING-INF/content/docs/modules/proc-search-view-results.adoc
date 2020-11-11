@@ -8,7 +8,7 @@ Search results are presented in a table organized in columns with the following 
 * *Title* - the content title
 * *Published* - the publication status, *Published* or *Not published*
 * *Draft uploaded* - the date the draft was uploaded
-* *Content Type* - the content type, *Concept*, *Procedure*, or *Reference*
+* *Content Type* - the content type, *Assembly*, *Concept*, *Procedure*, or *Reference*
 
 .Sorting search results
 
