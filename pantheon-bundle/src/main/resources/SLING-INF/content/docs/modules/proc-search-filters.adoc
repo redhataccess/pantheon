@@ -1,6 +1,9 @@
 [id='search-filters_{context}']
 
-The *Search* tab allows you to apply a number of filters to your search that are available as drop down menus.
+= Searching for content using filters
+
+[role="_abstract"]
+The *Search* tab allows you to apply filters to your search, available as drop down menus for each filter.
 
 .Procedure
 
@@ -8,6 +11,6 @@ Use any combination of the following filters:
 
 * Select a product name from the *Select a Product* menu.
 * Select a version number from the *Select a Version* menu.
-* Select a module type from the third menu (*All*, *Concept*, *Procedure*, or *Reference*).
-* Set the sort button to A-Z or Z-A to display the results in ascending or descending alphabetical order. 
-* Press *Enter* or click the search icon to initiate the search.
+* Select a content type from the third menu (*All*, *Concept*, *Procedure*, or *Reference*).
+* Click the search icon to initiate the search.
+* Set the sort button to A-Z or Z-A to display the results in ascending or descending alphabetical order.
