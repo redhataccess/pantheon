@@ -48,6 +48,7 @@ interface IState {
     keywords: string
     login: boolean
     metadataPath: string
+    variantPath: string
     moduleUrl: string
     product: { label: string, value: string }
     productVersion: { label: string, uuid: string }
@@ -84,6 +85,7 @@ class Versions extends Component<IProps, IState> {
             keywords: "",
             login: false,
             metadataPath: "",
+            variantPath: "",
             moduleUrl: "",
             product: { label: "", value: "" },
             productVersion: { label: "", uuid: "" },
@@ -174,23 +176,23 @@ class Versions extends Component<IProps, IState> {
                                             <CardActions>{}</CardActions>
                                             {data.metadata !== undefined && !this.state.showMetadataAlertIcon &&
                                                 <CardActions>
-                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
+                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="draft">Add metadata</Button>
                                                 </CardActions>}
                                             {data.metadata !== undefined && this.state.showMetadataAlertIcon &&
                                                 <CardActions><i className="pf-icon pf-icon-warning-triangle" />
-                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
+                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="draft">Add metadata</Button>
                                                 </CardActions>}
-                                            <CardActions><Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)}>Preview</Button>
+                                            <CardActions><Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)} id="draftPreview">Preview</Button>
                                             </CardActions>
                                             {data.metadata !== undefined && !this.state.showMetadataAlertIcon &&
                                                 <CardActions>
-                                                    <Button variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
+                                                    <Button variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)} id="publishButton">{data.firstButtonText}</Button>
                                                 </CardActions>
                                             }
                                             {data.metadata !== undefined && this.state.showMetadataAlertIcon &&
                                                 <CardActions>
                                                     <Tooltip content="Add metadata to publish">
-                                                        <Button isAriaDisabled={true} variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
+                                                        <Button isAriaDisabled={true} variant="primary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)} id="publishButton">{data.firstButtonText}</Button>
                                                     </Tooltip>
                                                 </CardActions>
                                             }
@@ -248,13 +250,13 @@ class Versions extends Component<IProps, IState> {
                                                 <CardHeaderMain><strong><span id="span-source-type-version-published">Published</span></strong></CardHeaderMain>
                                                 <CardActions>{}</CardActions>
                                                 <CardActions>
-                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle}>Add metadata</Button>
+                                                    <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="released">Add metadata</Button>
                                                 </CardActions>
                                                 <CardActions>
-                                                    <Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)}>Preview</Button>
+                                                    <Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)} id="releasedPreview">Preview</Button>
                                                 </CardActions>
                                                 <CardActions>
-                                                    <Button variant="secondary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)}>{data.firstButtonText}</Button>
+                                                    <Button variant="secondary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)} id="unpublishbutton">{data.firstButtonText}</Button>
                                                 </CardActions>
                                             </CardHeader>
 
@@ -429,7 +431,7 @@ class Versions extends Component<IProps, IState> {
                     for (let i = 0; i < versionCount; i++) {
                         const moduleVersion = firstVariant.__children__[i]
                         let variantReleased = false
-                        // console.log("[versions] moduleVersion => ", moduleVersion)
+
                         if (moduleVersion.__name__ === "draft") {
                             this.draft[0].version = "Version " + moduleVersion.__name__
                             this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
@@ -455,14 +457,15 @@ class Versions extends Component<IProps, IState> {
                     }
                     this.setState({
                         results: [this.draft, this.release],
+                        variantPath: "/content" + this.props.modulePath + "/en_US/variants/" + this.props.variant
                     })
 
+                    // Check metadata for draft. Show warning icon if metadata missing for draft
                     if (this.draft && this.draft[0].version.length > 0) {
                         this.setState({ metadataPath: this.draft[0].path })
-                    } else if (this.release && this.release[0].version.length > 0) {
-                        this.setState({ metadataPath: this.release[0].path })
+                        this.getMetadata(event)
                     }
-                    this.getMetadata(this.state.metadataPath)
+
                     // Get documents included in assembly
                     if (this.props.contentType === "assembly") {
                         this.getDocumentsIncluded(variantUuid)
@@ -543,7 +546,7 @@ class Versions extends Component<IProps, IState> {
         // process path
         const target = event.nativeEvent.target
         if (target.id !== undefined && target.id.trim().length > 0) {
-            this.setState({ metadataPath: target.id })
+            this.getMetadata(event)
         }
     }
 
@@ -686,34 +689,38 @@ class Versions extends Component<IProps, IState> {
         this.setState({ unpublishAlertForModuleVisible: false })
     }
 
-    private getMetadata = (versionPath) => {
-        if (versionPath.trim() !== "") {
-            fetch(versionPath + "/metadata.json")
-                .then(response => response.json())
-                .then(metadataResults => {
-                    if (JSON.stringify(metadataResults) !== "[]") {
-                        // Process results
-                        // Remove leading slash.
-                        if (metadataResults.urlFragment) {
-                            let url = metadataResults.urlFragment
-                            if (url.indexOf("/") === 0) {
-                                url = url.replace("/", "")
-
-                            }
-                            this.setState({ moduleUrl: url })
-                        }
-                        this.setState({
-                            keywords: metadataResults.searchKeywords,
-                            productVersion: { label: "", uuid: metadataResults.productVersion },
-                            usecaseValue: metadataResults.documentUsecase
-                        })
-                        if (metadataResults.productVersion !== undefined) {
-                            this.getProductFromVersionUuid(metadataResults.productVersion)
-                            this.setState({ showMetadataAlertIcon: false })
-                        }
-                    }
-                })
+    private getMetadata = (event) => {
+        let versionValue = ""
+        if (event !== undefined && event.target.id !== undefined) {
+            versionValue = event.target.id
+        } else {
+            versionValue = "draft"
         }
+        this.setState({ metadataPath: `${this.state.variantPath}/${versionValue}` })
+        fetch(`${this.state.variantPath}/${versionValue}/metadata.json`)
+            .then(response => response.json())
+            .then(metadataResults => {
+                if (JSON.stringify(metadataResults) !== "[]") {
+                    // Process results
+                    // Remove leading slash.
+                    if (metadataResults.urlFragment) {
+                        let url = metadataResults.urlFragment
+                        if (url.indexOf("/") === 0) {
+                            url = url.replace("/", "")
+                        }
+                        this.setState({ moduleUrl: url })
+                    }
+                    this.setState({
+                        keywords: metadataResults.searchKeywords,
+                        productVersion: { label: "", uuid: metadataResults.productVersion },
+                        usecaseValue: metadataResults.documentUsecase
+                    })
+                    if (metadataResults.productVersion !== undefined) {
+                        this.getProductFromVersionUuid(metadataResults.productVersion)
+                        this.setState({ showMetadataAlertIcon: false })
+                    }
+                }
+            })
     }
 
     private getProductFromVersionUuid(versionUuid) {
@@ -731,7 +738,6 @@ class Versions extends Component<IProps, IState> {
     }
 
     private handlePublishButton = () => {
-        // console.log("[handlePublishButton] productInfo =>", this.props.productInfo)
         if (this.props.productInfo !== undefined && this.props.productInfo.trim().length > 0) {
             this.setState({ showMetadataAlertIcon: false })
         }
