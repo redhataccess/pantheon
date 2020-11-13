@@ -7,6 +7,7 @@
 :ProductName: Pantheon
 :ProductShortName: Pantheon
 :ProductNumber: 2
+:ProductNumberPrevious: 1
 :ProductUrl: http://pantheon.corp.redhat.com[]
 
 // Publishing
