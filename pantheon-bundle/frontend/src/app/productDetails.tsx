@@ -185,17 +185,21 @@ class ProductDetails extends Component<IProps, IState> {
     }
 
     private saveVersion = () => {
+        // confirming form state is valid
         if (this.state.newVersion === "" || this.state.urlFragment === "") {
             this.setState({ isMissingFields: true })
         } else {
+            // creating formData obj and adding form's data to it
             const formData = new FormData()
             formData.append(Fields.NAME, this.state.newVersion)
             formData.append(Fields.SLING_RESOURCETYPE, SlingTypes.PRODUCT_VERSION)
             formData.append(Fields.JCR_PRIMARYTYPE, JcrTypes.PRODUCT_VERSION)
             formData.append(Fields.URL_FRAGMENT, this.state.urlFragment)
-
+            
+            // creating url-friendly version of product name and product version
             const productUrlFragment = this.props.productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
             const encodedVersion = this.state.newVersion.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_")
+            // sending formData to backend
             fetch(encodeURI("/content/products/" + productUrlFragment + "/versions/" + encodedVersion), {
                 body: formData,
                 method: "post",
