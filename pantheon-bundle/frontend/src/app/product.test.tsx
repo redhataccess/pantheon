@@ -97,7 +97,6 @@ describe("Product tests", () => {
   it("test saveVersion function", () => {
     const wrapper = renderer.create(<Product />)
     const inst = wrapper.getInstance()
-    console.log(inst)
     expect(inst.saveVersion).toMatchSnapshot()
   })
   it("test createVersionsPath function", () => {
