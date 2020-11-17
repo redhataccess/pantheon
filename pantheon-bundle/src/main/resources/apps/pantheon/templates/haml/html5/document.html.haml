@@ -1,11 +1,25 @@
 !!! 5
--# Set path to CSS
+-# Set default paths for important assets
 - rhDocsCssPath = '/static/rhdocs.css'
 - pantheonCssPath = '//access.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css'
+- cpDocsJsPath = '//access.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js'
 
+-# Not sure that localwebassets is needed anymore...
 - if (@document.attr :pantheonenv) == 'localwebassets'
   - rhDocsCssPath = '/dev-preview/rhdocs.css'
-  - pantheonCssPath = '/dev-preview/pantheon.css'
+
+- if (@document.attr :pantheonenv) == 'dev'
+  - rhDocsCssPath = '//access.dev.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css'
+  - cpDocsJsPath = '//access.dev.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js'
+- if (@document.attr :pantheonenv) == 'dev2'
+  - rhDocsCssPath = '//access.dev.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css'
+  - cpDocsJsPath = '//access.dev.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js'
+- if (@document.attr :pantheonenv) == 'qa'
+  - rhDocsCssPath = '//access.qa.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css'
+  - cpDocsJsPath = '//access.qa.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js'
+- if (@document.attr :pantheonenv) == 'stage'
+  - rhDocsCssPath = '//access.stage.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css'
+  - cpDocsJsPath = '//access.stage.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js'
 
 - wrappingTag = 'cp-documentation'
 -# - if (@document.attr :pantheondoctype) == 'assembly'
@@ -53,7 +67,7 @@
       %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/webcomponents-bundle.js")
       %script(src="https://access.redhat.com/webassets/avalon/j/lib/require.js")
       :javascript
-        chrometwo_require(["//access.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js"]);
+        chrometwo_require(["#{cpDocsJsPath}"]);
 
     :javascript
       window.addEventListener('load', function() {
