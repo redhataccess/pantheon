@@ -3,10 +3,7 @@
 exports[`Product tests should render Product component 1`] = `
 <Fragment>
   <Bullseye>
-    <Form
-      method="POST"
-      onSubmit={[Function]}
-    >
+    <Form>
       <div
         className="app-container"
       >

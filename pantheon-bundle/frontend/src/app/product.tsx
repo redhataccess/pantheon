@@ -41,7 +41,7 @@ class Product extends Component<any, IState> {
             <React.Fragment>
                 {/* Bullseye makes sure everyhting is in the middle */}
                 <Bullseye>
-                    <Form onSubmit={this.saveProduct} method='POST'>
+                    <Form>
                         <div className="app-container">
                             <div>
                                 {this.state.isMissingFields &&
@@ -159,7 +159,7 @@ class Product extends Component<any, IState> {
 
     private saveVersion = () => {
         // confirming form state is valid
-        if (this.state.versionName === "" || this.state.productUrlFragment === "") {
+        if (this.state.versionName.trim() === "" || this.state.versionUrlFragment === "") {
             this.setState({ isMissingFields: true })
         } else {
             // creating formData obj and adding form's data to it
