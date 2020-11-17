@@ -51,10 +51,39 @@ exports[`Product tests should render Product component 1`] = `
             />
           </FormGroup>
           <br />
+          <FormGroup
+            fieldId="version_name"
+            isRequired={true}
+            label="Product Version:"
+          >
+            <ForwardRef
+              id="new_version_name_text"
+              onChange={[Function]}
+              placeholder="Product Version"
+              type="text"
+              value=""
+            />
+          </FormGroup>
+          <br />
+          <FormGroup
+            fieldId="version_url_fragment"
+            isRequired={true}
+            label="Version URL Fragment:"
+          >
+            <ForwardRef
+              id="new_version_url_fragment"
+              onChange={[Function]}
+              placeholder="Version URL Fragment"
+              type="text"
+              value=""
+            />
+          </FormGroup>
+          <br />
           <ActionGroup>
             <Button
               aria-label="Creates a new Product Name with Description specified."
               onClick={[Function]}
+              type="submit"
             >
               Save
             </Button>
@@ -69,16 +98,24 @@ exports[`Product tests should render Product component 1`] = `
 
 exports[`Product tests test checkAuth function 1`] = `undefined`;
 
+exports[`Product tests test createVersionsPath function 1`] = `undefined`;
+
 exports[`Product tests test dismissNotification function 1`] = `[Function]`;
 
 exports[`Product tests test handleNameInput function 1`] = `undefined`;
 
 exports[`Product tests test handleProductInput function 1`] = `undefined`;
 
+exports[`Product tests test handleTextInputChange function 1`] = `undefined`;
+
 exports[`Product tests test handleUrlInput function 1`] = `undefined`;
+
+exports[`Product tests test handleUrlInputChange function 1`] = `undefined`;
 
 exports[`Product tests test loginRedirect function 1`] = `undefined`;
 
 exports[`Product tests test productExist function 1`] = `Promise {}`;
 
 exports[`Product tests test renderRedirect function 1`] = `[Function]`;
+
+exports[`Product tests test saveVersion function 1`] = `[Function]`;

@@ -84,4 +84,24 @@ describe("Product tests", () => {
     const inst = wrapper.getInstance()
     expect(inst.handleUrlInput("red_hat")).toMatchSnapshot()
   })
+  it("test handleTextInputChange function", () => {
+    const wrapper = renderer.create(<Product />)
+    const inst = wrapper.getInstance()
+    expect(inst.handleTextInputChange("1")).toMatchSnapshot()
+  })
+  it("test handleUrlInputChange function", () => {
+    const wrapper = renderer.create(<Product />)
+    const inst = wrapper.getInstance()
+    expect(inst.handleUrlInputChange("test_url")).toMatchSnapshot()
+  })
+  it("test saveVersion function", () => {
+    const wrapper = renderer.create(<Product />)
+    const inst = wrapper.getInstance()
+    expect(inst.saveVersion).toMatchSnapshot()
+  })
+  it("test createVersionsPath function", () => {
+    const wrapper = renderer.create(<Product />)
+    const inst = wrapper.getInstance()
+    expect(inst.createVersionsPath).toMatchSnapshot()
+  })
 })
