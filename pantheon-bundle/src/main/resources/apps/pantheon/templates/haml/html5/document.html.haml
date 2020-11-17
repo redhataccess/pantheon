@@ -1,29 +1,20 @@
 !!! 5
--# Set default paths for important assets
-- rhDocsCssPath = '/static/rhdocs.css'
-- pantheonCssPath = '//access.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css'
-- cpDocsJsPath = '//access.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js'
-
--# Not sure that localwebassets is needed anymore...
-- if (@document.attr :pantheonenv) == 'localwebassets'
-  - rhDocsCssPath = '/dev-preview/rhdocs.css'
+- portalUrl = 'access.redhat.com'
 
 - if (@document.attr :pantheonenv) == 'dev'
-  - rhDocsCssPath = '//access.dev.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css'
-  - cpDocsJsPath = '//access.dev.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js'
+  - portalUrl = 'access.dev.redhat.com'
 - if (@document.attr :pantheonenv) == 'dev2'
-  - rhDocsCssPath = '//access.dev.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css'
-  - cpDocsJsPath = '//access.dev.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js'
+  - portalUrl = 'access.dev.redhat.com'
 - if (@document.attr :pantheonenv) == 'qa'
-  - rhDocsCssPath = '//access.qa.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css'
-  - cpDocsJsPath = '//access.qa.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js'
+  - portalUrl = 'access.dev.redhat.com'
 - if (@document.attr :pantheonenv) == 'stage'
-  - rhDocsCssPath = '//access.stage.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css'
-  - cpDocsJsPath = '//access.stage.redhat.com/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js'
+  - portalUrl = 'access.dev.redhat.com'
+
+- pantheonCssPath = "//#{portalUrl}/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css"
+- cpDocsJsPath = "//#{portalUrl}/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js"
+
 
 - wrappingTag = 'cp-documentation'
--# - if (@document.attr :pantheondoctype) == 'assembly'
--#   - wrappingTag = 'div'
 
 %html{:lang=>(attr :lang, 'en')}
   %head
@@ -39,35 +30,26 @@
     %title=((doctitle :sanitize => true) || (attr 'untitled-label'))
     %link(rel="stylesheet" href="https://static.redhat.com/libs/redhat/redhat-font/2/webfonts/red-hat-font.css")
 
-    %link(rel="stylesheet" href=pantheonCssPath )
-    %link(rel="stylesheet" href=rhDocsCssPath )
+    %link(rel="stylesheet" href=pantheonCssPath)
 
-
-    - if (@document.attr :pantheonenv) == 'localwebassets'
-      %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/custom-elements-es5-adapter.js")
-      %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/webcomponents-bundle.js")
-      %script(src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js")
-      %script(type="module" src="/node_modules/@cpelements/cp-documentation/dist/cp-documentation.js")
-
-    - else
-      - # Dummy cp chrome code
-      :javascript
-        window.portal = {
-          analytics : {},
-          host      : "https://access.redhat.com",
-          idp_url   : "https://sso.redhat.com",
-          lang      : "en",
-          version   : "7b09880",
-          builddate : "2020-06-10T14:50:01.831Z",
-          fetchdate : "2020-06-10T14:50:04-0400",
-          nrid      : "14615289",
-          nrlk      : "2a497fa56f"
-        };
-      %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/custom-elements-es5-adapter.js")
-      %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/webcomponents-bundle.js")
-      %script(src="https://access.redhat.com/webassets/avalon/j/lib/require.js")
-      :javascript
-        chrometwo_require(["#{cpDocsJsPath}"]);
+    - # Dummy cp chrome code
+    :javascript
+      window.portal = {
+        analytics : {},
+        host      : "https://#{portalUrl}",
+        idp_url   : "https://sso.redhat.com",
+        lang      : "en",
+        version   : "7b09880",
+        builddate : "2020-06-10T14:50:01.831Z",
+        fetchdate : "2020-06-10T14:50:04-0400",
+        nrid      : "14615289",
+        nrlk      : "2a497fa56f"
+      };
+    %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/custom-elements-es5-adapter.js")
+    %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/webcomponents-bundle.js")
+    %script(src="https://#{portalUrl}/webassets/avalon/j/lib/require.js")
+    :javascript
+      chrometwo_require(["#{cpDocsJsPath}"]);
 
     :javascript
       window.addEventListener('load', function() {
