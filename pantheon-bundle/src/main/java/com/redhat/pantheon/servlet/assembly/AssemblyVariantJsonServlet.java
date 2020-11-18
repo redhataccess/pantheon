@@ -116,6 +116,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantMap.put("description", releasedMetadata.get().mAbstract().get());
         variantMap.put("content_type", "assembly");
         variantMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
+        variantMap.put("date_first_published", releasedMetadata.get().getValueMap().containsKey("pant:dateFirstPublished") ? releasedMetadata.get().dateFirstPublished().get().toInstant().toString() : "");
         variantMap.put("status", "published");
 
         // Assume the path is something like: /content/<something>/my/resource/path

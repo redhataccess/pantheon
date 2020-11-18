@@ -50,9 +50,13 @@ public interface DocumentVariant extends WorkspaceChild {
                 getResourceResolver().delete(released().get());
             }
             rename(draft().get(), "released");
-            released().get()
-                    .metadata().get()
-                    .datePublished().set(Calendar.getInstance());
+            DocumentMetadata metadata = released().get()
+                    .metadata().get();
+            Calendar now = Calendar.getInstance();
+            metadata.datePublished().set(now);
+            if (metadata.dateFirstPublished().get() == null) {
+                metadata.dateFirstPublished().set(now);
+            }
         } catch (PersistenceException | RepositoryException e) {
             throw new RuntimeException(e);
         }
