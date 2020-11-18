@@ -46,7 +46,9 @@ public abstract class VersionUploadOperation extends AbstractPostOperation {
                             "jcr:primaryType",
                             "jcr:title",
                             "pant:dateUploaded",
-                            "pant:datePublished"
+                            "pant:datePublished",
+                            "pant:abstract",
+                            "pant:headline"
                     )));
 
     protected void versionUpload(SlingHttpServletRequest request,

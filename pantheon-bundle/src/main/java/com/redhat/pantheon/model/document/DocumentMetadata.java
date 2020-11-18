@@ -34,9 +34,20 @@ public interface DocumentMetadata extends WorkspaceChild {
     @Named("jcr:createdBy")
     Field<String> createdBy();
 
+    /**
+     * This represents the date that a document was published *most recently* and is not carried forward from version
+     * to version (since a document version should record its own publish date). Contract this with 'dateFirstPublished'
+     * which deals with the document's *first ever* publish date.
+     * @return
+     */
     @Named("pant:datePublished")
     Field<Calendar> datePublished();
 
+    /**
+     * This represents the date that a document was published *for the first time ever* and is carried forward from
+     * version to version. Contrast this with 'datePublished' which deals with the *most recent* publish date.
+     * @return
+     */
     @Named("pant:dateFirstPublished")
     Field<Calendar> dateFirstPublished();
 
