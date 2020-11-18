@@ -68,7 +68,7 @@
     -# Begin main document
 
     -# %cp-documentation#rhdocs.rhdocs
-    - haml_tag wrappingTag do
+    - haml_tag wrappingTag, id: 'doc-content' do
       - unless noheader
         -# Set some simple vars so our if statements aren't gross
         - hasTitle = !(notitle) && (@header != nil) && (@header&.title != nil)
