@@ -66,16 +66,13 @@ public class ModuleVersionUpload extends VersionUploadOperation {
     private static ModuleType determineModuleType(Module module) {
         String fileName = module.getName();
 
-        if( fileName.startsWith("proc_") ) {
+        if(fileName.startsWith("proc_") || fileName.startsWith("proc-")) {
             return ModuleType.PROCEDURE;
-        }
-        else if( fileName.startsWith("con_") ) {
+        } else if(fileName.startsWith("con_") || fileName.startsWith("con-")) {
             return ModuleType.CONCEPT;
-        }
-        else if( fileName.startsWith("ref_") ) {
+        } else if(fileName.startsWith("ref_") || fileName.startsWith("ref-")) {
             return ModuleType.REFERENCE;
-        }
-        else {
+        } else {
             return null;
         }
     }
