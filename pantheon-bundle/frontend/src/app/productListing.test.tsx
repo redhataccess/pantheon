@@ -1,10 +1,11 @@
 import React from "react"
-import { ProductListing }  from "@app/productListing"
+
 import "@app/fetchMock"
 
 import { mount, shallow } from "enzyme"
 import { DataList, DataListItem, DataListItemCells, DataListItemRow, FormGroup, TextInput } from "@patternfly/react-core"
 import renderer from "react-test-renderer"
+import ProductListing from "./productListing"
 
  const props = {
    match: exact => true
