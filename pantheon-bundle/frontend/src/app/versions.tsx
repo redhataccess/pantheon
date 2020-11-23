@@ -34,6 +34,14 @@ export interface IProps {
     onPublishEvent: () => void
 }
 
+// Define properties in Metadata
+export interface IMetadata {
+    documentUsercase?: string
+    productVersion?: string
+    searchKeywords?: string
+    urlFragment?: string
+}
+
 interface IState {
     alertTitle: string
     allProducts: any
@@ -49,7 +57,7 @@ interface IState {
     login: boolean
     metadataPath: string
     variantPath: string
-    moduleUrl: string
+    urlFragment: string
     product: { label: string, value: string }
     productVersion: { label: string, uuid: string }
     publishAlertVisible: boolean
@@ -62,11 +70,12 @@ interface IState {
     assemblyData: [],
 }
 
+
 class Versions extends Component<IProps, IState> {
     private static USE_CASES = ["Select Use Case", "Administer", "Deploy", "Develop", "Install", "Migrate", "Monitor", "Network", "Plan", "Provision", "Release", "Troubleshoot", "Optimize"]
 
-    public draft = [{ type: "draft", icon: BlankImage, path: "", version: "", publishedState: "Not published", updatedDate: "", firstButtonType: "primary", secondButtonType: "secondary", firstButtonText: "Publish", secondButtonText: "Preview", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: "" }]
-    public release = [{ type: "release", icon: CheckImage, "path": "", version: "", publishedState: "Released", updatedDate: "", firstButtonType: "secondary", secondButtonType: "primary", firstButtonText: "Unpublish", secondButtonText: "View", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: "", draftUploadDate: "" }]
+    public draft = [{ type: "draft", icon: BlankImage, path: "", version: "", publishedState: "Not published", updatedDate: "", firstButtonType: "primary", secondButtonType: "secondary", firstButtonText: "Publish", secondButtonText: "Preview", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} } }]
+    public release = [{ type: "release", icon: CheckImage, "path": "", version: "", publishedState: "Released", updatedDate: "", firstButtonType: "secondary", secondButtonType: "primary", firstButtonText: "Unpublish", secondButtonText: "View", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} }, draftUploadDate: "" }]
 
     constructor(props) {
         super(props)
@@ -86,7 +95,7 @@ class Versions extends Component<IProps, IState> {
             login: false,
             metadataPath: "",
             variantPath: "",
-            moduleUrl: "",
+            urlFragment: "",
             product: { label: "", value: "" },
             productVersion: { label: "", uuid: "" },
             publishAlertVisible: false,
@@ -105,7 +114,6 @@ class Versions extends Component<IProps, IState> {
     public componentDidMount() {
         this.fetchProducts()
         this.fetchVersions()
-        this.handlePublishButton()
     }
 
     public componentDidUpdate(prevProps) {
@@ -256,7 +264,7 @@ class Versions extends Component<IProps, IState> {
                                                     <Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)} id="releasedPreview">Preview</Button>
                                                 </CardActions>
                                                 <CardActions>
-                                                    <Button variant="secondary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)} id="unpublishbutton">{data.firstButtonText}</Button>
+                                                    <Button variant="secondary" isSmall={true} onClick={() => this.changePublishState(data.firstButtonText)} id="unpublishButton">{data.firstButtonText}</Button>
                                                 </CardActions>
                                             </CardHeader>
 
@@ -375,7 +383,7 @@ class Versions extends Component<IProps, IState> {
                                 <InputGroupText id="slash" aria-label="/">
                                     <span>/</span>
                                 </InputGroupText>
-                                <TextInput isRequired={false} id="url-fragment" type="text" placeholder="Enter URL" value={this.state.moduleUrl} onChange={this.handleURLInput} />
+                                <TextInput isRequired={false} id="url-fragment" type="text" placeholder="Enter URL" value={this.state.urlFragment} onChange={this.handleURLInput} />
                             </InputGroup>
                         </FormGroup>
                         <FormGroup
@@ -461,9 +469,13 @@ class Versions extends Component<IProps, IState> {
                     })
 
                     // Check metadata for draft. Show warning icon if metadata missing for draft
-                    if (this.draft && this.draft[0].version.length > 0) {
-                        this.setState({ metadataPath: this.draft[0].path })
-                        this.getMetadata(event)
+                    if (this.draft && this.draft[0].path.length > 0) {
+                        if (this.draft[0].metadata !== undefined &&
+                            this.draft[0].metadata.productVersion === undefined) {
+                            this.setState({ showMetadataAlertIcon: true })
+                        } else {
+                            this.setState({ showMetadataAlertIcon: false })
+                        }
                     }
 
                     // Get documents included in assembly
@@ -570,11 +582,18 @@ class Versions extends Component<IProps, IState> {
             }
 
             const formData = new FormData(event.target.form)
+            let eventID = ""
             formData.append("productVersion", this.state.productVersion.uuid)
             formData.append("documentUsecase", this.state.usecaseValue)
-            formData.append("urlFragment", this.state.moduleUrl.trim().length > 0 ? "/" + this.state.moduleUrl.trim() : "")
+            formData.append("urlFragment", this.state.urlFragment.trim().length > 0 ? "/" + this.state.urlFragment.trim() : "")
             formData.append("searchKeywords", this.state.keywords === undefined ? "" : this.state.keywords)
 
+            const target = event.nativeEvent.target
+            if (target !== null
+                && target.id !== undefined
+                && target.id === "draft") {
+                eventID = event.target.id
+            }
             fetch(this.state.metadataPath + "/metadata", {
                 body: formData,
                 headers: hdrs,
@@ -586,9 +605,12 @@ class Versions extends Component<IProps, IState> {
                     this.setState({
                         canChangePublishState: true,
                         publishAlertVisible: false,
-                        showMetadataAlertIcon: false,
                         successAlertVisible: true,
                     })
+                    if (this.state.metadataPath.endsWith("/draft")) {
+                        this.setState({ showMetadataAlertIcon: false })
+                        this.fetchVersions()
+                    }
                     this.props.onGetProduct(this.state.product.label)
                     this.props.onGetVersion(this.state.productVersion.label)
                 } else if (response.status === 500) {
@@ -638,8 +660,8 @@ class Versions extends Component<IProps, IState> {
         this.setState({ usecaseValue })
     }
 
-    private handleURLInput = moduleUrl => {
-        this.setState({ moduleUrl })
+    private handleURLInput = urlFragment => {
+        this.setState({ urlFragment })
     }
 
     private handleKeywordsInput = keywords => {
@@ -691,33 +713,49 @@ class Versions extends Component<IProps, IState> {
 
     private getMetadata = (event) => {
         let versionValue = ""
+        let metadataPath = ""
         if (event !== undefined && event.target.id !== undefined) {
             versionValue = event.target.id
         } else {
             versionValue = "draft"
         }
-        this.setState({ metadataPath: `${this.state.variantPath}/${versionValue}` })
+
+        metadataPath = this.state.variantPath + "/" + versionValue
+
         fetch(`${this.state.variantPath}/${versionValue}/metadata.json`)
             .then(response => response.json())
             .then(metadataResults => {
                 if (JSON.stringify(metadataResults) !== "[]") {
+                    this.setState({ metadataPath })
                     // Process results
                     // Remove leading slash.
                     if (metadataResults.urlFragment) {
-                        let url = metadataResults.urlFragment
-                        if (url.indexOf("/") === 0) {
-                            url = url.replace("/", "")
+                        let urlFragment = metadataResults.urlFragment
+                        if (urlFragment.indexOf("/") === 0) {
+                            urlFragment = urlFragment.replace("/", "")
                         }
-                        this.setState({ moduleUrl: url })
+                        this.setState({ urlFragment })
                     }
-                    this.setState({
-                        keywords: metadataResults.searchKeywords,
-                        productVersion: { label: "", uuid: metadataResults.productVersion },
-                        usecaseValue: metadataResults.documentUsecase
-                    })
+
+                    if (metadataResults.searchKeywords) {
+                        this.setState({ keywords: metadataResults.searchKeywords })
+                    }
+
+                    if (metadataResults.productVersion) {
+                        this.setState({ productVersion: { label: "", uuid: metadataResults.productVersion } })
+                    }
+
+                    if (metadataResults.documentUsecase) {
+                        this.setState({ usecaseValue: metadataResults.documentUsecase })
+                    }
+
                     if (metadataResults.productVersion !== undefined) {
                         this.getProductFromVersionUuid(metadataResults.productVersion)
-                        this.setState({ showMetadataAlertIcon: false })
+
+                        if (versionValue === "draft") {
+                            this.setState({ showMetadataAlertIcon: false })
+                        }
+
                     }
                 }
             })

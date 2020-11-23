@@ -205,12 +205,25 @@ describe("Versions tests", () => {
         expect(state.versionModulePath).toEqual("versionPath")
     })
 
-    test("changePublishState click", () => {
+    test("changePublishState click Publish", () => {
         const wrapper = mount(<Versions {...props} />)
         const instance = wrapper.instance()
-        wrapper.setState({ "login": true })
         wrapper.setState({
-            "results": [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Not published", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": "" }]],
+            "login": true,
+            "showMetadataAlertIcon": false,
+            "results": [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Not published", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } } }]],
+        })
+        const spy = sinon.spy(instance, "changePublishState")
+        wrapper.find(Button).at(2).simulate("click")
+        sinon.assert.called(spy)
+    })
+
+    test("changePublishState click Unpublish", () => {
+        const wrapper = mount(<Versions {...props} />)
+        const instance = wrapper.instance()
+        wrapper.setState({
+            "login": true,
+            "results": [[{ "type": "release", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Released", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } } }]],
         })
         const spy = sinon.spy(instance, "changePublishState")
         wrapper.find(Button).at(2).simulate("click")
