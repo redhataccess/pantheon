@@ -5,6 +5,7 @@ import com.ibm.icu.util.ULocale;
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.assembly.AssemblyContent;
 import com.redhat.pantheon.model.assembly.AssemblyMetadata;
@@ -33,7 +34,6 @@ import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
 import java.util.*;
 
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.util.ServletHelper.getResourceByUuid;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
@@ -89,17 +89,17 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
     protected Map<String, Object> resourceToMap(@Nonnull SlingHttpServletRequest request,
                                                 @NotNull Resource resource) throws RepositoryException {
         AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
-        Optional<AssemblyMetadata> releasedMetadata = traverseFrom(assemblyVariant)
+        Optional<AssemblyMetadata> releasedMetadata = Child.from(assemblyVariant)
                 .toChild(AssemblyVariant::released)
                 .toChild(AssemblyVersion::metadata)
-                .getAsOptional();
-        Optional<FileResource> releasedContent = traverseFrom(assemblyVariant)
+                .asOptional();
+        Optional<FileResource> releasedContent = Child.from(assemblyVariant)
                 .toChild(AssemblyVariant::released)
                 .toChild(AssemblyVersion::cachedHtml)
-                .getAsOptional();
-        Optional<AssemblyVersion> releasedRevision = traverseFrom(assemblyVariant)
+                .asOptional();
+        Optional<AssemblyVersion> releasedRevision = Child.from(assemblyVariant)
                 .toChild(AssemblyVariant::released)
-                .getAsOptional();
+                .asOptional();
 
         Map<String, Object> variantMap = super.resourceToMap(request, resource);
         Map<String, Object> variantDetails = new HashMap<>();

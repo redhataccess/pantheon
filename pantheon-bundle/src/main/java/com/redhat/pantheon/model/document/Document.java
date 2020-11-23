@@ -10,8 +10,6 @@ import javax.inject.Named;
 import java.util.Locale;
 import java.util.Optional;
 
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
-
 public interface Document extends WorkspaceChild {
 
     @Named("jcr:uuid")
@@ -27,22 +25,22 @@ public interface Document extends WorkspaceChild {
 
     default Optional<? extends DocumentVersion> getDraftVersion(@Nonnull final Locale locale,
                                                                 @Nonnull final String variantName) {
-        return traverseFrom(this)
+        return Child.from(this)
                 .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::draft)
-                .getAsOptional();
+                .asOptional();
     }
 
     default Optional<? extends DocumentVersion> getReleasedVersion(@Nonnull final Locale locale,
                                                                    @Nonnull final String variantName) {
-        return traverseFrom(this)
+        return Child.from(this)
                 .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::released)
-                .getAsOptional();
+                .asOptional();
     }
 
     /**
@@ -52,13 +50,13 @@ public interface Document extends WorkspaceChild {
      */
     default Optional<FileResource> getDraftContent(@Nonnull final Locale locale,
                                                    @Nonnull final String variantName) {
-        return traverseFrom(this)
+        return Child.from(this)
                 .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::draft)
                 .toChild(DocumentVersion::cachedHtml)
-                .getAsOptional();
+                .asOptional();
     }
 
     /**
@@ -68,13 +66,13 @@ public interface Document extends WorkspaceChild {
      */
     default Optional<FileResource> getReleasedContent(@Nonnull final Locale locale,
                                                       @Nonnull final String variantName) {
-        return traverseFrom(this)
+        return Child.from(this)
                 .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::released)
                 .toChild(DocumentVersion::cachedHtml)
-                .getAsOptional();
+                .asOptional();
     }
 
     /**
@@ -84,13 +82,13 @@ public interface Document extends WorkspaceChild {
      */
     default Optional<? extends DocumentMetadata> getDraftMetadata(@Nonnull final Locale locale,
                                                                   @Nonnull final String variantName) {
-        return traverseFrom(this)
+        return Child.from(this)
                 .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::draft)
                 .toChild(DocumentVersion::metadata)
-                .getAsOptional();
+                .asOptional();
     }
 
     /**
@@ -100,13 +98,13 @@ public interface Document extends WorkspaceChild {
      */
     default Optional<? extends DocumentMetadata> getReleasedMetadata(@Nonnull final Locale locale,
                                                                      @Nonnull final String variantName) {
-        return traverseFrom(this)
+        return Child.from(this)
                 .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::released)
                 .toChild(DocumentVersion::metadata)
-                .getAsOptional();
+                .asOptional();
     }
 
     /**
@@ -117,12 +115,12 @@ public interface Document extends WorkspaceChild {
      */
     default Optional<AckStatus> getAcknowledgementStatus(@Nonnull final Locale locale,
                                                          @Nonnull final String variantName) {
-        return traverseFrom(this)
+        return Child.from(this)
                 .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName))
                 .toChild(DocumentVariant::released)
                 .toChild(DocumentVersion::ackStatus)
-                .getAsOptional();
+                .asOptional();
     }
 }

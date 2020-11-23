@@ -13,7 +13,6 @@ import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModels;
-import com.redhat.pantheon.model.api.util.ResourceTraversal;
 import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
 import com.redhat.pantheon.model.assembly.TableOfContents;
@@ -50,7 +49,6 @@ import java.util.Optional;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.redhat.pantheon.helper.PantheonConstants.MACRO_INCLUDE;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -171,11 +169,11 @@ public class AsciidoctorService {
                                Map<String, Object> context, final boolean regenMetadata) {
 
         Optional<HashableFileResource> sourceFile =
-                traverseFrom(base)
+                Child.from(base)
                         .toChild(m -> m.locale(locale))
                         .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> isDraft ? sourceContent.draft() : sourceContent.released())
-                        .getAsOptional();
+                        .asOptional();
 
         if (!sourceFile.isPresent()) {
             throw new RuntimeException("Cannot find source content for module: " + base.getPath() + ", locale: " + locale

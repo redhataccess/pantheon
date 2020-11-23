@@ -5,6 +5,7 @@ import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.ModelException;
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.assembly.AssemblyMetadata;
 import com.redhat.pantheon.model.assembly.AssemblyVariant;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
@@ -25,8 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 
 /**
  * The type Servlet helper.
@@ -149,10 +148,10 @@ public class ServletHelper {
         if(!canHaveDraft&&assemblyVariant.hasDraft()&&!assemblyVariant.released().isPresent()){
             return;
         }
-        Optional<AssemblyMetadata> metadata = traverseFrom(assemblyVariant)
+        Optional<AssemblyMetadata> metadata = Child.from(assemblyVariant)
                 .toChild(assemblyVariant.hasDraft()&&canHaveDraft?AssemblyVariant::draft:AssemblyVariant::released)
                 .toChild(AssemblyVersion::metadata)
-                .getAsOptional();
+                .asOptional();
         assemblyVariantDetails.put("uuid", assemblyVariant.uuid().get());
         assemblyVariantDetails.put("title", metadata.get().title().get());
         if(assemblyVariant.released().isPresent()&& System.getenv(PANTHEON_HOST) != null){

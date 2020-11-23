@@ -1,7 +1,6 @@
 package com.redhat.pantheon.model.api;
 
-import com.redhat.pantheon.model.api.util.ResourceTraversal;
-
+import javax.annotation.Nullable;
 import javax.jcr.RepositoryException;
 import java.util.Optional;
 import java.util.function.Function;
@@ -102,21 +101,32 @@ public interface Child<T extends SlingModel> extends Supplier<T> {
             if(refdNode == null) {
                 return (Child<R>) NullObjects.nullChild();
             }
-
-            final R finalRefdNode = refdNode; // Need a final variable so the anonymous class doesn't complain below
-            return new Child<R>() {
-                @Override
-                public R create() {
-                    throw new UnsupportedOperationException("This child was created with a specific resource reference," +
-                            " hence it cannot be created");
-                }
-
-                @Override
-                public R get() {
-                    return finalRefdNode;
-                }
-            };
+            return Child.from(refdNode);
         }
         return (Child<R>) NullObjects.nullChild();
+    }
+
+    /**
+     * Creates a {@link Child} object from the given model
+     * @param model The model to wrap around a {@link Child} object. May be null.
+     * @param <R>
+     * @return A new {@link Child} object referencing the given model object.
+     */
+    static <R extends SlingModel> Child<R> from(final @Nullable R model) {
+        if(model == null) {
+            return (Child<R>) NullObjects.nullChild();
+        }
+        return new Child<R>() {
+            @Override
+            public R create() {
+                throw new UnsupportedOperationException("This child was created with a specific resource reference," +
+                        " hence it cannot be created");
+            }
+
+            @Override
+            public R get() {
+                return model;
+            }
+        };
     }
 }

@@ -3,6 +3,7 @@ package com.redhat.pantheon.servlet;
 import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.HashableFileResource;
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.module.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +27,6 @@ import java.util.stream.Stream;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static java.util.stream.Collectors.toList;
 
@@ -189,11 +189,11 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         Optional<ModuleMetadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE, variantName);
         Optional<ModuleMetadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);
         Optional<HashableFileResource> sourceFile =
-                traverseFrom(module)
+                Child.from(module)
                         .toChild(m -> m.locale(DEFAULT_MODULE_LOCALE))
                         .toChild(ModuleLocale::source)
                         .toChild(sourceContent -> sourceContent.draft().isPresent() ? sourceContent.draft() : sourceContent.released())
-                        .getAsOptional();
+                        .asOptional();
 
         // TODO Need some DTOs to convert to maps
         Map<String, Object> m = super.resourceToMap(resource);

@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet.module;
 
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
@@ -23,7 +24,6 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsBoolean;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
@@ -59,12 +59,13 @@ public class RawAsciidocServlet extends SlingSafeMethodsServlet {
         response.setContentType("html");
         Writer w = response.getWriter();
 
-        Optional<String> content = traverseFrom(document)
+        Optional<String> content = Child.from(document)
                 .toChild(m -> m.locale(locale))
                 .toChild(DocumentLocale::source)
                 .toChild(draft ? SourceContent::draft : SourceContent::released)
                 .toChild(FileResource::jcrContent)
-                .toField(FileResource.JcrContent::jcrData);
+                .toField(FileResource.JcrContent::jcrData)
+                .asOptional();
 
         if(content.isPresent()) {
             response.setContentType(ContentType.TEXT_PLAIN.toString());
