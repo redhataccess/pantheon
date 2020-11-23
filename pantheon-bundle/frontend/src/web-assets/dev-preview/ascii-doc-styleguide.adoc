@@ -53,7 +53,7 @@ Most features labeled "`Asciidoctor only`" can be made available to the native A
 
 == Pantheon Specific Elements
 
-[.additional-resources]
+[role="_additional-resources"]
 .Additional resources
 
 * link:https://access.redhat.com/articles/3131341[Support Policies for RHEL High Availability Clusters - Microsoft Azure Virtual Machines as Cluster Members]

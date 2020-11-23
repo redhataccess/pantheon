@@ -1,6 +1,7 @@
 package com.redhat.pantheon.servlet.util;
 
 
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.ModelException;
@@ -19,7 +20,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 
@@ -31,6 +36,10 @@ public class ServletHelper {
      * The constant PANTHEON_HOST.
      */
     public static final String PANTHEON_HOST = "PANTHEON_HOST";
+    /**
+     * The constant PORTAL_URL.
+     */
+    public static final String PORTAL_URL = "PORTAL_URL";
     /**
      * The constant ASSEMBLY_VARIANT_API_PATH.
      */
@@ -137,7 +146,7 @@ public class ServletHelper {
         AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
         HashMap<String,String> assemblyVariantDetails = new HashMap<>();
         // if draft version cannot be added, however only draft exists, then just return
-        if(!canHaveDraft&&assemblyVariant.hasDraft()){
+        if(!canHaveDraft&&assemblyVariant.hasDraft()&&!assemblyVariant.released().isPresent()){
             return;
         }
         Optional<AssemblyMetadata> metadata = traverseFrom(assemblyVariant)
@@ -152,6 +161,11 @@ public class ServletHelper {
                     + "/"
                     + assemblyVariant.uuid().get();
             assemblyVariantDetails.put("url", assemblyUrl);
+        }
+        if (assemblyVariant.released().isPresent() && System.getenv(PORTAL_URL) != null) {
+            // Add Customer Portal view_uri
+            String view_uri = new CustomerPortalUrlUuidProvider().generateUrlString(assemblyVariant);
+            assemblyVariantDetails.put("view_uri", view_uri);
         }
         if(addPath){
             assemblyVariantDetails.put("path", assemblyVariant.getParentLocale().getParent().getPath());

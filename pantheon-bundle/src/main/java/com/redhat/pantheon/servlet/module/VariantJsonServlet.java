@@ -105,14 +105,14 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantDetails.put("message", "Module Found");
 
         String resourcePath = resource.getPath();
-        Locale locale = ULocale.createCanonical(moduleVariant.getParentLocale().getName()).toLocale();
-        variantMap.put("locale", ServletUtils.toLanguageTag(locale));
+        variantMap.put("locale", ServletUtils.toLanguageTag(moduleVariant.getParentLocale().getName()));
         variantMap.put("revision_id", releasedRevision.get().getName());
         variantMap.put("title", releasedMetadata.get().title().get());
         variantMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline().get() : "");
         variantMap.put("description", releasedMetadata.get().getValueMap().containsKey("jcr:description") ? releasedMetadata.get().description().get() : releasedMetadata.get().mAbstract().get());
         variantMap.put("content_type", CONTENT_TYPE);
         variantMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
+        variantMap.put("date_first_published", releasedMetadata.get().getValueMap().containsKey("pant:dateFirstPublished") ? releasedMetadata.get().dateFirstPublished().get().toInstant().toString() : "");
         variantMap.put("status", "published");
 
         // Assume the path is something like: /content/<something>/my/resource/path
@@ -120,9 +120,10 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Striping out the jcr: from key name
         String variant_uuid = (String) variantMap.remove("jcr:uuid");
+        // TODO: remove uuid when there are no more consumers for it (Solr, Hydra, Customer Portal)
         variantMap.put("uuid", variant_uuid);
-        // TODO: remove variant_uuid when Customer Portal no longer consumes variant_uuid.
         variantMap.put("variant_uuid", variant_uuid);
+        variantMap.put("document_uuid", moduleVariant.getParentLocale().getParent().uuid().get());
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         variantMap.put("date_modified", dateModified.toInstant().toString());

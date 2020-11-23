@@ -21,8 +21,6 @@ export interface IModuleDisplayState {
     moduleType: string
     portalUrl: string
     productValue: string
-    productUrlFragment: string
-    versionUrlFragment: string
     releasePath: string
     releaseUpdateDate: string
     releaseVersion: string
@@ -30,6 +28,10 @@ export interface IModuleDisplayState {
     variant: string
     variantUUID: string
     versionValue: string
+    portalHostUrl: string
+    productUrlFragment: string
+    versionUrlFragment: string
+    locale: string
 }
 
 class ModuleDisplay extends Component<any, IModuleDisplayState> {
@@ -46,8 +48,6 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
             moduleType: "",
             portalUrl: "",
             productValue: "",
-            productUrlFragment: "",
-            versionUrlFragment: "",
             releasePath: "",
             releaseUpdateDate: "",
             releaseVersion: "",
@@ -57,7 +57,11 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
             versionValue: "",
             assemblyData: [],
             assemblyTitle: "",
-            assemblyPath: ""
+            assemblyPath: "",
+            portalHostUrl: "",
+            productUrlFragment: "",
+            versionUrlFragment: "",
+            locale: ""
         }
     }
 
@@ -65,6 +69,9 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
         this.fetchAttributesFilePath(this.props)
+        this.getVersionUUID(this.props.location.pathname)
+        this.getPortalHostUrl()
+        this.getLocale(this.props.location.pathname)
 
     }
 
@@ -305,9 +312,31 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
     }
 
     private onPublishEvent = () => {
-        this.getVersionUUID(this.props.location.pathname)
+        // the published state cannot be ascertained correctly when moving from one page to another
+        this.getPortalUrl(this.props.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length), this.state.variant)
     }
 
+    private getLocale = (path) =>{
+        // remove /module from path
+        path = path.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
+        // path = "/content" + path + "/en_US/1/metadata.json"
+        path = "/content" + path + ".harray.1.json"
+        fetch(path)
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                }else {
+                    throw new Error(response.statusText)
+                }
+            })
+            .then(responseJSON => {
+                    const locale = responseJSON.__children__[0].__name__
+                    const localeFinal = locale.replace("_","-")
+                    this.setState({locale: localeFinal})
+                }
+
+            )
+    }
     private getVersionUUID = (path) => {
         // remove /module from path
         path = path.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
@@ -363,6 +392,11 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                             for (const productVersion of productChild.__children__) {
                                 if (productVersion[Fields.JCR_UUID] === uuid) {
                                     this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
+                                    const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase()+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/topic/' + this.state.variantUUID
+                                    console.log("Constructed url="+url)
+                                    if(this.state.productUrlFragment!==""){
+                                        this.setState({ portalUrl: url})
+                                    }
                                     break
                                 }
                             }
@@ -370,6 +404,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                     }
                 }
             })
+
     }
 
     private copyToClipboard = () => {
@@ -394,8 +429,18 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
             .then(resp => {
                 if (resp.ok) {
                     resp.text().then(text => {
-                        this.setState({ portalUrl: text })
+                        // get portal url from api and set it only if it is not empty
+                        if(text.trim() !== "") {
+                            this.setState({portalUrl: text})
+                        }else{
+                            // if portal url is empty, assemble the URL at client side
+                            console.log("GetPortalURI API returned empty URI. Falling back to url construction at UI")
+                            this.getVersionUUID(this.props.location.pathname)
+                        }
                     })
+                }else {
+                    console.log("GetPortalURI API returned error. Falling back to url construction at UI")
+                    this.getVersionUUID(this.props.location.pathname)
                 }
             })
     }
@@ -448,6 +493,17 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                 }
 
             )
+    }
+    private getPortalHostUrl = () => {
+        fetch('/conf/pantheon/pant:portalUrl')
+            .then(resp => {
+                if (resp.ok) {
+                    resp.text().then(text => {
+                        this.setState({ portalHostUrl: text })
+                        // console.log("set portalHost: " + this.state.portalHost)
+                    })
+                }
+            })
     }
 
 }

@@ -1,0 +1,33 @@
+//include::../attributes.adoc[]
+[id="publishing-content_{context}"]
+= Publishing {ContentTerm}
+
+[role="_abstract"]
+You need to publish a module or assembly when you want it to appear on the {PublishingPortal}.
+
+.Prerequisites
+
+* You are assigned the publisher role.
+* You are logged in.
+* The {ContentTerm} to be published has been imported to {ProductShortName}.
+* The metadata required for publishing has been applied to the {ContentTerm}.
+
+.Procedure
+
+. Navigate to link:{LinkToSearchPage}[Search page].
+
+. Click the name of the module or assembly you want to publish.
++
+If you do not see the module or assembly listed, search for it using the search box.
+
+. In the list of versions for each module or assembly, click  *Publish* next to the version you want to publish.
++
+After publishing, you can view the module or assembly at the following URL:
++
+`https://__PRODUCT_URL__/__UUID__`
++
+where, __PRODUCT_URL__ is the URL for the product, and __UUID__ is the auto-generated unique identifier for the {ContentTerm}.
+
+[role="_additional-resources"]
+.Additional Resources
+* link:<LinkToHowToSearchModules>[How To Search Modules]

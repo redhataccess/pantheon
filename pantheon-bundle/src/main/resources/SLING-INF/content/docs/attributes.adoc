@@ -7,9 +7,12 @@
 :ProductName: Pantheon
 :ProductShortName: Pantheon
 :ProductNumber: 2
+:ProductNumberPrevious: 1
 :ProductUrl: http://pantheon.corp.redhat.com[]
 
 // Publishing
 :PublishingPortal: Customer Portal
+:PublishingPortalSearch: Customer Portal Search
 
 :imagesdir: images
+:ContentTerm: content

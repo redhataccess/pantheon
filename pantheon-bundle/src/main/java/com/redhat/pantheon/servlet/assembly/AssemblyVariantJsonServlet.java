@@ -17,6 +17,7 @@ import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
 import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.servlet.util.ServletHelper;
 import com.redhat.pantheon.servlet.util.SlingPathSuffix;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -115,6 +116,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantMap.put("description", releasedMetadata.get().mAbstract().get());
         variantMap.put("content_type", "assembly");
         variantMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
+        variantMap.put("date_first_published", releasedMetadata.get().getValueMap().containsKey("pant:dateFirstPublished") ? releasedMetadata.get().dateFirstPublished().get().toInstant().toString() : "");
         variantMap.put("status", "published");
 
         // Assume the path is something like: /content/<something>/my/resource/path
@@ -122,7 +124,10 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Striping out the jcr: from key name
         String variant_uuid = (String) variantMap.remove("jcr:uuid");
+        // TODO: remove uuid when there are no more consumers for it (Solr, Hydra, Customer Portal)
         variantMap.put("uuid", variant_uuid);
+        variantMap.put("variant_uuid", variant_uuid);
+        variantMap.put("document_uuid", assemblyVariant.getParentLocale().getParent().uuid().get());
         // Convert date string to UTC
         Date dateModified = new Date(resource.getResourceMetadata().getModificationTime());
         variantMap.put("date_modified", dateModified.toInstant().toString());
@@ -198,7 +203,10 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                         .variants().get()
                         .canonicalVariant().get();
                 moduleMap.put("canonical_uuid", canonical.uuid().get());
-                moduleMap.put("title", page.title().get());
+                // Get the current title from module instead of using the stored value in the content node
+                // When module title is modified, the value stored in content node becomes stale.
+                // Sometime, the title stored in content node shows filename instead of title.
+                moduleMap.put("title", ServletHelper.getModuleTitleFromUuid(canonical));
                 moduleMap.put("module_uuid", module.uuid().get());
                 // check if the module is published
                 if (canonical.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {

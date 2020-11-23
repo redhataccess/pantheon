@@ -9,6 +9,7 @@
   "scripts": {
     "spandx": "spandx",
     "gulp": "gulp",
+    "rimraf": "rimraf",
     "prebuild": "yarn clean",
     "build": "webpack --config webpack.prod.js",
     "start": "gulp",

@@ -89,7 +89,7 @@ class ModuleVersionUploadTest {
     }
 
     @Test
-    void createFirstVersionUnicodeIso() throws Exception {
+    void createFirstVersionAccentedCharacter() throws Exception {
         // Given
         slingContext.build()
                 .resource("/content/repositories/test_workspace",
@@ -105,10 +105,9 @@ class ModuleVersionUploadTest {
         ModuleVersionUpload upload = new ModuleVersionUpload(asciidoctorService);
         Map<String, Object> params = newHashMap();
         params.put("locale", Locale.SIMPLIFIED_CHINESE.toString());
-        params.put("asciidoc", "å\u008D\u0097äº¬é\u0098²ç\u0096«ç\u008E°å\u009Cº");
+        params.put("asciidoc", "d'agua per toles partes, por exemplu: Sicilia y Cuba; al otrudía  decatáronse  d'ú  veníen  les  voces:  de  dientro  la  casa;  nun  foi  aaguantar aquel perru: vendiólu.");
         slingContext.request().setParameterMap(params);
         slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/proc_module"));
-        slingContext.request().setCharacterEncoding(StandardCharsets.ISO_8859_1.toString());
         HtmlResponse response = new HtmlResponse();
 
         // when
@@ -121,7 +120,7 @@ class ModuleVersionUploadTest {
                 SlingModels.getModel(
                         slingContext.resourceResolver().getResource("/content/repositories/test_workspace/entities/new/proc_module"),
                         Module.class);
-        assertEquals("南京防疫现场",
+        assertEquals("d'agua per toles partes, por exemplu: Sicilia y Cuba; al otrudía  decatáronse  d'ú  veníen  les  voces:  de  dientro  la  casa;  nun  foi  aaguantar aquel perru: vendiólu.",
                 module
                         .locale(Locale.SIMPLIFIED_CHINESE).get()
                         .source().get()
@@ -138,7 +137,6 @@ class ModuleVersionUploadTest {
         verify(asciidoctorService).getDocumentHtml(any(Module.class), any(Locale.class), anyString(), eq(true), anyMap(), eq(true));
     }
 
-    
     @Test
     void createFirstVersionUnicodeUtf() throws Exception {
         // Given
@@ -159,7 +157,6 @@ class ModuleVersionUploadTest {
         params.put("asciidoc", "南京防疫现场");
         slingContext.request().setParameterMap(params);
         slingContext.request().setResource(new NonExistingResource(slingContext.resourceResolver(), "/content/repositories/test_workspace/entities/new/proc_module"));
-        slingContext.request().setCharacterEncoding(StandardCharsets.UTF_8.toString());
         HtmlResponse response = new HtmlResponse();
 
         // when

@@ -1,0 +1,21 @@
+[id='definition-of-metadata_{context}']
+= Definition of metadata
+
+[role="_abstract"]
+Each module and assembly in {ProductShortName} has associated metadata for search engine optimization (SEO). SEO improves the findability of modules and assemblies.
+
+The types of module and assembly metadata in {ProductShortName} are as follows:
+
+Intrinsic:: The metadata that is inferred from the module or assemby automatically.
++
+Examples of intrinsic metadata include the following:
+
+** Name of the module or assembly
+** Description of the module or assembly
+
+Extrinsic:: The metadata that is applied manually before publishing.
++
+Examples of extrinsic metadata include the following:
+
+** Product name - the product and the product version for which the module or assembly is to be published.
+** Search keywords - words that, when searched by users, cause the search engine to return the module or assembly.

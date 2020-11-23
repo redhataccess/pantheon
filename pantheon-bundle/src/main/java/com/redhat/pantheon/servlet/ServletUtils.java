@@ -192,6 +192,16 @@ public final class ServletUtils {
     }
 
     /**
+     * Transforms the locale to an IETF BCP 47 language tag, which is a common URL friendly tag.
+     * @param locale A string representing the locale
+     * @return The appropriate IETF BCP 47 language tag for the provided locale.
+     * @see ULocale#toLanguageTag()
+     */
+    public static String toLanguageTag(String locale) {
+        return ServletUtils.toLanguageTag(ULocale.createCanonical(locale).toLocale());
+    }
+
+    /**
      * Writes the given payload as a json string to the servlet response.
      * @param response The servlet response on which to write
      * @param payload The object to turn to json and write

@@ -18,6 +18,7 @@ import org.osgi.service.component.annotations.Component;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.Optional;
 
 @Component(
         service = Servlet.class,
@@ -43,7 +44,7 @@ public class DocumentCustomerPortalUrlServlet extends SlingSafeMethodsServlet {
                     .variants().get()
                     .canonicalVariant().get();
             UrlProvider provider = new CustomerPortalUrlUuidProvider();
-            response.getWriter().write(provider.generateUrlString(dv));
+            response.getWriter().write(Optional.ofNullable(provider.generateUrlString(dv)).orElse(""));
         } catch (ModelException e) {
             throw new ServletException(e);
         }

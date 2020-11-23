@@ -5,6 +5,16 @@ variants:
     path: pantheon-bundle/src/main/resources/SLING-INF/content/docs/attributes.adoc
     canonical: true
 assemblies:
-  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/assemblies/*.adoc
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/assemblies/assembly-pantheon-help.adoc
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/assemblies/assembly-overview-of-modules.adoc
 modules:
-  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/*.adoc
+  # Concept modules
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/con_comparison-between-modules-and-DITA-topics.adoc
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/con_definition-of-a-module.adoc
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/con_definition-of-metadata.adoc
+  # Procedure modules
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/proc_publishing-content.adoc
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/proc_unpublishing-content.adoc
+  # Reference modules
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/ref_identifying-module-types.adoc
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/ref_prerequisites.adoc
