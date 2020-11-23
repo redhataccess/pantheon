@@ -28,12 +28,10 @@ public class ChildImpl<T extends SlingModel> implements Child<T> {
         this.owner = owner;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public Class<T> getType() {
         return type;
     }
@@ -48,19 +46,6 @@ public class ChildImpl<T extends SlingModel> implements Child<T> {
     }
 
     /**
-     * Returns the child as indicated by the definition's name, creating it
-     * in the process if necessary.
-     * @return The child resource as indicated by this definition
-     */
-    @Override
-    public T getOrCreate() {
-        if(owner.getChild(name) == null) {
-            return create();
-        }
-        return get();
-    }
-
-    /**
      * Attempts to create the child as indicated by this definition. This might
      * throw an exception if the child already exists.
      * @return The newly created child resource
@@ -68,15 +53,6 @@ public class ChildImpl<T extends SlingModel> implements Child<T> {
     @Override
     public T create() {
         return SlingModels.createModel(owner, name, type);
-    }
-
-    /**
-     * Indicates if the child exists.
-     * @return True, if the child exists. False otherwise.
-     */
-    @Override
-    public boolean isPresent() {
-        return get() != null;
     }
 
     /**

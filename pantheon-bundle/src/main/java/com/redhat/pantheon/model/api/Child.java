@@ -15,16 +15,20 @@ import java.util.function.Supplier;
  * @author Carlos Munoz
  */
 public interface Child<T extends SlingModel> extends Supplier<T> {
-    String getName();
-
-    Class<T> getType();
 
     /**
      * Returns the child as indicated by the definition's name, creating it
      * in the process if necessary.
      * @return The child resource as indicated by this definition
      */
-    T getOrCreate();
+    default T getOrCreate() {
+        if(!isPresent()) {
+            return create();
+        }
+        else {
+            return get();
+        }
+    }
 
     /**
      * Attempts to create the child as indicated by this definition. This might
@@ -37,7 +41,9 @@ public interface Child<T extends SlingModel> extends Supplier<T> {
      * Indicates if the child exists.
      * @return True, if the child exists. False otherwise.
      */
-    boolean isPresent();
+    default boolean isPresent() {
+        return get() != null;
+    }
 
     /**
      * Provides a null-safe way to operate on the value of the child, and return an
