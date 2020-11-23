@@ -23,6 +23,8 @@ exports[`User tests should render User component 1`] = `
     ouiaSafe={true}
     showClose={true}
     title="Placeholder dialog"
+    titleIconVariant={null}
+    titleLabel=""
     variant="default"
     width="60%"
   >

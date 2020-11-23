@@ -8,7 +8,7 @@ exports[`SearchFilter tests should render default Search component 1`] = `
     <InputGroup
       className="small-margin"
     >
-      <ForwardRef
+      <TextInput
         id="searchFilterInput"
         onChange={[Function]}
         type="text"

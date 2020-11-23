@@ -39,10 +39,11 @@ import { Pagination } from "@app/Pagination"
 export interface ISearchState {
   filterLabel: string
   isExpanded: boolean
-  isExpandedAssemblies: boolean
-  isExpandedModules: boolean
-  isExpandedProductFilter: boolean
-  isExpandedRepoFilter: boolean
+  assembliesIsExpanded: boolean
+  expandableSectionIsExpanded: boolean
+  modulesIsExpanded: boolean
+  productFilterIsExpanded: boolean
+  repoFilterIsExpanded: boolean
   products: Array<{ name: string, id: string }>
   repositories: Array<{ name: string, id: string, checked: boolean }>
 
@@ -71,10 +72,11 @@ class SearchBeta extends Component<any, ISearchState> {
       // states for drawer
       filterLabel: "repo",
       isExpanded: true,
-      isExpandedAssemblies: true,
-      isExpandedModules: true,
-      isExpandedProductFilter: true,
-      isExpandedRepoFilter: true,
+      assembliesIsExpanded: true,
+      expandableSectionIsExpanded: true,
+      modulesIsExpanded: true,
+      productFilterIsExpanded: true,
+      repoFilterIsExpanded: true,
       products: [{ name: "", id: "" }],
       repositories: [{ name: "", id: "", checked: false }],
       // states for toolbar
@@ -94,7 +96,7 @@ class SearchBeta extends Component<any, ISearchState> {
       // search
       keyword: "",
       productsSelected: [],
-      repositoriesSelected: ["rhel-8-docs-test", "rhel-8-docs"],
+      repositoriesSelected: [],
     };
     this.drawerRef = React.createRef();
 
@@ -116,7 +118,7 @@ class SearchBeta extends Component<any, ISearchState> {
     // window.removeEventListener("resize", this.closeExpandableContent);
   }
   public render() {
-    const { filterLabel, isExpanded, isExpandedProductFilter, isExpandedRepoFilter, repositories, inputValue, filters, statusIsExpanded, riskIsExpanded, kebabIsOpen } = this.state;
+    const { filterLabel, isExpanded, assembliesIsExpanded, modulesIsExpanded, productFilterIsExpanded, repoFilterIsExpanded, expandableSectionIsExpanded, repositories, inputValue, filters, statusIsExpanded, riskIsExpanded, kebabIsOpen } = this.state;
     
     const panelContent = (
       <DrawerPanelContent widths={{ lg: "width_25" }}>
@@ -125,7 +127,7 @@ class SearchBeta extends Component<any, ISearchState> {
           <DrawerActions>
             <DrawerCloseButton onClick={this.onCloseClick} />
           </DrawerActions>
-          <ExpandableSection toggleText="By repo" isActive={true}>
+          <ExpandableSection toggleText="By repo" isActive={true} isExpanded={repoFilterIsExpanded} onToggle={this.onRepositoriesToggle}>
             <SearchInput
               placeholder="Filter"
               value={this.state.repoFilterValue}
@@ -164,7 +166,7 @@ class SearchBeta extends Component<any, ISearchState> {
     const drawerContent = (
       <React.Fragment>
         {/* <ExpandableSection toggleText="Modules" className="pf-c-title pf-m-2xl" isActive={true}> */}
-        <ExpandableSection toggleText="Modules" className="pf-c-title" isActive={true}>
+        <ExpandableSection toggleText="Modules" className="pf-c-title" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
           <SearchResults
             contentType="module"
             keyWord={this.state.keyword}
@@ -174,7 +176,7 @@ class SearchBeta extends Component<any, ISearchState> {
 
         </ExpandableSection>
         <br />
-        <ExpandableSection toggleText="Assemblies" className="pf-c-title" isActive={true}>
+        <ExpandableSection toggleText="Assemblies" className="pf-c-title" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
           <SearchResults
             contentType="assembly"
             keyWord={this.state.keyword}
@@ -368,20 +370,6 @@ class SearchBeta extends Component<any, ISearchState> {
     this.drawerRef.current && this.drawerRef.current.focus()
   };
 
-  private onClickRepoFilter = () => {
-    const isExpandedRepoFilter = !this.state.isExpandedRepoFilter;
-    this.setState({
-      isExpandedRepoFilter
-    });
-  };
-
-  private onClickProductFilter = () => {
-    const isExpandedProductFilter = !this.state.isExpandedProductFilter;
-    this.setState({
-      isExpandedProductFilter
-    });
-  };
-
   private onClick = () => {
     const isExpanded = !this.state.isExpanded;
     this.setState({
@@ -536,6 +524,34 @@ class SearchBeta extends Component<any, ISearchState> {
     });
     
   }
+
+  // Method for ExpandableSection
+  private onExpandableToggle = isExpanded => {
+    this.setState({
+      expandableSectionIsExpanded: isExpanded
+    });
+  };
+
+  private onModulesToggle = () => {
+    const modulesIsExpanded = !this.state.modulesIsExpanded
+    this.setState({
+      modulesIsExpanded
+    });
+  };
+
+  private onAssembliesToggle = () => {
+    const assembliesIsExpanded = !this.state.assembliesIsExpanded
+    this.setState({
+      assembliesIsExpanded
+    });
+  };
+
+  private onRepositoriesToggle = () => {
+    const repoFilterIsExpanded = !this.state.repoFilterIsExpanded
+    this.setState({
+      repoFilterIsExpanded
+    });
+  };
 }
 
 

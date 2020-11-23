@@ -44,6 +44,8 @@ exports[`Versions tests should render Versions component 1`] = `
     ouiaSafe={true}
     showClose={true}
     title="Edit metadata"
+    titleIconVariant={null}
+    titleLabel=""
     variant="default"
     width="60%"
   >
@@ -190,7 +192,7 @@ exports[`Versions tests should render Versions component 1`] = `
               /
             </span>
           </InputGroupText>
-          <ForwardRef
+          <TextInput
             id="url-fragment"
             isRequired={false}
             onChange={[Function]}
@@ -206,7 +208,7 @@ exports[`Versions tests should render Versions component 1`] = `
         label="Search keywords"
       >
         <InputGroup>
-          <ForwardRef
+          <TextInput
             id="search-keywords"
             isRequired={false}
             onChange={[Function]}

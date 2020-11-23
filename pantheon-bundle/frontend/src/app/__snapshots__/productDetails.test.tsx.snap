@@ -50,7 +50,7 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
           isRequired={true}
           label="New Version:"
         >
-          <ForwardRef
+          <TextInput
             id="new_version_name_text"
             onChange={[Function]}
             placeholder="New version name"
@@ -64,7 +64,7 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
           isRequired={true}
           label=" URL Fragment:"
         >
-          <ForwardRef
+          <TextInput
             id="url_fragment_text"
             onChange={[Function]}
             placeholder="Url fragment"
