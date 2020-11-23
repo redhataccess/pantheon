@@ -205,13 +205,11 @@ public class ServletHelper {
         String moduleTitle;
         if (moduleVariant.hasDraft()) {
             moduleTitle = moduleVariant.draft()
-                    .traverse()
                     .toChild(ModuleVersion::metadata)
                     .toField(DocumentMetadata::title)
                     .get();
         } else if (moduleVariant.released().isPresent()) {
             moduleTitle = moduleVariant.released()
-                    .traverse()
                     .toChild(ModuleVersion::metadata)
                     .toField(DocumentMetadata::title)
                     .get();

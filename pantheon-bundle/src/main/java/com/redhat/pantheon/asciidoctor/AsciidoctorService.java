@@ -10,6 +10,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.api.util.ResourceTraversal;
@@ -100,8 +101,7 @@ public class AsciidoctorService {
                                   boolean draft,
                                   Map<String, Object> context,
                                   boolean forceRegen) {
-        ResourceTraversal<? extends DocumentVariant> traversal = document.locale(locale)
-                .traverse()
+        Child<? extends DocumentVariant> traversal = document.locale(locale)
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName));
 
@@ -109,11 +109,11 @@ public class AsciidoctorService {
         if (draft) {
             moduleVersion =
                     traversal.toChild(DocumentVariant::draft)
-                            .getAsOptional();
+                            .asOptional();
         } else {
             moduleVersion =
                     traversal.toChild(DocumentVariant::released)
-                            .getAsOptional();
+                            .asOptional();
         }
 
         String html;
@@ -202,9 +202,8 @@ public class AsciidoctorService {
             // process product and version.
             Optional<ProductVersion> productVersion =
                     documentVersion.metadata()
-                            .traverse()
-                            .toRef(DocumentMetadata::productVersion)
-                            .getAsOptional();
+                            .toReference(DocumentMetadata::productVersion)
+                            .asOptional();
 
             String productName = null;
             if (productVersion.isPresent()) {
@@ -216,9 +215,9 @@ public class AsciidoctorService {
             String entitiesPath = base.getWorkspace().entities().get().getPath();
             Optional<String> attributesFilePath =
                     base.getWorkspace().moduleVariantDefinitions()
-                            .traverse()
                             .toChild(vdf -> vdf.variant(variantName))
-                            .toField(ModuleVariantDefinition::attributesFilePath);
+                            .toField(ModuleVariantDefinition::attributesFilePath)
+                            .asOptional();
 
             // build the attributes (default + those coming from http parameters)
             AttributesBuilder atts = AttributesBuilder.attributes()

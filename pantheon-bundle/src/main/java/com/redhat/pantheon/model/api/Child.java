@@ -47,14 +47,6 @@ public interface Child<T extends SlingModel> extends Supplier<T> {
     }
 
     /**
-     * Start traversing the resource tree structure from this child
-     * @return a {@link ResourceTraversal} starting from this child.
-     */
-    default ResourceTraversal<T> traverse() {
-        return ResourceTraversal.traverseFrom(get());
-    }
-
-    /**
      * Convert this Child to an {@link Optional}
      * @return An {@link Optional} with the contained value.
      */
