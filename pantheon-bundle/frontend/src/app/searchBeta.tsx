@@ -58,7 +58,7 @@ export interface ISearchState {
 
   productFilterValue: string
   repoFilterValue: string
-  
+
   keyword: string
   productsSelected: string[]
   repositoriesSelected: string[]
@@ -112,6 +112,12 @@ class SearchBeta extends Component<any, ISearchState> {
     // window.addEventListener("resize", this.closeExpandableContent);
   }
 
+  public componentWillMount() {
+    // list repos inside the drawer
+    this.getRepositories()
+    this.getProducts()
+  }
+
   public componentWillUnmount() {
     // TODO: enable resize
     // toolbar
@@ -119,7 +125,7 @@ class SearchBeta extends Component<any, ISearchState> {
   }
   public render() {
     const { filterLabel, isExpanded, assembliesIsExpanded, modulesIsExpanded, productFilterIsExpanded, repoFilterIsExpanded, expandableSectionIsExpanded, repositories, inputValue, filters, statusIsExpanded, riskIsExpanded, kebabIsOpen } = this.state;
-    
+
     const panelContent = (
       <DrawerPanelContent widths={{ lg: "width_25" }}>
         <DrawerHead>
@@ -137,7 +143,7 @@ class SearchBeta extends Component<any, ISearchState> {
             <SimpleList aria-label="Repository List">
               {this.state.repositories.map((data) => (
                 <SimpleListItem key={data.id}>
-                  <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onClick={this.onSelectRepositories}/>
+                  <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onClick={this.onSelectRepositories} />
                 </SimpleListItem>
               ))}
             </SimpleList>
@@ -152,7 +158,7 @@ class SearchBeta extends Component<any, ISearchState> {
               onClear={(evt) => this.onChangeProductFilter("", evt)}
             />
             <SimpleList aria-label="Product List">
-            {this.state.products.map((data) => (
+              {this.state.products.map((data) => (
                 <SimpleListItem key={data.id}>
                   <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} />
                 </SimpleListItem>
@@ -336,7 +342,7 @@ class SearchBeta extends Component<any, ISearchState> {
         }
         this.setState({
           repositories: repos
-        })        
+        })
       })
       .catch((error) => {
         console.log(error)
@@ -460,10 +466,10 @@ class SearchBeta extends Component<any, ISearchState> {
       repoFilterValue: value
     });
 
-    if(value) {
+    if (value) {
       let inputString = "";
       const matchFound = [{ name: "", id: "", checked: false }];
-      
+
       this.state.repositories.map(data => {
         inputString = "" + data.name
         if (inputString.toLowerCase().includes(value.toLowerCase())) {
@@ -481,10 +487,10 @@ class SearchBeta extends Component<any, ISearchState> {
       productFilterValue: value
     });
 
-    if(value) {
+    if (value) {
       let inputString = "";
       const matchFound = [{ name: "", id: "" }];
-      
+
       this.state.products.map(data => {
         inputString = "" + data.name
         if (inputString.toLowerCase().includes(value.toLowerCase())) {
@@ -522,7 +528,7 @@ class SearchBeta extends Component<any, ISearchState> {
       repositories,
       repositoriesSelected
     });
-    
+
   }
 
   // Method for ExpandableSection
