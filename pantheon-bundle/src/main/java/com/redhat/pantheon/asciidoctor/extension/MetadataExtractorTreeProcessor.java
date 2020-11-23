@@ -154,8 +154,6 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                 log.warn("Invalid argument for " + MODULE_TYPE_ATT_NAME + " asciidoc attribute: "
                     + attValue.toString());
             }
-        } else {
-            mm.moduleType().set(null);
         }
     }
 
