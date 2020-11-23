@@ -2,6 +2,7 @@ package com.redhat.pantheon.model.api;
 
 import com.redhat.pantheon.model.api.util.ResourceTraversal;
 
+import javax.jcr.RepositoryException;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -46,25 +47,84 @@ public interface Child<T extends SlingModel> extends Supplier<T> {
     }
 
     /**
-     * Provides a null-safe way to operate on the value of the child, and return an
-     * {@link Optional} with the result of the operation. This allowes the caller to
-     * continue to operate in a null-safe fashion.
-     * @param func The function to apply to the value
-     * @param <R>
-     * @return An optional indicating the result of the operation. If the operation
-     * returns null, or if the value of this child was not present in the first place,
-     * this returns an empty Optional
-     * @deprecated Use {@link ResourceTraversal#traverseFrom(SlingModel)}
-     * for safe resource traversals
-     */
-    @Deprecated
-    <R> Optional<R> map(Function<? super T, ? extends R> func);
-
-    /**
      * Start traversing the resource tree structure from this child
      * @return a {@link ResourceTraversal} starting from this child.
      */
     default ResourceTraversal<T> traverse() {
         return ResourceTraversal.traverseFrom(get());
+    }
+
+    /**
+     * Convert this Child to an {@link Optional}
+     * @return An {@link Optional} with the contained value.
+     */
+    default Optional<T> asOptional() {
+        return Optional.ofNullable(get());
+    }
+
+    /**
+     * Navigates to the {@link Child} provided by an accessor function.
+     * @param childAccessor A function which given a {@link SlingModel} type, will
+     *                      yield a child
+     * @param <R>
+     * @return A {@link Child} (may be non-existent) as indicated by the accessor.
+     */
+    default <R extends SlingModel> Child<R> toChild(Function<? super T, Child<R>> childAccessor) {
+        if(isPresent()) {
+            return childAccessor.apply(get());
+        }
+        return (Child<R>) NullObjects.nullChild();
+    }
+
+    /**
+     * Navigates to the {@link Field} produced by an accessor function.
+     * @param fieldAccessor A function which given a {@link SlingModel} type, will
+     *                      yield a {@link Field}.
+     * @param <R>
+     * @return A {@link Field} (may be non-present) as indicated by the accessor
+     */
+    default <R> Field<R> toField(Function<? super T, Field<R>> fieldAccessor) {
+        if (isPresent()) {
+            return fieldAccessor.apply(get());
+        }
+        return (Field<R>) NullObjects.nullField();
+    }
+
+    /**
+     * Navigates to a {@link Child} referenced by a field of type REFERENCE.
+     * @param refAccessor A function which given a {@link SlingModel} type, will
+     *                    yield a {@link Reference} field.
+     * @param <R>
+     * @return The {@link Child} object as referenced by the resulting {@link Reference} field
+     */
+    default <R extends SlingModel> Child<R> toReference(Function<? super T, Reference<R>> refAccessor) {
+        if (isPresent()) {
+            T childNode = get();
+            Reference<R> reference = refAccessor.apply(childNode);
+            R refdNode = null;
+            try {
+                refdNode = reference.getReference();
+            } catch (RepositoryException e) {
+                // TODO Log a warning
+            }
+            if(refdNode == null) {
+                return (Child<R>) NullObjects.nullChild();
+            }
+
+            final R finalRefdNode = refdNode; // Need a final variable so the anonymous class doesn't complain below
+            return new Child<R>() {
+                @Override
+                public R create() {
+                    throw new UnsupportedOperationException("This child was created with a specific resource reference," +
+                            " hence it cannot be created");
+                }
+
+                @Override
+                public R get() {
+                    return finalRefdNode;
+                }
+            };
+        }
+        return (Child<R>) NullObjects.nullChild();
     }
 }
