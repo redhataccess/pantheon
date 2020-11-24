@@ -229,7 +229,7 @@ public class AsciidoctorService {
                     // show pantheonversion on the generated html. Base the value from metadata.
                     .attribute("pantheonversion", productVersion.isPresent() ? productVersion.get().name().get() : "")
                     // Shows custom rendering attribute to Haml
-                    .attribute("pantheonenv", "preview")
+                    .attribute("pantheonenv", System.getenv("PANTHEON_ENV") != null ? System.getenv("PANTHEON_ENV") : "dev")
                     // Provide doctype for haml use
                     .attribute("pantheondoctype", Assembly.class.equals(cls) ? "assembly" : "module")
                     // we want to avoid the footer on the generated html
