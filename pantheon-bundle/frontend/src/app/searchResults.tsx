@@ -234,6 +234,9 @@ class SearchResults extends Component<IProps, ISearchState> {
           })
           if (responseJSON.results.length > 0) {
             this.setState({ rows: data })
+          } else {
+            const rows = [{ cells: ["", "", "", ""] }]
+            this.setState({ rows })
           }
           console.log("[getResults] results=>", this.state.results)
           console.log("[getResults] rows=>", this.state.rows)
