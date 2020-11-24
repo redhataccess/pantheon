@@ -45,9 +45,11 @@ export interface ISearchState {
   nextPageRowCount: number
   page: number
   pageLimit: number
+  itemsPerPage: number
   results: any
   rows: any
   showDropdownOptions: boolean
+  bottom: boolean
 }
 class SearchResults extends Component<IProps, ISearchState> {
 
@@ -69,6 +71,7 @@ class SearchResults extends Component<IProps, ISearchState> {
       nextPageRowCount: 1,
       page: 1,
       pageLimit: 5,
+      itemsPerPage: 5,
       results: [
         {
           "pant:transientPath": "",
@@ -90,8 +93,8 @@ class SearchResults extends Component<IProps, ISearchState> {
           cells: ["", "", "", ""]
         }
       ],
-      showDropdownOptions: true,
-
+      showDropdownOptions: false,
+      bottom: true,
     };
   }
 
@@ -144,7 +147,7 @@ class SearchResults extends Component<IProps, ISearchState> {
           handlePerPageLimit={this.changePerPageLimit}
           perPageLimit={this.state.pageLimit}
           showDropdownOptions={this.state.showDropdownOptions}
-          bottom={false}
+          bottom={this.state.bottom}
         />}
         {/* </div> */}
         <Divider />
@@ -278,14 +281,14 @@ class SearchResults extends Component<IProps, ISearchState> {
 
   // methods for table rows
   private getResults = () => {
-    console.log("[getResults] results=>", this.state.results)
+    // console.log("[getResults] results=>", this.state.results)
     const data = new Array()
     this.state.results.map((item) => {
       const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
       data.push({ cells: [item.name, "", item["jcr:lastModified"], publishedDate] })
     })
     this.setState({ rows: data })
-    console.log("[getResults] rows=>", this.state.rows)
+    // console.log("[getResults] rows=>", this.state.rows)
   }
 }
 
