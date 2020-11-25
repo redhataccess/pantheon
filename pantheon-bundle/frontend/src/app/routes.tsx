@@ -49,7 +49,7 @@ class Routes extends Component<IAppState> {
         requiresLogin: true
       },
       {
-        component: (routeProps) => <ProductDetails productName={"test"} {...routeProps}/>,
+        component: (routeProps) => <ProductProvider><ProductDetails {...routeProps}/></ProductProvider>,
         exact: true,
         icon: null,
         label: "",
@@ -90,24 +90,12 @@ class Routes extends Component<IAppState> {
       }
     ]
 
-    // return (
-    //   // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
-    //   <Switch>
-    //     {console.log('PROPS', (routeProps) => <AssemblyDisplay {...routeProps} />)}
-    //     {routes.map(({path, exact, component, requiresLogin}, idx) => (
-    //       <Route path={path} exact={exact} render={(routeProps) => (this.props.userAuthenticated || !requiresLogin) ? component(routeProps) : <Login />} key={idx} />
-    //     ))}
-    //     <Route render={() => <Search {...this.props} />} />
-    //   </Switch>
-    // )
     return (
       // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
       <Switch>
-        {/* {console.log('PROPS', (routeProps) => <AssemblyDisplay {...routeProps} />)} */}
         {routes.map(({ path, exact, component, requiresLogin }, idx) => (
           <Route path={path} exact={exact} render={(routeProps) => (this.props.userAuthenticated || !requiresLogin) ? component(routeProps) : <Login />} key={idx} />
         ))}
-        {/* <Route path="/products" exact={true} render={(routeProps) => <ProductProvider><ProductListing routeProps={routeProps}/></ProductProvider>} /> */}
         <Route render={() => <Search {...this.props} />} />
       </Switch>
     )
