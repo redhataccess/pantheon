@@ -6,9 +6,9 @@
 - if (@document.attr :pantheonenv) == 'dev2'
   - portalUrl = 'access.dev.redhat.com'
 - if (@document.attr :pantheonenv) == 'qa'
-  - portalUrl = 'access.dev.redhat.com'
+  - portalUrl = 'access.qa.redhat.com'
 - if (@document.attr :pantheonenv) == 'stage'
-  - portalUrl = 'access.dev.redhat.com'
+  - portalUrl = 'access.stage.redhat.com'
 
 - pantheonCssPath = "//#{portalUrl}/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css"
 - cpDocsJsPath = "//#{portalUrl}/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js"
