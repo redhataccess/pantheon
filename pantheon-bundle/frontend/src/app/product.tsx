@@ -39,9 +39,7 @@ class Product extends Component<any, IState> {
     public render() {
         return (
             <React.Fragment>
-                {/* Bullseye makes sure everyhting is in the middle */}
-                <Bullseye>
-                    <Form>
+                    <Form className='p2-product__form'>
                         <div className="app-container">
                             <div>
                                 {this.state.isMissingFields &&
@@ -81,7 +79,8 @@ class Product extends Component<any, IState> {
                                 <FormGroup
                                         label="Product Name"
                                         isRequired={true}
-                                        fieldId="product_name" >
+                                        fieldId="product_name"
+                                        >
                                     <TextInput isRequired={true} id="product_name_text" type="text" placeholder="Product Name" value={this.state.productName} onChange={this.handleNameInput} />
                                 </FormGroup>
                                 <br />
@@ -123,7 +122,6 @@ class Product extends Component<any, IState> {
                             </div>
                         </div>
                     </Form>
-                </Bullseye>
             </React.Fragment>
         )
     }
