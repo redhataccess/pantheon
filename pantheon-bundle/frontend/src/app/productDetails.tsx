@@ -6,9 +6,6 @@ import {
 import { Fields, JcrTypes, SlingTypes } from "@app/Constants"
 import { ProductContext, IProduct } from "@app/contexts/ProductContext"
 
-export interface IProps {
-    productName: string
-}
 
 export const ProductDetails = (props: any) => {
     const allProducts = useContext(ProductContext);

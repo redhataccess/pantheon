@@ -5,12 +5,14 @@ import { DataList, DataListItem, DataListItemCells, DataListItemRow, FormGroup, 
 import ProductListing from "./productListing"
 import { ProductContext, IProduct } from "./contexts/ProductContext"
 
+const date = new Date();
+
 const allProducts: IProduct[] = [{
   description: "descrip",
   isOpen: false,
-  ["jcr:created"]: 1605556710885,
+  ["jcr:created"]: date,
   ['jcr:createdBy']: "admin",
-  ['jcr:lastModified']: 1605556710886,
+  ['jcr:lastModified']: date,
   ['jcr:lastModifiedBy']: "admin",
   ['jcr:primaryType']: "pant:product",
   ['jcr:uuid']: "5df8d913-79b9-42fd-a17b-ffc917add446",
@@ -21,9 +23,9 @@ const allProducts: IProduct[] = [{
 }, {
   description: "test descrip",
   isOpen: false,
-  ['jcr:created']: 1605621399917,
+  ['jcr:created']: date,
   ['jcr:createdBy']: "admin",
-  ['jcr:lastModified']: 1605621399918,
+  ['jcr:lastModified']: date,
   ['jcr:lastModifiedBy']: "admin",
   ['jcr:primaryType']: "pant:product",
   ['jcr:uuid']: "242d4187-d2f4-4df5-917b-e09bf4ff45e9",
@@ -93,7 +95,7 @@ describe("ProductListing tests", () => {
       );
       expect(container.state('filteredProducts')).toHaveLength(1)
       expect(container.state('filteredProducts')).toMatchObject(allProducts[0])
-    },2000)
+    }, 2000)
     searchInput.simulate('change', {
       target: {
         value: '',
@@ -107,6 +109,6 @@ describe("ProductListing tests", () => {
         '',
       );
       expect(container.state('filteredProducts')).toHaveLength(2)
-    },2000)    
+    }, 2000)
   })
 })
