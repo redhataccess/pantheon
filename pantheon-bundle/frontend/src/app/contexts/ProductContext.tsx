@@ -9,9 +9,9 @@ export interface IProductProviderProps {
 export interface IProduct {
   description: string,
   isOpen: boolean,
-  ["jcr:created"]: number,
+  ["jcr:created"]: Date,
   ["jcr:createdBy"]: string,
-  ['jcr:lastModified']: number,
+  ['jcr:lastModified']: Date,
   ["jcr:lastModifiedBy"]: string,
   ["jcr:primaryType"]: string,
   ["jcr:uuid"]: string,

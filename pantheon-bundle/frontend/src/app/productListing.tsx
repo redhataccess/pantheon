@@ -9,7 +9,7 @@ import { ProductContext, IProduct } from "@app/contexts/ProductContext"
 
 export default function ProductListing(props: any) {
   const allProducts = useContext(ProductContext);
-  
+
   const [input, setInputField] = useState("")
   const [filteredProducts, setFilteredProducts] = useState([] as IProduct[])
 
@@ -17,16 +17,30 @@ export default function ProductListing(props: any) {
     setFilteredProducts(allProducts)
   }, [allProducts])
 
+  /**
+  * Controls the toggle for the caret down for Product Details
+  * @param [string] id - product jcr:uuid
+  */
   const onToggle = (id) => {
     updateProduct(id);
   };
 
+  /**
+  * Sends user to Product Details page for
+  * individual product that was selected
+  * @param [string] id - product jcr:uuid
+  */
   const onSelect = (id) => {
     // @ts-ignore
     window.location += `/${id}`;
   };
 
-  const setInput = (text, event) => {
+  /**
+  * Updates input state value based on user's
+  * search bar text input
+  * @param [string] text
+  */
+  const setInput = (text) => {
     setInputField(text)
     const filteredProducts = allProducts.filter(product => {
       return product.name.toLowerCase().includes(text.toLowerCase())
@@ -34,6 +48,11 @@ export default function ProductListing(props: any) {
     setFilteredProducts(filteredProducts)
   }
 
+  /**
+  * Toggles product's isOpen key
+  * between true and false
+  * @param [string] id
+  */
   function updateProduct(id: string) {
     const newProducts = filteredProducts.map(product => {
       if (product['jcr:uuid'] === id) {
@@ -50,7 +69,7 @@ export default function ProductListing(props: any) {
         label="Search Products"
         fieldId="search">
         <div className="row-view">
-          <TextInput id="search" type="text" onChange={(text, event) => setInput(text, event)} placeholder="Type product name to search" value={input} />
+          <TextInput id="search" type="text" onChange={(text) => setInput(text)} placeholder="Type product name to search" value={input} />
         </div>
       </FormGroup>
       <DataList aria-label="single action data list example ">
