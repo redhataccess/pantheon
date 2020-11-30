@@ -22,12 +22,14 @@ import {
   EmptyStateVariant
 } from "@patternfly/react-core";
 import { SearchIcon } from "@patternfly/react-icons";
+import { SlingTypesPrefixes } from "./Constants";
 
 export interface IProps {
   contentType: string
   keyWord: string
   productsSelected: string[]
   repositoriesSelected: string[]
+  userAuthenticated: boolean
 }
 export interface ISearchState {
 
@@ -228,7 +230,16 @@ class SearchResults extends Component<IProps, ISearchState> {
           responseJSON.results.map((item, key) => {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
             const cellItem = new Array()
-            cellItem.push(item["jcr:title"])
+            if (this.props.userAuthenticated) {
+              cellItem.push({ title: <a href={"/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
+            } else {
+              cellItem.push({
+                title: <a href={"/pantheon/preview/released/" + item["jcr:uuid"]} target="_blank">
+                  {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]}
+                </a>
+              })
+            }
+
             cellItem.push(item["pant:transientSourceName"])
             cellItem.push(item["pant:dateUploaded"])
             cellItem.push(publishedDate)

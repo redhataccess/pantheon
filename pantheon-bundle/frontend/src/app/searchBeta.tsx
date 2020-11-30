@@ -35,6 +35,7 @@ import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 // import TextInput from "@patternfly/react-icons/dist/js/icons/text-input";
 import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
 import { Pagination } from "@app/Pagination"
+import { IAppState } from "@app/app"
 
 export interface ISearchState {
   filterLabel: string
@@ -63,7 +64,7 @@ export interface ISearchState {
   productsSelected: string[]
   repositoriesSelected: string[]
 }
-class SearchBeta extends Component<any, ISearchState> {
+class SearchBeta extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
 
   constructor(props) {
@@ -178,6 +179,7 @@ class SearchBeta extends Component<any, ISearchState> {
             keyWord={this.state.keyword}
             repositoriesSelected={this.state.repositoriesSelected}
             productsSelected={this.state.productsSelected}
+            userAuthenticated={this.props.userAuthenticated}
           />
 
         </ExpandableSection>
@@ -188,6 +190,7 @@ class SearchBeta extends Component<any, ISearchState> {
             keyWord={this.state.keyword}
             repositoriesSelected={this.state.repositoriesSelected}
             productsSelected={this.state.productsSelected}
+            userAuthenticated={this.props.userAuthenticated}
           />
 
         </ExpandableSection>
