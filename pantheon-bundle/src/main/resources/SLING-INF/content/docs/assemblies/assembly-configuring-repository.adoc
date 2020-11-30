@@ -1,0 +1,20 @@
+ifdef::context[:parent-context: {context}]
+
+include::../attributes.adoc[]
+
+[id="configuring_repository_{context}"]
+= Configuring your repository
+
+[role="_abstract"]
+Before you can add {ContentTerm} to {ProductName}, you must complete the following steps:
+
+. xref:configuring-a-repository-as-a-content-source-for-pantheon_assembly-help[Configure your documentation repository as a content source for {ProductShortName}.]
+. xref:creating-a-product_assembly-help[Create a product] and xref:versioning-a-product_assembly-help[product version] in {ProductShortName} to associate with your {ContentTerm}.
+
+include::../modules/proc_config_repo.adoc[leveloffset=+1]
+include::../modules/con_pantheon_yaml_file.adoc[leveloffset=+1]
+include::../modules/proc_creating-a-product.adoc[leveloffset=+1]
+include::../modules/proc_versioning_a_product.adoc[leveloffset=+1]
+
+ifdef::parent-context[:context: {parent-context}]
+ifndef::parent-context[:!context:]
