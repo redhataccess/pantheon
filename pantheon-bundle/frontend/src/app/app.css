@@ -105,3 +105,9 @@ body {
 .p2-header__login{
     padding-right: 8px;
 }
+
+/* Set product form width */
+
+.p2-product__form{
+    width: 320px;
+}
