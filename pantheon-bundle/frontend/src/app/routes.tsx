@@ -9,7 +9,7 @@ import { GitImport } from "./gitImport"
 import { ModuleDisplay } from "@app/moduleDisplay"
 import { AssemblyDisplay } from "@app/assemblyDisplay"
 import { IAppState } from "./app"
-import { ProductProvider } from "@app/contexts/ProductContext"
+import { ProductProvider } from "./contexts/ProductContext"
 
 interface IAppRoute {
   label: string
