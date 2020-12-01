@@ -1,14 +1,39 @@
 import React from "react"
-import { ProductListing }  from "@app/productListing"
 import "@app/fetchMock"
-
 import { mount, shallow } from "enzyme"
 import { DataList, DataListItem, DataListItemCells, DataListItemRow, FormGroup, TextInput } from "@patternfly/react-core"
-import renderer from "react-test-renderer"
+import ProductListing from "./productListing"
+import { ProductContext, IProduct } from "./contexts/ProductContext"
 
- const props = {
-   match: exact => true
- }
+const date = new Date();
+
+const allProducts: IProduct[] = [{
+  description: "descrip",
+  isOpen: false,
+  ["jcr:created"]: date,
+  ['jcr:createdBy']: "admin",
+  ['jcr:lastModified']: date,
+  ['jcr:lastModifiedBy']: "admin",
+  ['jcr:primaryType']: "pant:product",
+  ['jcr:uuid']: "5df8d913-79b9-42fd-a17b-ffc917add446",
+  locale: "en-US",
+  name: "product 11/16",
+  ['sling:resourceType']: "pantheon/product",
+  urlFragment: "product_url",
+}, {
+  description: "test descrip",
+  isOpen: false,
+  ['jcr:created']: date,
+  ['jcr:createdBy']: "admin",
+  ['jcr:lastModified']: date,
+  ['jcr:lastModifiedBy']: "admin",
+  ['jcr:primaryType']: "pant:product",
+  ['jcr:uuid']: "242d4187-d2f4-4df5-917b-e09bf4ff45e9",
+  locale: "en-US",
+  name: "test 11/17",
+  ['sling:resourceType']: "pantheon/product",
+  urlFragment: "testurl",
+}];
 
 describe("ProductListing tests", () => {
   test("should render ProductListing component", () => {
@@ -16,13 +41,13 @@ describe("ProductListing tests", () => {
     expect(view).toMatchSnapshot()
   })
 
-   it("should render a Data List", () => {
-     const wrapper = mount(<ProductListing />)
-     const dataList = wrapper.find(DataList)
-     expect(dataList.exists()).toBe(true)
-   })
+  it("should render a Data List", () => {
+    const wrapper = mount(<ProductListing />)
+    const dataList = wrapper.find(DataList)
+    expect(dataList.exists()).toBe(true)
+  })
 
-   it("should render a DataListItem", () => {
+  it("should render a DataListItem", () => {
     const wrapper = mount(<ProductListing />)
     const dataListItem = wrapper.find(DataListItem)
     expect(dataListItem.exists()).toBe(true)
@@ -40,57 +65,50 @@ describe("ProductListing tests", () => {
     expect(dataListItemRow.exists()).toBe(true)
   })
 
-   it("should render a form group", () => {
-     const wrapper = mount(<ProductListing />)
-     const formGroup = wrapper.find(FormGroup)
-     expect(formGroup.exists()).toBe(true)
-   })
-
-   it("should render a text input", () => {
-     const wrapper = mount(<ProductListing />)
-     const textInput = wrapper.find(TextInput)
-     expect(textInput.exists()).toBe(true)
-   })
-
-   it("test props", () => {
-     const productListing = mount(<ProductListing {...props} />).matchesElement
-     expect(productListing.length === 1)
-   })
-
-   
-   it("test getProducts function", () => {
-    const wrapper = renderer.create(<ProductListing />)
-    const inst = wrapper.getInstance()
-    expect(inst.getProducts([{"product1": "product1 name"}])).toMatchSnapshot()
+  it("should render a form group", () => {
+    const wrapper = mount(<ProductListing />)
+    const formGroup = wrapper.find(FormGroup)
+    expect(formGroup.exists()).toBe(true)
   })
 
-   it("test getProductsUrl function", () => {
-    const wrapper = renderer.create(<ProductListing />)
-    const inst = wrapper.getInstance()
-    expect(inst.getProductsUrl("/content/products.query.json?nodeType=pant:product&orderby=name")).toMatchSnapshot()
-  })
-   
-   it("test setInput function", () => {
-    const wrapper = renderer.create(<ProductListing />)
-    const inst = wrapper.getInstance()
-    expect(inst.setInput("test input")).toMatchSnapshot()
+  it("should render a text input", () => {
+    const wrapper = mount(<ProductListing />)
+    const textInput = wrapper.find(TextInput)
+    expect(textInput.exists()).toBe(true)
   })
 
-   it("test loginRedirect function", () => {
-    const wrapper = renderer.create(<ProductListing />)
-    const inst = wrapper.getInstance()
-    expect(inst.loginRedirect).toMatchSnapshot()
-  })
- 
-  it("test checkAuth function", () => {
-    const wrapper = renderer.create(<ProductListing />)
-    const inst = wrapper.getInstance()
-    expect(inst.checkAuth).toMatchSnapshot()
-  })
 
-  it("test componentDidMount function", () => {
-    const wrapper = renderer.create(<ProductListing />)
-    const inst = wrapper.getInstance()
-    expect(inst.componentDidMount).toMatchSnapshot()
+  it("should update input and list of products on text change", () => {
+    const container = mount(<ProductContext.Provider value={allProducts}><ProductListing /></ProductContext.Provider>)
+    const searchInput = container.find('#search.pf-c-form-control')
+    searchInput.simulate('change', {
+      target: {
+        value: 'product',
+      },
+    });
+    setTimeout(() => {
+      expect(container.prop('input')).toEqual(
+        'product',
+      );
+      expect(container.state('input')).toEqual(
+        'product',
+      );
+      expect(container.state('filteredProducts')).toHaveLength(1)
+      expect(container.state('filteredProducts')).toMatchObject(allProducts[0])
+    }, 2000)
+    searchInput.simulate('change', {
+      target: {
+        value: '',
+      },
+    });
+    setTimeout(() => {
+      expect(container.prop('input')).toEqual(
+        '',
+      );
+      expect(container.state('input')).toEqual(
+        '',
+      );
+      expect(container.state('filteredProducts')).toHaveLength(2)
+    }, 2000)
   })
 })
