@@ -96,4 +96,8 @@ public class Html {
         // returns the inner content of the body tag
         return document -> document.body().html();
     }
+
+    public static Function<Document, String> getElementById(String id) {
+        return document -> document.getElementById(id).toString();
+    }
 }
