@@ -27,6 +27,7 @@ export function ProductProvider({ children }: IProductProviderProps) {
 
   useEffect(() => {
     try {
+      // fetch all product data and set allProducts variable to the response
       fetch(backend)
         .then(response => response.json())
         .then(response => {
@@ -40,7 +41,7 @@ export function ProductProvider({ children }: IProductProviderProps) {
     }
 
   }, []);
-
+  // components wrapped in this provider will now have access to allProducts
   return <ProductContext.Provider value={allProducts}>
     {children}
   </ProductContext.Provider>
