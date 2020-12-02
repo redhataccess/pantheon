@@ -15,8 +15,6 @@ import {
   Button,
   EmptyState,
   EmptyStateBody,
-  EmptyStatePrimary,
-  Bullseye,
   Title,
   EmptyStateIcon,
   EmptyStateVariant
@@ -102,7 +100,6 @@ class SearchResults extends Component<IProps, ISearchState> {
   }
 
   public componentDidMount() {
-    // this.buildSearchQuery()
     this.doSearch()
   }
 
@@ -133,7 +130,7 @@ class SearchResults extends Component<IProps, ISearchState> {
           <EmptyStateBody>
             No results match the filter criteria. Select fitler to show results.
         </EmptyStateBody>
-          {/* <Button variant="link">Clear all filters</Button> */}
+
         </EmptyState>
         }
 
@@ -163,7 +160,6 @@ class SearchResults extends Component<IProps, ISearchState> {
       backend += this.state.filterQuery
 
       if (this.props.repositoriesSelected) {
-        console.log("[respositoriesSelected]", this.props.repositoriesSelected)
         this.props.repositoriesSelected.map(repo => {
           if (backend.endsWith("?") || backend.endsWith("&")) {
             backend += "repo=" + repo
@@ -213,9 +209,9 @@ class SearchResults extends Component<IProps, ISearchState> {
     }
   }
 
-  private setFilterQuery = (filterQuery: string) => {
-    this.setState({ filterQuery })
-  };
+  // private setFilterQuery = (filterQuery: string) => {
+  //   this.setState({ filterQuery })
+  // };
 
   // methods for pagination
   private updatePageCounter = (direction: string) => () => {
@@ -247,7 +243,7 @@ class SearchResults extends Component<IProps, ISearchState> {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
             const cellItem = new Array()
             if (this.props.userAuthenticated) {
-              cellItem.push({ title: <a href={"/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
+            cellItem.push({ title: <a href={"/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
             } else {
               cellItem.push({
                 title: <a href={"/pantheon/preview/released/" + item["jcr:uuid"]} target="_blank">
@@ -268,8 +264,6 @@ class SearchResults extends Component<IProps, ISearchState> {
             const rows = [{ cells: ["", "", "", ""] }]
             this.setState({ rows })
           }
-          console.log("[getResults] results=>", this.state.results)
-          console.log("[getResults] rows=>", this.state.rows)
         })
         .then(() => {
           if (JSON.stringify(this.state.results) === "[]") {

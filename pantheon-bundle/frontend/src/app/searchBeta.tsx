@@ -25,6 +25,8 @@ import {
   SimpleListItem,
   SimpleList,
   SearchInput,
+  Banner,
+  Alert,
 
 } from "@patternfly/react-core";
 
@@ -32,9 +34,7 @@ import { SearchResults } from "@app/searchResults";
 
 import "@app/app.css";
 import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
-// import TextInput from "@patternfly/react-icons/dist/js/icons/text-input";
 import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
-import { Pagination } from "@app/Pagination"
 import { IAppState } from "@app/app"
 
 export interface ISearchState {
@@ -55,7 +55,6 @@ export interface ISearchState {
     ctype: any,
     status: any
   },
-  kebabIsOpen: boolean,
 
   productFilterValue: string
   repoFilterValue: string
@@ -87,7 +86,6 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         ctype: [],
         status: []
       },
-      kebabIsOpen: false,
 
       // filters
       productFilterValue: "",
@@ -104,7 +102,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
   public componentDidMount() {
     // list repos inside the drawer
     this.getRepositories()
-    this.getProducts()
+    // this.getProducts()
 
     // TODO: enable resize
     // toolbar
@@ -114,7 +112,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
   public componentWillMount() {
     // list repos inside the drawer
     this.getRepositories()
-    this.getProducts()
+    // this.getProducts()
   }
 
   public componentWillUnmount() {
@@ -123,7 +121,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     // window.removeEventListener("resize", this.closeExpandableContent);
   }
   public render() {
-    const { filterLabel, isExpanded, assembliesIsExpanded, modulesIsExpanded, productFilterIsExpanded, repoFilterIsExpanded, expandableSectionIsExpanded, repositories, inputValue, filters, statusIsExpanded, ctypeIsExpanded, kebabIsOpen } = this.state;
+    const { filterLabel, isExpanded, assembliesIsExpanded, modulesIsExpanded, productFilterIsExpanded, repoFilterIsExpanded, expandableSectionIsExpanded, repositories, inputValue, filters, statusIsExpanded, ctypeIsExpanded } = this.state;
 
     const panelContent = (
       <DrawerPanelContent widths={{ lg: "width_25" }}>
@@ -170,7 +168,6 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     );
     const drawerContent = (
       <React.Fragment>
-        {/* <ExpandableSection toggleText="Modules" className="pf-c-title pf-m-2xl" isActive={true}> */}
         <ExpandableSection toggleText="Modules" className="pf-c-title" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
           <SearchResults
             contentType="module"
@@ -229,7 +226,9 @@ class SearchBeta extends Component<IAppState, ISearchState> {
               <SearchIcon />
             </Button>
           </InputGroup>
-        </ToolbarItem>
+        </ToolbarItem>{"      "}
+        <ToolbarItem />
+        <ToolbarItem />
         <ToolbarGroup variant="filter-group">
           <ToolbarFilter
             chips={filters.status}
@@ -267,23 +266,23 @@ class SearchBeta extends Component<IAppState, ISearchState> {
       </React.Fragment>
     );
 
-    const dropdownItems = [
-      <DropdownItem key="link">Link</DropdownItem>,
-      <DropdownItem key="action" component="button">
-        Action
-          </DropdownItem>,
-      <DropdownItem key="disabled link" isDisabled={true}>
-        Disabled Link
-          </DropdownItem>,
-      <DropdownItem key="disabled action" isDisabled={true} component="button">
-        Disabled Action
-          </DropdownItem>,
-      <DropdownSeparator key="separator" />,
-      <DropdownItem key="separated link">Separated Link</DropdownItem>,
-      <DropdownItem key="separated action" component="button">
-        Separated Action
-          </DropdownItem>
-    ];
+    // const dropdownItems = [
+    //   <DropdownItem key="link">Link</DropdownItem>,
+    //   <DropdownItem key="action" component="button">
+    //     Action
+    //       </DropdownItem>,
+    //   <DropdownItem key="disabled link" isDisabled={true}>
+    //     Disabled Link
+    //       </DropdownItem>,
+    //   <DropdownItem key="disabled action" isDisabled={true} component="button">
+    //     Disabled Action
+    //       </DropdownItem>,
+    //   <DropdownSeparator key="separator" />,
+    //   <DropdownItem key="separated link">Separated Link</DropdownItem>,
+    //   <DropdownItem key="separated action" component="button">
+    //     Separated Action
+    //       </DropdownItem>
+    // ];
 
     const toolbarItems = (
       <React.Fragment>
@@ -305,7 +304,13 @@ class SearchBeta extends Component<IAppState, ISearchState> {
 
     return (
       <React.Fragment>
-
+        <Alert variant="info" title="Beta feature." >
+        <p>
+        Please give us your feedback {"  "}
+            <a href="#">here.</a>
+          </p>
+        </Alert>
+        <br />
         <Toolbar
           id="toolbar-with-filter"
           className="pf-m-toggle-group-container"
@@ -316,8 +321,8 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         </Toolbar>
         <Divider />
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
-          <DrawerContent panelContent={panelContent}>
-            <DrawerContentBody>
+          <DrawerContent panelContent={panelContent} width="width_50">
+            <DrawerContentBody width="width_50">
               {drawerContent}
             </DrawerContentBody>
           </DrawerContent>
@@ -461,12 +466,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
       ctypeIsExpanded: isExpanded
     });
   };
-  private onKebabToggle = isOpen => {
-    this.setState({
-      kebabIsOpen: isOpen
-    });
-  };
-
+  
   // methods for filter search
   private onChangeRepoFilter = (value, event) => {
     this.setState({
