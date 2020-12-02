@@ -102,6 +102,11 @@ body {
     max-width: 44em;
 }
 
-.p2-header__login{
+.p2-header__login {
     padding-right: 8px;
+}
+
+.pf-c-drawer__panel[class] {
+    /* Added [class] for specificity */
+    z-index: 190;
 }

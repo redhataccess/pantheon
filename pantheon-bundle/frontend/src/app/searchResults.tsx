@@ -128,7 +128,7 @@ class SearchResults extends Component<IProps, ISearchState> {
             No results found
         </Title>
           <EmptyStateBody>
-            No results match the filter criteria. Select fitler to show results.
+            No results match the filter criteria. Select repo to show results.
         </EmptyStateBody>
 
         </EmptyState>

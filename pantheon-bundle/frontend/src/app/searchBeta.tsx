@@ -226,9 +226,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
               <SearchIcon />
             </Button>
           </InputGroup>
-        </ToolbarItem>{"      "}
-        <ToolbarItem />
-        <ToolbarItem />
+        </ToolbarItem>
         <ToolbarGroup variant="filter-group">
           <ToolbarFilter
             chips={filters.status}
@@ -307,7 +305,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         <Alert variant="info" title="Beta feature." >
         <p>
         Please give us your feedback {"  "}
-            <a href="#">here.</a>
+            <a href="https://projects.engineering.redhat.com/browse/CCS-3969">here.</a>
           </p>
         </Alert>
         <br />
