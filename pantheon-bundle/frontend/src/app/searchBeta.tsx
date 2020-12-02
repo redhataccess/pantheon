@@ -25,7 +25,6 @@ import {
   SimpleListItem,
   SimpleList,
   SearchInput,
-  Banner,
   Alert,
 
 } from "@patternfly/react-core";
