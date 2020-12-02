@@ -27,6 +27,7 @@ import { SlingTypesPrefixes } from "./Constants";
 export interface IProps {
   contentType: string
   keyWord: string
+  filters: { ctype: any, status: any }
   productsSelected: string[]
   repositoriesSelected: string[]
   userAuthenticated: boolean
@@ -101,24 +102,20 @@ class SearchResults extends Component<IProps, ISearchState> {
   }
 
   public componentDidMount() {
-    this.buildSearchQuery()
-    // this.getResults()
+    // this.buildSearchQuery()
     this.doSearch()
   }
 
   public componentDidUpdate(prevProps) {
-    // console.log("[componentDidUpdate] this.props=>", this.props)
-    // console.log("[componentDidUpdate] prevprops=>", prevProps)
-    if (this.props.repositoriesSelected !== prevProps.repositoriesSelected) {
-      // this.buildSearchQuery()
-      this.doSearch()
-    }
+    if (this.props.repositoriesSelected !== prevProps.repositoriesSelected
+      || this.props.productsSelected !== prevProps.productsSelected
+      || this.props.keyWord !== prevProps.keyWord
+      || this.props.filters !== prevProps.filters) {
 
-    if (this.props.productsSelected !== prevProps.productsSelected) {
-      // this.buildSearchQuery()
       this.doSearch()
     }
   }
+
   public render() {
     const { columns, rows } = this.state;
 
@@ -139,7 +136,7 @@ class SearchResults extends Component<IProps, ISearchState> {
           {/* <Button variant="link">Clear all filters</Button> */}
         </EmptyState>
         }
-        {/* <div className="notification-container"> */}
+
         {!this.state.isEmptyResults && <Pagination
           handleMoveLeft={this.updatePageCounter("L")}
           handleMoveRight={this.updatePageCounter("R")}
@@ -151,7 +148,7 @@ class SearchResults extends Component<IProps, ISearchState> {
           showDropdownOptions={this.state.showDropdownOptions}
           bottom={this.state.bottom}
         />}
-        {/* </div> */}
+
         <Divider />
       </React.Fragment>
     );
@@ -161,17 +158,18 @@ class SearchResults extends Component<IProps, ISearchState> {
   private buildSearchQuery() {
     if ((this.props.repositoriesSelected && this.props.repositoriesSelected.length > 0)
       || (this.props.productsSelected && this.props.productsSelected.length > 0)) {
-      console.log("[buildSearchQuery] repositoriesSelected=>", this.props.repositoriesSelected)
-      console.log("[buildSearchQuery] productsSelected=>", this.props.productsSelected)
       let backend = "/pantheon/internal/modules.json?"
+
       backend += this.state.filterQuery
-      if (this.state.filterQuery.trim() !== "") {
-        backend += "&"
-      }
+
       if (this.props.repositoriesSelected) {
         console.log("[respositoriesSelected]", this.props.repositoriesSelected)
         this.props.repositoriesSelected.map(repo => {
-          backend += "repo=" + repo + "&"
+          if (backend.endsWith("?") || backend.endsWith("&")) {
+            backend += "repo=" + repo
+          } else {
+            backend += "&repo=" + repo
+          }
         })
       }
 
@@ -186,11 +184,29 @@ class SearchResults extends Component<IProps, ISearchState> {
       if (this.props.contentType) {
         backend += "&ctype=" + this.props.contentType
       }
+
+      if (this.props.keyWord) {
+        backend += "&search=" + this.props.keyWord.trim()
+      }
+
+      if (this.props.filters) {
+        if (this.props.filters.ctype) {
+          this.props.filters.ctype.map(type => {
+            backend += "&type=" + type
+          })
+        }
+        if (this.props.filters.status) {
+          this.props.filters.status.map(stat => {
+            backend += "&status=" + stat
+          })
+        }
+      }
+
       backend += "&offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
       if (!backend.includes("Uploaded") && !backend.includes("direction")) {
         backend += "&key=Uploaded&direction=desc"
       }
-      console.log("[search] query=>", backend)
+
       return backend
     } else {
       return ""
@@ -285,21 +301,8 @@ class SearchResults extends Component<IProps, ISearchState> {
 
   private changePerPageLimit = (pageLimitValue) => {
     this.setState({ pageLimit: pageLimitValue, page: 1 }, () => {
-      // console.log("pageLImit value on calling changePerPageLimit function: "+this.state.pageLimit)
       return (this.state.pageLimit + " items per page")
     })
-  }
-
-  // methods for table rows
-  private getResults = () => {
-    // console.log("[getResults] results=>", this.state.results)
-    const data = new Array()
-    this.state.results.map((item) => {
-      const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
-      data.push({ cells: [item.name, "", item["jcr:lastModified"], publishedDate] })
-    })
-    this.setState({ rows: data })
-    // console.log("[getResults] rows=>", this.state.rows)
   }
 }
 

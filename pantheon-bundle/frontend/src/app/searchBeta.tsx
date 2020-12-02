@@ -50,9 +50,9 @@ export interface ISearchState {
 
   inputValue: string,
   statusIsExpanded: boolean,
-  riskIsExpanded: boolean,
+  ctypeIsExpanded: boolean,
   filters: {
-    risk: any,
+    ctype: any,
     status: any
   },
   kebabIsOpen: boolean,
@@ -60,7 +60,6 @@ export interface ISearchState {
   productFilterValue: string
   repoFilterValue: string
 
-  keyword: string
   productsSelected: string[]
   repositoriesSelected: string[]
 }
@@ -83,10 +82,10 @@ class SearchBeta extends Component<IAppState, ISearchState> {
       // states for toolbar
       inputValue: "",
       statusIsExpanded: false,
-      riskIsExpanded: false,
+      ctypeIsExpanded: false,
       filters: {
-        risk: ["Low"],
-        status: ["New", "Pending"]
+        ctype: [],
+        status: []
       },
       kebabIsOpen: false,
 
@@ -95,7 +94,6 @@ class SearchBeta extends Component<IAppState, ISearchState> {
       repoFilterValue: "",
 
       // search
-      keyword: "",
       productsSelected: [],
       repositoriesSelected: [],
     };
@@ -125,7 +123,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     // window.removeEventListener("resize", this.closeExpandableContent);
   }
   public render() {
-    const { filterLabel, isExpanded, assembliesIsExpanded, modulesIsExpanded, productFilterIsExpanded, repoFilterIsExpanded, expandableSectionIsExpanded, repositories, inputValue, filters, statusIsExpanded, riskIsExpanded, kebabIsOpen } = this.state;
+    const { filterLabel, isExpanded, assembliesIsExpanded, modulesIsExpanded, productFilterIsExpanded, repoFilterIsExpanded, expandableSectionIsExpanded, repositories, inputValue, filters, statusIsExpanded, ctypeIsExpanded, kebabIsOpen } = this.state;
 
     const panelContent = (
       <DrawerPanelContent widths={{ lg: "width_25" }}>
@@ -151,7 +149,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
 
           </ExpandableSection>
           <br />
-          <ExpandableSection toggleText="By product">
+          {/* <ExpandableSection toggleText="By product">
             <SearchInput
               placeholder="Filter"
               value={this.state.productFilterValue}
@@ -166,7 +164,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
               ))}
             </SimpleList>
 
-          </ExpandableSection>
+          </ExpandableSection> */}
         </DrawerHead>
       </DrawerPanelContent>
     );
@@ -176,10 +174,11 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         <ExpandableSection toggleText="Modules" className="pf-c-title" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
           <SearchResults
             contentType="module"
-            keyWord={this.state.keyword}
+            keyWord={this.state.inputValue}
             repositoriesSelected={this.state.repositoriesSelected}
             productsSelected={this.state.productsSelected}
             userAuthenticated={this.props.userAuthenticated}
+            filters={this.state.filters}
           />
 
         </ExpandableSection>
@@ -187,10 +186,11 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         <ExpandableSection toggleText="Assemblies" className="pf-c-title" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
           <SearchResults
             contentType="assembly"
-            keyWord={this.state.keyword}
+            keyWord={this.state.inputValue}
             repositoriesSelected={this.state.repositoriesSelected}
             productsSelected={this.state.productsSelected}
             userAuthenticated={this.props.userAuthenticated}
+            filters={this.state.filters}
           />
 
         </ExpandableSection>
@@ -198,16 +198,14 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     );
 
     const statusMenuItems = [
-      <SelectOption key="statusNew" value="New" />,
-      <SelectOption key="statusPending" value="Pending" />,
-      <SelectOption key="statusRunning" value="Running" />,
-      <SelectOption key="statusCancelled" value="Cancelled" />
+      <SelectOption key="statusDraft" value="draft" label= "Draft" />,
+      <SelectOption key="statusPublished" value="released" label="Published" />
     ];
 
-    const riskMenuItems = [
-      <SelectOption key="riskLow" value="Low" />,
-      <SelectOption key="riskMedium" value="Medium" />,
-      <SelectOption key="riskHigh" value="High" />
+    const contentTypeMenuItems = [
+      <SelectOption key="ctypeConcept" value="CONCEPT" label="Concept" />,
+      <SelectOption key="ctypeProcedure" value="PROCEDURE" label="Procedure" />,
+      <SelectOption key="ctypeReference" value="REFERENCE" label="Reference" />
     ];
 
     const toggleGroupItems = (
@@ -217,12 +215,14 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         </ToolbarItem>
         <ToolbarItem>
           <InputGroup>
-            <TextInput
-              name="textInput2"
-              id="textInput2"
+            <SearchInput
+              name="textInput"
+              id="textInput"
+              placeholder="Find by name"
               type="search"
               aria-label="search input"
               onChange={this.onInputChange}
+              onClear={this.onInputClear}
               value={inputValue}
             />
             <Button variant={ButtonVariant.control} aria-label="search button for search input">
@@ -249,18 +249,18 @@ class SearchBeta extends Component<IAppState, ISearchState> {
               {statusMenuItems}
             </Select>
           </ToolbarFilter>
-          {/* <ToolbarFilter chips={filters.risk} deleteChip={this.onDelete} categoryName="Risk"> */}
-          <ToolbarFilter chips={filters.risk} categoryName="Risk" >
+          {/* <ToolbarFilter chips={filters.ctype} deleteChip={this.onDelete} categoryName="Content Type"> */}
+          <ToolbarFilter chips={filters.ctype} categoryName="Content Type" >
             <Select
               variant={SelectVariant.checkbox}
-              aria-label="Risk"
-              onToggle={this.onRiskToggle}
-              onSelect={this.onRiskSelect}
-              selections={filters.risk}
-              isOpen={riskIsExpanded}
-              placeholderText="Risk"
+              aria-label="Content Type"
+              onToggle={this.onCtypeToggle}
+              onSelect={this.onCtypeSelect}
+              selections={filters.ctype}
+              isOpen={ctypeIsExpanded}
+              placeholderText="Content Type"
             >
-              {riskMenuItems}
+              {contentTypeMenuItems}
             </Select>
           </ToolbarFilter>
         </ToolbarGroup>
@@ -292,14 +292,14 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         </ToolbarToggleGroup>
         <ToolbarGroup variant="icon-button-group">
         </ToolbarGroup>
-        <ToolbarItem>
+        {/* <ToolbarItem>
           <Dropdown
             toggle={<KebabToggle onToggle={this.onKebabToggle} />}
             isOpen={kebabIsOpen}
             isPlain={true}
             dropdownItems={dropdownItems}
           />
-        </ToolbarItem>
+        </ToolbarItem> */}
       </React.Fragment>
     );
 
@@ -397,6 +397,10 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     this.setState({ inputValue: newValue });
   };
 
+  private onInputClear = (event) => {
+    this.setState({ inputValue: "" })
+  }
+
   private onSelect = (type, event, selection) => {
     const checked = event.target.checked;
     this.setState(prevState => {
@@ -414,8 +418,8 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     this.onSelect("status", event, selection);
   };
 
-  private onRiskSelect = (event, selection) => {
-    this.onSelect("risk", event, selection);
+  private onCtypeSelect = (event, selection) => {
+    this.onSelect("ctype", event, selection);
   };
 
   private onDelete = (type = "", id = "") => {
@@ -430,7 +434,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     } else {
       this.setState({
         filters: {
-          risk: [],
+          ctype: [],
           status: []
         }
       });
@@ -452,9 +456,9 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     });
   };
 
-  private onRiskToggle = isExpanded => {
+  private onCtypeToggle = isExpanded => {
     this.setState({
-      riskIsExpanded: isExpanded
+      ctypeIsExpanded: isExpanded
     });
   };
   private onKebabToggle = isOpen => {
@@ -507,9 +511,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
   };
 
   private onSelectRepositories = (event) => {
-    console.log("[onSelectRepositories] event.target id =>", event.target.id)
     const checked = event.target.checked;
-    console.log("[onSelectRepositories] checked =>", checked)
     let repositoriesSelected = new Array()
     let repositories
 
@@ -526,7 +528,11 @@ class SearchBeta extends Component<IAppState, ISearchState> {
           return item.name
         }
       }
-    })
+    });
+
+    // filter undefined values
+    repositoriesSelected = repositoriesSelected.filter(r => r !== undefined)
+  
     this.setState({
       repositories,
       repositoriesSelected

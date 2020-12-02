@@ -58,9 +58,10 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String directionParam = paramValue(request, "direction");
         String[] productIds = request.getParameterValues("product");
         String[] productVersionIds = request.getParameterValues("productversion");
-        String type = paramValue(request, "type");
+        String[] types = request.getParameterValues("type");
         String[] repoParam = request.getParameterValues("repo");
         String contentTypeParam = paramValue(request, "ctype");
+        String[] statusParam = request.getParameterValues("status");
 
         if(keyParam==null || keyParam.contains("Uploaded")){
             keyParam = "pant:dateUploaded";
@@ -74,7 +75,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             keyParam = JcrConstants.JCR_LASTMODIFIED;
         }
 
-        // Transform contentTypeParam to map the JCR type
+        // Transform contentTypeParam to map to the JCR type
         if (contentTypeParam != null) {
             if (contentTypeParam.toLowerCase().contains("module")) {
                 contentTypeParam = "pant:module";
@@ -99,6 +100,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
         StringBuilder queryBuilder = null;
         if (repoParam != null) {
+            log.info("[" + ModuleListingServlet.class.getSimpleName() + "] contentTypeParam: " + contentTypeParam);
             String repos = String.join(" | ", repoParam);
             log.info("[" + ModuleListingServlet.class.getSimpleName() + "] repos: " + repos);
             String contentType = contentTypeParam != null ? contentTypeParam : "pant:document";
@@ -136,15 +138,35 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         // Content type filter
-        if(!Strings.isNullOrEmpty(type)) {
+        if(types != null && types.length > 0) {
             StringBuilder contentTypeCondition = new StringBuilder();
-            if (type.equalsIgnoreCase("assembly")) {
-                contentTypeCondition.append("@jcr:primaryType = 'pant:assembly'");
-            } else {
-                contentTypeCondition.append("*/*/*/*/metadata/@pant:moduleType = '" + type + "'");
-            }
-
+            List<String> conditions = Arrays.stream(types)
+                    .map( type -> {
+                        if (type.equalsIgnoreCase("assembly")) {
+                            return "@jcr:primaryType = 'pant:assembly'";
+                        } else {
+                            return "*/*/*/*/metadata/@pant:moduleType = '" + type + "'";
+                        }
+                    })
+                    .collect(toList());
+//            if (type.equalsIgnoreCase("assembly")) {
+//                contentTypeCondition.append("@jcr:primaryType = 'pant:assembly'");
+//            } else {
+//                contentTypeCondition.append("*/*/*/*/metadata/@pant:moduleType = '" + type + "'");
+//            }
+            contentTypeCondition.append("(" + StringUtils.join(conditions, " or ") + ")");
             queryFilters.add(contentTypeCondition);
+        }
+
+        // Status filter
+        if (statusParam != null && statusParam.length < 2) {
+            StringBuilder statusCondition = new StringBuilder();
+            if (statusParam[0].equalsIgnoreCase("draft")) {
+                statusCondition.append("*/*/draft/@pant:hash");
+            } else {
+                statusCondition.append("*/*/released/@pant:hash");
+            }
+            queryFilters.add(statusCondition);
         }
 
         // join all the available conditions
