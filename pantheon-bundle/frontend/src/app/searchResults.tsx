@@ -38,7 +38,7 @@ export interface ISearchState {
     { title: string }
   ],
   displayLoadIcon: boolean
-  filterQuery: string
+  // filterQuery: string
   isEmptyResults: boolean
   isSearchException: boolean
   // states for pagination
@@ -64,7 +64,7 @@ class SearchResults extends Component<IProps, ISearchState> {
         { title: "Published date" }
       ],
       displayLoadIcon: true,
-      filterQuery: "",
+      // filterQuery: "",
       isEmptyResults: false,
       isSearchException: false,
       // states for pagination
@@ -156,8 +156,6 @@ class SearchResults extends Component<IProps, ISearchState> {
       || (this.props.productsSelected && this.props.productsSelected.length > 0)) {
       let backend = "/pantheon/internal/modules.json?"
 
-      backend += this.state.filterQuery
-
       if (this.props.repositoriesSelected) {
         this.props.repositoriesSelected.map(repo => {
           if (backend.endsWith("?") || backend.endsWith("&")) {
@@ -244,11 +242,8 @@ class SearchResults extends Component<IProps, ISearchState> {
             if (this.props.userAuthenticated) {
             cellItem.push({ title: <a href={"/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
             } else {
-              cellItem.push({
-                title: <a href={"/pantheon/preview/released/" + item["jcr:uuid"]} target="_blank">
-                  {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]}
-                </a>
-              })
+              let docTitle = item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]
+              cellItem.push(docTitle)
             }
 
             cellItem.push(item["pant:transientSourceName"])

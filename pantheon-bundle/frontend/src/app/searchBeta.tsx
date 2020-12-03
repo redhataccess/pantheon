@@ -304,7 +304,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         <Alert variant="info" title="Beta feature." >
         <p>
         Please give us your feedback {"  "}
-            <a href="https://projects.engineering.redhat.com/browse/CCS-3969">here.</a>
+            <a href="https://projects.engineering.redhat.com/browse/CCS-3969" target="_blank">here.</a>
           </p>
         </Alert>
         <br />
