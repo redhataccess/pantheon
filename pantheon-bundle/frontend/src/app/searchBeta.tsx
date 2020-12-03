@@ -301,7 +301,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
 
     return (
       <React.Fragment>
-        <Alert variant="info" title="Beta feature." >
+        <Alert variant="info" title="Beta feature" >
         <p>
         Please give us your feedback {"  "}
             <a href="https://projects.engineering.redhat.com/browse/CCS-3969" target="_blank">here.</a>
