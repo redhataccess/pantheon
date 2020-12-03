@@ -1,7 +1,6 @@
 package com.redhat.pantheon.servlet;
 
 import com.google.common.base.Strings;
-import com.redhat.pantheon.extension.HydraIntegration;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.module.*;
@@ -149,11 +148,6 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                         }
                     })
                     .collect(toList());
-//            if (type.equalsIgnoreCase("assembly")) {
-//                contentTypeCondition.append("@jcr:primaryType = 'pant:assembly'");
-//            } else {
-//                contentTypeCondition.append("*/*/*/*/metadata/@pant:moduleType = '" + type + "'");
-//            }
             contentTypeCondition.append("(" + StringUtils.join(conditions, " or ") + ")");
             queryFilters.add(contentTypeCondition);
         }

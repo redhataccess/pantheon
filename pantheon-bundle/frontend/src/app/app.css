@@ -1,105 +1,118 @@
-                              :root {
-                                 --myApp-global--spacer--md: 30px;
-                             }
-                             
-                             .sp-prop {
-                                 font-weight: bold;
-                                 padding: 0;
-                                 border: 0;
-                                 background: none;
-                             }
-                             
-                             .sp-prop-nosort {
-                                 font-weight: bold
-                             }
-                             
-                             .sp-prop:hover {
-                                 font-weight: bold;
-                                 color: #99ccff;
-                                 cursor: pointer;
-                             }
-                             
-                             #data-rows:hover {
-                                 background: gainsboro;
-                                 cursor: pointer;
-                             }
-                             
-                             #checkbox:hover {
-                                 cursor: default;
-                             }
-                             
-                             body {
-                                 background-color: rgb(36, 36, 36);
-                             }
-                             
-                             .row-view {
-                                 display: flex;
-                                 flex-direction: row;
-                             }
-                             
-                             .row-filter {
-                                 display: flex;
-                                 flex-direction: row;
-                                 padding: 10px 0;
-                             }
-                             
-                             .small-margin {
-                                 margin-right: 1.5rem;
-                             }
-                             
-                             .column-view {
-                                 float: right;
-                                 display: flex;
-                                 flex-direction: column;
-                                 font-size: small;
-                             }
-                             
-                             .pf-c-page {
-                                 width: 100%;
-                                 height: 100vh;
-                             }
-                             /* Use grey color as background for Draft card */
-                             
-                             .pf-c-card-draft {
-                                 --pf-c-card--BackgroundColor: var(--pf-global--palette--black-200) !important;
-                             }
-                             /* Use yellow color for warning. The default is black color */
-                             
-                             .pf-icon-warning-triangle {
-                                 color: var(--pf-global--warning-color--100) !important
-                             }
-                             /* Remove scrollbar from the left nav */
-                             
-                             .pf-c-page__sidebar {
-                                 overflow-x: hidden !important;
-                                 overflow-y: hidden !important;
-                             }
-                             /* Use green color for background on Published card */
-                             
-                             .pf-c-card.pf-m-selectable.pf-m-selected:before {
-                                 background-color: #5ba352 !important;
-                             }
-                             /* Set form group to medium size */
-                             
-                             .pant-form-width-md {
-                                 max-width: 45em;
-                             }
-                             /* Set max width for notification-container */
-                             
-                             .pant-notification-container-md {
-                                 max-width: 44em;
-                             }
-                             
-                             .p2-header__login {
-                                 padding-right: 8px;
-                             }
-                             /* Set product form width */
-                             
-                             .p2-product__form {
-                                 width: 320px;
-                             }
-                             
-                             .pf-c-drawer__panel[class] {
-                                 /* Added [class] for specificity */
-                                 z-index: 190;
-                             }
+:root {
+    --myApp-global--spacer--md: 30px;
+}
+
+.sp-prop {
+    font-weight: bold;
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
+.sp-prop-nosort {
+    font-weight: bold
+}
+
+.sp-prop:hover {
+    font-weight: bold;
+    color: #99ccff;
+    cursor: pointer;
+}
+
+#data-rows:hover {
+    background: gainsboro;
+    cursor: pointer;
+}
+
+#checkbox:hover {
+    cursor: default;
+}
+
+body {
+    background-color: rgb(36, 36, 36);
+}
+
+.row-view {
+    display: flex;
+    flex-direction: row;
+}
+
+.row-filter {
+    display: flex;
+    flex-direction: row;
+    padding: 10px 0;
+}
+
+.small-margin {
+    margin-right: 1.5rem;
+}
+
+.column-view {
+    float: right;
+    display: flex;
+    flex-direction: column;
+    font-size: small;
+}
+
+.pf-c-page {
+    width: 100%;
+    height: 100vh;
+}
+
+
+/* Use grey color as background for Draft card */
+
+.pf-c-card-draft {
+    --pf-c-card--BackgroundColor: var(--pf-global--palette--black-200) !important;
+}
+
+
+/* Use yellow color for warning. The default is black color */
+
+.pf-icon-warning-triangle {
+    color: var(--pf-global--warning-color--100) !important
+}
+
+
+/* Remove scrollbar from the left nav */
+
+.pf-c-page__sidebar {
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+}
+
+
+/* Use green color for background on Published card */
+
+.pf-c-card.pf-m-selectable.pf-m-selected:before {
+    background-color: #5ba352 !important;
+}
+
+
+/* Set form group to medium size */
+
+.pant-form-width-md {
+    max-width: 45em;
+}
+
+
+/* Set max width for notification-container */
+
+.pant-notification-container-md {
+    max-width: 44em;
+}
+
+.p2-header__login{
+    padding-right: 8px;
+}
+
+/* Set product form width */
+
+.p2-product__form{
+    width: 320px;
+}
+
+.pf-c-drawer__panel[class] {
+    /* Added [class] for specificity */
+    z-index: 190;
+}
