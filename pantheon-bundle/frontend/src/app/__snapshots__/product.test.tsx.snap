@@ -14,7 +14,7 @@ exports[`Product tests should render Product component 1`] = `
           isRequired={true}
           label="Product Name"
         >
-          <ForwardRef
+          <TextInput
             id="product_name_text"
             isRequired={true}
             onChange={[Function]}
@@ -29,7 +29,7 @@ exports[`Product tests should render Product component 1`] = `
           isRequired={true}
           label="Product URL Fragment"
         >
-          <ForwardRef
+          <TextInput
             id="product_url_fragment_text"
             isRequired={true}
             onChange={[Function]}
@@ -43,7 +43,7 @@ exports[`Product tests should render Product component 1`] = `
           fieldId="product_description"
           label="Product Description"
         >
-          <ForwardRef
+          <TextInput
             id="product_description_text"
             onChange={[Function]}
             placeholder="Product Description"
@@ -57,7 +57,7 @@ exports[`Product tests should render Product component 1`] = `
           isRequired={true}
           label="Product Version:"
         >
-          <ForwardRef
+          <TextInput
             id="new_version_name_text"
             onChange={[Function]}
             placeholder="Product Version"
@@ -71,7 +71,7 @@ exports[`Product tests should render Product component 1`] = `
           isRequired={true}
           label="Version URL Fragment:"
         >
-          <ForwardRef
+          <TextInput
             id="new_version_url_fragment"
             onChange={[Function]}
             placeholder="Version URL Fragment"

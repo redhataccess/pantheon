@@ -111,3 +111,8 @@ body {
 .p2-product__form{
     width: 320px;
 }
+
+.pf-c-drawer__panel[class] {
+    /* Added [class] for specificity */
+    z-index: 190;
+}

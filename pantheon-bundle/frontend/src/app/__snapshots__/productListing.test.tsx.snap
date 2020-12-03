@@ -9,7 +9,7 @@ exports[`ProductListing tests should render ProductListing component 1`] = `
     <div
       className="row-view"
     >
-      <ForwardRef
+      <TextInput
         id="search"
         onChange={[Function]}
         placeholder="Type product name to search"
@@ -20,10 +20,18 @@ exports[`ProductListing tests should render ProductListing component 1`] = `
   </FormGroup>
   <DataList
     aria-label="single action data list example "
+    className=""
+    gridBreakpoint="md"
+    isCompact={false}
+    selectedDataListItemId=""
+    wrapModifier={null}
   >
     <DataListItem
       aria-labelledby="single-action-item0"
+      className=""
       data-testid="emptyResults"
+      id=""
+      isExpanded={false}
     >
       <DataListItemRow>
         <DataListItemCells
