@@ -65,7 +65,7 @@ class SearchResults extends Component<IProps, ISearchState> {
       ],
       displayLoadIcon: true,
       // filterQuery: "",
-      isEmptyResults: true,
+      isEmptyResults: false,
       isSearchException: false,
       // states for pagination
       nextPageRowCount: 1,

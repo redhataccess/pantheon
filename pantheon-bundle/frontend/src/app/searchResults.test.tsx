@@ -37,6 +37,7 @@ describe("SearchResults tests", () => {
 
     it("should render a Table component", () => {
         const wrapper = mount(<Router><SearchResults {...props} /></Router>)
+        wrapper.setState({isEmptyResults: false})
         const table = wrapper.find(Table)
         expect(table.exists()).toBe(true)
     })
@@ -61,6 +62,7 @@ describe("SearchResults tests", () => {
 
     it("should render a Pagination component", () => {
         const wrapper = mount(<Router><SearchResults {...props} /></Router>)
+        wrapper.setState({isEmptyResults: false})
         const pagination = wrapper.find(Pagination)
         expect(pagination.exists()).toBe(true)
     })

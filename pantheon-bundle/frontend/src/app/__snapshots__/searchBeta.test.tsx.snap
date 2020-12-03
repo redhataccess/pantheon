@@ -3,7 +3,7 @@
 exports[`SearchBeta tests should render default Search component 1`] = `
 <Fragment>
   <Alert
-    title="Beta feature."
+    title="Beta feature"
     variant="info"
   >
     <p>
@@ -11,6 +11,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
         
       <a
         href="https://projects.engineering.redhat.com/browse/CCS-3969"
+        target="_blank"
       >
         here.
       </a>
