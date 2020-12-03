@@ -2,77 +2,56 @@
 
 exports[`ProductListing tests should render ProductListing component 1`] = `
 <Fragment>
-  <div>
-    <FormGroup
-      fieldId="search"
-      label="Search Products"
+  <FormGroup
+    fieldId="search"
+    label="Search Products"
+  >
+    <div
+      className="row-view"
     >
-      <div
-        className="row-view"
-      >
-        <TextInput
-          id="search"
-          onChange={[Function]}
-          placeholder="Type product name to search"
-          type="text"
-          value=""
-        />
-      </div>
-    </FormGroup>
-    <DataList
-      aria-label="single action data list"
+      <TextInput
+        id="search"
+        onChange={[Function]}
+        placeholder="Type product name to search"
+        type="text"
+        value=""
+      />
+    </div>
+  </FormGroup>
+  <DataList
+    aria-label="single action data list example "
+    className=""
+    gridBreakpoint="md"
+    isCompact={false}
+    selectedDataListItemId=""
+    wrapModifier={null}
+  >
+    <DataListItem
+      aria-labelledby="single-action-item0"
       className=""
-      gridBreakpoint="md"
-      isCompact={false}
-      selectedDataListItemId=""
-      wrapModifier={null}
+      data-testid="emptyResults"
+      id=""
+      isExpanded={false}
     >
-      <DataListItem
-        aria-labelledby="single-action-item1"
-        className=""
-        id=""
-        isExpanded={false}
-      >
-        <DataListItemRow>
-          <DataListItemCells
-            dataListCells={
-              Array [
-                <DataListCell>
-                  <span
-                    className="sp-prop-nosort"
-                    id="product-name"
-                  >
-                    Product Name
-                  </span>
-                </DataListCell>,
-                <DataListCell
-                  width={2}
+      <DataListItemRow>
+        <DataListItemCells
+          dataListCells={
+            Array [
+              <DataListCell
+                width={2}
+              >
+                <span
+                  className="sp-prop-nosort"
+                  id="product-name"
                 >
-                  <span
-                    className="sp-prop-nosort"
-                    id="product-description"
-                  >
-                    Product Description
-                  </span>
-                </DataListCell>,
-              ]
-            }
-          />
-        </DataListItemRow>
-      </DataListItem>
-    </DataList>
-  </div>
+                  No products found
+                </span>
+              </DataListCell>,
+            ]
+          }
+        />
+      </DataListItemRow>
+    </DataListItem>
+  </DataList>
 </Fragment>
 `;
-
-exports[`ProductListing tests test checkAuth function 1`] = `undefined`;
-
-exports[`ProductListing tests test componentDidMount function 1`] = `[Function]`;
-
-exports[`ProductListing tests test getProducts function 1`] = `undefined`;
-
-exports[`ProductListing tests test getProductsUrl function 1`] = `"/content/products.query.json?nodeType=pant:product&orderby=name"`;
-
-exports[`ProductListing tests test loginRedirect function 1`] = `undefined`;
-
-exports[`ProductListing tests test setInput function 1`] = `undefined`;
