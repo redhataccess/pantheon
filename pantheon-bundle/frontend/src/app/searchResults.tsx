@@ -65,7 +65,7 @@ class SearchResults extends Component<IProps, ISearchState> {
       ],
       displayLoadIcon: true,
       // filterQuery: "",
-      isEmptyResults: false,
+      isEmptyResults: true,
       isSearchException: false,
       // states for pagination
       nextPageRowCount: 1,
@@ -117,21 +117,11 @@ class SearchResults extends Component<IProps, ISearchState> {
 
     return (
       <React.Fragment>
-        <Table aria-label="Simple Table" cells={columns} rows={rows}>
+
+        {!this.state.isEmptyResults && <Table aria-label="Simple Table" cells={columns} rows={rows}>
           <TableHeader className={styles.modifiers.nowrap} />
           <TableBody />
-        </Table>
-        {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small}>
-          <EmptyStateIcon icon={SearchIcon} />
-          <Title headingLevel="h2" size="lg">
-            No results found
-        </Title>
-          <EmptyStateBody>
-            No results match the filter criteria. Select repo to show results.
-        </EmptyStateBody>
-
-        </EmptyState>
-        }
+        </Table>}
 
         {!this.state.isEmptyResults && <Pagination
           handleMoveLeft={this.updatePageCounter("L")}
@@ -145,6 +135,17 @@ class SearchResults extends Component<IProps, ISearchState> {
           bottom={this.state.bottom}
         />}
 
+        {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small}>
+          <EmptyStateIcon icon={SearchIcon} />
+          <Title headingLevel="h2" size="lg">
+            No results found
+        </Title>
+          <EmptyStateBody>
+            No results match the filter criteria. Select repo filter to show results.
+        </EmptyStateBody>
+
+        </EmptyState>
+        }
         <Divider />
       </React.Fragment>
     );
@@ -202,6 +203,7 @@ class SearchResults extends Component<IProps, ISearchState> {
 
       return backend
     } else {
+      this.setState({ isEmptyResults: true })
       return ""
     }
   }
@@ -240,7 +242,7 @@ class SearchResults extends Component<IProps, ISearchState> {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
             const cellItem = new Array()
             if (this.props.userAuthenticated) {
-            cellItem.push({ title: <a href={"/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
+              cellItem.push({ title: <a href={"/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
             } else {
               let docTitle = item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]
               cellItem.push(docTitle)
