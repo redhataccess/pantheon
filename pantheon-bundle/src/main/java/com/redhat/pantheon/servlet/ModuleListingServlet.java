@@ -100,13 +100,11 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
         StringBuilder queryBuilder = null;
         if (repoParam != null) {
-            // encode if repo name contains space
+            // encode if repo name contains space.
+            // https://www.mail-archive.com/users@jackrabbit.apache.org/msg05782.html
             String repos = Arrays.stream(repoParam)
                     .map( repo -> {
-                        if (repo.contains(" ")) {
-                            return ISO9075.encode(repo);
-                        }
-                        return repo;
+                        return ISO9075.encode(repo);
                     })
                     .collect(Collectors.joining(" | "));
             String contentType = contentTypeParam != null ? contentTypeParam : "pant:document";
