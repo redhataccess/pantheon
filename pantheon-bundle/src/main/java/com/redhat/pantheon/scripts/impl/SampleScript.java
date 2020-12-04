@@ -6,7 +6,7 @@ import org.apache.sling.pipes.Plumber;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-@Component(service = SampleScript.class)
+//@Component(service = SampleScript.class)
 public class SampleScript implements Script {
 
     private Plumber plumber;

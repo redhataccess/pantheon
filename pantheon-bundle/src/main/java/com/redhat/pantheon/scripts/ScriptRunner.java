@@ -36,11 +36,11 @@ public class ScriptRunner implements SlingRepositoryInitializer {
 
     @Activate
     public ScriptRunner(BundleContext context,
-                        @Reference ServiceResourceResolverProvider serviceResourceResolverProvider,
-                        @Reference Plumber plumber) {
+                        @Reference ServiceResourceResolverProvider serviceResourceResolverProvider/*,
+                        @Reference Plumber plumber*/) {
         this.bundleContext = context;
         this.serviceResourceResolverProvider = serviceResourceResolverProvider;
-        this.plumber = plumber;
+//        this.plumber = plumber;
     }
 
     @Override
