@@ -38,6 +38,11 @@
             "com.redhat.pantheon\=pantheon"\
             ]
         </config>
+        <config name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-org.apache.sling.pipes">
+            user.mapping=[\
+            "org.apache.sling.pipes\=pantheon"\
+            ]
+        </config>
         <config name="org.apache.sling.jcr.repoinit.RepositoryInitializer-pantheon">
             scripts=[\
                 "create path /content/repositories(sling:Folder) \n\
@@ -45,6 +50,7 @@
                 create path /content/products(sling:Folder) \n\
                 create path /content/sandbox(sling:Folder) \n\
                 create path /conf/pantheon(sling:Folder) \n\
+                create path /system/sling/permissions/pipes/exec(nt:unstructured) \n\
                 \n\
                 create group pantheon-authors \n\
                 create group pantheon-publishers\n\
