@@ -131,7 +131,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
                         .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider()))
-                        .andThen(Html.getElementById("doc-content"))
+                        .andThen(Html.getElementById("doc-content", Html.getBody()))
                         .apply(releasedContent.get().jcrContent().get().jcrData().get()));
 
         // Fields that are part of the spec and yet to be implemented

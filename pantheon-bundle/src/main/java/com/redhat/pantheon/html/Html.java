@@ -8,6 +8,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +98,14 @@ public class Html {
         return document -> document.body().html();
     }
 
-    public static Function<Document, String> getElementById(String id) {
-        return document -> document.getElementById(id).toString();
+    /**
+     * An extractor function that returns the section of the document that matches the provided id.
+     * If no element with that id is found, then the 'fallback' extractor is executed instead.
+     * @param id
+     * @param fallback
+     * @return
+     */
+    public static Function<Document, String> getElementById(String id, Function<Document, String> fallback) {
+        return document -> Optional.ofNullable(document.getElementById(id)).map(Element::toString).orElse(fallback.apply(document));
     }
 }
