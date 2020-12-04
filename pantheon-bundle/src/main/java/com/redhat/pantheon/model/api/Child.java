@@ -61,7 +61,7 @@ public interface Child<T extends SlingModel> extends Supplier<T> {
      * @return A {@link Child} (may be non-existent) as indicated by the accessor.
      */
     default <R extends SlingModel> Child<R> toChild(Function<? super T, Child<R>> childAccessor) {
-        if(isPresent()) {
+        if(isPresent()) {  // <-- Applies to the parent (aka the current node in navigation)
             return childAccessor.apply(get());
         }
         return (Child<R>) NullObjects.nullChild();
