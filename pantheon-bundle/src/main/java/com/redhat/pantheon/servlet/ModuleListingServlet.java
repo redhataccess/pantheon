@@ -1,12 +1,12 @@
 package com.redhat.pantheon.servlet;
 
-import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.module.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.jackrabbit.util.ISO9075;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -21,6 +21,7 @@ import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -99,9 +100,13 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
         StringBuilder queryBuilder = null;
         if (repoParam != null) {
-            log.info("[" + ModuleListingServlet.class.getSimpleName() + "] contentTypeParam: " + contentTypeParam);
-            String repos = String.join(" | ", repoParam);
-            log.info("[" + ModuleListingServlet.class.getSimpleName() + "] repos: " + repos);
+            // encode if repo name contains space.
+            // https://www.mail-archive.com/users@jackrabbit.apache.org/msg05782.html
+            String repos = Arrays.stream(repoParam)
+                    .map( repo -> {
+                        return ISO9075.encode(repo);
+                    })
+                    .collect(Collectors.joining(" | "));
             String contentType = contentTypeParam != null ? contentTypeParam : "pant:document";
 
             queryBuilder = new StringBuilder()
