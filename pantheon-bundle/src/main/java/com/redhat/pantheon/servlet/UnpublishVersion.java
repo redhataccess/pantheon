@@ -6,6 +6,7 @@ import com.redhat.pantheon.extension.events.document.DocumentVersionUnpublishedE
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
@@ -41,7 +42,6 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static com.redhat.pantheon.jcr.JcrResources.rename;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 
@@ -144,12 +144,12 @@ public class UnpublishVersion extends AbstractPostOperation {
 
                 changes.add(Modification.onModified(document.getPath()));
                 // Change source/released to source/draft
-                Optional<HashableFileResource> draftSource = traverseFrom(document)
+                Optional<HashableFileResource> draftSource = Child.from(document)
                         .toChild(d -> d.locale(locale))
                         .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> sourceContent.draft())
-                        .getAsOptional();
-                FileResource releasedSource = traverseFrom(document)
+                        .asOptional();
+                FileResource releasedSource = Child.from(document)
                         .toChild(d -> d.locale(locale))
                         .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> sourceContent.released())
