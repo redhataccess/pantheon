@@ -30,6 +30,8 @@
         <feature>sling-starter-content</feature>
         <feature>eventadmin</feature>
         <feature>sling-jcr</feature>
+        <!-- This is needed for sling-pipes -->
+        <feature>sling-distribution</feature>
         <feature>sling-pipes</feature>
         <config name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-com.redhat.pantheon">
             user.mapping=[\
