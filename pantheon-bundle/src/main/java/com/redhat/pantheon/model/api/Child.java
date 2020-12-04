@@ -55,6 +55,15 @@ public interface Child<T extends SlingModel> extends Supplier<T> {
 
     /**
      * Navigates to the {@link Child} provided by an accessor function.
+     * Uses the Null Object pattern to avoid throwing an NPE in a long chain of navigation.
+     * For example:
+     * Child.from(A)
+     * .toChild(B)
+     * .toChild(C)
+     * .toChild(D)
+     * .toChild(E)
+     * .getAsOptional()
+     * If C does not exist, the chain will not throw an exception because the nullChild will be returned for the remainder of the calls.
      * @param childAccessor A function which given a {@link SlingModel} type, will
      *                      yield a child
      * @param <R>
