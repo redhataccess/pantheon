@@ -6,10 +6,11 @@ include::../attributes.adoc[]
 = Configuring your repository
 
 [role="_abstract"]
-Before you can add {ContentTerm} to {ProductName}, you must complete the following steps:
+Before you can add {ContentTerm} to {ProductName}, you must configure your documentation repository as a content source for {ProductShortName} and then create a product and product version in {ProductShortName} to associate with your {ContentTerm}.
 
-. xref:configuring-a-repository-as-a-content-source-for-pantheon_assembly-help[Configure your documentation repository as a content source for {ProductShortName}.]
-. xref:creating-a-product_assembly-help[Create a product] and xref:versioning-a-product_assembly-help[product version] in {ProductShortName} to associate with your {ContentTerm}.
+* xref:configuring-a-repository-as-a-content-source-for-pantheon_assembly-help[Configuring your documentation repository as a content source for {ProductShortName}.]
+* xref:creating-a-product_assembly-help[Creating a product] in {ProductShortName} for your {ContentTerm}
+* xref:versioning-a-product_assembly-help[Creating a product version] in {ProductShortName} for your {ContentTerm}
 
 include::../modules/proc_config_repo.adoc[leveloffset=+1]
 include::../modules/con_pantheon_yaml_file.adoc[leveloffset=+1]
