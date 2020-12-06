@@ -51,6 +51,7 @@
                 create path /content/sandbox(sling:Folder) \n\
                 create path /conf/pantheon(sling:Folder) \n\
                 create path /system/sling/permissions/pipes/exec(nt:unstructured) \n\
+                create path /conf/pantheon/upgrades(nt:unstructured) \n\
                 \n\
                 create group pantheon-authors \n\
                 create group pantheon-publishers\n\
