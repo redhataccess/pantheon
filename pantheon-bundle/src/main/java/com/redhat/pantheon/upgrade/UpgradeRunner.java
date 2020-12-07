@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -40,20 +41,30 @@ public class UpgradeRunner {
                 if (upgradeResource == null) {
                     log.info("Running upgrade: " + upgrade.getId());
                     StringBuilder logCapture = new StringBuilder();
-                    upgrade.run(resourceResolver, new AppendableDecorator(logCapture) {
+                    AppendableDecorator appendable = new AppendableDecorator(logCapture) {
                         @Override
                         public CharSequence decorate(CharSequence csq) {
                             return csq + System.lineSeparator();
                         }
-                    });
-                    recordSuccessfulUpgrade(resourceResolver, upgrade, logCapture.toString());
-                    resourceResolver.commit();
+                    };
+                    boolean failure = false;
+                    try {
+                        upgrade.run(resourceResolver, appendable);
+                        recordSuccessfulUpgrade(resourceResolver, upgrade, logCapture.toString());
+                        resourceResolver.commit();
+                    } catch (Exception e) {
+                        log.error("Error encountered running upgrade " + upgrade.getId(), e);
+                        resourceResolver.revert();
+                        failure = true;
+                    }
+
+                    if(failure) {
+                        break;
+                    }
                 } else {
                     log.debug("Skipping already executed upgrade: " + upgrade.getId());
                 }
             }
-        } catch (Exception ex) {
-            log.error("Error running repository scripts", ex);
         }
     }
 
