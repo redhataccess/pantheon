@@ -8,6 +8,8 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,5 +97,27 @@ public class Html {
     public static Function<Document, String> getBody() {
         // returns the inner content of the body tag
         return document -> document.body().html();
+    }
+
+    /**
+     * An extractor function that returns the section of the document that matches the provided id.
+     * If no element with that id is found, then the 'fallback' extractor is executed instead.
+     * @param id
+     * @param fallback
+     * @return
+     */
+    public static Function<Document, String> getElementById(String id, Function<Document, String> fallback) {
+        return document -> Optional.ofNullable(document.getElementById(id)).map(Element::toString).orElse(fallback.apply(document));
+    }
+
+    /**
+     * An extractor function that returns the section of the document containing the specified tag name.
+     * If no element with that name is found, then the 'fallback' extractor is executed instead.
+     * @param tagName
+     * @param fallback
+     * @return
+     */
+    public static Function<Document, String> getElementByTagName(String tagName, Function<Document, String> fallback) {
+        return document -> Optional.ofNullable(document.getElementsByTag(tagName)).map(Elements::first).map(Element::toString).orElse(fallback.apply(document));
     }
 }
