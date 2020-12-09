@@ -7,8 +7,7 @@ import { ProductDetails } from "@app/productDetails"
 import ProductListing from "@app/productListing"
 import { Login } from "@app/login"
 import { GitImport } from "./gitImport"
-import { ModuleDisplay } from "@app/moduleDisplay"
-import { AssemblyDisplay } from "@app/assemblyDisplay"
+import { ContentDisplay }  from "@app/contentDisplay"
 import { IAppState } from "./app"
 import { ProductProvider } from "./contexts/ProductContext"
 
@@ -82,7 +81,7 @@ class Routes extends Component<IAppState> {
         requiresLogin: false
       },
       {
-        component: (routeProps) => <ModuleDisplay {...routeProps} />,
+        component: (routeProps) => <ContentDisplay {...routeProps} />,
         exact: false,
         icon: null,
         label: "", // Empty because we are using the Brand component to render the text.
@@ -90,7 +89,7 @@ class Routes extends Component<IAppState> {
         requiresLogin: true
       },
       {
-        component: (routeProps) => <AssemblyDisplay {...routeProps} />,
+        component: (routeProps) => <ContentDisplay {...routeProps} />,
         exact: false,
         icon: null,
         label: "", // Empty because we are using the Brand component to render the text.
