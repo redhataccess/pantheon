@@ -44,6 +44,11 @@ module.exports = {
         local: PANTHEON_PROXY
       }
     },
+    "/pantheon": {
+      host: {
+        local: PANTHEON_PROXY
+      }
+    },
     "/conf": {
       host: {
         local: PANTHEON_PROXY
