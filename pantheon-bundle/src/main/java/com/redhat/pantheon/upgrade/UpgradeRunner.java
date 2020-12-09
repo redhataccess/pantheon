@@ -1,5 +1,6 @@
 package com.redhat.pantheon.upgrade;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
 import org.apache.jackrabbit.JcrConstants;
@@ -19,6 +20,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
 
+/**
+ * Controls the execution of the upgrade process by collecting and running the
+ * available {@link Upgrade}s.
+ * @author Carlos Munoz
+ */
 @Component(service = UpgradeRunner.class)
 public class UpgradeRunner {
     private static final Logger log = LoggerFactory.getLogger(UpgradeRunner.class);
@@ -33,6 +39,12 @@ public class UpgradeRunner {
         this.upgradeProvider = upgradeProvider;
     }
 
+    /**
+     * Runs all the available upgrades.
+     * The available upgrades are provided by the {@link UpgradeProvider} component, and have a
+     * given order. If any one given upgrade fails, the whole process is stopped. Successful upgrades
+     * are recorded by the system and are not executed again in following invocations.
+     */
     public void runUpgrades() {
         try (ResourceResolver resourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
             for (Upgrade upgrade : upgradeProvider.getUpgrades()) {
@@ -49,7 +61,10 @@ public class UpgradeRunner {
                     };
                     boolean failure = false;
                     try {
+                        Stopwatch timer = Stopwatch.createStarted();
                         upgrade.run(resourceResolver, appendable);
+                        timer.stop();
+                        appendable.append("\nDone in " + timer.toString());
                         recordSuccessfulUpgrade(resourceResolver, upgrade, logCapture.toString());
                         resourceResolver.commit();
                     } catch (Exception e) {

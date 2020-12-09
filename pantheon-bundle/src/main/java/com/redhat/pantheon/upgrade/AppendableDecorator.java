@@ -2,7 +2,7 @@ package com.redhat.pantheon.upgrade;
 
 import java.io.IOException;
 
-public abstract class AppendableDecorator implements Appendable {
+abstract class AppendableDecorator implements Appendable {
 
     private final Appendable delegate;
 

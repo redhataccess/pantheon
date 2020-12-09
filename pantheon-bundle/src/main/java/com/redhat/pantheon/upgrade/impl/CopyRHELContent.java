@@ -15,10 +15,7 @@ public class CopyRHELContent implements Upgrade {
 
     @Override
     public void run(ResourceResolver resourceResolver, Appendable log) throws Exception {
-        resourceResolver.create(resourceResolver.getResource("/content/repositories"), "backup", Collections.emptyMap());
-        resourceResolver.copy("/content/repositories/rhel-8-docs", "/content/repositories/backup");
-        resourceResolver.adaptTo(Session.class).move("/content/repositories/backup/rhel-8-docs",
-                "/content/repositories/rhel-8-docs-copy");
-        resourceResolver.delete(resourceResolver.getResource("/content/repositories/backup"));
+        resourceResolver.adaptTo(Session.class).getWorkspace()
+                .copy("/content/repositories/rhel-8-docs", "/content/repositories/rhel-8-docs-backup");
     }
 }
