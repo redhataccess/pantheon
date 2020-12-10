@@ -9,6 +9,9 @@ exports[`SearchResults tests should render default Search component 1`] = `
     cells={
       Array [
         Object {
+          "title": "",
+        },
+        Object {
           "cellTransforms": Array [
             [Function],
           ],

@@ -116,3 +116,8 @@ body {
     /* Added [class] for specificity */
     z-index: 190;
 }
+
+.p2-search__check-circle-icon{
+color: var(--pf-global--success-color--100)
+
+}
