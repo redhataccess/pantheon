@@ -1,13 +1,15 @@
 import React, { Component } from "react"
 import { Route, RouteComponentProps, Switch } from "react-router-dom"
 import { Search } from "@app/search"
+import { SearchBeta } from "@app/searchBeta"
 import { Product } from "@app/product"
-import { ProductListing } from "@app/productListing"
+import { ProductDetails } from "@app/productDetails"
+import ProductListing from "@app/productListing"
 import { Login } from "@app/login"
 import { GitImport } from "./gitImport"
-import { ModuleDisplay } from "@app/moduleDisplay"
-import { AssemblyDisplay } from "@app/assemblyDisplay"
+import { ContentDisplay }  from "@app/contentDisplay"
 import { IAppState } from "./app"
+import { ProductProvider } from "./contexts/ProductContext"
 
 interface IAppRoute {
   label: string
@@ -31,6 +33,14 @@ class Routes extends Component<IAppState> {
         requiresLogin: false
       },
       {
+        component: (routeProps) => <SearchBeta {...this.props} />,
+        exact: true,
+        icon: null,
+        label: "Search Beta",
+        path: "/searchbeta",
+        requiresLogin: false
+      },
+      {
         component: (routeProps) => <Product />,
         exact: true,
         icon: null,
@@ -39,11 +49,19 @@ class Routes extends Component<IAppState> {
         requiresLogin: true
       },
       {
-        component: (routeProps) => <ProductListing />,
+        component: (routeProps) => <ProductProvider><ProductListing {...routeProps}/></ProductProvider>,
         exact: true,
         icon: null,
         label: "",
         path: "/products",
+        requiresLogin: true
+      },
+      {
+        component: (routeProps) => <ProductProvider><ProductDetails {...routeProps}/></ProductProvider>,
+        exact: true,
+        icon: null,
+        label: "",
+        path: "/products/:id",
         requiresLogin: true
       },
       {
@@ -63,7 +81,7 @@ class Routes extends Component<IAppState> {
         requiresLogin: false
       },
       {
-        component: (routeProps) => <ModuleDisplay {...routeProps} />,
+        component: (routeProps) => <ContentDisplay {...routeProps} />,
         exact: false,
         icon: null,
         label: "", // Empty because we are using the Brand component to render the text.
@@ -71,7 +89,7 @@ class Routes extends Component<IAppState> {
         requiresLogin: true
       },
       {
-        component: (routeProps) => <AssemblyDisplay {...routeProps} />,
+        component: (routeProps) => <ContentDisplay {...routeProps} />,
         exact: false,
         icon: null,
         label: "", // Empty because we are using the Brand component to render the text.
@@ -83,8 +101,8 @@ class Routes extends Component<IAppState> {
     return (
       // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
       <Switch>
-        {routes.map(({path, exact, component, requiresLogin}, idx) => (
-          <Route path={path} exact={exact} render={(routeProps) => this.props.userAuthenticated || !requiresLogin ? component(routeProps) : <Login />} key={idx} />
+        {routes.map(({ path, exact, component, requiresLogin }, idx) => (
+          <Route path={path} exact={exact} render={(routeProps) => (this.props.userAuthenticated || !requiresLogin) ? component(routeProps) : <Login />} key={idx} />
         ))}
         <Route render={() => <Search {...this.props} />} />
       </Switch>

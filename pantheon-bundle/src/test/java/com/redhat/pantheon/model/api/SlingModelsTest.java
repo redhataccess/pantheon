@@ -272,25 +272,22 @@ class SlingModelsTest {
         // Then
         assertNull(model.child().get());
         assertFalse(model.child()
-                .map(ChildResource::grandchild)
-                .map(Supplier::get)
+                .toChild(ChildResource::grandchild)
                 .isPresent());
         assertFalse(model.child()
-                .map(ChildResource::grandchild)
-                .map(Supplier::get)
-                .map(Grandchild::number)
+                .toChild(ChildResource::grandchild)
+                .toField(Grandchild::number)
+                .asOptional()
                 .isPresent());
         assertFalse(model.child()
-                .map(ChildResource::grandchild)
-                .map(Supplier::get)
-                .map(Grandchild::number)
-                .map(Supplier::get)
+                .toChild(ChildResource::grandchild)
+                .toField(Grandchild::number)
+                .asOptional()
                 .isPresent());
         assertEquals(new Long(10), model.child()
-                .map(ChildResource::grandchild)
-                .map(Supplier::get)
-                .map(Grandchild::number)
-                .map(Supplier::get)
+                .toChild(ChildResource::grandchild)
+                .toField(Grandchild::number)
+                .asOptional()
                 .orElse(10L));
     }
 

@@ -1,6 +1,7 @@
 [id='comparison-between-modules-and-DITA-topics_{context}']
 = Comparison between modules and DITA topics
 
+[role="_abstract"]
 A module is similar to a topic in Darwin Information Typing Architecture (DITA). 
 
 A module differs from a DITA-topic in the following aspects:
@@ -32,6 +33,7 @@ a|
 +
 The most important distinction is that modules cannot be nested like DITA topics.
 
+[role="_additional-resources"]
 .Additional Resources
 * DITA Topics - link:https://docs.oasis-open.org/dita/v1.0/archspec/topics.html[What are topics?] 
 * AsciiDoc home page - link:http://asciidoc.org[AsciiDoc Text based document generation]

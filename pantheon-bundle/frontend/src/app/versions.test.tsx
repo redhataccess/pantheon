@@ -3,7 +3,7 @@ import { Versions, IProps } from "@app/versions"
 import "@app/fetchMock"
 
 import { mount, shallow } from "enzyme"
-import { 
+import {
     Button, Form, FormGroup, FormSelect, FormSelectOption, InputGroup,
     InputGroupText, Modal, Title, Alert, AlertActionCloseButton, Grid
 } from "@patternfly/react-core"
@@ -170,9 +170,9 @@ describe("Versions tests", () => {
     });
 
     it("test hideUppublishAlertForModule function", () => {
-    const wrapper = renderer.create(<Versions {...props} />)
-    const inst = wrapper.getInstance()
-    expect(inst.hideUppublishAlertForModule()).toMatchSnapshot()
+        const wrapper = renderer.create(<Versions {...props} />)
+        const inst = wrapper.getInstance()
+        expect(inst.hideUppublishAlertForModule()).toMatchSnapshot()
     })
 
     it("has a props", () => {
@@ -205,12 +205,25 @@ describe("Versions tests", () => {
         expect(state.versionModulePath).toEqual("versionPath")
     })
 
-    test("changePublishState click", () => {
+    test("changePublishState click Publish", () => {
         const wrapper = mount(<Versions {...props} />)
         const instance = wrapper.instance()
-        wrapper.setState({ "login": true })
         wrapper.setState({
-            "results": [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Not published", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": "" }]],
+            "login": true,
+            "showMetadataAlertIcon": false,
+            "results": [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Not published", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } } }]],
+        })
+        const spy = sinon.spy(instance, "changePublishState")
+        wrapper.find(Button).at(2).simulate("click")
+        sinon.assert.called(spy)
+    })
+
+    test("changePublishState click Unpublish", () => {
+        const wrapper = mount(<Versions {...props} />)
+        const instance = wrapper.instance()
+        wrapper.setState({
+            "login": true,
+            "results": [[{ "type": "release", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Released", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } } }]],
         })
         const spy = sinon.spy(instance, "changePublishState")
         wrapper.find(Button).at(2).simulate("click")
@@ -248,5 +261,20 @@ describe("Versions tests", () => {
         inst.getDocumentsIncluded()
         sinon.assert.called(spy)
     })
-    
+
+    it("test capitalize function", () => {
+        const wrapper = renderer.create(<Versions {...props} />)
+        const inst = wrapper.getInstance()
+        const spy = sinon.spy(inst, "capitalize")
+        inst.capitalize()
+        sinon.assert.called(spy)
+    })
+
+    it("test setAlertTitle function", () => {
+        const wrapper = renderer.create(<Versions {...props} />)
+        const inst = wrapper.getInstance()
+        const spy = sinon.spy(inst, "setAlertTitle")
+        inst.setAlertTitle()
+        sinon.assert.called(spy)
+    })
 })

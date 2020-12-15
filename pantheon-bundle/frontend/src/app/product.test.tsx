@@ -3,7 +3,7 @@ import { Product } from "@app/product"
 import "@app/fetchMock"
 
 import { mount, shallow } from "enzyme"
-import { Bullseye, TextInput, FormGroup, Button } from "@patternfly/react-core"
+import { TextInput, FormGroup, Button } from "@patternfly/react-core"
 import renderer from "react-test-renderer"
 
 describe("Product tests", () => {
@@ -11,13 +11,6 @@ describe("Product tests", () => {
     const view = shallow(<Product />)
     expect(view).toMatchSnapshot()
   })
-
-  it("should render a Bullseye layout", () => {
-    const wrapper = mount(<Product />)
-    const bullseyeLayout = wrapper.find(Bullseye)
-    expect(bullseyeLayout.exists()).toBe(true)
-  })
-
 
   it("should render a form group", () => {
     const wrapper = mount(<Product />)
@@ -83,5 +76,25 @@ describe("Product tests", () => {
     const wrapper = renderer.create(<Product />)
     const inst = wrapper.getInstance()
     expect(inst.handleUrlInput("red_hat")).toMatchSnapshot()
+  })
+  it("test handleTextInputChange function", () => {
+    const wrapper = renderer.create(<Product />)
+    const inst = wrapper.getInstance()
+    expect(inst.handleTextInputChange("1")).toMatchSnapshot()
+  })
+  it("test handleUrlInputChange function", () => {
+    const wrapper = renderer.create(<Product />)
+    const inst = wrapper.getInstance()
+    expect(inst.handleUrlInputChange("test_url")).toMatchSnapshot()
+  })
+  it("test saveVersion function", () => {
+    const wrapper = renderer.create(<Product />)
+    const inst = wrapper.getInstance()
+    expect(inst.saveVersion).toMatchSnapshot()
+  })
+  it("test createVersionsPath function", () => {
+    const wrapper = renderer.create(<Product />)
+    const inst = wrapper.getInstance()
+    expect(inst.createVersionsPath).toMatchSnapshot()
   })
 })

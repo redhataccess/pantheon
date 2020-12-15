@@ -2,72 +2,103 @@
 
 exports[`Product tests should render Product component 1`] = `
 <Fragment>
-  <Bullseye>
-    <Form>
-      <div
-        className="app-container"
-      >
-        <div>
-          <FormGroup
-            fieldId="product_name"
+  <Form
+    className="p2-product__form"
+  >
+    <div
+      className="app-container"
+    >
+      <div>
+        <FormGroup
+          fieldId="product_name"
+          isRequired={true}
+          label="Product Name"
+        >
+          <TextInput
+            id="product_name_text"
             isRequired={true}
-            label="Product Name"
-          >
-            <ForwardRef
-              id="product_name_text"
-              isRequired={true}
-              onChange={[Function]}
-              placeholder="Product Name"
-              type="text"
-              value=""
-            />
-          </FormGroup>
-          <br />
-          <FormGroup
-            fieldId="product_url_fragment"
+            onChange={[Function]}
+            placeholder="Product Name"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <FormGroup
+          fieldId="product_url_fragment"
+          isRequired={true}
+          label="Product URL Fragment"
+        >
+          <TextInput
+            id="product_url_fragment_text"
             isRequired={true}
-            label="Product URL Fragment"
+            onChange={[Function]}
+            placeholder="URL Fragment"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <FormGroup
+          fieldId="product_description"
+          label="Product Description"
+        >
+          <TextInput
+            id="product_description_text"
+            onChange={[Function]}
+            placeholder="Product Description"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <FormGroup
+          fieldId="version_name"
+          isRequired={true}
+          label="Product Version:"
+        >
+          <TextInput
+            id="new_version_name_text"
+            onChange={[Function]}
+            placeholder="Product Version"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <FormGroup
+          fieldId="version_url_fragment"
+          isRequired={true}
+          label="Version URL Fragment:"
+        >
+          <TextInput
+            id="new_version_url_fragment"
+            onChange={[Function]}
+            placeholder="Version URL Fragment"
+            type="text"
+            value=""
+          />
+        </FormGroup>
+        <br />
+        <ActionGroup>
+          <Button
+            aria-label="Creates a new Product Name with Description specified."
+            onClick={[Function]}
+            type="submit"
           >
-            <ForwardRef
-              id="product_url_fragment_text"
-              isRequired={true}
-              onChange={[Function]}
-              placeholder="URL Fragment"
-              type="text"
-              value=""
-            />
-          </FormGroup>
-          <br />
-          <FormGroup
-            fieldId="product_description"
-            label="Product Description"
-          >
-            <ForwardRef
-              id="product_description_text"
-              onChange={[Function]}
-              placeholder="Product Description"
-              type="text"
-              value=""
-            />
-          </FormGroup>
-          <br />
-          <ActionGroup>
-            <Button
-              aria-label="Creates a new Product Name with Description specified."
-              onClick={[Function]}
-            >
-              Save
-            </Button>
-            <div />
-          </ActionGroup>
-        </div>
+            Save
+          </Button>
+          <div />
+        </ActionGroup>
       </div>
-    </Form>
-  </Bullseye>
+    </div>
+  </Form>
 </Fragment>
 `;
 
 exports[`Product tests test checkAuth function 1`] = `undefined`;
+
+exports[`Product tests test createVersionsPath function 1`] = `undefined`;
 
 exports[`Product tests test dismissNotification function 1`] = `[Function]`;
 
@@ -75,10 +106,16 @@ exports[`Product tests test handleNameInput function 1`] = `undefined`;
 
 exports[`Product tests test handleProductInput function 1`] = `undefined`;
 
+exports[`Product tests test handleTextInputChange function 1`] = `undefined`;
+
 exports[`Product tests test handleUrlInput function 1`] = `undefined`;
+
+exports[`Product tests test handleUrlInputChange function 1`] = `undefined`;
 
 exports[`Product tests test loginRedirect function 1`] = `undefined`;
 
 exports[`Product tests test productExist function 1`] = `Promise {}`;
 
 exports[`Product tests test renderRedirect function 1`] = `[Function]`;
+
+exports[`Product tests test saveVersion function 1`] = `[Function]`;

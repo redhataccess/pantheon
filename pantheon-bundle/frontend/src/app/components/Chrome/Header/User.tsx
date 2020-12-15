@@ -6,7 +6,7 @@ import {
     DropdownItem, Modal, DropdownPosition
 } from "@patternfly/react-core"
 import { HelpIcon } from "@patternfly/react-icons"
-
+import "@app/app.css"
 import { IAppState } from "@app/app"
 
 interface IState {
@@ -51,7 +51,8 @@ class User extends Component<IAppState, IState> {
                         dropdownItems={dropdownItems}
                         position={DropdownPosition.right}
                 />
-                <Link to={this.props.userAuthenticated ? "" : "/login"}
+                <Link className="p2-header__login"
+                        to={this.props.userAuthenticated ? "" : "/login"}
                         onClick={this.conditionalRedirect}>
                     {this.props.userAuthenticated ? "Log Out [" + this.props.username + "]" : "Log In"}
                 </Link>

@@ -1,14 +1,13 @@
 package com.redhat.pantheon.servlet;
 
-import com.google.common.base.Strings;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.HashableFileResource;
-import com.redhat.pantheon.model.module.Module;
-import com.redhat.pantheon.model.module.ModuleLocale;
-import com.redhat.pantheon.model.module.ModuleMetadata;
+import com.redhat.pantheon.model.api.Child;
+import com.redhat.pantheon.model.module.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.jackrabbit.util.ISO9075;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -23,12 +22,12 @@ import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
 import static java.util.stream.Collectors.toList;
 
@@ -59,7 +58,10 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String directionParam = paramValue(request, "direction");
         String[] productIds = request.getParameterValues("product");
         String[] productVersionIds = request.getParameterValues("productversion");
-        String type = paramValue(request, "type");        
+        String[] types = request.getParameterValues("type");
+        String[] repoParam = request.getParameterValues("repo");
+        String contentTypeParam = paramValue(request, "ctype");
+        String[] statusParam = request.getParameterValues("status");
 
         if(keyParam==null || keyParam.contains("Uploaded")){
             keyParam = "pant:dateUploaded";
@@ -71,6 +73,15 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             keyParam = "pant:moduleType";
         } else if (keyParam.contains("Updated")){
             keyParam = JcrConstants.JCR_LASTMODIFIED;
+        }
+
+        // Transform contentTypeParam to map to the JCR type
+        if (contentTypeParam != null) {
+            if (contentTypeParam.toLowerCase().contains("module")) {
+                contentTypeParam = "pant:module";
+            } else if (contentTypeParam.toLowerCase().contains("assembly")) {
+                contentTypeParam = "pant:assembly";
+            }
         }
 
         if ("desc".equals(directionParam)) {
@@ -87,8 +98,23 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             throw new RuntimeException(e);
         }
 
-        StringBuilder queryBuilder = new StringBuilder()
-                .append("/jcr:root/content/(repositories | modules)//element(*, pant:document)");
+        StringBuilder queryBuilder = null;
+        if (repoParam != null) {
+            // encode if repo name contains space.
+            // https://www.mail-archive.com/users@jackrabbit.apache.org/msg05782.html
+            String repos = Arrays.stream(repoParam)
+                    .map( repo -> {
+                        return ISO9075.encode(repo);
+                    })
+                    .collect(Collectors.joining(" | "));
+            String contentType = contentTypeParam != null ? contentTypeParam : "pant:document";
+
+            queryBuilder = new StringBuilder()
+                    .append("/jcr:root/content/repositories/(" + repos + ")//element(*, " + contentType + ")");
+        } else {
+            queryBuilder = new StringBuilder()
+                    .append("/jcr:root/content/repositories//element(*, pant:document)");
+        }
 
         List<StringBuilder> queryFilters = newArrayListWithCapacity(5);
 
@@ -116,15 +142,30 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         }
 
         // Content type filter
-        if(!Strings.isNullOrEmpty(type)) {
+        if(types != null && types.length > 0) {
             StringBuilder contentTypeCondition = new StringBuilder();
-            if (type.equalsIgnoreCase("assembly")) {
-                contentTypeCondition.append("@jcr:primaryType = 'pant:assembly'");
-            } else {
-                contentTypeCondition.append("*/*/*/*/metadata/@pant:moduleType = '" + type + "'");
-            }
-
+            List<String> conditions = Arrays.stream(types)
+                    .map( type -> {
+                        if (type.equalsIgnoreCase("assembly")) {
+                            return "@jcr:primaryType = 'pant:assembly'";
+                        } else {
+                            return "*/*/*/*/metadata/@pant:moduleType = '" + type + "'";
+                        }
+                    })
+                    .collect(toList());
+            contentTypeCondition.append("(" + StringUtils.join(conditions, " or ") + ")");
             queryFilters.add(contentTypeCondition);
+        }
+
+        // Status filter
+        if (statusParam != null && statusParam.length < 2) {
+            StringBuilder statusCondition = new StringBuilder();
+            if (statusParam[0].equalsIgnoreCase("draft")) {
+                statusCondition.append("*/*/draft/@pant:hash");
+            } else {
+                statusCondition.append("*/*/released/@pant:hash");
+            }
+            queryFilters.add(statusCondition);
         }
 
         // join all the available conditions
@@ -191,11 +232,11 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         Optional<ModuleMetadata> draftMetadata = module.getDraftMetadata(DEFAULT_MODULE_LOCALE, variantName);
         Optional<ModuleMetadata> releasedMetadata = module.getReleasedMetadata(DEFAULT_MODULE_LOCALE, variantName);
         Optional<HashableFileResource> sourceFile =
-                traverseFrom(module)
+                Child.from(module)
                         .toChild(m -> m.locale(DEFAULT_MODULE_LOCALE))
                         .toChild(ModuleLocale::source)
                         .toChild(sourceContent -> sourceContent.draft().isPresent() ? sourceContent.draft() : sourceContent.released())
-                        .getAsOptional();
+                        .asOptional();
 
         // TODO Need some DTOs to convert to maps
         Map<String, Object> m = super.resourceToMap(resource);

@@ -2,6 +2,7 @@ package com.redhat.pantheon.model.api;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -14,9 +15,6 @@ import java.util.function.Supplier;
  * @author Carlos Munoz
  */
 public interface Field<T> extends Supplier<T>, Consumer<T> {
-    String getName();
-
-    Class<T> getType();
 
     /**
      * Sets the value on the jcr field of the underlying resource.
@@ -43,6 +41,14 @@ public interface Field<T> extends Supplier<T>, Consumer<T> {
      * @return A new field which produces/consumes values of a different type
      */
     <R> Field<R> toFieldType(Class<R> newFieldType);
+
+    /**
+     * Convert this Child to an {@link Optional}
+     * @return An {@link Optional} with the contained value.
+     */
+    default Optional<T> asOptional() {
+        return Optional.ofNullable(get());
+    }
 
     /**
      * Executes a function if there is a value in the field.

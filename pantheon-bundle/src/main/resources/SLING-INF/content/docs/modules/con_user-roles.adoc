@@ -1,0 +1,21 @@
+[id="user-roles_{context}"]
+= User roles
+
+[role="_abstract"]
+As a {ProductShortName} user, you are assigned a role that determines what actions you can perform.
+
+There are two user roles defined in {ProductShortName} - *Author* and *Publisher*. The following permissions are associated with the roles:
+
+*Author*::
+
+* Use Git to import content into {ProductShortName}.
+* Revise existing content.
+* Preview and stage content.
+* Search and sort any content imported into {ProductShortName}.
+* Manage module metadata that is configurable in the user interface.
+ 
+*Publisher*::
+* All the permissions associated with the *Author* role.
+* Publish content to the {PublishingPortal} and the {PublishingPortalSearch}. 
+* Unpublish content from the {PublishingPortal} and the {PublishingPortalSearch}.
+* Create and manage {ProductShortName} product and product version.

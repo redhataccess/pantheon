@@ -9,17 +9,19 @@
 
 // The ID is used as an anchor for linking to the module. Avoid changing it after the module has been published to ensure existing links are not broken.
 [id='ref_prerequisites_{context}']
-
 = Prerequisites
+
+[role="_abstract"]
+You must have the following environment to use {ProductName}. 
 
 .Operating Systems
 
 [NOTE]
 ====
-Operating system support affects the performance of the uploader more than other Pantheon components.
+Operating system support affects the performance of the uploader more than other {ProductName} components.
 ====
 
-Pantheon 2 is supported on the following operating systems:
+{ProductName} {ProductNumber} is supported on the following operating systems:
 
 * Fedora 30 or later
 * RHEL 7 CSB
@@ -29,7 +31,7 @@ Pantheon 2 is supported on the following operating systems:
 
 .Browsers
 
-Pantheon 2 is supported on the following browsers:
+{ProductName} {ProductNumber} is supported on the following browsers:
 
 * Chrome 78.0 or later
 * Firefox 71.0 or later
@@ -37,5 +39,5 @@ Pantheon 2 is supported on the following browsers:
 
 [NOTE]
 ====
-Pantheon 2 is not supported on Firefox 68.3.0 extended support version (ESR).
+{ProductName} {ProductNumber} is not supported on Firefox 68.3.0 extended support version (ESR).
 ====

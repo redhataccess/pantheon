@@ -10,9 +10,9 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModels;
-import com.redhat.pantheon.model.api.util.ResourceTraversal;
 import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
 import com.redhat.pantheon.model.assembly.TableOfContents;
@@ -49,7 +49,6 @@ import java.util.Optional;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.redhat.pantheon.helper.PantheonConstants.MACRO_INCLUDE;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -100,8 +99,7 @@ public class AsciidoctorService {
                                   boolean draft,
                                   Map<String, Object> context,
                                   boolean forceRegen) {
-        ResourceTraversal<? extends DocumentVariant> traversal = document.locale(locale)
-                .traverse()
+        Child<? extends DocumentVariant> traversal = document.locale(locale)
                 .toChild(DocumentLocale::variants)
                 .toChild(variants -> variants.variant(variantName));
 
@@ -109,11 +107,11 @@ public class AsciidoctorService {
         if (draft) {
             moduleVersion =
                     traversal.toChild(DocumentVariant::draft)
-                            .getAsOptional();
+                            .asOptional();
         } else {
             moduleVersion =
                     traversal.toChild(DocumentVariant::released)
-                            .getAsOptional();
+                            .asOptional();
         }
 
         String html;
@@ -171,11 +169,11 @@ public class AsciidoctorService {
                                Map<String, Object> context, final boolean regenMetadata) {
 
         Optional<HashableFileResource> sourceFile =
-                traverseFrom(base)
+                Child.from(base)
                         .toChild(m -> m.locale(locale))
                         .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> isDraft ? sourceContent.draft() : sourceContent.released())
-                        .getAsOptional();
+                        .asOptional();
 
         if (!sourceFile.isPresent()) {
             throw new RuntimeException("Cannot find source content for module: " + base.getPath() + ", locale: " + locale
@@ -202,29 +200,22 @@ public class AsciidoctorService {
             // process product and version.
             Optional<ProductVersion> productVersion =
                     documentVersion.metadata()
-                            .traverse()
-                            .toRef(DocumentMetadata::productVersion)
-                            .getAsOptional();
+                            .toReference(DocumentMetadata::productVersion)
+                            .asOptional();
 
             String productName = null;
             if (productVersion.isPresent()) {
                 productName = productVersion.get().getProduct().name().get();
             }
 
-            Calendar updatedDate = sourceFile.get().created().get();
-
-            Optional<Calendar> publishedDate = documentVersion.metadata()
-                    .traverse()
-                    .toField(DocumentMetadata::datePublished);
-
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
 
             String entitiesPath = base.getWorkspace().entities().get().getPath();
             Optional<String> attributesFilePath =
                     base.getWorkspace().moduleVariantDefinitions()
-                            .traverse()
                             .toChild(vdf -> vdf.variant(variantName))
-                            .toField(ModuleVariantDefinition::attributesFilePath);
+                            .toField(ModuleVariantDefinition::attributesFilePath)
+                            .asOptional();
 
             // build the attributes (default + those coming from http parameters)
             AttributesBuilder atts = AttributesBuilder.attributes()
@@ -235,7 +226,9 @@ public class AsciidoctorService {
                     // show pantheonversion on the generated html. Base the value from metadata.
                     .attribute("pantheonversion", productVersion.isPresent() ? productVersion.get().name().get() : "")
                     // Shows custom rendering attribute to Haml
-                    .attribute("pantheonenv", "preview")
+                    .attribute("pantheonenv", System.getenv("PANTHEON_ENV") != null ? System.getenv("PANTHEON_ENV") : "dev")
+                    // Provide doctype for haml use
+                    .attribute("pantheondoctype", Assembly.class.equals(cls) ? "assembly" : "module")
                     // we want to avoid the footer on the generated html
                     .noFooter(true)
                     // link the css instead of embedding it
@@ -252,14 +245,20 @@ public class AsciidoctorService {
                 atts.attribute("attsFile", PathUtils.concat(entitiesPath, attributesFilePath.get()));
             }
 
+            Calendar updatedDate = documentVersion.metadata().get().datePublished().get();
             if (updatedDate != null) {
                 // show pantheonupdateddate on generated html. Base the value from metadata.
                 atts.attribute("pantheonupdateddate", dateFormat.format(updatedDate.getTime()));
+
+                // This is for docs that were published before we changed the date logic, and therefore do not have
+                // "first published" metadata.
+                atts.attribute("pantheonpublisheddate", dateFormat.format(updatedDate.getTime()));
             }
 
-            if (publishedDate.isPresent()) {
+            Calendar publishedDate = documentVersion.metadata().get().dateFirstPublished().get();
+            if (publishedDate != null) {
                 // show pantheonpublisheddate on generated html. Base the value from metadata.
-                atts.attribute("pantheonpublisheddate", dateFormat.format(publishedDate.get().getTime()));
+                atts.attribute("pantheonpublisheddate", dateFormat.format(publishedDate.getTime()));
             }
 
             // Add the context as attributes to the generation process

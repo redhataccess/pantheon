@@ -1,13 +1,11 @@
 package com.redhat.pantheon.servlet.module;
 
 import com.google.common.base.Charsets;
-import com.ibm.icu.util.ULocale;
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.html.Html;
-import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.assembly.*;
 import com.redhat.pantheon.model.module.ModuleMetadata;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
@@ -26,14 +24,16 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
 import javax.servlet.Servlet;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.redhat.pantheon.conf.GlobalConfig.CONTENT_TYPE;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
-import static org.apache.sling.query.SlingQuery.$;
 
 @Component(
         service = Servlet.class,
@@ -85,17 +85,17 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
     protected Map<String, Object> resourceToMap(@Nonnull SlingHttpServletRequest request,
                                                 @NotNull Resource resource) throws RepositoryException {
         ModuleVariant moduleVariant = resource.adaptTo(ModuleVariant.class);
-        Optional<ModuleMetadata> releasedMetadata = traverseFrom(moduleVariant)
+        Optional<ModuleMetadata> releasedMetadata = Child.from(moduleVariant)
                     .toChild(ModuleVariant::released)
                     .toChild(ModuleVersion::metadata)
-                    .getAsOptional();
-        Optional<FileResource> releasedContent = traverseFrom(moduleVariant)
+                    .asOptional();
+        Optional<FileResource> releasedContent = Child.from(moduleVariant)
                     .toChild(ModuleVariant::released)
                     .toChild(ModuleVersion::cachedHtml)
-                    .getAsOptional();
-        Optional<ModuleVersion> releasedRevision = traverseFrom(moduleVariant)
+                    .asOptional();
+        Optional<ModuleVersion> releasedRevision = Child.from(moduleVariant)
                     .toChild(ModuleVariant::released)
-                    .getAsOptional();
+                    .asOptional();
 
         Map<String, Object> variantMap = super.resourceToMap(request, resource);
         Map<String, Object> variantDetails = new HashMap<>();
@@ -112,6 +112,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantMap.put("description", releasedMetadata.get().getValueMap().containsKey("jcr:description") ? releasedMetadata.get().description().get() : releasedMetadata.get().mAbstract().get());
         variantMap.put("content_type", CONTENT_TYPE);
         variantMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
+        variantMap.put("date_first_published", releasedMetadata.get().getValueMap().containsKey("pant:dateFirstPublished") ? releasedMetadata.get().dateFirstPublished().get().toInstant().toString() : "");
         variantMap.put("status", "published");
 
         // Assume the path is something like: /content/<something>/my/resource/path
@@ -130,7 +131,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
                         .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider()))
-                        .andThen(Html.getBody())
+                        .andThen(Html.getElementById("doc-content", Html.getElementByTagName("cp-documentation", Html.getBody())))
                         .apply(releasedContent.get().jcrContent().get().jcrData().get()));
 
         // Fields that are part of the spec and yet to be implemented

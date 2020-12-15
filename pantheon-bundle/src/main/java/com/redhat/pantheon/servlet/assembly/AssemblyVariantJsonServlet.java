@@ -5,6 +5,7 @@ import com.ibm.icu.util.ULocale;
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.assembly.AssemblyContent;
 import com.redhat.pantheon.model.assembly.AssemblyMetadata;
@@ -17,6 +18,7 @@ import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
 import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.servlet.util.ServletHelper;
 import com.redhat.pantheon.servlet.util.SlingPathSuffix;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -32,7 +34,6 @@ import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
 import java.util.*;
 
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static com.redhat.pantheon.servlet.util.ServletHelper.getResourceByUuid;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
@@ -88,17 +89,17 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
     protected Map<String, Object> resourceToMap(@Nonnull SlingHttpServletRequest request,
                                                 @NotNull Resource resource) throws RepositoryException {
         AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
-        Optional<AssemblyMetadata> releasedMetadata = traverseFrom(assemblyVariant)
+        Optional<AssemblyMetadata> releasedMetadata = Child.from(assemblyVariant)
                 .toChild(AssemblyVariant::released)
                 .toChild(AssemblyVersion::metadata)
-                .getAsOptional();
-        Optional<FileResource> releasedContent = traverseFrom(assemblyVariant)
+                .asOptional();
+        Optional<FileResource> releasedContent = Child.from(assemblyVariant)
                 .toChild(AssemblyVariant::released)
                 .toChild(AssemblyVersion::cachedHtml)
-                .getAsOptional();
-        Optional<AssemblyVersion> releasedRevision = traverseFrom(assemblyVariant)
+                .asOptional();
+        Optional<AssemblyVersion> releasedRevision = Child.from(assemblyVariant)
                 .toChild(AssemblyVariant::released)
-                .getAsOptional();
+                .asOptional();
 
         Map<String, Object> variantMap = super.resourceToMap(request, resource);
         Map<String, Object> variantDetails = new HashMap<>();
@@ -115,6 +116,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantMap.put("description", releasedMetadata.get().mAbstract().get());
         variantMap.put("content_type", "assembly");
         variantMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
+        variantMap.put("date_first_published", releasedMetadata.get().getValueMap().containsKey("pant:dateFirstPublished") ? releasedMetadata.get().dateFirstPublished().get().toInstant().toString() : "");
         variantMap.put("status", "published");
 
         // Assume the path is something like: /content/<something>/my/resource/path
@@ -133,7 +135,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         variantMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
                         .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider()))
-                        .andThen(Html.getBody())
+                        .andThen(Html.getElementById("doc-content", Html.getElementByTagName("cp-documentation", Html.getBody())))
                         .apply(releasedContent.get().jcrContent().get().jcrData().get()));
 
         // Fields that are part of the spec and yet to be implemented
@@ -201,7 +203,10 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                         .variants().get()
                         .canonicalVariant().get();
                 moduleMap.put("canonical_uuid", canonical.uuid().get());
-                moduleMap.put("title", page.title().get());
+                // Get the current title from module instead of using the stored value in the content node
+                // When module title is modified, the value stored in content node becomes stale.
+                // Sometime, the title stored in content node shows filename instead of title.
+                moduleMap.put("title", ServletHelper.getModuleTitleFromUuid(canonical));
                 moduleMap.put("module_uuid", module.uuid().get());
                 // check if the module is published
                 if (canonical.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {

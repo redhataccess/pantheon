@@ -318,6 +318,7 @@ class Search extends Component<IAppState, ISearchState> {
     if (!backend.includes("Uploaded") && !backend.includes("direction")) {
       backend += "&key=Uploaded&direction=desc"
     }
+
     return backend
   }
 

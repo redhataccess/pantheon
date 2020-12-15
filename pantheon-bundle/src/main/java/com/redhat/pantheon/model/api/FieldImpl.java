@@ -26,12 +26,10 @@ public class FieldImpl<T> implements Field<T> {
         this.owner = owner;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public Class<T> getType() {
         return type;
     }

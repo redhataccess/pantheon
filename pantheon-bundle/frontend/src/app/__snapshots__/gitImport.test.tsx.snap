@@ -11,7 +11,7 @@ exports[`Login tests should render Login component 1`] = `
           fieldId="repository-url"
           label="Repository URL"
         >
-          <ForwardRef
+          <TextInput
             id="repository-url"
             onChange={[Function]}
             placeholder="Repository"
@@ -24,7 +24,7 @@ exports[`Login tests should render Login component 1`] = `
           fieldId="branch-name"
           label="Branch"
         >
-          <ForwardRef
+          <TextInput
             id="branch-name"
             onChange={[Function]}
             placeholder="Branch"

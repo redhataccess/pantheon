@@ -12,4 +12,8 @@ import com.redhat.pantheon.model.HashableFileResource;
 public interface SourceContent extends Folder {
     Child<HashableFileResource> draft();
     Child<HashableFileResource> released();
+
+    default Child<HashableFileResource> latest() {
+        return draft().get() == null ? released() : draft();
+    }
 }
