@@ -85,7 +85,12 @@
                             !javax.jmdns,
                             !org.apache.commons.net.ftp,
                             !org.apache.commons.lang,
-                            !org.apache.commons.lang.builder,*
+                            !org.apache.commons.lang.builder,
+                            !javax.microedition.io,
+                            !javax.persistence,
+                            !org.keycloak,!org.keycloak.adapters,
+                            !org.keycloak.adapters.servlet,!org.keycloak.common,!org.keycloak.common.enums,
+                            !org.keycloak.common.util,!org.keycloak.crypto,!org.keycloak.representations,*
                         </Import-Package>
                         <!-- Embed the necessary dependencies -->
                         <!-- The `inline=true` is important, don't remove it unless you want cryptic problems such as servlets that suddenly stop resolving without explanation -->
@@ -445,6 +450,27 @@
             <version>4.5.12</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-servlet-filter-adapter</artifactId>
+            <version>11.0.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- org.apache.sling.auth.core -->
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.auth.core</artifactId>
+            <version>1.5.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.http.whiteboard -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.http.whiteboard</artifactId>
+            <version>1.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -537,6 +563,12 @@
             <artifactId>org.apache.sling.jcr.base</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
+            <version>6.0.0</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
