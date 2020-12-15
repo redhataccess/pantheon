@@ -407,7 +407,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                             for (const productVersion of productChild.__children__) {
                                 if (productVersion[Fields.JCR_UUID] === uuid) {
                                     this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
-                                    const isGuideOrTopic = this.isAssembly ? '/guide' : '/topic/'
+                                    const isGuideOrTopic = this.isAssembly ? '/guide/' : '/topic/'
                                     const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase()+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + isGuideOrTopic + this.state.variantUUID
                                     console.log("Constructed url="+url)
                                     if(this.state.productUrlFragment!==""){
