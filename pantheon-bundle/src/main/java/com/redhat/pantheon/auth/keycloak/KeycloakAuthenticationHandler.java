@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core.spi.AuthenticationHandler {
 
     private static final Logger LOG = Logger.getLogger(KeycloakAuthenticationHandler.class.getName());
+    private static final String AUTH_TYPE = "KEYCLOAK";
 
     @Override
     public AuthenticationInfo extractCredentials(
@@ -40,7 +41,9 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
             LOG.log(Level.FINE, "username = {0}", ctx.getToken().getPreferredUsername());
         }
 
-        return new AuthenticationInfo("KEYCLOAK", "admin", "admin".toCharArray());
+        //TODO: use a service account or the identity of the real user instead of admin
+        // use of real identify requires user provisioning
+        return new AuthenticationInfo(AUTH_TYPE, "admin", "admin".toCharArray());
     }
 
     @Override

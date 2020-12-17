@@ -23,21 +23,19 @@ import java.util.regex.Pattern;
         immediate = true,
         service = Filter.class,
         property = {
-                KeycloakOIDCFilter.CONFIG_FILE_PARAM + "=" + "keycloak.json",
+//                KeycloakOIDCFilter.CONFIG_FILE_PARAM + "=" + "keycloak.json",
+                "keycloak.config.file=" + "keycloak.json",
 //                KeycloakOIDCFilter.SKIP_PATTERN_PARAM + "=" + "/pantheon/preview/.*",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/*",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_SELECT
                         + "="
-                        + "(osgi.http.whiteboard.context.name=com.redhat.pantheon)",
-//                HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_PATH
-//                        + "="
-//                        + "(osgi.http.whiteboard.context.path=/pantheon)"
+                        + "(osgi.http.whiteboard.context.name=pantheon)",
         })
 
 @SlingServletFilter(scope = {SlingServletFilterScope.REQUEST},
-        pattern = "/pantheon/.*",
-        methods = {"GET","HEAD"})
-public class KeycloakFilter extends KeycloakOIDCFilter {
+        pattern = "/*",
+        methods = {"GET","POST"})
+public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
 
     private static final Logger log = Logger.getLogger(KeycloakOIDCFilter.class.getName());
     private final KeycloakConfigResolver keycloakConfigResolver;

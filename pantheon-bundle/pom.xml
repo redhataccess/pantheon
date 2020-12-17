@@ -55,7 +55,7 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
-                <version>4.1.0</version>
+                <version>4.2.1</version>
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>com.redhat.pantheon</Bundle-SymbolicName>
@@ -90,7 +90,10 @@
                             !javax.persistence,
                             !org.keycloak,!org.keycloak.adapters,
                             !org.keycloak.adapters.servlet,!org.keycloak.common,!org.keycloak.common.enums,
-                            !org.keycloak.common.util,!org.keycloak.crypto,!org.keycloak.representations,*
+                            !org.keycloak.common.util,!org.keycloak.crypto,!org.keycloak.representations,
+                            !org.jboss.logmanager,
+                            !com.google.appengine.api,!com.google.apphosting.api,
+                            !com.sun.security.auth.module,!com.sun.security.jgss,!sun.management,!sun.nio.ch,!osgi.http,*
                         </Import-Package>
                         <!-- Embed the necessary dependencies -->
                         <!-- The `inline=true` is important, don't remove it unless you want cryptic problems such as servlets that suddenly stop resolving without explanation -->
@@ -326,7 +329,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <version>5.0.0</version>
+            <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -454,7 +457,6 @@
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-servlet-filter-adapter</artifactId>
             <version>11.0.3</version>
-            <scope>provided</scope>
         </dependency>
         <!-- org.apache.sling.auth.core -->
         <dependency>
@@ -468,9 +470,7 @@
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.http.whiteboard</artifactId>
             <version>1.1.0</version>
-            <scope>provided</scope>
         </dependency>
-
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

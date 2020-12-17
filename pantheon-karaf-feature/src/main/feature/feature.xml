@@ -20,6 +20,7 @@
 <features name="pantheon-features" xmlns="http://karaf.apache.org/xmlns/features/v1.5.0">
     <!-- Using 0.1.0 version so that 0.1.1 is searched for in any circumstance -->
     <repository>mvn:org.apache.sling/org.apache.sling.karaf-features/0.1.1-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.keycloak/keycloak-osgi-features/11.0.3/xml/features</repository>
     <!-- Pantheon -->
     <feature name="pantheon-bundle" version="${project.version}">
         <feature>sling-models</feature>
@@ -30,6 +31,7 @@
         <feature>sling-starter-content</feature>
         <feature>eventadmin</feature>
         <feature>sling-jcr</feature>
+        <feature>keycloak-servlet-filter-adapter</feature>
         <config name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-com.redhat.pantheon">
             user.mapping=[\
             "com.redhat.pantheon\=pantheon"\
@@ -100,6 +102,19 @@
             request.log.service.output = data/log/request.log
             request.log.service.outputtype = 1
         </config>
+        <config name="com.redhat.pantheon.auth.keycloak.KeycloakFilter">
+            keycloak-servlet-filter-adapter = ${karaf.etc}/keycloak.json
+            osgi.http.whiteboard.filter.pattern = /pantheon/*
+        </config>
+<!--        <config name="keycloak.json">-->
+<!--            realm = redhat-external-->
+<!--            &lt;!&ndash; TODO: Use env variable for auth-server-url &ndash;&gt;-->
+<!--            auth-server-url = https://sso.redhat.com/auth/-->
+<!--            ssl-required = all-->
+<!--            resource = pantheon-->
+<!--            public-client = true-->
+<!--            confidential-port = 0-->
+<!--        </config>-->
         <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.9.9</bundle>
         <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.9.9</bundle>
         <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.9.9</bundle>
