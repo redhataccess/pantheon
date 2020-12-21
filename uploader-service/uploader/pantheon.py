@@ -568,14 +568,14 @@ def main():
     repository = args.repository
     sandbox = args.sandbox
     use_broker = True if args.use_broker else False
-    _info("Using user:" + user)
-    _info("Using dry:" + dry)
-    _info("Using server:" + server)
-    _info("Using logStr:" + logStr)
-    _info("Using numeric_level:" + numeric_level)
-    _info("Using repository:" + repository)
-    _info("Using directory:" + sandbox)
-    _info("Using broker:" + use_broker)
+    _info("Using user:" + str(user))
+    _info("Using dry:" + str(dry))
+    _info("Using server:" + str(server))
+    _info("Using logStr:" + str(logStr))
+    _info("Using numeric_level:" + str(numeric_level))
+    _info("Using repository:" + str(repository))
+    _info("Using directory:" + str(sandbox))
+    _info("Using broker:" + str(use_broker))
     start_process(numeric_level, pw, directory, server, user, repository, sandbox, dry, attrFile, use_broker)
 
 # ToDo: find a better way to handle variants validation
