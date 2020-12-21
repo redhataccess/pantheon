@@ -227,8 +227,8 @@ def process_assembly(base_name, dry, path, pw, url, user, status_data:Data):
 def publish_status(should_publish, processed_data):
     global broker
     if not should_publish:
-        logger.info("not publishing as should_publish is not set")
-        _info("not publishing as should_publish is not set")
+        logger.info("not publishing the status details to the broker as broker is not being used")
+        _info("not publishing the status details to the broker as broker is not being used")
         return
     data = json.dumps(processed_data)
     # broker.set(channel_name, data)
@@ -554,9 +554,13 @@ def main():
     # global pw, config
     args = create_args()
     user = args.user
-    directory = args.directory
+
+    directory = args.directory if args.directory else os.getcwd()
+
     attrFile = args.attrFile
+
     dry = args.dry
+
     pw = args.password
     server = args.server
     logStr = 'DEBUG' if args.verbose is not None else 'WARNING'
@@ -564,7 +568,14 @@ def main():
     repository = args.repository
     sandbox = args.sandbox
     use_broker = True if args.use_broker else False
-    _info(use_broker)
+    _info("Using user:" + user)
+    _info("Using dry:" + dry)
+    _info("Using server:" + server)
+    _info("Using logStr:" + logStr)
+    _info("Using numeric_level:" + numeric_level)
+    _info("Using repository:" + repository)
+    _info("Using directory:" + sandbox)
+    _info("Using broker:" + use_broker)
     start_process(numeric_level, pw, directory, server, user, repository, sandbox, dry, attrFile, use_broker)
 
 # ToDo: find a better way to handle variants validation
@@ -683,7 +694,6 @@ def start_process(numeric_level=30, pw=None, directory=None, server=DEFAULT_SERV
         return False
     logger.info('Finished!')
     finalise_update(use_broker, status_data)
-    print(json.dumps(status_data.processed_data))
     return True
 
 
