@@ -26,4 +26,4 @@ A product must have at least one product version assigned to it.
 New Version:: 4.4 Beta
 URL Fragment:: `4.4-beta`
 
-After creating a product version `4.4-beta` and assigning a module the .NET Core product and version 4.4-beta, the resulting URL for that module is: `https://access.stage.redhat.com/documentation/en-us/topic/net_core/4.4-beta/_module-UUID_`
+After creating a product version *4.4-beta* and assigning a module the *.NET Core* product and version *4.4-beta*, the resulting URL for that module is: `\https://access.stage.redhat.com/documentation/en-us/topic/net_core/4.4-beta/<_module-UUID_>`

@@ -16,6 +16,7 @@ include::modules/ref_prerequisites.adoc[leveloffset=+1]
 // Link to Overview of Modules
 
 // Link to Configuring your repository
+include::assembly-configuring-repository.adoc[leveloffset=+1]
 
 // Link to Importing content
 
