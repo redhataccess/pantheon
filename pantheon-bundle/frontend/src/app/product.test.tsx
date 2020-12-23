@@ -3,9 +3,7 @@ import { Product } from "@app/product"
 import "@app/fetchMock"
 
 import { mount, shallow } from "enzyme"
-import { TextInput, FormGroup, Button, Alert } from "@patternfly/react-core"
-import renderer from "react-test-renderer"
-import { spy } from 'sinon';
+import { TextInput, FormGroup, Button } from "@patternfly/react-core"
 
 describe("Product tests", () => {
   test("should render Product component", () => {
