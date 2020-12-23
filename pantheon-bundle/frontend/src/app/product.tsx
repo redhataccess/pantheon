@@ -30,17 +30,16 @@ export default function Product(props: any) {
     const [versionUrlFragment, setVersionUrlFragment] = useState("")
     const [redirect, setRedirect] = useState(false)
 
-  // methods that handle the state changes.
-  const handleNameInput = productName => {
-    setProductName(productName)
+    // methods that handle the state changes.
+    const handleNameInput = productName => {
+        setProductName(productName)
     }
 
-const handleProductInput = productDescription => {
-    setProductDescription(productDescription)
-        // console.log("Desc " + productDescription)
+    const handleProductInput = productDescription => {
+        setProductDescription(productDescription)
     }
 
-const handleUrlInput = productUrlFragment => {
+    const handleUrlInput = productUrlFragment => {
         if (/^[-.\w]+$/.test(productUrlFragment)) {
             setProductUrlFragment(productUrlFragment)
             setIsUrlFragmentValid(true)
@@ -49,11 +48,11 @@ const handleUrlInput = productUrlFragment => {
         }
     }
 
-const handleTextInputChange = versionName => {
-    setVersionName(versionName)
+    const handleTextInputChange = versionName => {
+        setVersionName(versionName)
     }
 
-const handleUrlInputChange = versionUrlFragment => {
+    const handleUrlInputChange = versionUrlFragment => {
         if (/^[-.\w]+$/.test(versionUrlFragment)) {
             setVersionUrlFragment(versionUrlFragment)
             setIsUrlFragmentValid(true)
@@ -62,7 +61,7 @@ const handleUrlInputChange = versionUrlFragment => {
         }
     }
 
-const saveVersion = () => {
+    const saveVersion = () => {
         // confirming form state is valid
         if (versionName.trim() === "" || versionUrlFragment === "") {
             setIsMissingFields(true)
@@ -95,7 +94,7 @@ const saveVersion = () => {
 
     }
 
-const saveProduct = (e) => {
+    const saveProduct = (e) => {
         e.preventDefault()
         if (productName === "" || productUrlFragment === "" || versionName === "" || versionUrlFragment === "") {
             setIsMissingFields(true)
@@ -137,7 +136,7 @@ const saveProduct = (e) => {
         }
     }
 
-const renderRedirect = () => {
+    const renderRedirect = () => {
         if (redirect) {
             return <Redirect to="/products" />
         } else {
@@ -145,13 +144,13 @@ const renderRedirect = () => {
         }
     }
 
-const dismissNotification = () => {
+    const dismissNotification = () => {
         setFailedPost(false)
         setIsDup(false)
         setIsMissingFields(false)
     }
 
-const productExist = () => {
+    const productExist = () => {
         let exists = false
         const backend = "/content/products/" + productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_") + ".json"
         return fetch(backend)
@@ -163,9 +162,6 @@ const productExist = () => {
             }).then(() => exists)
     }
 
-
-
-    // render method transforms the react components into DOM nodes for the browser.
     return (
         <React.Fragment>
             <Form className='p2-product__form'>
