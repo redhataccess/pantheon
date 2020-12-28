@@ -8,7 +8,7 @@ ifdef::context[:parent-context: {context}]
 :context: assembly-preparing-content-for-publication
 
 [role="_abstract"]
-Prepare your {ContentTerm} for publication by assigning it metadata. After you assign metadata, you can preview your {ContentTerm} to see how it looks in the {PublishingPortal}. 
+After you have imported your content into {ProductShortName}, prepare it for publication by assigning metadata. After you assign metadata, you can preview your {ContentTerm} to see how it looks in the {PublishingPortal}. 
 
 include::../modules/proc_assigning-metadata-to-a-module.adoc[leveloffset=+1]
 

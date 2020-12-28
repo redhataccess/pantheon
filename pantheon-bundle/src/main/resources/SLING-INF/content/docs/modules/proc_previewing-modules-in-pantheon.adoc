@@ -13,7 +13,7 @@ If you are not logged in, you can still see the rendered {ContentTerm} if it is 
 
 .Procedure
 . Navigate to the link:{LinkToSearchPage}[Search page].
-. Click the name of the {ContentTerm} you want to preview.
+. Click the item that you want to preview.
 +
 If you do not see the {ContentTerm} listed, search for it using the search box.
 
