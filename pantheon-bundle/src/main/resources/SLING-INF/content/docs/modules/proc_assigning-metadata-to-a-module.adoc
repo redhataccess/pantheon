@@ -2,12 +2,12 @@
 = Assigning metadata to {ContentTerm}
 
 [role="_abstract"]
-Assign metadata to {ContentTerm} to enable search engine optimization (SEO). SEO improves the findability of content. Assigned metadata also determines the URL at which the {ContentTerm} is published.
+Assign metadata to {ContentTerm} to enable search engine optimization (SEO). SEO improves the findability of content. Assigned metadata also defines the URL at which the {ContentTerm} is published.
 
 .Prerequisites
 
 * You are logged in.
-* The {ContentTerm} to be assigned metadata has been imported to {ProductShortName}.
+* The {ContentTerm} to be assigned metadata has been imported into {ProductShortName}.
 
 .Procedure
 
