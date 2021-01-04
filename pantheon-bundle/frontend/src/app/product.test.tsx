@@ -4,7 +4,6 @@ import "@app/fetchMock"
 
 import { mount, shallow } from "enzyme"
 import { TextInput, FormGroup, Button } from "@patternfly/react-core"
-import renderer from "react-test-renderer"
 
 describe("Product tests", () => {
   test("should render Product component", () => {
@@ -29,72 +28,70 @@ describe("Product tests", () => {
     const button = wrapper.find(Button)
     expect(button.exists()).toBe(true)
   })
-
-  it("test renderRedirect function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.renderRedirect).toMatchSnapshot()
-  })
-
-  it("test loginRedirect function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.loginRedirect).toMatchSnapshot()
-  })
  
-  it("test checkAuth function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.checkAuth).toMatchSnapshot()
-  })
-  
-  it("test dismissNotification function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.dismissNotification).toMatchSnapshot()
-  })
-
-  it("test productExist function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.productExist("Red Hat Enterprise Linux")).toMatchSnapshot()
-  })
-
   it("test handleNameInput function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.handleNameInput("Red Hat Enterprise Linux")).toMatchSnapshot()
+    const container = shallow(<Product />)
+    const productInput = container.find('#product_name_text')
+    productInput.simulate('change', 'test_name');
+    container.update()
+    expect(container.find('#product_name_text').prop('value')).toEqual(
+      'test_name',
+    );
   })
-
   it("test handleProductInput function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.handleProductInput("Linux Platform")).toMatchSnapshot()
+    const container = shallow(<Product />)
+    const input = container.find('#product_description_text')
+    input.simulate('change', 'test_prod_descrip');
+    container.update()
+    expect(container.find('#product_description_text').prop('value')).toEqual(
+      'test_prod_descrip',
+    );
   })
 
-  it("test handleUrlInput function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.handleUrlInput("red_hat")).toMatchSnapshot()
+  it("test handleUrlInput function - valid url provided", () => {
+    const container = shallow(<Product />)
+    const input = container.find('#product_url_fragment_text')
+    input.simulate('change', 'test_prod_url');
+    container.update()
+    expect(container.find('#product_url_fragment_text').prop('value')).toEqual(
+      'test_prod_url',
+    );
+  })
+  it("test handleUrlInput function - invalid url provided", () => {
+    const container = shallow(<Product />)
+    const input = container.find('#product_url_fragment_text')
+    input.simulate('change', '');
+    container.update()
+    expect(container.find('#product_url_fragment_text').prop('value')).toEqual(
+      '',
+    );
   })
   it("test handleTextInputChange function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.handleTextInputChange("1")).toMatchSnapshot()
+    const container = shallow(<Product />)
+    const input = container.find('#new_version_name_text')
+    input.simulate('change', 'test_version_name');
+    container.update()
+    expect(container.find('#new_version_name_text').prop('value')).toEqual(
+      'test_version_name',
+    );
   })
-  it("test handleUrlInputChange function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.handleUrlInputChange("test_url")).toMatchSnapshot()
+  it("test handleUrlInputChange function - valid URL", () => {
+    const container = shallow(<Product />)
+    const input = container.find('#new_version_url_fragment')
+    input.simulate('change', 'test_version_url');
+    container.update()
+    expect(container.find('#new_version_url_fragment').prop('value')).toEqual(
+      'test_version_url',
+    );
   })
-  it("test saveVersion function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.saveVersion).toMatchSnapshot()
+  it("test handleUrlInputChange function - invalid URL", () => {
+    const container = shallow(<Product />)
+    const input = container.find('#new_version_url_fragment')
+    input.simulate('change', '');
+    container.update()
+    expect(container.find('#new_version_url_fragment').prop('value')).toEqual(
+      '',
+    );
   })
-  it("test createVersionsPath function", () => {
-    const wrapper = renderer.create(<Product />)
-    const inst = wrapper.getInstance()
-    expect(inst.createVersionsPath).toMatchSnapshot()
-  })
+
 })
