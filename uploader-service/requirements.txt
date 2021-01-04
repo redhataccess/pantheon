@@ -1,0 +1,9 @@
+argparse~=1.4.0
+requests~=2.22.0
+PyYAML~=5.3.1
+flasgger~=0.9.5
+Flask~=1.1.2
+marshmallow~=3.9.1
+giturlparse~=0.10.0
+Werkzeug~=1.0.1
+redis~=3.5.3
