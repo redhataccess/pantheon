@@ -98,7 +98,8 @@ def status():
 
     status_message = Status(current_status=status_data['current_status'],
                             file_type=status_data.get('type_uploading', ""),
-                            last_uploaded_file=status_data.get('last_uploaded_file'))
+                            last_uploaded_file=status_data.get('last_uploaded_file'),
+                            total_files_uploaded=status_data.get('total_files_uploaded'))
     return jsonify(
         dict(status=status_message.current_status,
              currently_uploading=status_message.processing_file_type,
@@ -144,7 +145,7 @@ def progress_update():
         server_status="OK",
         server_message="Accepting requests",
         current_status=status_data['current_status'],
-        file_type=status_data.get['type_uploading']
+        file_type=status_data['type_uploading']
     )
     if status_data['other_status'] is not None:
         response_dict['extra_info'] = status_data['other_status']
