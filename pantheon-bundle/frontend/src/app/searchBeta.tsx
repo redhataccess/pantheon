@@ -46,6 +46,7 @@ export interface ISearchState {
   repoFilterIsExpanded: boolean
   products: Array<{ name: string, id: string }>
   repositories: Array<{ name: string, id: string, checked: boolean }>
+  filteredRepositories: Array<{ name: string, id: string, checked: boolean }>
 
   inputValue: string,
   statusIsExpanded: boolean,
@@ -77,6 +78,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
       repoFilterIsExpanded: true,
       products: [{ name: "", id: "" }],
       repositories: [{ name: "", id: "", checked: false }],
+      filteredRepositories: [{ name: "", id: "", checked: false }],
       // states for toolbar
       inputValue: "",
       statusIsExpanded: false,
@@ -99,6 +101,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
   }
 
   public componentDidMount() {
+
     // list repos inside the drawer
     this.getRepositories()
     // this.getProducts()
@@ -136,13 +139,15 @@ class SearchBeta extends Component<IAppState, ISearchState> {
               onChange={this.onChangeRepoFilter}
               onClear={(evt) => this.onChangeRepoFilter("", evt)}
             />
+            {this.state.filteredRepositories && this.state.filteredRepositories.length > 0 &&
             <SimpleList aria-label="Repository List">
-              {this.state.repositories.map((data) => (
+              {this.state.filteredRepositories.map((data) => (
                 <SimpleListItem key={data.id}>
                   <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onClick={this.onSelectRepositories} />
                 </SimpleListItem>
               ))}
             </SimpleList>
+            }
 
           </ExpandableSection>
           <br />
@@ -346,7 +351,8 @@ class SearchBeta extends Component<IAppState, ISearchState> {
           repos.push({ name: repository.__name__, id: repository["jcr:uuid"] })
         }
         this.setState({
-          repositories: repos
+          repositories: repos,
+          filteredRepositories: repos
         })
       })
       .catch((error) => {
@@ -470,17 +476,13 @@ class SearchBeta extends Component<IAppState, ISearchState> {
       repoFilterValue: value
     });
 
+    // check for input value
     if (value) {
-      let inputString = "";
-      const matchFound = [{ name: "", id: "", checked: false }];
-
-      this.state.repositories.map(data => {
-        inputString = "" + data.name
-        if (inputString.toLowerCase().includes(value.toLowerCase())) {
-          matchFound.push(data)
-        }
-      });
-      this.setState({ repositories: matchFound })
+      // filter and return repositories that include input value, and set state to the filtered list
+      let filtered = this.state.repositories.filter(data => data.name.toLowerCase().includes(value.toLowerCase()))
+      this.setState({
+        filteredRepositories: filtered
+      })
     } else {
       this.getRepositories()
     }
