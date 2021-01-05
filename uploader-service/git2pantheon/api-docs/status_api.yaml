@@ -1,0 +1,58 @@
+Status of the clone and upload process
+---
+tags:
+  - Status of the clone and upload process.
+
+parameters:
+  - in: body
+    name: body
+    description: 'The key corresponding to upload process whose status needs to be retrieved. The key is passed as body as the key could be long and might be long for GET'
+    required: true
+    schema:
+      $ref: '#/definitions/UploaderKey'
+
+reponses:
+  200:
+    description: 'The status of upload corresponding to the key'
+    schema:
+      $ref: '#/definitions/UploaderKey'
+  400:
+    description: 'Invalid content error'
+    schema:
+      $ref: '#/definitions/Error'
+  500:
+    description: 'Internal server error'
+    schema:
+      $ref: '#/definitions/Error'
+
+
+definitions:
+  UploaderKey:
+    type: object
+    properties:
+      status_key:
+        type: string
+        description: 'Key to retrieve status and progress update'
+  UploadStatus:
+    type: object
+    properties:
+      status:
+        type: string
+        description: 'The current status of the upload process'
+      currently_processing:
+        type: string
+        description: 'The filetype currently being processed'
+
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+        description: 'HTTP status code of the error'
+      message:
+        type: string
+        description: 'Error message'
+      details:
+        type: string
+        description: 'Error details'
+

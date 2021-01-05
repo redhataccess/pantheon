@@ -34,7 +34,7 @@ ProcessedStatus = namedtuple('ProcessedStatus', ['path', 'response_code', 'respo
 
 class Data:
     def __init__(self):
-        self.processed_data = {
+        self.uploaded_data = {
             'modules': [],
             'modules_not_processed': [],
             'assemblies': [],
@@ -44,13 +44,15 @@ class Data:
             'server': {},
             'module_variants': [],
             'other_status': [],
-            'current_status': 'processing',
-            'type_processing': '',
+            'current_status': 'uploading',
+            'type_uploading': '',
+            'last_file_uploaded': '',
+            'total_files_uploaded': 0
         }
 
 
 def reset_processed_data(data):
-    data.processed_data.clear()
+    data.uploaded_data.clear()
 
 
 def _generate_data(jcr_primary_type, base_name, path_name, asccidoc_type):
@@ -192,17 +194,18 @@ def process_file(path, filetype, server, sandbox, repository, directory, dry, us
 
     # Asciidoc content (treat as a module)
     if isModule:
-        status_data.processed_data['type_processing'] = 'module'
+        status_data.uploaded_data['type_uploading'] = 'module'
         process_module(base_name, dry, path, pw, url, user, status_data)
-        publish_status(should_publish, status_data.processed_data)
+        publish_status(should_publish, status_data.uploaded_data)
     elif isResource:
-        status_data.processed_data['type_processing'] = 'resource'
+        status_data.uploaded_data['type_uploading'] = 'resource'
         process_resource(dry, path, pw, url, user, status_data)
-        publish_status(should_publish, status_data.processed_data)
+        publish_status(should_publish, status_data.uploaded_data)
     elif isAssembly:
-        status_data.processed_data['type_processing'] = 'assembly'
+        status_data.uploaded_data['type_uploading'] = 'assembly'
         process_assembly(base_name, dry, path, pw, url, user, status_data)
-        publish_status(should_publish, status_data.processed_data)
+        publish_status(should_publish, status_data.uploaded_data)
+    status_data.uploaded_data['last_file_uploaded'] = str(path)
     logger.debug('')
 
 
@@ -218,9 +221,9 @@ def process_assembly(base_name, dry, path, pw, url, user, status_data:Data):
         r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(user, pw))
         # print the response content received from Pantheon, not just reason
         if not 200 <= r.status_code < 300:
-            status_data.processed_data['assemblies_not_processed'].append(create_status_data(path, r.status_code, r.text))
+            status_data.uploaded_data['assemblies_not_processed'].append(create_status_data(path, r.status_code, r.text))
         else:
-            status_data.processed_data['assemblies'].append(create_status_data(path, r.status_code, r.text))
+            status_data.uploaded_data['assemblies'].append(create_status_data(path, r.status_code, r.text))
         _print_response('assembly', path, r.status_code, r.text)
 
 
@@ -231,9 +234,12 @@ def publish_status(should_publish, processed_data):
         _info("not publishing the status details to the broker as broker is not being used")
         return
     data = json.dumps(processed_data)
-    # broker.set(channel_name, data)
-    print('publishing: '+data +' with key:'+channel_name)
-    broker.set(channel_name, data)
+    # dont stop upload process if there is issue with broker
+    print('publishing: ' + data + ' with key:'+channel_name)
+    try:
+        broker.set(channel_name, data)
+    except Exception as e:
+        logger.error('Could not publish status to broker due to error=' + str(e))
 
 
 def process_resource(dry, path, pw, url, user, status_data:Data):
@@ -250,9 +256,9 @@ def process_resource(dry, path, pw, url, user, status_data:Data):
             r = requests.post(url, headers=HEADERS, data=symlinkData, auth=(user, pw))
             # print the response content received from Pantheon, not just reason
             if not 200 <= r.status_code < 300:
-                status_data.processed_data['resources_not_processed'].append(create_status_data(path, r.status_code, r.text))
+                status_data.uploaded_data['resources_not_processed'].append(create_status_data(path, r.status_code, r.text))
             else:
-                status_data.processed_data['resources'].append(create_status_data(path, r.status_code, r.text))
+                status_data.uploaded_data['resources'].append(create_status_data(path, r.status_code, r.text))
             _print_response('symlink', path, r.status_code, r.text)
 
     else:
@@ -267,9 +273,9 @@ def process_resource(dry, path, pw, url, user, status_data:Data):
             r = requests.post(url, headers=HEADERS, files=files, auth=(user, pw))
             # print the response content received from Pantheon, not just reason
             if not 200 <= r.status_code < 300:
-                status_data.processed_data['resources_not_processed'].append(create_status_data(path, r.status_code, r.text))
+                status_data.uploaded_data['resources_not_processed'].append(create_status_data(path, r.status_code, r.text))
             else:
-                status_data.processed_data['resources'].append(create_status_data(path, r.status_code, r.text))
+                status_data.uploaded_data['resources'].append(create_status_data(path, r.status_code, r.text))
             _print_response('resource', path, r.status_code, r.text)
 
 
@@ -290,9 +296,9 @@ def process_module(base_name, dry, path, pw, url, user, status_data:Data):
     if not dry:
         r = requests.post(url, headers=HEADERS, data=data, files=files, auth=(user, pw))
         if not 200 <= r.status_code < 300:
-            status_data.processed_data['modules_not_processed'].append(create_status_data(path, r.status_code, r.text))
+            status_data.uploaded_data['modules_not_processed'].append(create_status_data(path, r.status_code, r.text))
         else:
-            status_data.processed_data['modules'].append(create_status_data(path, r.status_code, r.text))
+            status_data.uploaded_data['modules'].append(create_status_data(path, r.status_code, r.text))
         # print the response content received from Pantheon, not just reason
         _print_response('module', path, r.status_code, r.text)
 
@@ -354,12 +360,12 @@ def validateVariants(variants, status_data:Data):
     for variant in variants:
         if 'name' not in variant or variant[
             'name'] is None:  # name is mandatory for variant, throw errors in case of missing
-            status_data.processed_data['other_status'].append(
+            status_data.uploaded_data['other_status'].append(
                 create_status_data(variants, 400, "Variant (name) missing, please correct variant name "))
             return False
         if 'path' not in variant or variant[
             'path'] is None:  # path is mandatory for variant, throw errors in case of missing
-            status_data.processed_data['other_status'].append(
+            status_data.uploaded_data['other_status'].append(
                 create_status_data(variants, 400, "Variant (path) missing, please correct variant path "))
             return False
 
@@ -367,7 +373,7 @@ def validateVariants(variants, status_data:Data):
             if variant['canonical'] is not None:
                 isCannonicalList.append(variant['canonical'])
             else:
-                status_data.processed_data['other_status'].append(
+                status_data.uploaded_data['other_status'].append(
                     create_status_data(variants, 400,
                                        "Cannonical (Value) missing, please correct Cannonical value for " + variant[
                                            'name']))
@@ -380,17 +386,17 @@ def validateVariants(variants, status_data:Data):
             elif (not isCanon and value):
                 isCanon = True
             else:
-                status_data.processed_data['other_status'].append(
+                status_data.uploaded_data['other_status'].append(
                     create_status_data(variants, 400,
                                        'Multiple Canonical attribute present, Only one variant can be Cannonical'))
                 return False
         else:
-            status_data.processed_data['other_status'].append(
+            status_data.uploaded_data['other_status'].append(
                 create_status_data(variants, 400,
                                    'Canonical Attribute takes only boolean values.'))
             return False
     if len(variants) > 1 and not isCanon:
-        status_data.processed_data['other_status'].append(
+        status_data.uploaded_data['other_status'].append(
             create_status_data(variants, 400,
                                'Canonical attribute missing, Should be present in case multiple variants'))
         return False
@@ -413,7 +419,7 @@ def createVariant(data, path, url, workspace, user, pw, dry, status_data:Data):
             r: Response = requests.post(url, headers=HEADERS, data=payload, auth=(user, pw))
             _print_response('module_variants', list(data.keys()), r.status_code, r.text)
             if r.status_code == 200 or r.status_code == 201:
-                status_data.processed_data['module_variants'].append(create_status_data(path, r.status_code, r.text))
+                status_data.uploaded_data['module_variants'].append(create_status_data(path, r.status_code, r.text))
                 # indicate that variant have been created
                 return None
             else:
@@ -471,6 +477,8 @@ def processRegexMatches(files, globs, filetype, server, sandbox, repository, dir
                     break  # necessary because the same file could potentially match more than 1 wildcard
     for f in matches:
         files.remove(f)
+    status_data.uploaded_data['total_files_uploaded'] = int(status_data.uploaded_data['total_files_uploaded'])\
+                                                        + len(matches)
 
 
 def process_attributes_as_resources(variants):
@@ -568,15 +576,20 @@ def main():
     repository = args.repository
     sandbox = args.sandbox
     use_broker = True if args.use_broker else False
+    log_options(directory, dry, logStr, numeric_level, repository, server, use_broker, user)
+    start_process(numeric_level, pw, directory, server, user, repository, sandbox, dry, attrFile, use_broker)
+
+
+def log_options(directory, dry, logStr, numeric_level, repository, server, use_broker, user):
     _info("Using user:" + str(user))
     _info("Using dry:" + str(dry))
     _info("Using server:" + str(server))
     _info("Using logStr:" + str(logStr))
     _info("Using numeric_level:" + str(numeric_level))
     _info("Using repository:" + str(repository))
-    _info("Using directory:" + str(sandbox))
+    _info("Using directory:" + str(directory))
     _info("Using broker:" + str(use_broker))
-    start_process(numeric_level, pw, directory, server, user, repository, sandbox, dry, attrFile, use_broker)
+
 
 # ToDo: find a better way to handle variants validation
 def get_status(err):
@@ -595,6 +608,9 @@ def setup_broker(channel):
 def start_process(numeric_level=30, pw=None, directory=None, server=DEFAULT_SERVER, user=None, repository=None,
                   sandbox=None
                   , dry=None, attrFile=None, use_broker=False):
+    # log the parameter values. logStr is send as empty string as
+    # log level is indicated by numeric_level
+    log_options(directory, dry, '', numeric_level, repository, server, use_broker, user)
     # initialize status update ds
     status_data = Data()
     set_logger(numeric_level)
@@ -622,8 +638,9 @@ def start_process(numeric_level=30, pw=None, directory=None, server=DEFAULT_SERV
     if exists(server + '/pantheon'):
         logger.debug('server: %s is reachable', server)
     else:
-        status_data.processed_data['server'] = create_status_data(server, '503', 'server ' + server + ' is not reachable')
-        publish_status(use_broker, status_data.processed_data)
+        status_data.uploaded_data['server'] = create_status_data(server, '503', 'server ' + server + ' is not reachable')
+        status_data.uploaded_data['current_status'] = "server error"
+        publish_status(use_broker, status_data.uploaded_data)
         return False
     _info('Using server: ' + server)
 
@@ -632,7 +649,7 @@ def start_process(numeric_level=30, pw=None, directory=None, server=DEFAULT_SERV
 
         # Enforce a repository being set in the pantheon.yml
         if repository == "" and mode == 'repository':
-            status_data.processed_data['other_status'].append(create_status_data("repository error", 400, 'repository is not set'))
+            status_data.uploaded_data['other_status'].append(create_status_data("repository error", 400, 'repository is not set'))
 
         mode = 'sandbox' if sandbox else 'repository'
         # override repository if sandbox is chosen (sandbox name is the user name)
@@ -647,13 +664,13 @@ def start_process(numeric_level=30, pw=None, directory=None, server=DEFAULT_SERV
         print('--------------')
         err = process_workspace(repository, server, sandbox, repository, variants, user, pw, dry, status_data)
         if err is not None:
-            status_data.processed_data['other_status'].append(create_status_data(repository, get_status(err),
+            status_data.uploaded_data['other_status'].append(create_status_data(repository, get_status(err),
                                                                      'Either workspace or variant could not be '
                                                                      'created because of {0}'.format(
                                                                          err)))
             logger.warning('Either workspace or variant could not be created because of {0}'.format(err))
-            publish_status(use_broker, status_data.processed_data)
-            status_data.processed_data['current_status']= "error"
+            publish_status(use_broker, status_data.uploaded_data)
+            status_data.uploaded_data['current_status']= "error"
             return False
         attribute_files = []
         if variants:
@@ -689,7 +706,7 @@ def start_process(numeric_level=30, pw=None, directory=None, server=DEFAULT_SERV
                   + ' are handled for upload.')
 
     else:
-        status_data.processed_data['other_status'].append(
+        status_data.uploaded_data['other_status'].append(
             create_status_data(repository, 400, 'Modules and resources not found, please check yaml syntax'))
         return False
     logger.info('Finished!')
@@ -698,9 +715,9 @@ def start_process(numeric_level=30, pw=None, directory=None, server=DEFAULT_SERV
 
 
 def finalise_update(use_broker, status_data:Data):
-    status_data.processed_data['current_status'] = "done"
-    status_data.processed_data['type_processing'] = "done"
-    publish_status(use_broker, status_data.processed_data)
+    status_data.uploaded_data['current_status'] = "done"
+    status_data.uploaded_data['type_uploading'] = "NA"
+    publish_status(use_broker, status_data.uploaded_data)
 
 
 def set_logger(numeric_level):
