@@ -123,7 +123,7 @@ class SearchResults extends Component<IProps, ISearchState> {
 
         {!this.state.isEmptyResults && <Table aria-label="Simple Table" cells={columns} rows={rows}>
           <TableHeader className={styles.modifiers.nowrap} />
-          <TableBody className="search__search-results__table-body" />
+          <TableBody className="results__table-body" />
         </Table>}
 
         {!this.state.isEmptyResults && <Pagination
@@ -136,9 +136,10 @@ class SearchResults extends Component<IProps, ISearchState> {
           perPageLimit={this.state.pageLimit}
           showDropdownOptions={this.state.showDropdownOptions}
           bottom={this.state.bottom}
+          className="results__pagination"
         />}
 
-        {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small} className="search__empty-search-result">
+        {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small} className="results--empty">
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
             No results found

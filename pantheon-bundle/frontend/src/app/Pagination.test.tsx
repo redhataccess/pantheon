@@ -18,6 +18,7 @@ describe("Tests for Pagination", () => {
     perPageLimit={1}
     showDropdownOptions={true}
     bottom={true}
+    className={"test"}
 />)
     expect(view).toMatchSnapshot()
   })
@@ -33,6 +34,7 @@ describe("Tests for Pagination", () => {
       perPageLimit={1}
       showDropdownOptions={true}
       bottom={true}
+      className={"test"}
     />)
     const pageNumberDisplay = wrapper.find(LevelItem)
     expect(pageNumberDisplay.exists()).toBe(true)

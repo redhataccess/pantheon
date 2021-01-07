@@ -57,11 +57,12 @@ exports[`SearchResults tests should render default Search component 1`] = `
       className="pf-m-nowrap"
     />
     <Component
-      className="search__search-results__table-body"
+      className="results__table-body"
     />
   </Table>
   <Pagination
     bottom={true}
+    className="results__pagination"
     handleMoveLeft={[Function]}
     handleMoveRight={[Function]}
     handleMoveToFirst={[Function]}
