@@ -56,7 +56,9 @@ exports[`SearchResults tests should render default Search component 1`] = `
     <TableHeader
       className="pf-m-nowrap"
     />
-    <Component />
+    <Component
+      className="search__search-results__table-body"
+    />
   </Table>
   <Pagination
     bottom={true}
