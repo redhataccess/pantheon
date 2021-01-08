@@ -132,7 +132,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
           <DrawerActions>
             <DrawerCloseButton onClick={this.onCloseClick} />
           </DrawerActions>
-          <ExpandableSection toggleText="By repo" isActive={true} isExpanded={repoFilterIsExpanded} onToggle={this.onRepositoriesToggle}>
+          <ExpandableSection className="filters-drawer filters-drawer--by-repo" toggleText="By repo" isActive={true} isExpanded={repoFilterIsExpanded} onToggle={this.onRepositoriesToggle}>
             <SearchInput
               placeholder="Filter"
               value={this.state.repoFilterValue}
@@ -142,7 +142,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
             {this.state.filteredRepositories && this.state.filteredRepositories.length > 0 &&
             <SimpleList aria-label="Repository List">
               {this.state.filteredRepositories.map((data) => (
-                <SimpleListItem key={data.id}>
+                <SimpleListItem key={data.id} className='repo-list filters-drawer__repo-list'>
                   <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onClick={this.onSelectRepositories} />
                 </SimpleListItem>
               ))}
@@ -172,7 +172,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     );
     const drawerContent = (
       <React.Fragment>
-        <ExpandableSection toggleText="Modules" className="pf-c-title" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
+        <ExpandableSection toggleText="Modules" className="pf-c-title search-results__section search-results__section--module" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
           <SearchResults
             contentType="module"
             keyWord={this.state.inputValue}
@@ -184,7 +184,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
 
         </ExpandableSection>
         <br />
-        <ExpandableSection toggleText="Assemblies" className="pf-c-title" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
+        <ExpandableSection toggleText="Assemblies" className="pf-c-title search-results__section search-results__section--assembly" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
           <SearchResults
             contentType="assembly"
             keyWord={this.state.inputValue}
@@ -199,24 +199,25 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     );
 
     const statusMenuItems = [
-      <SelectOption key="statusDraft" value="draft" label= "Draft" />,
-      <SelectOption key="statusPublished" value="released" label="Published" />
+      <SelectOption key="statusDraft" value="draft" label= "Draft" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--draft" />,
+      <SelectOption key="statusPublished" value="released" label="Published" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--released" />
     ];
 
     const contentTypeMenuItems = [
-      <SelectOption key="ctypeConcept" value="CONCEPT" label="Concept" />,
-      <SelectOption key="ctypeProcedure" value="PROCEDURE" label="Procedure" />,
-      <SelectOption key="ctypeReference" value="REFERENCE" label="Reference" />
+      <SelectOption key="ctypeConcept" value="CONCEPT" label="Concept" className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--concept" />,
+      <SelectOption key="ctypeProcedure" value="PROCEDURE" label="Procedure" className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--procedure" />,
+      <SelectOption key="ctypeReference" value="REFERENCE" label="Reference" className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--reference" />
     ];
 
     const toggleGroupItems = (
       <React.Fragment>
-        <ToolbarItem>
+        <ToolbarItem id="filters-bar__toolbar-toggle">
           <Button variant="tertiary" aria-expanded={isExpanded} onClick={this.onClick} icon={<FilterIcon />} />
         </ToolbarItem>
         <ToolbarItem>
           <InputGroup>
             <SearchInput
+              className="filters-bar__name-search"
               name="textInput"
               id="textInput"
               placeholder="Find by name"
@@ -237,6 +238,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
             // deleteChip={this.onDelete}
             deleteChipGroup={this.onDeleteGroup}
             categoryName="Status"
+            className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--status"
           >
             <Select
               variant={SelectVariant.checkbox}
@@ -251,7 +253,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
             </Select>
           </ToolbarFilter>
           {/* <ToolbarFilter chips={filters.ctype} deleteChip={this.onDelete} categoryName="Content Type"> */}
-          <ToolbarFilter chips={filters.ctype} categoryName="Content Type" >
+          <ToolbarFilter chips={filters.ctype} categoryName="Content Type" className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--content-type">
             <Select
               variant={SelectVariant.checkbox}
               aria-label="Content Type"
@@ -315,7 +317,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         <br />
         <Toolbar
           id="toolbar-with-filter"
-          className="pf-m-toggle-group-container"
+          className="pf-m-toggle-group-container filters-bar__filters-wrapper"
           collapseListedFiltersBreakpoint="xl"
           clearAllFilters={this.onDelete}
         >
@@ -324,7 +326,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         <Divider />
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
           <DrawerContent panelContent={panelContent} width="width_50">
-            <DrawerContentBody width="width_50">
+            <DrawerContentBody className="search-results" width="width_50">
               {drawerContent}
             </DrawerContentBody>
           </DrawerContent>
