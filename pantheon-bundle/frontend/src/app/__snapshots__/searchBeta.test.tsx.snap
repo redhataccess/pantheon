@@ -39,7 +39,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
         }
       >
         <ToolbarItem
-          id="filter-bar__toolbar-toggle"
+          id="filters-bar__toolbar-toggle"
         >
           <Button
             aria-expanded={true}
@@ -58,7 +58,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
           <InputGroup>
             <SearchInput
               aria-label="search input"
-              className="filters-toolbar__name-search"
+              className="filters-bar__name-search"
               id="textInput"
               name="textInput"
               onChange={[Function]}
@@ -128,7 +128,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
               width=""
             >
               <SelectOption
-                className="dropdown-filter__option dropdown-filter__option-status dropdown-filter__option--draft"
+                className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--draft"
                 component="button"
                 index={0}
                 inputId=""
@@ -146,7 +146,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
                 value="draft"
               />
               <SelectOption
-                className="dropdown-filter__option dropdown-filter__option-staus dropdown-filter__option--released"
+                className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--released"
                 component="button"
                 index={0}
                 inputId=""
@@ -210,7 +210,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
               width=""
             >
               <SelectOption
-                className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--concept"
+                className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--concept"
                 component="button"
                 index={0}
                 inputId=""
@@ -228,7 +228,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
                 value="CONCEPT"
               />
               <SelectOption
-                className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--procedure"
+                className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--procedure"
                 component="button"
                 index={0}
                 inputId=""
@@ -246,7 +246,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
                 value="PROCEDURE"
               />
               <SelectOption
-                className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--reference"
+                className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--reference"
                 component="button"
                 index={0}
                 inputId=""

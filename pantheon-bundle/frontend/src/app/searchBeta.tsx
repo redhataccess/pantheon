@@ -199,25 +199,25 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     );
 
     const statusMenuItems = [
-      <SelectOption key="statusDraft" value="draft" label= "Draft" className="dropdown-filter__option dropdown-filter__option-status dropdown-filter__option--draft" />,
-      <SelectOption key="statusPublished" value="released" label="Published" className="dropdown-filter__option dropdown-filter__option-staus dropdown-filter__option--released" />
+      <SelectOption key="statusDraft" value="draft" label= "Draft" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--draft" />,
+      <SelectOption key="statusPublished" value="released" label="Published" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--released" />
     ];
 
     const contentTypeMenuItems = [
-      <SelectOption key="ctypeConcept" value="CONCEPT" label="Concept" className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--concept" />,
-      <SelectOption key="ctypeProcedure" value="PROCEDURE" label="Procedure" className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--procedure" />,
-      <SelectOption key="ctypeReference" value="REFERENCE" label="Reference" className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--reference" />
+      <SelectOption key="ctypeConcept" value="CONCEPT" label="Concept" className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--concept" />,
+      <SelectOption key="ctypeProcedure" value="PROCEDURE" label="Procedure" className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--procedure" />,
+      <SelectOption key="ctypeReference" value="REFERENCE" label="Reference" className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--reference" />
     ];
 
     const toggleGroupItems = (
       <React.Fragment>
-        <ToolbarItem id="filter-bar__toolbar-toggle">
+        <ToolbarItem id="filters-bar__toolbar-toggle">
           <Button variant="tertiary" aria-expanded={isExpanded} onClick={this.onClick} icon={<FilterIcon />} />
         </ToolbarItem>
         <ToolbarItem>
           <InputGroup>
             <SearchInput
-              className="filters-toolbar__name-search"
+              className="filters-bar__name-search"
               name="textInput"
               id="textInput"
               placeholder="Find by name"
