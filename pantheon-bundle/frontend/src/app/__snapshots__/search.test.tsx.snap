@@ -12,7 +12,7 @@ exports[`Search tests should render default Search component 1`] = `
   >
     <Pagination
       bottom={false}
-      className="search__pagination"
+      className="pagination"
       handleMoveLeft={[Function]}
       handleMoveRight={[Function]}
       handleMoveToFirst={[Function]}
@@ -110,7 +110,7 @@ exports[`Search tests should render default Search component 1`] = `
   >
     <Pagination
       bottom={true}
-      className="search__pagination"
+      className="pagination"
       handleMoveLeft={[Function]}
       handleMoveRight={[Function]}
       handleMoveToFirst={[Function]}

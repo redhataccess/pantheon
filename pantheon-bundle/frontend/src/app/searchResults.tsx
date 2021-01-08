@@ -139,7 +139,7 @@ class SearchResults extends Component<IProps, ISearchState> {
           className="results__pagination"
         />}
 
-        {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small} className="results--empty">
+        {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small} className="search-results--empty">
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
             No results found

@@ -132,7 +132,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
           <DrawerActions>
             <DrawerCloseButton onClick={this.onCloseClick} />
           </DrawerActions>
-          <ExpandableSection className="filters-drawer filters-drawer__toggle--by-repo" toggleText="By repo" isActive={true} isExpanded={repoFilterIsExpanded} onToggle={this.onRepositoriesToggle}>
+          <ExpandableSection className="filters-drawer filters-drawer--by-repo" toggleText="By repo" isActive={true} isExpanded={repoFilterIsExpanded} onToggle={this.onRepositoriesToggle}>
             <SearchInput
               placeholder="Filter"
               value={this.state.repoFilterValue}
@@ -142,7 +142,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
             {this.state.filteredRepositories && this.state.filteredRepositories.length > 0 &&
             <SimpleList aria-label="Repository List">
               {this.state.filteredRepositories.map((data) => (
-                <SimpleListItem key={data.id} className='filters-drawer__repo-list-item'>
+                <SimpleListItem key={data.id} className='repo-list filters-drawer__repo-list'>
                   <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onClick={this.onSelectRepositories} />
                 </SimpleListItem>
               ))}
@@ -172,7 +172,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     );
     const drawerContent = (
       <React.Fragment>
-        <ExpandableSection toggleText="Modules" className="pf-c-title searh-results__section search-results__section--module" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
+        <ExpandableSection toggleText="Modules" className="pf-c-title search-results__section search-results__section--module" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
           <SearchResults
             contentType="module"
             keyWord={this.state.inputValue}
@@ -184,7 +184,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
 
         </ExpandableSection>
         <br />
-        <ExpandableSection toggleText="Assemblies" className="pf-c-title searh-results__section search-results__section--assembly" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
+        <ExpandableSection toggleText="Assemblies" className="pf-c-title search-results__section search-results__section--assembly" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
           <SearchResults
             contentType="assembly"
             keyWord={this.state.inputValue}
@@ -199,19 +199,19 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     );
 
     const statusMenuItems = [
-      <SelectOption key="statusDraft" value="draft" label= "Draft" className="filters-bar__option filters-bar__option-status filters-bar__option--draft" />,
-      <SelectOption key="statusPublished" value="released" label="Published" className="filters-bar__option filters-bar__option-staus filters-bar__option--released" />
+      <SelectOption key="statusDraft" value="draft" label= "Draft" className="dropdown-filter__option dropdown-filter__option-status dropdown-filter__option--draft" />,
+      <SelectOption key="statusPublished" value="released" label="Published" className="dropdown-filter__option dropdown-filter__option-staus dropdown-filter__option--released" />
     ];
 
     const contentTypeMenuItems = [
-      <SelectOption key="ctypeConcept" value="CONCEPT" label="Concept" className="filters-bar__option filters-bar__option-content-type filters-bar__option--concept" />,
-      <SelectOption key="ctypeProcedure" value="PROCEDURE" label="Procedure" className="filters-bar__option filters-bar__option-content-type filters-bar__option--procedure" />,
-      <SelectOption key="ctypeReference" value="REFERENCE" label="Reference" className="filters-bar__option filters-bar__option-content-type filters-bar__option--reference" />
+      <SelectOption key="ctypeConcept" value="CONCEPT" label="Concept" className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--concept" />,
+      <SelectOption key="ctypeProcedure" value="PROCEDURE" label="Procedure" className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--procedure" />,
+      <SelectOption key="ctypeReference" value="REFERENCE" label="Reference" className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--reference" />
     ];
 
     const toggleGroupItems = (
       <React.Fragment>
-        <ToolbarItem id="filters__toolbar-toggle">
+        <ToolbarItem id="filter-bar__toolbar-toggle">
           <Button variant="tertiary" aria-expanded={isExpanded} onClick={this.onClick} icon={<FilterIcon />} />
         </ToolbarItem>
         <ToolbarItem>
@@ -317,7 +317,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         <br />
         <Toolbar
           id="toolbar-with-filter"
-          className="pf-m-toggle-group-container filter-bar__filters-wrapper"
+          className="pf-m-toggle-group-container filters-bar__filters-wrapper"
           collapseListedFiltersBreakpoint="xl"
           clearAllFilters={this.onDelete}
         >
@@ -326,7 +326,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         <Divider />
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
           <DrawerContent panelContent={panelContent} width="width_50">
-            <DrawerContentBody width="width_50">
+            <DrawerContentBody className="search-results" width="width_50">
               {drawerContent}
             </DrawerContentBody>
           </DrawerContent>

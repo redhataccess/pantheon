@@ -19,7 +19,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
   </Alert>
   <br />
   <Toolbar
-    className="pf-m-toggle-group-container filter-bar__filters-wrapper"
+    className="pf-m-toggle-group-container filters-bar__filters-wrapper"
     clearAllFilters={[Function]}
     collapseListedFiltersBreakpoint="xl"
     id="toolbar-with-filter"
@@ -39,7 +39,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
         }
       >
         <ToolbarItem
-          id="filters__toolbar-toggle"
+          id="filter-bar__toolbar-toggle"
         >
           <Button
             aria-expanded={true}
@@ -128,7 +128,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
               width=""
             >
               <SelectOption
-                className="filters-bar__option filters-bar__option-status filters-bar__option--draft"
+                className="dropdown-filter__option dropdown-filter__option-status dropdown-filter__option--draft"
                 component="button"
                 index={0}
                 inputId=""
@@ -146,7 +146,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
                 value="draft"
               />
               <SelectOption
-                className="filters-bar__option filters-bar__option-staus filters-bar__option--released"
+                className="dropdown-filter__option dropdown-filter__option-staus dropdown-filter__option--released"
                 component="button"
                 index={0}
                 inputId=""
@@ -210,7 +210,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
               width=""
             >
               <SelectOption
-                className="filters-bar__option filters-bar__option-content-type filters-bar__option--concept"
+                className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--concept"
                 component="button"
                 index={0}
                 inputId=""
@@ -228,7 +228,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
                 value="CONCEPT"
               />
               <SelectOption
-                className="filters-bar__option filters-bar__option-content-type filters-bar__option--procedure"
+                className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--procedure"
                 component="button"
                 index={0}
                 inputId=""
@@ -246,7 +246,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
                 value="PROCEDURE"
               />
               <SelectOption
-                className="filters-bar__option filters-bar__option-content-type filters-bar__option--reference"
+                className="dropdown-filter__option dropdown-filter__option-content-type dropdown-filter__option--reference"
                 component="button"
                 index={0}
                 inputId=""
@@ -301,7 +301,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
               />
             </DrawerActions>
             <ExpandableSection
-              className="filters-drawer filters-drawer__toggle--by-repo"
+              className="filters-drawer filters-drawer--by-repo"
               isActive={true}
               isExpanded={true}
               onToggle={[Function]}
@@ -320,7 +320,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
                 className=""
               >
                 <SimpleListItem
-                  className="filters-drawer__repo-list-item"
+                  className="repo-list filters-drawer__repo-list"
                   component="button"
                   componentClassName=""
                   href=""
@@ -349,10 +349,11 @@ exports[`SearchBeta tests should render default Search component 1`] = `
       width="width_50"
     >
       <DrawerContentBody
+        className="search-results"
         width="width_50"
       >
         <ExpandableSection
-          className="pf-c-title searh-results__section search-results__section--module"
+          className="pf-c-title search-results__section search-results__section--module"
           isActive={true}
           isExpanded={true}
           onToggle={[Function]}
@@ -376,7 +377,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
         </ExpandableSection>
         <br />
         <ExpandableSection
-          className="pf-c-title searh-results__section search-results__section--assembly"
+          className="pf-c-title search-results__section search-results__section--assembly"
           isActive={true}
           isExpanded={true}
           onToggle={[Function]}
