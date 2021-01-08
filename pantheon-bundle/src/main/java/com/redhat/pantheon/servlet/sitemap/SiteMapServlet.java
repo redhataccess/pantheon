@@ -36,6 +36,8 @@ import static com.redhat.pantheon.helper.PantheonConstants.*;
         property = {
                 Constants.SERVICE_DESCRIPTION + "=Sitemap Servlet",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
+                "sling.servlet.paths="+ "/api/sitemap/module.sitemap.xml",
+                "sling.servlet.paths="+ "/api/sitemap/assembly.sitemap.xml"
         }
 )
 @SlingServletResourceTypes(
@@ -71,14 +73,16 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
         String documentVersionResourceType = "";
         Resource resource = request.getResourceResolver().getResource(RESOURCE_ROOT);
 
-        if (request.getResource().getPath().startsWith("/api/module.sitemap")) {
+        if (request.getResource().getPath().startsWith("/api/sitemap/module.sitemap")) {
             documentVariantResourceType = "pant:moduleVariant";
             documentVersionResourceType = "pant:moduleVersion";
-        } else if (request.getResource().getPath().startsWith("/api/assembly.sitemap")) {
+        } else if (request.getResource().getPath().startsWith("/api/sitemap/assembly.sitemap")) {
             documentVariantResourceType = "pant:assemblyVariant";
             documentVersionResourceType = "pant:assemblyVersion";
         } else {
             log.warn("[" + SiteMapServlet.class.getSimpleName() + "] unhandled resource type: " + resource.getClass());
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
         }
 
 //        List<Resource> documentAssets = getAsset(resource, documentVariantResourceType, documentVersionResourceType);
