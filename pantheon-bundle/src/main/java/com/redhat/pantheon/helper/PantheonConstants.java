@@ -21,6 +21,8 @@ public class PantheonConstants {
     public static final String JCR_TYPE_ASSEMBLY = "pant:assembly";
     public static final String JCR_TYPE_MODULEVARIANT = "pant:moduleVariant";
     public static final String JCR_TYPE_ASSEMBLYVARIANT = "pant:assemblyVariant";
+    public static final String JCR_TYPE_MODULEVERSION = "pant:moduleVersion";
+    public static final String JCR_TYPE_ASSEMBLYVERSION = "pant:assemblyVersion";
 
     public static final String LATEST_SUFFIX = "/latest";
     public static final Set<String> RELEASED_SUFFIXES = new HashSet<>();
