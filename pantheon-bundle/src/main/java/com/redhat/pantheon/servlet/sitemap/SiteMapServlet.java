@@ -19,14 +19,16 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.redhat.pantheon.helper.PantheonConstants.*;
@@ -48,8 +50,6 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
     private final Logger log = LoggerFactory.getLogger(SiteMapServlet.class);
 
     private static final String RESOURCE_ROOT = "/content/repositories";
-    private static final String RESOURCE_TYPE_QUERY = "select parent.* from {type} as parent INNER JOIN {version} as child ON ISCHILDNODE(child, parent) WHERE ISDESCENDANTNODE(child,[" + RESOURCE_ROOT + "]) and name(child) = 'released' ORDER BY child.[jcr:lastModified] DESC";
-
 
     private List<Resource> getAsset(Resource resource, String documentVariantResourceType, String documentVersionResourceType, List<Resource> assets) {
 
@@ -168,17 +168,5 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
         xmlStream.writeStartElement(SITEMAP_NAMESPACE, elementName);
         xmlStream.writeCharacters(xmlText);
         xmlStream.writeEndElement();
-    }
-
-    private List<Resource> getAssetsThroughQuery(Resource resource, String documentVariantResourceType, String documentVersionResourceType) {
-        List<Resource> assets = new ArrayList<Resource>();
-        String queryStrType = RESOURCE_TYPE_QUERY.replace("{type}","[" + documentVariantResourceType + "]");
-        String queryStrVersion = queryStrType.replace("{version}", "[" + documentVersionResourceType + "]");
-        Iterator<Resource> typedResourceIterator = resource.getResourceResolver().findResources(queryStrVersion, Query.JCR_SQL2);
-
-        typedResourceIterator.forEachRemaining(r -> {
-            assets.add(r);
-        });
-        return assets;
     }
 }
