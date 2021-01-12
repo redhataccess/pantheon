@@ -1,12 +1,11 @@
 package com.redhat.pantheon.servlet.sitemap;
 
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.extension.url.UrlProvider;
 import com.redhat.pantheon.model.api.Child;
-import com.redhat.pantheon.model.assembly.AssemblyVariant;
 import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.document.DocumentVersion;
-import com.redhat.pantheon.model.module.ModuleVariant;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -138,13 +137,11 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
 
         // Process external url
         if (System.getenv(PORTAL_URL) != null) {
-            if (resource.isResourceType(RESOURCE_TYPE_ASSEMBLYVARIANT)) {
-                documentVariant = resource.adaptTo(AssemblyVariant.class);
-            } else if (resource.isResourceType(RESOURCE_TYPE_MODULEVARIANT)) {
-                documentVariant = resource.adaptTo(ModuleVariant.class);
-            }
+            UrlProvider provider = new CustomerPortalUrlUuidProvider();
+            documentVariant = resource.adaptTo(DocumentVariant.class);
+
             if (documentVariant != null && documentVariant.released().isPresent()) {
-                locPath = new CustomerPortalUrlUuidProvider().generateUrlString(documentVariant);
+                locPath = provider.generateUrlString(documentVariant);
             }
         } else {
             locPath = resource.getPath();
