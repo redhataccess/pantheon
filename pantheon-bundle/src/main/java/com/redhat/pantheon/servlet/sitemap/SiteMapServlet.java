@@ -46,39 +46,25 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
 
     private static final String RESOURCE_ROOT = "/content/repositories";
 
-    private Set<Resource> getAsset(Resource resource, String documentVariantResourceType, String documentVersionResourceType, Set<Resource> assets) {
+    private Set<Resource> getAsset(Resource resource, String documentVersionResourceType) {
 
-        for (Resource r1 : resource.getChildren()) {
-            // Use Resource Filter Stream to limit memory consumption and path traversal
-            ResourceFilterStream rfs = r1.adaptTo(ResourceFilterStream.class);
+        // Use Resource Filter Stream to limit memory consumption and path traversal
+        ResourceFilterStream rfs = resource.adaptTo(ResourceFilterStream.class);
 
-            assets.addAll(rfs.setBranchSelector("[sling:resourceType] == '" + documentVariantResourceType + "'")
-                    .setChildSelector("[released/sling:resourceType] == '" + documentVersionResourceType + "'")
-                    .stream()
-                    .collect(Collectors.toSet())
-                    );
-
-            if (r1.hasChildren()) {
-                getAsset(r1, documentVariantResourceType, documentVersionResourceType, assets);
-            }
-        }
-        return assets;
+        return rfs.setChildSelector("[released/sling:resourceType] == '" + documentVersionResourceType + "'")
+                        .stream()
+                        .collect(Collectors.toSet());
     }
 
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
-
-        String documentVariantResourceType = "";
         String documentVersionResourceType = "";
         Resource resource = request.getResourceResolver().getResource(RESOURCE_ROOT);
 
         if (request.getResource().getPath().startsWith("/api/sitemap/module.sitemap")) {
-
-            documentVariantResourceType = RESOURCE_TYPE_MODULEVARIANT;
             documentVersionResourceType = RESOURCE_TYPE_MODULEVERSION;
         } else if (request.getResource().getPath().startsWith("/api/sitemap/assembly.sitemap")) {
-            documentVariantResourceType = RESOURCE_TYPE_ASSEMBLYVARIANT;
             documentVersionResourceType = RESOURCE_TYPE_ASSEMBLYVERSION;
         } else {
             log.warn("[" + SiteMapServlet.class.getSimpleName() + "] unhandled resource type: " + resource.getClass());
@@ -86,14 +72,7 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
             return;
         }
 
-        Set<Resource> assets = new HashSet<>();
-        getAsset(resource, documentVariantResourceType, documentVersionResourceType, assets);
-
-        // Remove duplicates
-        Set<Resource> documentAssets = assets.stream()
-                .collect(Collectors.toCollection(
-                        () -> new TreeSet<>(Comparator.comparing(Resource::getPath))
-                ));
+        Set<Resource> documentAssets = getAsset(resource, documentVersionResourceType);
 
         if(documentAssets == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
