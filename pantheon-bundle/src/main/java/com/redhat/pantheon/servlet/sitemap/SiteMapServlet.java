@@ -1,7 +1,6 @@
 package com.redhat.pantheon.servlet.sitemap;
 
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
-import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.assembly.AssemblyVariant;
 import com.redhat.pantheon.model.document.DocumentMetadata;
@@ -25,10 +24,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.redhat.pantheon.helper.PantheonConstants.*;
@@ -51,7 +47,7 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
 
     private static final String RESOURCE_ROOT = "/content/repositories";
 
-    private List<Resource> getAsset(Resource resource, String documentVariantResourceType, String documentVersionResourceType, List<Resource> assets) {
+    private Set<Resource> getAsset(Resource resource, String documentVariantResourceType, String documentVersionResourceType, Set<Resource> assets) {
 
         for (Resource r1 : resource.getChildren()) {
             // Use Resource Filter Stream to limit memory consumption and path traversal
@@ -60,7 +56,9 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
             assets.addAll(rfs.setBranchSelector("[sling:resourceType] == '" + documentVariantResourceType + "'")
                     .setChildSelector("[released/sling:resourceType] == '" + documentVersionResourceType + "'")
                     .stream()
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toSet())
+                    );
+
             if (r1.hasChildren()) {
                 getAsset(r1, documentVariantResourceType, documentVersionResourceType, assets);
             }
@@ -89,16 +87,22 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
             return;
         }
 
-        List<Resource> documentAssets = new ArrayList<Resource>();
-        getAsset(resource, documentVariantResourceType, documentVersionResourceType, documentAssets);
+        Set<Resource> assets = new HashSet<>();
+        getAsset(resource, documentVariantResourceType, documentVersionResourceType, assets);
+
+        // Remove duplicates
+        Set<Resource> documentAssets = assets.stream()
+                .collect(Collectors.toCollection(
+                        () -> new TreeSet<>(Comparator.comparing(Resource::getPath))
+                ));
 
         if(documentAssets == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        response.setContentType(PantheonConstants.XML_MIME_TYPE);
-        response.setCharacterEncoding(PantheonConstants.UTF_8);
+        response.setContentType(XML_MIME_TYPE);
+        response.setCharacterEncoding(UTF_8);
 
         XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
         try {
@@ -109,12 +113,11 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
             stream.writeNamespace("", SITEMAP_NAMESPACE);
 
             documentAssets.forEach(r -> {
-                log.info("[" + SiteMapServlet.class.getSimpleName() + "] documentAssets r: " + r.getPath());
-            try {
-                writeXML(r, stream, request);
-            } catch (XMLStreamException e) {
-                e.printStackTrace();
-            }
+                try {
+                    writeXML(r, stream, request);
+                } catch (XMLStreamException e) {
+                    e.printStackTrace();
+                }
             });
 
             stream.writeEndElement();
@@ -124,6 +127,7 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
             throw new IOException(e);
         }
     }
+
     private void writeXML(Resource resource, XMLStreamWriter xmlStream, SlingHttpServletRequest slingRequest)
             throws XMLStreamException {
         xmlStream.writeStartElement(SITEMAP_NAMESPACE, URL);
