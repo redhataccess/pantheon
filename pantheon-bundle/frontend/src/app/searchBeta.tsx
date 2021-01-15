@@ -138,6 +138,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
               value={this.state.repoFilterValue}
               onChange={this.onChangeRepoFilter}
               onClear={(evt) => this.onChangeRepoFilter("", evt)}
+              className='filters-drawer filters-drawer__repo-search '
             />
             {this.state.filteredRepositories && this.state.filteredRepositories.length > 0 &&
             <SimpleList aria-label="Repository List">

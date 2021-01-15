@@ -310,6 +310,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
               toggleTextExpanded=""
             >
               <SearchInput
+                className="filters-drawer filters-drawer__repo-search "
                 onChange={[Function]}
                 onClear={[Function]}
                 placeholder="Filter"
