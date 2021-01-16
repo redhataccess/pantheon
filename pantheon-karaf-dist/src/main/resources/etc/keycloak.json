@@ -1,6 +1,6 @@
 {
   "realm": "redhat-external",
-  "auth-server-url": "https://sso.redhat.com/auth/",
+  "auth-server-url": "https://sso.redhat.com/auth",
   "ssl-required": "all",
   "resource": "pantheon",
   "public-client": true,

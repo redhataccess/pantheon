@@ -104,7 +104,9 @@
         </config>
         <config name="com.redhat.pantheon.auth.keycloak.KeycloakFilter">
             keycloak-servlet-filter-adapter = ${karaf.etc}/keycloak.json
-            osgi.http.whiteboard.filter.pattern = /pantheon/*
+<!--            osgi.http.whiteboard.filter.pattern = /pantheon/*-->
+<!--            keycloak.config.skipPattern=/(pantheon/app|content/|pantheon/internal/).*-->
+<!--            keycloak.config.file= pantheon-keycloak.json-->
         </config>
 <!--        <config name="keycloak.json">-->
 <!--            realm = redhat-external-->

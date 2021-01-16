@@ -16,9 +16,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.HashMap;
@@ -46,6 +44,7 @@ public class KeycloakOIDCFilter implements Filter {
     public static final String SKIP_PATTERN_PARAM = "keycloak.config.skipPattern";
     public static final String CONFIG_PATH_PARAM = "keycloak.config.path";
     protected KeycloakDeployment keycloakDeployment;
+    private PathBasedKeycloakConfigResolver keycloakConfigResolver;
     protected Pattern skipPattern;
 
     @Override
@@ -56,7 +55,9 @@ public class KeycloakOIDCFilter implements Filter {
             skipPattern = Pattern.compile(skipPatternDefinition, Pattern.DOTALL);
         }
         // Load client configuration information
-        String path = "keycloak.json";
+//        String path = "keycloak.json";
+        File file = new File( System.getProperty( "karaf.etc" ) + File.separator + "keycloak.json" );
+        String path = file.getPath();
         String pathParam = filterConfig.getInitParameter(CONFIG_PATH_PARAM);
         if (pathParam != null){
             path = pathParam;
@@ -76,6 +77,12 @@ public class KeycloakOIDCFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+        log.info("[" + KeycloakOIDCFilter.class.getSimpleName() + "] createKeycloakDeployeFrom InputSteam");
+        File file = new File( System.getProperty( "karaf.etc" ) + File.separator + "keycloak.json" );
+        // load config from the file system
+        InputStream is = new FileInputStream(file);
+        keycloakDeployment = createKeycloakDeploymentFrom(is);
+
         log.info("Keycloak OIDC Filter");
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;

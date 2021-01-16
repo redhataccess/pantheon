@@ -319,6 +319,27 @@
             <artifactId>jsoup</artifactId>
             <version>1.12.1</version>
         </dependency>
+        <dependency>
+            <artifactId>jackson-core</artifactId>
+            <version>2.10.4</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.10.4</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-servlet-filter-adapter</artifactId>
+            <version>11.0.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.http.whiteboard -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.http.whiteboard</artifactId>
+            <version>1.1.0</version>
+        </dependency>
         <!-- Provided dependencies -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -332,7 +353,6 @@
             <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.component.annotations</artifactId>
@@ -436,27 +456,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <artifactId>jackson-core</artifactId>
-            <version>2.9.9</version>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.9.9</version>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.12</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-servlet-filter-adapter</artifactId>
-            <version>11.0.3</version>
         </dependency>
         <!-- org.apache.sling.auth.core -->
         <dependency>
@@ -464,12 +467,6 @@
             <artifactId>org.apache.sling.auth.core</artifactId>
             <version>1.5.0</version>
             <scope>provided</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.http.whiteboard -->
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.service.http.whiteboard</artifactId>
-            <version>1.1.0</version>
         </dependency>
         <!-- Test dependencies -->
         <dependency>
