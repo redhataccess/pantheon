@@ -4,6 +4,7 @@ import "@app/fetchMock"
 
 import { mount, shallow } from "enzyme"
 import { TextInput, FormGroup, Button } from "@patternfly/react-core"
+import { render, fireEvent } from '@testing-library/react'
 
 describe("Product tests", () => {
   test("should render Product component", () => {
@@ -93,5 +94,15 @@ describe("Product tests", () => {
       '',
     );
   })
-
+  test('isMissingFields alert', () => {
+    const { queryByText, getByText } = render(<Product />)
+    fireEvent.click(getByText('Save'))
+    expect(queryByText("Fields indicated by * are mandatory")).toBeTruthy()
+  })
+  test('!isUrlFragmentValid alert', () => { 
+    const {queryByText, getByPlaceholderText } = render(<Product />)
+    let input = getByPlaceholderText('URL Fragment')
+    fireEvent.change(input, { target: { value: '*' } })
+    expect(queryByText("Allowed input for Product ulrFragment: alphanumeric, hyphen, period and underscore")).toBeTruthy()
+  })
 })
