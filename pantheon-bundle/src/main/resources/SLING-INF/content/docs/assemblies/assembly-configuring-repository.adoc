@@ -1,6 +1,6 @@
-ifdef::context[:parent-context: {context}]
-
 include::../attributes.adoc[]
+
+ifdef::context[:parent-context: {context}]
 
 [id="configuring_repository_{context}"]
 = Configuring your repository
