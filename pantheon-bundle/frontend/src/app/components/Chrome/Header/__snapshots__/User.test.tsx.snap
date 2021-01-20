@@ -63,13 +63,13 @@ exports[`User tests should render User component 1`] = `
       </DropdownToggle>
     }
   />
-  <Link
+  <a
     className="p2-header__login"
+    href=""
     onClick={[Function]}
-    to=""
   >
     Log Out [demo]
-  </Link>
+  </a>
 </Fragment>
 `;
 
