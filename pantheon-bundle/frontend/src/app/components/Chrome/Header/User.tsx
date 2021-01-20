@@ -51,11 +51,12 @@ class User extends Component<IAppState, IState> {
                         dropdownItems={dropdownItems}
                         position={DropdownPosition.right}
                 />
-                <Link className="p2-header__login"
-                        to={this.props.userAuthenticated ? "" : "/login"}
+                <a className="p2-header__login"
+                        href={this.props.userAuthenticated ? "" : "https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/auth?client_id=pantheon&redirect_uri=https%3A%2F%2F" + window.location.hostname
+                        +"&login=true&response_type=code&scope=openid"}
                         onClick={this.conditionalRedirect}>
                     {this.props.userAuthenticated ? "Log Out [" + this.props.username + "]" : "Log In"}
-                </Link>
+                </a>
             </React.Fragment>
         )
     }

@@ -30,7 +30,11 @@ import java.util.regex.Pattern;
         property = {
                 Constants.SERVICE_DESCRIPTION + "=Filter to enable Keycloak Single Sign On support",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
+                // works
+//                "keycloak.config.skipPattern=/pantheon/internal/.*",
+                "keycloak.config.skipPattern=/pantheon/builddate.json",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/pantheon/*",
+//                HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/pantheon/#/security/*",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_SELECT
                         + "="
                         + "(osgi.http.whiteboard.context.name=pantheon)",
@@ -44,8 +48,10 @@ public class KeycloakOIDCFilter implements Filter {
     public static final String SKIP_PATTERN_PARAM = "keycloak.config.skipPattern";
     public static final String CONFIG_PATH_PARAM = "keycloak.config.path";
     protected KeycloakDeployment keycloakDeployment;
-    private PathBasedKeycloakConfigResolver keycloakConfigResolver;
+//    private PathBasedKeycloakConfigResolver keycloakConfigResolver;
     protected Pattern skipPattern;
+    private static final String DOMAIN_ALLOWED = ".redhat.com";
+    private static final String SKIP_PATTERN = "/pantheon/internal/.*";
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
@@ -55,7 +61,6 @@ public class KeycloakOIDCFilter implements Filter {
             skipPattern = Pattern.compile(skipPatternDefinition, Pattern.DOTALL);
         }
         // Load client configuration information
-//        String path = "keycloak.json";
         File file = new File( System.getProperty( "karaf.etc" ) + File.separator + "keycloak.json" );
         String path = file.getPath();
         String pathParam = filterConfig.getInitParameter(CONFIG_PATH_PARAM);
@@ -68,7 +73,7 @@ public class KeycloakOIDCFilter implements Filter {
 
     private KeycloakDeployment createKeycloakDeploymentFrom(InputStream is) {
         if (is == null) {
-            log.info("No adapter configuration. "
+            log.info("[" + KeycloakOIDCFilter.class.getSimpleName()  + "] No adapter configuration. "
                     + "Keycloak is unconfigured and will deny all requests.");
             return new KeycloakDeployment();
         }
@@ -77,13 +82,13 @@ public class KeycloakOIDCFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-        log.info("[" + KeycloakOIDCFilter.class.getSimpleName() + "] createKeycloakDeployeFrom InputSteam");
+        log.info("[" + KeycloakOIDCFilter.class.getSimpleName() + "] createKeycloakDeployFrom InputSteam");
         File file = new File( System.getProperty( "karaf.etc" ) + File.separator + "keycloak.json" );
         // load config from the file system
         InputStream is = new FileInputStream(file);
         keycloakDeployment = createKeycloakDeploymentFrom(is);
 
-        log.info("Keycloak OIDC Filter");
+        log.info("[" + KeycloakOIDCFilter.class.getSimpleName() + "] Keycloak OIDC Filter");
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
@@ -99,7 +104,7 @@ public class KeycloakOIDCFilter implements Filter {
             // If there is no authorization code, then turn to keycloak
             if(code == null){
                 String authURL = this.getRedirectURL(request);
-                log.info("turn to keycloak authentication");
+                log.info("[" + KeycloakOIDCFilter.class.getSimpleName() + "] turn to keycloak authentication");
                 log.info(authURL);
                 response.sendRedirect(authURL);
                 return;
@@ -108,14 +113,14 @@ public class KeycloakOIDCFilter implements Filter {
                 String sessioncode = (String)session.getAttribute("code");
                 if(code.equals(sessioncode)){
                     String authURL = this.getRedirectURL(request);
-                    log.info ("Authorization code has been used, re-directed to keycloak authentication");
+                    log.info ("[" + KeycloakOIDCFilter.class.getSimpleName() + "] Authorization code has been used, re-directed to keycloak authentication");
                     log.info(authURL);
                     response.sendRedirect(authURL);
                     return;
                 }
                 session.setAttribute("code", code);
-                log.info("return URL:"+request.getRequestURL().toString()+request.getQueryString());
-                log.info("Get authorization code:"+code);
+                log.info("[" + KeycloakOIDCFilter.class.getSimpleName() + "] return URL:"+request.getRequestURL().toString()+request.getQueryString());
+                log.info("[" + KeycloakOIDCFilter.class.getSimpleName() + "] Get authorization code:"+code);
                 // There is an authorization code, then exchange the token according to the authorization code
                 String url = keycloakDeployment.getAuthServerBaseUrl()
                         + "/realms/"
@@ -127,7 +132,7 @@ public class KeycloakOIDCFilter implements Filter {
                 params.put("client_id", keycloakDeployment.getResourceName());
                 params.put("redirect_uri", getBaseURL(request));
                 params.put("client_secret", String.valueOf(keycloakDeployment.getResourceCredentials().get("secret")));
-                log.info ("authorization code in exchange for token");
+                log.info ("[" + KeycloakOIDCFilter.class.getSimpleName() + "] authorization code in exchange for token");
                 log.info(url);
                 log.info(params.toString());
                 Map<String,String> requestHeaders = new HashMap<String, String>();
@@ -140,7 +145,7 @@ public class KeycloakOIDCFilter implements Filter {
                         log.info(headers[i].getName() + "  "
                                 + headers[i].getValue());
                     }
-                    log.info("------------body--------------");
+                    log.info("[" + KeycloakOIDCFilter.class.getSimpleName() +"] ------------body--------------");
                     log.info(result.getBody());
                     throw new RuntimeException("Error in token exchange for authorization code!"
                             + result.getStatusCode() + result.getReasonPhrase());
@@ -148,7 +153,7 @@ public class KeycloakOIDCFilter implements Filter {
                 Map token = new ObjectMapper().readValue(result.getBody(), Map.class);
                 String refreshTokenString = token.get("refresh_token").toString();
                 String tokenString = token.get("access_token").toString();
-                log.info("--get token-----");
+                log.info("[" + KeycloakOIDCFilter.class.getSimpleName() +"] --get token-----");
                 log.info(tokenString);
                 byte[] bytes = Base64.getDecoder().decode(tokenString.split("\\.")[1]);
                 String json = new String(bytes);
@@ -159,7 +164,7 @@ public class KeycloakOIDCFilter implements Filter {
                 chain.doFilter(req, res);
                 return;
             }
-        }else{
+        } else {
             // has logged in, check the token expiration time
             Map accessToken = (Map)session.getAttribute("access_token");
             //unit seconds
@@ -180,9 +185,9 @@ public class KeycloakOIDCFilter implements Filter {
                 params.put("client_secret", String.valueOf(keycloakDeployment.getResourceCredentials().get("secret")));
                 HttpResponse result = HttpClientUtil.httpPostForm(url, params, null, "UTF-8");
                 if(result.getStatusCode() != 200){
-                    log.info("Refresh token error!"+result.getStatusCode()+ result.getReasonPhrase());
+                    log.info("[" + KeycloakOIDCFilter.class.getSimpleName() + "] Refresh token error!"+result.getStatusCode()+ result.getReasonPhrase());
                     String authURL = this.getRedirectURL(request);
-                    log.info("---refresh token error, re-authentication----");
+                    log.info("[" + KeycloakOIDCFilter.class.getSimpleName() + "] ---refresh token error, re-authentication----");
                     log.info(authURL);
                     response.sendRedirect(authURL);
                     return;
@@ -190,7 +195,7 @@ public class KeycloakOIDCFilter implements Filter {
                 Map token = new ObjectMapper().readValue(result.getBody(), Map.class);
                 String refreshTokenString = token.get("refresh_token").toString();
                 String tokenString = token.get("access_token").toString();
-                log.info("---Get the refreshed token---");
+                log.info("[" + KeycloakOIDCFilter.class.getSimpleName() +"] ---Get the refreshed token---");
                 log.info(tokenString);
                 byte[] bytes = Base64.getDecoder().decode(tokenString.split("\\.")[1]);
                 String json = new String(bytes);
@@ -207,7 +212,7 @@ public class KeycloakOIDCFilter implements Filter {
         }
     }
 
-    private String getRedirectURL(HttpServletRequest request)
+    public String getRedirectURL(HttpServletRequest request)
             throws UnsupportedEncodingException{
         String callbackURL = URLEncoder.encode(getBaseURL(request), "UTF-8");
         String authURL = keycloakDeployment.getAuthServerBaseUrl()

@@ -45,7 +45,7 @@ class Routes extends Component<IAppState> {
         exact: true,
         icon: null,
         label: "",
-        path: "/product",
+        path: "/secure/product",
         requiresLogin: true
       },
       {
@@ -53,7 +53,7 @@ class Routes extends Component<IAppState> {
         exact: true,
         icon: null,
         label: "",
-        path: "/products",
+        path: "/secure/products",
         requiresLogin: true
       },
       {
@@ -61,7 +61,7 @@ class Routes extends Component<IAppState> {
         exact: true,
         icon: null,
         label: "",
-        path: "/products/:id",
+        path: "/secure/products/:id",
         requiresLogin: true
       },
       {
@@ -69,7 +69,7 @@ class Routes extends Component<IAppState> {
         exact: true,
         icon: null,
         label: "",
-        path: "/git",
+        path: "/secure/git",
         requiresLogin: true
       },
       {
@@ -85,7 +85,7 @@ class Routes extends Component<IAppState> {
         exact: false,
         icon: null,
         label: "", // Empty because we are using the Brand component to render the text.
-        path: "/module/:data",
+        path: "/secure/module/:data",
         requiresLogin: true
       },
       {
@@ -93,7 +93,7 @@ class Routes extends Component<IAppState> {
         exact: false,
         icon: null,
         label: "", // Empty because we are using the Brand component to render the text.
-        path: "/assembly/:data",
+        path: "/secure/assembly/:data",
         requiresLogin: true
       }
     ]

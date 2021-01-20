@@ -12,7 +12,7 @@ import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom"
 import { IAppState } from "@app/app"
 import { SearchFilter } from "@app/searchFilter";
 import SpinImage from "@app/images/spin.gif";
-import { Fields, SlingTypesPrefixes } from "@app/Constants";
+import { Fields, PantheonRoutePrefix, SlingTypesPrefixes } from "@app/Constants";
 
 export interface ISearchState {
   alertOneVisible: boolean
@@ -160,7 +160,7 @@ class Search extends Component<IAppState, ISearchState> {
                       dataListCells={[
                         <DataListCell key={"title_" + key} width={2}>
                           {this.props.userAuthenticated &&
-                            <Link to={data["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data["pant:transientPath"] + "?variant=" + data.variant} key={"link_" + key}>
+                            <Link to={PantheonRoutePrefix.ROUTE_PREFIX + data["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data["pant:transientPath"] + "?variant=" + data.variant} key={"link_" + key}>
                               {data["jcr:title"] !== "-" ? data["jcr:title"] : data["pant:transientPath"]}
                             </Link>
                           }
@@ -270,7 +270,9 @@ class Search extends Component<IAppState, ISearchState> {
   // Handle gateway timeout on slow connections.
   private doSearch = () => {
     this.setState({ displayLoadIcon: true })
-    fetch(this.buildSearchUrl())
+    fetch(this.buildSearchUrl(), {
+      mode: 'no-cors'
+    })
       .then(response => response.json())
       .then(responseJSON => {
         this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })

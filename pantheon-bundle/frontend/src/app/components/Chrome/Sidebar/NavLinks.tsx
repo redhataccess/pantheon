@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { NavItem, NavExpandable, NavList } from "@patternfly/react-core"
 import { Link } from "react-router-dom"
 import { IAppState } from "@app/app"
+import { PantheonRoutePrefix } from "@app/Constants"
 
 // BASE is used in the fetch call to check if isLoggedIn or isAdmin. It currently breaks the Navlinks.
 // only search is displayed when BASE is consumed.
@@ -57,7 +58,7 @@ class NavLinks extends Component<IAppState, any> {
                 isActive={this.state.activeItem === "grp-1_itm-2"}
                 onClick={this.handleItemOnclick}
               >
-                <Link to="/git">{gitText}</Link>
+                <Link to={"/" + PantheonRoutePrefix.ROUTE_PREFIX + "/git"}>{gitText}</Link>
               </NavItem>)}
           </NavExpandable>
           {(this.props.userAuthenticated) && (<NavExpandable title="Products" groupId="grp-2" isActive={this.state.activeGroup === "grp-2"}>
@@ -67,7 +68,7 @@ class NavLinks extends Component<IAppState, any> {
               isActive={this.state.activeGroup === "grp-2" && this.state.activeItem === "grp-2_itm-1"}
               onClick={this.handleItemOnclick}
             >
-              <Link to="/products">{productsText}</Link>
+              <Link to={"/" + PantheonRoutePrefix.ROUTE_PREFIX + "/products"}>{productsText}</Link>
             </NavItem>
             {(productText.length > 0) &&
               (<NavItem
@@ -76,7 +77,7 @@ class NavLinks extends Component<IAppState, any> {
                 isActive={this.state.activeGroup === "grp-2" && this.state.activeItem === "grp-2_itm-2"}
                 onClick={this.handleItemOnclick}
               >
-                <Link to="/product">{productText}</Link>
+                <Link to={"/" + PantheonRoutePrefix.ROUTE_PREFIX + "/product"}>{productText}</Link>
               </NavItem>)}
           </NavExpandable>)}
           {(this.props.userAuthenticated) && this.props.isAdmin && (<NavExpandable title="Admin Panel" groupId="grp-3" isActive={this.state.activeGroup === "grp-3"}>

@@ -20,7 +20,7 @@ import {
 } from "@patternfly/react-core";
 import { SearchIcon } from "@patternfly/react-icons";
 import CheckCircleIcon from "@patternfly/react-icons/dist/js/icons/check-circle-icon"
-import { SlingTypesPrefixes } from "./Constants";
+import { PantheonRoutePrefix, SlingTypesPrefixes } from "./Constants";
 
 export interface IProps {
   contentType: string
@@ -236,7 +236,9 @@ class SearchResults extends Component<IProps, ISearchState> {
   private doSearch = () => {
     this.setState({ displayLoadIcon: true })
     if (this.buildSearchQuery()) {
-      fetch(this.buildSearchQuery())
+      fetch(this.buildSearchQuery(), {
+        mode: 'no-cors'
+      })
         .then(response => response.json())
         .then(responseJSON => {
           this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })
@@ -246,12 +248,12 @@ class SearchResults extends Component<IProps, ISearchState> {
             const publishedIcon = publishedDate !== "-" ? <><CheckCircleIcon className="p2-search__check-circle-icon"/></> : ""
             const cellItem = new Array()
             cellItem.push(publishedIcon)
-            if (this.props.userAuthenticated) {
-              cellItem.push({ title: <a href={"/pantheon/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
-            } else {
-              let docTitle = item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]
-              cellItem.push(docTitle)
-            }
+            // if (this.props.userAuthenticated) {
+              cellItem.push({ title: <a href={"/pantheon/#" + PantheonRoutePrefix.ROUTE_PREFIX + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
+            // } else {
+            //   let docTitle = item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]
+            //   cellItem.push(docTitle)
+            // }
             cellItem.push(item["pant:transientSourceName"])
             cellItem.push(item["pant:dateUploaded"])
             cellItem.push(publishedDate)

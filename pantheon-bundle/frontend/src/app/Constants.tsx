@@ -38,3 +38,7 @@ export class PantheonContentTypes {
     public static MODULE = "module"
     public static ASSEMBLY = "assembly"
 }
+
+export class PantheonRoutePrefix {
+    public static ROUTE_PREFIX = "secure"
+}
