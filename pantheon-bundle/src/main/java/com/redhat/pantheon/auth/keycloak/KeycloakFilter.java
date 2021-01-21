@@ -11,10 +11,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
 
 import javax.servlet.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -68,18 +65,27 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
         }
         // Load client configuration information
         File file = new File( System.getProperty( "karaf.etc" ) + File.separator + "keycloak.json" );
-        String path = file.getPath();
-        String pathParam = filterConfig.getInitParameter(CONFIG_PATH_PARAM);
-        if (pathParam != null){
-            path = pathParam;
+//        String path = file.getPath();
+//        String pathParam = filterConfig.getInitParameter(CONFIG_PATH_PARAM);
+//        if (pathParam != null){
+//            path = pathParam;
+//        }
+//        InputStream is = filterConfig.getServletContext().getResourceAsStream(path);
+        // load config from the file system
+        InputStream is = null;
+        try {
+            is = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-        InputStream is = filterConfig.getServletContext().getResourceAsStream(path);
+        if (is != null) {
         keycloakDeployment = createKeycloakDeploymentFrom(is);
         deploymentContext = new AdapterDeploymentContext(keycloakDeployment);
         filterConfig
                 .getServletContext()
                 .setAttribute(AdapterDeploymentContext.class.getName(), deploymentContext);
         nodesRegistrationManagement = new NodesRegistrationManagement();
+        }
     }
 
     @Override
