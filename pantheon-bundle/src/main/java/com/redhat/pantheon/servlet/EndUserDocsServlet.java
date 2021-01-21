@@ -46,7 +46,7 @@ public class EndUserDocsServlet extends SlingSafeMethodsServlet {
         String document = Optional.ofNullable(request.getRequestParameter("document")).map(RequestParameter::getString)
                 .orElse((String) request.getAttribute("document"));
 
-        Resource resource = request.getResourceResolver().getResource("/content/docs/" + document);
+        Resource resource = request.getResourceResolver().getResource("/content/staticdocs/" + document);
 
         OptionsBuilder ob = OptionsBuilder.options()
                 // we're generating html
