@@ -44,8 +44,10 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -137,6 +139,47 @@ public class AsciidoctorService {
         }
 
         return html;
+    }
+
+    public InputStream getDocumentPdf(@Nonnull Document document,
+                                       @Nonnull Locale locale,
+                                       @Nonnull String variantName,
+                                       boolean draft,
+                                       Map<String, Object> context,
+                                       boolean forceRegen) throws IOException {
+        Child<? extends DocumentVariant> traversal = document.locale(locale)
+                .toChild(DocumentLocale::variants)
+                .toChild(variants -> variants.variant(variantName));
+
+        Optional<? extends DocumentVersion> moduleVersion;
+        if (draft) {
+            moduleVersion =
+                    traversal.toChild(DocumentVariant::draft)
+                            .asOptional();
+        } else {
+            moduleVersion =
+                    traversal.toChild(DocumentVariant::released)
+                            .asOptional();
+        }
+
+        InputStream pdf;
+        // If regeneration is forced, the content doesn't exist yet, or it needs generation because the original
+        // asciidoc has changed,
+        // then generate and save it
+        // TODO To keep things simple, regeneration will not happen automatically when the source of the module
+        //  has changed. This can be added later
+        if (forceRegen
+                || !moduleVersion.isPresent()
+                || moduleVersion.get().cachedPdf().get() == null) {
+            pdf = buildDocumentPdf(document, locale, variantName, draft, context, true);
+        } else {
+            pdf = moduleVersion.get()
+                    .cachedPdf().get()
+                    .jcrContent().get()
+                    .jcrData().toFieldType(InputStream.class).get();
+        }
+
+        return pdf;
     }
 
     /**
@@ -348,7 +391,7 @@ public class AsciidoctorService {
         }
     }
 
-    public File buildDocumentPdf(@Nonnull Document base, @Nonnull Locale locale, @Nonnull String variantName, boolean isDraft,
+    public InputStream buildDocumentPdf(@Nonnull Document base, @Nonnull Locale locale, @Nonnull String variantName, boolean isDraft,
                                  Map<String, Object> context, final boolean regenMetadata) throws IOException {
 
         Optional<HashableFileResource> sourceFile =
@@ -520,7 +563,7 @@ public class AsciidoctorService {
             log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
             serviceResourceResolver.commit();
 
-            return outputFile;
+            return new FileInputStream(outputFile);
         } catch (PersistenceException pex) {
             throw new RuntimeException(pex);
         }
