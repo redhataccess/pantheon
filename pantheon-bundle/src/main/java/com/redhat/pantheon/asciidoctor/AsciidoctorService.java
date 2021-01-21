@@ -41,6 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -338,6 +340,185 @@ public class AsciidoctorService {
             serviceResourceResolver.commit();
 
             return html;
+        } catch (PersistenceException pex) {
+            throw new RuntimeException(pex);
+        }
+    }
+
+    public File buildDocumentPdf(@Nonnull Document base, @Nonnull Locale locale, @Nonnull String variantName, boolean isDraft,
+                                 Map<String, Object> context, final boolean regenMetadata) throws IOException {
+
+        Optional<HashableFileResource> sourceFile =
+                Child.from(base)
+                        .toChild(m -> m.locale(locale))
+                        .toChild(DocumentLocale::source)
+                        .toChild(sourceContent -> isDraft ? sourceContent.draft() : sourceContent.released())
+                        .asOptional();
+
+        if (!sourceFile.isPresent()) {
+            throw new RuntimeException("Cannot find source content for module: " + base.getPath() + ", locale: " + locale
+                    + ",variant: " + variantName + ", draft: " + isDraft);
+        }
+
+        // Use a service-level resource resolver to build the module or assemblies as it will require write access to the resources
+        try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
+
+            Class cls = base.getResourceType().equals(PantheonConstants.RESOURCE_TYPE_ASSEMBLY) ? Assembly.class : Module.class;
+            Document serviceDocument = (Document) SlingModels.getModel(serviceResourceResolver, base.getPath(), cls);
+
+            DocumentVariant documentVariant = serviceDocument.locale(locale).getOrCreate()
+                    .variants().getOrCreate()
+                    .variant(variantName).getOrCreate();
+
+            DocumentVersion documentVersion;
+            if (isDraft) {
+                documentVersion = documentVariant.draft().getOrCreate();
+            } else {
+                documentVersion = documentVariant.released().getOrCreate();
+            }
+
+            // process product and version.
+            Optional<ProductVersion> productVersion =
+                    documentVersion.metadata()
+                            .toReference(DocumentMetadata::productVersion)
+                            .asOptional();
+
+            String productName = null;
+            if (productVersion.isPresent()) {
+                productName = productVersion.get().getProduct().name().get();
+            }
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
+
+            String entitiesPath = base.getWorkspace().entities().get().getPath();
+            Optional<String> attributesFilePath =
+                    base.getWorkspace().moduleVariantDefinitions()
+                            .toChild(vdf -> vdf.variant(variantName))
+                            .toField(ModuleVariantDefinition::attributesFilePath)
+                            .asOptional();
+
+            // build the attributes (default + those coming from http parameters)
+            AttributesBuilder atts = AttributesBuilder.attributes()
+                    // show the title on the generated html
+                    .attribute("showtitle")
+                    // show pantheonproduct on the generated html. Base the value from metadata.
+                    .attribute("pantheonproduct", productName)
+                    // show pantheonversion on the generated html. Base the value from metadata.
+                    .attribute("pantheonversion", productVersion.isPresent() ? productVersion.get().name().get() : "")
+                    // Shows custom rendering attribute to Haml
+                    .attribute("pantheonenv", System.getenv("PANTHEON_ENV") != null ? System.getenv("PANTHEON_ENV") : "dev")
+                    // Provide doctype for haml use
+                    .attribute("pantheondoctype", Assembly.class.equals(cls) ? "assembly" : "module")
+                    // we want to avoid the footer on the generated html
+                    .noFooter(true)
+                    // link the css instead of embedding it
+                    .linkCss(true)
+                    // stylesheet reference
+                    .styleSheetName("/static/rhdocs.css");
+
+            if (attributesFilePath.isPresent()) {
+                // provide attribute file as argument to ASCIIDOCTOR for building doc.
+                if (PathUtils.isAbsolute(attributesFilePath.get())) {
+                    // remove the starting slash
+                    attributesFilePath = attributesFilePath.map(p -> p.substring(1));
+                }
+                atts.attribute("attsFile", PathUtils.concat(entitiesPath, attributesFilePath.get()));
+            }
+
+            Calendar updatedDate = documentVersion.metadata().get().datePublished().get();
+            if (updatedDate != null) {
+                // show pantheonupdateddate on generated html. Base the value from metadata.
+                atts.attribute("pantheonupdateddate", dateFormat.format(updatedDate.getTime()));
+
+                // This is for docs that were published before we changed the date logic, and therefore do not have
+                // "first published" metadata.
+                atts.attribute("pantheonpublisheddate", dateFormat.format(updatedDate.getTime()));
+            }
+
+            Calendar publishedDate = documentVersion.metadata().get().dateFirstPublished().get();
+            if (publishedDate != null) {
+                // show pantheonpublisheddate on generated html. Base the value from metadata.
+                atts.attribute("pantheonpublisheddate", dateFormat.format(publishedDate.getTime()));
+            }
+
+            // Add the context as attributes to the generation process
+            context.entrySet().stream().forEach(entry -> {
+                atts.attribute(entry.getKey(), entry.getValue());
+            });
+
+            // generate pdf
+            File outputFile = File.createTempFile("pantheon-pdf-", ".pdf");
+            OptionsBuilder ob = OptionsBuilder.options()
+                    // we're generating html
+                    .backend("pdf")
+                    // no physical file is being generated
+                    .toFile(outputFile)
+                    // allow for some extra flexibility
+                    .safe(SafeMode.UNSAFE) // This probably needs to change
+                    .inPlace(false)
+                    // Generate the html header and footer
+                    .headerFooter(true);
+                    // use the provided attributes
+//                    .attributes(atts);
+            globalConfig.getTemplateDirectory().ifPresent(ob::templateDir);
+
+            long start = System.currentTimeMillis();
+            Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
+            String html = "";
+            try {
+                TableOfContents tableOfContents = new TableOfContents();
+                PantheonXrefProcessor xrefProcessor = new PantheonXrefProcessor(documentVariant, tableOfContents
+                );
+                // extensions needed to generate a module's html
+                asciidoctor.javaExtensionRegistry().includeProcessor(
+                        new SlingResourceIncludeProcessor(base, tableOfContents, xrefProcessor));
+
+                asciidoctor.javaExtensionRegistry().inlineMacro(MACRO_INCLUDE,
+                        new PantheonLeveloffsetProcessor(tableOfContents));
+
+                asciidoctor.javaExtensionRegistry().inlineMacro(PantheonXrefProcessor.MACRO_PREFIX,
+                        xrefProcessor);
+
+                asciidoctor.javaExtensionRegistry().inlineMacro(PantheonXrefTargetProcessor.MACRO_PREFIX,
+                        new PantheonXrefTargetProcessor());
+
+//                asciidoctor.javaExtensionRegistry().postprocessor(
+//                        new HtmlModulePostprocessor(base));
+
+                // add specific extensions for metadata regeneration
+                if (regenMetadata) {
+                    asciidoctor.javaExtensionRegistry().treeprocessor(
+                            new MetadataExtractorTreeProcessor(documentVersion.metadata().getOrCreate()));
+                }
+
+                StringBuilder content = new StringBuilder();
+                if (attributesFilePath.isPresent() && !isNullOrEmpty(attributesFilePath.get())) {
+                    content.append("include::")
+                            .append("{attsFile}")
+                            .append("[]")
+                            .append(System.lineSeparator());
+                }
+                String rawContent = sourceFile.get()
+                        .jcrContent().get()
+                        .jcrData().get();
+                content.append(xrefProcessor.preprocess(rawContent));
+
+                asciidoctor.convert(content.toString(), ob);
+//                if (documentVersion instanceof AssemblyVersion) {
+//                    ((AssemblyVersion) documentVersion).consumeTableOfContents(tableOfContents);
+//                }
+//                cacheContent(documentVersion, html);
+
+                // ack_status
+                // TODO: re-evaluate where ack_status node should be created
+                documentVersion.ackStatus().getOrCreate();
+            } finally {
+                asciidoctorPool.returnObject(asciidoctor);
+            }
+            log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
+            serviceResourceResolver.commit();
+
+            return outputFile;
         } catch (PersistenceException pex) {
             throw new RuntimeException(pex);
         }
