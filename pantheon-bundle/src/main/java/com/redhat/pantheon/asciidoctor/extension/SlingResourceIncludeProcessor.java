@@ -104,7 +104,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                         .append("[]")
                         .append(System.lineSeparator())
                         .append(System.lineSeparator())
-                        .append(xrefProcessor.preprocess(content))
+                        .append(xrefProcessor == null ? content : xrefProcessor.preprocess(content))
                         .append(System.lineSeparator())
                         .append(System.lineSeparator())
                         .append(":!pantheon_module_id:")
