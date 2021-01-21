@@ -25,6 +25,9 @@ public interface DocumentVersion extends WorkspaceChild {
     @Named("cached_html")
     Child<FileResource> cachedHtml();
 
+    @Named("cached_pdf")
+    Child<FileResource> cachedPdf();
+
     Child<? extends DocumentMetadata> metadata();
 
     @Named("ack_status")

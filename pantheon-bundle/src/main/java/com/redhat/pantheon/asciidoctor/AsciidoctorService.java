@@ -42,7 +42,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -464,7 +467,6 @@ public class AsciidoctorService {
 
             long start = System.currentTimeMillis();
             Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
-            String html = "";
             try {
                 TableOfContents tableOfContents = new TableOfContents();
                 PantheonXrefProcessor xrefProcessor = new PantheonXrefProcessor(documentVariant, tableOfContents
@@ -507,7 +509,7 @@ public class AsciidoctorService {
 //                if (documentVersion instanceof AssemblyVersion) {
 //                    ((AssemblyVersion) documentVersion).consumeTableOfContents(tableOfContents);
 //                }
-//                cacheContent(documentVersion, html);
+                cachePdfContent(documentVersion, outputFile);
 
                 // ack_status
                 // TODO: re-evaluate where ack_status node should be created
@@ -537,5 +539,16 @@ public class AsciidoctorService {
                 .jcrContent().getOrCreate();
         cachedHtmlFile.jcrData().set(html);
         cachedHtmlFile.mimeType().set("text/html");
+    }
+
+    private void cachePdfContent(final DocumentVersion version, final File pdf) {
+        FileResource.JcrContent cachedPdf = version.cachedPdf().getOrCreate()
+                .jcrContent().getOrCreate();
+        try( FileInputStream is = new FileInputStream(pdf) ) {
+            cachedPdf.jcrData().toFieldType(InputStream.class).set(is);
+            cachedPdf.mimeType().set("application/pdf");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
