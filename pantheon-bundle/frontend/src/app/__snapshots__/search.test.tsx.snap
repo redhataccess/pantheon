@@ -12,6 +12,7 @@ exports[`Search tests should render default Search component 1`] = `
   >
     <Pagination
       bottom={false}
+      className="pagination"
       handleMoveLeft={[Function]}
       handleMoveRight={[Function]}
       handleMoveToFirst={[Function]}
@@ -24,9 +25,17 @@ exports[`Search tests should render default Search component 1`] = `
   </div>
   <DataList
     aria-label="Search results Headings"
+    className=""
+    gridBreakpoint="md"
+    isCompact={false}
+    selectedDataListItemId=""
+    wrapModifier={null}
   >
     <DataListItem
       aria-labelledby="span-name"
+      className=""
+      id=""
+      isExpanded={false}
     >
       <DataListItemRow
         id="data-rows-header"
@@ -101,6 +110,7 @@ exports[`Search tests should render default Search component 1`] = `
   >
     <Pagination
       bottom={true}
+      className="pagination"
       handleMoveLeft={[Function]}
       handleMoveRight={[Function]}
       handleMoveToFirst={[Function]}

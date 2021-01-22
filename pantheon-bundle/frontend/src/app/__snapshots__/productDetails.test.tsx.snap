@@ -9,7 +9,6 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
       <BreadcrumbItem>
         <a
           href="#/products"
-          onClick={[Function]}
         >
           All Products
         </a>
@@ -22,23 +21,6 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
       </BreadcrumbItem>
     </Breadcrumb>
   </div>
-  <div
-    className="app-container"
-  >
-    <Level>
-      <LevelItem>
-        <TextContent>
-          <Text
-            component="h1"
-          >
-            Red Hat Enterprise Linux
-              
-          </Text>
-        </TextContent>
-      </LevelItem>
-      <LevelItem />
-    </Level>
-  </div>
   <br />
   <div>
     <Form>
@@ -50,7 +32,7 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
           isRequired={true}
           label="New Version:"
         >
-          <ForwardRef
+          <TextInput
             id="new_version_name_text"
             onChange={[Function]}
             placeholder="New version name"
@@ -64,7 +46,7 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
           isRequired={true}
           label=" URL Fragment:"
         >
-          <ForwardRef
+          <TextInput
             id="url_fragment_text"
             onChange={[Function]}
             placeholder="Url fragment"
@@ -72,26 +54,8 @@ exports[`ProductDetails tests should render ProductDetails component 1`] = `
             value=""
           />
         </FormGroup>
-        <ActionGroup>
-          <Button
-            aria-label="Creates a new Version Name."
-            onClick={[Function]}
-          >
-            Save
-          </Button>
-        </ActionGroup>
       </div>
     </Form>
   </div>
 </Fragment>
 `;
-
-exports[`ProductDetails tests test componentWillReceiveProps function 1`] = `undefined`;
-
-exports[`ProductDetails tests test createVersionsPath function 1`] = `[Function]`;
-
-exports[`ProductDetails tests test fetchProductDetails function 1`] = `Array []`;
-
-exports[`ProductDetails tests test handleUrlInputChange function 1`] = `undefined`;
-
-exports[`ProductDetails tests test saveVersion function 1`] = `[Function]`;

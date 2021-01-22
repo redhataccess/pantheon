@@ -30,9 +30,17 @@
         <feature>sling-starter-content</feature>
         <feature>eventadmin</feature>
         <feature>sling-jcr</feature>
+        <!-- This is needed for sling-pipes -->
+        <feature>sling-distribution</feature>
+        <feature>sling-pipes</feature>
         <config name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-com.redhat.pantheon">
             user.mapping=[\
             "com.redhat.pantheon\=pantheon"\
+            ]
+        </config>
+        <config name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-org.apache.sling.pipes">
+            user.mapping=[\
+            "org.apache.sling.pipes\=pantheon"\
             ]
         </config>
         <config name="org.apache.sling.jcr.repoinit.RepositoryInitializer-pantheon">
@@ -42,6 +50,8 @@
                 create path /content/products(sling:Folder) \n\
                 create path /content/sandbox(sling:Folder) \n\
                 create path /conf/pantheon(sling:Folder) \n\
+                create path /system/sling/permissions/pipes/exec(nt:unstructured) \n\
+                create path /conf/pantheon/upgrades(nt:unstructured) \n\
                 \n\
                 create group pantheon-authors \n\
                 create group pantheon-publishers\n\
@@ -104,6 +114,8 @@
         <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.9.9</bundle>
         <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.9.9</bundle>
         <bundle>mvn:org.apache.sling/org.apache.sling.commons.log/5.1.10</bundle>
+        <!-- This is already present in the sling karaf features, but not the -all dependency  -->
+        <bundle>mvn:org.codehaus.groovy/groovy-all/2.4.9</bundle>
         <bundle>mvn:com.redhat.pantheon/pantheon-bundle/1.0-SNAPSHOT</bundle>
     </feature>
 </features>

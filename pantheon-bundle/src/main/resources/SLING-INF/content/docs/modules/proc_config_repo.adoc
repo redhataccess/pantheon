@@ -2,20 +2,21 @@
 
 = Configuring a repository as a content source for {ProductShortName}
 
+[role="_abstract"]
 In order to enable a repository as a content source for {ProductShortName}, you need to configure the repository by adding a configuration file to the root directory.
 
 .Procedure
 
 . In a text editor, paste the content of the sample configuration file in xref:pantheon-yaml-file_{context}[] into a new text file. Name the file [filename]`pantheon2.yml`. This file is the {ProductShortName} configuration file for your repository.
 
-. Replace the default value for ‘server’ with the URL you receive from a {ProductShortName} administrator.
+. Replace the default value for `server` with the URL you receive from a {ProductShortName} administrator.
 +
 [options="nowrap" subs="normal"]
 ----
-server: http://pantheon.example.com[]
+server: \http://pantheon.example.com[]
 repository: <UNIQUE_ID>
 ----
-. Replace the default value for ‘repository’ with a unique ID, not a URL:
+. Replace the default value for `repository` with a unique ID, not a URL:
 +
 [options="nowrap" subs="normal"]
 ----

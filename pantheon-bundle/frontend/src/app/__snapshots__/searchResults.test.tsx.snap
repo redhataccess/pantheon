@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SearchResults tests should render default Search component 1`] = `
+<Fragment>
+  <Table
+    aria-label="Simple Table"
+    borders={true}
+    canSelectAll={true}
+    cells={
+      Array [
+        Object {
+          "title": "",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "title": "Document Title",
+        },
+        Object {
+          "title": "Repository name",
+        },
+        Object {
+          "title": "Updated date",
+        },
+        Object {
+          "title": "Published date",
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    isStickyHeader={false}
+    ouiaSafe={true}
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            "",
+            "",
+            "",
+            "",
+          ],
+        },
+      ]
+    }
+    selectVariant="checkbox"
+    variant={null}
+  >
+    <TableHeader
+      className="pf-m-nowrap"
+    />
+    <Component
+      className="results__table-body"
+    />
+  </Table>
+  <Pagination
+    bottom={true}
+    className="results__pagination"
+    handleMoveLeft={[Function]}
+    handleMoveRight={[Function]}
+    handleMoveToFirst={[Function]}
+    handlePerPageLimit={[Function]}
+    nextPageRecordCount={1}
+    pageNumber={1}
+    perPageLimit={5}
+    showDropdownOptions={false}
+  />
+  <Divider />
+</Fragment>
+`;

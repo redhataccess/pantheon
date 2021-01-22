@@ -1,4 +1,6 @@
 :Year: 2020
+//:experimental: enables GUI doc macros.
+:experimental:
 
 // Red Hat
 :RH: Red{nbsp}Hat
@@ -7,6 +9,7 @@
 :ProductName: Pantheon
 :ProductShortName: Pantheon
 :ProductNumber: 2
+:ProductNumberPrevious: 1
 :ProductUrl: http://pantheon.corp.redhat.com[]
 
 // Publishing

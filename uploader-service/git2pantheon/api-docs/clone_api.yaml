@@ -1,0 +1,58 @@
+Clone the repository provided in the request and upload it to the Pantheon2 server.
+---
+tags:
+  - Clone the repository provided in the request and upload it
+
+parameters:
+  - in: body
+    name: body
+    description: 'The repository URL and branch to clone and upload'
+    required: true
+    schema:
+      $ref: '#/definitions/Repo'
+
+definitions:
+  Repo:
+    type: object
+    properties:
+      repo:
+        type: string
+        description: 'GitHub/GitLab URL of the repository to be cloned'
+      branch:
+        type: string
+        description: 'Branch of the repository to be cloned'
+  UploaderKey:
+    type: object
+    properties:
+      status_key:
+        type: string
+        description: 'Key to retrieve status and progress update'
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+        description: 'HTTP status code of the error'
+      message:
+        type: string
+        description: 'Error message'
+      details:
+        type: string
+        description: 'Error details'
+reponses:
+  200:
+    description: 'The key to get current status and progress update'
+    schema:
+      $ref: '#/definitions/UploaderKey'
+  400:
+    description: 'Invalid content error'
+    schema:
+          $ref: '#/definitions/Error'
+  500:
+    description: 'Internal server error'
+    schema:
+          $ref: '#/definitions/Error'
+
+
+
+

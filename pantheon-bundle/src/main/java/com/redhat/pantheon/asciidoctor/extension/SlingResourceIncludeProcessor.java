@@ -2,6 +2,7 @@ package com.redhat.pantheon.asciidoctor.extension;
 
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.helper.Symlinks;
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.assembly.TableOfContents;
@@ -22,7 +23,6 @@ import java.util.Map;
 
 import static com.redhat.pantheon.helper.PantheonConstants.JCR_TYPE_MODULE;
 import static com.redhat.pantheon.helper.PantheonConstants.MACRO_INCLUDE;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
 public class SlingResourceIncludeProcessor extends IncludeProcessor {
@@ -76,7 +76,7 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                 Module module = includedResourceAsModel.adaptTo(Module.class);
 
                 // TODO, right now only default locale of the module is used
-                content = traverseFrom(module)
+                content = Child.from(module)
                         .toChild(m -> m.locale(GlobalConfig.DEFAULT_MODULE_LOCALE))
                         .toChild(ModuleLocale::source)
                         .toChild(SourceContent::latest)

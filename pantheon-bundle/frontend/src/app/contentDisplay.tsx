@@ -6,12 +6,8 @@ import {
 
 import { Versions } from "@app/versions"
 import { Fields, PathPrefixes, PantheonContentTypes } from "@app/Constants"
-// import { continueStatement } from "@babel/types";
 
-export interface IModuleDisplayState {
-    assemblyData: any
-    assemblyTitle: string
-    assemblyPath: string
+export interface IContentDisplayState {
     attributesFilePath: string
     copySuccess: string
     draftPath: string
@@ -32,9 +28,18 @@ export interface IModuleDisplayState {
     productUrlFragment: string
     versionUrlFragment: string
     locale: string
+    assemblyData: any
 }
 
-class ModuleDisplay extends Component<any, IModuleDisplayState> {
+export interface IModuleDisplayState extends IContentDisplayState {
+    assemblyTitle: string
+    assemblyPath: string  
+}
+
+export interface IAssemblyDisplayState extends IContentDisplayState{}
+
+class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDisplayState> {
+    isAssembly: any;
 
     constructor(props) {
         super(props)
@@ -66,20 +71,19 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
     }
 
     public componentDidMount() {
+        //set var to determine if this component will render assembly or module details
+        this.isAssembly = this.props.match.path.includes('assembly')
         this.fetchModuleDetails(this.props)
         this.getVersionUUID(this.props.location.pathname)
         this.fetchAttributesFilePath(this.props)
-        this.getVersionUUID(this.props.location.pathname)
         this.getPortalHostUrl()
         this.getLocale(this.props.location.pathname)
 
     }
 
     public render() {
-        // console.log("Props: ", this.props)
         return (
             <React.Fragment>
-
                 <Level>
                     <LevelItem>
                         <Title headingLevel="h1" size="xl">{this.state.moduleTitle}</Title>
@@ -89,16 +93,15 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                 <Level>
                     <LevelItem>
                         <TextContent>
-                            <Text component={TextVariants.small}>Module</Text>
+                            <Text component={TextVariants.small}>{this.isAssembly ? 'Assembly' : 'Module'}</Text>
                         </TextContent>
                     </LevelItem>
                     <LevelItem />
                 </Level>
-
                 <Level>
                     <LevelItem>
                         <TextContent>
-                            <Text component={TextVariants.pre}>{this.props.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length)}</Text>
+                            <Text component={TextVariants.pre}>{this.props.location.pathname.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)}</Text>
                         </TextContent>
                     </LevelItem>
                     <LevelItem />
@@ -128,11 +131,12 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                         </TextContent>
                     </LevelItem>
                     <LevelItem>{}</LevelItem>
-                    <LevelItem>
+
+                    {!this.isAssembly && <LevelItem>
                         <TextContent>
                             <Text><strong><span id="span-source-name-module-type">Module type</span></strong></Text>
                         </TextContent>
-                    </LevelItem>
+                    </LevelItem>}
                     <LevelItem>
                         <TextContent>
                             <Text><strong><span id="span-source-type-draft-uploaded">Draft uploaded</span></strong></Text>
@@ -140,7 +144,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                     </LevelItem>
                     <LevelItem>
                         <TextContent>
-                            <Text><strong><span id="span-source-type-published">Published</span></strong></Text>
+                            <Text><strong><span id={this.isAssembly ? "span-source-type-draft-published" : "span-source-type-published"}>Published</span></strong></Text>
                         </TextContent>
                     </LevelItem>
                 </Level>
@@ -152,7 +156,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                         </TextContent>
                     </LevelItem>
                     <LevelItem>{}</LevelItem>
-                    <LevelItem>
+                    {!this.isAssembly && <LevelItem>
                         <TextContent>
                             <Text>
                                 <span>
@@ -161,7 +165,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                                 </span>
                             </Text>
                         </TextContent>
-                    </LevelItem>
+                    </LevelItem>}
                     <LevelItem>
                         <TextContent>
                             <Text>
@@ -201,7 +205,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
 
                 <Card>
                     <Versions
-                        contentType={PantheonContentTypes.MODULE}
+                        contentType={this.isAssembly ? PantheonContentTypes.ASSEMBLY : PantheonContentTypes.MODULE}
                         modulePath={this.state.modulePath}
                         productInfo={this.state.productValue}
                         versionModulePath={this.state.moduleTitle}
@@ -234,10 +238,12 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
             releaseVersion,
         })
     }
-
+    
+    
     private fetchModuleDetails = async (data) => {
+        console.log(data)
         await this.getVariantParam()
-        const path = data.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
+        const path = data.location.pathname.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         this.setState({
             modulePath: path,
             releasePath: "/content" + path + ".preview?variant=" + this.state.variant
@@ -248,7 +254,6 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
         fetch(path + "/en_US.harray.4.json")
             .then(response => response.json())
             .then(responseJSON => {
-                 // console.log("fetch results:", responseJSON)
                 // TODO: refactor for loops
                 for (const sourceVariant of responseJSON.__children__) {
                     if (!sourceVariant.__children__) {
@@ -277,10 +282,17 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                                             moduleTitle: offspring[Fields.JCR_TITLE],
                                         })
                                     }
-                                    if (offspring["pant:moduleType"] !== undefined) {
+                                    if (!this.isAssembly && offspring["pant:moduleType"] !== undefined) {
 
                                         this.setState({
                                             moduleType: offspring["pant:moduleType"],
+
+                                        })
+                                    }
+                                    if (this.isAssembly && offspring[Fields.PANT_MODULE_TYPE] !== undefined) {
+
+                                        this.setState({
+                                            moduleType: offspring[Fields.PANT_MODULE_TYPE],
 
                                         })
                                     }
@@ -291,7 +303,8 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                     }
 
                 }
-                // get the variant UUID
+                if(!this.isAssembly){
+                    // get the variant UUID
                 for (const variants of responseJSON.__children__){
                     if(variants.__name__ === "variants"){
                         for (const variant of variants.__children__){
@@ -299,7 +312,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                         }
                     }
                 }
-
+                }
             })
     }
 
@@ -313,12 +326,14 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
 
     private onPublishEvent = () => {
         // the published state cannot be ascertained correctly when moving from one page to another
-        this.getPortalUrl(this.props.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length), this.state.variant)
+        const path = this.props.location.pathname.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
+        this.getPortalUrl(path, this.state.variant)
+
     }
 
     private getLocale = (path) =>{
         // remove /module from path
-        path = path.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
+        path =  path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + ".harray.1.json"
         fetch(path)
@@ -339,7 +354,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
     }
     private getVersionUUID = (path) => {
         // remove /module from path
-        path = path.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
+        path =  path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + "/en_US.harray.4.json"
         fetch(path)
@@ -392,7 +407,8 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
                             for (const productVersion of productChild.__children__) {
                                 if (productVersion[Fields.JCR_UUID] === uuid) {
                                     this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
-                                    const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase()+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + '/topic/' + this.state.variantUUID
+                                    const isGuideOrTopic = this.isAssembly ? '/guide/' : '/topic/'
+                                    const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase()+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + isGuideOrTopic + this.state.variantUUID
                                     console.log("Constructed url="+url)
                                     if(this.state.productUrlFragment!==""){
                                         this.setState({ portalUrl: url})
@@ -456,7 +472,7 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
 
     private fetchAttributesFilePath = async (data) => {
         await this.getVariantParam()
-        const path = data.location.pathname.substring(PathPrefixes.MODULE_PATH_PREFIX.length)
+        const path = data.location.pathname.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         // console.log("[fetchAttributesFilePath] path =>", path)
         let repo = ""
         const group = path.split("/")
@@ -508,4 +524,4 @@ class ModuleDisplay extends Component<any, IModuleDisplayState> {
 
 }
 
-export { ModuleDisplay }
+export { ContentDisplay }

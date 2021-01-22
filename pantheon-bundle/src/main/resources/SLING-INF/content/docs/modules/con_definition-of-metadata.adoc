@@ -1,5 +1,5 @@
 [id='definition-of-metadata_{context}']
-= Definition of metadata in {ProductShortName}
+= Definition of metadata
 
 [role="_abstract"]
 Each module and assembly in {ProductShortName} has associated metadata for search engine optimization (SEO). SEO improves the findability of modules and assemblies.

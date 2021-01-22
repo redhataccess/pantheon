@@ -6,6 +6,7 @@ import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.document.DocumentVersionPublishedEvent;
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.model.HashableFileResource;
+import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
@@ -38,8 +39,8 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static com.redhat.pantheon.jcr.JcrResources.rename;
-import static com.redhat.pantheon.model.api.util.ResourceTraversal.traverseFrom;
-import static com.redhat.pantheon.servlet.ServletUtils.*;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValue;
+import static com.redhat.pantheon.servlet.ServletUtils.paramValueAsLocale;
 
 @Component(
         service = PostOperation.class,
@@ -133,7 +134,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
                 return;
             } else {
                 // Draft becomes the new released version
-                DocumentVariant docVariant = traverseFrom(document)
+                DocumentVariant docVariant = Child.from(document)
                         .toChild(d -> d.locale(locale))
                         .toChild(DocumentLocale::variants)
                         .toChild(variants -> variants.variant(variant))
@@ -141,17 +142,17 @@ public class PublishDraftVersion extends AbstractPostOperation {
                 docVariant.releaseDraft();
                 changes.add(Modification.onModified(document.getPath()));
                 // source/draft becomes source/released
-                FileResource draftSource = traverseFrom(document)
+                FileResource draftSource = Child.from(document)
                         .toChild(d -> d.locale(locale))
                         .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> sourceContent.draft())
                         .get();
                 // Check for released version
-                Optional<HashableFileResource> releasedSource = traverseFrom(document)
+                Optional<HashableFileResource> releasedSource = Child.from(document)
                         .toChild(d -> d.locale(locale))
                         .toChild(DocumentLocale::source)
                         .toChild(sourceContent -> sourceContent.released())
-                        .getAsOptional();
+                        .asOptional();
                 if (draftSource != null) {
                     if (releasedSource.isPresent()) {
                         try {

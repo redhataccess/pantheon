@@ -1,0 +1,18 @@
+include::../attributes.adoc[]
+
+ifdef::context[:parent-context: {context}]
+
+[id="assembly-preparing-content-for-publication_{context}"]
+= Preparing content for publication
+
+:context: assembly-preparing-content-for-publication
+
+[role="_abstract"]
+After you have imported your content into {ProductShortName}, prepare it for publication by assigning metadata. After you assign metadata, you can preview your {ContentTerm} to see how it looks in the {PublishingPortal}. 
+
+include::../modules/proc_assigning-metadata-to-a-module.adoc[leveloffset=+1]
+
+include::../modules/proc_previewing-modules-in-pantheon.adoc[leveloffset=+1]
+
+ifdef::parent-context[:context: {parent-context}]
+ifndef::parent-context[:!context:]

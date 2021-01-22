@@ -45,7 +45,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class MetadataExtractorTreeProcessor extends Treeprocessor {
 
-    private final static String MODULE_TYPE_ATT_NAME = "pantheon-module-type";
+    private final static String MODULE_TYPE_ATT_NAME = "_module-type";
     public static final String ROLE_ABSTRACT = "_abstract";
 
     private final Logger log = LoggerFactory.getLogger(MetadataExtractorTreeProcessor.class);
@@ -131,7 +131,7 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
     }
 
     /**
-     * Extract the module type from the asciidoc content. This method looks at the pantheon-module-type
+     * Extract the module type from the asciidoc content. This method looks at the _module-type
      * property defined in the module.
      * @param document The document which is being parsed by the extension
      * @see ModuleType for the valid values for the property.
@@ -154,8 +154,6 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                 log.warn("Invalid argument for " + MODULE_TYPE_ATT_NAME + " asciidoc attribute: "
                     + attValue.toString());
             }
-        } else {
-            mm.moduleType().set(null);
         }
     }
 

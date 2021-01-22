@@ -105,3 +105,19 @@ body {
 .p2-header__login{
     padding-right: 8px;
 }
+
+/* Set product form width */
+
+.p2-product__form{
+    width: 320px;
+}
+
+.pf-c-drawer__panel[class] {
+    /* Added [class] for specificity */
+    z-index: 190;
+}
+
+.p2-search__check-circle-icon{
+color: var(--pf-global--success-color--100)
+
+}

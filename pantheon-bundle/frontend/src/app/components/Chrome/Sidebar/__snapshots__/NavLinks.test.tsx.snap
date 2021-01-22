@@ -38,6 +38,19 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         onClick={[Function]}
       >
         <Link
+          data-testid="navLink_searchbeta"
+          to="/searchbeta"
+        >
+          Search Beta
+        </Link>
+      </NavItem>
+      <NavItem
+        groupId="grp-1"
+        isActive={false}
+        itemId="grp-1_itm-2"
+        onClick={[Function]}
+      >
+        <Link
           to="/git"
         >
           Git Import

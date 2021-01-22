@@ -1,6 +1,7 @@
 [id="creating-a-product_{context}"]
 = Creating a product
 
+[role="_abstract"]
 A product must exist in {ProductName} before you can assign a product name to the metadata of a module or assembly. If the product doesn't already exist, you need to create one.
 
 .Prerequisites

@@ -1,9 +1,8 @@
 //include::../attributes.adoc[]
-[id="unpublishing-content-in-pantheon_{context}"]
+[id="unpublishing-content_{context}"]
 = Unpublishing {ContentTerm}
 
-[role=_abstract]
-
+[role="_abstract"]
 You need to unpublish a module or assembly when you want to remove it from the {PublishingPortal}.
 
 .Prerequisites

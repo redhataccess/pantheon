@@ -3,33 +3,34 @@
 // <List assemblies here, each on a new line>
 
 // Base the file name and the ID on the module title. For example:
-// * file name: prerequisites.adoc
-// * ID: [id='mprerequisites']
-// * Title: = prerequisites
+// * file name: ref_prerequisites.adoc
+// * ID: [id='ref_prerequisites_{context}']
+// * Title: = Prerequisites
 
 // The ID is used as an anchor for linking to the module. Avoid changing it after the module has been published to ensure existing links are not broken.
 [id='ref_prerequisites_{context}']
-
 = Prerequisites
+
+[role="_abstract"]
+{ProductName} is optimized for certain web browsers and operating systems.
 
 .Operating Systems
 
+{ProductName} {ProductNumber} is supported on the following operating systems:
+
 [NOTE]
 ====
-Operating system support affects the performance of the uploader more than other Pantheon components.
+Operating system support affects the performance of the uploader more than other {ProductName} components.
 ====
-
-Pantheon 2 is supported on the following operating systems:
 
 * Fedora 30 or later
 * RHEL 7 CSB
 * RHEL 8 CSB
 * macOS 10.15 (Catalina) or later
 
-
 .Browsers
 
-Pantheon 2 is supported on the following browsers:
+{ProductName} {ProductNumber} is supported on the following browsers:
 
 * Chrome 78.0 or later
 * Firefox 71.0 or later
@@ -37,5 +38,5 @@ Pantheon 2 is supported on the following browsers:
 
 [NOTE]
 ====
-Pantheon 2 is not supported on Firefox 68.3.0 extended support version (ESR).
+{ProductName} {ProductNumber} is not supported on Firefox 68.3.0 extended support version (ESR).
 ====
