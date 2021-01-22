@@ -30,6 +30,9 @@ public class EndUserDocsFilter implements Filter {
         // Get the id, everything after the prefix
         Matcher pathMatcher = getPathMatcher(PATH_PATTERN, (HttpServletRequest) request);
         String path = pathMatcher.group("path");
+        if (path.endsWith(".html")) {
+            path = path.substring(0, path.length() - 5) + ".adoc";
+        }
         request.setAttribute("document", path);
 
         request.getRequestDispatcher("/pantheon/staticdocs").forward(request, response);

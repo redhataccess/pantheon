@@ -55,8 +55,10 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
     }
 
     public String preprocess(String content) {
-        content = preprocessWithPattern(content, XREF_PATTERN);
-        content = preprocessWithPattern(content, TRIANGLE_PATTERN);
+        if (!documentVariant.getPath().startsWith("/content/docs/")) {
+            content = preprocessWithPattern(content, XREF_PATTERN);
+            content = preprocessWithPattern(content, TRIANGLE_PATTERN);
+        }
         return content;
     }
 

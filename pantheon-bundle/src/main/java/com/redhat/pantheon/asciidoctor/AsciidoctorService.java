@@ -262,9 +262,10 @@ public class AsciidoctorService {
             }
 
             // Add the context as attributes to the generation process
-            context.entrySet().stream().forEach(entry -> {
-                atts.attribute(entry.getKey(), entry.getValue());
-            });
+            Optional.ofNullable(context).ifPresent(
+                    c -> c.entrySet().stream().forEach(
+                            entry -> atts.attribute(entry.getKey(), entry.getValue())
+            ));
 
             // generate html
             OptionsBuilder ob = OptionsBuilder.options()

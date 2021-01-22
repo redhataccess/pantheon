@@ -1,8 +1,10 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.asciidoctor.AsciidoctorPool;
+import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.model.assembly.TableOfContents;
+import com.redhat.pantheon.model.document.Document;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestParameter;
@@ -23,6 +25,8 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.redhat.pantheon.conf.GlobalConfig.DEFAULT_MODULE_LOCALE;
+
 @Component(
         service = Servlet.class,
         property = {
@@ -35,41 +39,52 @@ import java.util.Optional;
 public class EndUserDocsServlet extends SlingSafeMethodsServlet {
 
     private AsciidoctorPool asciidoctorPool;
+    private AsciidoctorService asciidoctorService;
 
     @Activate
-    public EndUserDocsServlet(@Reference AsciidoctorPool asciidoctorPool) {
+    public EndUserDocsServlet(@Reference AsciidoctorPool asciidoctorPool, @Reference AsciidoctorService asciidoctorService) {
         this.asciidoctorPool = asciidoctorPool;
+        this.asciidoctorService = asciidoctorService;
     }
 
     @Override
     protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) throws ServletException, IOException {
-        String document = Optional.ofNullable(request.getRequestParameter("document")).map(RequestParameter::getString)
-                .orElse((String) request.getAttribute("document"));
+        Optional<String> staticdoc = Optional.ofNullable(request.getRequestParameter("document")).map(RequestParameter::getString);
+        String attributeDoc = (String) request.getAttribute("document");
 
-        Resource resource = request.getResourceResolver().getResource("/content/staticdocs/" + document);
+        String document = staticdoc.orElse(attributeDoc);
 
-        OptionsBuilder ob = OptionsBuilder.options()
-                // we're generating html
-                .backend("html")
-                // no physical file is being generated
-                .toFile(false)
-                // allow for some extra flexibility
-                .safe(SafeMode.UNSAFE) // This probably needs to change
-                .inPlace(false)
-                // Generate the html header and footer
-                .headerFooter(true);
+        Resource resource = request.getResourceResolver().getResource("/content/docs/Pantheon/entities/pantheon-bundle/src/main/resources/SLING-INF/content/docs/" + document);
 
-        Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
         String html = "";
-        try {
-            asciidoctor.javaExtensionRegistry().includeProcessor(
-                    new SlingResourceIncludeProcessor(resource, new TableOfContents(), null));
+        StringBuilder content = new StringBuilder();
+        if (resource != null && !staticdoc.isPresent()) {
+            Document doc = resource.adaptTo(Document.class);
+            html = asciidoctorService.getDocumentHtml(doc, DEFAULT_MODULE_LOCALE, doc.getWorkspace().getCanonicalVariantName(), true, null, true);
+        } else {
+            resource = request.getResourceResolver().getResource("/content/staticdocs/" + document);
+            content.append(resource.getChild("jcr:content").getValueMap().get("jcr:data", String.class));
 
-            StringBuilder content = new StringBuilder(resource.getChild("jcr:content").getValueMap().get("jcr:data", String.class));
+            OptionsBuilder ob = OptionsBuilder.options()
+                    // we're generating html
+                    .backend("html")
+                    // no physical file is being generated
+                    .toFile(false)
+                    // allow for some extra flexibility
+                    .safe(SafeMode.UNSAFE) // This probably needs to change
+                    .inPlace(false)
+                    // Generate the html header and footer
+                    .headerFooter(true);
 
-            html = asciidoctor.convert(content.toString(), ob.get());
-        } finally {
-            asciidoctorPool.returnObject(asciidoctor);
+            Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
+            try {
+                asciidoctor.javaExtensionRegistry().includeProcessor(
+                        new SlingResourceIncludeProcessor(resource, new TableOfContents(), null));
+
+                html = asciidoctor.convert(content.toString(), ob.get());
+            } finally {
+                asciidoctorPool.returnObject(asciidoctor);
+            }
         }
         response.setContentType("text/html");
         response.getWriter().write(html);

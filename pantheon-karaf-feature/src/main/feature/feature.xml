@@ -46,6 +46,7 @@
         <config name="org.apache.sling.jcr.repoinit.RepositoryInitializer-pantheon">
             scripts=[\
                 "create path /content/repositories(sling:Folder) \n\
+                create path /content/docs(sling:Folder) \n\
                 create path /content/modules(sling:Folder) \n\
                 create path /content/products(sling:Folder) \n\
                 create path /content/sandbox(sling:Folder) \n\
@@ -66,35 +67,44 @@
                 \n\
                 set ACL for pantheon-authors\n\
                 allow jcr:modifyProperties,jcr:read on /content/repositories\n\
+                allow jcr:modifyProperties,jcr:read on /content/docs\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/modules\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/sandbox\n\
                 allow jcr:read on /conf/pantheon\n\
                 \n\
                 deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:moduleLocale)\n\
+                deny jcr:modifyProperties on /content/docs restriction(rep:ntNames,pant:moduleLocale)\n\
                 deny jcr:modifyProperties on /content/modules restriction(rep:ntNames,pant:moduleLocale)\n\
                 deny jcr:modifyProperties on /content/sandbox restriction(rep:ntNames,pant:moduleLocale)\n\
                 \n\
                 deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,nt:resource)\n\
+                deny jcr:modifyProperties on /content/docs restriction(rep:ntNames,nt:resource)\n\
                 deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:symlink)\n\
+                deny jcr:modifyProperties on /content/docs restriction(rep:ntNames,pant:symlink)\n\
                 end\n\
                 \n\
                 set ACL for pantheon-publishers\n\
                 allow jcr:removeNode,jcr:modifyProperties,jcr:read on /content/repositories\n\
+                allow jcr:removeNode,jcr:modifyProperties,jcr:read on /content/docs\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/modules\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/products\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/sandbox\n\
                 allow jcr:read on /conf/pantheon\n\
                 \n\
                 deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,nt:resource)\n\
+                deny jcr:modifyProperties on /content/docs restriction(rep:ntNames,nt:resource)\n\
                 deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:symlink)\n\
+                deny jcr:modifyProperties on /content/docs restriction(rep:ntNames,pant:symlink)\n\
                 end\n\
                 \n\
                 set ACL for sync-service\n\
                 allow jcr:all on /content/repositories\n\
+                allow jcr:all on /content/docs\n\
                 end\n\
                 \n\
                 set ACL for pantheon-statusProvider\n\
                 allow jcr:write on /content/repositories restriction(rep:ntNames,pant:acknowledgment)\n\
+                allow jcr:write on /content/docs restriction(rep:ntNames,pant:acknowledgment)\n\
                 end"\
             ]
         </config>
