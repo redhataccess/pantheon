@@ -2,8 +2,14 @@ package com.redhat.pantheon.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.icu.util.ULocale;
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.model.document.Document;
+import com.redhat.pantheon.model.document.DocumentVariant;
+import com.redhat.pantheon.servlet.util.ServletHelper;
 import org.apache.commons.io.input.ReaderInputStream;
+import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.servlets.post.PostResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -243,5 +249,28 @@ public final class ServletUtils {
                     + pathRegexp);
         }
         return matcher;
+    }
+
+    /**
+     * refactored method call to generate customer portalurl
+     *
+     * @param request
+     * @param response
+     */
+
+    protected static void getCustomerPortalUrl(SlingHttpServletRequest request, PostResponse response) {
+        try {
+            Object o = ServletHelper.resourceToModel(request.getResource());
+            DocumentVariant dv = o instanceof DocumentVariant
+                    ? (DocumentVariant) o
+                    : ((Document) o).locale("en_US").get()
+                    .variants().get()
+                    .canonicalVariant().get();
+            String url = new CustomerPortalUrlUuidProvider().generateUrlString(dv);
+            response.setStatus(HttpStatus.SC_OK,"{\"url\":\""+url+"\"}");
+            response.setLocation(url);
+        }catch (Exception e){
+            throw new RuntimeException("Cannot generate customer portal url: " + request.getResource().getPath());
+        }
     }
 }

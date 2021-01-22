@@ -504,11 +504,16 @@ class Versions extends Component<IProps, IState> {
                     this.setState({ unpublishAlertForModuleVisible: true })
                     this.props.onPublishEvent()
                 }
+                const hdrs = {
+                    "Accept": "application/json",
+                    "cache-control": "no-cache"
+                }
                 formData.append("locale", "en_US")
                 formData.append("variant", this.props.variant)
                 fetch("/content" + this.props.modulePath, {
                     body: formData,
-                    method: "post"
+                    method: "post",
+                    headers: hdrs
                 }).then(response => {
                     if (response.status === 201 || response.status === 200) {
                         console.log(buttonText + " works: " + response.status)
