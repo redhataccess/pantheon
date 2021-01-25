@@ -11,6 +11,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -20,25 +22,26 @@ import java.util.regex.Pattern;
         service = Filter.class,
         property = {
 //                KeycloakOIDCFilter.CONFIG_FILE_PARAM + "=" + "keycloak.json",
-//                "keycloak.config.file=keycloak.json",
-                "keycloak.config.skipPattern=/pantheon/builddate.json",
+                "keycloak.config.skipPattern=(/pantheon/internal/modules.json|/pantheon/builddate.json|/pantheon/fonts/*|/content/repositories.harray.*|/starter.html|/system/*|pantheon/*.js)",
                 // must  have this annotation
 //                "keycloak.config.resolver=PathBasedKeycloakConfigResolver",
                 // handle all role on request to all path
 //                "keycloak.securityConstraints[0].authRoles[0]=*",
 //                "keycloak.securityConstraints[0].securityCollections[0].patterns[0]=/pantheon/#/*",
-//                HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/pantheon/#/*",
+                HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/pantheon/*",
+                HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/content/pantheon",
+                HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/content/products",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_SELECT
                         + "="
                         + "(osgi.http.whiteboard.context.name=pantheon)",
         })
 
 @SlingServletFilter(scope = {SlingServletFilterScope.REQUEST},
-        pattern = "/pantheon/.*",
+        pattern = "/content/.*",
         methods = {"GET","POST"})
 public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
 
-    private static final Logger log = Logger.getLogger(KeycloakOIDCFilter.class.getName());
+    private static final Logger log = Logger.getLogger(KeycloakFilter.class.getName());
     protected KeycloakDeployment keycloakDeployment;
 //    private KeycloakConfigResolver keycloakConfigResolver;
     private PathBasedKeycloakConfigResolver keycloakConfigResolver;
@@ -102,6 +105,13 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
         nodesRegistrationManagement = new NodesRegistrationManagement();
         log.info("[" + KeycloakFilter.class.getSimpleName() + "] Keycloak OIDC Filter");
 
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
+        //Whitelisted URL, direct release
+        if (shouldSkip(request)) {
+            chain.doFilter(req, res);
+            return;
+        }
         super.doFilter(req, res, chain);
     }
 
@@ -111,5 +121,15 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
             return new KeycloakDeployment();
         }
         return KeycloakDeploymentBuilder.build(is);
+    }
+
+    private boolean shouldSkip(HttpServletRequest request) {
+        if (skipPattern == null) {
+            return false;
+        }
+        log.info("[" + KeycloakFilter.class.getSimpleName() + "] skipPattern provided.");
+        String requestPath = request.getRequestURI().substring(request.getContextPath().length());
+        log.info("[" + KeycloakFilter.class.getSimpleName() + "] Attempt to match skipPattern from requestPath: " + skipPattern.matcher(requestPath).matches());
+        return skipPattern.matcher(requestPath).matches();
     }
 }

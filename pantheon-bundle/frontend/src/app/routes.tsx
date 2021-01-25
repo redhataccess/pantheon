@@ -85,7 +85,7 @@ class Routes extends Component<IAppState> {
         exact: false,
         icon: null,
         label: "", // Empty because we are using the Brand component to render the text.
-        path: "/secure/module/:data",
+        path: "/module/:data",
         requiresLogin: true
       },
       {
@@ -93,7 +93,7 @@ class Routes extends Component<IAppState> {
         exact: false,
         icon: null,
         label: "", // Empty because we are using the Brand component to render the text.
-        path: "/secure/assembly/:data",
+        path: "/assembly/:data",
         requiresLogin: true
       }
     ]

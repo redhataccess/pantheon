@@ -1,14 +1,25 @@
 package com.redhat.pantheon.auth.keycloak;
 
+import org.apache.jackrabbit.api.JackrabbitSession;
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.Group;
+import org.apache.jackrabbit.api.security.user.UserManager;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.auth.core.spi.AuthenticationHandler;
 import org.apache.sling.auth.core.spi.AuthenticationInfo;
+import org.apache.sling.jcr.api.SlingRepository;
 import org.keycloak.KeycloakSecurityContext;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.logging.Level;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -19,7 +30,7 @@ import java.util.logging.Logger;
 @Component(
         name = "com.redhat.pantheon.auth.keycloak.KeycloakAuthenticationHandler",
         property = {
-                AuthenticationHandler.PATH_PROPERTY + "=" + "/pantheon/*",
+                AuthenticationHandler.PATH_PROPERTY + "=" + "/",
                 AuthenticationHandler.TYPE_PROPERTY + "=" + "KEYCLOAK"
         },
         service = AuthenticationHandler.class,
@@ -29,36 +40,77 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
 
     private final Logger log = Logger.getLogger(KeycloakAuthenticationHandler.class.getName());
     private static final String AUTH_TYPE = "KEYCLOAK";
+    private static final String DEFAULT_GROUP = "pantheon-authors";
+//    private static final String DEFAULT_GROUP = "pantheon-publishers";
+    private Session session;
+
+    @Reference
+    private ResourceResolverFactory resourceResolverFactory;
+    @Reference
+    private SlingRepository repository;
 
     @Override
     public AuthenticationInfo extractCredentials(
             HttpServletRequest request, HttpServletResponse response) {
 
-        log.info("KeycloakAuthenticationHandler::extractCredentials");
-        String extractedUserId = "admin"; //request.getParameter("j_username");
-        String extractedPassword = "admin"; // request.getParameter("j_password");
+        log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() +"] KeycloakAuthenticationHandler::extractCredentials");
+        String extractedUserId = ""; //request.getParameter("j_username");
+
         // KeycloakSecurityContext contains tokenString, AccessToken, idTokenString and IDToken
         KeycloakSecurityContext ctx =
                 (KeycloakSecurityContext)
                         request.getSession().getAttribute("org.keycloak.KeycloakSecurityContext");
         KeycloakSecurityContext keycloakSecurityContext = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
-        log.log(Level.INFO, "KeycloakSecurityContext = {0}", ctx);
+        log.info("[" +KeycloakAuthenticationHandler.class.getSimpleName() + "] KeycloakSecurityContext:" + ctx);
 
-        if (keycloakSecurityContext == null) {
-            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] keycloakSecurityContext is null. ");
-        } else {
-            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] getIdToken: " + keycloakSecurityContext.getIdToken());
-        }
         if (ctx != null) {
-            log.log(Level.INFO, "username = {0}", ctx.getToken().getPreferredUsername());
-            extractedUserId = ctx.getToken().getPreferredUsername();
-            return new AuthenticationInfo(AUTH_TYPE, extractedUserId);
-        }
+            log.info( "[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] username: " + ctx.getToken().getPreferredUsername());
+            //use a service account or the identity of the real user
+            Map<String, Object> param = new HashMap<>();
+            param.put(ResourceResolverFactory.USER, "pantheon");
+            ResourceResolver resolver = null;
+            try {
+                extractedUserId = ctx.getToken().getPreferredUsername();
 
-        //TODO: use a service account or the identity of the real user instead of admin
-        // use of real identify requires user provisioning
-//        return new AuthenticationInfo(AUTH_TYPE, "admin", "admin".toCharArray());
-        return new AuthenticationInfo(HttpServletRequest.BASIC_AUTH, extractedUserId);
+                if (extractedUserId != null) {
+
+                    resolver = resourceResolverFactory.getAdministrativeResourceResolver(null);
+                    session = resolver.adaptTo(Session.class);
+
+                    //Create a UserManager instance from the session object
+                    UserManager userManager = ((JackrabbitSession) session).getUserManager();
+
+                    JackrabbitSession js = (JackrabbitSession) session;
+
+                    Authorizable user = userManager.getAuthorizable(extractedUserId);
+                    if(user == null) {
+                        log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] user does not exist in the system. Attempt to create new user: " + extractedUserId);
+
+                        userManager.createUser(extractedUserId,extractedUserId);
+                        // Use "pantheon-authors" as the default group
+                        Group group = (Group) userManager.getAuthorizable(DEFAULT_GROUP);
+                        if (group !=  null) {
+                            group.addMember(userManager.getAuthorizable(extractedUserId));
+                            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] add user: " + extractedUserId + " to group: " + DEFAULT_GROUP);
+                        }
+                        session.save();
+                        session.logout();
+                        resolver.commit();
+                    }
+
+                    Session session = this.repository.login(new SimpleCredentials(extractedUserId, extractedUserId.toCharArray()));
+                    if (session != null) {
+                        return new AuthenticationInfo(AUTH_TYPE, session.getUserID(), session.getUserID().toCharArray());
+                    }
+                }
+            } catch (Exception e) {
+                log.warning("[" + KeycloakAuthenticationHandler.class.getSimpleName() +"] Exception in extractCredentials while processing the request" + e.getMessage());
+            } finally {
+                if(resolver != null && resolver.isLive())
+                    resolver.close();
+            }
+        }// end of ctx
+        return null;
     }
 
     @Override
@@ -80,7 +132,4 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
         log.info("KeycloakAuthenticationHandler::dropCredentials");
     }
 
-
-    // TODO
-//    protected AuthenticationInfo oidcLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {}
 }

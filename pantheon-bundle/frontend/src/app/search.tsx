@@ -160,7 +160,7 @@ class Search extends Component<IAppState, ISearchState> {
                       dataListCells={[
                         <DataListCell key={"title_" + key} width={2}>
                           {this.props.userAuthenticated &&
-                            <Link to={PantheonRoutePrefix.ROUTE_PREFIX + data["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data["pant:transientPath"] + "?variant=" + data.variant} key={"link_" + key}>
+                            <Link to={data["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + data["pant:transientPath"] + "?variant=" + data.variant} key={"link_" + key}>
                               {data["jcr:title"] !== "-" ? data["jcr:title"] : data["pant:transientPath"]}
                             </Link>
                           }
