@@ -18,8 +18,6 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -53,64 +51,63 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
     public AuthenticationInfo extractCredentials(
             HttpServletRequest request, HttpServletResponse response) {
 
-        log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() +"] KeycloakAuthenticationHandler::extractCredentials");
-        String extractedUserId = ""; //request.getParameter("j_username");
+        if (System.getenv("AUTH_SERVER_URL") != null) {
+            String extractedUserId = "";
 
-        // KeycloakSecurityContext contains tokenString, AccessToken, idTokenString and IDToken
-        KeycloakSecurityContext ctx =
+            // KeycloakSecurityContext contains tokenString, AccessToken, idTokenString and IDToken
+            KeycloakSecurityContext ctx =
                 (KeycloakSecurityContext)
                         request.getSession().getAttribute("org.keycloak.KeycloakSecurityContext");
-        KeycloakSecurityContext keycloakSecurityContext = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
-        log.info("[" +KeycloakAuthenticationHandler.class.getSimpleName() + "] KeycloakSecurityContext:" + ctx);
+            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] KeycloakSecurityContext:" + ctx);
+            if (ctx != null) {
+                log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] username: " + ctx.getToken().getPreferredUsername());
 
-        if (ctx != null) {
-            log.info( "[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] username: " + ctx.getToken().getPreferredUsername());
-            //use a service account or the identity of the real user
-            Map<String, Object> param = new HashMap<>();
-            param.put(ResourceResolverFactory.USER, "pantheon");
-            ResourceResolver resolver = null;
-            try {
-                extractedUserId = ctx.getToken().getPreferredUsername();
+                ResourceResolver resolver = null;
+                try {
+                    extractedUserId = ctx.getToken().getPreferredUsername();
 
-                if (extractedUserId != null) {
+                    if (extractedUserId != null) {
+                        resolver = resourceResolverFactory.getAdministrativeResourceResolver(null);
+                        session = resolver.adaptTo(Session.class);
 
-                    resolver = resourceResolverFactory.getAdministrativeResourceResolver(null);
-                    session = resolver.adaptTo(Session.class);
+                        //Create a UserManager instance from the session object
+                        UserManager userManager = ((JackrabbitSession) session).getUserManager();
 
-                    //Create a UserManager instance from the session object
-                    UserManager userManager = ((JackrabbitSession) session).getUserManager();
+                        JackrabbitSession js = (JackrabbitSession) session;
 
-                    JackrabbitSession js = (JackrabbitSession) session;
+                        Authorizable user = userManager.getAuthorizable(extractedUserId);
+                        if (user == null) {
+                            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] user does not exist in the system. Attempt to create new user: " + extractedUserId);
 
-                    Authorizable user = userManager.getAuthorizable(extractedUserId);
-                    if(user == null) {
-                        log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] user does not exist in the system. Attempt to create new user: " + extractedUserId);
-
-                        userManager.createUser(extractedUserId,extractedUserId);
-                        // Use "pantheon-authors" as the default group
-                        Group group = (Group) userManager.getAuthorizable(DEFAULT_GROUP);
-                        if (group !=  null) {
-                            group.addMember(userManager.getAuthorizable(extractedUserId));
-                            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] add user: " + extractedUserId + " to group: " + DEFAULT_GROUP);
+                            userManager.createUser(extractedUserId, extractedUserId);
+                            // Use "pantheon-authors" as the default group
+                            Group group = (Group) userManager.getAuthorizable(DEFAULT_GROUP);
+                            if (group != null) {
+                                group.addMember(userManager.getAuthorizable(extractedUserId));
+                                log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] add user: " + extractedUserId + " to group: " + DEFAULT_GROUP);
+                            }
+                            session.save();
+                            session.logout();
+                            resolver.commit();
                         }
-                        session.save();
-                        session.logout();
-                        resolver.commit();
+                        Session session = this.repository.login(new SimpleCredentials(extractedUserId, extractedUserId.toCharArray()));
+                            if (session != null) {
+                            return new AuthenticationInfo(AUTH_TYPE, session.getUserID(), session.getUserID().toCharArray());
+                        }
                     }
-
-                    Session session = this.repository.login(new SimpleCredentials(extractedUserId, extractedUserId.toCharArray()));
-                    if (session != null) {
-                        return new AuthenticationInfo(AUTH_TYPE, session.getUserID(), session.getUserID().toCharArray());
+                } catch (Exception e) {
+                    log.warning("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] Exception in extractCredentials while processing the request" + e.getMessage());
+                } finally {
+                    if (resolver != null && resolver.isLive()) {
+                        resolver.close();
                     }
                 }
-            } catch (Exception e) {
-                log.warning("[" + KeycloakAuthenticationHandler.class.getSimpleName() +"] Exception in extractCredentials while processing the request" + e.getMessage());
-            } finally {
-                if(resolver != null && resolver.isLive())
-                    resolver.close();
             }
-        }// end of ctx
-        return null;
+            return null;
+        } else {
+            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] AUTH_SERVER_URL not defined. Use basic auth instead...");
+            return new AuthenticationInfo(AuthenticationInfo.AUTH_TYPE);
+        }
     }
 
     @Override

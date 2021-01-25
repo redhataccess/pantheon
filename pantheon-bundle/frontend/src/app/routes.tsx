@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { Route, RouteComponentProps, Switch } from "react-router-dom"
+import { Router, Route, RouteComponentProps, Switch, BrowserRouter } from "react-router-dom"
 import { Search } from "@app/search"
 import { SearchBeta } from "@app/searchBeta"
 import { Product } from "@app/product"
@@ -100,12 +100,14 @@ class Routes extends Component<IAppState> {
 
     return (
       // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
+      // <BrowserRouter>
       <Switch>
         {routes.map(({ path, exact, component, requiresLogin }, idx) => (
           <Route path={path} exact={exact} render={(routeProps) => (this.props.userAuthenticated || !requiresLogin) ? component(routeProps) : <Login />} key={idx} />
         ))}
         <Route render={() => <Search {...this.props} />} />
       </Switch>
+      // </BrowserRouter>
     )
   }
 }
