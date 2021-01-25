@@ -169,6 +169,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
             categoryName="Content Type"
             chips={Array []}
             className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--content-type"
+            deleteChipGroup={[Function]}
             showToolbarItem={true}
           >
             <Select

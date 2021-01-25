@@ -254,7 +254,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
             </Select>
           </ToolbarFilter>
           {/* <ToolbarFilter chips={filters.ctype} deleteChip={this.onDelete} categoryName="Content Type"> */}
-          <ToolbarFilter chips={filters.ctype} categoryName="Content Type" className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--content-type">
+          <ToolbarFilter chips={filters.ctype} deleteChipGroup={this.onDeleteGroup} categoryName="Content Type" className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--content-type">
             <Select
               variant={SelectVariant.checkbox}
               aria-label="Content Type"
@@ -453,8 +453,10 @@ class SearchBeta extends Component<IAppState, ISearchState> {
   };
 
   private onDeleteGroup = type => {
+    let filterType
+    filterType = type === 'Content Type' ? 'ctype' : type
     this.setState(prevState => {
-      prevState.filters[type.toLowerCase()] = [];
+      prevState.filters[filterType.toLowerCase()] = [];
       return {
         filters: prevState.filters
       };
