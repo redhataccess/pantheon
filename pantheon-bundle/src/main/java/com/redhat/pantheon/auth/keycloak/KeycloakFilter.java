@@ -22,8 +22,7 @@ import java.util.regex.Pattern;
         service = Filter.class,
         property = {
 //                KeycloakOIDCFilter.CONFIG_FILE_PARAM + "=" + "keycloak.json",
-                "keycloak.config.skipPattern=(/pantheon/internal/modules.json|/pantheon/builddate.json|/pantheon/fonts/*|/content/repositories.harray.*|/starter.html|/system/*|pantheon/*.js)",
-                // must  have this annotation
+                "keycloak.config.skipPattern=(/pantheon/internal/modules.json|/pantheon/builddate.json|/pantheon/fonts/*|/content/repositories.harray.1.json|/starter.html|/content/starter/css/bundle.css|/content/starter/img/sling-logo.svg|/content/starter/img/asf-logo.svg|/content/starter/img/sling-logo.svg|/content/starter/img/gradient.jpg|/content/starter/fonts/OpenSans-Light-webfont.woff|/content/starter/fonts/OpenSans-Regular-webfont.woff|/system/sling.js|/system/*|/pantheon/*.js)",
 //                "keycloak.config.resolver=PathBasedKeycloakConfigResolver",
                 // handle all role on request to all path
 //                "keycloak.securityConstraints[0].authRoles[0]=*",
