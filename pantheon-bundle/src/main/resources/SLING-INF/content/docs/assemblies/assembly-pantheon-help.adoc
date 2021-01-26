@@ -9,7 +9,7 @@ include::../attributes.adoc[]
 
 Welcome to {ProductShortName} help.
 
-include::modules/ref_prerequisites.adoc[leveloffset=+1]
+include::../modules/ref_prerequisites.adoc[leveloffset=+1]
 
 // Link to Overview of Pantheon
 
