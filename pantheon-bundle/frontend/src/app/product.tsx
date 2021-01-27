@@ -30,6 +30,8 @@ export default function Product(props: any) {
     const [versionUrlFragment, setVersionUrlFragment] = useState("")
     const [redirect, setRedirect] = useState(false)
 
+    const path = "/content/products/"
+
     // methods that handle the state changes.
     const handleNameInput = productName => {
         setProductName(productName)
@@ -99,7 +101,7 @@ export default function Product(props: any) {
         if (productName === "" || productUrlFragment === "" || versionName === "" || versionUrlFragment === "") {
             setIsMissingFields(true)
         } else {
-            productExist().then(exist => {
+            productExist(productName , path).then(exist => {
                 if (!exist) {
                     const hdrs = {
                         "Accept": "application/json",
@@ -150,9 +152,9 @@ export default function Product(props: any) {
         setIsMissingFields(false)
     }
 
-    const productExist = () => {
+    const productExist = (productName, path) => {
         let exists = false
-        const backend = "/content/products/" + productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_") + ".json"
+        const backend = path + productName.toString().toLowerCase().replace(/[^A-Z0-9]+/ig, "_") + ".json"
         return fetch(backend)
             .then(response => {
                 if (response.status === 200) {
