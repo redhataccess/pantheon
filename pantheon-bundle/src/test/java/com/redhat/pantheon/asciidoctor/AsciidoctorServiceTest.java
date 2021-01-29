@@ -19,16 +19,6 @@ class AsciidoctorServiceTest {
 
     @Test
     void generatePdf() throws IOException {
-        AsciidoctorPool pool = mock(AsciidoctorPool.class);
-        when(pool.borrowObject()).thenReturn(Asciidoctor.Factory.create());
-
-        AsciidoctorService asciidoctorService = new AsciidoctorService(
-                mock(GlobalConfig.class),
-                pool,
-                mock(ServiceResourceResolverProvider.class)
-        );
-
-//        System.out.println(
-//                asciidoctorService.generatePdf(null).getAbsolutePath());
+        // TODO add a test here
     }
 }
