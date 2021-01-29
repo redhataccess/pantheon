@@ -472,6 +472,13 @@ public class AsciidoctorService {
                     .noFooter(true)
                     // link the css instead of embedding it
                     .linkCss(true)
+                    // only needed for PDF
+                    .allowUriRead(true)
+                    // only needed for PDF
+                    // TODO If a url prefix is given here, asciidoctor pdf is able to resolve images
+                    //  from this base url. So, giving it a hardcoded pantheon base url would allow this
+                    //  pantheon instance to serve images to itself while generating PDFs
+                    //.imagesDir("")
                     // stylesheet reference
                     .styleSheetName("/static/rhdocs.css");
 
@@ -516,9 +523,9 @@ public class AsciidoctorService {
                     .safe(SafeMode.UNSAFE) // This probably needs to change
                     .inPlace(false)
                     // Generate the html header and footer
-                    .headerFooter(true);
+                    .headerFooter(true)
                     // use the provided attributes
-//                    .attributes(atts);
+                    .attributes(atts);
             globalConfig.getTemplateDirectory().ifPresent(ob::templateDir);
 
             long start = System.currentTimeMillis();
