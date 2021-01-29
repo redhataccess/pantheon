@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
+import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.module.Module;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -16,10 +17,12 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Rendering servlet for PDFs
+ */
 @Component(
         service = Servlet.class,
         property = {
@@ -27,7 +30,7 @@ import java.io.InputStream;
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
 @SlingServletResourceTypes(
-        resourceTypes = {"pantheon/module"},
+        resourceTypes = {"pantheon/module", "pantheon/assembly"},
         methods = "GET",
         extensions = "pdf")
 public class PdfRenderer extends SlingSafeMethodsServlet {
@@ -38,16 +41,14 @@ public class PdfRenderer extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
 
-        Module module = request.getResource().adaptTo(Module.class);
+        Document document = request.getResource().adaptTo(Document.class);
 
         InputStream pdfFile =
-                asciidoctorService.buildDocumentPdf(module, GlobalConfig.DEFAULT_MODULE_LOCALE,
+                asciidoctorService.buildDocumentPdf(document, GlobalConfig.DEFAULT_MODULE_LOCALE,
                     DocumentVariant.DEFAULT_VARIANT_NAME, true, Maps.newHashMap(), true);
 
         response.setStatus(200);
         response.setContentType("application/pdf");
         ByteStreams.copy(pdfFile, response.getOutputStream());
-
-        // TODO at this point the temp file still exists. Figure out what to do with it.
     }
 }

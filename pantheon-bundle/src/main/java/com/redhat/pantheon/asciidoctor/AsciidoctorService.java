@@ -391,6 +391,19 @@ public class AsciidoctorService {
         }
     }
 
+    /**
+     * Builds a document PDF. This means generating the pdf file for the document at one of its revisions.
+     * @param base          The base document which is being generated.
+     *                      The module will only be used as a base for resolving included resources and images.
+     * @param locale        The locale to build
+     * @param variantName   The variant name to generate. If unknown, provide {@link ModuleVariant#DEFAULT_VARIANT_NAME}.
+     * @param isDraft       True if aiming to generate the draft version of the module. False, to generate the released version.
+     * @param context       Any asciidoc attributes necessary to inject into the generation process
+     * @param regenMetadata If true, metadata will be extracted from the content and repopulated into the JCR module.
+     * @return The generated html string.
+     * @return An {@link InputStream} capable of producing the PDF contents.
+     * @throws IOException If there is a problem generating the PDF file
+     */
     public InputStream buildDocumentPdf(@Nonnull Document base, @Nonnull Locale locale, @Nonnull String variantName, boolean isDraft,
                                  Map<String, Object> context, final boolean regenMetadata) throws IOException {
 
@@ -510,6 +523,7 @@ public class AsciidoctorService {
 
             long start = System.currentTimeMillis();
             Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
+            InputStream pdfStream;
             try {
                 TableOfContents tableOfContents = new TableOfContents();
                 PantheonXrefProcessor xrefProcessor = new PantheonXrefProcessor(documentVariant, tableOfContents
@@ -552,18 +566,19 @@ public class AsciidoctorService {
 //                if (documentVersion instanceof AssemblyVersion) {
 //                    ((AssemblyVersion) documentVersion).consumeTableOfContents(tableOfContents);
 //                }
-                cachePdfContent(documentVersion, outputFile);
+                pdfStream = cachePdfContent(documentVersion, outputFile);
 
                 // ack_status
                 // TODO: re-evaluate where ack_status node should be created
                 documentVersion.ackStatus().getOrCreate();
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);
+                outputFile.delete();
             }
             log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
             serviceResourceResolver.commit();
 
-            return new FileInputStream(outputFile);
+            return pdfStream;
         } catch (PersistenceException pex) {
             throw new RuntimeException(pex);
         }
@@ -584,12 +599,22 @@ public class AsciidoctorService {
         cachedHtmlFile.mimeType().set("text/html");
     }
 
-    private void cachePdfContent(final DocumentVersion version, final File pdf) {
+    /**
+     * Stores (cache) the generated pdf content into the provided document for later retrieval. This method assumes
+     * that the generated pdf is a result of the transformation of the Module's asciidoc content; but it will not
+     * check this assertion.
+     *
+     * @param version The specific document version for which to cache the html
+     * @param pdf    The pdf file that was generated
+     * @return An {@link InputStream} with the contents of the cached PDF as it was stored.
+     */
+    private InputStream cachePdfContent(final DocumentVersion version, final File pdf) {
         FileResource.JcrContent cachedPdf = version.cachedPdf().getOrCreate()
                 .jcrContent().getOrCreate();
         try( FileInputStream is = new FileInputStream(pdf) ) {
             cachedPdf.jcrData().toFieldType(InputStream.class).set(is);
             cachedPdf.mimeType().set("application/pdf");
+            return cachedPdf.jcrData().toFieldType(InputStream.class).get();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
