@@ -1,0 +1,50 @@
+// This assembly is included in the following assemblies:
+//
+// <List assemblies here, each on a new line>
+
+include::../attributes.adoc[]
+
+ifdef::context[:parent-context: {context}]
+
+[id="assembly-help-splash-page_{context}"]
+= Pantheon Help
+
+:context: help-splash-page
+
+:link: dummy
+[role="_abstract"]
+Welcome to {ProductShortName} help.
+
+This document links to the main concepts, requirements, and actions in {ProductShortName}.
+
+
+== link:{dummy}#overview-of-modules_{context}[Overview of modules]
+
+Information about modules in {ProductShortName}. 
+
+== link:{dummy}#configuring_repository_{context}[Configuring your repository]
+
+Information about configuring your repository to use with {ProductShortName}.
+
+== link:{dummy}#importing-(ContentTerm}_{context}[Importing {ContentTerm}]
+
+Information about importing content into {ProductShortName} from your configured repository.
+
+== link:{dummy}#search-modules_{context}[Searching for content]
+
+Information about searching content in {ProductShortName}.
+
+== link:{dummy}#assembly-preparing-content-for-publication_{context}[Preparing content for publication]
+
+Information about preparing your content for publication in {ProductShortName}.
+
+== link:{dummy}#publishing-content_{context}[Publishing {ContentTerm}]
+
+Information about publishing your content in {ProductShortName}.
+
+== link:{dummy}#unpublishing-content_{context}[Unpublishing {ContentTerm}]
+
+Information about unpublishing your content in {ProductShortName}.
+
+ifdef::parent-context[:context: {parent-context}]
+ifndef::parent-context[:!context:]
