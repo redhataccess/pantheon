@@ -86,6 +86,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
             categoryName="Status"
             chips={Array []}
             className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--status"
+            deleteChip={[Function]}
             deleteChipGroup={[Function]}
             showToolbarItem={true}
           >
@@ -169,6 +170,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
             categoryName="Content Type"
             chips={Array []}
             className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--content-type"
+            deleteChip={[Function]}
             deleteChipGroup={[Function]}
             showToolbarItem={true}
           >
