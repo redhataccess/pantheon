@@ -26,6 +26,8 @@ import {
   SimpleList,
   SearchInput,
   Alert,
+  ToolbarChipGroup,
+  ToolbarChip,
 
 } from "@patternfly/react-core";
 
@@ -141,13 +143,13 @@ class SearchBeta extends Component<IAppState, ISearchState> {
               className='filters-drawer__repo-search'
             />
             {this.state.filteredRepositories && this.state.filteredRepositories.length > 0 &&
-            <SimpleList aria-label="Repository List">
-              {this.state.filteredRepositories.map((data) => (
-                <SimpleListItem key={data.id} className='repo-list filters-drawer__repo-list'>
-                  <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onClick={this.onSelectRepositories} />
-                </SimpleListItem>
-              ))}
-            </SimpleList>
+              <SimpleList aria-label="Repository List">
+                {this.state.filteredRepositories.map((data) => (
+                  <SimpleListItem key={data.id} className='repo-list filters-drawer__repo-list'>
+                    <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onClick={this.onSelectRepositories} />
+                  </SimpleListItem>
+                ))}
+              </SimpleList>
             }
 
           </ExpandableSection>
@@ -200,7 +202,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     );
 
     const statusMenuItems = [
-      <SelectOption key="statusDraft" value="draft" label= "Draft" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--draft" />,
+      <SelectOption key="statusDraft" value="draft" label="Draft" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--draft" />,
       <SelectOption key="statusPublished" value="released" label="Published" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--released" />
     ];
 
@@ -236,7 +238,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         <ToolbarGroup variant="filter-group">
           <ToolbarFilter
             chips={filters.status}
-            // deleteChip={this.onDelete}
+            deleteChip={this.onDelete}
             deleteChipGroup={this.onDeleteGroup}
             categoryName="Status"
             className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--status"
@@ -253,8 +255,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
               {statusMenuItems}
             </Select>
           </ToolbarFilter>
-          {/* <ToolbarFilter chips={filters.ctype} deleteChip={this.onDelete} categoryName="Content Type"> */}
-          <ToolbarFilter chips={filters.ctype} categoryName="Content Type" className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--content-type">
+          <ToolbarFilter chips={filters.ctype} deleteChipGroup={this.onDeleteGroup} deleteChip={this.onDelete} categoryName="Content Type" className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--content-type">
             <Select
               variant={SelectVariant.checkbox}
               aria-label="Content Type"
@@ -310,8 +311,8 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     return (
       <React.Fragment>
         <Alert variant="info" title="Beta feature" >
-        <p>
-        Please give us your feedback {"  "}
+          <p>
+            Please give us your feedback {"  "}
             <a href="https://projects.engineering.redhat.com/browse/CCS-3969" target="_blank">here.</a>
           </p>
         </Alert>
@@ -433,11 +434,14 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     this.onSelect("ctype", event, selection);
   };
 
-  private onDelete = (type = "", id = "") => {
+  private onDelete = (type: string | ToolbarChipGroup = "", id: string | ToolbarChip = "") => {
     if (type) {
+      let filterType
+      filterType = typeof type === "object" ? type.name : type
+      filterType = type === 'Content Type' ? 'ctype' : type
       this.setState(prevState => {
         const newState = Object.assign(prevState);
-        newState.filters[type.toLowerCase()] = newState.filters[type.toLowerCase()].filter(s => s !== id);
+        newState.filters[filterType.toLowerCase()] = newState.filters[filterType.toLowerCase()].filter(s => s !== id);
         return {
           filters: newState.filters
         };
@@ -453,8 +457,10 @@ class SearchBeta extends Component<IAppState, ISearchState> {
   };
 
   private onDeleteGroup = type => {
+    let filterType
+    filterType = type === 'Content Type' ? 'ctype' : type
     this.setState(prevState => {
-      prevState.filters[type.toLowerCase()] = [];
+      prevState.filters[filterType.toLowerCase()] = [];
       return {
         filters: prevState.filters
       };
@@ -472,7 +478,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
       ctypeIsExpanded: isExpanded
     });
   };
-  
+
   // methods for filter search
   private onChangeRepoFilter = (value, event) => {
     this.setState({
@@ -534,7 +540,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
 
     // filter undefined values
     repositoriesSelected = repositoriesSelected.filter(r => r !== undefined)
-  
+
     this.setState({
       repositories,
       repositoriesSelected
