@@ -102,7 +102,6 @@ public class PublishDraftVersion extends AbstractPostOperation {
                 // Regenerate the document once more
                 asciidoctorService.getDocumentHtml(document, locale, variant, false, new HashMap(),true);
                 events.fireEvent(new DocumentVersionPublishedEvent(documentVersion), 15);
-
                 ServletUtils.getCustomerPortalUrl(request, response);
             }
         }catch (RepositoryException ex){
