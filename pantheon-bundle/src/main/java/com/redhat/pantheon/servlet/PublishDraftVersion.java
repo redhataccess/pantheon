@@ -4,6 +4,7 @@ import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.document.DocumentVersionPublishedEvent;
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
@@ -11,7 +12,9 @@ import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.document.DocumentVersion;
+import com.redhat.pantheon.servlet.util.ServletHelper;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -97,8 +100,9 @@ public class PublishDraftVersion extends AbstractPostOperation {
                         .released().get();
 
                 // Regenerate the document once more
-                asciidoctorService.getDocumentHtml(document, locale, variant, false, new HashMap(), true);
+                asciidoctorService.getDocumentHtml(document, locale, variant, false, new HashMap(),true);
                 events.fireEvent(new DocumentVersionPublishedEvent(documentVersion), 15);
+                ServletUtils.getCustomerPortalUrl(request, response);
             }
         }catch (RepositoryException ex){
             logger.error("An error has occured ", ex.getMessage());
