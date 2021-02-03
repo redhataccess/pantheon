@@ -5,6 +5,7 @@
 :toc: left
 :numbered:
 
+include::../attributes.adoc[]
 
 ifdef::context[:parent-context: {context}]
 
