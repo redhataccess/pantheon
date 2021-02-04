@@ -10,7 +10,7 @@ include::../attributes.adoc[]
 ifdef::context[:parent-context: {context}]
 
 [id="assembly-help-toc_{context}"]
-= Pantheon Help
+= Pantheon Help topic
 
 :context: help-toc
 
