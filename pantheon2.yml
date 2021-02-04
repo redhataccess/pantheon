@@ -11,6 +11,7 @@ assemblies:
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/assemblies/assembly-overview-of-modules.adoc
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/assemblies/assembly-searching-modules.adoc
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/assemblies/assembly-help-splash-page.adoc
+    - pantheon-bundle/src/main/resources/SLING-INF/content/docs/assemblies/assembly-help-toc.adoc
 modules:
   # Concept modules
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/con_comparison-between-modules-and-DITA-topics.adoc
