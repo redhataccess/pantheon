@@ -61,8 +61,8 @@ class SearchResults extends Component<IProps, ISearchState> {
       // states for table
       columns: [
         { title: "" },
-        { title: "Document Title", cellTransforms: [headerCol()] },
-        { title: "Repository name" },
+        { title: "Title", cellTransforms: [headerCol()] },
+        { title: "Repository" },
         { title: "Updated date" },
         { title: "Published date" }
       ],

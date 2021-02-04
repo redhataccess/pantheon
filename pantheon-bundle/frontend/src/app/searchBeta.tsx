@@ -134,7 +134,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
           <DrawerActions>
             <DrawerCloseButton onClick={this.onCloseClick} />
           </DrawerActions>
-          <ExpandableSection className="filters-drawer filters-drawer--by-repo" toggleText="By repo" isActive={true} isExpanded={repoFilterIsExpanded} onToggle={this.onRepositoriesToggle}>
+          <ExpandableSection className="filters-drawer filters-drawer--by-repo" toggleText="By repository" isActive={true} isExpanded={repoFilterIsExpanded} onToggle={this.onRepositoriesToggle}>
             <SearchInput
               placeholder="Filter"
               value={this.state.repoFilterValue}
@@ -146,7 +146,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
               <SimpleList aria-label="Repository List">
                 {this.state.filteredRepositories.map((data) => (
                   <SimpleListItem key={data.id} className='repo-list filters-drawer__repo-list'>
-                    <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onClick={this.onSelectRepositories} />
+                    <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onChange={this.onSelectRepositories} isChecked={data.checked}/>
                   </SimpleListItem>
                 ))}
               </SimpleList>
@@ -203,7 +203,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
 
     const statusMenuItems = [
       <SelectOption key="statusDraft" value="draft" label="Draft" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--draft" />,
-      <SelectOption key="statusPublished" value="released" label="Published" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--released" />
+      <SelectOption key="statusPublished" value="published" label="Published" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--published" />
     ];
 
     const contentTypeMenuItems = [
@@ -518,14 +518,13 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     }
   };
 
-  private onSelectRepositories = (event) => {
-    const checked = event.target.checked;
+  private onSelectRepositories = (checked, event) => {
     let repositoriesSelected = new Array()
     let repositories
 
     repositories = this.state.repositories.map(item => {
       if (item.id === event.target.id) {
-        item.checked = checked;
+        item.checked = checked; 
       }
       return item;
     });
