@@ -33,7 +33,7 @@ func gitClone(repository string, branch string, directory string) {
 
 func getUploader() {
 	if _, err := os.Stat("./pantheon.py"); os.IsNotExist(err) {
-		const uploader_url = "https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/pantheon.py"
+		const uploader_url = "https://raw.githubusercontent.com/redhataccess/pantheon-uploader/master/pantheon_uploader/pantheon.py"
 		args := []string{"-o", "./pantheon.py", uploader_url}
 		cmd := exec.Command("curl", args...)
 		out, err := cmd.Output()
