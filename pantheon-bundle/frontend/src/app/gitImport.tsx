@@ -109,11 +109,12 @@ class GitImport extends Component {
                     branch: this.state.branch,
                     repo: this.state.repository
                   };
-                  fetch(this.state.git2pantheonURL + "/clone", {
+                  fetch(this.state.git2pantheonURL + "/api/clone", {
                     body: JSON.stringify(payload),
                     method: "POST"
                   }).then(response => {
-                    if (response.status === 201 || response.status === 200) {
+                    // check 202 as well if 201 is being checked
+                    if (response.status === 201 || response.status === 200 || response.status === 202) {
                       console.log(" Works " + response.status)
                       this.setState({ isFormSubmitted: true, isSucess: true, msgType: "success", submitMsg: "The git import has been submitted it might take up to 1 minute to see it in the module library." })
                     } else if (response.status === 500) {
