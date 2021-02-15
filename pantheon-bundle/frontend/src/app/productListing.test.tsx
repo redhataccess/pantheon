@@ -1,6 +1,7 @@
 import React from "react"
 import "@app/fetchMock"
 import { mount, shallow } from "enzyme"
+import { render, fireEvent } from '@testing-library/react'
 import { DataList, DataListItem, DataListItemCells, DataListItemRow, FormGroup, TextInput } from "@patternfly/react-core"
 import ProductListing from "./productListing"
 import { ProductContext, IProduct } from "./contexts/ProductContext"
@@ -79,36 +80,19 @@ describe("ProductListing tests", () => {
 
 
   it("should update input and list of products on text change", () => {
-    const container = mount(<ProductContext.Provider value={allProducts}><ProductListing /></ProductContext.Provider>)
-    const searchInput = container.find('#search.pf-c-form-control')
-    searchInput.simulate('change', {
-      target: {
-        value: 'product',
-      },
-    });
-    setTimeout(() => {
-      expect(container.prop('input')).toEqual(
-        'product',
-      );
-      expect(container.state('input')).toEqual(
-        'product',
-      );
-      expect(container.state('filteredProducts')).toHaveLength(1)
-      expect(container.state('filteredProducts')).toMatchObject(allProducts[0])
-    }, 2000)
-    searchInput.simulate('change', {
-      target: {
-        value: '',
-      },
-    });
-    setTimeout(() => {
-      expect(container.prop('input')).toEqual(
-        '',
-      );
-      expect(container.state('input')).toEqual(
-        '',
-      );
-      expect(container.state('filteredProducts')).toHaveLength(2)
-    }, 2000)
+    const { getByPlaceholderText } = render(<ProductContext.Provider value={allProducts}><ProductListing /></ProductContext.Provider>)
+    let productInput = getByPlaceholderText('Type product name to search') as HTMLInputElement
+    expect(productInput.value).toBe('')
+    fireEvent.change(productInput, { target: { value: 'test_name' } })
+    expect(productInput.value).toBe('test_name')
+  })
+
+  it("should test toggling caret to display product details dropdown option", () => {
+    const { getByTestId, getByText } = render(<ProductContext.Provider value={allProducts}><ProductListing /></ProductContext.Provider>)
+    const caret = getByTestId('product-5df8d913-79b9-42fd-a17b-ffc917add446-button')
+    fireEvent.click(caret)
+    expect(getByText('Product Details')).toBeTruthy()
+    const productDetailButton = getByText('Product Details')
+    fireEvent.click(productDetailButton)
   })
 })

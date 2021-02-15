@@ -111,7 +111,7 @@ export default function ProductListing(props: any) {
                           menuItems={[
                             <OptionsMenuItem onSelect={() => onSelect(product["jcr:uuid"])} key="dropdown">Product Details</OptionsMenuItem>]}
                           isOpen={product.isOpen}
-                          toggle={<OptionsMenuToggle onToggle={() => onToggle(product["jcr:uuid"])} toggleTemplate={<CaretDownIcon aria-hidden="true" />} aria-label="Sort by" hideCaret={true} id={`product-${product["jcr:uuid"]}-button`} />} />
+                          toggle={<OptionsMenuToggle onToggle={() => onToggle(product["jcr:uuid"])} toggleTemplate={<CaretDownIcon aria-hidden="true" />} aria-label="Sort by" hideCaret={true} id={`product-${product["jcr:uuid"]}-button`} data-testid={`product-${product["jcr:uuid"]}-button`} />} />
                       </DataListAction>
                     </DataListCell>
                   ]}
