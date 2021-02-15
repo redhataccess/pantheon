@@ -94,15 +94,31 @@ describe("Product tests", () => {
       '',
     );
   })
-  test('isMissingFields alert', () => {
-    const { queryByText, getByText } = render(<Product />)
+  test('test alert message that appears when form is missing fields', () => {
+    const handleClose = jest.fn()
+    const { queryByText, getByText, getByLabelText } = render(<Product onClose={handleClose} />)
     fireEvent.click(getByText('Save'))
     expect(queryByText("Fields indicated by * are mandatory")).toBeTruthy()
+    const closeButton = getByLabelText('Close Warning alert: alert: Fields indicated by * are mandatory')
+    fireEvent.click(closeButton)
+
   })
-  test('!isUrlFragmentValid alert', () => { 
-    const {queryByText, getByPlaceholderText } = render(<Product />)
+  test('test alert message that appears when invalid input is entered for URL Fragment', () => {
+    const { queryByText, getByPlaceholderText } = render(<Product />)
     let input = getByPlaceholderText('URL Fragment')
     fireEvent.change(input, { target: { value: '*' } })
     expect(queryByText("Allowed input for Product ulrFragment: alphanumeric, hyphen, period and underscore")).toBeTruthy()
+  })
+  test('test filling out product form and clicking save product button', async () => {
+    const { getByText, getByPlaceholderText } = render(<Product exist={false} />)
+    let productInput = getByPlaceholderText('Product Name')
+    fireEvent.change(productInput, { target: { value: 'test_name' } })
+    let urlInput = getByPlaceholderText('URL Fragment')
+    fireEvent.change(urlInput, { target: { value: 'url' } })
+    let prodVersionInput = getByPlaceholderText('Product Version')
+    fireEvent.change(prodVersionInput, { target: { value: 'test_version' } })
+    let versionUrlInput = getByPlaceholderText('Version URL Fragment')
+    fireEvent.change(versionUrlInput, { target: { value: 'test_url' } })
+    fireEvent.click(getByText('Save'))
   })
 })

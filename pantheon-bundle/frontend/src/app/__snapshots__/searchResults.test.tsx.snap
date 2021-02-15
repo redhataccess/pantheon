@@ -15,10 +15,10 @@ exports[`SearchResults tests should render default Search component 1`] = `
           "cellTransforms": Array [
             [Function],
           ],
-          "title": "Document Title",
+          "title": "Title",
         },
         Object {
-          "title": "Repository name",
+          "title": "Repository",
         },
         Object {
           "title": "Updated date",

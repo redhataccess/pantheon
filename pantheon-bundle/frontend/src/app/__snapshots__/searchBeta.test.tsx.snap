@@ -147,7 +147,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
                 value="draft"
               />
               <SelectOption
-                className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--released"
+                className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--published"
                 component="button"
                 index={0}
                 inputId=""
@@ -162,7 +162,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
                 label="Published"
                 onClick={[Function]}
                 sendRef={[Function]}
-                value="released"
+                value="published"
               />
             </Select>
           </ToolbarFilter>
@@ -308,7 +308,7 @@ exports[`SearchBeta tests should render default Search component 1`] = `
               isActive={true}
               isExpanded={true}
               onToggle={[Function]}
-              toggleText="By repo"
+              toggleText="By repository"
               toggleTextCollapsed=""
               toggleTextExpanded=""
             >
@@ -341,7 +341,6 @@ exports[`SearchBeta tests should render default Search component 1`] = `
                     isValid={true}
                     label=""
                     onChange={[Function]}
-                    onClick={[Function]}
                   />
                 </SimpleListItem>
               </SimpleList>
