@@ -117,9 +117,9 @@
 <!--            public-client = true-->
 <!--            confidential-port = 0-->
 <!--        </config>-->
-        <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.9.9</bundle>
-        <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.9.9</bundle>
-        <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.9.9</bundle>
+        <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.10.4</bundle>
+        <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.10.4</bundle>
+        <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.10.4</bundle>
         <bundle>mvn:org.apache.sling/org.apache.sling.commons.log/5.1.10</bundle>
         <bundle>mvn:com.redhat.pantheon/pantheon-bundle/1.0-SNAPSHOT</bundle>
     </feature>
