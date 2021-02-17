@@ -104,19 +104,8 @@
         </config>
         <config name="com.redhat.pantheon.auth.keycloak.KeycloakFilter">
             keycloak-servlet-filter-adapter = ${karaf.etc}/keycloak.json
-<!--            osgi.http.whiteboard.filter.pattern = /pantheon/*-->
-<!--            keycloak.config.skipPattern=/(pantheon/app|content/|pantheon/internal/).*-->
-<!--            keycloak.config.file= pantheon-keycloak.json-->
         </config>
-<!--        <config name="keycloak.json">-->
-<!--            realm = redhat-external-->
-<!--            &lt;!&ndash; TODO: Use env variable for auth-server-url &ndash;&gt;-->
-<!--            auth-server-url = https://sso.redhat.com/auth/-->
-<!--            ssl-required = all-->
-<!--            resource = pantheon-->
-<!--            public-client = true-->
-<!--            confidential-port = 0-->
-<!--        </config>-->
+
         <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.10.4</bundle>
         <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.10.4</bundle>
         <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.10.4</bundle>

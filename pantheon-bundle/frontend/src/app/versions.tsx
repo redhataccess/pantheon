@@ -523,9 +523,6 @@ class Versions extends Component<IProps, IState> {
                     "Accept": "application/json",
                     "cache-control": "no-cache",
                     "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                    "content-type": "multipart/form-data",
-                    "type": "formData"
                 }
                 formData.append("locale", "en_US")
                 formData.append("variant", this.props.variant)

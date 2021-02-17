@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 
 @SlingServletFilter(scope = {SlingServletFilterScope.REQUEST},
         pattern = "/content/.*",
-        methods = {"GET","POST"})
+        methods = {"GET"})
 public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
 
     private static final Logger log = Logger.getLogger(KeycloakFilter.class.getName());
