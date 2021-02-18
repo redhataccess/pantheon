@@ -11,6 +11,7 @@ import { IAppState } from "@app/app"
 
 interface IState {
     helpDropdownOpen: boolean
+    loginUrl: string
     placeholderDialogOpen: boolean
 }
 
@@ -19,8 +20,13 @@ class User extends Component<IAppState, IState> {
         super(props)
         this.state = {
             helpDropdownOpen: false,
+            loginUrl: "",
             placeholderDialogOpen: false
         }
+    }
+
+    public componentDidMount() {
+        this.getLoginUrl()
     }
 
     public render() {
@@ -52,8 +58,7 @@ class User extends Component<IAppState, IState> {
                         position={DropdownPosition.right}
                 />
                 <a className="p2-header__login"
-                        href={this.props.userAuthenticated ? "" : "https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/auth?client_id=pantheon&redirect_uri=https%3A%2F%2F" + window.location.hostname
-                        +"&login=true&response_type=code&scope=openid"}
+                        href={this.props.userAuthenticated ? "" : this.state.loginUrl}
                         onClick={this.conditionalRedirect}>
                     {this.props.userAuthenticated ? "Log Out [" + this.props.username + "]" : "Log In"}
                 </a>
@@ -84,6 +89,18 @@ class User extends Component<IAppState, IState> {
             fetch("/system/sling/logout")
                 .then(response => window.location.href = "/pantheon")
         }
+    }
+
+    private getLoginUrl = () => {
+        fetch("/conf/pantheon/pant:ssoLoginUrl")
+        .then((resp => { 
+            resp.text().then((text) => {
+                if (text.length > 0) {
+                    this.setState({ loginUrl: text })
+                }
+                console.log("The response text from pant:ssoLoginUrl is: " + text)
+              })
+        }))
     }
 }
 
