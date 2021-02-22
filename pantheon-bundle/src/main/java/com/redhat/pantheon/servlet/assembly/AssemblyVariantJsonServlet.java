@@ -7,15 +7,9 @@ import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
-import com.redhat.pantheon.model.assembly.AssemblyContent;
-import com.redhat.pantheon.model.assembly.AssemblyMetadata;
-import com.redhat.pantheon.model.assembly.AssemblyPage;
-import com.redhat.pantheon.model.assembly.AssemblyVariant;
-import com.redhat.pantheon.model.assembly.AssemblyVersion;
-import com.redhat.pantheon.model.document.DocumentMetadata;
+import com.redhat.pantheon.model.assembly.*;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVariant;
-import com.redhat.pantheon.model.module.ModuleVersion;
 import com.redhat.pantheon.servlet.AbstractJsonSingleQueryServlet;
 import com.redhat.pantheon.servlet.ServletUtils;
 import com.redhat.pantheon.servlet.util.ServletHelper;
@@ -57,6 +51,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
     public static final String PANTHEON_HOST = "PANTHEON_HOST";
     public static final String MODULE_VARIANT_API_PATH = "/api/module/variant.json";
     public static final String VARIANT_URL = "url";
+    public static final String PANTHEON_ENV = "PANTHEON_ENV";
 
     private final Logger log = LoggerFactory.getLogger(AssemblyVariantJsonServlet.class);
 
@@ -214,12 +209,16 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                             + MODULE_VARIANT_API_PATH
                             + "/"
                             + canonical.uuid().get();
+                    String relativeUrl = MODULE_VARIANT_API_PATH + "/" + canonical.uuid().get();
                     moduleMap.put(VARIANT_URL, variantUrl);
+                    moduleMap.put("relative_url", relativeUrl);
                 } else {
                     moduleMap.put(VARIANT_URL, "");
+                    moduleMap.put("relative_url", "");
                 }
                 moduleMap.put("level_offset", String.valueOf(page.leveloffset().get()));
-
+                if (canonical.released().isPresent() && System.getenv(PANTHEON_ENV) != null) {}
+                    moduleMap.put("pantheon_env", System.getenv(PANTHEON_ENV));
             }
             moduleList.stream().filter(map -> map.containsKey(VARIANT_URL))
                     .filter(map -> !map.get(VARIANT_URL).isEmpty())
