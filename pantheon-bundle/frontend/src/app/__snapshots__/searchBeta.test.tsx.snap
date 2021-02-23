@@ -405,5 +405,6 @@ exports[`SearchBeta tests should render default Search component 1`] = `
       </DrawerContentBody>
     </DrawerContent>
   </Drawer>
+  <BuildInfo />
 </Fragment>
 `;

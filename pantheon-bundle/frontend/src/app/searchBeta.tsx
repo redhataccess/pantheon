@@ -32,6 +32,7 @@ import {
 } from "@patternfly/react-core";
 
 import { SearchResults } from "@app/searchResults";
+import { BuildInfo } from "./components/Chrome/Header/BuildInfo"
 
 import "@app/app.css";
 import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
@@ -333,7 +334,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
             </DrawerContentBody>
           </DrawerContent>
         </Drawer>
-
+        <BuildInfo />
       </React.Fragment>
     );
   }

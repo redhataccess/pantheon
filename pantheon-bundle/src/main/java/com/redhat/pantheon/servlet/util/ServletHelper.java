@@ -43,6 +43,10 @@ public class ServletHelper {
      * The constant ASSEMBLY_VARIANT_API_PATH.
      */
     public static final String ASSEMBLY_VARIANT_API_PATH = "/api/assembly/variant.json";
+    /**
+     * The constant PANTHEON_ENV.
+     */
+    public static final String PANTHEON_ENV = "PANTHEON_ENV";
 
     private static final Set<String> DOCUMENT_TYPES = new HashSet<>();
     private static final Set<String> VARIANT_TYPES = new HashSet<>();
@@ -159,7 +163,9 @@ public class ServletHelper {
                     + ASSEMBLY_VARIANT_API_PATH
                     + "/"
                     + assemblyVariant.uuid().get();
+            String relativeUrl = ASSEMBLY_VARIANT_API_PATH + "/" + assemblyVariant.uuid().get();
             assemblyVariantDetails.put("url", assemblyUrl);
+            assemblyVariantDetails.put("relative_url", relativeUrl);
         }
         if (assemblyVariant.released().isPresent() && System.getenv(PORTAL_URL) != null) {
             // Add Customer Portal view_uri
@@ -168,6 +174,9 @@ public class ServletHelper {
         }
         if(addPath){
             assemblyVariantDetails.put("path", assemblyVariant.getParentLocale().getParent().getPath());
+        }
+        if (assemblyVariant.released().isPresent() && System.getenv(PANTHEON_ENV) != null) {
+            assemblyVariantDetails.put("pantheon_env", System.getenv(PANTHEON_ENV));
         }
         includeAssemblies.add(assemblyVariantDetails);
 
