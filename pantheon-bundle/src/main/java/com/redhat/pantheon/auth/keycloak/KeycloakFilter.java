@@ -90,6 +90,7 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+
         log.info("[" + KeycloakFilter.class.getSimpleName() + "] createKeycloakDeployFrom InputSteam");
         File file = new File( System.getProperty( KARAF_ETC ) + File.separator + KEYCLOAKOIDCFILTER_CONFIG_FILE_NAME );
         // load config from the file system
@@ -119,6 +120,9 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
     }
 
     private boolean shouldSkip(HttpServletRequest request) {
+        if (System.getenv("AUTH_SERVER_URL") == null) {
+            return true;
+        }
         if (skipPattern == null) {
             return false;
         }

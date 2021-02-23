@@ -103,11 +103,13 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
                     }
                 }
             }
-            return null;
+//            return null;
         } else {
             log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] AUTH_SERVER_URL not defined. Use basic auth instead...");
-            return new AuthenticationInfo(AuthenticationInfo.AUTH_TYPE);
+//            return new AuthenticationInfo(AuthenticationInfo.AUTH_TYPE);
+//            return null;
         }
+        return null;
     }
 
     @Override
