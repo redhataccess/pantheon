@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { Router, Route, RouteComponentProps, Switch, BrowserRouter } from "react-router-dom"
+import { Route, RouteComponentProps, Switch } from "react-router-dom"
 import { Search } from "@app/search"
 import { SearchBeta } from "@app/searchBeta"
 import { Product } from "@app/product"
@@ -45,7 +45,7 @@ class Routes extends Component<IAppState> {
         exact: true,
         icon: null,
         label: "",
-        path: "/secure/product",
+        path: "/product",
         requiresLogin: true
       },
       {
@@ -53,7 +53,7 @@ class Routes extends Component<IAppState> {
         exact: true,
         icon: null,
         label: "",
-        path: "/secure/products",
+        path: "/products",
         requiresLogin: true
       },
       {
@@ -61,7 +61,7 @@ class Routes extends Component<IAppState> {
         exact: true,
         icon: null,
         label: "",
-        path: "/secure/products/:id",
+        path: "/products/:id",
         requiresLogin: true
       },
       {
@@ -69,7 +69,7 @@ class Routes extends Component<IAppState> {
         exact: true,
         icon: null,
         label: "",
-        path: "/secure/git",
+        path: "/git",
         requiresLogin: true
       },
       {

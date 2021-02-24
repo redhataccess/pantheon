@@ -20,7 +20,7 @@ import {
 } from "@patternfly/react-core";
 import { SearchIcon } from "@patternfly/react-icons";
 import CheckCircleIcon from "@patternfly/react-icons/dist/js/icons/check-circle-icon"
-import { PantheonRoutePrefix, SlingTypesPrefixes } from "./Constants";
+import { SlingTypesPrefixes } from "./Constants";
 
 export interface IProps {
   contentType: string

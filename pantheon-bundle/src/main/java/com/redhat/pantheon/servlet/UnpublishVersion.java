@@ -106,11 +106,9 @@ public class UnpublishVersion extends AbstractPostOperation {
 
                 // Need to cache the URL now because once the document is unpublished, it can no longer be constructed
                 String publishedUrl = new CustomerPortalUrlUuidProvider().generateUrlString(docVariant);
-                try {
-                    super.run(request, response, processors);
-                } catch (Exception e) {
-                    logger.error("An error has occured ", e.getMessage());
-                }
+
+                super.run(request, response, processors);
+
                 DocumentVersion documentVersion = docVariant.draft().get();
 
                 // TODO We need to change the event so that the right variant is processed

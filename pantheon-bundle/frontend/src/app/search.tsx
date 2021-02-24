@@ -12,7 +12,7 @@ import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom"
 import { IAppState } from "@app/app"
 import { SearchFilter } from "@app/searchFilter";
 import SpinImage from "@app/images/spin.gif";
-import { Fields, PantheonRoutePrefix, SlingTypesPrefixes } from "@app/Constants";
+import { Fields, SlingTypesPrefixes } from "@app/Constants";
 
 export interface ISearchState {
   alertOneVisible: boolean

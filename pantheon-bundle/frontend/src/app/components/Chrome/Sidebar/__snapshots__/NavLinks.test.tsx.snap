@@ -51,7 +51,7 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         onClick={[Function]}
       >
         <Link
-          to="/secure/git"
+          to="/git"
         >
           Git Import
         </Link>
@@ -73,7 +73,7 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         onClick={[Function]}
       >
         <Link
-          to="/secure/products"
+          to="/products"
         >
           Product Listing
         </Link>
@@ -85,7 +85,7 @@ exports[`NavLinks tests should render NavLinks component 1`] = `
         onClick={[Function]}
       >
         <Link
-          to="/secure/product"
+          to="/product"
         >
           New Product
         </Link>

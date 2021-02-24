@@ -33,7 +33,7 @@ import static com.redhat.pantheon.helper.PantheonConstants.*;
         property = {
                 Constants.SERVICE_DESCRIPTION + "=Sitemap Servlet",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
-                "sling.servlet.paths="+ "[\"/api/sitemap/module.sitemap.xml\", \"/api/sitemap/assembly.sitemap.xml\" ]"
+                "sling.servlet.paths=[\"/api/sitemap/module.sitemap.xml\", \"/api/sitemap/assembly.sitemap.xml\" ]"
         }
 )
 @SlingServletResourceTypes(
