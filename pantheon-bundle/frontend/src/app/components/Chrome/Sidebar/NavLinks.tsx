@@ -57,7 +57,7 @@ class NavLinks extends Component<IAppState, any> {
                 isActive={this.state.activeItem === "grp-1_itm-2"}
                 onClick={this.handleItemOnclick}
               >
-                <Link to={"/git"}>{gitText}</Link>
+                <Link to="/git">{gitText}</Link>
               </NavItem>)}
           </NavExpandable>
           {(this.props.userAuthenticated) && (<NavExpandable title="Products" groupId="grp-2" isActive={this.state.activeGroup === "grp-2"}>
@@ -67,7 +67,7 @@ class NavLinks extends Component<IAppState, any> {
               isActive={this.state.activeGroup === "grp-2" && this.state.activeItem === "grp-2_itm-1"}
               onClick={this.handleItemOnclick}
             >
-              <Link to={"/products"}>{productsText}</Link>
+              <Link to="/products">{productsText}</Link>
             </NavItem>
             {(productText.length > 0) &&
               (<NavItem
@@ -76,7 +76,7 @@ class NavLinks extends Component<IAppState, any> {
                 isActive={this.state.activeGroup === "grp-2" && this.state.activeItem === "grp-2_itm-2"}
                 onClick={this.handleItemOnclick}
               >
-                <Link to={"/product"}>{productText}</Link>
+                <Link to="/product">{productText}</Link>
               </NavItem>)}
           </NavExpandable>)}
           {(this.props.userAuthenticated) && this.props.isAdmin && (<NavExpandable title="Admin Panel" groupId="grp-3" isActive={this.state.activeGroup === "grp-3"}>
