@@ -311,13 +311,6 @@ class Search extends Component<IAppState, ISearchState> {
 
     return (
       <React.Fragment>
-        <Alert variant="info" title="Beta feature" >
-          <p>
-            Please give us your feedback {"  "}
-            <a href="https://projects.engineering.redhat.com/browse/CCS-3969" target="_blank">here.</a>
-          </p>
-        </Alert>
-        <br />
         <Toolbar
           id="toolbar-with-filter"
           className="pf-m-toggle-group-container filters-bar__filters-wrapper"
