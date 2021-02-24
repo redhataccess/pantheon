@@ -236,9 +236,7 @@ class SearchResults extends Component<IProps, ISearchState> {
   private doSearch = () => {
     this.setState({ displayLoadIcon: true })
     if (this.buildSearchQuery()) {
-      fetch(this.buildSearchQuery(), {
-        mode: 'no-cors'
-      })
+      fetch(this.buildSearchQuery())
         .then(response => response.json())
         .then(responseJSON => {
           this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })

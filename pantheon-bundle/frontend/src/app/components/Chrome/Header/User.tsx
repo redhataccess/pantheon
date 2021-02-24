@@ -20,7 +20,7 @@ class User extends Component<IAppState, IState> {
         super(props)
         this.state = {
             helpDropdownOpen: false,
-            loginUrl: "",
+            loginUrl: "/login",
             placeholderDialogOpen: false
         }
     }
@@ -57,11 +57,11 @@ class User extends Component<IAppState, IState> {
                         dropdownItems={dropdownItems}
                         position={DropdownPosition.right}
                 />
-                <a className="p2-header__login"
-                        href={this.props.userAuthenticated ? "" : this.state.loginUrl}
+                <Link className="p2-header__login"
+                        to={this.props.userAuthenticated ? "" : this.state.loginUrl}
                         onClick={this.conditionalRedirect}>
-                    {this.props.userAuthenticated ? "Log Out [" + this.props.username + "]" : "Log In"}
-                </a>
+                    {this.props.userAuthenticated ? "[" + this.props.username + "]" : "Log In"}
+                </Link>
             </React.Fragment>
         )
     }
@@ -93,14 +93,23 @@ class User extends Component<IAppState, IState> {
 
     private getLoginUrl = () => {
         fetch("/conf/pantheon/pant:ssoLoginUrl")
-        .then((resp => { 
-            resp.text().then((text) => {
-                if (text.length > 0) {
-                    this.setState({ loginUrl: text })
-                }
-                console.log("The response text from pant:ssoLoginUrl is: " + text)
-              })
+        .then((response => { 
+            if (response.ok) {
+                return response.text()
+              } else {
+                throw new Error(response.statusText)
+              }
         }))
+        .then(
+            responseText => {
+                if (responseText.length > 0) {
+                    this.setState({ loginUrl: responseText })
+                }
+                console.log("The response text from pant:ssoLoginUrl is: " + responseText)
+              })
+        .catch((error) => {
+            console.log(error)
+        })
     }
 }
 

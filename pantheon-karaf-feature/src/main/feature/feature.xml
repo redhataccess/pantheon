@@ -48,12 +48,17 @@
                 create group pantheon-authors \n\
                 create group pantheon-publishers\n\
                 create group pantheon-statusProvider\n\
+                create group pantheon-administrators \n\
                 create service user pantheon\n\
                 create user sync-service with password sync-service\n\
                 \n\
                 set ACL for pantheon\n\
                 allow jcr:all on /content restriction(rep:glob,*)\n\
                 allow jcr:all on /conf/pantheon\n\
+                end\n\
+                \n\
+                set ACL for pantheon-administrators\n\
+                allow jcr:all on / restriction(rep:glob,*)\n\
                 end\n\
                 \n\
                 set ACL for pantheon-authors\n\

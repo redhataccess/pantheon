@@ -8,6 +8,12 @@ import org.keycloak.adapters.OIDCHttpFacade;
 import java.io.File;
 import java.io.InputStream;
 
+/**
+ * Custom KeycloakConfigResolver
+ * It loads keycloak config file from karaf etc
+ **
+ * @author Lisa Davidson
+ */
 public class PathBasedKeycloakConfigResolver implements KeycloakConfigResolver {
 
     @Override

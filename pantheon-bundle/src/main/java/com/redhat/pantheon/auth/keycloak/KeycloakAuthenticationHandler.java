@@ -24,12 +24,13 @@ import java.util.logging.Logger;
  * used for authenticating a request that matches the property value
  * defined in AuthenticationHandler.path
  *
+ * @author Lisa Davidson
  */
 @Component(
         name = "com.redhat.pantheon.auth.keycloak.KeycloakAuthenticationHandler",
         property = {
                 AuthenticationHandler.PATH_PROPERTY + "=" + "/",
-                AuthenticationHandler.TYPE_PROPERTY + "=" + "KEYCLOAK"
+                AuthenticationHandler.TYPE_PROPERTY + "=" + KeycloakAuthenticationHandler.AUTH_TYPE
         },
         service = AuthenticationHandler.class,
         immediate = true)
@@ -37,9 +38,9 @@ import java.util.logging.Logger;
 public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core.spi.AuthenticationHandler {
 
     private final Logger log = Logger.getLogger(KeycloakAuthenticationHandler.class.getName());
-    private static final String AUTH_TYPE = "KEYCLOAK";
+    public static final String AUTH_TYPE = "KEYCLOAK";
     private static final String DEFAULT_GROUP = "pantheon-authors";
-//    private static final String DEFAULT_GROUP = "pantheon-publishers";
+
     private Session session;
 
     @Reference
@@ -103,11 +104,8 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
                     }
                 }
             }
-//            return null;
         } else {
             log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] AUTH_SERVER_URL not defined. Use basic auth instead...");
-//            return new AuthenticationInfo(AuthenticationInfo.AUTH_TYPE);
-//            return null;
         }
         return null;
     }
@@ -115,12 +113,11 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
     @Override
     public boolean requestCredentials(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        log.info("KeycloakAuthenticationHandler::requestCredentials");
+
         try {
             response.getWriter().print("Request");
-            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] Headername: " + response.getHeaderNames());
         } catch (IOException e) {
-            log.info("Error occurred when requesting credentials.");
+            log.info("[" +KeycloakAuthenticationHandler.class.getSimpleName() + "] Error occurred when requesting credentials.");
         }
         return true;
     }
@@ -128,7 +125,6 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
     @Override
     public void dropCredentials(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        log.info("KeycloakAuthenticationHandler::dropCredentials");
     }
 
 }

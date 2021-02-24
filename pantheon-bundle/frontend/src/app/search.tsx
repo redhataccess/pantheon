@@ -270,9 +270,7 @@ class Search extends Component<IAppState, ISearchState> {
   // Handle gateway timeout on slow connections.
   private doSearch = () => {
     this.setState({ displayLoadIcon: true })
-    fetch(this.buildSearchUrl(), {
-      mode: 'no-cors'
-    })
+    fetch(this.buildSearchUrl())
       .then(response => response.json())
       .then(responseJSON => {
         this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })

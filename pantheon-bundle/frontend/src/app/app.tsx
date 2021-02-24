@@ -20,6 +20,7 @@ export interface IAppState {
 class App extends Component<any, IAppState> {
   public static ANON_USER = "anonymous"
   public static ADMIN_USER = "admin"
+  public static ADMIN_GROUP = "pantheon-administrators"
 
   public static thisApp: App
 
@@ -36,11 +37,11 @@ class App extends Component<any, IAppState> {
   }
 
   public componentDidMount() {
-    fetch("/system/sling/info.sessionInfo.json")
+    fetch("/api/userinfo.json")
       .then(response => response.json())
       .then(responseJSON => {
           this.setState({
-            isAdmin: responseJSON.userID === App.ADMIN_USER ,
+            isAdmin: responseJSON.userID === App.ADMIN_USER || responseJSON.groups.includes(App.ADMIN_GROUP),
             userAuthenticated: responseJSON.userID !== App.ANON_USER,
             username: responseJSON.userID
           })
