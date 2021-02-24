@@ -1,7 +1,6 @@
 import React, { Component } from "react"
 import { Route, RouteComponentProps, Switch } from "react-router-dom"
 import { Search } from "@app/search"
-import { SearchBeta } from "@app/searchBeta"
 import { Product } from "@app/product"
 import { ProductDetails } from "@app/productDetails"
 import ProductListing from "@app/productListing"
@@ -30,14 +29,6 @@ class Routes extends Component<IAppState> {
         icon: null,
         label: "Search",
         path: "/search",
-        requiresLogin: false
-      },
-      {
-        component: (routeProps) => <SearchBeta {...this.props} />,
-        exact: true,
-        icon: null,
-        label: "Search Beta",
-        path: "/searchbeta",
         requiresLogin: false
       },
       {

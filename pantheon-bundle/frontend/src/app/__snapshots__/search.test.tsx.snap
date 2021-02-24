@@ -2,153 +2,409 @@
 
 exports[`Search tests should render default Search component 1`] = `
 <Fragment>
-  <SearchFilter
-    filterQuery={[Function]}
-    onClick={[Function]}
-    onKeyDown={[Function]}
-  />
-  <div
-    className="notification-container"
+  <Alert
+    title="Beta feature"
+    variant="info"
   >
-    <Pagination
-      bottom={false}
-      className="pagination"
-      handleMoveLeft={[Function]}
-      handleMoveRight={[Function]}
-      handleMoveToFirst={[Function]}
-      handlePerPageLimit={[Function]}
-      nextPageRecordCount={1}
-      pageNumber={1}
-      perPageLimit={25}
-      showDropdownOptions={true}
-    />
-  </div>
-  <DataList
-    aria-label="Search results Headings"
-    className=""
-    gridBreakpoint="md"
-    isCompact={false}
-    selectedDataListItemId=""
-    wrapModifier={null}
+    <p>
+      Please give us your feedback 
+        
+      <a
+        href="https://projects.engineering.redhat.com/browse/CCS-3969"
+        target="_blank"
+      >
+        here.
+      </a>
+    </p>
+  </Alert>
+  <br />
+  <Toolbar
+    className="pf-m-toggle-group-container filters-bar__filters-wrapper"
+    clearAllFilters={[Function]}
+    collapseListedFiltersBreakpoint="xl"
+    id="toolbar-with-filter"
   >
-    <DataListItem
-      aria-labelledby="span-name"
-      className=""
-      id=""
+    <ToolbarContent
       isExpanded={false}
+      showClearFiltersButton={false}
     >
-      <DataListItemRow
-        id="data-rows-header"
+      <ToolbarToggleGroup
+        breakpoint="xl"
+        toggleIcon={
+          <FilterIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+          />
+        }
       >
-        <DataListItemCells
-          dataListCells={
-            Array [
-              <DataListCell
-                width={2}
-              >
-                <span
-                  aria-label="column name"
-                  className="sp-prop-nosort"
-                  id="span-name"
-                >
-                  Title
-                </span>
-              </DataListCell>,
-              <DataListCell>
-                <span
-                  className="sp-prop-nosort"
-                  id="span-source-type"
-                >
-                  Published
-                </span>
-              </DataListCell>,
-              <DataListCell>
-                <span
-                  className="sp-prop-nosort"
-                  id="span-source-name"
-                >
-                  Draft Uploaded
-                </span>
-              </DataListCell>,
-              <DataListCell>
-                <span
-                  aria-label="column upload time"
-                  className="sp-prop-nosort"
-                  id="span-upload-time"
-                >
-                  Content Type
-                </span>
-              </DataListCell>,
-            ]
-          }
-        />
-      </DataListItemRow>
-      <Level
-        hasGutter={true}
-      >
-        <LevelItem />
-        <LevelItem>
-          <div
-            className="notification-container"
-          >
-            <br />
-            <br />
-            <img
-              alt="Spinlogo"
-              src="test-file-stub"
+        <ToolbarItem
+          id="filters-bar__toolbar-toggle"
+        >
+          <Button
+            aria-expanded={true}
+            icon={
+              <FilterIcon
+                color="currentColor"
+                noVerticalAlign={false}
+                size="sm"
+              />
+            }
+            onClick={[Function]}
+            variant="tertiary"
+          />
+        </ToolbarItem>
+        <ToolbarItem>
+          <InputGroup>
+            <SearchInput
+              aria-label="search input"
+              className="filters-bar__name-search"
+              id="textInput"
+              name="textInput"
+              onChange={[Function]}
+              onClear={[Function]}
+              placeholder="Find by name"
+              type="search"
+              value=""
             />
-            <br />
-            <br />
-          </div>
-        </LevelItem>
-        <LevelItem />
-      </Level>
-    </DataListItem>
-  </DataList>
-  <div
-    className="notification-container"
+            <Button
+              aria-label="search button for search input"
+              variant="control"
+            >
+              <SearchIcon
+                color="currentColor"
+                noVerticalAlign={false}
+                size="sm"
+              />
+            </Button>
+          </InputGroup>
+        </ToolbarItem>
+        <ForwardRef
+          variant="filter-group"
+        >
+          <ToolbarFilter
+            categoryName="Status"
+            chips={Array []}
+            className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--status"
+            deleteChip={[Function]}
+            deleteChipGroup={[Function]}
+            showToolbarItem={true}
+          >
+            <Select
+              aria-label="Status"
+              aria-labelledby=""
+              chipGroupComponent={null}
+              className=""
+              clearSelectionsAriaLabel="Clear all"
+              createText="Create"
+              customBadgeText={null}
+              customContent={null}
+              direction="down"
+              favorites={Array []}
+              favoritesLabel="Favorites"
+              hasInlineFilter={false}
+              inlineFilterPlaceholderText={null}
+              inputIdPrefix=""
+              isCreatable={false}
+              isDisabled={false}
+              isGrouped={false}
+              isOpen={false}
+              isPlain={false}
+              menuAppendTo="inline"
+              noResultsFoundText="No results found"
+              onClear={[Function]}
+              onCreateOption={[Function]}
+              onFilter={null}
+              onSelect={[Function]}
+              onToggle={[Function]}
+              ouiaSafe={true}
+              placeholderText="Status"
+              removeSelectionAriaLabel="Remove"
+              selections={Array []}
+              toggleAriaLabel="Options menu"
+              toggleIcon={null}
+              toggleId={null}
+              typeAheadAriaLabel=""
+              variant="checkbox"
+              width=""
+            >
+              <SelectOption
+                className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--draft"
+                component="button"
+                index={0}
+                inputId=""
+                isChecked={false}
+                isDisabled={false}
+                isFavorite={null}
+                isNoResultsOption={false}
+                isPlaceholder={false}
+                isSelected={false}
+                key="statusDraft"
+                keyHandler={[Function]}
+                label="Draft"
+                onClick={[Function]}
+                sendRef={[Function]}
+                value="draft"
+              />
+              <SelectOption
+                className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--published"
+                component="button"
+                index={0}
+                inputId=""
+                isChecked={false}
+                isDisabled={false}
+                isFavorite={null}
+                isNoResultsOption={false}
+                isPlaceholder={false}
+                isSelected={false}
+                key="statusPublished"
+                keyHandler={[Function]}
+                label="Published"
+                onClick={[Function]}
+                sendRef={[Function]}
+                value="published"
+              />
+            </Select>
+          </ToolbarFilter>
+          <ToolbarFilter
+            categoryName="Content Type"
+            chips={Array []}
+            className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--content-type"
+            deleteChip={[Function]}
+            deleteChipGroup={[Function]}
+            showToolbarItem={true}
+          >
+            <Select
+              aria-label="Content Type"
+              aria-labelledby=""
+              chipGroupComponent={null}
+              className=""
+              clearSelectionsAriaLabel="Clear all"
+              createText="Create"
+              customBadgeText={null}
+              customContent={null}
+              direction="down"
+              favorites={Array []}
+              favoritesLabel="Favorites"
+              hasInlineFilter={false}
+              inlineFilterPlaceholderText={null}
+              inputIdPrefix=""
+              isCreatable={false}
+              isDisabled={false}
+              isGrouped={false}
+              isOpen={false}
+              isPlain={false}
+              menuAppendTo="inline"
+              noResultsFoundText="No results found"
+              onClear={[Function]}
+              onCreateOption={[Function]}
+              onFilter={null}
+              onSelect={[Function]}
+              onToggle={[Function]}
+              ouiaSafe={true}
+              placeholderText="Content Type"
+              removeSelectionAriaLabel="Remove"
+              selections={Array []}
+              toggleAriaLabel="Options menu"
+              toggleIcon={null}
+              toggleId={null}
+              typeAheadAriaLabel=""
+              variant="checkbox"
+              width=""
+            >
+              <SelectOption
+                className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--concept"
+                component="button"
+                index={0}
+                inputId=""
+                isChecked={false}
+                isDisabled={false}
+                isFavorite={null}
+                isNoResultsOption={false}
+                isPlaceholder={false}
+                isSelected={false}
+                key="ctypeConcept"
+                keyHandler={[Function]}
+                label="Concept"
+                onClick={[Function]}
+                sendRef={[Function]}
+                value="CONCEPT"
+              />
+              <SelectOption
+                className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--procedure"
+                component="button"
+                index={0}
+                inputId=""
+                isChecked={false}
+                isDisabled={false}
+                isFavorite={null}
+                isNoResultsOption={false}
+                isPlaceholder={false}
+                isSelected={false}
+                key="ctypeProcedure"
+                keyHandler={[Function]}
+                label="Procedure"
+                onClick={[Function]}
+                sendRef={[Function]}
+                value="PROCEDURE"
+              />
+              <SelectOption
+                className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--reference"
+                component="button"
+                index={0}
+                inputId=""
+                isChecked={false}
+                isDisabled={false}
+                isFavorite={null}
+                isNoResultsOption={false}
+                isPlaceholder={false}
+                isSelected={false}
+                key="ctypeReference"
+                keyHandler={[Function]}
+                label="Reference"
+                onClick={[Function]}
+                sendRef={[Function]}
+                value="REFERENCE"
+              />
+            </Select>
+          </ToolbarFilter>
+        </ForwardRef>
+      </ToolbarToggleGroup>
+      <ForwardRef
+        variant="icon-button-group"
+      />
+    </ToolbarContent>
+  </Toolbar>
+  <Divider />
+  <Drawer
+    isExpanded={true}
+    isInline={true}
+    onExpand={[Function]}
+    position="left"
   >
-    <Pagination
-      bottom={true}
-      className="pagination"
-      handleMoveLeft={[Function]}
-      handleMoveRight={[Function]}
-      handleMoveToFirst={[Function]}
-      handlePerPageLimit={[Function]}
-      nextPageRecordCount={1}
-      pageNumber={1}
-      perPageLimit={25}
-      showDropdownOptions={false}
-    />
-    <BuildInfo />
-  </div>
+    <DrawerContent
+      panelContent={
+        <DrawerPanelContent
+          widths={
+            Object {
+              "lg": "width_25",
+            }
+          }
+        >
+          <DrawerHead>
+            <span
+              className="pf-c-title pf-m-2xl"
+              tabIndex={0}
+            >
+              Filters
+            </span>
+            <DrawerActions>
+              <DrawerCloseButton
+                onClick={[Function]}
+              />
+            </DrawerActions>
+            <ExpandableSection
+              className="filters-drawer filters-drawer--by-repo"
+              isActive={true}
+              isExpanded={true}
+              onToggle={[Function]}
+              toggleText="By repository"
+              toggleTextCollapsed=""
+              toggleTextExpanded=""
+            >
+              <SearchInput
+                className="filters-drawer__repo-search"
+                onChange={[Function]}
+                onClear={[Function]}
+                placeholder="Filter"
+                value=""
+              />
+              <SimpleList
+                aria-label="Repository List"
+                className=""
+              >
+                <SimpleListItem
+                  className="repo-list filters-drawer__repo-list"
+                  component="button"
+                  componentClassName=""
+                  href=""
+                  isCurrent={false}
+                  onClick={[Function]}
+                  type="button"
+                >
+                  <Checkbox
+                    aria-label="uncontrolled checkbox"
+                    className=""
+                    id=""
+                    isChecked={false}
+                    isDisabled={false}
+                    isValid={true}
+                    label=""
+                    onChange={[Function]}
+                  />
+                </SimpleListItem>
+              </SimpleList>
+            </ExpandableSection>
+            <br />
+          </DrawerHead>
+        </DrawerPanelContent>
+      }
+      width="width_50"
+    >
+      <DrawerContentBody
+        className="search-results"
+        width="width_50"
+      >
+        <ExpandableSection
+          className="pf-c-title search-results__section search-results__section--module"
+          isActive={true}
+          isExpanded={true}
+          onToggle={[Function]}
+          toggleText="Modules"
+          toggleTextCollapsed=""
+          toggleTextExpanded=""
+        >
+          <SearchResults
+            contentType="module"
+            filters={
+              Object {
+                "ctype": Array [],
+                "status": Array [],
+              }
+            }
+            keyWord=""
+            productsSelected={Array []}
+            repositoriesSelected={Array []}
+            userAuthenticated={true}
+          />
+        </ExpandableSection>
+        <br />
+        <ExpandableSection
+          className="pf-c-title search-results__section search-results__section--assembly"
+          isActive={true}
+          isExpanded={true}
+          onToggle={[Function]}
+          toggleText="Assemblies"
+          toggleTextCollapsed=""
+          toggleTextExpanded=""
+        >
+          <SearchResults
+            contentType="assembly"
+            filters={
+              Object {
+                "ctype": Array [],
+                "status": Array [],
+              }
+            }
+            keyWord=""
+            productsSelected={Array []}
+            repositoriesSelected={Array []}
+            userAuthenticated={true}
+          />
+        </ExpandableSection>
+      </DrawerContentBody>
+    </DrawerContent>
+  </Drawer>
+  <BuildInfo />
 </Fragment>
 `;
-
-exports[`Search tests test buildSearchUrl function 1`] = `undefined`;
-
-exports[`Search tests test buildTransientPathArray function 1`] = `undefined`;
-
-exports[`Search tests test changePerPageLimit function 1`] = `undefined`;
-
-exports[`Search tests test dismissNotification function 1`] = `undefined`;
-
-exports[`Search tests test doSearch function 1`] = `undefined`;
-
-exports[`Search tests test fetchTimeout function 1`] = `undefined`;
-
-exports[`Search tests test getRows function 1`] = `undefined`;
-
-exports[`Search tests test handleSelectAll function 1`] = `undefined`;
-
-exports[`Search tests test hideAlertOne function 1`] = `undefined`;
-
-exports[`Search tests test newSearch function 1`] = `undefined`;
-
-exports[`Search tests test setInput function 1`] = `undefined`;
-
-exports[`Search tests test sortByDescription function 1`] = `undefined`;
-
-exports[`Search tests test sortByName function 1`] = `undefined`;
-
-exports[`Search tests test sortByUploadTime function 1`] = `undefined`;
