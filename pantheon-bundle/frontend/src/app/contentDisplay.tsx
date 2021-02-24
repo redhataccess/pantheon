@@ -325,7 +325,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
     }
 
     private onGetUrl = (url) => {
-        console.log("Constructed url="+url)
+        console.log("Received url="+url)
         if(this.state.productUrlFragment!==""){
             this.setState({ portalUrl: url})
         }

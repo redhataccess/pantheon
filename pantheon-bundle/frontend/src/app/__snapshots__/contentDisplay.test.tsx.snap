@@ -156,9 +156,9 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
       assemblies={Array []}
       attributesFilePath=""
       contentType="module"
-      onGetUrl={[Function]}
       modulePath=""
       onGetProduct={[Function]}
+      onGetUrl={[Function]}
       onGetVersion={[Function]}
       productInfo=""
       updateDate={[Function]}
@@ -336,9 +336,9 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
       assemblies={Array []}
       attributesFilePath=""
       contentType="module"
-      onGetUrl={[Function]}
       modulePath=""
       onGetProduct={[Function]}
+      onGetUrl={[Function]}
       onGetVersion={[Function]}
       productInfo=""
       updateDate={[Function]}
