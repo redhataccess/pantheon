@@ -36,7 +36,7 @@ import static com.google.common.collect.Maps.newHashMap;
 @Component(
         service = Servlet.class,
         property = {
-                Constants.SERVICE_DESCRIPTION + "=Servlet to fetch the current build date in the Admin Panel",
+                Constants.SERVICE_DESCRIPTION + "=Servlet to fetch the auth user info",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
 @SlingServletPaths(value = "/api/userinfo.json")
@@ -64,8 +64,8 @@ public class AuthUserInfoServlet extends SlingSafeMethodsServlet {
                 }
             }
 
-            } catch (Exception e) {
-                log.debug("[" + AuthUserInfoServlet.class.getSimpleName() + "] currentUser:  " + request.getUserPrincipal().getName() );
+        } catch (Exception e) {
+            log.debug("[" + AuthUserInfoServlet.class.getSimpleName() + "] currentUser:  " + request.getUserPrincipal().getName() );
         }
         ServletUtils.writeAsJson(response, userInfo);
     }
