@@ -214,7 +214,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         attributesFilePath={this.state.attributesFilePath}
                         assemblies={this.state.assemblyData}
                         updateDate={this.updateDate}
-                        getUrl={this.getUrl}
+                        onGetUrl={this.onGetUrl}
                         onGetProduct={this.getProduct}
                         onGetVersion={this.getVersion}
                     />
@@ -324,7 +324,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
         this.setState({ versionValue: version })
     }
 
-    private getUrl = (url) => {
+    private onGetUrl = (url) => {
         console.log("Constructed url="+url)
         if(this.state.productUrlFragment!==""){
             this.setState({ portalUrl: url})

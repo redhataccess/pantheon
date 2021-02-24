@@ -28,7 +28,7 @@ export interface IProps {
     variantUUID: string
     attributesFilePath: string
     assemblies?: any
-    getUrl: (url) => any
+    onGetUrl: (url) => any
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
@@ -531,7 +531,7 @@ class Versions extends Component<IProps, IState> {
                     if (response.status === 201 || response.status === 200) {
                         console.log(buttonText + " works: " + response.status)
                         console.log(" response is : " + response.url)
-                        this.props.getUrl(response.url)
+                        this.props.onGetUrl(response.url)
                         this.setState({
                             canChangePublishState: true,
                             publishAlertVisible: false,
