@@ -12,7 +12,6 @@ import { IAppState } from "@app/app"
 interface IState {
     helpDropdownOpen: boolean
     loginUrl: string
-    placeholderDialogOpen: boolean
 }
 
 class User extends Component<IAppState, IState> {
@@ -21,7 +20,6 @@ class User extends Component<IAppState, IState> {
         this.state = {
             helpDropdownOpen: false,
             loginUrl: "/login",
-            placeholderDialogOpen: false
         }
     }
 
@@ -31,21 +29,11 @@ class User extends Component<IAppState, IState> {
 
     public render() {
         const dropdownItems = [
-            <DropdownItem key="help" onClick={this.onPlaceholderShow}>Help</DropdownItem>,
+            <DropdownItem key="help" href="/pantheon/docs/assemblies/assembly-pantheon-help.html" target="_blank">Help</DropdownItem>,
             <DropdownItem key="contribute" href="https://github.com/redhataccess/pantheon" target="_blank">Contribute to Pantheon</DropdownItem>
-        ]
-        const placeHolderModalButtons = [
-            <Button key="placeholderOk" onClick={this.onPlaceholderClose}>OK</Button>
         ]
         return (
             <React.Fragment>
-                <Modal width={"60%"}
-                        title="Placeholder dialog"
-                        isOpen={this.state.placeholderDialogOpen}
-                        onClose={this.onPlaceholderClose}
-                        actions={placeHolderModalButtons}>
-                    This feature has not yet been implemented.
-                </Modal>
                 <Dropdown onSelect={this.onHelpSelect}
                         toggle={
                             <DropdownToggle toggleIndicator={null} onToggle={this.onHelpToggle}>
@@ -76,14 +64,6 @@ class User extends Component<IAppState, IState> {
         })
     }
 
-    private onPlaceholderClose = () => {
-        this.setState({ placeholderDialogOpen: false })
-    }
-
-    private onPlaceholderShow = () => {
-        this.setState({ placeholderDialogOpen: true })
-    }
-
     private conditionalRedirect = () => {
         if (this.props.userAuthenticated) {
             fetch("/system/sling/logout")
@@ -105,7 +85,7 @@ class User extends Component<IAppState, IState> {
                 if (responseText.length > 0) {
                     this.setState({ loginUrl: responseText })
                 }
-                console.log("The response text from pant:ssoLoginUrl is: " + responseText)
+                // console.log("The response text from pant:ssoLoginUrl is: " + responseText)
               })
         .catch((error) => {
             console.log(error)

@@ -4,6 +4,7 @@ import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.document.DocumentVersionPublishedEvent;
+import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.FileResource;
@@ -11,11 +12,17 @@ import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.document.DocumentVersion;
+import com.redhat.pantheon.servlet.util.ServletHelper;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.servlets.post.*;
+import org.apache.sling.servlets.post.AbstractPostOperation;
+import org.apache.sling.servlets.post.Modification;
+import org.apache.sling.servlets.post.PostOperation;
+import org.apache.sling.servlets.post.PostResponse;
+import org.apache.sling.servlets.post.SlingPostProcessor;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -79,29 +86,26 @@ public class PublishDraftVersion extends AbstractPostOperation {
             return;
         }
         long startTime = System.currentTimeMillis();
+        super.run(request, response, processors);
         try {
-            super.run(request, response, processors);
-            try {
-                if (response.getError() == null) {
-                    // call the extension point
-                    Locale locale = getLocale(request);
-                    Document document = UnpublishVersion.canUnPublish(request)
-                            ? getDocument(request, serviceResourceResolverProvider.getServiceResourceResolver())
-                            : getDocument(request, request.getResourceResolver());
-                    DocumentVersion documentVersion = document.locale(locale).get()
-                            .variants().get()
-                            .variant(variant).get()
-                            .released().get();
+            if (response.getError() == null) {
+                // call the extension point
+                Locale locale = getLocale(request);
+                Document document = UnpublishVersion.canUnPublish(request)
+                        ? getDocument(request, serviceResourceResolverProvider.getServiceResourceResolver())
+                        : getDocument(request, request.getResourceResolver());
+                DocumentVersion documentVersion = document.locale(locale).get()
+                        .variants().get()
+                        .variant(variant).get()
+                        .released().get();
 
-                    // Regenerate the document once more
-                    asciidoctorService.getDocumentHtml(document, locale, variant, false, new HashMap(), true);
-                    events.fireEvent(new DocumentVersionPublishedEvent(documentVersion), 15);
-                }
-            } catch (RepositoryException ex) {
-                logger.error("An error has occured ", ex.getMessage());
+                // Regenerate the document once more
+                asciidoctorService.getDocumentHtml(document, locale, variant, false, new HashMap(),true);
+                events.fireEvent(new DocumentVersionPublishedEvent(documentVersion), 15);
+                ServletUtils.getCustomerPortalUrl(request, response);
             }
-        } catch (Exception e) {
-            logger.error("An error has occured ", e.getMessage());
+        }catch (RepositoryException ex){
+            logger.error("An error has occured ", ex.getMessage());
         }
         log.debug("Operation Publishing draft version,  completed");
         long elapseTime = System.currentTimeMillis() - startTime;

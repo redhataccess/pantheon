@@ -2,39 +2,12 @@
 
 exports[`User tests should render User component 1`] = `
 <Fragment>
-  <Modal
-    actions={
-      Array [
-        <Button
-          onClick={[Function]}
-        >
-          OK
-        </Button>,
-      ]
-    }
-    appendTo={[Function]}
-    aria-describedby=""
-    aria-label=""
-    aria-labelledby=""
-    className=""
-    hasNoBodyWrapper={false}
-    isOpen={false}
-    onClose={[Function]}
-    ouiaSafe={true}
-    showClose={true}
-    title="Placeholder dialog"
-    titleIconVariant={null}
-    titleLabel=""
-    variant="default"
-    width="60%"
-  >
-    This feature has not yet been implemented.
-  </Modal>
   <Dropdown
     dropdownItems={
       Array [
         <DropdownItem
-          onClick={[Function]}
+          href="/pantheon/docs/assemblies/assembly-pantheon-help.html"
+          target="_blank"
         >
           Help
         </DropdownItem>,

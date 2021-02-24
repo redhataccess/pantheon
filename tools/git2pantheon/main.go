@@ -97,8 +97,8 @@ func init() {
 func main() {
 	flag.Parse()
 	mux := http.NewServeMux()
-	mux.HandleFunc("/clone", cloneBranch)
-	mux.HandleFunc("/info", getInfo)
+	mux.HandleFunc("/api/clone", cloneBranch)
+	mux.HandleFunc("/api/info", getInfo)
 
 	getUploader()
 

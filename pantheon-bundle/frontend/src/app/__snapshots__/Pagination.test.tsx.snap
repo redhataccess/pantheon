@@ -7,7 +7,8 @@ exports[`Tests for Pagination should render Pagination component 1`] = `
     <LevelItem />
     <LevelItem>
       <nav
-        aria-label="Countries Pagination"
+        aria-label="Pagination"
+        className="test"
       >
         <div>
           <div>

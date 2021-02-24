@@ -3,6 +3,8 @@ package com.redhat.pantheon.helper;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
+import java.util.Arrays;
+
 public class Symlinks {
 
     public static Resource resolve(ResourceResolver resolver, String path) {
@@ -26,7 +28,19 @@ public class Symlinks {
                 }
             }
 
-            return resolver.resolve(realPath.toString().replaceAll("/+", "/"));
+            res = resolver.resolve(realPath.toString().replaceAll("/+", "/"));
+            if (Arrays.stream(res.getPath().split("/")).anyMatch(t -> ".".equals(t) || "..".equals(t))
+                    && !res.getPath().equals(realPath.toString())) {
+                // Compensating for glitchy sling code here.
+                // If you ask sling for something like this:
+                // /content/docs/Pantheon/assemblies/../modules/ref_pantheon-user-interface.adoc
+                // ...and that resource doesn't exist, sling gives you this instead:
+                // /content/docs/Pantheon/assemblies/.
+                // ...which is working reference to the sling:Folder rather than a sling:nonexisting to the file like
+                // one might expect. I'm not sure why and this is my best effort to detect that scenario.
+                res = resolver.resolve("/dummyNonExisting");
+            }
+            return res;
         }
     }
 }

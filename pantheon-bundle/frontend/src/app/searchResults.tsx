@@ -61,8 +61,8 @@ class SearchResults extends Component<IProps, ISearchState> {
       // states for table
       columns: [
         { title: "" },
-        { title: "Document Title", cellTransforms: [headerCol()] },
-        { title: "Repository name" },
+        { title: "Title", cellTransforms: [headerCol()] },
+        { title: "Repository" },
         { title: "Updated date" },
         { title: "Published date" }
       ],
@@ -123,7 +123,7 @@ class SearchResults extends Component<IProps, ISearchState> {
 
         {!this.state.isEmptyResults && <Table aria-label="Simple Table" cells={columns} rows={rows}>
           <TableHeader className={styles.modifiers.nowrap} />
-          <TableBody />
+          <TableBody className="results__table-body" />
         </Table>}
 
         {!this.state.isEmptyResults && <Pagination
@@ -136,9 +136,10 @@ class SearchResults extends Component<IProps, ISearchState> {
           perPageLimit={this.state.pageLimit}
           showDropdownOptions={this.state.showDropdownOptions}
           bottom={this.state.bottom}
+          className="results__pagination"
         />}
 
-        {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small}>
+        {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small} className="search-results--empty">
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
             No results found

@@ -83,6 +83,7 @@ exports[`Product tests should render Product component 1`] = `
         <ActionGroup>
           <Button
             aria-label="Creates a new Product Name with Description specified."
+            id="form-submit-button"
             onClick={[Function]}
             type="submit"
           >
@@ -95,27 +96,3 @@ exports[`Product tests should render Product component 1`] = `
   </Form>
 </Fragment>
 `;
-
-exports[`Product tests test checkAuth function 1`] = `undefined`;
-
-exports[`Product tests test createVersionsPath function 1`] = `undefined`;
-
-exports[`Product tests test dismissNotification function 1`] = `[Function]`;
-
-exports[`Product tests test handleNameInput function 1`] = `undefined`;
-
-exports[`Product tests test handleProductInput function 1`] = `undefined`;
-
-exports[`Product tests test handleTextInputChange function 1`] = `undefined`;
-
-exports[`Product tests test handleUrlInput function 1`] = `undefined`;
-
-exports[`Product tests test handleUrlInputChange function 1`] = `undefined`;
-
-exports[`Product tests test loginRedirect function 1`] = `undefined`;
-
-exports[`Product tests test productExist function 1`] = `Promise {}`;
-
-exports[`Product tests test renderRedirect function 1`] = `[Function]`;
-
-exports[`Product tests test saveVersion function 1`] = `[Function]`;

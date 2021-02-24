@@ -1,30 +1,31 @@
 [id="assigning-metadata-to-a-module_{context}"]
-= Assigning metadata to a module
+= Assigning metadata to {ContentTerm}
 
-Assign metadata to a module to enable search engine optimization (SEO). SEO improves the findability of content.
+[role="_abstract"]
+Assign metadata to {ContentTerm} to enable search engine optimization (SEO). SEO improves the findability of content. Assigned metadata also defines the URL at which the {ContentTerm} is published.
 
 .Prerequisites
 
 * You are logged in.
-* The module to be assigned metadata has been imported to {ProductShortName}.
+* The {ContentTerm} to be assigned metadata has been imported into {ProductShortName}.
 
 .Procedure
 
 . Navigate to link:{LinkToSearchPage}[Search page].
 
-. Click the name of the module to which you want to assign metadata.
+. Click the item to which you want to assign metadata.
 +
-If you do not see the module listed, search for it using the search box.
+If you do not see the {ContentTerm} listed, search for it using the search box.
 
-. In the list of module versions, click the vertical ellipsis next to the version of the module you want to assign metadata.
+. In the list of {ContentTerm} versions, click the vertical ellipsis next to the version of the {ContentTerm} you want to assign metadata.
 
 . Click *Edit metadata* to assign the following metadata: 
 +
-* *Product Name* - Select the product and product version for the module.
-* *Document use case* - Select the verb that best describes the use case for the module.
-* *Vanity URL fragment* - (Optional) Enter a URL for the module.
+* *Product Name* - Select the product and product version for the {ContentTerm}.
+* *Document use case* - Select the verb that best describes the use case for the {ContentTerm}.
+* *Vanity URL fragment* - (Optional) Enter a URL for the {ContentTerm}.
 * *Search keywords* - (Optional) Enter any words or terms that users might use when searching for this content.
 
 . Click *Save*.
 
-The module now includes metadata.
+The {ContentTerm} now includes metadata.

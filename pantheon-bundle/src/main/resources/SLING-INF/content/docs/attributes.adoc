@@ -1,4 +1,6 @@
 :Year: 2020
+//:experimental: enables GUI doc macros.
+:experimental:
 
 // Red Hat
 :RH: Red{nbsp}Hat

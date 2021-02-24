@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+import static com.redhat.pantheon.helper.PantheonConstants.JCR_TYPE_ASSEMBLY;
 import static com.redhat.pantheon.helper.PantheonConstants.JCR_TYPE_MODULE;
 import static com.redhat.pantheon.helper.PantheonConstants.MACRO_INCLUDE;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -104,13 +105,15 @@ public class SlingResourceIncludeProcessor extends IncludeProcessor {
                         .append("[]")
                         .append(System.lineSeparator())
                         .append(System.lineSeparator())
-                        .append(xrefProcessor.preprocess(content))
+                        .append(xrefProcessor == null ? content : xrefProcessor.preprocess(content))
                         .append(System.lineSeparator())
                         .append(System.lineSeparator())
                         .append(":!pantheon_module_id:")
                         .append(System.lineSeparator());
 
                 content = contentBuilder.toString();
+            } else if (includedResourceAsModel.field(JCR_PRIMARYTYPE, String.class).get().equals(JCR_TYPE_ASSEMBLY)) {
+                content = "Invalid include: " + target + " is an assembly.";
             } else {
                 // It's a plain file
                 FileResource file = includedResourceAsModel.adaptTo(FileResource.class);

@@ -1,21 +1,22 @@
 [id="previewing-modules-in-pantheon_{context}"]
-= Previewing modules in {ProductShortName}
+= Previewing {ContentTerm} in {ProductShortName}
 
-Preview a module that has been imported in {ProductShortName}. 
+[role="_abstract"]
+Preview {ContentTerm} that has been imported into {ProductShortName}. 
 
 .Prerequisites
 * You are logged in.
 +
-If you are not logged in, you can still see the rendered module if it is already published to the customer portal.
+If you are not logged in, you can still see the rendered {ContentTerm} if it is already published to the {PublishingPortal}.
 
-* The module to be previewed has been imported in {ProductShortName}.
+* The {ContentTerm} to be previewed has been imported into {ProductShortName}.
 
 .Procedure
 . Navigate to the link:{LinkToSearchPage}[Search page].
-. Click the name of the module you want to preview.
+. Click the item that you want to preview.
 +
-If you do not see the module listed, search for the modules using the search box.
+If you do not see the {ContentTerm} listed, search for it using the search box.
 
-. Click *Preview* next to the version of the module you want to preview.
+. Click *Preview* next to the version of the {ContentTerm} you want to preview.
 +
-If the module is already published to the Customer Portal, you will see *View* instead of *Preview*.
+If the {ContentTerm} is already published to the {PublishingPortal}, {ProductShortName} displays *View* instead of *Preview*.

@@ -70,7 +70,7 @@
                         <Sling-Initial-Content><![CDATA[
                             apps/pantheon;overwrite:=true;uninstall:=true;path:=/apps/pantheon,
                             SLING-INF/content/static;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/static,
-                            SLING-INF/content/docs;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/docs,
+                            SLING-INF/content/docs;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/staticdocs,
                             SLING-INF/SPA;overwrite:=true;overwriteProperties:=true;uninstall:=true;path:=/content/pantheon,
                             SLING-INF/users;overwrite:=false;uninstall:=false,
                         ]]></Sling-Initial-Content>
@@ -86,6 +86,7 @@
                             !org.apache.commons.net.ftp,
                             !org.apache.commons.lang,
                             !org.apache.commons.lang.builder,
+                            !jdk.nashorn.internal.ir.annotations,
                             !org.keycloak,!org.keycloak.adapters,
                             !org.keycloak.adapters.servlet,!org.keycloak.common,!org.keycloak.common.enums,
                             !org.keycloak.common.util,!org.keycloak.crypto,!org.keycloak.representations,
@@ -330,6 +331,12 @@
             <version>1.1.0</version>
         </dependency>
         <!-- Provided dependencies -->
+        <!-- https://mvnrepository.com/artifact/org.apache.sling/org.apache.sling.resource.filter -->
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.resource.filter</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -468,6 +475,12 @@
             <version>4.5.12</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.pipes</artifactId>
+            <version>4.0.0</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- org.apache.sling.auth.core -->
         <dependency>
             <groupId>org.apache.sling</groupId>
@@ -534,7 +547,7 @@
         </dependency>
         <dependency>
             <artifactId>org.apache.felix.scr</artifactId>
-            <version>2.1.16</version>
+            <version>2.1.24</version>
             <groupId>org.apache.felix</groupId>
             <scope>test</scope>
         </dependency>

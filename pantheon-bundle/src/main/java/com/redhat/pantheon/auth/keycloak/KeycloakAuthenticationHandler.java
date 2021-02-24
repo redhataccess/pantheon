@@ -59,9 +59,9 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
             KeycloakSecurityContext ctx =
                 (KeycloakSecurityContext)
                         request.getSession().getAttribute("org.keycloak.KeycloakSecurityContext");
-            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] KeycloakSecurityContext:" + ctx);
+//            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] KeycloakSecurityContext:" + ctx);
             if (ctx != null) {
-                log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] username: " + ctx.getToken().getPreferredUsername());
+//                log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] username: " + ctx.getToken().getPreferredUsername());
 
                 ResourceResolver resolver = null;
                 try {

@@ -98,6 +98,7 @@ class Search extends Component<IAppState, ISearchState> {
             perPageLimit={this.state.pageLimit}
             showDropdownOptions={this.state.showDropdownOptions}
             bottom={false}
+            className="pagination"
           />
         </div>
         {/* @todo This should _definitely_ be a table */}
@@ -235,6 +236,7 @@ class Search extends Component<IAppState, ISearchState> {
                 perPageLimit={this.state.pageLimit}
                 showDropdownOptions={!this.state.showDropdownOptions}
                 bottom={true}
+                className="pagination"
               />
               <BuildInfo />
             </div>

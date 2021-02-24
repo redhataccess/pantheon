@@ -26,10 +26,13 @@ import {
   SimpleList,
   SearchInput,
   Alert,
+  ToolbarChipGroup,
+  ToolbarChip,
 
 } from "@patternfly/react-core";
 
 import { SearchResults } from "@app/searchResults";
+import { BuildInfo } from "./components/Chrome/Header/BuildInfo"
 
 import "@app/app.css";
 import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
@@ -46,6 +49,7 @@ export interface ISearchState {
   repoFilterIsExpanded: boolean
   products: Array<{ name: string, id: string }>
   repositories: Array<{ name: string, id: string, checked: boolean }>
+  filteredRepositories: Array<{ name: string, id: string, checked: boolean }>
 
   inputValue: string,
   statusIsExpanded: boolean,
@@ -77,6 +81,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
       repoFilterIsExpanded: true,
       products: [{ name: "", id: "" }],
       repositories: [{ name: "", id: "", checked: false }],
+      filteredRepositories: [{ name: "", id: "", checked: false }],
       // states for toolbar
       inputValue: "",
       statusIsExpanded: false,
@@ -99,6 +104,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
   }
 
   public componentDidMount() {
+
     // list repos inside the drawer
     this.getRepositories()
     // this.getProducts()
@@ -129,20 +135,23 @@ class SearchBeta extends Component<IAppState, ISearchState> {
           <DrawerActions>
             <DrawerCloseButton onClick={this.onCloseClick} />
           </DrawerActions>
-          <ExpandableSection toggleText="By repo" isActive={true} isExpanded={repoFilterIsExpanded} onToggle={this.onRepositoriesToggle}>
+          <ExpandableSection className="filters-drawer filters-drawer--by-repo" toggleText="By repository" isActive={true} isExpanded={repoFilterIsExpanded} onToggle={this.onRepositoriesToggle}>
             <SearchInput
               placeholder="Filter"
               value={this.state.repoFilterValue}
               onChange={this.onChangeRepoFilter}
               onClear={(evt) => this.onChangeRepoFilter("", evt)}
+              className='filters-drawer__repo-search'
             />
-            <SimpleList aria-label="Repository List">
-              {this.state.repositories.map((data) => (
-                <SimpleListItem key={data.id}>
-                  <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onClick={this.onSelectRepositories} />
-                </SimpleListItem>
-              ))}
-            </SimpleList>
+            {this.state.filteredRepositories && this.state.filteredRepositories.length > 0 &&
+              <SimpleList aria-label="Repository List">
+                {this.state.filteredRepositories.map((data) => (
+                  <SimpleListItem key={data.id} className='repo-list filters-drawer__repo-list'>
+                    <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onChange={this.onSelectRepositories} isChecked={data.checked}/>
+                  </SimpleListItem>
+                ))}
+              </SimpleList>
+            }
 
           </ExpandableSection>
           <br />
@@ -167,7 +176,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     );
     const drawerContent = (
       <React.Fragment>
-        <ExpandableSection toggleText="Modules" className="pf-c-title" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
+        <ExpandableSection toggleText="Modules" className="pf-c-title search-results__section search-results__section--module" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
           <SearchResults
             contentType="module"
             keyWord={this.state.inputValue}
@@ -179,7 +188,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
 
         </ExpandableSection>
         <br />
-        <ExpandableSection toggleText="Assemblies" className="pf-c-title" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
+        <ExpandableSection toggleText="Assemblies" className="pf-c-title search-results__section search-results__section--assembly" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
           <SearchResults
             contentType="assembly"
             keyWord={this.state.inputValue}
@@ -194,24 +203,25 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     );
 
     const statusMenuItems = [
-      <SelectOption key="statusDraft" value="draft" label= "Draft" />,
-      <SelectOption key="statusPublished" value="released" label="Published" />
+      <SelectOption key="statusDraft" value="draft" label="Draft" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--draft" />,
+      <SelectOption key="statusPublished" value="published" label="Published" className="dropdown-filter__option dropdown-filter__option--status dropdown-filter__option--published" />
     ];
 
     const contentTypeMenuItems = [
-      <SelectOption key="ctypeConcept" value="CONCEPT" label="Concept" />,
-      <SelectOption key="ctypeProcedure" value="PROCEDURE" label="Procedure" />,
-      <SelectOption key="ctypeReference" value="REFERENCE" label="Reference" />
+      <SelectOption key="ctypeConcept" value="CONCEPT" label="Concept" className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--concept" />,
+      <SelectOption key="ctypeProcedure" value="PROCEDURE" label="Procedure" className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--procedure" />,
+      <SelectOption key="ctypeReference" value="REFERENCE" label="Reference" className="dropdown-filter__option dropdown-filter__option--content-type dropdown-filter__option--reference" />
     ];
 
     const toggleGroupItems = (
       <React.Fragment>
-        <ToolbarItem>
+        <ToolbarItem id="filters-bar__toolbar-toggle">
           <Button variant="tertiary" aria-expanded={isExpanded} onClick={this.onClick} icon={<FilterIcon />} />
         </ToolbarItem>
         <ToolbarItem>
           <InputGroup>
             <SearchInput
+              className="filters-bar__name-search"
               name="textInput"
               id="textInput"
               placeholder="Find by name"
@@ -229,9 +239,10 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         <ToolbarGroup variant="filter-group">
           <ToolbarFilter
             chips={filters.status}
-            // deleteChip={this.onDelete}
+            deleteChip={this.onDelete}
             deleteChipGroup={this.onDeleteGroup}
             categoryName="Status"
+            className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--status"
           >
             <Select
               variant={SelectVariant.checkbox}
@@ -245,8 +256,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
               {statusMenuItems}
             </Select>
           </ToolbarFilter>
-          {/* <ToolbarFilter chips={filters.ctype} deleteChip={this.onDelete} categoryName="Content Type"> */}
-          <ToolbarFilter chips={filters.ctype} categoryName="Content Type" >
+          <ToolbarFilter chips={filters.ctype} deleteChipGroup={this.onDeleteGroup} deleteChip={this.onDelete} categoryName="Content Type" className="dropdown-filter filters-bar__dropdown-filter filters-bar__dropdown-filter--content-type">
             <Select
               variant={SelectVariant.checkbox}
               aria-label="Content Type"
@@ -302,15 +312,15 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     return (
       <React.Fragment>
         <Alert variant="info" title="Beta feature" >
-        <p>
-        Please give us your feedback {"  "}
+          <p>
+            Please give us your feedback {"  "}
             <a href="https://projects.engineering.redhat.com/browse/CCS-3969" target="_blank">here.</a>
           </p>
         </Alert>
         <br />
         <Toolbar
           id="toolbar-with-filter"
-          className="pf-m-toggle-group-container"
+          className="pf-m-toggle-group-container filters-bar__filters-wrapper"
           collapseListedFiltersBreakpoint="xl"
           clearAllFilters={this.onDelete}
         >
@@ -319,12 +329,12 @@ class SearchBeta extends Component<IAppState, ISearchState> {
         <Divider />
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
           <DrawerContent panelContent={panelContent} width="width_50">
-            <DrawerContentBody width="width_50">
+            <DrawerContentBody className="search-results" width="width_50">
               {drawerContent}
             </DrawerContentBody>
           </DrawerContent>
         </Drawer>
-
+        <BuildInfo />
       </React.Fragment>
     );
   }
@@ -346,7 +356,8 @@ class SearchBeta extends Component<IAppState, ISearchState> {
           repos.push({ name: repository.__name__, id: repository["jcr:uuid"] })
         }
         this.setState({
-          repositories: repos
+          repositories: repos,
+          filteredRepositories: repos
         })
       })
       .catch((error) => {
@@ -424,11 +435,14 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     this.onSelect("ctype", event, selection);
   };
 
-  private onDelete = (type = "", id = "") => {
+  private onDelete = (type: string | ToolbarChipGroup = "", id: string | ToolbarChip = "") => {
     if (type) {
+      let filterType
+      filterType = typeof type === "object" ? type.name : type
+      filterType = type === 'Content Type' ? 'ctype' : type
       this.setState(prevState => {
         const newState = Object.assign(prevState);
-        newState.filters[type.toLowerCase()] = newState.filters[type.toLowerCase()].filter(s => s !== id);
+        newState.filters[filterType.toLowerCase()] = newState.filters[filterType.toLowerCase()].filter(s => s !== id);
         return {
           filters: newState.filters
         };
@@ -444,8 +458,10 @@ class SearchBeta extends Component<IAppState, ISearchState> {
   };
 
   private onDeleteGroup = type => {
+    let filterType
+    filterType = type === 'Content Type' ? 'ctype' : type
     this.setState(prevState => {
-      prevState.filters[type.toLowerCase()] = [];
+      prevState.filters[filterType.toLowerCase()] = [];
       return {
         filters: prevState.filters
       };
@@ -463,24 +479,20 @@ class SearchBeta extends Component<IAppState, ISearchState> {
       ctypeIsExpanded: isExpanded
     });
   };
-  
+
   // methods for filter search
   private onChangeRepoFilter = (value, event) => {
     this.setState({
       repoFilterValue: value
     });
 
+    // check for input value
     if (value) {
-      let inputString = "";
-      const matchFound = [{ name: "", id: "", checked: false }];
-
-      this.state.repositories.map(data => {
-        inputString = "" + data.name
-        if (inputString.toLowerCase().includes(value.toLowerCase())) {
-          matchFound.push(data)
-        }
-      });
-      this.setState({ repositories: matchFound })
+      // filter and return repositories that include input value, and set state to the filtered list
+      let filtered = this.state.repositories.filter(data => data.name.toLowerCase().includes(value.toLowerCase()))
+      this.setState({
+        filteredRepositories: filtered
+      })
     } else {
       this.getRepositories()
     }
@@ -507,14 +519,13 @@ class SearchBeta extends Component<IAppState, ISearchState> {
     }
   };
 
-  private onSelectRepositories = (event) => {
-    const checked = event.target.checked;
+  private onSelectRepositories = (checked, event) => {
     let repositoriesSelected = new Array()
     let repositories
 
     repositories = this.state.repositories.map(item => {
       if (item.id === event.target.id) {
-        item.checked = checked;
+        item.checked = checked; 
       }
       return item;
     });
@@ -529,7 +540,7 @@ class SearchBeta extends Component<IAppState, ISearchState> {
 
     // filter undefined values
     repositoriesSelected = repositoriesSelected.filter(r => r !== undefined)
-  
+
     this.setState({
       repositories,
       repositoriesSelected

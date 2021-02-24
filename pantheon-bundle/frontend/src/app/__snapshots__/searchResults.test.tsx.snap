@@ -15,10 +15,10 @@ exports[`SearchResults tests should render default Search component 1`] = `
           "cellTransforms": Array [
             [Function],
           ],
-          "title": "Document Title",
+          "title": "Title",
         },
         Object {
-          "title": "Repository name",
+          "title": "Repository",
         },
         Object {
           "title": "Updated date",
@@ -56,10 +56,13 @@ exports[`SearchResults tests should render default Search component 1`] = `
     <TableHeader
       className="pf-m-nowrap"
     />
-    <Component />
+    <Component
+      className="results__table-body"
+    />
   </Table>
   <Pagination
     bottom={true}
+    className="results__pagination"
     handleMoveLeft={[Function]}
     handleMoveRight={[Function]}
     handleMoveToFirst={[Function]}

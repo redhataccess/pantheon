@@ -13,6 +13,7 @@ export interface IProps {
   perPageLimit:number
   showDropdownOptions: boolean
   bottom: boolean
+  className?: string
 }
 
 class Pagination extends React.Component<IProps> {
@@ -69,7 +70,7 @@ class Pagination extends React.Component<IProps> {
           <LevelItem />
           <LevelItem />
           <LevelItem>
-            <nav aria-label="Countries Pagination">
+            <nav aria-label="Pagination" className={this.props.className}>
               <div>
                 <div>
                   <div className="example">

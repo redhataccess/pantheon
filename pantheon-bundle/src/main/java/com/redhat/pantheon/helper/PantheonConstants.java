@@ -21,9 +21,27 @@ public class PantheonConstants {
     public static final String JCR_TYPE_ASSEMBLY = "pant:assembly";
     public static final String JCR_TYPE_MODULEVARIANT = "pant:moduleVariant";
     public static final String JCR_TYPE_ASSEMBLYVARIANT = "pant:assemblyVariant";
+    public static final String JCR_TYPE_MODULEVERSION = "pant:moduleVersion";
+    public static final String JCR_TYPE_ASSEMBLYVERSION = "pant:assemblyVersion";
 
     public static final String LATEST_SUFFIX = "/latest";
     public static final Set<String> RELEASED_SUFFIXES = new HashSet<>();
+
+    public static final String XML_DOCUMENT_VERSION = "1.0";
+    public static final String SITEMAP_NAMESPACE = "http://www.sitemaps.org/schemas/sitemap/0.9";
+    public static final String SITE_MAP = "sitemap";
+    public static final String SITEMAP_EXTENSION = "xml";
+    public static final String URL_SET = "urlset";
+    public static final String URL = "url";
+    public static final String LOC = "loc";
+    public static final String LAST_MOD = "lastmod";
+    public static final String UTF_8 = "utf-8";
+    public static final String XML_MIME_TYPE = "application/xml";
+
+    public static final String SLING_SERVLET_DEFAULT = "sling/servlet/default";
+    public static final String SLING_SERVLET_METHOD_GET = "GET";
+    public static final String VIEW_URI = "view_uri";
+    public static final String PORTAL_URL = "PORTAL_URL";
     static {
         RELEASED_SUFFIXES.add("/released");
         RELEASED_SUFFIXES.add("/");

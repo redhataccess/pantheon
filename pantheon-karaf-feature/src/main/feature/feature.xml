@@ -31,19 +31,31 @@
         <feature>sling-starter-content</feature>
         <feature>eventadmin</feature>
         <feature>sling-jcr</feature>
+        <!-- This is needed for sling-pipes -->
+        <feature>sling-distribution</feature>
+        <feature>sling-pipes</feature>
+        <!-- Keycloak integration -->
         <feature>keycloak-servlet-filter-adapter</feature>
         <config name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-com.redhat.pantheon">
             user.mapping=[\
             "com.redhat.pantheon\=pantheon"\
             ]
         </config>
+        <config name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-org.apache.sling.pipes">
+            user.mapping=[\
+            "org.apache.sling.pipes\=pantheon"\
+            ]
+        </config>
         <config name="org.apache.sling.jcr.repoinit.RepositoryInitializer-pantheon">
             scripts=[\
                 "create path /content/repositories(sling:Folder) \n\
+                create path /content/docs(sling:Folder) \n\
                 create path /content/modules(sling:Folder) \n\
                 create path /content/products(sling:Folder) \n\
                 create path /content/sandbox(sling:Folder) \n\
                 create path /conf/pantheon(sling:Folder) \n\
+                create path /system/sling/permissions/pipes/exec(nt:unstructured) \n\
+                create path /conf/pantheon/upgrades(nt:unstructured) \n\
                 \n\
                 create group pantheon-authors \n\
                 create group pantheon-publishers\n\
@@ -63,35 +75,44 @@
                 \n\
                 set ACL for pantheon-authors\n\
                 allow jcr:modifyProperties,jcr:read on /content/repositories\n\
+                allow jcr:modifyProperties,jcr:read on /content/docs\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/modules\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/sandbox\n\
                 allow jcr:read on /conf/pantheon\n\
                 \n\
                 deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:moduleLocale)\n\
+                deny jcr:modifyProperties on /content/docs restriction(rep:ntNames,pant:moduleLocale)\n\
                 deny jcr:modifyProperties on /content/modules restriction(rep:ntNames,pant:moduleLocale)\n\
                 deny jcr:modifyProperties on /content/sandbox restriction(rep:ntNames,pant:moduleLocale)\n\
                 \n\
                 deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,nt:resource)\n\
+                deny jcr:modifyProperties on /content/docs restriction(rep:ntNames,nt:resource)\n\
                 deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:symlink)\n\
+                deny jcr:modifyProperties on /content/docs restriction(rep:ntNames,pant:symlink)\n\
                 end\n\
                 \n\
                 set ACL for pantheon-publishers\n\
                 allow jcr:removeNode,jcr:modifyProperties,jcr:read on /content/repositories\n\
+                allow jcr:removeNode,jcr:modifyProperties,jcr:read on /content/docs\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/modules\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/products\n\
                 allow jcr:write,jcr:nodeTypeManagement on /content/sandbox\n\
                 allow jcr:read on /conf/pantheon\n\
                 \n\
                 deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,nt:resource)\n\
+                deny jcr:modifyProperties on /content/docs restriction(rep:ntNames,nt:resource)\n\
                 deny jcr:modifyProperties on /content/repositories restriction(rep:ntNames,pant:symlink)\n\
+                deny jcr:modifyProperties on /content/docs restriction(rep:ntNames,pant:symlink)\n\
                 end\n\
                 \n\
                 set ACL for sync-service\n\
                 allow jcr:all on /content/repositories\n\
+                allow jcr:all on /content/docs\n\
                 end\n\
                 \n\
                 set ACL for pantheon-statusProvider\n\
                 allow jcr:write on /content/repositories restriction(rep:ntNames,pant:acknowledgment)\n\
+                allow jcr:write on /content/docs restriction(rep:ntNames,pant:acknowledgment)\n\
                 end"\
             ]
         </config>
@@ -107,6 +128,7 @@
             request.log.service.output = data/log/request.log
             request.log.service.outputtype = 1
         </config>
+        <!-- keycloak config -->
         <config name="com.redhat.pantheon.auth.keycloak.KeycloakFilter">
             keycloak-servlet-filter-adapter = ${karaf.etc}/keycloak.json
         </config>
@@ -115,6 +137,8 @@
         <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.10.4</bundle>
         <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.10.4</bundle>
         <bundle>mvn:org.apache.sling/org.apache.sling.commons.log/5.1.10</bundle>
+        <!-- This is already present in the sling karaf features, but not the -all dependency  -->
+        <bundle>mvn:org.codehaus.groovy/groovy-all/2.4.9</bundle>
         <bundle>mvn:com.redhat.pantheon/pantheon-bundle/1.0-SNAPSHOT</bundle>
     </feature>
 </features>
