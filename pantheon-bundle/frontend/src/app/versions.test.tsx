@@ -20,12 +20,12 @@ const props = {
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
+    onGetUrl: (url) => anymatch,
     productInfo: "Red Hat Enterprise Linux",
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
     variant: "test",
     variantUUID: "abcd-1234",
     versionModulePath: "/modules/test_module/en_US/variants/test/draft",
-    onPublishEvent: () => anymatch
 }
 
 describe("Versions tests", () => {
@@ -193,12 +193,12 @@ describe("Versions tests", () => {
             modulePath: "somePath",
             onGetProduct: (productValue) => anymatch,
             onGetVersion: (versionValue) => anymatch,
+            onGetUrl: (url) => anymatch,
             productInfo: "Red Hat Enterprise Linux",
             updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
             variant: "DEFAULT",
             variantUUID: "abcd-1234",
             versionModulePath: "versionPath",
-            onPublishEvent: () => anymatch
         }
         state.updateDate("-", "-", 1, "1234")
         expect(state.modulePath).toEqual("somePath")

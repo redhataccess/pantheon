@@ -214,9 +214,9 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         attributesFilePath={this.state.attributesFilePath}
                         assemblies={this.state.assemblyData}
                         updateDate={this.updateDate}
+                        onGetUrl={this.onGetUrl}
                         onGetProduct={this.getProduct}
                         onGetVersion={this.getVersion}
-                        onPublishEvent={this.onPublishEvent}
                     />
                 </Card>
 
@@ -324,11 +324,11 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
         this.setState({ versionValue: version })
     }
 
-    private onPublishEvent = () => {
-        // the published state cannot be ascertained correctly when moving from one page to another
-        const path = this.props.location.pathname.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
-        this.getPortalUrl(path, this.state.variant)
-
+    private onGetUrl = (url) => {
+        console.log("Received url="+url)
+        if(this.state.productUrlFragment!==""){
+            this.setState({ portalUrl: url})
+        }
     }
 
     private getLocale = (path) =>{
@@ -407,13 +407,6 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                             for (const productVersion of productChild.__children__) {
                                 if (productVersion[Fields.JCR_UUID] === uuid) {
                                     this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
-                                    const isGuideOrTopic = this.isAssembly ? '/guide/' : '/topic/'
-                                    const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase()+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + isGuideOrTopic + this.state.variantUUID
-                                    console.log("Constructed url="+url)
-                                    if(this.state.productUrlFragment!==""){
-                                        this.setState({ portalUrl: url})
-                                    }
-                                    break
                                 }
                             }
                         }
@@ -448,15 +441,8 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         // get portal url from api and set it only if it is not empty
                         if(text.trim() !== "") {
                             this.setState({portalUrl: text})
-                        }else{
-                            // if portal url is empty, assemble the URL at client side
-                            console.log("GetPortalURI API returned empty URI. Falling back to url construction at UI")
-                            this.getVersionUUID(this.props.location.pathname)
                         }
                     })
-                }else {
-                    console.log("GetPortalURI API returned error. Falling back to url construction at UI")
-                    this.getVersionUUID(this.props.location.pathname)
                 }
             })
     }
