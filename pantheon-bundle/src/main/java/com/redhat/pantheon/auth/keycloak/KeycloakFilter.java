@@ -14,8 +14,9 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Custom KeycloakFilter
@@ -45,7 +46,7 @@ import java.util.regex.Pattern;
         methods = {"GET", "POST"})
 public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
 
-    private static final Logger log = Logger.getLogger(KeycloakFilter.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(KeycloakFilter.class.getName());
     private static final String KARAF_ETC = "karaf.etc";
     private  static final String KEYCLOAKOIDCFILTER_CONFIG_FILE_NAME = "keycloak.json";
     protected KeycloakDeployment keycloakDeployment;
@@ -79,7 +80,7 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
         try {
             is = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.error("[" + KeycloakFilter.class.getSimpleName() + "] Failed to log config from the file system: " + file.getPath());
         }
         if (is != null) {
         keycloakDeployment = createKeycloakDeploymentFrom(is);

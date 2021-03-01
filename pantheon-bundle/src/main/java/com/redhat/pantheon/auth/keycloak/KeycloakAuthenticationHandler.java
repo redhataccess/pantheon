@@ -1,5 +1,7 @@
 package com.redhat.pantheon.auth.keycloak;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.apache.jackrabbit.api.security.user.Group;
@@ -18,7 +20,6 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * used for authenticating a request that matches the property value
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
 
 public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core.spi.AuthenticationHandler {
 
-    private final Logger log = Logger.getLogger(KeycloakAuthenticationHandler.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(KeycloakFilter.class);
     public static final String AUTH_TYPE = "KEYCLOAK";
     private static final String DEFAULT_GROUP = "pantheon-authors";
 
@@ -78,14 +79,14 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
 
                         Authorizable user = userManager.getAuthorizable(extractedUserId);
                         if (user == null) {
-                            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] user does not exist in the system. Attempt to create new user: " + extractedUserId);
+                            log.warn("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] user does not exist in the system. Attempt to create new user: " + extractedUserId);
 
                             userManager.createUser(extractedUserId, extractedUserId);
                             // Use "pantheon-authors" as the default group
                             Group group = (Group) userManager.getAuthorizable(DEFAULT_GROUP);
                             if (group != null) {
                                 group.addMember(userManager.getAuthorizable(extractedUserId));
-                                log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] add user: " + extractedUserId + " to group: " + DEFAULT_GROUP);
+                                log.debug("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] add user: " + extractedUserId + " to group: " + DEFAULT_GROUP);
                             }
                             session.save();
                             session.logout();
@@ -97,7 +98,7 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
                         }
                     }
                 } catch (Exception e) {
-                    log.warning("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] Exception in extractCredentials while processing the request" + e.getMessage());
+                    log.error("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] Exception in extractCredentials while processing the request" + e.getMessage());
                 } finally {
                     if (resolver != null && resolver.isLive()) {
                         resolver.close();
@@ -105,7 +106,7 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
                 }
             }
         } else {
-            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] AUTH_SERVER_URL not defined. Use basic auth instead...");
+            log.debug("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] AUTH_SERVER_URL not defined. Use basic auth instead...");
         }
         return null;
     }
