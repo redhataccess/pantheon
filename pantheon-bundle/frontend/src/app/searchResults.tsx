@@ -201,8 +201,8 @@ class SearchResults extends Component<IProps, ISearchState> {
       }
 
       backend += "&offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
-      if (!backend.includes("Uploaded") && !backend.includes("direction")) {
-        backend += "&key=Uploaded&direction=desc"
+      if (!backend.includes("Updated") && !backend.includes("direction")) {
+        backend += "&key=Updated&direction=desc"
       }
 
       return backend
