@@ -158,8 +158,8 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
       contentType="module"
       modulePath=""
       onGetProduct={[Function]}
-      onGetUrl={[Function]}
       onGetVersion={[Function]}
+      onPublishEvent={[Function]}
       productInfo=""
       updateDate={[Function]}
       variant="DEFAULT"
@@ -338,8 +338,8 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
       contentType="module"
       modulePath=""
       onGetProduct={[Function]}
-      onGetUrl={[Function]}
       onGetVersion={[Function]}
+      onPublishEvent={[Function]}
       productInfo=""
       updateDate={[Function]}
       variant="DEFAULT"
