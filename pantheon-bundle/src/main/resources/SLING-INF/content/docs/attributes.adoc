@@ -15,6 +15,7 @@
 // Publishing
 :PublishingPortal: Customer Portal
 :PublishingPortalSearch: Customer Portal Search
+:LinkToSearchPage: https://pantheon.corp.redhat.com/pantheon/#/search
 
 :imagesdir: images
 :ContentTerm: content
