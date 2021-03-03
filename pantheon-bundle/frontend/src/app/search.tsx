@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, FormEvent } from "react";
 import {
   Drawer,
   DrawerPanelContent,
@@ -64,6 +64,7 @@ export interface ISearchState {
 
   productsSelected: string[]
   repositoriesSelected: string[]
+  documentSelected: string[]
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
@@ -98,6 +99,9 @@ class Search extends Component<IAppState, ISearchState> {
       // search
       productsSelected: [],
       repositoriesSelected: [],
+
+      // bulk operation
+      documentSelected: []
     };
     this.drawerRef = React.createRef();
 
@@ -298,6 +302,9 @@ class Search extends Component<IAppState, ISearchState> {
         </ToolbarToggleGroup>
         <ToolbarGroup variant="icon-button-group">
         </ToolbarGroup>
+        <ToolbarItem>
+          <Button variant="secondary">Edit metadata</Button>
+        </ToolbarItem>
         {/* <ToolbarItem>
           <Dropdown
             toggle={<KebabToggle onToggle={this.onKebabToggle} />}
@@ -321,8 +328,8 @@ class Search extends Component<IAppState, ISearchState> {
         </Toolbar>
         <Divider />
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
-          <DrawerContent panelContent={panelContent} width="width_50">
-            <DrawerContentBody className="search-results" width="width_50">
+          <DrawerContent panelContent={panelContent}>
+            <DrawerContentBody className="search-results">
               {drawerContent}
             </DrawerContentBody>
           </DrawerContent>
@@ -573,6 +580,35 @@ class Search extends Component<IAppState, ISearchState> {
       repoFilterIsExpanded
     });
   };
+
+  private onBulkSelectMetadata = (checked, event) => {
+    let documentSelected = new Array()
+    let repositories
+
+    repositories = this.state.repositories.map(item => {
+      if (item.id === event.target.id) {
+        item.checked = checked; 
+      }
+      return item;
+    });
+
+    documentSelected = repositories.map(item => {
+      if (item.checked !== undefined && item.checked === true) {
+        if (item.name !== undefined) {
+          return item.name
+        }
+      }
+    });
+
+    // filter undefined values
+    documentSelected = documentSelected.filter(r => r !== undefined)
+
+    this.setState({
+      repositories,
+      documentSelected
+    });
+
+  }
 }
 
 

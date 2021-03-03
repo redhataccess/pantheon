@@ -257,6 +257,13 @@ exports[`Search tests should render default Search component 1`] = `
       <ForwardRef
         variant="icon-button-group"
       />
+      <ToolbarItem>
+        <Button
+          variant="secondary"
+        >
+          Edit metadata
+        </Button>
+      </ToolbarItem>
     </ToolbarContent>
   </Toolbar>
   <Divider />
@@ -333,11 +340,9 @@ exports[`Search tests should render default Search component 1`] = `
           </DrawerHead>
         </DrawerPanelContent>
       }
-      width="width_50"
     >
       <DrawerContentBody
         className="search-results"
-        width="width_50"
       >
         <ExpandableSection
           className="pf-c-title search-results__section search-results__section--module"

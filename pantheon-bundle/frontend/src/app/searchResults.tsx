@@ -6,7 +6,8 @@ import {
   TableBody,
   headerCol,
 } from "@patternfly/react-table";
-
+import { Checkbox } from '@patternfly/react-core';
+import { Tooltip } from '@patternfly/react-core';
 import "@app/app.css";
 import styles from "@patternfly/react-styles/css/components/Table/table";
 import { Pagination } from "@app/Pagination"
@@ -20,6 +21,7 @@ import {
 } from "@patternfly/react-core";
 import { SearchIcon } from "@patternfly/react-icons";
 import CheckCircleIcon from "@patternfly/react-icons/dist/js/icons/check-circle-icon"
+// import ExclamationTriangleIcon from "@patternfly/react-icons/dist/js/icons/exclamation-circle-icon"
 import { SlingTypesPrefixes } from "./Constants";
 
 export interface IProps {
@@ -50,6 +52,7 @@ export interface ISearchState {
   itemsPerPage: number
   results: any
   rows: any
+  canSelectAll: boolean
   showDropdownOptions: boolean
   bottom: boolean
 }
@@ -82,6 +85,7 @@ class SearchResults extends Component<IProps, ISearchState> {
           "name": "",
           "jcr:title": "",
           "jcr:description": "",
+          "productVersion": "",
           "sling:transientSource": "",
           "pant:transientSourceName": "",
           "checkedItem": false,
@@ -96,9 +100,13 @@ class SearchResults extends Component<IProps, ISearchState> {
           cells: ["", "", "", ""]
         }
       ],
+      canSelectAll: true,
       showDropdownOptions: false,
       bottom: true,
     };
+
+    this.onSelect = this.onSelect.bind(this);
+    this.toggleSelect = this.toggleSelect.bind(this);
   }
 
   public componentDidMount() {
@@ -116,15 +124,32 @@ class SearchResults extends Component<IProps, ISearchState> {
   }
 
   public render() {
-    const { columns, rows } = this.state;
+    const { columns, rows, canSelectAll } = this.state;
 
     return (
       <React.Fragment>
 
-        {!this.state.isEmptyResults && <Table aria-label="Simple Table" cells={columns} rows={rows}>
+        {!this.state.isEmptyResults &&
+          <div>
+          <Checkbox
+            label="Can select all"
+            className="pf-u-mb-lg"
+            isChecked={canSelectAll}
+            onChange={this.toggleSelect}
+            aria-label="toggle select all checkbox"
+            id={"toggle-select-all-"+this.props.contentType}
+            name={"toggle-select-all-"+this.props.contentType}
+        />
+          <Table 
+            onSelect={this.onSelect}
+            canSelectAll={canSelectAll}
+            aria-label={"Selectable Table "+this.props.contentType}
+            cells={columns}
+            rows={rows}
+          >
           <TableHeader className={styles.modifiers.nowrap} />
           <TableBody className="results__table-body" />
-        </Table>}
+        </Table></div> }
 
         {!this.state.isEmptyResults && <Pagination
           handleMoveLeft={this.updatePageCounter("L")}
@@ -204,7 +229,7 @@ class SearchResults extends Component<IProps, ISearchState> {
       if (!backend.includes("Updated") && !backend.includes("direction")) {
         backend += "&key=Updated&direction=desc"
       }
-
+      console.log("[buildSearchQuery] backend=>", backend)
       return backend
     } else {
       this.setState({ isEmptyResults: true })
@@ -242,9 +267,15 @@ class SearchResults extends Component<IProps, ISearchState> {
         .then(responseJSON => {
           this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })
           const data = new Array()
+          console.log("[doSearch] results=>", this.state.results)
           responseJSON.results.map((item, key) => {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
-            const publishedIcon = publishedDate !== "-" ? <><CheckCircleIcon className="p2-search__check-circle-icon"/></> : ""
+            let publishedIcon = publishedDate !== "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon"/></Tooltip></div> : ""
+            if (publishedIcon === "") {
+              const productVersion = item["productVersion"] != undefined ? item["productVersion"] : "-"
+              publishedIcon = productVersion == "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Metadata missing</div>}><i className="pf-icon pf-icon-warning-triangle" /></Tooltip></div> : ""
+            }
+            
             const cellItem = new Array()
             cellItem.push(publishedIcon)
             if (this.props.userAuthenticated) {
@@ -298,6 +329,29 @@ class SearchResults extends Component<IProps, ISearchState> {
     this.setState({ pageLimit: pageLimitValue, page: 1 }, () => {
       return (this.state.pageLimit + " items per page")
     })
+  }
+
+  private onSelect(event, isSelected, rowId) {
+    let rows;
+    if (rowId === -1) {
+      rows = this.state.rows.map(oneRow => {
+        oneRow.selected = isSelected;
+        return oneRow;
+      });
+    } else {
+      rows = [...this.state.rows];
+      rows[rowId].selected = isSelected;
+    }
+    this.setState({
+      rows
+    });
+    console.log("[onSelect] bulkSelected rows =>", rows)
+  }
+
+  private toggleSelect(checked) {
+    this.setState({
+      canSelectAll: checked
+    });
   }
 }
 
