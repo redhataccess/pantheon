@@ -41,7 +41,7 @@ exports[`User tests should render User component 1`] = `
     onClick={[Function]}
     to=""
   >
-    Log Out [demo]
+    [demo]
   </Link>
 </Fragment>
 `;

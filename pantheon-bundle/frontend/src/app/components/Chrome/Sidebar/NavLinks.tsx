@@ -79,7 +79,7 @@ class NavLinks extends Component<IAppState, any> {
               component="a"
               onClick={this.handleItemOnclick}
             >
-              <a href="/starter/index.html" target="_blank">{slingHomeText}</a>
+              <a href="/starter.html" target="_blank">{slingHomeText}</a>
             </NavItem>
             <NavItem
               groupId="grp-3"

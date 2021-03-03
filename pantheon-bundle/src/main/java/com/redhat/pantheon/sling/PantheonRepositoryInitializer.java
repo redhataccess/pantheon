@@ -32,6 +32,7 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
     public void processRepository(SlingRepository slingRepository) throws Exception {
         setSyncServiceUrl();
         setFrontEndRedirect();
+        setSsoLoginUrl();
     }
 
     private void setSyncServiceUrl() throws RepositoryException, PersistenceException {
@@ -62,10 +63,32 @@ public class PantheonRepositoryInitializer implements SlingRepositoryInitializer
         }
     }
 
+    private void setSsoLoginUrl() throws RepositoryException, PersistenceException {
+        try (ResourceResolver resourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
+            String loginUrl = getSsoLoginUrl();
+            if (loginUrl != null) {
+                resourceResolver.getResource("/conf/pantheon")
+                        .adaptTo(ModifiableValueMap.class)
+                        .put("pant:ssoLoginUrl", loginUrl);
+                resourceResolver.commit();
+                log.info("SSO login URL: " + loginUrl);
+            } else {
+                log.info("Environment Variable SSO_LOGIN_URL is not set.");
+            }
+        }
+    }
+
     /**
      * Retrieves the environment variable value for the sync service url
      */
     String getSyncServiceUrl() {
         return System.getenv("SYNC_SERVICE_URL");
+    }
+
+    /**
+     * Retrieves the environment variable value for sso login url
+     */
+    String getSsoLoginUrl() {
+        return System.getenv("SSO_LOGIN_URL");
     }
 }

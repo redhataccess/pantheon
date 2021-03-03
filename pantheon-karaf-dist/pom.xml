@@ -169,6 +169,10 @@
                         <feature>composum-nodes</feature>
                         <!-- Thymeleaf -->
                         <feature>thymeleaf</feature>
+                        <!-- keycloak -->
+                        <feature>keycloak-servlet-filter-adapter</feature>
+                        <feature>keycloak-adapter-core</feature>
+                        <feature>org.keycloak</feature>
                     </installedFeatures>
                     <startupFeatures>
                         <feature>eventadmin</feature>

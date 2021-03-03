@@ -521,7 +521,8 @@ class Versions extends Component<IProps, IState> {
                 }
                 const hdrs = {
                     "Accept": "application/json",
-                    "cache-control": "no-cache"
+                    "cache-control": "no-cache",
+                    "Access-Control-Allow-Origin": "*",
                 }
                 formData.append("locale", "en_US")
                 formData.append("variant", this.props.variant)
