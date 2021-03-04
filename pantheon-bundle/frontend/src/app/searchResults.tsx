@@ -285,12 +285,12 @@ class SearchResults extends Component<IProps, ISearchState> {
             
             const cellItem = new Array()
             cellItem.push(publishedIcon)
-            if (this.props.userAuthenticated) {
+            // if (this.props.userAuthenticated) {
               cellItem.push({ title: <a href={"/pantheon/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
-            } else {
-              let docTitle = item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]
-              cellItem.push(docTitle)
-            }
+            // } else {
+            //   let docTitle = item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]
+            //   cellItem.push(docTitle)
+            // }
             cellItem.push(item["pant:transientSourceName"])
             cellItem.push(item["pant:dateUploaded"])
             cellItem.push(publishedDate)
