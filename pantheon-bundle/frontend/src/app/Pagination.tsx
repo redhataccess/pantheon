@@ -29,7 +29,7 @@ class Pagination extends React.Component<IProps> {
     filteredItems: this.dropdownItems,
     isExpanded: false, 
     isOpen: false,
-    itemsPerPage: 25,
+    itemsPerPage: 5,
     renderSearch: false,
     searchValue: "",
     selected: this.dropdownItems[0]

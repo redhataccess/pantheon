@@ -23,6 +23,7 @@ import { SearchIcon } from "@patternfly/react-icons";
 import CheckCircleIcon from "@patternfly/react-icons/dist/js/icons/check-circle-icon"
 // import ExclamationTriangleIcon from "@patternfly/react-icons/dist/js/icons/exclamation-circle-icon"
 import { SlingTypesPrefixes } from "./Constants";
+import { PaginationBottom } from "@app/PaginationBottom"
 
 export interface IProps {
   contentType: string
@@ -101,7 +102,7 @@ class SearchResults extends Component<IProps, ISearchState> {
         }
       ],
       canSelectAll: true,
-      showDropdownOptions: false,
+      showDropdownOptions: true,
       bottom: true,
     };
 
@@ -124,7 +125,7 @@ class SearchResults extends Component<IProps, ISearchState> {
   }
 
   public render() {
-    const { columns, rows, canSelectAll } = this.state;
+    const { columns, rows, canSelectAll, results } = this.state;
 
     return (
       <React.Fragment>
@@ -164,6 +165,12 @@ class SearchResults extends Component<IProps, ISearchState> {
           className="results__pagination"
         />}
 
+      {/* {!this.state.isEmptyResults && 
+        <PaginationBottom 
+          itemCount={results.length}
+          contentType={this.props.contentType}
+        />
+      } */}
         {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small} className="search-results--empty">
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
