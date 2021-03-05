@@ -37,6 +37,7 @@ import {
   InputGroupText,
   Title,
   BaseSizes,
+  ModalVariant,
 
 } from "@patternfly/react-core";
 
@@ -346,7 +347,7 @@ class Search extends Component<IAppState, ISearchState> {
     const metadataModal = (
       <React.Fragment>
          <Modal
-                    width={"60%"}
+                    variant={ModalVariant.medium}
                     title="Edit metadata"
                     isOpen={this.state.isModalOpen}
                     header={header}
@@ -372,9 +373,9 @@ class Search extends Component<IAppState, ISearchState> {
                             <br />
                         </div>
                     )}
-                    <div id="edit_metadata_helper_text"><p>Editing {} items. Changes made apply to all selected docs.</p></div>
+                    <div id="edit_metadata_helper_text"><p>Editing multiple items. Changes made apply to all selected docs.</p></div>
                     <br />
-                    <Form isHorizontal={true} id="edit_metadata">
+                    <Form isWidthLimited={true} id="edit_metadata">
                         <FormGroup
                             label="Product Name"
                             isRequired={true}
