@@ -118,15 +118,13 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
         // Check if AUTH_SERVER_URL is configured, fall back to basic auth otherwise.
         if ((request.getHeader("Authorization") != null && request.getHeader("Authorization").contains("Basic "))
                 || System.getenv("AUTH_SERVER_URL") == null) {
-//            log.info("[" + KeycloakFilter.class.getSimpleName() + "] Authorization header: " + request.getHeader("Authorization"));
             return true;
         }
         if (skipPattern == null) {
             return false;
         }
-//        log.info("[" + KeycloakFilter.class.getSimpleName() + "] skipPattern provided.");
+
         String requestPath = request.getRequestURI().substring(request.getContextPath().length());
-//        log.info("[" + KeycloakFilter.class.getSimpleName() + "] Attempt to match skipPattern from requestPath: " + skipPattern.matcher(requestPath).matches());
         return skipPattern.matcher(requestPath).matches();
     }
 }
