@@ -28,6 +28,15 @@ import {
   Alert,
   ToolbarChipGroup,
   ToolbarChip,
+  Modal,
+  Form,
+  FormGroup,
+  AlertActionCloseButton,
+  FormSelect,
+  FormSelectOption,
+  InputGroupText,
+  Title,
+  BaseSizes,
 
 } from "@patternfly/react-core";
 
@@ -38,6 +47,7 @@ import "@app/app.css";
 import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
 import { IAppState } from "@app/app"
+import { Metadata } from "@app/Constants"
 
 export interface ISearchState {
   filterLabel: string
@@ -64,7 +74,18 @@ export interface ISearchState {
 
   productsSelected: string[]
   repositoriesSelected: string[]
-  documentSelected: string[]
+  documentsSelected: string[]
+  isModalOpen: boolean
+  alertTitle: string
+  allProducts: any
+  allProductVersions: any
+  isMissingFields: boolean
+  product: { label: string, value: string }
+  productVersion: { label: string, uuid: string }
+  urlFragment: string
+  keywords: string
+  usecaseOptions: any
+  usecaseValue: string
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
@@ -101,7 +122,20 @@ class Search extends Component<IAppState, ISearchState> {
       repositoriesSelected: [],
 
       // bulk operation
-      documentSelected: []
+      documentsSelected: [],
+      isModalOpen: false,
+      alertTitle: "",
+      allProducts: [],
+      allProductVersions: [],
+      isMissingFields: false,
+      product: { label: "", value: "" },
+      productVersion: { label: "", uuid: "" },
+      urlFragment: "",
+      keywords: "",
+      usecaseOptions: [
+        { value: "", label: "Select Use Case", disabled: false }
+      ],
+      usecaseValue: "",
     };
     this.drawerRef = React.createRef();
 
@@ -188,6 +222,7 @@ class Search extends Component<IAppState, ISearchState> {
             productsSelected={this.state.productsSelected}
             userAuthenticated={this.props.userAuthenticated}
             filters={this.state.filters}
+            onGetdocumentsSelected={this.getdocumentsSelected}
           />
 
         </ExpandableSection>
@@ -200,6 +235,7 @@ class Search extends Component<IAppState, ISearchState> {
             productsSelected={this.state.productsSelected}
             userAuthenticated={this.props.userAuthenticated}
             filters={this.state.filters}
+            onGetdocumentsSelected={this.getdocumentsSelected}
           />
 
         </ExpandableSection>
@@ -302,9 +338,15 @@ class Search extends Component<IAppState, ISearchState> {
         </ToolbarToggleGroup>
         <ToolbarGroup variant="icon-button-group">
         </ToolbarGroup>
-        <ToolbarItem>
-          <Button variant="secondary">Edit metadata</Button>
-        </ToolbarItem>
+        {this.props.userAuthenticated && (this.props.isAuthor || this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
+          <Button variant="secondary" onClick={this.handleModalToggle} id="edit_metadata">Edit metadata</Button>
+        </ToolbarItem>}
+        {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
+          <Button variant="secondary" isAriaDisabled={true}>Publish</Button>
+        </ToolbarItem>}
+        {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
+          <Button variant="secondary" isAriaDisabled={true}>Unpublish</Button>
+        </ToolbarItem>}
         {/* <ToolbarItem>
           <Dropdown
             toggle={<KebabToggle onToggle={this.onKebabToggle} />}
@@ -313,6 +355,103 @@ class Search extends Component<IAppState, ISearchState> {
             dropdownItems={dropdownItems}
           />
         </ToolbarItem> */}
+      </React.Fragment>
+    );
+
+    const header = (
+      <React.Fragment>
+          <Title headingLevel="h1" size={BaseSizes["2xl"]}>
+              Edit Metadata
+        </Title>
+      </React.Fragment>
+  )
+    const metadataModal = (
+      <React.Fragment>
+         <Modal
+                    width={"60%"}
+                    title="Edit metadata"
+                    isOpen={this.state.isModalOpen}
+                    header={header}
+                    aria-label="Edit metadata"
+                    onClose={this.handleModalClose}
+                    actions={[
+                        <Button form="edit_metadata" key="confirm" variant="primary" onClick={this.saveMetadata}>
+                            Save
+          </Button>,
+                        <Button key="cancel" variant="secondary" onClick={this.handleModalToggle}>
+                            Cancel
+            </Button>
+                    ]}
+                >
+
+                    {this.state.isMissingFields && (
+                        <div className="notification-container">
+                            <Alert
+                                variant="warning"
+                                title="Fields indicated by * are mandatory"
+                                actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
+                            />
+                            <br />
+                        </div>
+                    )}
+                    <Form isHorizontal={true} id="edit_metadata">
+                        <FormGroup
+                            label="Product Name"
+                            isRequired={true}
+                            fieldId="product-name"
+                        >
+                            <InputGroup>
+                                <FormSelect value={this.state.product.value} onChange={this.onChangeProduct} aria-label="FormSelect Product">
+                                    <FormSelectOption label="Select a Product" />
+                                    {this.state.allProducts.map((option, key) => (
+                                        <FormSelectOption key={key} value={option.value} label={option.label} />
+                                    ))}
+                                </FormSelect>
+                                <FormSelect value={this.state.productVersion.uuid} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
+                                    <FormSelectOption label="Select a Version" />
+                                    {this.state.allProductVersions.map((option, key) => (
+                                        <FormSelectOption key={key} value={option["jcr:uuid"]} label={option.name} />
+                                    ))}
+                                </FormSelect>
+                            </InputGroup>
+                        </FormGroup>
+                        <FormGroup
+                            label="Document use case"
+                            isRequired={true}
+                            fieldId="document-usecase"
+                            helperText="Explanations of document user cases included in documentation."
+                        >
+                            <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
+                                {Metadata.USE_CASES.map((option, key) => (
+                                    <FormSelectOption key={"usecase_" + key} value={option} label={option} />
+                                ))}
+                            </FormSelect>
+                        </FormGroup>
+                        <FormGroup
+                            label="Vanity URL fragment"
+                            fieldId="url-fragment"
+                        >
+                            <InputGroup>
+                                <InputGroupText id="slash" aria-label="/">
+                                    <span>/</span>
+                                </InputGroupText>
+                                <TextInput isRequired={false} id="url-fragment" type="text" placeholder="Enter URL" value={this.state.urlFragment} onChange={this.handleURLInput} />
+                            </InputGroup>
+                        </FormGroup>
+                        <FormGroup
+                            label="Search keywords"
+                            isRequired={false}
+                            fieldId="search-keywords"
+                        >
+                            <InputGroup>
+                                <TextInput isRequired={false} id="search-keywords" type="text" placeholder="cat, dog, bird..." value={this.state.keywords} onChange={this.handleKeywordsInput} />
+                            </InputGroup>
+                        </FormGroup>
+                        <div>
+                            <input name="productVersion@TypeHint" type="hidden" value="Reference" />
+                        </div>
+                    </Form>
+                </Modal>
       </React.Fragment>
     );
 
@@ -331,6 +470,7 @@ class Search extends Component<IAppState, ISearchState> {
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody className="search-results">
               {drawerContent}
+              {metadataModal}
             </DrawerContentBody>
           </DrawerContent>
         </Drawer>
@@ -581,32 +721,108 @@ class Search extends Component<IAppState, ISearchState> {
     });
   };
 
-  private onBulkSelectMetadata = (checked, event) => {
-    let documentSelected = new Array()
-    let repositories
+  private getdocumentsSelected = (documentsSelected) => {
+    this.setState({ documentsSelected })
+  }
 
-    repositories = this.state.repositories.map(item => {
-      if (item.id === event.target.id) {
-        item.checked = checked; 
-      }
-      return item;
-    });
-
-    documentSelected = repositories.map(item => {
-      if (item.checked !== undefined && item.checked === true) {
-        if (item.name !== undefined) {
-          return item.name
-        }
-      }
-    });
-
-    // filter undefined values
-    documentSelected = documentSelected.filter(r => r !== undefined)
-
+  private handleModalToggle = (event) => {
     this.setState({
-      repositories,
-      documentSelected
-    });
+        isModalOpen: !this.state.isModalOpen
+    })
+
+    // process path
+    // const target = event.nativeEvent.target
+    // if (target.id !== undefined && target.id.trim().length > 0) {
+    //     this.getMetadata(event)
+    // }
+}
+
+  private handleModalClose = () => {
+    this.setState({
+        isModalOpen: false
+    })
+  }
+
+  private onChangeProduct = (productValue: string, event: React.FormEvent<HTMLSelectElement>) => {
+    let productLabel = ""
+    const target = event.nativeEvent.target
+    if (target !== null) {
+        // Necessary because target.selectedOptions produces a compiler error but is valid
+        // tslint:disable-next-line: no-string-literal
+        productLabel = target["selectedOptions"][0].label
+    }
+    this.setState({
+        product: { label: productLabel, value: productValue },
+        productVersion: { label: "", uuid: "" }
+    })
+    this.populateProductVersions(productValue)
+}
+
+private populateProductVersions(productValue) {
+    fetch("/content/products/" + productValue + "/versions.harray.1.json")
+        .then(response => response.json())
+        .then(json => {
+            this.setState({ allProductVersions: json.__children__ })
+        })
+}
+
+private onChangeVersion = (value: string, event: React.FormEvent<HTMLSelectElement>) => {
+    if (event.target !== null) {
+        // Necessary because target.selectedOptions produces a compiler error but is valid
+        // tslint:disable-next-line: no-string-literal
+        const selectedOption = event.target["selectedOptions"][0]
+        if (this.state.productVersion.uuid !== selectedOption.value) {
+            this.setState({
+                productVersion: { label: selectedOption.label, uuid: selectedOption.value }
+            })
+        }
+    }
+}
+
+private onChangeUsecase = (usecaseValue, event) => {
+    this.setState({ usecaseValue })
+}
+
+private handleURLInput = urlFragment => {
+    this.setState({ urlFragment })
+}
+
+private handleKeywordsInput = keywords => {
+    this.setState({ keywords })
+}
+
+private fetchProducts = () => {
+
+    const path = "/content/products.harray.1.json"
+    const products = new Array()
+
+    fetch(path)
+        .then((response) => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error(response.statusText)
+            }
+        })
+        .then(responseJSON => {
+            for (const product of responseJSON.__children__) {
+                products.push({ label: product.name, value: product.__name__ })
+            }
+            this.setState({
+                allProducts: products
+            })
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+    return products
+}
+
+  private dismissNotification = () => {
+    this.setState({ isMissingFields: false })
+  }
+  
+  private saveMetadata() {
 
   }
 }

@@ -257,13 +257,6 @@ exports[`Search tests should render default Search component 1`] = `
       <ForwardRef
         variant="icon-button-group"
       />
-      <ToolbarItem>
-        <Button
-          variant="secondary"
-        >
-          Edit metadata
-        </Button>
-      </ToolbarItem>
     </ToolbarContent>
   </Toolbar>
   <Divider />
@@ -362,6 +355,7 @@ exports[`Search tests should render default Search component 1`] = `
               }
             }
             keyWord=""
+            onGetdocumentsSelected={[Function]}
             productsSelected={Array []}
             repositoriesSelected={Array []}
             userAuthenticated={true}
@@ -386,11 +380,234 @@ exports[`Search tests should render default Search component 1`] = `
               }
             }
             keyWord=""
+            onGetdocumentsSelected={[Function]}
             productsSelected={Array []}
             repositoriesSelected={Array []}
             userAuthenticated={true}
           />
         </ExpandableSection>
+        <Modal
+          actions={
+            Array [
+              <Button
+                form="edit_metadata"
+                onClick={[Function]}
+                variant="primary"
+              >
+                Save
+              </Button>,
+              <Button
+                onClick={[Function]}
+                variant="secondary"
+              >
+                Cancel
+              </Button>,
+            ]
+          }
+          appendTo={[Function]}
+          aria-describedby=""
+          aria-label="Edit metadata"
+          aria-labelledby=""
+          className=""
+          hasNoBodyWrapper={false}
+          header={
+            <React.Fragment>
+              <Title
+                headingLevel="h1"
+                size="2xl"
+              >
+                Edit Metadata
+              </Title>
+            </React.Fragment>
+          }
+          isOpen={false}
+          onClose={[Function]}
+          ouiaSafe={true}
+          showClose={true}
+          title="Edit metadata"
+          titleIconVariant={null}
+          titleLabel=""
+          variant="default"
+          width="60%"
+        >
+          <Form
+            id="edit_metadata"
+            isHorizontal={true}
+          >
+            <FormGroup
+              fieldId="product-name"
+              isRequired={true}
+              label="Product Name"
+            >
+              <InputGroup>
+                <FormSelect
+                  aria-label="FormSelect Product"
+                  className=""
+                  isDisabled={false}
+                  isRequired={false}
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  ouiaSafe={true}
+                  validated="default"
+                  value=""
+                >
+                  <FormSelectOption
+                    label="Select a Product"
+                  />
+                </FormSelect>
+                <FormSelect
+                  aria-label="FormSelect Version"
+                  className=""
+                  id="productVersion"
+                  isDisabled={false}
+                  isRequired={false}
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  ouiaSafe={true}
+                  validated="default"
+                  value=""
+                >
+                  <FormSelectOption
+                    label="Select a Version"
+                  />
+                </FormSelect>
+              </InputGroup>
+            </FormGroup>
+            <FormGroup
+              fieldId="document-usecase"
+              helperText="Explanations of document user cases included in documentation."
+              isRequired={true}
+              label="Document use case"
+            >
+              <FormSelect
+                aria-label="FormSelect Usecase"
+                className=""
+                isDisabled={false}
+                isRequired={false}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                ouiaSafe={true}
+                validated="default"
+                value=""
+              >
+                <FormSelectOption
+                  key="usecase_0"
+                  label="Select Use Case"
+                  value="Select Use Case"
+                />
+                <FormSelectOption
+                  key="usecase_1"
+                  label="Administer"
+                  value="Administer"
+                />
+                <FormSelectOption
+                  key="usecase_2"
+                  label="Deploy"
+                  value="Deploy"
+                />
+                <FormSelectOption
+                  key="usecase_3"
+                  label="Develop"
+                  value="Develop"
+                />
+                <FormSelectOption
+                  key="usecase_4"
+                  label="Install"
+                  value="Install"
+                />
+                <FormSelectOption
+                  key="usecase_5"
+                  label="Migrate"
+                  value="Migrate"
+                />
+                <FormSelectOption
+                  key="usecase_6"
+                  label="Monitor"
+                  value="Monitor"
+                />
+                <FormSelectOption
+                  key="usecase_7"
+                  label="Network"
+                  value="Network"
+                />
+                <FormSelectOption
+                  key="usecase_8"
+                  label="Plan"
+                  value="Plan"
+                />
+                <FormSelectOption
+                  key="usecase_9"
+                  label="Provision"
+                  value="Provision"
+                />
+                <FormSelectOption
+                  key="usecase_10"
+                  label="Release"
+                  value="Release"
+                />
+                <FormSelectOption
+                  key="usecase_11"
+                  label="Troubleshoot"
+                  value="Troubleshoot"
+                />
+                <FormSelectOption
+                  key="usecase_12"
+                  label="Optimize"
+                  value="Optimize"
+                />
+              </FormSelect>
+            </FormGroup>
+            <FormGroup
+              fieldId="url-fragment"
+              label="Vanity URL fragment"
+            >
+              <InputGroup>
+                <InputGroupText
+                  aria-label="/"
+                  id="slash"
+                >
+                  <span>
+                    /
+                  </span>
+                </InputGroupText>
+                <TextInput
+                  id="url-fragment"
+                  isRequired={false}
+                  onChange={[Function]}
+                  placeholder="Enter URL"
+                  type="text"
+                  value=""
+                />
+              </InputGroup>
+            </FormGroup>
+            <FormGroup
+              fieldId="search-keywords"
+              isRequired={false}
+              label="Search keywords"
+            >
+              <InputGroup>
+                <TextInput
+                  id="search-keywords"
+                  isRequired={false}
+                  onChange={[Function]}
+                  placeholder="cat, dog, bird..."
+                  type="text"
+                  value=""
+                />
+              </InputGroup>
+            </FormGroup>
+            <div>
+              <input
+                name="productVersion@TypeHint"
+                type="hidden"
+                value="Reference"
+              />
+            </div>
+          </Form>
+        </Modal>
       </DrawerContentBody>
     </DrawerContent>
   </Drawer>

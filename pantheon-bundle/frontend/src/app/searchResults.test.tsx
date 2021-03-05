@@ -11,13 +11,15 @@ import { HashRouter as Router, Link } from "react-router-dom"
 import { Pagination } from "@app/Pagination"
 import { Table } from "@patternfly/react-table"
 
+const anymatch = require("anymatch")
 const props = {
     contentType: "assemblies",
     keyWord: "test",
     filters: { ctype: ["PROCEDURE"], status: ["draft"] },
     productsSelected: [],
     repositoriesSelected: ["test"],
-    userAuthenticated: true
+    userAuthenticated: true,
+    onGetdocumentsSelected: (documentsSelected) => anymatch
 }
 
 const propsEmptyState = {
@@ -26,7 +28,8 @@ const propsEmptyState = {
     filters: { ctype: [], status: [] },
     productsSelected: [],
     repositoriesSelected: [],
-    userAuthenticated: true
+    userAuthenticated: true,
+    onGetdocumentsSelected: (documentsSelected) => anymatch
 }
 
 describe("SearchResults tests", () => {

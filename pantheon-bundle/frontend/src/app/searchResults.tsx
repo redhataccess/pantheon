@@ -32,6 +32,7 @@ export interface IProps {
   productsSelected: string[]
   repositoriesSelected: string[]
   userAuthenticated: boolean
+  onGetdocumentsSelected: (documentsSelected) => any
 }
 export interface ISearchState {
 
@@ -352,7 +353,20 @@ class SearchResults extends Component<IProps, ISearchState> {
     this.setState({
       rows
     });
-    console.log("[onSelect] bulkSelected rows =>", rows)
+    // console.log("[onSelect] bulkSelected rows =>", rows)
+    // update props.documentSelected
+    let selectedRows;
+    selectedRows = this.state.rows.map(oneRow => {
+      if (oneRow.selected === true) {
+        return oneRow;
+      }
+    })
+
+    //TODO: remove undefined values from selectedRows
+    console.log("[onSelect] bulkSelected selectedRows =>", selectedRows)
+    if (selectedRows.length > 0) {
+      this.props.onGetdocumentsSelected(selectedRows);
+    }
   }
 
   private toggleSelect(checked) {

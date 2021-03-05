@@ -38,3 +38,7 @@ export class PantheonContentTypes {
     public static MODULE = "module"
     public static ASSEMBLY = "assembly"
 }
+
+export class Metadata {
+    public static USE_CASES = ["Select Use Case", "Administer", "Deploy", "Develop", "Install", "Migrate", "Monitor", "Network", "Plan", "Provision", "Release", "Troubleshoot", "Optimize"]
+}

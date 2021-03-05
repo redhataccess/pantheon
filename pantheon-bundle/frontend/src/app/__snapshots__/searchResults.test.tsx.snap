@@ -84,7 +84,7 @@ exports[`SearchResults tests should render default Search component 1`] = `
     nextPageRecordCount={1}
     pageNumber={1}
     perPageLimit={5}
-    showDropdownOptions={false}
+    showDropdownOptions={true}
   />
   <Divider />
 </Fragment>
