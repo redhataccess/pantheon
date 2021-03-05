@@ -114,16 +114,17 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
     }
 
     private boolean shouldSkip(HttpServletRequest request) {
-        // Use basic auth if AUTH_SERVER_URL is not configured. basic auth is the fall back if SSO is not enabled
-        if (System.getenv("AUTH_SERVER_URL") == null) {
+        // Check request header to allow basic auth.
+        // Check if AUTH_SERVER_URL is configured, fall back to basic auth otherwise.
+        if ((request.getHeader("Authorization") != null && request.getHeader("Authorization").startsWith("Basic "))
+                || System.getenv("AUTH_SERVER_URL") == null) {
             return true;
         }
         if (skipPattern == null) {
             return false;
         }
-//        log.info("[" + KeycloakFilter.class.getSimpleName() + "] skipPattern provided.");
+
         String requestPath = request.getRequestURI().substring(request.getContextPath().length());
-//        log.info("[" + KeycloakFilter.class.getSimpleName() + "] Attempt to match skipPattern from requestPath: " + skipPattern.matcher(requestPath).matches());
         return skipPattern.matcher(requestPath).matches();
     }
 }
