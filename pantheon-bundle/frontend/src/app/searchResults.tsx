@@ -361,8 +361,8 @@ class SearchResults extends Component<IProps, ISearchState> {
         return oneRow;
       }
     })
-
-    //TODO: remove undefined values from selectedRows
+    // filter undefined values
+    selectedRows = selectedRows.filter(r => r !== undefined)
     console.log("[onSelect] bulkSelected selectedRows =>", selectedRows)
     if (selectedRows.length > 0) {
       this.props.onGetdocumentsSelected(selectedRows);

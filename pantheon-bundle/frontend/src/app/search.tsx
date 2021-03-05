@@ -145,8 +145,11 @@ class Search extends Component<IAppState, ISearchState> {
 
     // list repos inside the drawer
     this.getRepositories()
+    // product and id used for Filter
     // this.getProducts()
 
+    // fetch products and label for metadata Modal
+    this.fetchProducts()
     // TODO: enable resize
     // toolbar
     // window.addEventListener("resize", this.closeExpandableContent);
@@ -313,24 +316,6 @@ class Search extends Component<IAppState, ISearchState> {
       </React.Fragment>
     );
 
-    // const dropdownItems = [
-    //   <DropdownItem key="link">Link</DropdownItem>,
-    //   <DropdownItem key="action" component="button">
-    //     Action
-    //       </DropdownItem>,
-    //   <DropdownItem key="disabled link" isDisabled={true}>
-    //     Disabled Link
-    //       </DropdownItem>,
-    //   <DropdownItem key="disabled action" isDisabled={true} component="button">
-    //     Disabled Action
-    //       </DropdownItem>,
-    //   <DropdownSeparator key="separator" />,
-    //   <DropdownItem key="separated link">Separated Link</DropdownItem>,
-    //   <DropdownItem key="separated action" component="button">
-    //     Separated Action
-    //       </DropdownItem>
-    // ];
-
     const toolbarItems = (
       <React.Fragment>
         <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
@@ -339,22 +324,15 @@ class Search extends Component<IAppState, ISearchState> {
         <ToolbarGroup variant="icon-button-group">
         </ToolbarGroup>
         {this.props.userAuthenticated && (this.props.isAuthor || this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="secondary" onClick={this.handleModalToggle} id="edit_metadata">Edit metadata</Button>
+          <Button variant="primary" onClick={this.handleModalToggle} id="edit_metadata">Edit metadata</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="secondary" isAriaDisabled={true}>Publish</Button>
+          <Button variant="primary" isAriaDisabled={true}>Publish</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="secondary" isAriaDisabled={true}>Unpublish</Button>
+          <Button variant="primary" isAriaDisabled={true}>Unpublish</Button>
         </ToolbarItem>}
-        {/* <ToolbarItem>
-          <Dropdown
-            toggle={<KebabToggle onToggle={this.onKebabToggle} />}
-            isOpen={kebabIsOpen}
-            isPlain={true}
-            dropdownItems={dropdownItems}
-          />
-        </ToolbarItem> */}
+        
       </React.Fragment>
     );
 
@@ -394,6 +372,8 @@ class Search extends Component<IAppState, ISearchState> {
                             <br />
                         </div>
                     )}
+                    <div id="edit_metadata_helper_text"><p>Editing {} items. Changes made apply to all selected docs.</p></div>
+                    <br />
                     <Form isHorizontal={true} id="edit_metadata">
                         <FormGroup
                             label="Product Name"
@@ -430,13 +410,14 @@ class Search extends Component<IAppState, ISearchState> {
                         <FormGroup
                             label="Vanity URL fragment"
                             fieldId="url-fragment"
+                            helperText="Edit individually to set or change vanity URL."
                         >
-                            <InputGroup>
+                            {/* <InputGroup>
                                 <InputGroupText id="slash" aria-label="/">
                                     <span>/</span>
                                 </InputGroupText>
-                                <TextInput isRequired={false} id="url-fragment" type="text" placeholder="Enter URL" value={this.state.urlFragment} onChange={this.handleURLInput} />
-                            </InputGroup>
+                                <TextInput isRequired={false} id="url-fragment" type="text" placeholder="Edit individually to set or change vanity URL." value="" isDisabled={true}/>
+                            </InputGroup> */}
                         </FormGroup>
                         <FormGroup
                             label="Search keywords"
@@ -721,6 +702,7 @@ class Search extends Component<IAppState, ISearchState> {
     });
   };
 
+  // methods for bulk operation
   private getdocumentsSelected = (documentsSelected) => {
     this.setState({ documentsSelected })
   }
@@ -791,6 +773,7 @@ private handleKeywordsInput = keywords => {
     this.setState({ keywords })
 }
 
+// used for metadata Modal
 private fetchProducts = () => {
 
     const path = "/content/products.harray.1.json"
