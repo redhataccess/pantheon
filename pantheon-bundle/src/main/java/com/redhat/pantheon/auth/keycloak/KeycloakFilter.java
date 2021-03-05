@@ -116,7 +116,7 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
     private boolean shouldSkip(HttpServletRequest request) {
         // Check request header to allow basic auth.
         // Check if AUTH_SERVER_URL is configured, fall back to basic auth otherwise.
-        if ((request.getHeader("Authorization") != null && request.getHeader("Authorization").contains("Basic "))
+        if ((request.getHeader("Authorization") != null && request.getHeader("Authorization").startsWith("Basic "))
                 || System.getenv("AUTH_SERVER_URL") == null) {
             return true;
         }
