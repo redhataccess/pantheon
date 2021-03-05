@@ -427,12 +427,19 @@ exports[`Search tests should render default Search component 1`] = `
           title="Edit metadata"
           titleIconVariant={null}
           titleLabel=""
-          variant="default"
-          width="60%"
+          variant="medium"
         >
+          <div
+            id="edit_metadata_helper_text"
+          >
+            <p>
+              Editing multiple items. Changes made apply to all selected docs.
+            </p>
+          </div>
+          <br />
           <Form
             id="edit_metadata"
-            isHorizontal={true}
+            isWidthLimited={true}
           >
             <FormGroup
               fieldId="product-name"
@@ -562,27 +569,9 @@ exports[`Search tests should render default Search component 1`] = `
             </FormGroup>
             <FormGroup
               fieldId="url-fragment"
+              helperText="Edit individually to set or change vanity URL."
               label="Vanity URL fragment"
-            >
-              <InputGroup>
-                <InputGroupText
-                  aria-label="/"
-                  id="slash"
-                >
-                  <span>
-                    /
-                  </span>
-                </InputGroupText>
-                <TextInput
-                  id="url-fragment"
-                  isRequired={false}
-                  onChange={[Function]}
-                  placeholder="Enter URL"
-                  type="text"
-                  value=""
-                />
-              </InputGroup>
-            </FormGroup>
+            />
             <FormGroup
               fieldId="search-keywords"
               isRequired={false}
