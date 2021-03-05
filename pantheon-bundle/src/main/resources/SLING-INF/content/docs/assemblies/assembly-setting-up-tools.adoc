@@ -6,6 +6,7 @@ ifdef::context[:parent-context: {context}]
 
 :context: setting-up-tools
 
+[role="_abstract"]
 This chapter describes the setup process for tools and configuration files needed to work with {ProductShortName}.
 
 include::../modules/con_pantheon_yaml_file.adoc[]

@@ -8,7 +8,6 @@ include::../attributes.adoc[]
 :context: assembly-configuring-repository
 
 [role="_abstract"]
-
 Before you can add {ContentTerm} to {ProductName}, you must configure your documentation repository as a content source for {ProductShortName} and then create a product and product version in {ProductShortName} to associate with your {ContentTerm}.
 
 * xref:configuring-a-repository-as-a-content-source-for-pantheon_assembly-help[Configuring your documentation repository as a content source for {ProductShortName}.]
