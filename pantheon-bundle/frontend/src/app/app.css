@@ -122,3 +122,9 @@ body {
 color: var(--pf-global--success-color--100)
 
 }
+
+/* add style for list of repos on search filter by repo */
+.repo-list-container{
+    height: 500px;
+    overflow: scroll;
+}
