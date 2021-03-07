@@ -14,7 +14,7 @@ import yaml
 from requests import Response
 from datetime import datetime
 
-DEFAULT_SERVER = 'http://localhost:8080'
+DEFAULT_SERVER = 'http://localhost:8181'
 DEFAULT_USER = 'author'
 DEFAULT_PASSWORD = base64.b64decode(b'YXV0aG9y').decode()
 CONFIG_FILE = 'pantheon2.yml'
@@ -75,7 +75,7 @@ def _print_response(filetype, path, response_code, reason):
     """
     Prints an http response in the appropriate terminal color
     """
-    if 200 <= response_code < 300:
+    if 200 <= response_code < 305:
         _info(filetype + ': ' + str(path), False)
         _info(str(response_code) + ' ' + reason, True)
     elif response_code >= 500:
@@ -475,7 +475,6 @@ else:
 _info('Using server: ' + server)
 
 if len(config.keys()) > 0 and 'repository' in config:
-    # for repo_list in config['repositories']:
     repository = resolveOption(args.repository, '', config['repository'])
     # Enforce a repository being set in the pantheon.yml
     if repository == "" and mode == 'repository':
