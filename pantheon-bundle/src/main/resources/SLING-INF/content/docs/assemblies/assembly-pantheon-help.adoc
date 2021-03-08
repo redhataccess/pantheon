@@ -12,7 +12,7 @@ ifdef::context[:parent-context: {context}]
 [id="assembly-help_{context}"]
 = Pantheon Help Page
 
-:context: help-toc
+:context: assembly-help
 
 [role="_abstract"]
 Welcome to {ProductShortName} help.
@@ -60,6 +60,8 @@ include::modules/proc_creating-a-product.adoc[leveloffset=+2]
 include::modules/proc_versioning_a_product.adoc[leveloffset=+2]
 
 include::modules/proc_importing-content.adoc[leveloffset=+1]
+
+[[searching-for-content_{context}]]
 
 == Searching for {ContentTerm}
 

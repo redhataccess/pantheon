@@ -30,4 +30,4 @@ where, __PRODUCT_URL__ is the URL for the product, and __UUID__ is the auto-gene
 
 [role="_additional-resources"]
 .Additional Resources
-* link:<LinkToHowToSearchModules>[How To Search Modules]
+* xref:searching-for-content_assembly-help[Searching for content]
