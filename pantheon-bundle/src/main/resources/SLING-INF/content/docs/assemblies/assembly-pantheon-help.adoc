@@ -21,8 +21,7 @@ This document describes the main concepts, requirements, and actions in {Product
 
 include::modules/ref_prerequisites.adoc[leveloffset=+1]
 
-== Overview of {Prod
-uctShortName}
+== Overview of {ProductShortName}
 
 This overview describes {ProductShortName} and the key terms associated with it.
  
