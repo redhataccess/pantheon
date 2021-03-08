@@ -13,21 +13,13 @@ import org.apache.sling.servlets.post.PostResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -267,8 +259,7 @@ public final class ServletUtils {
                     .variants().get()
                     .canonicalVariant().get();
             String url = new CustomerPortalUrlUuidProvider().generateUrlString(dv);
-            response.setStatus(HttpStatus.SC_OK,"{\"url\":\""+url+"\"}");
-            response.setLocation(url);
+            response.setPath(url);
         }catch (Exception e){
             throw new RuntimeException("Cannot generate customer portal url: " + request.getResource().getPath());
         }
