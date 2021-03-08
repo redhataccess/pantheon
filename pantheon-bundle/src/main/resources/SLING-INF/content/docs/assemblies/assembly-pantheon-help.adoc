@@ -21,7 +21,8 @@ This document describes the main concepts, requirements, and actions in {Product
 
 include::modules/ref_prerequisites.adoc[leveloffset=+1]
 
-== Overview of {ProductShortName}
+== Overview of {Prod
+uctShortName}
 
 This overview describes {ProductShortName} and the key terms associated with it.
  
@@ -65,7 +66,7 @@ include::modules/proc_importing-content.adoc[leveloffset=+1]
 
 == Searching for {ContentTerm}
 
-The *{ContentTerm}* tab allows you to search for content in {ProductShortName} by simple keyword or free text search, and by applying a number of different filters to search and to sort the results.
+The search tab allows you to search for content in {ProductShortName} by simple keyword or free text search, and by applying a number of different filters to search and to sort the results.
 
 include::modules/proc-search-keyword.adoc[leveloffset=+2]
 
