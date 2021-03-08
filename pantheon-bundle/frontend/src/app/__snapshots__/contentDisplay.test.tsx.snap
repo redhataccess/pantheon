@@ -165,7 +165,6 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
       variant="DEFAULT"
       variantUUID=""
       versionModulePath=""
-      onEditMetadata={[Function]}
     />
   </Card>
 </Fragment>
@@ -346,7 +345,6 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
       variant="DEFAULT"
       variantUUID=""
       versionModulePath=""
-      onEditMetadata={[Function]}
     />
   </Card>
 </Fragment>

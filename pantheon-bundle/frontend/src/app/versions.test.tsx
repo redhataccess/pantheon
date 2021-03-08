@@ -26,7 +26,6 @@ const props = {
     variant: "test",
     variantUUID: "abcd-1234",
     versionModulePath: "/modules/test_module/en_US/variants/test/draft",
-    onEditMetadata: () => anymatch,
 }
 
 describe("Versions tests", () => {
@@ -200,7 +199,6 @@ describe("Versions tests", () => {
             variant: "DEFAULT",
             variantUUID: "abcd-1234",
             versionModulePath: "versionPath",
-            onEditMetadata: () => anymatch,
         }
         state.updateDate("-", "-", 1, "1234")
         expect(state.modulePath).toEqual("somePath")
