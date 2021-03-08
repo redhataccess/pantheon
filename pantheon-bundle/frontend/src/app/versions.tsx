@@ -32,6 +32,7 @@ export interface IProps {
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
+    onEditMetadata: () => any
 }
 
 // Define properties in Metadata
@@ -530,8 +531,6 @@ class Versions extends Component<IProps, IState> {
                 }).then(response => {
                     if (response.status === 201 || response.status === 200) {
                         console.log(buttonText + " works: " + response.status)
-                        console.log(" response is : " + response.url)
-                        this.props.onGetUrl(response.url)
                         this.setState({
                             canChangePublishState: true,
                             publishAlertVisible: false,
@@ -543,7 +542,8 @@ class Versions extends Component<IProps, IState> {
                         this.setAlertTitle()
                     }
                     this.fetchVersions()
-                });
+                    return response.json()
+                }).then(response => this.props.onGetUrl(response.path));
             }
         }
     }
@@ -617,6 +617,8 @@ class Versions extends Component<IProps, IState> {
                     }
                     this.props.onGetProduct(this.state.product.label)
                     this.props.onGetVersion(this.state.productVersion.label)
+                    this.props.onEditMetadata()
+
                 } else if (response.status === 500) {
                     // console.log(" Needs login " + response.status)
                     this.setState({ login: true })

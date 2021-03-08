@@ -268,7 +268,7 @@ public final class ServletUtils {
                     .canonicalVariant().get();
             String url = new CustomerPortalUrlUuidProvider().generateUrlString(dv);
             response.setStatus(HttpStatus.SC_OK,"{\"url\":\""+url+"\"}");
-            response.setLocation(url);
+            response.setPath(url);
         }catch (Exception e){
             throw new RuntimeException("Cannot generate customer portal url: " + request.getResource().getPath());
         }

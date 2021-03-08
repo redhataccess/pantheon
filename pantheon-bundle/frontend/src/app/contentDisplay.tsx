@@ -217,6 +217,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         onGetUrl={this.onGetUrl}
                         onGetProduct={this.getProduct}
                         onGetVersion={this.getVersion}
+                        onEditMetadata={this.onEditMetadata}
                     />
                 </Card>
 
@@ -326,7 +327,16 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
 
     private onGetUrl = (url) => {
         console.log("Received url="+url)
-        if(this.state.productUrlFragment!==""){
+        if(url!==""){
+            this.setState({ portalUrl: url})
+        }
+    }
+
+    private onEditMetadata = () => {
+        const isGuideOrTopic = this.isAssembly ? '/guide/' : '/topic/'
+        const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase()+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + isGuideOrTopic + this.state.variantUUID
+        console.log("Constructed url="+url)
+        if(url!==""){
             this.setState({ portalUrl: url})
         }
     }
