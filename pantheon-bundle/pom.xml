@@ -55,7 +55,7 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
-                <version>4.1.0</version>
+                <version>4.2.1</version>
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>com.redhat.pantheon</Bundle-SymbolicName>
@@ -86,7 +86,13 @@
                             !org.apache.commons.net.ftp,
                             !org.apache.commons.lang,
                             !org.apache.commons.lang.builder,
-                            !jdk.nashorn.internal.ir.annotations,*
+                            !jdk.nashorn.internal.ir.annotations,
+                            !org.keycloak,!org.keycloak.adapters,
+                            !org.keycloak.adapters.servlet,!org.keycloak.common,!org.keycloak.common.enums,
+                            !org.keycloak.common.util,!org.keycloak.crypto,!org.keycloak.representations,
+                            !org.jboss.logmanager,
+                            !com.google.appengine.api,!com.google.apphosting.api,
+                            !com.sun.security.auth.module,!com.sun.security.jgss,!sun.management,!sun.nio.ch,*
                         </Import-Package>
                         <!-- Embed the necessary dependencies -->
                         <!-- The `inline=true` is important, don't remove it unless you want cryptic problems such as servlets that suddenly stop resolving without explanation -->
@@ -116,6 +122,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
@@ -312,6 +319,17 @@
             <artifactId>jsoup</artifactId>
             <version>1.12.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-servlet-filter-adapter</artifactId>
+            <version>11.0.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.http.whiteboard -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.http.whiteboard</artifactId>
+            <version>1.1.0</version>
+        </dependency>
         <!-- Provided dependencies -->
         <!-- https://mvnrepository.com/artifact/org.apache.sling/org.apache.sling.resource.filter -->
         <dependency>
@@ -331,7 +349,6 @@
             <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.component.annotations</artifactId>
@@ -436,14 +453,20 @@
         </dependency>
         <dependency>
             <artifactId>jackson-core</artifactId>
-            <version>2.9.9</version>
+            <version>2.10.4</version>
             <groupId>com.fasterxml.jackson.core</groupId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.9</version>
+            <version>2.10.4</version>
             <groupId>com.fasterxml.jackson.core</groupId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.10.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -456,6 +479,13 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.pipes</artifactId>
             <version>4.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- org.apache.sling.auth.core -->
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.auth.core</artifactId>
+            <version>1.5.0</version>
             <scope>provided</scope>
         </dependency>
         <!-- Test dependencies -->
@@ -474,12 +504,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
@@ -551,6 +575,5 @@
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 </project>

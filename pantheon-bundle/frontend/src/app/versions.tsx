@@ -28,10 +28,10 @@ export interface IProps {
     variantUUID: string
     attributesFilePath: string
     assemblies?: any
-    onGetUrl: (url) => any
     updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
+    onPublishEvent: () => void
 }
 
 // Define properties in Metadata
@@ -511,15 +511,18 @@ class Versions extends Component<IProps, IState> {
                     // console.log("Published file path:", this.props.modulePath)
                     this.draft[0].version = "";
                     this.setState({ unpublishAlertForModuleVisible: false })
+                    this.props.onPublishEvent()
                 } else {
                     formData.append(":operation", "pant:unpublish");
                     // console.log("Unpublished file path:", this.props.modulePath);
                     this.release[0].version = "";
                     this.setState({ unpublishAlertForModuleVisible: true })
+                    this.props.onPublishEvent()
                 }
                 const hdrs = {
                     "Accept": "application/json",
-                    "cache-control": "no-cache"
+                    "cache-control": "no-cache",
+                    "Access-Control-Allow-Origin": "*",
                 }
                 formData.append("locale", "en_US")
                 formData.append("variant", this.props.variant)
@@ -535,6 +538,7 @@ class Versions extends Component<IProps, IState> {
                             publishAlertVisible: false,
                             showMetadataAlertIcon: false
                         })
+                        this.props.onPublishEvent()
                     } else {
                         console.log(buttonText + " failed " + response.status)
                         this.setState({ publishAlertVisible: true })

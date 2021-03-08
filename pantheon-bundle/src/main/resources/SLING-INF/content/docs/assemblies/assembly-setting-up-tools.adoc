@@ -1,8 +1,16 @@
+ifdef::context[:parent-context: {context}]
+
 [id'setting-up-tools_{context}']
 
 = Setting up tools
 
+:context: setting-up-tools
+
+[role="_abstract"]
 This chapter describes the setup process for tools and configuration files needed to work with {ProductShortName}.
 
 include::../modules/con_pantheon_yaml_file.adoc[]
 include::../modules/proc_installing_uploader_tool.adoc[]
+
+ifdef::parent-context[:context: {parent-context}]
+ifndef::parent-context[:!context:]
