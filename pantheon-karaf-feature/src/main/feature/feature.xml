@@ -70,7 +70,7 @@
                 end\n\
                 \n\
                 set ACL for pantheon-administrators\n\
-                allow jcr:all on / restriction(rep:glob,*)\n\
+                allow jcr:all on / \n\
                 end\n\
                 \n\
                 set ACL for pantheon-authors\n\
