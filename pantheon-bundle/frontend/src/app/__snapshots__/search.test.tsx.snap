@@ -390,7 +390,7 @@ exports[`Search tests should render default Search component 1`] = `
           actions={
             Array [
               <Button
-                form="edit_metadata"
+                form="bulk_edit_metadata"
                 onClick={[Function]}
                 variant="primary"
               >
@@ -433,12 +433,14 @@ exports[`Search tests should render default Search component 1`] = `
             id="edit_metadata_helper_text"
           >
             <p>
-              Editing multiple items. Changes made apply to all selected docs.
+              Editing 
+              0
+               items. Changes made apply to all selected docs.
             </p>
           </div>
           <br />
           <Form
-            id="edit_metadata"
+            id="bulk_edit_metadata"
             isWidthLimited={true}
           >
             <FormGroup
@@ -452,6 +454,7 @@ exports[`Search tests should render default Search component 1`] = `
                   className=""
                   isDisabled={false}
                   isRequired={false}
+                  name="product"
                   onBlur={[Function]}
                   onChange={[Function]}
                   onFocus={[Function]}
@@ -469,6 +472,7 @@ exports[`Search tests should render default Search component 1`] = `
                   id="productVersion"
                   isDisabled={false}
                   isRequired={false}
+                  name="productVersion"
                   onBlur={[Function]}
                   onChange={[Function]}
                   onFocus={[Function]}
@@ -493,6 +497,7 @@ exports[`Search tests should render default Search component 1`] = `
                 className=""
                 isDisabled={false}
                 isRequired={false}
+                name="useCase"
                 onBlur={[Function]}
                 onChange={[Function]}
                 onFocus={[Function]}
@@ -581,6 +586,7 @@ exports[`Search tests should render default Search component 1`] = `
                 <TextInput
                   id="search-keywords"
                   isRequired={false}
+                  name="keywords"
                   onChange={[Function]}
                   placeholder="cat, dog, bird..."
                   type="text"

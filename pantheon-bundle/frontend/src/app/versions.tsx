@@ -689,7 +689,9 @@ class Versions extends Component<IProps, IState> {
             })
             .then(responseJSON => {
                 for (const product of responseJSON.__children__) {
-                    products.push({ label: product.name, value: product.__name__ })
+                    if (product.name !== undefined) {
+                        products.push({ label: product.name, value: product.__name__ })
+                    }
                 }
                 this.setState({
                     allProducts: products

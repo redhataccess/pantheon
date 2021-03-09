@@ -75,7 +75,7 @@ export interface ISearchState {
 
   productsSelected: string[]
   repositoriesSelected: string[]
-  documentsSelected: string[]
+  documentsSelected: Array<{ cells: [{}, { title: { props: { href: string } } }, {}, {}, {}], selected: boolean }>
   isModalOpen: boolean
   alertTitle: string
   allProducts: any
@@ -83,7 +83,7 @@ export interface ISearchState {
   isMissingFields: boolean
   product: { label: string, value: string }
   productVersion: { label: string, uuid: string }
-  urlFragment: string
+  showBulkEditConfirmation: boolean
   keywords: string
   usecaseOptions: any
   usecaseValue: string
@@ -131,7 +131,7 @@ class Search extends Component<IAppState, ISearchState> {
       isMissingFields: false,
       product: { label: "", value: "" },
       productVersion: { label: "", uuid: "" },
-      urlFragment: "",
+      showBulkEditConfirmation: false,
       keywords: "",
       usecaseOptions: [
         { value: "", label: "Select Use Case", disabled: false }
@@ -189,7 +189,7 @@ class Search extends Component<IAppState, ISearchState> {
               <SimpleList aria-label="Repository List">
                 {this.state.filteredRepositories.map((data) => (
                   <SimpleListItem key={data.id} className='repo-list filters-drawer__repo-list'>
-                    <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onChange={this.onSelectRepositories} isChecked={data.checked}/>
+                    <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onChange={this.onSelectRepositories} isChecked={data.checked} />
                   </SimpleListItem>
                 ))}
               </SimpleList>
@@ -333,109 +333,115 @@ class Search extends Component<IAppState, ISearchState> {
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
           <Button variant="primary" isAriaDisabled={true}>Unpublish</Button>
         </ToolbarItem>}
-        
+
       </React.Fragment>
     );
 
     const header = (
       <React.Fragment>
-          <Title headingLevel="h1" size={BaseSizes["2xl"]}>
-              Edit Metadata
+        <Title headingLevel="h1" size={BaseSizes["2xl"]}>
+          Edit Metadata
         </Title>
       </React.Fragment>
-  )
+    )
     const metadataModal = (
       <React.Fragment>
-         <Modal
-                    variant={ModalVariant.medium}
-                    title="Edit metadata"
-                    isOpen={this.state.isModalOpen}
-                    header={header}
-                    aria-label="Edit metadata"
-                    onClose={this.handleModalClose}
-                    actions={[
-                        <Button form="edit_metadata" key="confirm" variant="primary" onClick={this.saveMetadata}>
-                            Save
+        <Modal
+          variant={ModalVariant.medium}
+          title="Edit metadata"
+          isOpen={this.state.isModalOpen}
+          header={header}
+          aria-label="Edit metadata"
+          onClose={this.handleModalClose}
+          actions={[
+            <Button form="bulk_edit_metadata" key="confirm" variant="primary" onClick={this.saveMetadata}>
+              Save
           </Button>,
-                        <Button key="cancel" variant="secondary" onClick={this.handleModalToggle}>
-                            Cancel
+            <Button key="cancel" variant="secondary" onClick={this.handleModalToggle}>
+              Cancel
             </Button>
-                    ]}
-                >
+          ]}
+        >
 
-                    {this.state.isMissingFields && (
-                        <div className="notification-container">
-                            <Alert
-                                variant="warning"
-                                title="Fields indicated by * are mandatory"
-                                actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
-                            />
-                            <br />
-                        </div>
-                    )}
-                    <div id="edit_metadata_helper_text"><p>Editing multiple items. Changes made apply to all selected docs.</p></div>
-                    <br />
-                    <Form isWidthLimited={true} id="edit_metadata">
-                        <FormGroup
-                            label="Product Name"
-                            isRequired={true}
-                            fieldId="product-name"
-                        >
-                            <InputGroup>
-                                <FormSelect value={this.state.product.value} onChange={this.onChangeProduct} aria-label="FormSelect Product">
-                                    <FormSelectOption label="Select a Product" />
-                                    {this.state.allProducts.map((option, key) => (
-                                        <FormSelectOption key={key} value={option.value} label={option.label} />
-                                    ))}
-                                </FormSelect>
-                                <FormSelect value={this.state.productVersion.uuid} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion">
-                                    <FormSelectOption label="Select a Version" />
-                                    {this.state.allProductVersions.map((option, key) => (
-                                        <FormSelectOption key={key} value={option["jcr:uuid"]} label={option.name} />
-                                    ))}
-                                </FormSelect>
-                            </InputGroup>
-                        </FormGroup>
-                        <FormGroup
-                            label="Document use case"
-                            isRequired={true}
-                            fieldId="document-usecase"
-                            helperText="Explanations of document user cases included in documentation."
-                        >
-                            <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
-                                {Metadata.USE_CASES.map((option, key) => (
-                                    <FormSelectOption key={"usecase_" + key} value={option} label={option} />
-                                ))}
-                            </FormSelect>
-                        </FormGroup>
-                        <FormGroup
-                            label="Vanity URL fragment"
-                            fieldId="url-fragment"
-                            helperText="Edit individually to set or change vanity URL."
-                        >
-                            {/* <InputGroup>
-                                <InputGroupText id="slash" aria-label="/">
-                                    <span>/</span>
-                                </InputGroupText>
-                                <TextInput isRequired={false} id="url-fragment" type="text" placeholder="Edit individually to set or change vanity URL." value="" isDisabled={true}/>
-                            </InputGroup> */}
-                        </FormGroup>
-                        <FormGroup
-                            label="Search keywords"
-                            isRequired={false}
-                            fieldId="search-keywords"
-                        >
-                            <InputGroup>
-                                <TextInput isRequired={false} id="search-keywords" type="text" placeholder="cat, dog, bird..." value={this.state.keywords} onChange={this.handleKeywordsInput} />
-                            </InputGroup>
-                        </FormGroup>
-                        <div>
-                            <input name="productVersion@TypeHint" type="hidden" value="Reference" />
-                        </div>
-                    </Form>
-                </Modal>
+          {this.state.isMissingFields && (
+            <div className="notification-container">
+              <Alert
+                variant="warning"
+                title="Fields indicated by * are mandatory"
+                actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
+              />
+              <br />
+            </div>
+          )}
+          <div id="edit_metadata_helper_text"><p>Editing {this.state.documentsSelected.length} items. Changes made apply to all selected docs.</p></div>
+          <br />
+          <Form isWidthLimited={true} id="bulk_edit_metadata">
+            <FormGroup
+              label="Product Name"
+              isRequired={true}
+              fieldId="product-name"
+            >
+              <InputGroup>
+                <FormSelect value={this.state.product.value} onChange={this.onChangeProduct} aria-label="FormSelect Product" name="product">
+                  <FormSelectOption label="Select a Product" />
+                  {this.state.allProducts.map((option, key) => (
+                    <FormSelectOption key={key} value={option.value} label={option.label} />
+                  ))}
+                </FormSelect>
+                <FormSelect value={this.state.productVersion.uuid} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion" name="productVersion">
+                  <FormSelectOption label="Select a Version" />
+                  {this.state.allProductVersions.map((option, key) => (
+                    <FormSelectOption key={key} value={option["jcr:uuid"]} label={option.name} />
+                  ))}
+                </FormSelect>
+              </InputGroup>
+            </FormGroup>
+            <FormGroup
+              label="Document use case"
+              isRequired={true}
+              fieldId="document-usecase"
+              helperText="Explanations of document user cases included in documentation."
+            >
+              <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase" name="useCase">
+                {Metadata.USE_CASES.map((option, key) => (
+                  <FormSelectOption key={"usecase_" + key} value={option} label={option} />
+                ))}
+              </FormSelect>
+            </FormGroup>
+            <FormGroup
+              label="Vanity URL fragment"
+              fieldId="url-fragment"
+              helperText="Edit individually to set or change vanity URL."
+            >
+            </FormGroup>
+            <FormGroup
+              label="Search keywords"
+              isRequired={false}
+              fieldId="search-keywords"
+            >
+              <InputGroup>
+                <TextInput isRequired={false} id="search-keywords" type="text" placeholder="cat, dog, bird..." value={this.state.keywords} onChange={this.handleKeywordsInput} name="keywords" />
+              </InputGroup>
+            </FormGroup>
+            <div>
+              <input name="productVersion@TypeHint" type="hidden" value="Reference" />
+            </div>
+          </Form>
+        </Modal>
       </React.Fragment>
     );
+
+    const bulkEditConfirmation = (<React.Fragment>
+      <div className="notification-container pant-notification-container-md">
+        <Alert
+          variant="success"
+          title="Bulk Edit"
+          actionClose={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
+        >
+          Update Successful!
+                    </Alert>
+      </div>
+    </React.Fragment>);
 
     return (
       <React.Fragment>
@@ -453,6 +459,7 @@ class Search extends Component<IAppState, ISearchState> {
             <DrawerContentBody className="search-results">
               {drawerContent}
               {metadataModal}
+              {this.state.showBulkEditConfirmation && bulkEditConfirmation}
             </DrawerContentBody>
           </DrawerContent>
         </Drawer>
@@ -564,8 +571,8 @@ class Search extends Component<IAppState, ISearchState> {
       filterType = type === 'Content Type' ? 'ctype' : type
       this.setState(prevState => {
         const newState = Object.assign(prevState);
-        return{
-          filters:{
+        return {
+          filters: {
             ...prevState.filters,
             [filterType.toLowerCase()]: newState.filters[filterType.toLowerCase()].filter(s => s !== id),
 
@@ -652,7 +659,7 @@ class Search extends Component<IAppState, ISearchState> {
 
     repositories = this.state.repositories.map(item => {
       if (item.id === event.target.id) {
-        item.checked = checked; 
+        item.checked = checked;
       }
       return item;
     });
@@ -710,19 +717,14 @@ class Search extends Component<IAppState, ISearchState> {
 
   private handleModalToggle = (event) => {
     this.setState({
-        isModalOpen: !this.state.isModalOpen
+      isModalOpen: !this.state.isModalOpen
     })
 
-    // process path
-    // const target = event.nativeEvent.target
-    // if (target.id !== undefined && target.id.trim().length > 0) {
-    //     this.getMetadata(event)
-    // }
-}
+  }
 
   private handleModalClose = () => {
     this.setState({
-        isModalOpen: false
+      isModalOpen: false
     })
   }
 
@@ -730,85 +732,156 @@ class Search extends Component<IAppState, ISearchState> {
     let productLabel = ""
     const target = event.nativeEvent.target
     if (target !== null) {
-        // Necessary because target.selectedOptions produces a compiler error but is valid
-        // tslint:disable-next-line: no-string-literal
-        productLabel = target["selectedOptions"][0].label
+      // Necessary because target.selectedOptions produces a compiler error but is valid
+      // tslint:disable-next-line: no-string-literal
+      productLabel = target["selectedOptions"][0].label
     }
     this.setState({
-        product: { label: productLabel, value: productValue },
-        productVersion: { label: "", uuid: "" }
+      product: { label: productLabel, value: productValue },
+      productVersion: { label: "", uuid: "" }
     })
     this.populateProductVersions(productValue)
-}
+  }
 
-private populateProductVersions(productValue) {
-    fetch("/content/products/" + productValue + "/versions.harray.1.json")
+  private populateProductVersions = (productValue) => {
+    if (productValue.length > 0) {
+      fetch("/content/products/" + productValue + "/versions.harray.1.json")
         .then(response => response.json())
         .then(json => {
-            this.setState({ allProductVersions: json.__children__ })
+          this.setState({ allProductVersions: json.__children__ })
         })
-}
-
-private onChangeVersion = (value: string, event: React.FormEvent<HTMLSelectElement>) => {
-    if (event.target !== null) {
-        // Necessary because target.selectedOptions produces a compiler error but is valid
-        // tslint:disable-next-line: no-string-literal
-        const selectedOption = event.target["selectedOptions"][0]
-        if (this.state.productVersion.uuid !== selectedOption.value) {
-            this.setState({
-                productVersion: { label: selectedOption.label, uuid: selectedOption.value }
-            })
-        }
     }
-}
+  }
 
-private onChangeUsecase = (usecaseValue, event) => {
-    this.setState({ usecaseValue })
-}
+  private onChangeVersion = (value: string, event: React.FormEvent<HTMLSelectElement>) => {
+    if (event.target !== null) {
+      // Necessary because target.selectedOptions produces a compiler error but is valid
+      // tslint:disable-next-line: no-string-literal
+      const selectedOption = event.target["selectedOptions"][0]
+      if (this.state.productVersion.uuid !== selectedOption.value) {
+        this.setState({
+          productVersion: { label: selectedOption.label, uuid: selectedOption.value }
+        })
+      }
+    }
+  }
 
-private handleURLInput = urlFragment => {
-    this.setState({ urlFragment })
-}
+  private onChangeUsecase = (usecaseValue, event) => {
+    if (event != undefined) {
+      this.setState({ usecaseValue: event.target.value })
+    }
+  }
 
-private handleKeywordsInput = keywords => {
-    this.setState({ keywords })
-}
+  private handleKeywordsInput = (keywords, event) => {
+    if (event != undefined) {
+      this.setState({ keywords: event.target.value })
+    }
+  }
 
-// used for metadata Modal
-private fetchProducts = () => {
+  // used for metadata Modal
+  private fetchProducts = () => {
 
     const path = "/content/products.harray.1.json"
     const products = new Array()
 
     fetch(path)
-        .then((response) => {
-            if (response.ok) {
-                return response.json()
-            } else {
-                throw new Error(response.statusText)
-            }
+      .then((response) => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error(response.statusText)
+        }
+      })
+      .then(responseJSON => {
+        for (const product of responseJSON.__children__) {
+          if (product.name !== undefined) {
+            products.push({ label: product.name, value: product.__name__ })
+          }
+        }
+        this.setState({
+          allProducts: products
         })
-        .then(responseJSON => {
-            for (const product of responseJSON.__children__) {
-                products.push({ label: product.name, value: product.__name__ })
-            }
-            this.setState({
-                allProducts: products
-            })
-        })
-        .catch((error) => {
-            console.log(error)
-        })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
     return products
-}
+  }
 
   private dismissNotification = () => {
     this.setState({ isMissingFields: false })
   }
-  
-  private saveMetadata() {
 
+  private saveMetadata = (event) => {
+    const hdrs = {
+      "Accept": "application/json",
+      "cache-control": "no-cache"
+    }
+
+    const metadataForm = event.target.form
+    console.log("[saveMetadata] event.target.form => ", event.target.form)
+    console.log("[saveMetadata] keywords value => ", event.target.form.keywords.value)
+    console.log("[saveMetadata] useCase value => ", event.target.form.useCase.value)
+    console.log("[saveMetadata] productVersion value => ", event.target.form.productVersion.value)
+    const formData = new FormData(metadataForm)
+
+    formData.append("documentUsecase", this.state.usecaseValue)
+    formData.append("searchKeywords", this.state.keywords === undefined ? "" : this.state.keywords)
+
+    console.log("[saveMetadata] documentsSeleted => ", this.state.documentsSelected)
+    this.state.documentsSelected.map((r) => {
+      console.log("[saveMetadata] documentsSelected href =>", r.cells[1].title.props.href)
+      if (r.cells[1].title.props.href) {
+        let href = r.cells[1].title.props.href
+
+        let variant = href.split("?variant=")[1]
+        let hrefPart = href.slice(0, href.indexOf("?"))
+        let docPath = hrefPart.match("/repositories/.*") ? hrefPart.match("/repositories/.*") : ""
+
+        // check draft version
+        const backend = docPath + "/en_US/variants/" + variant + "/draft/metadata"
+        if (this.draftExist(backend)) {
+          console.log("[saveMetadata] draftExist for backend=>", backend)
+          // Process form for each docPath
+          fetch(backend, {
+            body: formData,
+            headers: hdrs,
+            method: "post"
+          }).then(response => {
+            if (response.status === 201 || response.status === 200) {
+              console.log("successful edit ", response.status)
+              this.handleModalClose()
+              // reset documentsSelected
+              this.setState({
+                showBulkEditConfirmation: true,
+                documentsSelected: []
+              })
+
+            } else if (response.status === 500) {
+              console.log(" User authenticated? " + response.status)
+            }
+          })
+        }
+      }
+    })
   }
+
+  private draftExist = (path) => {
+    let exists = false
+    const backend = path + ".json"
+    return fetch(backend)
+      .then(response => {
+        if (response.status === 200) {
+          exists = true
+          console.log("[drafExist] for path=>", path)
+        }
+      }).then(() => exists)
+  }
+
+  private hideSuccessAlert = () => {
+    this.setState({ showBulkEditConfirmation: false })
+  }
+
 }
 
 
