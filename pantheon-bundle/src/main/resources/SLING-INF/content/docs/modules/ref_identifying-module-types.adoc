@@ -1,47 +1,54 @@
 [id='identifying-module-types_{context}']
-= Identifying {ProductShortName} module types
-:pantheon-module-type: REFERENCE
+= Adding the module type to modules in {ProductShortName}
+:_module-type: REFERENCE
 
 [role="_abstract"]
-In {ProductShortName}, each module must be identified by type: concept, procedure, or reference.
+In {ProductShortName}, you can search and filter modules  by type: concept, procedure, or reference. You declare a module's type by adding an identifier to each module.
 
-For information about module types, see https://redhat-documentation.github.io/modular-docs/#writing-mod-docs[Types of modules in Red Hat documentation].
+Use one or both of the following identifiers to declare the module's type:
 
-Identify the module type by using either one or both of the following:
+* The `:_module-type:` attribute after the module's title
+* The corresponding prefix in the module's file name
 
-* The correct attribute after the module's title
-* The correct prefix in the module's name
-
-Using the correct attribute (preferred method)::
-
+Attribute (preferred method)::
 Enter the correct attribute in the line immediately following the module's title, choosing among the following:
-
-* `:pantheon-module-type: CONCEPT`
-* `:pantheon-module-type: PROCEDURE`
-* `:pantheon-module-type: REFERENCE`
-
++
+* `:_module-type: CONCEPT`
+* `:_module-type: PROCEDURE`
+* `:_module-type: REFERENCE`
++
 ====
 .Example
 
-`= Identifying {ProductShortName} module types :pantheon-module-type: REFERENCE`
+`= Identifying {ProductShortName} module types
+:_module-type: REFERENCE`
 
 ====
 
-Using the correct prefix::
-
-Begin the file names of modules with the correct prefix, choosing among the following:
-
-* `con_`
-* `proc_`
-* `ref_`
-
+Prefix::
+Begin the file names of modules with one of the following prefixes, followed by either an underscore or a hyphen:
++
+* `con`
+* `proc`
+* `ref`
++
 ====
-.Example
+.Examples: A reference module
 
-`ref_identifying-module-types.adoc`
+Underscore after the prefix:
+
+`**ref_**identifying-module-types.adoc`
+
+Hyphen after the prefix:
+
+`**ref-**identifying-module-types.adoc`
 
 ====
 
 How {ProductShortName} {ProductNumber}  checks identifiers::
 
-{ProductShortName} {ProductNumber} first checks for the module's attribute. Any value other than those specified is ignored. If there is no valid attribute, {ProductShortName} {ProductNumber} then checks the module's prefix. If both a valid attribute and prefix exist, {ProductShortName} {ProductNumber}  uses the attribute.
+{ProductShortName} {ProductNumber} first checks for  :`_module-type:` attribute. Any value other than those specified above is ignored. If there is no valid attribute, {ProductShortName} {ProductNumber} then checks if the module's file name includes a valid prefix. If both a valid attribute and prefix exist, {ProductShortName} {ProductNumber}  uses the attribute.
+
+.Additional resources
+
+* link:https://redhat-documentation.github.io/modular-docs/#writing-mod-docs[Types of modules in Red Hat documentation] in the _Modular Documentation Reference Guide_
