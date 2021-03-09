@@ -10,7 +10,7 @@ ADD . /go/app/
 WORKDIR /go/app 
 RUN go get gopkg.in/src-d/go-git.v4
 RUN go build -o main .
-RUN wget https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/pantheon.py
+RUN wget https://raw.githubusercontent.com/redhataccess/pantheon-uploader/master/pantheon_uploader/pantheon.py
 
 #Use RHEL 8 Universal Base Image with python-3.6 support as runtime.
 FROM registry.access.redhat.com/ubi8/python-36
