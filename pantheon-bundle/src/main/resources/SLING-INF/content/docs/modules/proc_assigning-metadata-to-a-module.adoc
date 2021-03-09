@@ -1,8 +1,18 @@
 [id="assigning-metadata-to-a-module_{context}"]
 = Assigning metadata to {ContentTerm}
+:_module-type: PROCEDURE
 
 [role="_abstract"]
-Assign metadata to {ContentTerm} to enable search engine optimization (SEO). SEO improves the findability of content. Assigned metadata also defines the URL at which the {ContentTerm} is published.
+Metadata in modules and assemblies does the following:
+
+* Enables external search engine optimization (SEO) for published content, making it easier for customers to find content.
+* Enables (SEO) within {ProductShortName}'s  search engine, making it easier for {ProductShortName} users and administrators to find content.
+* Defines the URL at which the {ContentTerm} is published.
+
+[NOTE]
+====
+Module type is also metadata. You define the module's type directly within the module. See  xref:identifying-module-types_assembly-help[Identifying {ProductShortName} module types].
+====
 
 .Prerequisites
 
@@ -19,7 +29,7 @@ If you do not see the {ContentTerm} listed, search for it using the search box.
 
 . In the list of {ContentTerm} versions, click the vertical ellipsis next to the version of the {ContentTerm} you want to assign metadata.
 
-. Click *Edit metadata* to assign the following metadata: 
+. Click *Edit metadata* to assign the following metadata:
 +
 * *Product Name* - Select the product and product version for the {ContentTerm}.
 * *Document use case* - Select the verb that best describes the use case for the {ContentTerm}.
