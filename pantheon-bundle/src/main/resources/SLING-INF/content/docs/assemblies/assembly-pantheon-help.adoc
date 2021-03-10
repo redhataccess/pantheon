@@ -19,29 +19,29 @@ Welcome to {ProductShortName} help.
 
 This document describes the main concepts, requirements, and actions in {ProductShortName}.
 
-include::modules/ref_prerequisites.adoc[leveloffset=+1]
+include::../modules/ref_prerequisites.adoc[leveloffset=+1]
 
 == Overview of {ProductShortName}
 
 This overview describes {ProductShortName} and the key terms associated with it.
  
-include::modules/con_pantheon.adoc[leveloffset=+2]
+include::../modules/con_pantheon.adoc[leveloffset=+2]
 
-include::modules/ref_pantheon-user-interface.adoc[leveloffset=+2]
+include::../modules/ref_pantheon-user-interface.adoc[leveloffset=+2]
 
-include::modules/con_about_products.adoc[leveloffset=+2]
+include::../modules/con_about_products.adoc[leveloffset=+2]
 
-include::modules/con_user-roles.adoc[leveloffset=+2]
+include::../modules/con_user-roles.adoc[leveloffset=+2]
 
 == Overview of modules
 
 This overview describes what a module is in the context of {ProductShortName} and how {ProductShortName} tells modules apart.
 
-include::modules/con_definition-of-a-module.adoc[leveloffset=+2]
+include::../modules/con_definition-of-a-module.adoc[leveloffset=+2]
 
-include::modules/con_definition-of-metadata.adoc[leveloffset=+2]
+include::../modules/con_definition-of-metadata.adoc[leveloffset=+2]
 
-include::modules/ref_identifying-module-types.adoc[leveloffset=+2]
+include::../modules/ref_identifying-module-types.adoc[leveloffset=+2]
 
 == Configuring your repository
 
@@ -51,15 +51,15 @@ Before you can add {ContentTerm} to {ProductName}, you must configure your docum
 * xref:creating-a-product_assembly-help[Creating a product] in {ProductShortName} for your {ContentTerm}
 * xref:versioning-a-product_assembly-help[Creating a product version] in {ProductShortName} for your {ContentTerm}
 
-include::modules/con_pantheon_yaml_file.adoc[leveloffset=+2]
+include::../modules/con_pantheon_yaml_file.adoc[leveloffset=+2]
 
-include::modules/proc_config_repo.adoc[leveloffset=+2]
+include::../modules/proc_config_repo.adoc[leveloffset=+2]
 
-include::modules/proc_creating-a-product.adoc[leveloffset=+2]
+include::../modules/proc_creating-a-product.adoc[leveloffset=+2]
 
-include::modules/proc_versioning_a_product.adoc[leveloffset=+2]
+include::../modules/proc_versioning_a_product.adoc[leveloffset=+2]
 
-include::modules/proc_importing-content.adoc[leveloffset=+1]
+include::../modules/proc_importing-content.adoc[leveloffset=+1]
 
 [[searching-for-content_{context}]]
 
@@ -67,23 +67,23 @@ include::modules/proc_importing-content.adoc[leveloffset=+1]
 
 The search tab allows you to search for content in {ProductShortName} by simple keyword or free text search, and by applying a number of different filters to search and to sort the results.
 
-include::modules/proc-search-keyword.adoc[leveloffset=+2]
+include::../modules/proc-search-keyword.adoc[leveloffset=+2]
 
-include::modules/proc-search-filters.adoc[leveloffset=+2]
+include::../modules/proc-search-filters.adoc[leveloffset=+2]
 
-include::modules/proc-search-view-results.adoc[leveloffset=+2]
+include::../modules/proc-search-view-results.adoc[leveloffset=+2]
 
 == Preparing content for publication
 
 After you have imported your content into {ProductShortName}, prepare it for publication by assigning metadata. After you assign metadata, you can preview your {ContentTerm} to see how it looks in the {PublishingPortal}. 
 
-include::modules/proc_assigning-metadata-to-a-module.adoc[leveloffset=+2]
+include::../modules/proc_assigning-metadata-to-a-module.adoc[leveloffset=+2]
 
-include::modules/proc_previewing-modules-in-pantheon.adoc[leveloffset=+2]
+include::../modules/proc_previewing-modules-in-pantheon.adoc[leveloffset=+2]
 
-include::modules/proc_publishing-content.adoc[leveloffset=+1]
+include::../modules/proc_publishing-content.adoc[leveloffset=+1]
 
-include::modules/proc_unpublishing-content.adoc[leveloffset=+1]
+include::../modules/proc_unpublishing-content.adoc[leveloffset=+1]
 
 ////
 [role="_additional-resources"]

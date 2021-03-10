@@ -14,7 +14,7 @@ You need to publish a module or assembly when you want it to appear on the {Publ
 
 .Procedure
 
-. Navigate to link:{LinkToSearchPage}[Search page].
+. Navigate to the link:{LinkToSearchPage}[Search page].
 
 . Click the name of the module or assembly you want to publish.
 +
