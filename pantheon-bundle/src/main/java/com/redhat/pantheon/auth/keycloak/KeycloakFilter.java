@@ -32,8 +32,7 @@ import org.slf4j.LoggerFactory;
         service = Filter.class,
         property = {
                 KeycloakOIDCFilter.CONFIG_FILE_PARAM + "=" + "keycloak.json",
-                "keycloak.config.skipPattern=(/pantheon/internal/modules.json|/pantheon/builddate.json|/pantheon/fonts/*|/content/repositories.harray.1.json|/starter.html|/bin/browser.html|/content/starter/css/bundle.css|/content/starter/img/sling-logo.svg|/content/starter/img/asf-logo.svg|/content/starter/img/sling-logo.svg|/content/starter/img/gradient.jpg|/content/starter/fonts/OpenSans-Light-webfont.woff|/content/starter/fonts/OpenSans-Regular-webfont.woff|/system/sling.js|/system/*|/pantheon/*.js)",
-                HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/pantheon/*",
+                "keycloak.config.skipPattern=(/|/pantheon|/pantheon/|/content/pantheon|/pantheon/internal/modules.json|/pantheon/builddate.json|/pantheon/fonts/.*|/content/repositories.harray.1.json|/starter.html|/bin/browser.html|/content/starter/css/bundle.css|/content/starter/img/sling-logo.svg|/content/starter/img/asf-logo.svg|/content/starter/img/sling-logo.svg|/content/starter/img/gradient.jpg|/content/starter/fonts/OpenSans-Light-webfont.woff|/content/starter/fonts/OpenSans-Regular-webfont.woff|/system/sling.js|/system/*|/pantheon/.*.js|/pantheon/app.bundle.js|/pantheon/app.bundle.js.map|/pantheon/app.css)",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/content/pantheon",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/content/products",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_SELECT
@@ -99,6 +98,7 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         //Whitelisted URL, direct release
         if (shouldSkip(request)) {
+            log.info("[" + KeycloakFilter.class.getSimpleName()+"] doFilter skip request=>", request.getRequestURI());
             chain.doFilter(req, res);
             return;
         }
@@ -125,6 +125,7 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
         }
 
         String requestPath = request.getRequestURI().substring(request.getContextPath().length());
+        log.info("[" + KeycloakFilter.class.getSimpleName()+"] shouldSkip requestPath=>", requestPath);
         return skipPattern.matcher(requestPath).matches();
     }
 }
