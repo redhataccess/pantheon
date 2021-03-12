@@ -20,7 +20,7 @@ import java.io.IOException;
 @Component(
         service = Filter.class,
         property = {
-                Constants.SERVICE_DESCRIPTION + "=Filter to handle logout request",
+                Constants.SERVICE_DESCRIPTION + "=Filter for keycloak logout request",
                 Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         })
 @SlingServletFilter(scope = {SlingServletFilterScope.REQUEST},
@@ -38,6 +38,7 @@ public class LogoutFilter implements Filter {
         final HttpServletResponse response = (HttpServletResponse) res;
 
         if (System.getenv("AUTH_SERVER_URL") != null) {
+            // Invalidate keycloak session
             request.getSession().invalidate();
         }
             chain.doFilter(request, response);
