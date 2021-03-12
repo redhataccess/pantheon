@@ -91,6 +91,7 @@ class Routes extends Component<IAppState> {
 
     return (
       // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
+      // FIXME: here we are routing to the form based authentication regardless if SSO is enabled or not
       <Switch>
         {routes.map(({ path, exact, component, requiresLogin }, idx) => (
           <Route path={path} exact={exact} render={(routeProps) => (this.props.userAuthenticated || !requiresLogin) ? component(routeProps) : <Login />} key={idx} />
