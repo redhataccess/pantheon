@@ -38,10 +38,10 @@ exports[`User tests should render User component 1`] = `
   />
   <a
     className="p2-header__login"
-    href=""
+    href="/system/sling/logout"
     onClick={[Function]}
   >
-    [demo]
+    Log Out [demo]
   </a>
 </Fragment>
 `;

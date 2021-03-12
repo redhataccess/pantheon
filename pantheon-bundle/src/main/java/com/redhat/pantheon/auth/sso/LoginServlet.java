@@ -1,6 +1,5 @@
-package com.redhat.pantheon.auth.login;
+package com.redhat.pantheon.auth.sso;
 
-import com.redhat.pantheon.auth.keycloak.KeycloakAuthenticationHandler;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
@@ -10,10 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.Servlet;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import static com.redhat.pantheon.servlet.ServletUtils.writeAsJson;
 
 /**
  * A login servlet that handles Keycloak or basic auth request
@@ -29,6 +24,7 @@ import static com.redhat.pantheon.servlet.ServletUtils.writeAsJson;
         immediate = true)
 public class LoginServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(LoginServlet.class.getName());
+    private static final String BASIC_AUTH_LOGIN_URI = "/pantheon/#/login";
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
@@ -48,10 +44,9 @@ public class LoginServlet extends SlingAllMethodsServlet {
                 log.error("Error occurred while creating the Authentication request.");
             }
         } else {
-            log.info("SSO is not enabled.");
-            uri = "/pantheon/#/login";
+            log.debug("SSO is not enabled.");
             response.setStatus(302);
-            response.setHeader("Location", uri);
+            response.setHeader("Location", BASIC_AUTH_LOGIN_URI);
         }
     }
 }

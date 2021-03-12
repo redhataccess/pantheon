@@ -60,9 +60,7 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
             KeycloakSecurityContext ctx =
                 (KeycloakSecurityContext)
                         request.getSession().getAttribute("org.keycloak.KeycloakSecurityContext");
-//            log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] KeycloakSecurityContext:" + ctx);
             if (ctx != null) {
-//                log.info("[" + KeycloakAuthenticationHandler.class.getSimpleName() + "] username: " + ctx.getToken().getPreferredUsername());
 
                 ResourceResolver resolver = null;
                 try {
@@ -118,7 +116,7 @@ public class KeycloakAuthenticationHandler implements org.apache.sling.auth.core
         try {
             response.getWriter().print("Request");
         } catch (IOException e) {
-            log.info("[" +KeycloakAuthenticationHandler.class.getSimpleName() + "] Error occurred when requesting credentials.");
+            log.error("[" +KeycloakAuthenticationHandler.class.getSimpleName() + "] Error occurred when requesting credentials.");
         }
         return true;
     }
