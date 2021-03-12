@@ -1,8 +1,13 @@
 package com.redhat.pantheon.auth.sso;
 
+import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
+import org.apache.sling.servlets.annotations.SlingServletFilter;
+import org.apache.sling.servlets.annotations.SlingServletFilterScope;
+import org.apache.sling.servlets.annotations.SlingServletPaths;
+import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +23,17 @@ import java.io.IOException;
 @Component(
         service = Servlet.class,
         property = {
-                "sling.servlet.methods={GET, POST}",
-                "sling.servlet.paths=/auth/login"
-                },
-        immediate = true)
+                Constants.SERVICE_DESCRIPTION + "=Servlet that handles keycloak or basic auth request",
+                Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
+        })
+@SlingServlet(
+        methods = {"GET", "POST"},
+        paths = LoginServlet.PATH_PATTERN
+        )
 public class LoginServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(LoginServlet.class.getName());
     private static final String BASIC_AUTH_LOGIN_URI = "/pantheon/#/login";
+    static final String PATH_PATTERN = "/auth/login";
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
