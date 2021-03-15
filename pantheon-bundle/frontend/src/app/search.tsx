@@ -38,6 +38,7 @@ import {
   Title,
   BaseSizes,
   ModalVariant,
+  FormAlert,
 
 } from "@patternfly/react-core";
 
@@ -47,8 +48,10 @@ import { BuildInfo } from "./components/Chrome/Header/BuildInfo"
 import "@app/app.css";
 import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { IAppState } from "@app/app"
 import { Metadata } from "@app/Constants"
+
 
 export interface ISearchState {
   filterLabel: string
@@ -81,6 +84,9 @@ export interface ISearchState {
   allProducts: any
   allProductVersions: any
   isMissingFields: boolean
+  productValidated: any
+  productVersionValidated: any
+  useCaseValidated: any
   product: { label: string, value: string }
   productVersion: { label: string, uuid: string }
   showBulkEditConfirmation: boolean
@@ -129,6 +135,9 @@ class Search extends Component<IAppState, ISearchState> {
       allProducts: [],
       allProductVersions: [],
       isMissingFields: false,
+      productValidated: "error",
+      productVersionValidated: "error",
+      useCaseValidated: "error",
       product: { label: "", value: "" },
       productVersion: { label: "", uuid: "" },
       showBulkEditConfirmation: false,
@@ -362,33 +371,35 @@ class Search extends Component<IAppState, ISearchState> {
             </Button>
           ]}
         >
-
-          {this.state.isMissingFields && (
-            <div className="notification-container">
-              <Alert
-                variant="warning"
-                title="Fields indicated by * are mandatory"
-                actionClose={<AlertActionCloseButton onClose={this.dismissNotification} />}
-              />
-              <br />
-            </div>
-          )}
           <div id="edit_metadata_helper_text"><p>Editing {this.state.documentsSelected.length} items. Changes made apply to all selected docs.</p></div>
           <br />
           <Form isWidthLimited={true} id="bulk_edit_metadata">
+            {this.state.isMissingFields
+              && (
+                <FormAlert>
+                  <Alert
+                    variant="danger"
+                    title="You must fill out all required fields before you can proceed."
+                    aria-live="polite"
+                    isInline={true}
+                  />
+                  <br />
+                </FormAlert>
+              )}
             <FormGroup
               label="Product Name"
               isRequired={true}
               fieldId="product-name"
+              validated={this.state.productValidated}
             >
               <InputGroup>
-                <FormSelect value={this.state.product.value} onChange={this.onChangeProduct} aria-label="FormSelect Product" name="product">
+                <FormSelect value={this.state.product.value} onChange={this.onChangeProduct} aria-label="FormSelect Product" name="product" isRequired={true} validated={this.state.productValidated}>
                   <FormSelectOption label="Select a Product" />
                   {this.state.allProducts.map((option, key) => (
                     <FormSelectOption key={key} value={option.value} label={option.label} />
                   ))}
                 </FormSelect>
-                <FormSelect value={this.state.productVersion.uuid} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion" name="productVersion">
+                <FormSelect value={this.state.productVersion.uuid} onChange={this.onChangeVersion} aria-label="FormSelect Version" id="productVersion" name="productVersion" isRequired={true} validated={this.state.productVersionValidated}>
                   <FormSelectOption label="Select a Version" />
                   {this.state.allProductVersions.map((option, key) => (
                     <FormSelectOption key={key} value={option["jcr:uuid"]} label={option.name} />
@@ -401,8 +412,9 @@ class Search extends Component<IAppState, ISearchState> {
               isRequired={true}
               fieldId="document-usecase"
               helperText="Explanations of document user cases included in documentation."
+              validated={this.state.useCaseValidated}
             >
-              <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase" name="useCase">
+              <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase" name="useCase" isRequired={true} validated={this.state.useCaseValidated}>
                 {Metadata.USE_CASES.map((option, key) => (
                   <FormSelectOption key={"usecase_" + key} value={option} label={option} />
                 ))}
@@ -457,9 +469,9 @@ class Search extends Component<IAppState, ISearchState> {
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody className="search-results">
+              {this.state.showBulkEditConfirmation && (bulkEditConfirmation)}
               {drawerContent}
               {metadataModal}
-              {this.state.showBulkEditConfirmation && bulkEditConfirmation}
             </DrawerContentBody>
           </DrawerContent>
         </Drawer>
@@ -735,11 +747,19 @@ class Search extends Component<IAppState, ISearchState> {
       // Necessary because target.selectedOptions produces a compiler error but is valid
       // tslint:disable-next-line: no-string-literal
       productLabel = target["selectedOptions"][0].label
+    } else {
+      this.setState({ productValidated: "error" })
     }
     this.setState({
       product: { label: productLabel, value: productValue },
       productVersion: { label: "", uuid: "" }
     })
+
+    if (productValue.length > 0) {
+      this.setState({ productValidated: "success" })
+    } else {
+      this.setState({ productValidated: "error" })
+    }
     this.populateProductVersions(productValue)
   }
 
@@ -763,12 +783,25 @@ class Search extends Component<IAppState, ISearchState> {
           productVersion: { label: selectedOption.label, uuid: selectedOption.value }
         })
       }
+      if (selectedOption.value !== "") {
+        this.setState({ productVersionValidated: "success" })
+      } else {
+        this.setState({ productVersionValidated: "error" })
+      }
     }
   }
 
   private onChangeUsecase = (usecaseValue, event) => {
     if (event != undefined) {
       this.setState({ usecaseValue: event.target.value })
+      console.log("[onChangeUsecase] event.target.value=>", event.target.value)
+      if (event.target.value !== "" && event.target.value.trim() !== "Select Use Case") {
+        this.setState({ useCaseValidated: "success" })
+      } else {
+        this.setState({ useCaseValidated: "error" })
+      }
+    } else {
+      this.setState({ useCaseValidated: "error" })
     }
   }
 
@@ -813,57 +846,62 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   private saveMetadata = (event) => {
-    const hdrs = {
-      "Accept": "application/json",
-      "cache-control": "no-cache"
-    }
-
-    const metadataForm = event.target.form
-    console.log("[saveMetadata] event.target.form => ", event.target.form)
-    console.log("[saveMetadata] keywords value => ", event.target.form.keywords.value)
-    console.log("[saveMetadata] useCase value => ", event.target.form.useCase.value)
-    console.log("[saveMetadata] productVersion value => ", event.target.form.productVersion.value)
-    const formData = new FormData(metadataForm)
-
-    formData.append("documentUsecase", this.state.usecaseValue)
-    formData.append("searchKeywords", this.state.keywords === undefined ? "" : this.state.keywords)
-
-    console.log("[saveMetadata] documentsSeleted => ", this.state.documentsSelected)
-    this.state.documentsSelected.map((r) => {
-      console.log("[saveMetadata] documentsSelected href =>", r.cells[1].title.props.href)
-      if (r.cells[1].title.props.href) {
-        let href = r.cells[1].title.props.href
-
-        let variant = href.split("?variant=")[1]
-        let hrefPart = href.slice(0, href.indexOf("?"))
-        let docPath = hrefPart.match("/repositories/.*") ? hrefPart.match("/repositories/.*") : ""
-
-        // check draft version
-        const backend = docPath + "/en_US/variants/" + variant + "/draft/metadata"
-        if (this.draftExist(backend)) {
-          console.log("[saveMetadata] draftExist for backend=>", backend)
-          // Process form for each docPath
-          fetch(backend, {
-            body: formData,
-            headers: hdrs,
-            method: "post"
-          }).then(response => {
-            if (response.status === 201 || response.status === 200) {
-              console.log("successful edit ", response.status)
-              this.handleModalClose()
-              // reset documentsSelected
-              this.setState({
-                showBulkEditConfirmation: true,
-                documentsSelected: []
-              })
-
-            } else if (response.status === 500) {
-              console.log(" User authenticated? " + response.status)
-            }
-          })
-        }
+    if (this.state.productValidated === "error"
+      || this.state.productVersionValidated === "error"
+      || this.state.useCaseValidated === "error") {
+      this.setState({ isMissingFields: true })
+    } else {
+      const hdrs = {
+        "Accept": "application/json",
+        "cache-control": "no-cache"
       }
-    })
+
+      const metadataForm = event.target.form
+      console.log("[saveMetadata] event.target.form => ", event.target.form)
+      console.log("[saveMetadata] keywords value => ", event.target.form.keywords.value)
+      console.log("[saveMetadata] useCase value => ", event.target.form.useCase.value)
+      console.log("[saveMetadata] productVersion value => ", event.target.form.productVersion.value)
+      const formData = new FormData(metadataForm)
+
+      formData.append("documentUsecase", this.state.usecaseValue)
+      formData.append("searchKeywords", this.state.keywords === undefined ? "" : this.state.keywords)
+
+      console.log("[saveMetadata] documentsSeleted => ", this.state.documentsSelected)
+      this.state.documentsSelected.map((r) => {
+        console.log("[saveMetadata] documentsSelected href =>", r.cells[1].title.props.href)
+        if (r.cells[1].title.props.href) {
+          let href = r.cells[1].title.props.href
+
+          let variant = href.split("?variant=")[1]
+          let hrefPart = href.slice(0, href.indexOf("?"))
+          let docPath = hrefPart.match("/repositories/.*") ? hrefPart.match("/repositories/.*") : ""
+
+          // check draft version
+          const backend = docPath + "/en_US/variants/" + variant + "/draft/metadata"
+          if (this.draftExist(backend)) {
+            console.log("[saveMetadata] draftExist for backend=>", backend)
+            // Process form for each docPath
+            fetch(backend, {
+              body: formData,
+              headers: hdrs,
+              method: "post"
+            }).then(response => {
+              if (response.status === 201 || response.status === 200) {
+                console.log("successful edit ", response.status)
+                this.handleModalClose()
+                // reset documentsSelected
+                this.setState({
+                  showBulkEditConfirmation: true,
+                  documentsSelected: []
+                })
+              } else if (response.status === 500) {
+                console.log(" User authenticated? " + response.status)
+              }
+            })
+          }
+        }
+      })
+    }
   }
 
   private draftExist = (path) => {
@@ -879,7 +917,8 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   private hideSuccessAlert = () => {
-    this.setState({ showBulkEditConfirmation: false })
+    this.setState({ showBulkEditConfirmation: false, documentsSelected: [] })
+    //TODO: refresh documentsSelected
   }
 
 }

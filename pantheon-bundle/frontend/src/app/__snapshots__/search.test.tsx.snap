@@ -447,19 +447,20 @@ exports[`Search tests should render default Search component 1`] = `
               fieldId="product-name"
               isRequired={true}
               label="Product Name"
+              validated="error"
             >
               <InputGroup>
                 <FormSelect
                   aria-label="FormSelect Product"
                   className=""
                   isDisabled={false}
-                  isRequired={false}
+                  isRequired={true}
                   name="product"
                   onBlur={[Function]}
                   onChange={[Function]}
                   onFocus={[Function]}
                   ouiaSafe={true}
-                  validated="default"
+                  validated="error"
                   value=""
                 >
                   <FormSelectOption
@@ -471,13 +472,13 @@ exports[`Search tests should render default Search component 1`] = `
                   className=""
                   id="productVersion"
                   isDisabled={false}
-                  isRequired={false}
+                  isRequired={true}
                   name="productVersion"
                   onBlur={[Function]}
                   onChange={[Function]}
                   onFocus={[Function]}
                   ouiaSafe={true}
-                  validated="default"
+                  validated="error"
                   value=""
                 >
                   <FormSelectOption
@@ -491,18 +492,19 @@ exports[`Search tests should render default Search component 1`] = `
               helperText="Explanations of document user cases included in documentation."
               isRequired={true}
               label="Document use case"
+              validated="error"
             >
               <FormSelect
                 aria-label="FormSelect Usecase"
                 className=""
                 isDisabled={false}
-                isRequired={false}
+                isRequired={true}
                 name="useCase"
                 onBlur={[Function]}
                 onChange={[Function]}
                 onFocus={[Function]}
                 ouiaSafe={true}
-                validated="default"
+                validated="error"
                 value=""
               >
                 <FormSelectOption
