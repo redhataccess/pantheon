@@ -46,7 +46,7 @@ class User extends Component<IAppState, IState> {
                 <a className="p2-header__login"
                     href={this.props.userAuthenticated ? this.state.logoutUrl : this.state.loginUrl}
                     onClick={this.conditionalRedirect}>
-                    {this.props.userAuthenticated ? "Log Out [" + this.props.username + "]" : "Log In"}
+                    {this.props.userAuthenticated ? "[" + this.props.username + "]" : "Log In"}
                 </a>
             </React.Fragment>
         )

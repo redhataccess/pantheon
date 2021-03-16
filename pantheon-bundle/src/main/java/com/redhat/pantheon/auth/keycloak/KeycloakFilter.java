@@ -32,13 +32,17 @@ import org.slf4j.LoggerFactory;
         service = Filter.class,
         property = {
                 KeycloakOIDCFilter.CONFIG_FILE_PARAM + "=" + "keycloak.json",
+                "keycloak.config.skipPattern=(/pantheon/internal/modules.json|/pantheon/builddate.json|/pantheon/fonts/*|/content/repositories.harray.1.json|/starter.html|/bin/browser.html|/content/starter/css/bundle.css|/content/starter/img/sling-logo.svg|/content/starter/img/asf-logo.svg|/content/starter/img/sling-logo.svg|/content/starter/img/gradient.jpg|/content/starter/fonts/OpenSans-Light-webfont.woff|/content/starter/fonts/OpenSans-Regular-webfont.woff|/system/sling.js|/system/*|/pantheon/*.js)",
+                HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/pantheon/*",
+                HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/content/pantheon",
+                HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/content/products",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_SELECT
                         + "="
                         + "(osgi.http.whiteboard.context.name=pantheon)",
         })
 
 @SlingServletFilter(scope = {SlingServletFilterScope.REQUEST},
-        pattern = "/auth/login",
+        pattern = "/content/.*",
         methods = {"GET", "POST"})
 
 public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
