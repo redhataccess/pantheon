@@ -13,12 +13,6 @@ describe("User tests", () => {
     expect(view).toMatchSnapshot()
   })
 
-  it("should render a Link component", () => {
-    const wrapper = mount(<Router><User {...mockStateUser} /></Router>)
-    const navLinks = wrapper.find(Link)
-    expect(navLinks.exists()).toBe(true)
-  })
-
   it("test render function", () => {
     const wrapper = renderer.create(<Router><User {...mockStateUser} /></Router>)
     const inst = wrapper.getInstance()

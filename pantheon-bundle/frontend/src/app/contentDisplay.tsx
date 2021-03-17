@@ -238,8 +238,8 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
             releaseVersion,
         })
     }
-    
-    
+
+
     private fetchModuleDetails = async (data) => {
         console.log(data)
         await this.getVariantParam()
@@ -326,7 +326,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
 
     private onGetUrl = (url) => {
         console.log("Received url="+url)
-        if(this.state.productUrlFragment!==""){
+        if(url!==""){
             this.setState({ portalUrl: url})
         }
     }

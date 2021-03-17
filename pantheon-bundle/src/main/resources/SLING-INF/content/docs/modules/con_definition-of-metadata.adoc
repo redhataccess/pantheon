@@ -6,7 +6,7 @@ Each module and assembly in {ProductShortName} has associated metadata for searc
 
 The types of module and assembly metadata in {ProductShortName} are as follows:
 
-Intrinsic:: The metadata that is inferred from the module or assemby automatically.
+Intrinsic:: The metadata that is inferred from the module or assembly automatically.
 +
 Examples of intrinsic metadata include the following:
 

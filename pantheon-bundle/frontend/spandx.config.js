@@ -54,6 +54,11 @@ module.exports = {
         local: PANTHEON_PROXY
       }
     },
+    "/api": {
+      host: {
+      local: PANTHEON_PROXY
+      }
+    },
     "/j_security_check": {
       host: {
         local: PANTHEON_PROXY

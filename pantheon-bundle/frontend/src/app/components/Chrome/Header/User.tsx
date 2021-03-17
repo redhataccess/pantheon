@@ -11,13 +11,17 @@ import { IAppState } from "@app/app"
 
 interface IState {
     helpDropdownOpen: boolean
+    loginUrl: string
+    logoutUrl: string
 }
 
 class User extends Component<IAppState, IState> {
     constructor(props) {
         super(props)
         this.state = {
-            helpDropdownOpen: false
+            helpDropdownOpen: false,
+            loginUrl: "/auth/login",
+            logoutUrl: "/system/sling/logout"
         }
     }
 
@@ -29,21 +33,21 @@ class User extends Component<IAppState, IState> {
         return (
             <React.Fragment>
                 <Dropdown onSelect={this.onHelpSelect}
-                        toggle={
-                            <DropdownToggle toggleIndicator={null} onToggle={this.onHelpToggle}>
-                                <HelpIcon />
-                            </DropdownToggle>
-                        }
-                        isPlain={true}
-                        isOpen={this.state.helpDropdownOpen}
-                        dropdownItems={dropdownItems}
-                        position={DropdownPosition.right}
+                    toggle={
+                        <DropdownToggle toggleIndicator={null} onToggle={this.onHelpToggle}>
+                            <HelpIcon />
+                        </DropdownToggle>
+                    }
+                    isPlain={true}
+                    isOpen={this.state.helpDropdownOpen}
+                    dropdownItems={dropdownItems}
+                    position={DropdownPosition.right}
                 />
-                <Link className="p2-header__login"
-                        to={this.props.userAuthenticated ? "" : "/login"}
-                        onClick={this.conditionalRedirect}>
+                <a className="p2-header__login"
+                    href={this.props.userAuthenticated ? this.state.logoutUrl : this.state.loginUrl}
+                    onClick={this.conditionalRedirect}>
                     {this.props.userAuthenticated ? "Log Out [" + this.props.username + "]" : "Log In"}
-                </Link>
+                </a>
             </React.Fragment>
         )
     }
@@ -60,7 +64,7 @@ class User extends Component<IAppState, IState> {
 
     private conditionalRedirect = () => {
         if (this.props.userAuthenticated) {
-            fetch("/system/sling/logout")
+            fetch(this.state.logoutUrl)
                 .then(response => window.location.href = "/pantheon")
         }
     }

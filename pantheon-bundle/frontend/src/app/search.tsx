@@ -144,7 +144,7 @@ class Search extends Component<IAppState, ISearchState> {
               className='filters-drawer__repo-search'
             />
             {this.state.filteredRepositories && this.state.filteredRepositories.length > 0 &&
-              <SimpleList aria-label="Repository List">
+              <SimpleList aria-label="Repository List" className='repo-list-container'>
                 {this.state.filteredRepositories.map((data) => (
                   <SimpleListItem key={data.id} className='repo-list filters-drawer__repo-list'>
                     <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onChange={this.onSelectRepositories} isChecked={data.checked}/>
@@ -435,10 +435,13 @@ class Search extends Component<IAppState, ISearchState> {
       filterType = type === 'Content Type' ? 'ctype' : type
       this.setState(prevState => {
         const newState = Object.assign(prevState);
-        newState.filters[filterType.toLowerCase()] = newState.filters[filterType.toLowerCase()].filter(s => s !== id);
-        return {
-          filters: newState.filters
-        };
+        return{
+          filters:{
+            ...prevState.filters,
+            [filterType.toLowerCase()]: newState.filters[filterType.toLowerCase()].filter(s => s !== id),
+
+          }
+        }
       });
     } else {
       this.setState({
@@ -454,9 +457,11 @@ class Search extends Component<IAppState, ISearchState> {
     let filterType
     filterType = type === 'Content Type' ? 'ctype' : type
     this.setState(prevState => {
-      prevState.filters[filterType.toLowerCase()] = [];
       return {
-        filters: prevState.filters
+        filters: {
+          ...prevState.filters,
+          [filterType.toLowerCase()]: []
+        }
       };
     });
   };
@@ -487,7 +492,9 @@ class Search extends Component<IAppState, ISearchState> {
         filteredRepositories: filtered
       })
     } else {
-      this.getRepositories()
+      this.setState({
+        filteredRepositories: this.state.repositories
+      })
     }
   };
 

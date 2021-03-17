@@ -519,7 +519,8 @@ class Versions extends Component<IProps, IState> {
                 }
                 const hdrs = {
                     "Accept": "application/json",
-                    "cache-control": "no-cache"
+                    "cache-control": "no-cache",
+                    "Access-Control-Allow-Origin": "*"
                 }
                 formData.append("locale", "en_US")
                 formData.append("variant", this.props.variant)
@@ -530,8 +531,6 @@ class Versions extends Component<IProps, IState> {
                 }).then(response => {
                     if (response.status === 201 || response.status === 200) {
                         console.log(buttonText + " works: " + response.status)
-                        console.log(" response is : " + response.url)
-                        this.props.onGetUrl(response.url)
                         this.setState({
                             canChangePublishState: true,
                             publishAlertVisible: false,
@@ -543,7 +542,8 @@ class Versions extends Component<IProps, IState> {
                         this.setAlertTitle()
                     }
                     this.fetchVersions()
-                });
+                    return response.json()
+                }).then(response => this.props.onGetUrl(response.path));
             }
         }
     }

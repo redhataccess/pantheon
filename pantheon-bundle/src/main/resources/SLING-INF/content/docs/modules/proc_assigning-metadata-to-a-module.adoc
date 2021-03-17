@@ -11,7 +11,7 @@ Assign metadata to {ContentTerm} to enable search engine optimization (SEO). SEO
 
 .Procedure
 
-. Navigate to link:{LinkToSearchPage}[Search page].
+. Navigate to the link:{LinkToSearchPage}[Search page].
 
 . Click the item to which you want to assign metadata.
 +
