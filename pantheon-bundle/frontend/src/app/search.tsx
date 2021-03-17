@@ -47,9 +47,10 @@ export interface ISearchState {
   modulesIsExpanded: boolean
   productFilterIsExpanded: boolean
   repoFilterIsExpanded: boolean
-  products: Array<{ name: string, id: string }>
+  products: Array<{ name: string, id: string, checked: boolean }>
   repositories: Array<{ name: string, id: string, checked: boolean }>
   filteredRepositories: Array<{ name: string, id: string, checked: boolean }>
+  filteredProducts: Array<{ name: string, id: string, checked: boolean }>
 
   inputValue: string,
   statusIsExpanded: boolean,
@@ -79,9 +80,11 @@ class Search extends Component<IAppState, ISearchState> {
       modulesIsExpanded: true,
       productFilterIsExpanded: true,
       repoFilterIsExpanded: true,
-      products: [{ name: "", id: "" }],
+      products: [{ name: "", id: "", checked: false}],
       repositories: [{ name: "", id: "", checked: false }],
       filteredRepositories: [{ name: "", id: "", checked: false }],
+      filteredProducts: [{ name: "", id: "", checked: false }],
+
       // states for toolbar
       inputValue: "",
       statusIsExpanded: false,
@@ -107,7 +110,7 @@ class Search extends Component<IAppState, ISearchState> {
 
     // list repos inside the drawer
     this.getRepositories()
-    // this.getProducts()
+    this.getProducts()
 
     // TODO: enable resize
     // toolbar
@@ -117,7 +120,7 @@ class Search extends Component<IAppState, ISearchState> {
   public componentWillMount() {
     // list repos inside the drawer
     this.getRepositories()
-    // this.getProducts()
+    this.getProducts()
   }
 
   public componentWillUnmount() {
@@ -155,22 +158,25 @@ class Search extends Component<IAppState, ISearchState> {
 
           </ExpandableSection>
           <br />
-          {/* <ExpandableSection toggleText="By product">
+          <ExpandableSection className="filters-drawer filters-drawer--by-product" toggleText="By product" isActive={true} isExpanded={productFilterIsExpanded} onToggle={this.onProductsToggle}>
             <SearchInput
               placeholder="Filter"
               value={this.state.productFilterValue}
               onChange={this.onChangeProductFilter}
               onClear={(evt) => this.onChangeProductFilter("", evt)}
+              className='filters-drawer__product-search'
             />
-            <SimpleList aria-label="Product List">
-              {this.state.products.map((data) => (
-                <SimpleListItem key={data.id}>
-                  <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} />
-                </SimpleListItem>
-              ))}
-            </SimpleList>
+            {this.state.filteredProducts && this.state.filteredProducts.length > 0 &&
+              <SimpleList aria-label="Product List" className='product-list-container'>
+                {this.state.filteredProducts.map((data) => (
+                  <SimpleListItem key={data.id} className='product-list filters-drawer__product-list'>
+                    <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onChange={this.onSelectProduct} isChecked={data.checked}/>
+                  </SimpleListItem>
+                ))}
+              </SimpleList>
+            }
 
-          </ExpandableSection> */}
+          </ExpandableSection>
         </DrawerHead>
       </DrawerPanelContent>
     );
@@ -374,7 +380,10 @@ class Search extends Component<IAppState, ISearchState> {
         for (const product of responseJSON.__children__) {
           products.push({ name: product.__name__, id: product["jcr:uuid"] })
         }
-        this.setState({ products })
+        this.setState({ 
+          products: products,
+          filteredProducts: products
+        })
       })
       .catch((error) => {
         console.log(error)
@@ -503,19 +512,17 @@ class Search extends Component<IAppState, ISearchState> {
       productFilterValue: value
     });
 
+    // check for input value
     if (value) {
-      let inputString = "";
-      const matchFound = [{ name: "", id: "" }];
-
-      this.state.products.map(data => {
-        inputString = "" + data.name
-        if (inputString.toLowerCase().includes(value.toLowerCase())) {
-          matchFound.push(data)
-        }
-      });
-      this.setState({ products: matchFound })
+      // filter and return products that include input value, and set state to the filtered list
+      let filtered = this.state.products.filter(data => data.name.toLowerCase().includes(value.toLowerCase()))
+      this.setState({
+        filteredProducts: filtered
+      })
     } else {
-      this.getProducts()
+      this.setState({
+        filteredProducts: this.state.products
+      })
     }
   };
 
@@ -548,6 +555,35 @@ class Search extends Component<IAppState, ISearchState> {
 
   }
 
+  private onSelectProduct = (checked, event) => {
+    let productsSelected = new Array()
+    let products
+
+    products = this.state.products.map(item => {
+      if (item.id === event.target.id) {
+        item.checked = checked; 
+      }
+      return item;
+    });
+
+    productsSelected = products.map(item => {
+      if (item.checked !== undefined && item.checked === true) {
+        if (item.name !== undefined) {
+          return item.name
+        }
+      }
+    });
+
+    // filter undefined values
+    productsSelected = productsSelected.filter(r => r !== undefined)
+
+    this.setState({
+      products,
+      productsSelected
+    });
+
+  }
+
   // Method for ExpandableSection
   private onExpandableToggle = isExpanded => {
     this.setState({
@@ -573,6 +609,13 @@ class Search extends Component<IAppState, ISearchState> {
     const repoFilterIsExpanded = !this.state.repoFilterIsExpanded
     this.setState({
       repoFilterIsExpanded
+    });
+  };
+
+  private onProductsToggle = () => {
+    const productFilterIsExpanded = !this.state.productFilterIsExpanded
+    this.setState({
+      productFilterIsExpanded
     });
   };
 }
