@@ -122,3 +122,8 @@ body {
 color: var(--pf-global--success-color--100)
 
 }
+
+.disabled-search-results{
+    pointer-events: none;
+    opacity: 0.4;
+}

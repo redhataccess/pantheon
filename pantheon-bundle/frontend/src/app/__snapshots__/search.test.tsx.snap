@@ -348,6 +348,8 @@ exports[`Search tests should render default Search component 1`] = `
         >
           <SearchResults
             contentType="module"
+            currentBulkOperation=""
+            disabledClassname=""
             filters={
               Object {
                 "ctype": Array [],
@@ -356,6 +358,7 @@ exports[`Search tests should render default Search component 1`] = `
             }
             keyWord=""
             onGetdocumentsSelected={[Function]}
+            onSelectContentType={[Function]}
             productsSelected={Array []}
             repositoriesSelected={Array []}
             userAuthenticated={true}
@@ -373,6 +376,8 @@ exports[`Search tests should render default Search component 1`] = `
         >
           <SearchResults
             contentType="assembly"
+            currentBulkOperation=""
+            disabledClassname=""
             filters={
               Object {
                 "ctype": Array [],
@@ -381,6 +386,7 @@ exports[`Search tests should render default Search component 1`] = `
             }
             keyWord=""
             onGetdocumentsSelected={[Function]}
+            onSelectContentType={[Function]}
             productsSelected={Array []}
             repositoriesSelected={Array []}
             userAuthenticated={true}

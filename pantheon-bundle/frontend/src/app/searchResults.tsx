@@ -33,6 +33,9 @@ export interface IProps {
   repositoriesSelected: string[]
   userAuthenticated: boolean
   onGetdocumentsSelected: (documentsSelected) => any
+  onSelectContentType: (contentType) => any
+  currentBulkOperation: string
+  disabledClassname: string
 }
 export interface ISearchState {
 
@@ -132,7 +135,7 @@ class SearchResults extends Component<IProps, ISearchState> {
       <React.Fragment>
 
         {!this.state.isEmptyResults &&
-          <div>
+          <div className={this.props.disabledClassname}>
           <Checkbox
             label="Can select all"
             className="pf-u-mb-lg"
@@ -143,13 +146,13 @@ class SearchResults extends Component<IProps, ISearchState> {
             name={"toggle-select-all-"+this.props.contentType}
         />
           <Table 
-            onSelect={this.onSelect}
+            onSelect={this.onSelect} 
             canSelectAll={canSelectAll}
             aria-label={"Selectable Table "+this.props.contentType}
             cells={columns}
             rows={rows}
           >
-          <TableHeader className={styles.modifiers.nowrap} />
+          <TableHeader className={styles.modifiers.nowrap}/>
           <TableBody className="results__table-body" />
         </Table></div> }
 
@@ -366,6 +369,12 @@ class SearchResults extends Component<IProps, ISearchState> {
     console.log("[onSelect] bulkSelected selectedRows =>", selectedRows)
     if (selectedRows.length > 0) {
       this.props.onGetdocumentsSelected(selectedRows);
+    }
+    if(selectedRows.length > 0 || isSelected == true){
+      this.props.onSelectContentType(this.props.contentType);
+    }
+    if(selectedRows.length == 0 && isSelected == false){
+      this.props.onSelectContentType("");
     }
   }
 

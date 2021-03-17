@@ -19,7 +19,10 @@ const props = {
     productsSelected: [],
     repositoriesSelected: ["test"],
     userAuthenticated: true,
-    onGetdocumentsSelected: (documentsSelected) => anymatch
+    onGetdocumentsSelected: (documentsSelected) => anymatch,
+    onSelectContentType: (contentType) => anymatch,
+    currentBulkOperation: "",
+    disabledClassname: ""
 }
 
 const propsEmptyState = {
@@ -29,7 +32,11 @@ const propsEmptyState = {
     productsSelected: [],
     repositoriesSelected: [],
     userAuthenticated: true,
-    onGetdocumentsSelected: (documentsSelected) => anymatch
+    onGetdocumentsSelected: (documentsSelected) => anymatch,
+    onSelectContentType: (contentType) => anymatch,
+    currentBulkOperation: "",
+    disabledClassname: ""
+
 }
 
 describe("SearchResults tests", () => {

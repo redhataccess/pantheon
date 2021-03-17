@@ -79,6 +79,7 @@ export interface ISearchState {
   productsSelected: string[]
   repositoriesSelected: string[]
   documentsSelected: Array<{ cells: [{}, { title: { props: { href: string } } }, {}, {}, {}], selected: boolean }>
+  contentTypeSelected: string
   isModalOpen: boolean
   alertTitle: string
   allProducts: any
@@ -130,6 +131,7 @@ class Search extends Component<IAppState, ISearchState> {
 
       // bulk operation
       documentsSelected: [],
+      contentTypeSelected: "",
       isModalOpen: false,
       alertTitle: "",
       allProducts: [],
@@ -178,7 +180,7 @@ class Search extends Component<IAppState, ISearchState> {
   }
   public render() {
     const { filterLabel, isExpanded, assembliesIsExpanded, modulesIsExpanded, productFilterIsExpanded, repoFilterIsExpanded, expandableSectionIsExpanded, repositories, inputValue, filters, statusIsExpanded, ctypeIsExpanded } = this.state;
-
+console.log('content type selected', this.state.contentTypeSelected)
     const panelContent = (
       <DrawerPanelContent widths={{ lg: "width_25" }}>
         <DrawerHead>
@@ -236,6 +238,9 @@ class Search extends Component<IAppState, ISearchState> {
             userAuthenticated={this.props.userAuthenticated}
             filters={this.state.filters}
             onGetdocumentsSelected={this.getdocumentsSelected}
+            onSelectContentType={this.bulkEditSectionCheck}
+            currentBulkOperation={this.state.contentTypeSelected}
+            disabledClassname={this.state.contentTypeSelected == 'assembly' ? 'disabled-search-results' : ''}
           />
 
         </ExpandableSection>
@@ -249,6 +254,9 @@ class Search extends Component<IAppState, ISearchState> {
             userAuthenticated={this.props.userAuthenticated}
             filters={this.state.filters}
             onGetdocumentsSelected={this.getdocumentsSelected}
+            onSelectContentType={this.bulkEditSectionCheck}
+            currentBulkOperation={this.state.contentTypeSelected}
+            disabledClassname={this.state.contentTypeSelected == 'module' ? 'disabled-search-results' : ''}
           />
 
         </ExpandableSection>
@@ -725,6 +733,10 @@ class Search extends Component<IAppState, ISearchState> {
   // methods for bulk operation
   private getdocumentsSelected = (documentsSelected) => {
     this.setState({ documentsSelected })
+  }
+
+  private bulkEditSectionCheck = (contentTypeSelected) => {
+    this.setState({ contentTypeSelected })
   }
 
   private handleModalToggle = (event) => {
