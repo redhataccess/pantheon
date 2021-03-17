@@ -82,6 +82,7 @@ class SearchResults extends Component<IProps, ISearchState> {
           "name": "",
           "jcr:title": "",
           "jcr:description": "",
+          "productVersion": "",
           "sling:transientSource": "",
           "pant:transientSourceName": "",
           "checkedItem": false,

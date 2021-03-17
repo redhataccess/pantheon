@@ -3,7 +3,9 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.Child;
-import com.redhat.pantheon.model.module.*;
+import com.redhat.pantheon.model.module.Module;
+import com.redhat.pantheon.model.module.ModuleLocale;
+import com.redhat.pantheon.model.module.ModuleMetadata;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -21,7 +23,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -287,6 +292,15 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("jcr:description",releasedMetadata.get().description().get());
         }else{
             m.put("jcr:description","-");
+        }
+
+        if(draftMetadata.isPresent() && draftMetadata.get().productVersion().get()!=null){
+            ResourceResolver request = null;
+            m.put("productVersion",draftMetadata.get().productVersion().get());
+        }else if(releasedMetadata.isPresent() && releasedMetadata.get().productVersion().get()!=null){
+            m.put("productVersion",releasedMetadata.get().productVersion().get());
+        }else{
+            m.put("productVersion","-");
         }
 
         // Assume the path is something like: /content/<something>/my/resource/path
