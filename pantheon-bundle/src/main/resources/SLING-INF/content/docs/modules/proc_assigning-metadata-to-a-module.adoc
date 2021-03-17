@@ -3,6 +3,8 @@
 :_module-type: PROCEDURE
 
 [role="_abstract"]
+Assign metadata to your content so that {ProductShortName} can publish it under the correct product and version on the {PublishingPortal}.
+
 Metadata in modules and assemblies does the following:
 
 * Enables external search engine optimization (SEO) for published content, making it easier for customers to find content.
