@@ -23,7 +23,6 @@ import { SearchIcon } from "@patternfly/react-icons";
 import CheckCircleIcon from "@patternfly/react-icons/dist/js/icons/check-circle-icon"
 // import ExclamationTriangleIcon from "@patternfly/react-icons/dist/js/icons/exclamation-circle-icon"
 import { SlingTypesPrefixes } from "./Constants";
-import { PaginationBottom } from "@app/PaginationBottom"
 
 export interface IProps {
   contentType: string
@@ -122,8 +121,9 @@ class SearchResults extends Component<IProps, ISearchState> {
     if (this.props.repositoriesSelected !== prevProps.repositoriesSelected
       || this.props.productsSelected !== prevProps.productsSelected
       || this.props.keyWord !== prevProps.keyWord
-      || this.props.filters !== prevProps.filters) {
-
+      || this.props.filters !== prevProps.filters
+      || this.props.onGetdocumentsSelected !== prevProps.onGetdocumentsSelected
+    ) {
       this.doSearch()
     }
   }
@@ -133,28 +133,27 @@ class SearchResults extends Component<IProps, ISearchState> {
 
     return (
       <React.Fragment>
-
         {!this.state.isEmptyResults &&
           <div className={this.props.disabledClassname}>
-          <Checkbox
-            label="Can select all"
-            className="pf-u-mb-lg"
-            isChecked={canSelectAll}
-            onChange={this.toggleSelect}
-            aria-label="toggle select all checkbox"
-            id={"toggle-select-all-"+this.props.contentType}
-            name={"toggle-select-all-"+this.props.contentType}
-        />
-          <Table 
-            onSelect={this.onSelect} 
-            canSelectAll={canSelectAll}
-            aria-label={"Selectable Table "+this.props.contentType}
-            cells={columns}
-            rows={rows}
-          >
-          <TableHeader className={styles.modifiers.nowrap}/>
-          <TableBody className="results__table-body" />
-        </Table></div> }
+            <Checkbox
+              label="Can select all"
+              className="pf-u-mb-lg"
+              isChecked={canSelectAll}
+              onChange={this.toggleSelect}
+              aria-label="toggle select all checkbox"
+              id={"toggle-select-all-" + this.props.contentType}
+              name={"toggle-select-all-" + this.props.contentType}
+            />
+            <Table
+              onSelect={this.onSelect}
+              canSelectAll={canSelectAll}
+              aria-label={"Selectable Table " + this.props.contentType}
+              cells={columns}
+              rows={rows}
+            >
+              <TableHeader className={styles.modifiers.nowrap} />
+              <TableBody className="results__table-body" />
+            </Table></div>}
 
         {!this.state.isEmptyResults && <Pagination
           handleMoveLeft={this.updatePageCounter("L")}
@@ -163,18 +162,13 @@ class SearchResults extends Component<IProps, ISearchState> {
           pageNumber={this.state.page}
           nextPageRecordCount={this.state.nextPageRowCount}
           handlePerPageLimit={this.changePerPageLimit}
+          handleItemsPerPage={this.changePerPageLimit}
           perPageLimit={this.state.pageLimit}
           showDropdownOptions={this.state.showDropdownOptions}
           bottom={this.state.bottom}
           className="results__pagination"
         />}
 
-      {/* {!this.state.isEmptyResults && 
-        <PaginationBottom 
-          itemCount={results.length}
-          contentType={this.props.contentType}
-        />
-      } */}
         {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small} className="search-results--empty">
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
@@ -236,7 +230,8 @@ class SearchResults extends Component<IProps, ISearchState> {
         }
       }
 
-      backend += "&offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
+      backend += "&offset=" + ((this.state.page - 1) * this.state.itemsPerPage) + "&limit=" + this.state.itemsPerPage
+
       if (!backend.includes("Updated") && !backend.includes("direction")) {
         backend += "&key=Updated&direction=desc"
       }
@@ -281,16 +276,16 @@ class SearchResults extends Component<IProps, ISearchState> {
           console.log("[doSearch] results=>", this.state.results)
           responseJSON.results.map((item, key) => {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
-            let publishedIcon = publishedDate !== "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon"/></Tooltip></div> : ""
+            let publishedIcon = publishedDate !== "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : ""
             if (publishedIcon === "") {
               const productVersion = item["productVersion"] != undefined ? item["productVersion"] : "-"
               publishedIcon = productVersion == "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Metadata missing</div>}><i className="pf-icon pf-icon-warning-triangle" /></Tooltip></div> : ""
             }
-            
+
             const cellItem = new Array()
             cellItem.push(publishedIcon)
             // if (this.props.userAuthenticated) {
-              cellItem.push({ title: <a href={"/pantheon/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
+            cellItem.push({ title: <a href={"/pantheon/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
             // } else {
             //   let docTitle = item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]
             //   cellItem.push(docTitle)
@@ -336,9 +331,9 @@ class SearchResults extends Component<IProps, ISearchState> {
     }
   }
 
-  private changePerPageLimit = (pageLimitValue) => {
-    this.setState({ pageLimit: pageLimitValue, page: 1 }, () => {
-      return (this.state.pageLimit + " items per page")
+  public changePerPageLimit = (pageLimitValue) => {
+    this.setState({ pageLimit: pageLimitValue, page: 1, itemsPerPage: pageLimitValue }, () => {
+      this.doSearch()
     })
   }
 
@@ -370,10 +365,10 @@ class SearchResults extends Component<IProps, ISearchState> {
     if (selectedRows.length > 0) {
       this.props.onGetdocumentsSelected(selectedRows);
     }
-    if(selectedRows.length > 0 || isSelected == true){
+    if (selectedRows.length > 0 || isSelected == true) {
       this.props.onSelectContentType(this.props.contentType);
     }
-    if(selectedRows.length == 0 && isSelected == false){
+    if (selectedRows.length == 0 && isSelected == false) {
       this.props.onSelectContentType("");
     }
   }
