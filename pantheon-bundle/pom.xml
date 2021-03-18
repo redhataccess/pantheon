@@ -92,7 +92,9 @@
                             !org.keycloak.common.util,!org.keycloak.crypto,!org.keycloak.representations,
                             !org.jboss.logmanager,
                             !com.google.appengine.api,!com.google.apphosting.api,
-                            !com.sun.security.auth.module,!com.sun.security.jgss,!sun.management,!sun.nio.ch,*
+                            !com.sun.security.auth.module,!com.sun.security.jgss,!sun.management,!sun.nio.ch,
+                            !sun.net.www.protocol.http,
+                            !sun.security.jgss,*
                         </Import-Package>
                         <!-- Embed the necessary dependencies -->
                         <!-- The `inline=true` is important, don't remove it unless you want cryptic problems such as servlets that suddenly stop resolving without explanation -->
@@ -278,6 +280,11 @@
     </profiles>
     <dependencies>
         <!-- Embedded (compile) dependencies -->
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>5.11.0.202103091610-r</version>
+        </dependency>
         <dependency>
             <groupId>org.asciidoctor</groupId>
             <artifactId>asciidoctorj</artifactId>
