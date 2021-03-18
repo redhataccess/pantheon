@@ -97,9 +97,11 @@ export interface ISearchState {
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
+  private SearchResults;
 
   constructor(props) {
     super(props);
+    this.SearchResults = React.createRef();
     this.state = {
       // states for drawer
       filterLabel: "repo",
@@ -231,6 +233,7 @@ console.log('content type selected', this.state.contentTypeSelected)
       <React.Fragment>
         <ExpandableSection toggleText="Modules" className="pf-c-title search-results__section search-results__section--module" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
           <SearchResults
+            ref={this.SearchResults}
             contentType="module"
             keyWord={this.state.inputValue}
             repositoriesSelected={this.state.repositoriesSelected}
@@ -247,6 +250,7 @@ console.log('content type selected', this.state.contentTypeSelected)
         <br />
         <ExpandableSection toggleText="Assemblies" className="pf-c-title search-results__section search-results__section--assembly" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
           <SearchResults
+            ref={this.SearchResults}
             contentType="assembly"
             keyWord={this.state.inputValue}
             repositoriesSelected={this.state.repositoriesSelected}
@@ -904,7 +908,14 @@ console.log('content type selected', this.state.contentTypeSelected)
                 // reset documentsSelected
                 this.setState({
                   showBulkEditConfirmation: true,
-                  documentsSelected: []
+                  usecaseValue: "",
+                  product: { label: "", value: "" },
+                  productVersion: { label: "", uuid: "" },
+                  keywords: "",
+                  productValidated: "error",
+                  productVersionValidated: "error",
+                  useCaseValidated: "error",
+                  // documentsSelected: []
                 })
               } else if (response.status === 500) {
                 console.log(" User authenticated? " + response.status)
@@ -929,8 +940,10 @@ console.log('content type selected', this.state.contentTypeSelected)
   }
 
   private hideSuccessAlert = () => {
-    this.setState({ showBulkEditConfirmation: false, documentsSelected: [] })
+    this.setState({ showBulkEditConfirmation: false})
     //TODO: refresh documentsSelected
+    this.SearchResults.current.doSearch()
+    console.log("[hideSucccessAlert] documentsSelected=>", this.state.documentsSelected)
   }
 
 }
