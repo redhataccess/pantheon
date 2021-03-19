@@ -41,7 +41,7 @@ exports[`User tests should render User component 1`] = `
     href="/system/sling/logout"
     onClick={[Function]}
   >
-    Log Out [demo]
+    [demo]
   </a>
 </Fragment>
 `;
