@@ -12,7 +12,6 @@ class Dropdown extends Component<IProps> {
     "5 items per page",
     "25 items per page",
     "50 items per page",
-    "75 items per page",
     "100 items per page"
   ];
 

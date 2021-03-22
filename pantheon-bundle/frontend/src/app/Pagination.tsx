@@ -24,7 +24,6 @@ class Pagination extends React.Component<IProps> {
     "5 items per page",
     "25 items per page",
     "50 items per page",
-    "75 items per page",
     "100 items per page"
   ];
 
@@ -124,7 +123,6 @@ class Pagination extends React.Component<IProps> {
       itemsPerPage: Number(value.substr(0, value.indexOf(" "))),
       selected: value
     }, () => {
-
       this.props.handlePerPageLimit(Number(value.substr(0, value.indexOf(" "))))
       this.props.handleItemsPerPage(Number(value.substr(0, value.indexOf(" "))))
     });

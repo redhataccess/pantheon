@@ -1,54 +1,32 @@
-import React, { Component, FormEvent } from "react";
+import React, { Component } from "react";
 import {
-  Drawer,
-  DrawerPanelContent,
-  DrawerContent,
-  DrawerContentBody,
-  DrawerPanelBody,
-  DrawerHead,
-  DrawerActions,
-  DrawerCloseButton,
+  Drawer, DrawerPanelContent, DrawerContent, DrawerContentBody, DrawerHead, DrawerActions, DrawerCloseButton,
   Button, ButtonVariant,
   InputGroup,
-  Select,
-  SelectOption,
-  Dropdown,
-  DropdownItem,
-  DropdownSeparator,
-  KebabToggle,
+  Select, SelectOption,
   Toolbar, ToolbarItem, ToolbarContent, ToolbarFilter, ToolbarToggleGroup, ToolbarGroup,
   TextInput,
   SelectVariant,
   ExpandableSection,
   Checkbox,
   Divider,
-  SimpleListItem,
-  SimpleList,
+  SimpleListItem, SimpleList,
   SearchInput,
   Alert,
-  ToolbarChipGroup,
-  ToolbarChip,
-  Modal,
-  Form,
-  FormGroup,
-  AlertActionCloseButton,
-  FormSelect,
-  FormSelectOption,
-  InputGroupText,
+  ToolbarChipGroup, ToolbarChip,
+  Modal, ModalVariant,
+  Form, FormGroup, FormSelect, FormSelectOption, FormAlert,
   Title,
   BaseSizes,
-  ModalVariant,
-  FormAlert,
-
 } from "@patternfly/react-core";
 
 import { SearchResults } from "@app/searchResults";
 import { BuildInfo } from "./components/Chrome/Header/BuildInfo"
+import { BulkOperationConfirmation } from "./bulkOperationConfirmation";
 
 import "@app/app.css";
 import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { IAppState } from "@app/app"
 import { Metadata } from "@app/Constants"
 
@@ -76,6 +54,7 @@ export interface ISearchState {
   productFilterValue: string
   repoFilterValue: string
 
+  // metadatat
   productsSelected: string[]
   repositoriesSelected: string[]
   documentsSelected: Array<{ cells: [{}, { title: { props: { href: string } } }, {}, {}, {}], selected: boolean }>
@@ -94,6 +73,22 @@ export interface ISearchState {
   keywords: string
   usecaseOptions: any
   usecaseValue: string
+  metadataEditError: string
+
+  progressFailureValue: number
+  progressSuccessValue: number
+  progressWarningValue: number
+  bulkUpdateFailure: number
+  bulkUpdateSuccess: number
+  bulkUpdateWarning: number
+
+  documentsSucceeded: string[]
+  documentsFailed: string[]
+  documentsIgnored: string[]
+  confirmationBody: string
+  confirmationSucceeded: string
+  confirmationIgnored: string
+  confirmationFailed: string
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
@@ -150,6 +145,23 @@ class Search extends Component<IAppState, ISearchState> {
         { value: "", label: "Select Use Case", disabled: false }
       ],
       usecaseValue: "",
+      metadataEditError: "",
+
+      //progress bar
+      progressFailureValue: 0,
+      progressSuccessValue: 0,
+      progressWarningValue: 0,
+      bulkUpdateFailure: 0,
+      bulkUpdateSuccess: 0,
+      bulkUpdateWarning: 0,
+
+      documentsSucceeded: [""],
+      documentsFailed: [""],
+      documentsIgnored: [""],
+      confirmationBody: "",
+      confirmationSucceeded: "",
+      confirmationIgnored: "",
+      confirmationFailed: "",
     };
     this.drawerRef = React.createRef();
 
@@ -182,7 +194,7 @@ class Search extends Component<IAppState, ISearchState> {
   }
   public render() {
     const { filterLabel, isExpanded, assembliesIsExpanded, modulesIsExpanded, productFilterIsExpanded, repoFilterIsExpanded, expandableSectionIsExpanded, repositories, inputValue, filters, statusIsExpanded, ctypeIsExpanded } = this.state;
-console.log('content type selected', this.state.contentTypeSelected)
+    // console.log('content type selected', this.state.contentTypeSelected)
     const panelContent = (
       <DrawerPanelContent widths={{ lg: "width_25" }}>
         <DrawerHead>
@@ -358,6 +370,7 @@ console.log('content type selected', this.state.contentTypeSelected)
       </React.Fragment>
     );
 
+    // TODO: move Edit metadata modal to its own component
     const header = (
       <React.Fragment>
         <Title headingLevel="h1" size={BaseSizes["2xl"]}>
@@ -392,6 +405,19 @@ console.log('content type selected', this.state.contentTypeSelected)
                   <Alert
                     variant="danger"
                     title="You must fill out all required fields before you can proceed."
+                    aria-live="polite"
+                    isInline={true}
+                  />
+                  <br />
+                </FormAlert>
+              )}
+
+            {this.state.metadataEditError
+              && (
+                <FormAlert>
+                  <Alert
+                    variant="danger"
+                    title={this.state.metadataEditError}
                     aria-live="polite"
                     isInline={true}
                   />
@@ -455,18 +481,6 @@ console.log('content type selected', this.state.contentTypeSelected)
       </React.Fragment>
     );
 
-    const bulkEditConfirmation = (<React.Fragment>
-      <div className="notification-container pant-notification-container-md">
-        <Alert
-          variant="success"
-          title="Bulk Edit"
-          actionClose={<AlertActionCloseButton onClose={this.hideSuccessAlert} />}
-        >
-          Update Successful!
-                    </Alert>
-      </div>
-    </React.Fragment>);
-
     return (
       <React.Fragment>
         <Toolbar
@@ -481,7 +495,20 @@ console.log('content type selected', this.state.contentTypeSelected)
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody className="search-results">
-              {this.state.showBulkEditConfirmation && (bulkEditConfirmation)}
+              {this.state.showBulkEditConfirmation &&
+                <BulkOperationConfirmation
+                  header="Bulk Edit"
+                  subheading="Documents updated in the bulk operation"
+                  updateSucceeded={this.state.confirmationSucceeded}
+                  updateIgnored={this.state.confirmationIgnored}
+                  updateFailed={this.state.confirmationFailed}
+                  footer=""
+                  progressSuccessValue={this.state.progressSuccessValue}
+                  progressFailureValue={this.state.progressFailureValue}
+                  progressWarningValue={this.state.progressWarningValue}
+                  onShowBulkEditConfirmation={this.updateShowBulkEditConfirmation}
+                  onMetadataEditError={this.updateMetadataEditError}
+                />}
               {drawerContent}
               {metadataModal}
             </DrawerContentBody>
@@ -873,18 +900,13 @@ console.log('content type selected', this.state.contentTypeSelected)
       }
 
       const metadataForm = event.target.form
-      console.log("[saveMetadata] event.target.form => ", event.target.form)
-      console.log("[saveMetadata] keywords value => ", event.target.form.keywords.value)
-      console.log("[saveMetadata] useCase value => ", event.target.form.useCase.value)
-      console.log("[saveMetadata] productVersion value => ", event.target.form.productVersion.value)
       const formData = new FormData(metadataForm)
 
       formData.append("documentUsecase", this.state.usecaseValue)
       formData.append("searchKeywords", this.state.keywords === undefined ? "" : this.state.keywords)
 
-      console.log("[saveMetadata] documentsSeleted => ", this.state.documentsSelected)
       this.state.documentsSelected.map((r) => {
-        console.log("[saveMetadata] documentsSelected href =>", r.cells[1].title.props.href)
+        // console.log("[saveMetadata] documentsSelected href =>", r.cells[1].title.props.href)
         if (r.cells[1].title.props.href) {
           let href = r.cells[1].title.props.href
 
@@ -893,59 +915,137 @@ console.log('content type selected', this.state.contentTypeSelected)
           let docPath = hrefPart.match("/repositories/.*") ? hrefPart.match("/repositories/.*") : ""
 
           // check draft version
-          const backend = docPath + "/en_US/variants/" + variant + "/draft/metadata"
-          if (this.draftExist(backend)) {
-            console.log("[saveMetadata] draftExist for backend=>", backend)
-            // Process form for each docPath
-            fetch(backend, {
-              body: formData,
-              headers: hdrs,
-              method: "post"
-            }).then(response => {
-              if (response.status === 201 || response.status === 200) {
-                console.log("successful edit ", response.status)
-                this.handleModalClose()
-                // reset documentsSelected
-                this.setState({
-                  showBulkEditConfirmation: true,
-                  usecaseValue: "",
-                  product: { label: "", value: "" },
-                  productVersion: { label: "", uuid: "" },
-                  keywords: "",
-                  productValidated: "error",
-                  productVersionValidated: "error",
-                  useCaseValidated: "error",
-                  // documentsSelected: []
-                })
-              } else if (response.status === 500) {
-                console.log(" User authenticated? " + response.status)
-              }
-            })
-          }
+          const backend = "/content" + docPath + "/en_US/variants/" + variant + "/draft/metadata"
+
+          this.draftExist(backend).then((exist) => {
+            if (exist) {
+              // Process form for each docPath
+              fetch(backend, {
+                body: formData,
+                headers: hdrs,
+                method: "post"
+              }).then(response => {
+                if (response.status === 201 || response.status === 200) {
+                  console.log("successful edit ", response.status + " for  path: " + backend)
+                  this.handleModalClose()
+                  let docs = new Array()
+                  docs = this.state.documentsSucceeded
+                  docs.push(docPath)
+                  this.setState({
+                    documentsSucceeded: docs,
+                    usecaseValue: "",
+                    product: { label: "", value: "" },
+                    productVersion: { label: "", uuid: "" },
+                    keywords: "",
+                    productValidated: "error",
+                    productVersionValidated: "error",
+                    useCaseValidated: "error",
+                    bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
+
+                  }, () => {
+                    this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
+                  })
+                } else {
+                  console.log(" User authenticated? " + response.status + " for  path: " + backend)
+                  let docs = new Array()
+                  docs = this.state.documentsFailed
+                  docs.push(docPath)
+                  // update state for progressbar
+                  this.setState({ bulkUpdateFailure: this.state.bulkUpdateFailure + 1, documentsFailed: docs }, () => {
+                    this.calculateFailureProgress(this.state.bulkUpdateFailure)
+                  })
+
+                }
+              })
+            } else {
+              // draft does not exist
+              console.log("[saveMetadata] no draft version found:", backend)
+              let docs = new Array()
+              docs = this.state.documentsIgnored
+              docs.push(docPath)
+              this.setState({ bulkUpdateWarning: this.state.bulkUpdateWarning + 1, documentsIgnored: docs }, () => {
+                this.calculateWarningProgress(this.state.bulkUpdateWarning)
+                if (this.state.bulkUpdateWarning > 0 && this.state.bulkUpdateWarning === this.state.documentsSelected.length) {
+                  this.setState({ metadataEditError: "No draft versions found on selected items. Unable to save metadata." })
+                }
+              })
+            }
+          })
         }
       })
     }
   }
 
-  private draftExist = (path) => {
+  private draftExist(path) {
     let exists = false
-    const backend = path + ".json"
-    return fetch(backend)
+    return fetch(path + ".json")
       .then(response => {
-        if (response.status === 200) {
+        if (response.ok) {
           exists = true
-          console.log("[drafExist] for path=>", path)
         }
-      }).then(() => exists)
+        return exists
+      })
+      .catch((error) => {
+        console.log("[draftExist] error detected=>", error + " for " + path)
+        return false
+      })
   }
 
-  private hideSuccessAlert = () => {
-    this.setState({ showBulkEditConfirmation: false})
-    //TODO: refresh documentsSelected
-    this.SearchResults.current.doSearch()
-    console.log("[hideSucccessAlert] documentsSelected=>", this.state.documentsSelected)
+  private updateShowBulkEditConfirmation = (showBulkEditConfirmation) => {
+    this.setState({ showBulkEditConfirmation })
   }
 
+  private updateMetadataEditError = (metadataEditError) => {
+    this.setState({ metadataEditError })
+  }
+
+  private calculateFailureProgress = (num: number) => {
+    if (num >= 0) {
+      let stat = (num) / this.state.documentsSelected.length * 100
+      this.setState({ progressFailureValue: stat, showBulkEditConfirmation: true }, () => {
+        this.getDocumentFailed()
+      })
+    }
+  }
+
+  private calculateSuccessProgress = (num: number) => {
+    if (num >= 0) {
+      let stat = (num) / this.state.documentsSelected.length * 100
+      this.setState({ progressSuccessValue: stat, showBulkEditConfirmation: true }, () => {
+        this.getDocumentsSucceeded()
+      })
+    }
+  }
+
+  private calculateWarningProgress = (num: number) => {
+    if (num >= 0) {
+      let stat = (num) / this.state.documentsSelected.length * 100
+      this.setState({ progressWarningValue: stat, showBulkEditConfirmation: true }, () => {
+        this.getDocumentIgnored()
+      })
+    }
+  }
+  private getDocumentsSucceeded = () => {
+    if (this.state.documentsSucceeded.length > 0) {
+      let succeeded = this.state.documentsSucceeded.join(",")
+      console.log("[getdocomentsSucceeded] content=>", succeeded)
+      this.setState({ confirmationSucceeded: succeeded })
+    }
+  }
+
+  private getDocumentIgnored = () => {
+    if (this.state.documentsIgnored.length > 0) {
+      let ignored = this.state.documentsIgnored.join(",")
+      this.setState({ confirmationIgnored: ignored })
+    }
+  }
+
+  private getDocumentFailed = () => {
+    if (this.state.documentsFailed.length > 0) {
+      let failed = this.state.documentsFailed.join(",")
+      this.setState({ confirmationFailed: failed })
+    }
+  }
 }
 
 
