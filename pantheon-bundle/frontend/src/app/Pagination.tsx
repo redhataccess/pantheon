@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import { DropdownItem, Level, LevelItem } from "@patternfly/react-core";
 import { ContextSelector, ContextSelectorItem } from "@patternfly/react-core";
 import { Dropdown } from "@app/Dropdown";
-// import { element } from "prop-types";
 
 export interface IProps {
   handleMoveLeft: () => any
