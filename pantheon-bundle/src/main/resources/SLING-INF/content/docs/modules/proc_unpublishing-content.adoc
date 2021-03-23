@@ -12,7 +12,7 @@ You need to unpublish a module or assembly when you want to remove it from the {
 
 .Procedure
 
-. Navigate to link:{LinkToSearchPage}[Search page].
+. Navigate to the link:{LinkToSearchPage}[Search page].
 
 . Click the name of the {ContentTerm} you want to unpublish.
 +

@@ -12,10 +12,12 @@
 :ProductNumberPrevious: 1
 :ProductUrl: http://pantheon.corp.redhat.com[]
 
+:LinkToSearchPage: https://pantheon.corp.redhat.com/pantheon/#/search
+:LinkToGitImportPage: https://pantheon.corp.redhat.com/pantheon/#/git
+
 // Publishing
 :PublishingPortal: Customer Portal
 :PublishingPortalSearch: Customer Portal Search
-:LinkToSearchPage: https://pantheon.corp.redhat.com/pantheon/#/search
 
 :imagesdir: images
 :ContentTerm: content

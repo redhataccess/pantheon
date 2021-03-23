@@ -1,6 +1,6 @@
-include::../attributes.adoc[]
-
 ifdef::context[:parent-context: {context}]
+
+include::../attributes.adoc[]
 
 [id="assembly-preparing-content-for-publication_{context}"]
 = Preparing content for publication

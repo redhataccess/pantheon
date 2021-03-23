@@ -305,7 +305,7 @@ exports[`Search tests should render default Search component 1`] = `
               />
               <SimpleList
                 aria-label="Repository List"
-                className=""
+                className="repo-list-container"
               >
                 <SimpleListItem
                   className="repo-list filters-drawer__repo-list"

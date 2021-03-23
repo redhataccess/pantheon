@@ -14,7 +14,7 @@ You need to publish a module or assembly when you want it to appear on the {Publ
 
 .Procedure
 
-. Navigate to link:{LinkToSearchPage}[Search page].
+. Navigate to the link:{LinkToSearchPage}[Search page].
 
 . Click the name of the module or assembly you want to publish.
 +
@@ -30,4 +30,4 @@ where, __PRODUCT_URL__ is the URL for the product, and __UUID__ is the auto-gene
 
 [role="_additional-resources"]
 .Additional Resources
-* link:<LinkToHowToSearchModules>[How To Search Modules]
+* xref:searching-for-content_assembly-help[Searching for content]

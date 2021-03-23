@@ -143,7 +143,7 @@ class Search extends Component<IAppState, ISearchState> {
               className='filters-drawer__repo-search'
             />
             {this.state.filteredRepositories && this.state.filteredRepositories.length > 0 &&
-              <SimpleList aria-label="Repository List">
+              <SimpleList aria-label="Repository List" className='repo-list-container'>
                 {this.state.filteredRepositories.map((data) => (
                   <SimpleListItem key={data.id} className='repo-list filters-drawer__repo-list'>
                     <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onChange={this.onSelectRepositories} isChecked={data.checked} />
@@ -480,7 +480,9 @@ class Search extends Component<IAppState, ISearchState> {
       let filtered = this.state.repositories.filter(data => data.name.toLowerCase().includes(value.toLowerCase()))
       this.setState({ filteredRepositories: filtered })
     } else {
-      this.getRepositories()
+      this.setState({
+        filteredRepositories: this.state.repositories
+      })
     }
   };
 
