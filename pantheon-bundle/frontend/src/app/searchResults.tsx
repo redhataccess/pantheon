@@ -235,7 +235,7 @@ class SearchResults extends Component<IProps, ISearchState> {
       if (!backend.includes("Updated") && !backend.includes("direction")) {
         backend += "&key=Updated&direction=desc"
       }
-      console.log("[buildSearchQuery] backend=>", backend)
+      // console.log("[buildSearchQuery] backend=>", backend)
       return backend
     } else {
       this.setState({ isEmptyResults: true })
@@ -273,7 +273,7 @@ class SearchResults extends Component<IProps, ISearchState> {
         .then(responseJSON => {
           this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })
           const data = new Array()
-          console.log("[doSearch] results=>", this.state.results)
+          // console.log("[doSearch] results=>", this.state.results)
           responseJSON.results.map((item, key) => {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
             let publishedIcon = publishedDate !== "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : ""
@@ -361,7 +361,7 @@ class SearchResults extends Component<IProps, ISearchState> {
     })
     // filter undefined values
     selectedRows = selectedRows.filter(r => r !== undefined)
-    console.log("[onSelect] bulkSelected selectedRows =>", selectedRows)
+    // console.log("[onSelect] bulkSelected selectedRows =>", selectedRows)
     if (selectedRows.length > 0) {
       this.props.onGetdocumentsSelected(selectedRows);
     }

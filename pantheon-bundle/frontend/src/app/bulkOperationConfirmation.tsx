@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, ModalVariant, Button, Title, TitleSizes, AlertActionCloseButton, Alert, AlertActionLink, Progress, ProgressVariant, ProgressSize, List, ListItem } from '@patternfly/react-core';
+import { Modal, ModalVariant, Button, Title, TitleSizes, AlertActionCloseButton, Alert, AlertActionLink, Progress, ProgressVariant, ProgressSize, List, ListItem, ProgressMeasureLocation } from '@patternfly/react-core';
 import WarningTriangleIcon from '@patternfly/react-icons/dist/js/icons/warning-triangle-icon';
 import "@app/app.css";
 
@@ -22,7 +22,6 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
     super(props);
     this.state = {
       isModalOpen: false,
-      showBulkEditConfirmation: false,
     };
 
   }
@@ -47,21 +46,23 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
 
     return (
       <React.Fragment>
-        <Alert
-          variant="info"
-          title="Bulk Edit"
-          actionClose={<AlertActionCloseButton data-testid="hide-alert-button" onClose={this.hideAlert} />}
-          actionLinks={
-            <React.Fragment>
-              <AlertActionLink data-testid="view-details-link" onClick={this.handleModalToggle}>View details</AlertActionLink>
-            </React.Fragment>
-          }
-        >
-          <div><Progress value={this.props.progressSuccessValue} title="Update Succeeded" variant={ProgressVariant.success} size={ProgressSize.sm} /></div>
-          <div><Progress value={this.props.progressFailureValue} title="Update failed" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
-          <div><Progress value={this.props.progressWarningValue} title="No draft version found. No action taken" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>
-        </Alert>
-
+        <div className="p2-search__pf-c-alert">
+          <Alert
+            // className="p2-search__pf-c-alert pf-c-alert pf-m-info"
+            variant="info"
+            title="Bulk Edit"
+            actionClose={<AlertActionCloseButton data-testid="hide-alert-button" onClose={this.hideAlert} />}
+            actionLinks={
+              <React.Fragment>
+                <AlertActionLink data-testid="view-details-link" onClick={this.handleModalToggle}>View details</AlertActionLink>
+              </React.Fragment>
+            }
+          >
+            <div><Progress value={this.props.progressSuccessValue} title="Update Succeeded" variant={ProgressVariant.success} size={ProgressSize.sm} /></div>
+            <div><Progress value={this.props.progressFailureValue} title="Update failed" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
+            <div><Progress value={this.props.progressWarningValue} title="No draft version found. No action taken" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>
+          </Alert>
+        </div>
         <Modal
           variant={ModalVariant.large}
           isOpen={isModalOpen}
