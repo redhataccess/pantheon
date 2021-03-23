@@ -5,11 +5,6 @@ import { mount, shallow } from "enzyme"
 import { Alert, Form, FormAlert, FormGroup, FormSelectOption, InputGroup, Modal, Progress } from "@patternfly/react-core"
 import { render, fireEvent, queryAllByLabelText, getByText, screen } from '@testing-library/react'
 import fetchMock from 'fetch-mock';
-// import 'react-testing-library/extend-expect';
-// interface ExtendedMatchers extends jest.Matchers<void> {
-//   toHaveTextContent: (htmlElement: string) => object;
-//   toBeInTheDOM: () => void;
-// }
 
 const anymatch = require("anymatch")
 const props = {
