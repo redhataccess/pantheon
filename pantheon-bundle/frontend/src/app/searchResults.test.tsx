@@ -70,11 +70,4 @@ describe("SearchResults tests", () => {
         expect(divider.exists()).toBe(true)
     })
 
-    // it("should render a Pagination component", () => {
-    //     const wrapper = mount(<Router><SearchResults {...props} /></Router>)
-    //     wrapper.setState({isEmptyResults: false})
-    //     const pagination = wrapper.find(Pagination)
-    //     expect(pagination.exists()).toBe(true)
-    // })
-
 });
