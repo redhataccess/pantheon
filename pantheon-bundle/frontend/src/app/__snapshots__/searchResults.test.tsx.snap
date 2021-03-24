@@ -2,67 +2,84 @@
 
 exports[`SearchResults tests should render default Search component 1`] = `
 <Fragment>
-  <Table
-    aria-label="Simple Table"
-    borders={true}
-    canSelectAll={true}
-    cells={
-      Array [
-        Object {
-          "title": "",
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "title": "Title",
-        },
-        Object {
-          "title": "Repository",
-        },
-        Object {
-          "title": "Updated date",
-        },
-        Object {
-          "title": "Published date",
-        },
-      ]
-    }
+  <div
     className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
-    isStickyHeader={false}
-    ouiaSafe={true}
-    role="grid"
-    rowLabeledBy="simple-node"
-    rows={
-      Array [
-        Object {
-          "cells": Array [
-            "",
-            "",
-            "",
-            "",
-          ],
-        },
-      ]
-    }
-    selectVariant="checkbox"
-    variant={null}
   >
-    <TableHeader
-      className="pf-m-nowrap"
+    <Checkbox
+      aria-label="toggle select all checkbox"
+      className="pf-u-mb-lg"
+      id="toggle-select-all-assemblies"
+      isChecked={true}
+      isDisabled={false}
+      isValid={true}
+      label="Can select all"
+      name="toggle-select-all-assemblies"
+      onChange={[Function]}
     />
-    <Component
-      className="results__table-body"
-    />
-  </Table>
+    <Table
+      aria-label="Selectable Table assemblies"
+      borders={true}
+      canSelectAll={true}
+      cells={
+        Array [
+          Object {
+            "title": "",
+          },
+          Object {
+            "cellTransforms": Array [
+              [Function],
+            ],
+            "title": "Title",
+          },
+          Object {
+            "title": "Repository",
+          },
+          Object {
+            "title": "Updated date",
+          },
+          Object {
+            "title": "Published date",
+          },
+        ]
+      }
+      className=""
+      contentId="expanded-content"
+      dropdownDirection="down"
+      dropdownPosition="right"
+      expandId="expandable-toggle"
+      gridBreakPoint="grid-md"
+      isStickyHeader={false}
+      onSelect={[Function]}
+      ouiaSafe={true}
+      role="grid"
+      rowLabeledBy="simple-node"
+      rows={
+        Array [
+          Object {
+            "cells": Array [
+              "",
+              "",
+              "",
+              "",
+            ],
+          },
+        ]
+      }
+      selectVariant="checkbox"
+      variant={null}
+    >
+      <TableHeader
+        className="pf-m-nowrap"
+      />
+      <Component
+        className="results__table-body"
+      />
+    </Table>
+  </div>
   <Pagination
     bottom={true}
     className="results__pagination"
+    handleItemsPerPage={[Function]}
     handleMoveLeft={[Function]}
     handleMoveRight={[Function]}
     handleMoveToFirst={[Function]}
@@ -70,7 +87,7 @@ exports[`SearchResults tests should render default Search component 1`] = `
     nextPageRecordCount={1}
     pageNumber={1}
     perPageLimit={5}
-    showDropdownOptions={false}
+    showDropdownOptions={true}
   />
   <Divider />
 </Fragment>

@@ -333,11 +333,9 @@ exports[`Search tests should render default Search component 1`] = `
           </DrawerHead>
         </DrawerPanelContent>
       }
-      width="width_50"
     >
       <DrawerContentBody
         className="search-results"
-        width="width_50"
       >
         <ExpandableSection
           className="pf-c-title search-results__section search-results__section--module"
@@ -350,6 +348,8 @@ exports[`Search tests should render default Search component 1`] = `
         >
           <SearchResults
             contentType="module"
+            currentBulkOperation=""
+            disabledClassname=""
             filters={
               Object {
                 "ctype": Array [],
@@ -357,6 +357,8 @@ exports[`Search tests should render default Search component 1`] = `
               }
             }
             keyWord=""
+            onGetdocumentsSelected={[Function]}
+            onSelectContentType={[Function]}
             productsSelected={Array []}
             repositoriesSelected={Array []}
             userAuthenticated={true}
@@ -374,6 +376,8 @@ exports[`Search tests should render default Search component 1`] = `
         >
           <SearchResults
             contentType="assembly"
+            currentBulkOperation=""
+            disabledClassname=""
             filters={
               Object {
                 "ctype": Array [],
@@ -381,6 +385,8 @@ exports[`Search tests should render default Search component 1`] = `
               }
             }
             keyWord=""
+            onGetdocumentsSelected={[Function]}
+            onSelectContentType={[Function]}
             productsSelected={Array []}
             repositoriesSelected={Array []}
             userAuthenticated={true}

@@ -6,7 +6,8 @@ import {
   TableBody,
   headerCol,
 } from "@patternfly/react-table";
-
+import { Checkbox } from '@patternfly/react-core';
+import { Tooltip } from '@patternfly/react-core';
 import "@app/app.css";
 import styles from "@patternfly/react-styles/css/components/Table/table";
 import { Pagination } from "@app/Pagination"
@@ -29,6 +30,10 @@ export interface IProps {
   productsSelected: string[]
   repositoriesSelected: string[]
   userAuthenticated: boolean
+  onGetdocumentsSelected: (documentsSelected) => any
+  onSelectContentType: (contentType) => any
+  currentBulkOperation: string
+  disabledClassname: string
 }
 export interface ISearchState {
 
@@ -50,6 +55,7 @@ export interface ISearchState {
   itemsPerPage: number
   results: any
   rows: any
+  canSelectAll: boolean
   showDropdownOptions: boolean
   bottom: boolean
 }
@@ -82,6 +88,7 @@ class SearchResults extends Component<IProps, ISearchState> {
           "name": "",
           "jcr:title": "",
           "jcr:description": "",
+          "productVersion": "",
           "sling:transientSource": "",
           "pant:transientSourceName": "",
           "checkedItem": false,
@@ -96,9 +103,13 @@ class SearchResults extends Component<IProps, ISearchState> {
           cells: ["", "", "", ""]
         }
       ],
-      showDropdownOptions: false,
+      canSelectAll: true,
+      showDropdownOptions: true,
       bottom: true,
     };
+
+    this.onSelect = this.onSelect.bind(this);
+    this.toggleSelect = this.toggleSelect.bind(this);
   }
 
   public componentDidMount() {
@@ -109,22 +120,39 @@ class SearchResults extends Component<IProps, ISearchState> {
     if (this.props.repositoriesSelected !== prevProps.repositoriesSelected
       || this.props.productsSelected !== prevProps.productsSelected
       || this.props.keyWord !== prevProps.keyWord
-      || this.props.filters !== prevProps.filters) {
-
+      || this.props.filters !== prevProps.filters
+      || this.props.onGetdocumentsSelected !== prevProps.onGetdocumentsSelected
+    ) {
       this.doSearch()
     }
   }
 
   public render() {
-    const { columns, rows } = this.state;
+    const { columns, rows, canSelectAll, results } = this.state;
 
     return (
       <React.Fragment>
-
-        {!this.state.isEmptyResults && <Table aria-label="Simple Table" cells={columns} rows={rows}>
-          <TableHeader className={styles.modifiers.nowrap} />
-          <TableBody className="results__table-body" />
-        </Table>}
+        {!this.state.isEmptyResults &&
+          <div className={this.props.disabledClassname}>
+            <Checkbox
+              label="Can select all"
+              className="pf-u-mb-lg"
+              isChecked={canSelectAll}
+              onChange={this.toggleSelect}
+              aria-label="toggle select all checkbox"
+              id={"toggle-select-all-" + this.props.contentType}
+              name={"toggle-select-all-" + this.props.contentType}
+            />
+            <Table
+              onSelect={this.onSelect}
+              canSelectAll={canSelectAll}
+              aria-label={"Selectable Table " + this.props.contentType}
+              cells={columns}
+              rows={rows}
+            >
+              <TableHeader className={styles.modifiers.nowrap} />
+              <TableBody className="results__table-body" />
+            </Table></div>}
 
         {!this.state.isEmptyResults && <Pagination
           handleMoveLeft={this.updatePageCounter("L")}
@@ -133,6 +161,7 @@ class SearchResults extends Component<IProps, ISearchState> {
           pageNumber={this.state.page}
           nextPageRecordCount={this.state.nextPageRowCount}
           handlePerPageLimit={this.changePerPageLimit}
+          handleItemsPerPage={this.changePerPageLimit}
           perPageLimit={this.state.pageLimit}
           showDropdownOptions={this.state.showDropdownOptions}
           bottom={this.state.bottom}
@@ -200,7 +229,8 @@ class SearchResults extends Component<IProps, ISearchState> {
         }
       }
 
-      backend += "&offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
+      backend += "&offset=" + ((this.state.page - 1) * this.state.itemsPerPage) + "&limit=" + this.state.itemsPerPage
+
       if (!backend.includes("Updated") && !backend.includes("direction")) {
         backend += "&key=Updated&direction=desc"
       }
@@ -242,9 +272,15 @@ class SearchResults extends Component<IProps, ISearchState> {
         .then(responseJSON => {
           this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })
           const data = new Array()
+
           responseJSON.results.map((item, key) => {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
-            const publishedIcon = publishedDate !== "-" ? <><CheckCircleIcon className="p2-search__check-circle-icon"/></> : ""
+            let publishedIcon = publishedDate !== "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : ""
+            if (publishedIcon === "") {
+              const productVersion = item["productVersion"] != undefined ? item["productVersion"] : "-"
+              publishedIcon = productVersion == "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Metadata missing</div>}><i className="pf-icon pf-icon-warning-triangle" /></Tooltip></div> : ""
+            }
+
             const cellItem = new Array()
             cellItem.push(publishedIcon)
             if (this.props.userAuthenticated) {
@@ -294,10 +330,52 @@ class SearchResults extends Component<IProps, ISearchState> {
     }
   }
 
-  private changePerPageLimit = (pageLimitValue) => {
-    this.setState({ pageLimit: pageLimitValue, page: 1 }, () => {
-      return (this.state.pageLimit + " items per page")
+  public changePerPageLimit = (pageLimitValue) => {
+    this.setState({ pageLimit: pageLimitValue, page: 1, itemsPerPage: pageLimitValue }, () => {
+      this.doSearch()
     })
+  }
+
+  private onSelect(event, isSelected, rowId) {
+    let rows;
+    if (rowId === -1) {
+      rows = this.state.rows.map(oneRow => {
+        oneRow.selected = isSelected;
+        return oneRow;
+      });
+    } else {
+      rows = [...this.state.rows];
+      rows[rowId].selected = isSelected;
+    }
+    this.setState({
+      rows
+    });
+    // console.log("[onSelect] bulkSelected rows =>", rows)
+    // update props.documentSelected
+    let selectedRows;
+    selectedRows = this.state.rows.map(oneRow => {
+      if (oneRow.selected === true) {
+        return oneRow;
+      }
+    })
+    // filter undefined values
+    selectedRows = selectedRows.filter(r => r !== undefined)
+    // console.log("[onSelect] bulkSelected selectedRows =>", selectedRows)
+    if (selectedRows.length > 0) {
+      this.props.onGetdocumentsSelected(selectedRows);
+    }
+    if (selectedRows.length > 0 || isSelected == true) {
+      this.props.onSelectContentType(this.props.contentType);
+    }
+    if (selectedRows.length == 0 && isSelected == false) {
+      this.props.onSelectContentType("");
+    }
+  }
+
+  private toggleSelect(checked) {
+    this.setState({
+      canSelectAll: checked
+    });
   }
 }
 

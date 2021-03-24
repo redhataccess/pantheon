@@ -1,34 +1,17 @@
 import React, { Component } from "react";
 import {
-  Drawer,
-  DrawerPanelContent,
-  DrawerContent,
-  DrawerContentBody,
-  DrawerPanelBody,
-  DrawerHead,
-  DrawerActions,
-  DrawerCloseButton,
+  Drawer, DrawerPanelContent, DrawerContent, DrawerContentBody, DrawerHead, DrawerActions, DrawerCloseButton,
   Button, ButtonVariant,
   InputGroup,
-  Select,
-  SelectOption,
-  Dropdown,
-  DropdownItem,
-  DropdownSeparator,
-  KebabToggle,
+  Select, SelectOption,
   Toolbar, ToolbarItem, ToolbarContent, ToolbarFilter, ToolbarToggleGroup, ToolbarGroup,
-  TextInput,
   SelectVariant,
   ExpandableSection,
   Checkbox,
   Divider,
-  SimpleListItem,
-  SimpleList,
+  SimpleListItem, SimpleList,
   SearchInput,
-  Alert,
-  ToolbarChipGroup,
-  ToolbarChip,
-
+  ToolbarChipGroup, ToolbarChip,
 } from "@patternfly/react-core";
 
 import { SearchResults } from "@app/searchResults";
@@ -38,6 +21,8 @@ import "@app/app.css";
 import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
 import { IAppState } from "@app/app"
+import { BulkOperationMetadata } from "./bulkOperationMetadata";
+
 
 export interface ISearchState {
   filterLabel: string
@@ -62,14 +47,21 @@ export interface ISearchState {
   productFilterValue: string
   repoFilterValue: string
 
+  // metadata
   productsSelected: string[]
   repositoriesSelected: string[]
+  documentsSelected: Array<{ cells: [string, { title: { props: { href: string } } }, string, string, string], selected: boolean }>
+  contentTypeSelected: string
+  isModalOpen: boolean
+  isEditMetadata: boolean
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
+  private SearchResults;
 
   constructor(props) {
     super(props);
+    this.SearchResults = React.createRef();
     this.state = {
       // states for drawer
       filterLabel: "repo",
@@ -98,6 +90,12 @@ class Search extends Component<IAppState, ISearchState> {
       // search
       productsSelected: [],
       repositoriesSelected: [],
+
+      // bulk operation
+      documentsSelected: [],
+      contentTypeSelected: "",
+      isModalOpen: false,
+      isEditMetadata: false,
     };
     this.drawerRef = React.createRef();
 
@@ -107,6 +105,7 @@ class Search extends Component<IAppState, ISearchState> {
 
     // list repos inside the drawer
     this.getRepositories()
+    // product and id used for Filter
     // this.getProducts()
 
     // TODO: enable resize
@@ -127,7 +126,7 @@ class Search extends Component<IAppState, ISearchState> {
   }
   public render() {
     const { filterLabel, isExpanded, assembliesIsExpanded, modulesIsExpanded, productFilterIsExpanded, repoFilterIsExpanded, expandableSectionIsExpanded, repositories, inputValue, filters, statusIsExpanded, ctypeIsExpanded } = this.state;
-
+    // console.log('content type selected', this.state.contentTypeSelected)
     const panelContent = (
       <DrawerPanelContent widths={{ lg: "width_25" }}>
         <DrawerHead>
@@ -147,7 +146,7 @@ class Search extends Component<IAppState, ISearchState> {
               <SimpleList aria-label="Repository List" className='repo-list-container'>
                 {this.state.filteredRepositories.map((data) => (
                   <SimpleListItem key={data.id} className='repo-list filters-drawer__repo-list'>
-                    <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onChange={this.onSelectRepositories} isChecked={data.checked}/>
+                    <Checkbox label={data.name} aria-label="uncontrolled checkbox" id={data.id} onChange={this.onSelectRepositories} isChecked={data.checked} />
                   </SimpleListItem>
                 ))}
               </SimpleList>
@@ -178,24 +177,34 @@ class Search extends Component<IAppState, ISearchState> {
       <React.Fragment>
         <ExpandableSection toggleText="Modules" className="pf-c-title search-results__section search-results__section--module" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
           <SearchResults
+            ref={this.SearchResults}
             contentType="module"
             keyWord={this.state.inputValue}
             repositoriesSelected={this.state.repositoriesSelected}
             productsSelected={this.state.productsSelected}
             userAuthenticated={this.props.userAuthenticated}
             filters={this.state.filters}
+            onGetdocumentsSelected={this.getdocumentsSelected}
+            onSelectContentType={this.bulkEditSectionCheck}
+            currentBulkOperation={this.state.contentTypeSelected}
+            disabledClassname={this.state.contentTypeSelected == 'assembly' ? 'disabled-search-results' : ''}
           />
 
         </ExpandableSection>
         <br />
         <ExpandableSection toggleText="Assemblies" className="pf-c-title search-results__section search-results__section--assembly" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
           <SearchResults
+            ref={this.SearchResults}
             contentType="assembly"
             keyWord={this.state.inputValue}
             repositoriesSelected={this.state.repositoriesSelected}
             productsSelected={this.state.productsSelected}
             userAuthenticated={this.props.userAuthenticated}
             filters={this.state.filters}
+            onGetdocumentsSelected={this.getdocumentsSelected}
+            onSelectContentType={this.bulkEditSectionCheck}
+            currentBulkOperation={this.state.contentTypeSelected}
+            disabledClassname={this.state.contentTypeSelected == 'module' ? 'disabled-search-results' : ''}
           />
 
         </ExpandableSection>
@@ -273,24 +282,6 @@ class Search extends Component<IAppState, ISearchState> {
       </React.Fragment>
     );
 
-    // const dropdownItems = [
-    //   <DropdownItem key="link">Link</DropdownItem>,
-    //   <DropdownItem key="action" component="button">
-    //     Action
-    //       </DropdownItem>,
-    //   <DropdownItem key="disabled link" isDisabled={true}>
-    //     Disabled Link
-    //       </DropdownItem>,
-    //   <DropdownItem key="disabled action" isDisabled={true} component="button">
-    //     Disabled Action
-    //       </DropdownItem>,
-    //   <DropdownSeparator key="separator" />,
-    //   <DropdownItem key="separated link">Separated Link</DropdownItem>,
-    //   <DropdownItem key="separated action" component="button">
-    //     Separated Action
-    //       </DropdownItem>
-    // ];
-
     const toolbarItems = (
       <React.Fragment>
         <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
@@ -298,14 +289,16 @@ class Search extends Component<IAppState, ISearchState> {
         </ToolbarToggleGroup>
         <ToolbarGroup variant="icon-button-group">
         </ToolbarGroup>
-        {/* <ToolbarItem>
-          <Dropdown
-            toggle={<KebabToggle onToggle={this.onKebabToggle} />}
-            isOpen={kebabIsOpen}
-            isPlain={true}
-            dropdownItems={dropdownItems}
-          />
-        </ToolbarItem> */}
+        {this.props.userAuthenticated && (this.props.isAuthor || this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
+          <Button variant="primary" onClick={this.handleEditMetadata} data-testid="edit_metadata">Edit metadata</Button>
+        </ToolbarItem>}
+        {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
+          <Button variant="primary" isAriaDisabled={true}>Publish</Button>
+        </ToolbarItem>}
+        {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
+          <Button variant="primary" isAriaDisabled={true}>Unpublish</Button>
+        </ToolbarItem>}
+
       </React.Fragment>
     );
 
@@ -321,9 +314,15 @@ class Search extends Component<IAppState, ISearchState> {
         </Toolbar>
         <Divider />
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
-          <DrawerContent panelContent={panelContent} width="width_50">
-            <DrawerContentBody className="search-results" width="width_50">
+          <DrawerContent panelContent={panelContent}>
+            <DrawerContentBody className="search-results">
               {drawerContent}
+              {this.state.isEditMetadata && <BulkOperationMetadata 
+                documentsSelected={this.state.documentsSelected}
+                contentTypeSelected={this.state.contentTypeSelected}
+                isEditMetadata={this.state.isEditMetadata}
+                updateIsEditMetadata={this.updateIsEditMetadata}
+              />}
             </DrawerContentBody>
           </DrawerContent>
         </Drawer>
@@ -381,21 +380,18 @@ class Search extends Component<IAppState, ISearchState> {
       })
 
   }
+
   private onExpand = () => {
     this.drawerRef.current && this.drawerRef.current.focus()
   };
 
   private onClick = () => {
     const isExpanded = !this.state.isExpanded;
-    this.setState({
-      isExpanded
-    });
+    this.setState({ isExpanded });
   };
 
   private onCloseClick = () => {
-    this.setState({
-      isExpanded: false
-    });
+    this.setState({ isExpanded: false });
   };
 
   // methods for toolbar
@@ -435,8 +431,8 @@ class Search extends Component<IAppState, ISearchState> {
       filterType = type === 'Content Type' ? 'ctype' : type
       this.setState(prevState => {
         const newState = Object.assign(prevState);
-        return{
-          filters:{
+        return {
+          filters: {
             ...prevState.filters,
             [filterType.toLowerCase()]: newState.filters[filterType.toLowerCase()].filter(s => s !== id),
 
@@ -467,30 +463,22 @@ class Search extends Component<IAppState, ISearchState> {
   };
 
   private onStatusToggle = isExpanded => {
-    this.setState({
-      statusIsExpanded: isExpanded
-    });
+    this.setState({ statusIsExpanded: isExpanded });
   };
 
   private onCtypeToggle = isExpanded => {
-    this.setState({
-      ctypeIsExpanded: isExpanded
-    });
+    this.setState({ ctypeIsExpanded: isExpanded });
   };
 
   // methods for filter search
   private onChangeRepoFilter = (value, event) => {
-    this.setState({
-      repoFilterValue: value
-    });
+    this.setState({ repoFilterValue: value });
 
     // check for input value
     if (value) {
       // filter and return repositories that include input value, and set state to the filtered list
       let filtered = this.state.repositories.filter(data => data.name.toLowerCase().includes(value.toLowerCase()))
-      this.setState({
-        filteredRepositories: filtered
-      })
+      this.setState({ filteredRepositories: filtered })
     } else {
       this.setState({
         filteredRepositories: this.state.repositories
@@ -525,7 +513,7 @@ class Search extends Component<IAppState, ISearchState> {
 
     repositories = this.state.repositories.map(item => {
       if (item.id === event.target.id) {
-        item.checked = checked; 
+        item.checked = checked;
       }
       return item;
     });
@@ -550,32 +538,40 @@ class Search extends Component<IAppState, ISearchState> {
 
   // Method for ExpandableSection
   private onExpandableToggle = isExpanded => {
-    this.setState({
-      expandableSectionIsExpanded: isExpanded
-    });
+    this.setState({ expandableSectionIsExpanded: isExpanded });
   };
 
   private onModulesToggle = () => {
     const modulesIsExpanded = !this.state.modulesIsExpanded
-    this.setState({
-      modulesIsExpanded
-    });
+    this.setState({ modulesIsExpanded });
   };
 
   private onAssembliesToggle = () => {
     const assembliesIsExpanded = !this.state.assembliesIsExpanded
-    this.setState({
-      assembliesIsExpanded
-    });
+    this.setState({ assembliesIsExpanded });
   };
 
   private onRepositoriesToggle = () => {
     const repoFilterIsExpanded = !this.state.repoFilterIsExpanded
-    this.setState({
-      repoFilterIsExpanded
-    });
+    this.setState({ repoFilterIsExpanded });
   };
-}
 
+  // methods for bulk operation
+  private getdocumentsSelected = (documentsSelected) => {
+    this.setState({ documentsSelected })
+  }
+
+  private bulkEditSectionCheck = (contentTypeSelected) => {
+    this.setState({ contentTypeSelected })
+  }
+
+  private handleEditMetadata = (event) => {
+    this.setState({ isEditMetadata: !this.state.isEditMetadata })
+  }
+
+  private updateIsEditMetadata = (updateIsEditMetadata) => {
+    this.setState({isEditMetadata: updateIsEditMetadata })
+  }
+}
 
 export { Search }; 

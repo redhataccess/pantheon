@@ -2,6 +2,8 @@ import { IAppState } from "./app";
 
 const mockStateUser: IAppState = {
     isAdmin: false,
+    isAuthor: false,
+    isPublisher: false,
     isNavOpen: true,
     userAuthenticated: true,
     username: "demo"
@@ -9,6 +11,8 @@ const mockStateUser: IAppState = {
 
 const mockStateAdmin: IAppState = {
     isAdmin: true,
+    isAuthor: true,
+    isPublisher: true,
     isNavOpen: true,
     userAuthenticated: true,
     username: "admin"
@@ -16,6 +20,8 @@ const mockStateAdmin: IAppState = {
 
 const mockStateGuest: IAppState = {
     isAdmin: false,
+    isAuthor: false,
+    isPublisher: false,
     isNavOpen: true,
     userAuthenticated: false,
     username: "anonymous"
