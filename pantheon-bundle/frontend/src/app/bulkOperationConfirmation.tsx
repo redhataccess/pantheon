@@ -48,7 +48,6 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
       <React.Fragment>
         <div className="p2-search__pf-c-alert">
           <Alert
-            // className="p2-search__pf-c-alert pf-c-alert pf-m-info"
             variant="info"
             title="Bulk Edit"
             actionClose={<AlertActionCloseButton data-testid="hide-alert-button" onClose={this.hideAlert} />}

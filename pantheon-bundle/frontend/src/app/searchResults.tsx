@@ -21,7 +21,6 @@ import {
 } from "@patternfly/react-core";
 import { SearchIcon } from "@patternfly/react-icons";
 import CheckCircleIcon from "@patternfly/react-icons/dist/js/icons/check-circle-icon"
-// import ExclamationTriangleIcon from "@patternfly/react-icons/dist/js/icons/exclamation-circle-icon"
 import { SlingTypesPrefixes } from "./Constants";
 
 export interface IProps {
@@ -235,7 +234,7 @@ class SearchResults extends Component<IProps, ISearchState> {
       if (!backend.includes("Updated") && !backend.includes("direction")) {
         backend += "&key=Updated&direction=desc"
       }
-      // console.log("[buildSearchQuery] backend=>", backend)
+
       return backend
     } else {
       this.setState({ isEmptyResults: true })
@@ -273,7 +272,7 @@ class SearchResults extends Component<IProps, ISearchState> {
         .then(responseJSON => {
           this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })
           const data = new Array()
-          // console.log("[doSearch] results=>", this.state.results)
+
           responseJSON.results.map((item, key) => {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
             let publishedIcon = publishedDate !== "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : ""
