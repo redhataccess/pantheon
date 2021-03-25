@@ -51,8 +51,7 @@ class Dropdown extends Component<IProps> {
                   <li role="none"><button className="pf-c-context-selector__menu-list-item" onClick={() => this.changeSelection(this.dropdownItems[0])} id="items_5">{this.dropdownItems[0]}</button></li>
                   <li role="none"><button className="pf-c-context-selector__menu-list-item" onClick={() => this.changeSelection(this.dropdownItems[1])} id="items_25">{this.dropdownItems[1]}</button></li>
                   <li role="none"><button className="pf-c-context-selector__menu-list-item" onClick={() => this.changeSelection(this.dropdownItems[2])} id="items_50">{this.dropdownItems[2]}</button></li>
-                  <li role="none"><button className="pf-c-context-selector__menu-list-item" onClick={() => this.changeSelection(this.dropdownItems[3])} id="items_75">{this.dropdownItems[3]}</button></li>
-                  <li role="none"><button className="pf-c-context-selector__menu-list-item" onClick={() => this.changeSelection(this.dropdownItems[4])} id="items_100">{this.dropdownItems[4]}</button></li>
+                  <li role="none"><button className="pf-c-context-selector__menu-list-item" onClick={() => this.changeSelection(this.dropdownItems[3])} id="items_100">{this.dropdownItems[3]}</button></li>
                 </ul>
               </div>
             </div>
