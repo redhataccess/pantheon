@@ -46,7 +46,6 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
 
     return (
       <React.Fragment>
-        <div className="p2-search__pf-c-alert">
           <Alert
             variant="info"
             title="Bulk Edit"
@@ -61,7 +60,6 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
             <div><Progress value={this.props.progressFailureValue} title="Update failed" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
             <div><Progress value={this.props.progressWarningValue} title="No draft version found. No action taken" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>
           </Alert>
-        </div>
         <Modal
           variant={ModalVariant.large}
           isOpen={isModalOpen}

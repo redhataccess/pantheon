@@ -132,10 +132,4 @@ color: var(--pf-global--success-color--100)
 .repo-list-container{
     height: 500px;
     overflow-y: auto;
-}
-
-.p2-search__pf-c-alert{
-    position: absolute;
-    top:160px;
-    width: 50%;
-}    
+}  
