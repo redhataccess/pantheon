@@ -11,7 +11,7 @@ import {
   Divider,
   SimpleListItem, SimpleList,
   SearchInput,
-  ToolbarChipGroup, ToolbarChip,
+  ToolbarChipGroup, ToolbarChip, Alert, AlertActionLink,
 } from "@patternfly/react-core";
 
 import { SearchResults } from "@app/searchResults";
@@ -54,6 +54,7 @@ export interface ISearchState {
   contentTypeSelected: string
   isModalOpen: boolean
   isEditMetadata: boolean
+  editMetadataWarn: boolean
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
@@ -96,6 +97,7 @@ class Search extends Component<IAppState, ISearchState> {
       contentTypeSelected: "",
       isModalOpen: false,
       isEditMetadata: false,
+      editMetadataWarn: false,
     };
     this.drawerRef = React.createRef();
 
@@ -124,6 +126,11 @@ class Search extends Component<IAppState, ISearchState> {
     // toolbar
     // window.removeEventListener("resize", this.closeExpandableContent);
   }
+
+  public componentDidUpdate(prevProps) {
+  
+  }
+
   public render() {
     const { filterLabel, isExpanded, assembliesIsExpanded, modulesIsExpanded, productFilterIsExpanded, repoFilterIsExpanded, expandableSectionIsExpanded, repositories, inputValue, filters, statusIsExpanded, ctypeIsExpanded } = this.state;
     // console.log('content type selected', this.state.contentTypeSelected)
@@ -316,13 +323,15 @@ class Search extends Component<IAppState, ISearchState> {
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody className="search-results">
-              {drawerContent}
+              {this.state.editMetadataWarn && <Alert variant="danger" isInline title="Attempt to apply the same product/version to multiple repositories is not allowed." />}
               {this.state.isEditMetadata && <BulkOperationMetadata 
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isEditMetadata={this.state.isEditMetadata}
                 updateIsEditMetadata={this.updateIsEditMetadata}
               />}
+              {drawerContent}
+              
             </DrawerContentBody>
           </DrawerContent>
         </Drawer>
@@ -532,6 +541,10 @@ class Search extends Component<IAppState, ISearchState> {
     this.setState({
       repositories,
       repositoriesSelected
+    }, ()=> {
+      if(this.state.repositoriesSelected.length ===1 && this.state.editMetadataWarn === true) {
+        this.setState({editMetadataWarn: false})
+      }
     });
 
     this.getdocumentsSelected(this.state.documentsSelected)
@@ -571,7 +584,15 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   private handleEditMetadata = (event) => {
-    this.setState({ isEditMetadata: !this.state.isEditMetadata })
+    if (this.state.repositoriesSelected.length > 1) {
+      this.setState({ editMetadataWarn: true})
+    } else {
+      this.setState({ 
+        isEditMetadata: !this.state.isEditMetadata, 
+        editMetadataWarn: false 
+      })
+    }
+    
   }
 
   private updateIsEditMetadata = (updateIsEditMetadata) => {

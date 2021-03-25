@@ -2,82 +2,78 @@
 
 exports[`BulkOperationConfirmation tests should render BulkOperationConfirmation component 1`] = `
 <Fragment>
-  <div
-    className="p2-search__pf-c-alert"
+  <Alert
+    actionClose={
+      <AlertActionCloseButton
+        data-testid="hide-alert-button"
+        onClose={[Function]}
+      />
+    }
+    actionLinks={
+      <React.Fragment>
+        <AlertActionLink
+          data-testid="view-details-link"
+          onClick={[Function]}
+        >
+          View details
+        </AlertActionLink>
+      </React.Fragment>
+    }
+    title="Bulk Edit"
+    variant="info"
   >
-    <Alert
-      actionClose={
-        <AlertActionCloseButton
-          data-testid="hide-alert-button"
-          onClose={[Function]}
-        />
-      }
-      actionLinks={
-        <React.Fragment>
-          <AlertActionLink
-            data-testid="view-details-link"
-            onClick={[Function]}
-          >
-            View details
-          </AlertActionLink>
-        </React.Fragment>
-      }
-      title="Bulk Edit"
-      variant="info"
-    >
-      <div>
-        <Progress
-          className=""
-          id=""
-          isTitleTruncated={false}
-          label={null}
-          max={100}
-          measureLocation="top"
-          min={0}
-          size="sm"
-          title="Update Succeeded"
-          tooltipPosition="top"
-          value={50}
-          valueText={null}
-          variant="success"
-        />
-      </div>
-      <div>
-        <Progress
-          className=""
-          id=""
-          isTitleTruncated={false}
-          label={null}
-          max={100}
-          measureLocation="top"
-          min={0}
-          size="sm"
-          title="Update failed"
-          tooltipPosition="top"
-          value={10}
-          valueText={null}
-          variant="danger"
-        />
-      </div>
-      <div>
-        <Progress
-          className=""
-          id=""
-          isTitleTruncated={false}
-          label={null}
-          max={100}
-          measureLocation="top"
-          min={0}
-          size="sm"
-          title="No draft version found. No action taken"
-          tooltipPosition="top"
-          value={40}
-          valueText={null}
-          variant="warning"
-        />
-      </div>
-    </Alert>
-  </div>
+    <div>
+      <Progress
+        className=""
+        id=""
+        isTitleTruncated={false}
+        label={null}
+        max={100}
+        measureLocation="top"
+        min={0}
+        size="sm"
+        title="Update Succeeded"
+        tooltipPosition="top"
+        value={50}
+        valueText={null}
+        variant="success"
+      />
+    </div>
+    <div>
+      <Progress
+        className=""
+        id=""
+        isTitleTruncated={false}
+        label={null}
+        max={100}
+        measureLocation="top"
+        min={0}
+        size="sm"
+        title="Update failed"
+        tooltipPosition="top"
+        value={10}
+        valueText={null}
+        variant="danger"
+      />
+    </div>
+    <div>
+      <Progress
+        className=""
+        id=""
+        isTitleTruncated={false}
+        label={null}
+        max={100}
+        measureLocation="top"
+        min={0}
+        size="sm"
+        title="No draft version found. No action taken"
+        tooltipPosition="top"
+        value={40}
+        valueText={null}
+        variant="warning"
+      />
+    </div>
+  </Alert>
   <Modal
     actions={Array []}
     appendTo={[Function]}
