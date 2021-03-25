@@ -560,7 +560,7 @@ class Search extends Component<IAppState, ISearchState> {
 
   // methods for bulk operation
   private getdocumentsSelected = (documentsSelected) => {
-    if(this.state.repositoriesSelected.length == 0){
+    if(this.state.repositoriesSelected.length === 0){
       this.setState({ contentTypeSelected: '' })
     }
     this.setState({ documentsSelected })
