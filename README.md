@@ -20,6 +20,10 @@ and built on top of Apache sling.
 
 ## Contributing to Pantheon
 
+### Filing a bug for Pantheon 2 end-user documentation
+
+If you have any suggestions to improve or extend the end-user documentation, create a new issue and tag @pantheon-doc-authors.
+
 ### Prerequisites
 
 * You must have an account on GitHub.
