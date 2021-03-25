@@ -67,9 +67,9 @@ Whenever you work on a new issue, you must create a new working branch based on 
        ```
        $ git pull upstream master
        ```
-1. Create a working branch based on the issue in JIRA:
+1. Create a working branch based on the issue in JIRA. For example:
        ```
-       $ git checkout -b FCCEUD<ID#>
+       $ git checkout -b FCCEUD-<ID#>
        ```       
 
 ### Creating a pull request and completing review
