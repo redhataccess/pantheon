@@ -309,11 +309,6 @@ class Search extends Component<IAppState, ISearchState> {
       </React.Fragment>
     );
 
-    const editMetadataAlert = (
-      <React.Fragment>
-      
-        </React.Fragment>
-    )
     return (
       <React.Fragment>
         <Toolbar
