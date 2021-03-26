@@ -253,6 +253,7 @@ exports[`Search tests should render default Search component 1`] = `
             </Select>
           </ToolbarFilter>
         </ForwardRef>
+        .
       </ToolbarToggleGroup>
       <ForwardRef
         variant="icon-button-group"

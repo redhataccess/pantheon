@@ -20,6 +20,7 @@ exports[`BulkOperationMetadata tests should render BulkOperationMetadata compone
       Array [
         <Button
           form="bulk_edit_metadata"
+          isAriaDisabled={false}
           onClick={[Function]}
           variant="primary"
         >

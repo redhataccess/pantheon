@@ -55,6 +55,7 @@ export interface ISearchState {
   isModalOpen: boolean
   isEditMetadata: boolean
   editMetadataWarn: boolean
+  isMetadataButtonDisabled: boolean
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
@@ -98,6 +99,7 @@ class Search extends Component<IAppState, ISearchState> {
       isModalOpen: false,
       isEditMetadata: false,
       editMetadataWarn: false,
+      isMetadataButtonDisabled: true,
     };
     this.drawerRef = React.createRef();
 
@@ -128,12 +130,12 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   public componentDidUpdate(prevProps) {
-  
+
   }
 
   public render() {
     const { filterLabel, isExpanded, assembliesIsExpanded, modulesIsExpanded, productFilterIsExpanded, repoFilterIsExpanded, expandableSectionIsExpanded, repositories, inputValue, filters, statusIsExpanded, ctypeIsExpanded } = this.state;
-    // console.log('content type selected', this.state.contentTypeSelected)
+
     const panelContent = (
       <DrawerPanelContent widths={{ lg: "width_25" }}>
         <DrawerHead>
@@ -292,12 +294,12 @@ class Search extends Component<IAppState, ISearchState> {
     const toolbarItems = (
       <React.Fragment>
         <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
-          {toggleGroupItems}
+          {toggleGroupItems}.
         </ToolbarToggleGroup>
         <ToolbarGroup variant="icon-button-group">
         </ToolbarGroup>
         {this.props.userAuthenticated && (this.props.isAuthor || this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" onClick={this.handleEditMetadata} data-testid="edit_metadata">Edit metadata</Button>
+          <Button variant="primary" isAriaDisabled={this.state.isMetadataButtonDisabled || this.state.repositoriesSelected.length === 0} onClick={this.handleEditMetadata} data-testid="edit_metadata">Edit metadata</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
           <Button variant="primary" isAriaDisabled={true}>Publish</Button>
@@ -324,14 +326,14 @@ class Search extends Component<IAppState, ISearchState> {
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody className="search-results">
               {this.state.editMetadataWarn && <Alert variant="danger" isInline title="Attempt to apply the same product/version to multiple repositories is not allowed." />}
-              {this.state.isEditMetadata && <BulkOperationMetadata 
+              {this.state.isEditMetadata && <BulkOperationMetadata
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isEditMetadata={this.state.isEditMetadata}
                 updateIsEditMetadata={this.updateIsEditMetadata}
               />}
               {drawerContent}
-              
+
             </DrawerContentBody>
           </DrawerContent>
         </Drawer>
@@ -541,10 +543,15 @@ class Search extends Component<IAppState, ISearchState> {
     this.setState({
       repositories,
       repositoriesSelected
-    }, ()=> {
-      if(this.state.repositoriesSelected.length ===1 && this.state.editMetadataWarn === true) {
-        this.setState({editMetadataWarn: false})
+    }, () => {
+      if (this.state.repositoriesSelected.length === 0) {
+        this.setState({ documentsSelected: [], isMetadataButtonDisabled: true })
       }
+
+      if (this.state.repositoriesSelected.length === 1 && this.state.editMetadataWarn === true) {
+        this.setState({ editMetadataWarn: false })
+      }
+
     });
 
     this.getdocumentsSelected(this.state.documentsSelected)
@@ -573,10 +580,22 @@ class Search extends Component<IAppState, ISearchState> {
 
   // methods for bulk operation
   private getdocumentsSelected = (documentsSelected) => {
-    if(this.state.repositoriesSelected.length === 0){
-      this.setState({ contentTypeSelected: '' })
+    if (this.state.repositoriesSelected.length === 0) {
+      this.setState({
+        contentTypeSelected: '',
+        documentsSelected: [],
+        isMetadataButtonDisabled: true
+      })
+    } else {
+      this.setState({ documentsSelected }, () => {
+        if (this.state.documentsSelected.length > 0) {
+          this.setState({ isMetadataButtonDisabled: false })
+        } else {
+          this.setState({ isMetadataButtonDisabled: true })
+        }
+      })
     }
-    this.setState({ documentsSelected })
+
   }
 
   private bulkEditSectionCheck = (contentTypeSelected) => {
@@ -585,18 +604,26 @@ class Search extends Component<IAppState, ISearchState> {
 
   private handleEditMetadata = (event) => {
     if (this.state.repositoriesSelected.length > 1) {
-      this.setState({ editMetadataWarn: true})
+      this.setState({ editMetadataWarn: true }, () => {
+        this.setState({ isMetadataButtonDisabled: true })
+      })
     } else {
-      this.setState({ 
-        isEditMetadata: !this.state.isEditMetadata, 
-        editMetadataWarn: false 
+      this.setState({
+        isEditMetadata: !this.state.isEditMetadata,
+        editMetadataWarn: false
+      }, () => {
+        if (this.state.editMetadataWarn === false && this.state.repositoriesSelected.length === 1) {
+          this.setState({ isMetadataButtonDisabled: false })
+        } else {
+          this.setState({ isMetadataButtonDisabled: true })
+        }
       })
     }
-    
+
   }
 
   private updateIsEditMetadata = (updateIsEditMetadata) => {
-    this.setState({isEditMetadata: updateIsEditMetadata })
+    this.setState({ isEditMetadata: updateIsEditMetadata })
   }
 }
 
