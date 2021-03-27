@@ -55,7 +55,7 @@ export interface ISearchState {
   isModalOpen: boolean
   isEditMetadata: boolean
   editMetadataWarn: boolean
-  isMetadataButtonDisabled: boolean
+  isBulkOperationButtonDisabled: boolean
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
@@ -99,7 +99,7 @@ class Search extends Component<IAppState, ISearchState> {
       isModalOpen: false,
       isEditMetadata: false,
       editMetadataWarn: false,
-      isMetadataButtonDisabled: true,
+      isBulkOperationButtonDisabled: true,
     };
     this.drawerRef = React.createRef();
 
@@ -299,7 +299,7 @@ class Search extends Component<IAppState, ISearchState> {
         <ToolbarGroup variant="icon-button-group">
         </ToolbarGroup>
         {this.props.userAuthenticated && (this.props.isAuthor || this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" isAriaDisabled={this.state.isMetadataButtonDisabled || this.state.repositoriesSelected.length === 0} onClick={this.handleEditMetadata} data-testid="edit_metadata">Edit metadata</Button>
+          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length === 0} onClick={this.handleEditMetadata} data-testid="edit_metadata">Edit metadata</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
           <Button variant="primary" isAriaDisabled={true}>Publish</Button>
@@ -545,7 +545,7 @@ class Search extends Component<IAppState, ISearchState> {
       repositoriesSelected
     }, () => {
       if (this.state.repositoriesSelected.length === 0) {
-        this.setState({ documentsSelected: [], isMetadataButtonDisabled: true })
+        this.setState({ documentsSelected: [], isBulkOperationButtonDisabled: true })
       }
 
       if (this.state.repositoriesSelected.length === 1 && this.state.editMetadataWarn === true) {
@@ -584,14 +584,14 @@ class Search extends Component<IAppState, ISearchState> {
       this.setState({
         contentTypeSelected: '',
         documentsSelected: [],
-        isMetadataButtonDisabled: true
+        isBulkOperationButtonDisabled: true
       })
     } else {
       this.setState({ documentsSelected }, () => {
         if (this.state.documentsSelected.length > 0) {
-          this.setState({ isMetadataButtonDisabled: false })
+          this.setState({ isBulkOperationButtonDisabled: false })
         } else {
-          this.setState({ isMetadataButtonDisabled: true })
+          this.setState({ isBulkOperationButtonDisabled: true })
         }
       })
     }
@@ -605,7 +605,7 @@ class Search extends Component<IAppState, ISearchState> {
   private handleEditMetadata = (event) => {
     if (this.state.repositoriesSelected.length > 1) {
       this.setState({ editMetadataWarn: true }, () => {
-        this.setState({ isMetadataButtonDisabled: true })
+        this.setState({ isBulkOperationButtonDisabled: true })
       })
     } else {
       this.setState({
@@ -613,9 +613,9 @@ class Search extends Component<IAppState, ISearchState> {
         editMetadataWarn: false
       }, () => {
         if (this.state.editMetadataWarn === false && this.state.repositoriesSelected.length === 1) {
-          this.setState({ isMetadataButtonDisabled: false })
+          this.setState({ isBulkOperationButtonDisabled: false })
         } else {
-          this.setState({ isMetadataButtonDisabled: true })
+          this.setState({ isBulkOperationButtonDisabled: true })
         }
       })
     }
