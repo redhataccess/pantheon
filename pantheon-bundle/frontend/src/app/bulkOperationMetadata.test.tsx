@@ -11,7 +11,9 @@ const props = {
     documentsSelected: anymatch,
     contentTypeSelected: "module",
     isEditMetadata: true,
+    bulkOperationCompleted: false,
     updateIsEditMetadata: (isEditMetadata) => anymatch,
+    updateBulkOperationCompleted: (bulkOperationCompleted) => anymatch
 }
 describe("BulkOperationMetadata tests", () => {
     const api = "/content/products.harray.1.json"

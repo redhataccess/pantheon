@@ -10,7 +10,9 @@ export interface IBulkOperationMetadataProps {
     documentsSelected: Array<{ cells: [string, { title: { props: { href: string } } }, string, string, string], selected: boolean }>
     contentTypeSelected: string
     isEditMetadata: boolean
+    bulkOperationCompleted: boolean
     updateIsEditMetadata: (isEditMetadata) => any
+    updateBulkOperationCompleted: (bulkOperationConfirmation) => any
 }
 
 class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps, any>{
@@ -202,6 +204,9 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                 this.state.documentsFailed.length === 0 &&
                 this.state.documentsIgnored.length === 0) {
                 this.props.updateIsEditMetadata(false)
+            } else {
+                this.props.updateBulkOperationCompleted(true)
+
             }
 
         })
@@ -209,7 +214,11 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
     private handleModalToggle = (event) => {
         this.setState({ isModalOpen: !this.state.isModalOpen, showBulkEditConfirmation: false }, () => {
-            this.props.updateIsEditMetadata(false)
+            
+            if (!this.state.isModalOpen) {
+                this.props.updateIsEditMetadata(false)
+                this.props.updateBulkOperationCompleted(true)
+            }
         })
     }
 

@@ -56,14 +56,14 @@ export interface ISearchState {
   isEditMetadata: boolean
   editMetadataWarn: boolean
   isBulkOperationButtonDisabled: boolean
+  bulkOperationCompleted: boolean
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
-  private SearchResults;
+  private searchResultsRef;
 
   constructor(props) {
-    super(props);
-    this.SearchResults = React.createRef();
+    super(props);   
     this.state = {
       // states for drawer
       filterLabel: "repo",
@@ -100,9 +100,10 @@ class Search extends Component<IAppState, ISearchState> {
       isEditMetadata: false,
       editMetadataWarn: false,
       isBulkOperationButtonDisabled: true,
+      bulkOperationCompleted: false,
     };
     this.drawerRef = React.createRef();
-
+    this.searchResultsRef = React.createRef();
   }
 
   public componentDidMount() {
@@ -130,7 +131,7 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   public componentDidUpdate(prevProps) {
-
+    
   }
 
   public render() {
@@ -186,7 +187,7 @@ class Search extends Component<IAppState, ISearchState> {
       <React.Fragment>
         <ExpandableSection toggleText="Modules" className="pf-c-title search-results__section search-results__section--module" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
           <SearchResults
-            ref={this.SearchResults}
+            ref={this.searchResultsRef}
             contentType="module"
             keyWord={this.state.inputValue}
             repositoriesSelected={this.state.repositoriesSelected}
@@ -203,7 +204,7 @@ class Search extends Component<IAppState, ISearchState> {
         <br />
         <ExpandableSection toggleText="Assemblies" className="pf-c-title search-results__section search-results__section--assembly" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
           <SearchResults
-            ref={this.SearchResults}
+            ref={this.searchResultsRef}
             contentType="assembly"
             keyWord={this.state.inputValue}
             repositoriesSelected={this.state.repositoriesSelected}
@@ -330,7 +331,9 @@ class Search extends Component<IAppState, ISearchState> {
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isEditMetadata={this.state.isEditMetadata}
+                bulkOperationCompleted={this.state.bulkOperationCompleted}
                 updateIsEditMetadata={this.updateIsEditMetadata}
+                updateBulkOperationCompleted={this.updateBulkOperationCompleted}
               />}
               {drawerContent}
 
@@ -624,6 +627,15 @@ class Search extends Component<IAppState, ISearchState> {
 
   private updateIsEditMetadata = (updateIsEditMetadata) => {
     this.setState({ isEditMetadata: updateIsEditMetadata })
+  }
+
+  private updateBulkOperationCompleted = (bulkOperationCompleted) => {
+    this.setState({ bulkOperationCompleted}, ()=>{
+      if(this.state.bulkOperationCompleted){
+        // refresh documentsSelected
+        this.searchResultsRef.current && this.searchResultsRef.current.doSearch()
+      }
+    })
   }
 }
 
