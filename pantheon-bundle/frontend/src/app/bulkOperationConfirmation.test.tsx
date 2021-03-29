@@ -17,8 +17,8 @@ const props = {
     progressSuccessValue: 50,
     progressFailureValue: 10,
     progressWarningValue: 40,
-    onShowBulkOperationConfirmation: (showBulkConfirmation) => anymatch,
-    onBulkOperationError: (updateBulkOperationError) => anymatch
+    onShowBulkEditConfirmation: (showBulkEditConfirmation) => anymatch,
+    onMetadataEditError: (metadataEditError) => anymatch
 }
 
 describe("BulkOperationConfirmation tests", () => {

@@ -636,13 +636,6 @@ class Search extends Component<IAppState, ISearchState> {
   private handleBulkPublish = (event) => {
     this.setState({ isBulkPublish: !this.state.isBulkPublish })
   }
-
-  private updateSearchResults = () => {
-    console.log('updating search results?')
-  }
-
-
- 
   
   private updateIsEditMetadata = (updateIsEditMetadata) => {
     this.setState({ isEditMetadata: updateIsEditMetadata })

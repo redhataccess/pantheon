@@ -13,8 +13,8 @@ export interface IBulkOperationProps {
   progressSuccessValue: number
   progressFailureValue: number
   progressWarningValue: number
-  onShowBulkOperationConfirmation: (showBulkConfirmation) => any
-  onBulkOperationError: (metadataEditError) => any
+  onShowBulkEditConfirmation: (showBulkEditConfirmation) => any
+  onMetadataEditError: (metadataEditError) => any
 }
 
 class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any>{
@@ -122,8 +122,8 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
   };
 
   private hideAlert = () => {
-    this.props.onShowBulkOperationConfirmation(false)
-    this.props.onBulkOperationError("")
+    this.props.onShowBulkEditConfirmation(false)
+    this.props.onMetadataEditError("")
     //TODO: refresh documentsSelected
     // this.SearchResults.current.doSearch()
   }

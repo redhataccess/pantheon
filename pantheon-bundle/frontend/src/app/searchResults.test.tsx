@@ -23,8 +23,6 @@ const props = {
     onSelectContentType: (contentType) => anymatch,
     currentBulkOperation: "",
     disabledClassname: "",
-    //@ts-ignore
-    updateSearchResults: () => any
 }
 
 const propsEmptyState = {
@@ -38,9 +36,6 @@ const propsEmptyState = {
     onSelectContentType: (contentType) => anymatch,
     currentBulkOperation: "",
     disabledClassname: "",
-    //@ts-ignore
-    updateSearchResults: () => any
-
 }
 
 describe("SearchResults tests", () => {

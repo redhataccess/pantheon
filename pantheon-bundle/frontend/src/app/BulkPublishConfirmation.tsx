@@ -14,8 +14,6 @@ export interface IBulkPublishProps {
   progressFailureValue: number
   progressWarningValue: number
   onShowBulkOperationConfirmation: (showBulkConfirmation) => any
-  onBulkOperationError: (metadataEditError) => any
-  updatePublishIcons: () => any
 }
 
 class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
@@ -29,9 +27,6 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
 
   render() {
     const { isModalOpen } = this.state;
-    if(this.props.progressSuccessValue > 0){
-      this.props.updatePublishIcons()
-  }
 
     const header = (
       <React.Fragment>
@@ -129,7 +124,6 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
 
   private hideAlert = () => {
     this.props.onShowBulkOperationConfirmation(false)
-    this.props.onBulkOperationError("")
     //TODO: refresh documentsSelected
     // this.SearchResults.current.doSearch()
   }

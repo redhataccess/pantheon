@@ -41,11 +41,6 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
 
     }
 
-    public componentDidMount() {
-        // fetch products and label for metadata Modal
-        // this.fetchProducts()
-    }
-
     public render() {
         const { isModalOpen } = this.state;
         const publishHeader = (
@@ -88,31 +83,6 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
           </React.Fragment>
         );
 
-        const publishConfirmationHeader = (
-          <React.Fragment>
-            <Title headingLevel="h1" size={BaseSizes["2xl"]}>
-              Published Message
-            </Title>
-          </React.Fragment>
-        )
-
-        // const publishConfirmationModal = (
-        //   <React.Fragment>
-        //     <Modal
-        //       variant={ModalVariant.medium}
-        //       title="Documents Successfully Published"
-        //       isOpen={this.state.showPublishMessage}
-        //       header={publishConfirmationHeader}
-        //       aria-label="Documents Successfully Published"
-        //       onClose={this.handlePublishConfirmationModalClose}
-        //     >
-        //       <div>
-        //     {this.state.documentTitles.length > 0 ? this.state.documentTitles.map(title => <p>{title}</p>) : <p>Documents failed to publish. Please ensure no metadata is missing from selected docs.</p>}
-        //     </div>
-        //     </Modal>
-        //   </React.Fragment>
-        // );
-
         return (
             <React.Fragment>
                 {this.state.showBulkConfirmation &&
@@ -127,7 +97,6 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                         progressFailureValue={this.state.progressFailureValue}
                         progressWarningValue={this.state.progressWarningValue}
                         onShowBulkOperationConfirmation={this.updateShowBulkPublishConfirmation}
-                        onBulkOperationError={this.updateBulkOperationError}
                     />}
 
                 {this.props.isBulkPublish && publishModal}
@@ -233,10 +202,6 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
   //functions for success & failure messages
   private updateShowBulkPublishConfirmation = (showBulkConfirmation) => {
     this.setState({ showBulkConfirmation })
-}
-
-private updateBulkOperationError = (metadataEditError) => {
-    this.setState({ metadataEditError: "string" })
 }
 
 private calculateFailureProgress = (num: number) => {
