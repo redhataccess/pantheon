@@ -82,6 +82,7 @@
     "@patternfly/react-core": "^4.50.2",
     "@patternfly/react-icons": "^4.7.11",
     "@patternfly/react-table": "^4.18.14",
+    "fetch-mock": "^9.11.0",
     "sinon": "^7.4.1"
   }
 }

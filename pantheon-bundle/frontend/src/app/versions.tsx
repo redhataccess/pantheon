@@ -17,7 +17,7 @@ import CheckImage from "@app/images/check_image.jpg"
 import BlankImage from "@app/images/blank.jpg"
 import { Redirect } from "react-router-dom"
 import { ExclamationTriangleIcon, TimesIcon, PlusCircleIcon } from "@patternfly/react-icons"
-import { PantheonContentTypes, PathPrefixes } from "./Constants"
+import { Metadata, PantheonContentTypes, PathPrefixes } from "./Constants"
 
 export interface IProps {
     contentType: string
@@ -72,7 +72,6 @@ interface IState {
 
 
 class Versions extends Component<IProps, IState> {
-    private static USE_CASES = ["Select Use Case", "Administer", "Deploy", "Develop", "Install", "Migrate", "Monitor", "Network", "Plan", "Provision", "Release", "Troubleshoot", "Optimize"]
 
     public draft = [{ type: "draft", icon: BlankImage, path: "", version: "", publishedState: "Not published", updatedDate: "", firstButtonType: "primary", secondButtonType: "secondary", firstButtonText: "Publish", secondButtonText: "Preview", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} } }]
     public release = [{ type: "release", icon: CheckImage, "path": "", version: "", publishedState: "Released", updatedDate: "", firstButtonType: "secondary", secondButtonType: "primary", firstButtonText: "Unpublish", secondButtonText: "View", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} }, draftUploadDate: "" }]
@@ -370,7 +369,7 @@ class Versions extends Component<IProps, IState> {
                             helperText="Explanations of document user cases included in documentation."
                         >
                             <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
-                                {Versions.USE_CASES.map((option, key) => (
+                                {Metadata.USE_CASES.map((option, key) => (
                                     <FormSelectOption key={"usecase_" + key} value={option} label={option} />
                                 ))}
                             </FormSelect>
@@ -572,6 +571,7 @@ class Versions extends Component<IProps, IState> {
         })
     }
 
+    //TODO: refactor this method and move necessary code to Utils
     private saveMetadata = (event) => {
         // save form data
         if (this.state.product.value === undefined || this.state.product.value === "Select a Product" || this.state.product.value === ""
@@ -687,7 +687,9 @@ class Versions extends Component<IProps, IState> {
             })
             .then(responseJSON => {
                 for (const product of responseJSON.__children__) {
-                    products.push({ label: product.name, value: product.__name__ })
+                    if (product.name !== undefined) {
+                        products.push({ label: product.name, value: product.__name__ })
+                    }
                 }
                 this.setState({
                     allProducts: products

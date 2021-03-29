@@ -289,6 +289,13 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("jcr:description","-");
         }
 
+        if(draftMetadata.isPresent() && draftMetadata.get().productVersion().get()!=null){
+            m.put("productVersion",draftMetadata.get().productVersion().get());
+        }else if(releasedMetadata.isPresent() && releasedMetadata.get().productVersion().get()!=null){
+            m.put("productVersion",releasedMetadata.get().productVersion().get());
+        }else{
+            m.put("productVersion","-");
+        }
         // Assume the path is something like: /content/<something>/my/resource/path
         m.put("pant:transientPath", resourcePath.substring("/content/".length()));
         // Example path: /content/repositories/ben_2019-04-11_16-15-15/shared/attributes.module.adoc

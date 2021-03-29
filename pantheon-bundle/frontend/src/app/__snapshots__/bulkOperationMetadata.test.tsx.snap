@@ -1,0 +1,241 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BulkOperationMetadata tests should render BulkOperationMetadata component 1`] = `
+<Fragment>
+  <BulkOperationConfirmation
+    footer=""
+    header="Bulk Edit"
+    onMetadataEditError={[Function]}
+    onShowBulkEditConfirmation={[Function]}
+    progressFailureValue={0}
+    progressSuccessValue={0}
+    progressWarningValue={0}
+    subheading="Documents updated in the bulk operation"
+    updateFailed=""
+    updateIgnored=""
+    updateSucceeded=""
+  />
+  <Modal
+    actions={
+      Array [
+        <Button
+          form="bulk_edit_metadata"
+          onClick={[Function]}
+          variant="primary"
+        >
+          Save
+        </Button>,
+        <Button
+          data-testid="metadata-modal-cancel-button"
+          onClick={[Function]}
+          variant="secondary"
+        >
+          Cancel
+        </Button>,
+      ]
+    }
+    appendTo={[Function]}
+    aria-describedby=""
+    aria-label="Edit metadata"
+    aria-labelledby=""
+    className=""
+    hasNoBodyWrapper={false}
+    header={
+      <React.Fragment>
+        <Title
+          headingLevel="h1"
+          size="2xl"
+        >
+          Edit Metadata
+        </Title>
+      </React.Fragment>
+    }
+    isOpen={true}
+    onClose={[Function]}
+    ouiaSafe={true}
+    showClose={true}
+    title="Edit metadata"
+    titleIconVariant={null}
+    titleLabel=""
+    variant="medium"
+  >
+    <div
+      id="edit_metadata_helper_text"
+    >
+      <p>
+        Editing 
+        5
+         
+        modules
+        . Changes made apply to all selected docs.
+      </p>
+    </div>
+    <br />
+    <Form
+      id="bulk_edit_metadata"
+      isWidthLimited={true}
+    >
+      <FormGroup
+        fieldId="product-name"
+        isRequired={true}
+        label="Product Name"
+        validated="error"
+      >
+        <InputGroup>
+          <FormSelect
+            aria-label="FormSelect Product"
+            className=""
+            isDisabled={false}
+            isRequired={true}
+            name="product"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            ouiaSafe={true}
+            validated="error"
+            value=""
+          >
+            <FormSelectOption
+              label="Select a Product"
+            />
+          </FormSelect>
+          <FormSelect
+            aria-label="FormSelect Version"
+            className=""
+            id="productVersion"
+            isDisabled={false}
+            isRequired={true}
+            name="productVersion"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            ouiaSafe={true}
+            validated="error"
+            value=""
+          >
+            <FormSelectOption
+              label="Select a Version"
+            />
+          </FormSelect>
+        </InputGroup>
+      </FormGroup>
+      <FormGroup
+        fieldId="document-usecase"
+        helperText="Explanations of document user cases included in documentation."
+        isRequired={true}
+        label="Document use case"
+        validated="error"
+      >
+        <FormSelect
+          aria-label="FormSelect Usecase"
+          className=""
+          isDisabled={false}
+          isRequired={true}
+          name="useCase"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onFocus={[Function]}
+          ouiaSafe={true}
+          validated="error"
+          value=""
+        >
+          <FormSelectOption
+            key="usecase_0"
+            label="Select Use Case"
+            value="Select Use Case"
+          />
+          <FormSelectOption
+            key="usecase_1"
+            label="Administer"
+            value="Administer"
+          />
+          <FormSelectOption
+            key="usecase_2"
+            label="Deploy"
+            value="Deploy"
+          />
+          <FormSelectOption
+            key="usecase_3"
+            label="Develop"
+            value="Develop"
+          />
+          <FormSelectOption
+            key="usecase_4"
+            label="Install"
+            value="Install"
+          />
+          <FormSelectOption
+            key="usecase_5"
+            label="Migrate"
+            value="Migrate"
+          />
+          <FormSelectOption
+            key="usecase_6"
+            label="Monitor"
+            value="Monitor"
+          />
+          <FormSelectOption
+            key="usecase_7"
+            label="Network"
+            value="Network"
+          />
+          <FormSelectOption
+            key="usecase_8"
+            label="Plan"
+            value="Plan"
+          />
+          <FormSelectOption
+            key="usecase_9"
+            label="Provision"
+            value="Provision"
+          />
+          <FormSelectOption
+            key="usecase_10"
+            label="Release"
+            value="Release"
+          />
+          <FormSelectOption
+            key="usecase_11"
+            label="Troubleshoot"
+            value="Troubleshoot"
+          />
+          <FormSelectOption
+            key="usecase_12"
+            label="Optimize"
+            value="Optimize"
+          />
+        </FormSelect>
+      </FormGroup>
+      <FormGroup
+        fieldId="url-fragment"
+        helperText="Edit individually to set or change vanity URL."
+        label="Vanity URL fragment"
+      />
+      <FormGroup
+        fieldId="search-keywords"
+        isRequired={false}
+        label="Search keywords"
+      >
+        <InputGroup>
+          <TextInput
+            id="search-keywords"
+            isRequired={false}
+            name="keywords"
+            onChange={[Function]}
+            placeholder="cat, dog, bird..."
+            type="text"
+            value=""
+          />
+        </InputGroup>
+      </FormGroup>
+      <div>
+        <input
+          name="productVersion@TypeHint"
+          type="hidden"
+          value="Reference"
+        />
+      </div>
+    </Form>
+  </Modal>
+</Fragment>
+`;

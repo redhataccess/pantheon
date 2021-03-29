@@ -29,7 +29,7 @@ exports[`Tests for Pagination should render Pagination component 1`] = `
                       className="pf-c-options-menu__toggle pf-m-plain pf-m-text"
                     >
                       <Dropdown
-                        newPerPagevalue="25 items per page"
+                        newPerPagevalue="1 items per page"
                         perPageValue={[Function]}
                       />
                       <button

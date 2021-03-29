@@ -123,8 +123,13 @@ color: var(--pf-global--success-color--100)
 
 }
 
+.disabled-search-results{
+    pointer-events: none;
+    opacity: 0.4;
+}
+
 /* add style for list of repos on search filter by repo */
 .repo-list-container{
     height: 500px;
     overflow-y: auto;
-}
+}  
