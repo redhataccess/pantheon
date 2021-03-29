@@ -338,13 +338,13 @@ class Search extends Component<IAppState, ISearchState> {
                 isEditMetadata={this.state.isEditMetadata}
                 updateIsEditMetadata={this.updateIsEditMetadata}
               />}
-              {drawerContent}
               {this.state.isBulkPublish && <BulkOperationPublish 
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isBulkPublish={this.state.isBulkPublish}
                 updateIsBulkPublish={this.updateIsBulkPublish}
               />}
+              {drawerContent}
             </DrawerContentBody>
           </DrawerContent>
         </Drawer>
