@@ -350,7 +350,6 @@ class SearchResults extends Component<IProps, ISearchState> {
     this.setState({
       rows
     });
-    // console.log("[onSelect] bulkSelected rows =>", rows)
     // update props.documentSelected
     let selectedRows;
     selectedRows = this.state.rows.map(oneRow => {
@@ -360,10 +359,9 @@ class SearchResults extends Component<IProps, ISearchState> {
     })
     // filter undefined values
     selectedRows = selectedRows.filter(r => r !== undefined)
-    // console.log("[onSelect] bulkSelected selectedRows =>", selectedRows)
-    if (selectedRows.length > 0) {
-      this.props.onGetdocumentsSelected(selectedRows);
-    }
+
+    this.props.onGetdocumentsSelected(selectedRows);
+
     if (selectedRows.length > 0 || isSelected == true) {
       this.props.onSelectContentType(this.props.contentType);
     }

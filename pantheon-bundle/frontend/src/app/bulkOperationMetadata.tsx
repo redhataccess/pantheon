@@ -80,7 +80,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                     aria-label="Edit metadata"
                     onClose={this.handleModalClose}
                     actions={[
-                        <Button form="bulk_edit_metadata" key="confirm" variant="primary" onClick={this.saveMetadata}>
+                        <Button form="bulk_edit_metadata" isAriaDisabled={this.props.documentsSelected.length === 0 ? true : false} key="confirm" variant="primary" onClick={this.saveMetadata}>
                             Save
                 </Button>,
                         <Button data-testid="metadata-modal-cancel-button" key="cancel" variant="secondary" onClick={this.handleModalToggle}>
@@ -267,7 +267,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
     private onChangeUsecase = (usecaseValue, event) => {
         if (event != undefined) {
             this.setState({ usecaseValue: event.target.value })
-            // console.log("[onChangeUsecase] event.target.value=>", event.target.value)
+
             if (event.target.value !== "" && event.target.value.trim() !== "Select Use Case") {
                 this.setState({ useCaseValidated: "success" })
             } else {
@@ -337,7 +337,6 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
             formData.append("searchKeywords", this.state.keywords === undefined ? "" : this.state.keywords)
 
             this.props.documentsSelected.map((r) => {
-                // console.log("[saveMetadata] documentsSelected href =>", r.cells[1].title.props.href)
                 if (r.cells[1].title.props.href) {
                     let href = r.cells[1].title.props.href
 
@@ -357,7 +356,6 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                                 method: "post"
                             }).then(response => {
                                 if (response.status === 201 || response.status === 200) {
-                                    // console.log("successful edit ", response.status + " for  path: " + backend)
 
                                     let docs = new Array()
                                     docs = this.state.documentsSucceeded
@@ -372,14 +370,13 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                                         productVersionValidated: "error",
                                         useCaseValidated: "error",
                                         bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
-                                        // showBulkEditConfirmation: true,
                                     }, () => {
                                         this.handleModalClose()
-                                        
+
                                         this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
                                     })
                                 } else {
-                                    
+
                                     let docs = new Array()
                                     docs = this.state.documentsFailed
                                     docs.push(docPath)
@@ -392,15 +389,14 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                             })
                         } else {
                             // draft does not exist
-                            // console.log("[saveMetadata] no draft version found:", backend)
                             let docs = new Array()
                             docs = this.state.documentsIgnored
                             docs.push(docPath)
                             this.setState({ bulkUpdateWarning: this.state.bulkUpdateWarning + 1, documentsIgnored: docs }, () => {
-                                
+
                                 this.calculateWarningProgress(this.state.bulkUpdateWarning)
                                 if (this.state.bulkUpdateWarning > 0 && this.state.bulkUpdateWarning === this.props.documentsSelected.length) {
-                                    
+
                                     this.setState({ metadataEditError: "No draft versions found on selected items. Unable to save metadata." })
                                 }
                             })
