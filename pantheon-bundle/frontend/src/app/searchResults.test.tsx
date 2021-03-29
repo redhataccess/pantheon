@@ -22,7 +22,9 @@ const props = {
     onGetdocumentsSelected: (documentsSelected) => anymatch,
     onSelectContentType: (contentType) => anymatch,
     currentBulkOperation: "",
-    disabledClassname: ""
+    disabledClassname: "",
+    //@ts-ignore
+    updateSearchResults: () => any
 }
 
 const propsEmptyState = {
@@ -35,7 +37,9 @@ const propsEmptyState = {
     onGetdocumentsSelected: (documentsSelected) => anymatch,
     onSelectContentType: (contentType) => anymatch,
     currentBulkOperation: "",
-    disabledClassname: ""
+    disabledClassname: "",
+    //@ts-ignore
+    updateSearchResults: () => any
 
 }
 

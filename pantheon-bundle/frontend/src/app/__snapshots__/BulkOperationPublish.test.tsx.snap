@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BulkOperationPublish tests should render BulkOperationPublish component 1`] = `
+<Fragment>
+  <Modal
+    actions={
+      Array [
+        <Button
+          form="bulk_publish"
+          onClick={[Function]}
+          variant="primary"
+        >
+          Publish
+        </Button>,
+        <Button
+          onClick={[Function]}
+          variant="secondary"
+        >
+          Cancel
+        </Button>,
+      ]
+    }
+    appendTo={[Function]}
+    aria-describedby=""
+    aria-label="Publish"
+    aria-labelledby=""
+    className=""
+    hasNoBodyWrapper={false}
+    header={
+      <React.Fragment>
+        <Title
+          headingLevel="h1"
+          size="2xl"
+        >
+          Publish
+        </Title>
+      </React.Fragment>
+    }
+    isOpen={true}
+    onClose={[Function]}
+    ouiaSafe={true}
+    showClose={true}
+    title="Publish"
+    titleIconVariant={null}
+    titleLabel=""
+    variant="medium"
+  >
+    <div>
+      <div
+        id="publish__module_helper_text"
+      >
+        <p>
+          Publishing 
+          <b>
+            5
+          </b>
+           module
+          s.
+        </p>
+      </div>
+      <br />
+      <p>
+        Publishing modules does 
+        <b>
+          not
+        </b>
+         publish assemblies including these modules
+      </p>
+      <br />
+      <p>
+        Publishing assemblies 
+        <b>
+          does
+        </b>
+         publish all included draft modules. Modules removed from the published assembly are still published as separate modules.
+      </p>
+      <br />
+      <p>
+        If metadata is missing from any selected or included docs, they will 
+        <b>
+          not
+        </b>
+         be published.
+      </p>
+      <br />
+      <p>
+        The publish process may take a while to update all files
+      </p>
+    </div>
+  </Modal>
+</Fragment>
+`;

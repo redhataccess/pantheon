@@ -5,8 +5,8 @@ exports[`BulkOperationMetadata tests should render BulkOperationMetadata compone
   <BulkOperationConfirmation
     footer=""
     header="Bulk Edit"
-    onMetadataEditError={[Function]}
-    onShowBulkEditConfirmation={[Function]}
+    onBulkOperationError={[Function]}
+    onShowBulkOperationConfirmation={[Function]}
     progressFailureValue={0}
     progressSuccessValue={0}
     progressWarningValue={0}

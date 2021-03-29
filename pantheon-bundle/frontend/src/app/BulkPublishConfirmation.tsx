@@ -3,7 +3,7 @@ import { Modal, ModalVariant, Button, Title, TitleSizes, AlertActionCloseButton,
 import WarningTriangleIcon from '@patternfly/react-icons/dist/js/icons/warning-triangle-icon';
 import "@app/app.css";
 
-export interface IBulkOperationProps {
+export interface IBulkPublishProps {
   header: string
   subheading: string
   updateSucceeded: string
@@ -15,9 +15,10 @@ export interface IBulkOperationProps {
   progressWarningValue: number
   onShowBulkOperationConfirmation: (showBulkConfirmation) => any
   onBulkOperationError: (metadataEditError) => any
+  updatePublishIcons: () => any
 }
 
-class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any>{
+class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
   constructor(props) {
     super(props);
     this.state = {
@@ -28,6 +29,9 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
 
   render() {
     const { isModalOpen } = this.state;
+    if(this.props.progressSuccessValue > 0){
+      this.props.updatePublishIcons()
+  }
 
     const header = (
       <React.Fragment>
@@ -46,9 +50,10 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
 
     return (
       <React.Fragment>
+        <div className="p2-search__pf-c-alert">
           <Alert
             variant="info"
-            title="Bulk Edit"
+            title="Bulk Publish"
             actionClose={<AlertActionCloseButton data-testid="hide-alert-button" onClose={this.hideAlert} />}
             actionLinks={
               <React.Fragment>
@@ -57,9 +62,10 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
             }
           >
             <div><Progress value={this.props.progressSuccessValue} title="Update Succeeded" variant={ProgressVariant.success} size={ProgressSize.sm} /></div>
-            <div><Progress value={this.props.progressFailureValue} title="Update failed" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
+            <div><Progress value={this.props.progressFailureValue} title="Update failed (metadata missing or no draft version found)" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
             <div><Progress value={this.props.progressWarningValue} title="No draft version found. No action taken" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>
           </Alert>
+        </div>
         <Modal
           variant={ModalVariant.large}
           isOpen={isModalOpen}
@@ -70,7 +76,7 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
           onClose={this.handleModalToggle}
           footer={footer}
         >
-          <strong>Update Succeeded:</strong>
+          <strong>Published Succeessfully:</strong>
           <br />
           <span id="update-succeeded">
             <List aria-label="succeeded">
@@ -96,7 +102,7 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
           </span>
           <br />
           <br />
-          <strong>Update Failed:</strong>
+          <strong>Publish Failed:</strong>
           <br />
           <span id="update-failed">
             <List aria-label="failed">
@@ -129,4 +135,4 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
   }
 }
 
-export { BulkOperationConfirmation }
+export { BulkPublishConfirmation }
