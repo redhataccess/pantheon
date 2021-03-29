@@ -5,14 +5,15 @@ exports[`BulkOperationMetadata tests should render BulkOperationMetadata compone
   <BulkOperationConfirmation
     footer=""
     header="Bulk Edit"
+    isEditMetadata={true}
     onMetadataEditError={[Function]}
-    onShowBulkEditConfirmation={[Function]}
     progressFailureValue={0}
     progressSuccessValue={0}
     progressWarningValue={0}
     subheading="Documents updated in the bulk operation"
     updateFailed=""
     updateIgnored=""
+    updateIsEditMetadata={[Function]}
     updateSucceeded=""
   />
   <Modal

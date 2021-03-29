@@ -129,13 +129,19 @@ exports[`BulkOperationConfirmation tests should render BulkOperationConfirmation
       <List
         aria-label="succeeded"
       >
-        <ListItem>
+        <ListItem
+          key="0"
+        >
           /repositories/s/a
         </ListItem>
-        <ListItem>
+        <ListItem
+          key="1"
+        >
           /repositories/s/b
         </ListItem>
-        <ListItem>
+        <ListItem
+          key="2"
+        >
           /repositories/s/c
         </ListItem>
       </List>
@@ -152,10 +158,14 @@ exports[`BulkOperationConfirmation tests should render BulkOperationConfirmation
       <List
         aria-label="ignored"
       >
-        <ListItem>
+        <ListItem
+          key="0"
+        >
           /repositorires/i/a
         </ListItem>
-        <ListItem>
+        <ListItem
+          key="1"
+        >
           /repositorires/i/b
         </ListItem>
       </List>
@@ -172,7 +182,9 @@ exports[`BulkOperationConfirmation tests should render BulkOperationConfirmation
       <List
         aria-label="failed"
       >
-        <ListItem>
+        <ListItem
+          key="0"
+        >
           /repositories/f/a
         </ListItem>
       </List>

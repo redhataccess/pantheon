@@ -4,6 +4,7 @@ import WarningTriangleIcon from '@patternfly/react-icons/dist/js/icons/warning-t
 import "@app/app.css";
 
 export interface IBulkOperationProps {
+  isEditMetadata: boolean
   header: string
   subheading: string
   updateSucceeded: string
@@ -13,8 +14,9 @@ export interface IBulkOperationProps {
   progressSuccessValue: number
   progressFailureValue: number
   progressWarningValue: number
-  onShowBulkEditConfirmation: (showBulkEditConfirmation) => any
+  // onShowBulkEditConfirmation: (showBulkEditConfirmation) => any
   onMetadataEditError: (metadataEditError) => any
+  updateIsEditMetadata: (isEditMetadata) => any
 }
 
 class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any>{
@@ -75,9 +77,9 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
           <span id="update-succeeded">
             <List aria-label="succeeded">
               {this.props.updateSucceeded.length > 0 &&
-                this.props.updateSucceeded.split(",").map((data) => (
+                this.props.updateSucceeded.split(",").map((data, index) => (
                   data.length > 0 &&
-                  <ListItem>{data}</ListItem>
+                  <ListItem key={index}>{data}</ListItem>
                 ))}
             </List>
           </span>
@@ -88,9 +90,9 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
           <span id="update-ignored">
             <List aria-label="ignored">
               {this.props.updateIgnored.length > 0 &&
-                this.props.updateIgnored.split(",").map((data) => (
+                this.props.updateIgnored.split(",").map((data, index) => (
                   data.length > 0 &&
-                  <ListItem>{data}</ListItem>
+                  <ListItem key={index}>{data}</ListItem>
                 ))}
             </List>
           </span>
@@ -101,9 +103,9 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
           <span id="update-failed">
             <List aria-label="failed">
               {this.props.updateFailed.length > 0 &&
-                this.props.updateFailed.split(",").map((data) => (
+                this.props.updateFailed.split(",").map((data, index) => (
                   data.length > 0 &&
-                  <ListItem>{data}</ListItem>
+                  <ListItem key={index}>{data}</ListItem>
                 ))}
             </List>
           </span>
@@ -122,10 +124,17 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
   };
 
   private hideAlert = () => {
-    this.props.onShowBulkEditConfirmation(false)
+    // this.props.onShowBulkEditConfirmation(false)
     this.props.onMetadataEditError("")
+    // console.log("[hideAlert] showBulkEditConfirmation: false")
+    // this.updateIsEditMetadata()
     //TODO: refresh documentsSelected
     // this.SearchResults.current.doSearch()
+  }
+
+  private updateIsEditMetadata = () => {
+    // call parent `updateIsEditMetadata` method
+    this.props.updateIsEditMetadata(false)
   }
 }
 

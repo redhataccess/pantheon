@@ -11,8 +11,10 @@ const props = {
     documentsSelected: anymatch,
     contentTypeSelected: "module",
     isEditMetadata: true,
+    showBulkEditConfirmation: true,
     bulkOperationCompleted: false,
     updateIsEditMetadata: (isEditMetadata) => anymatch,
+    updateShowBulkEditConfirmation: (showBulkEditConfirmation) => anymatch,
     updateBulkOperationCompleted: (bulkOperationCompleted) => anymatch
 }
 describe("BulkOperationMetadata tests", () => {
@@ -45,6 +47,7 @@ describe("BulkOperationMetadata tests", () => {
     it("should render an Alert component", () => {
 
         const wrapper = mount(<BulkOperationMetadata {...props} />)
+        wrapper.setState({showBulkEditConfirmation: true})
         const alert = wrapper.find(Alert)
         expect(alert.exists()).toBe(true)
     })
@@ -52,6 +55,7 @@ describe("BulkOperationMetadata tests", () => {
     it("should render an Button component", () => {
 
         const wrapper = mount(<BulkOperationMetadata {...props} />)
+        wrapper.setState({showBulkEditConfirmation: true})
         const button = wrapper.find(Alert)
         expect(button.exists()).toBe(true)
     })

@@ -52,8 +52,8 @@ export interface ISearchState {
   repositoriesSelected: string[]
   documentsSelected: Array<{ cells: [string, { title: { props: { href: string } } }, string, string, string], selected: boolean }>
   contentTypeSelected: string
-  isModalOpen: boolean
   isEditMetadata: boolean
+  showBulkEditConfirmation: boolean
   editMetadataWarn: boolean
   isBulkOperationButtonDisabled: boolean
   bulkOperationCompleted: boolean
@@ -96,8 +96,8 @@ class Search extends Component<IAppState, ISearchState> {
       // bulk operation
       documentsSelected: [],
       contentTypeSelected: "",
-      isModalOpen: false,
       isEditMetadata: false,
+      showBulkEditConfirmation: false,
       editMetadataWarn: false,
       isBulkOperationButtonDisabled: true,
       bulkOperationCompleted: false,
@@ -198,6 +198,7 @@ class Search extends Component<IAppState, ISearchState> {
             onSelectContentType={this.bulkEditSectionCheck}
             currentBulkOperation={this.state.contentTypeSelected}
             disabledClassname={this.state.contentTypeSelected == 'assembly' ? 'disabled-search-results' : ''}
+            bulkOperationCompleted={this.state.bulkOperationCompleted}
           />
 
         </ExpandableSection>
@@ -215,6 +216,7 @@ class Search extends Component<IAppState, ISearchState> {
             onSelectContentType={this.bulkEditSectionCheck}
             currentBulkOperation={this.state.contentTypeSelected}
             disabledClassname={this.state.contentTypeSelected == 'module' ? 'disabled-search-results' : ''}
+            bulkOperationCompleted={this.state.bulkOperationCompleted}
           />
 
         </ExpandableSection>
@@ -327,12 +329,14 @@ class Search extends Component<IAppState, ISearchState> {
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody className="search-results">
               {this.state.editMetadataWarn && <Alert variant="danger" isInline title="Attempt to apply the same product/version to multiple repositories is not allowed." />}
-              {this.state.isEditMetadata && <BulkOperationMetadata
+              {(this.state.isEditMetadata || this.state.showBulkEditConfirmation )&& <BulkOperationMetadata
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isEditMetadata={this.state.isEditMetadata}
+                showBulkEditConfirmation={this.state.showBulkEditConfirmation}
                 bulkOperationCompleted={this.state.bulkOperationCompleted}
                 updateIsEditMetadata={this.updateIsEditMetadata}
+                updateShowBulkEditConfirmation={this.updateShowBulkEditConfirmation}
                 updateBulkOperationCompleted={this.updateBulkOperationCompleted}
               />}
               {drawerContent}
@@ -629,10 +633,15 @@ class Search extends Component<IAppState, ISearchState> {
     this.setState({ isEditMetadata: updateIsEditMetadata })
   }
 
+  private updateShowBulkEditConfirmation = (showBulkEditConfirmation) => {
+    this.setState({ showBulkEditConfirmation })
+  }
+
   private updateBulkOperationCompleted = (bulkOperationCompleted) => {
     this.setState({ bulkOperationCompleted}, ()=>{
       if(this.state.bulkOperationCompleted){
         // refresh documentsSelected
+        console.log("[updateBulkOperationCompleted] trigger doSearch")
         this.searchResultsRef.current && this.searchResultsRef.current.doSearch()
       }
     })
