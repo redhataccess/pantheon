@@ -30,6 +30,9 @@ public interface DocumentVersion extends WorkspaceChild {
     @Named("ack_status")
     Child<AckStatus> ackStatus();
 
+    @Named("validations")
+    Child<Validations> validations();
+
     @Override
     DocumentVariant getParent();
 }

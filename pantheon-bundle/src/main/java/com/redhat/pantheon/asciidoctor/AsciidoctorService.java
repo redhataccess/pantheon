@@ -16,15 +16,13 @@ import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.assembly.Assembly;
 import com.redhat.pantheon.model.assembly.AssemblyVersion;
 import com.redhat.pantheon.model.assembly.TableOfContents;
-import com.redhat.pantheon.model.document.Document;
-import com.redhat.pantheon.model.document.DocumentLocale;
-import com.redhat.pantheon.model.document.DocumentMetadata;
-import com.redhat.pantheon.model.document.DocumentVariant;
-import com.redhat.pantheon.model.document.DocumentVersion;
+import com.redhat.pantheon.model.document.*;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.workspace.ModuleVariantDefinition;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import com.redhat.pantheon.validation.model.Violations;
+import com.redhat.pantheon.validation.validators.XrefValidator;
 import org.apache.jackrabbit.oak.commons.PathUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
@@ -324,6 +322,17 @@ public class AsciidoctorService {
                 content.append(xrefProcessor.preprocess(rawContent));
 
                 html = asciidoctor.convert(content.toString(), ob.get());
+                Violations violations = new XrefValidator(html).validate();
+                Validations validationResult = documentVersion.validations().getOrCreate();
+                Validation validation = validationResult.page(validationResult.getValueMap().size()).getOrCreate();
+                validation.validationCategory().set("xref");
+                if(violations.hasViolations()){
+                    validation.message().set("Not a valid Xref");
+                    validation.validator().set(violations.get("Not a valid Xref").getDetails());
+                }else{
+                    validation.message().set("valid Xref");
+                    validation.validator().set("NA");
+                }
                 if (documentVersion instanceof AssemblyVersion) {
                     ((AssemblyVersion) documentVersion).consumeTableOfContents(tableOfContents);
                 }
