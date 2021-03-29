@@ -56,9 +56,9 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
               </React.Fragment>
             }
           >
-            <div><Progress value={this.props.progressSuccessValue} title="Update Succeeded" variant={ProgressVariant.success} size={ProgressSize.sm} /></div>
-            <div><Progress value={this.props.progressFailureValue} title="Update failed (metadata missing or no draft version found)" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
-            <div><Progress value={this.props.progressWarningValue} title="No draft version found. No action taken" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>
+            <div><Progress value={this.props.progressSuccessValue} title="Publish Successful" variant={ProgressVariant.success} size={ProgressSize.sm} /></div>
+            <div><Progress value={this.props.progressFailureValue} title="Publish Failed (metadata missing)" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
+            <div><Progress value={this.props.progressWarningValue} title="Publish Failed (no draft version found)" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>
           </Alert>
         </div>
         <Modal
@@ -84,7 +84,7 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
           </span>
           <br />
           <br />
-          <strong>Update Ignored:</strong>
+          <strong>Publish Ignored:</strong>
           <br />
           <span id="update-ignored">
             <List aria-label="ignored">

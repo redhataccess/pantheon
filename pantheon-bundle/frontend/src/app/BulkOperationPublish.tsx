@@ -38,7 +38,6 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
             confirmationIgnored: "",
             confirmationFailed: "",
         };
-
     }
 
     public render() {
@@ -158,36 +157,20 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                                 this.setState({ bulkUpdateFailure: this.state.bulkUpdateFailure + 1, documentsFailed: [...this.state.documentsFailed, modulePath] }, () => {
                                     this.calculateFailureProgress(this.state.bulkUpdateFailure)
                                 })
-
-
                             }
                         })
-
                     } else {
                         console.log('no draft exists')
                         this.setState({ bulkUpdateWarning: this.state.bulkUpdateWarning + 1, documentsIgnored: [...this.state.documentsFailed, modulePath] }, () => {
                             this.calculateWarningProgress(this.state.bulkUpdateWarning)
                         })
                     }
-
                 })
             }
 
         })
-
-
-
         this.setState({ isModalOpen: false, showBulkConfirmation: true })
-
-
-
     }
-
-
-
-
-
-
 
     //functions for success & failure messages
     private updateShowBulkPublishConfirmation = (showBulkConfirmation) => {
