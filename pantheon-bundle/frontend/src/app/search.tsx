@@ -22,6 +22,8 @@ import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
 import { IAppState } from "@app/app"
 import { BulkOperationMetadata } from "./bulkOperationMetadata";
+import { BulkOperationPublish } from "./BulkOperationPublish"
+import { PathPrefixes } from "./Constants";
 
 
 export interface ISearchState {
@@ -50,12 +52,14 @@ export interface ISearchState {
   // metadata
   productsSelected: string[]
   repositoriesSelected: string[]
-  documentsSelected: Array<{ cells: [string, { title: { props: { href: string } } }, string, string, string], selected: boolean }>
+  documentsSelected: Array<{ cells: [string, { title: { props: {children: string[], href: string } } }, string, string, string], selected: boolean }>
   contentTypeSelected: string
-  isModalOpen: boolean
   isEditMetadata: boolean
   editMetadataWarn: boolean
   isBulkOperationButtonDisabled: boolean
+
+  // bulk publish
+  isBulkPublish: boolean
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
@@ -96,10 +100,12 @@ class Search extends Component<IAppState, ISearchState> {
       // bulk operation
       documentsSelected: [],
       contentTypeSelected: "",
-      isModalOpen: false,
       isEditMetadata: false,
       editMetadataWarn: false,
       isBulkOperationButtonDisabled: true,
+
+      //bulk operation - publish
+      isBulkPublish: false
     };
     this.drawerRef = React.createRef();
 
@@ -302,7 +308,7 @@ class Search extends Component<IAppState, ISearchState> {
           <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length === 0} onClick={this.handleEditMetadata} data-testid="edit_metadata">Edit metadata</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" isAriaDisabled={true}>Publish</Button>
+          <Button variant="primary" isAriaDisabled={this.state.documentsSelected.length > 0 ? false : true} onClick={this.handleBulkPublish}>Publish</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
           <Button variant="primary" isAriaDisabled={true}>Unpublish</Button>
@@ -332,8 +338,13 @@ class Search extends Component<IAppState, ISearchState> {
                 isEditMetadata={this.state.isEditMetadata}
                 updateIsEditMetadata={this.updateIsEditMetadata}
               />}
+              {this.state.isBulkPublish && <BulkOperationPublish 
+                documentsSelected={this.state.documentsSelected}
+                contentTypeSelected={this.state.contentTypeSelected}
+                isBulkPublish={this.state.isBulkPublish}
+                updateIsBulkPublish={this.updateIsBulkPublish}
+              />}
               {drawerContent}
-
             </DrawerContentBody>
           </DrawerContent>
         </Drawer>
@@ -622,9 +633,18 @@ class Search extends Component<IAppState, ISearchState> {
 
   }
 
+  private handleBulkPublish = (event) => {
+    this.setState({ isBulkPublish: !this.state.isBulkPublish })
+  }
+  
   private updateIsEditMetadata = (updateIsEditMetadata) => {
     this.setState({ isEditMetadata: updateIsEditMetadata })
   }
+
+  private updateIsBulkPublish = updateIsBulkPublish => {
+    this.setState({isBulkPublish: updateIsBulkPublish})
+  }
+
 }
 
 export { Search }; 
