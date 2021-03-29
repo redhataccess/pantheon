@@ -44,43 +44,43 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
     public render() {
         const { isModalOpen } = this.state;
         const publishHeader = (
-          <React.Fragment>
-            <Title headingLevel="h1" size={BaseSizes["2xl"]}>
-              Publish
+            <React.Fragment>
+                <Title headingLevel="h1" size={BaseSizes["2xl"]}>
+                    Publish
             </Title>
-          </React.Fragment>
+            </React.Fragment>
         )
         const publishModal = (
-          <React.Fragment>
-            <Modal
-              variant={ModalVariant.medium}
-              title="Publish"
-              isOpen={this.state.isModalOpen}
-              header={publishHeader}
-              aria-label="Publish"
-              onClose={this.handleModalClose}
-              actions={[
-                <Button form="bulk_publish" key="publish" variant="primary" onClick={this.onBulkPublish}>
-                  Publish
+            <React.Fragment>
+                <Modal
+                    variant={ModalVariant.medium}
+                    title="Publish"
+                    isOpen={this.state.isModalOpen}
+                    header={publishHeader}
+                    aria-label="Publish"
+                    onClose={this.handleModalClose}
+                    actions={[
+                        <Button form="bulk_publish" key="publish" variant="primary" onClick={this.onBulkPublish}>
+                            Publish
               </Button>,
-                <Button key="cancel" variant="secondary" onClick={this.handleModalClose}>
-                  Cancel
+                        <Button key="cancel" variant="secondary" onClick={this.handleModalClose}>
+                            Cancel
                 </Button>
-              ]}
-            >
-              <div>
-            {this.props.contentTypeSelected == 'module' ? <div id="publish__module_helper_text"><p>Publishing <b>{this.props.documentsSelected.length}</b> module{this.props.documentsSelected.length > 1 ? 's.' : '.'}</p></div> : <div id="publish__assembly_helper_text"><p>Publishing <b>{this.props.documentsSelected.length}</b> assembl{this.props.documentsSelected.length > 1 ? 'ies.' : 'y.'}</p></div>}
-            <br/>
-            <p>Publishing modules does <b>not</b> publish assemblies including these modules</p>
-            <br/>
-            <p>Publishing assemblies <b>does</b> publish all included draft modules. Modules removed from the published assembly are still published as separate modules.</p>
-            <br/>
-            <p>If metadata is missing from any selected or included docs, they will <b>not</b> be published.</p>
-            <br/>
-            <p>The publish process may take a while to update all files</p>
-            </div>
-            </Modal>
-          </React.Fragment>
+                    ]}
+                >
+                    <div>
+                        {this.props.contentTypeSelected == 'module' ? <div id="publish__module_helper_text"><p>Publishing <b>{this.props.documentsSelected.length}</b> module{this.props.documentsSelected.length > 1 ? 's.' : '.'}</p></div> : <div id="publish__assembly_helper_text"><p>Publishing <b>{this.props.documentsSelected.length}</b> assembl{this.props.documentsSelected.length > 1 ? 'ies.' : 'y.'}</p></div>}
+                        <br />
+                        <p>Publishing modules does <b>not</b> publish assemblies including these modules.</p>
+                        <br />
+                        <p>Publishing assemblies <b>does</b> publish all included draft modules. Modules removed from the published assembly are still published as separate modules.</p>
+                        <br />
+                        <p>If metadata is missing from any selected or included docs, they will <b>not</b> be published.</p>
+                        <br />
+                        <p>The publish process may take a while to update all files.</p>
+                    </div>
+                </Modal>
+            </React.Fragment>
         );
 
         return (
@@ -109,146 +109,136 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
     }
 
     private onBulkPublish = (event) => {
-                const formData = new FormData();
-  
-                    formData.append(":operation", "pant:publish");
+        const formData = new FormData();
 
-  
-                const hdrs = {
-                    "Accept": "application/json",
-                    "cache-control": "no-cache",
-                    "Access-Control-Allow-Origin": "*",
-                }
-                this.props.documentsSelected.map((r) => {
-                  console.log("[saveMetadata] documentsSelected href =>", r.cells[1].title.props.href)
-                  if (r.cells[1].title.props.href) {
-                    let href = r.cells[1].title.props.href
-                    let documentTitle = r.cells[1].title.props.children[1]
-                    let variant = href.split("?variant=")[1]
-                    
-                    //href part is module path
-                    let hrefPart = href.slice(0, href.indexOf("?"))
-                    let docPath = hrefPart.match("/repositories/.*") ? hrefPart.match("/repositories/.*") : ""
-                    let path = hrefPart.slice(hrefPart.indexOf("/module"))
-                    let modulePath = hrefPart.slice(hrefPart.indexOf("/repositories"))
-  
-                    console.log('path', path)
-                    console.log('variant', variant)
-                    console.log('hrefPart', hrefPart)
-                    console.log('docPath', docPath)
+        formData.append(":operation", "pant:publish");
 
-                    console.log('modulePath', modulePath)
-                    const backend = "/content" + modulePath + "/en_US/variants/unified/draft"
-                    console.log('PUBLISH BACKEND VALUE', backend)
+
+        const hdrs = {
+            "Accept": "application/json",
+            "cache-control": "no-cache",
+            "Access-Control-Allow-Origin": "*",
+        }
+        this.props.documentsSelected.map((r) => {
+            if (r.cells[1].title.props.href) {
+                let href = r.cells[1].title.props.href
+                let documentTitle = r.cells[1].title.props.children[1]
+                let variant = href.split("?variant=")[1]
+
+                //href part is module path
+                let hrefPart = href.slice(0, href.indexOf("?"))
+                let docPath = hrefPart.match("/repositories/.*") ? hrefPart.match("/repositories/.*") : ""
+                let path = hrefPart.slice(hrefPart.indexOf("/module"))
+                let modulePath = hrefPart.slice(hrefPart.indexOf("/repositories"))
+                const backend = "/content" + modulePath + "/en_US/variants/unified/draft"
 
                 formData.append("locale", "en_US")
                 formData.append("variant", variant)
                 Utils.draftExist(backend).then((exist) => {
-                if(exist){
-                    fetch("/content" + modulePath, {
-                        body: formData,
-                        method: "post",
-                        headers: hdrs
-                    }).then(response => {
-                        if (response.status === 201 || response.status === 200) {
-                            console.log("publish works: " + response.status)
-                            this.setState({
-                                canChangePublishState: true,
-                                documentsSucceeded: [...this.state.documentsSucceeded, modulePath],
-                                isBulkPublish: false,
-                                showPublishMessage: true,
-                                bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
-                            },() =>{
-                              this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
-      
-                            })
-                        } else {
-                            console.log("publish failed " + response.status)
-                            this.setState({ bulkUpdateFailure: this.state.bulkUpdateFailure + 1, documentsFailed: [...this.state.documentsFailed, modulePath] }, () => {
-                              this.calculateFailureProgress(this.state.bulkUpdateFailure)
-                          })
-        
-                       
-                          }
+                    if (exist) {
+                        fetch("/content" + modulePath, {
+                            body: formData,
+                            method: "post",
+                            headers: hdrs
+                        }).then(response => {
+                            if (response.status === 201 || response.status === 200) {
+                                console.log("publish works: " + response.status)
+                                this.setState({
+                                    canChangePublishState: true,
+                                    documentsSucceeded: [...this.state.documentsSucceeded, modulePath],
+                                    isBulkPublish: false,
+                                    showPublishMessage: true,
+                                    bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
+                                }, () => {
+                                    this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
+
+                                })
+                            } else {
+                                console.log("publish failed " + response.status)
+                                this.setState({ bulkUpdateFailure: this.state.bulkUpdateFailure + 1, documentsFailed: [...this.state.documentsFailed, modulePath] }, () => {
+                                    this.calculateFailureProgress(this.state.bulkUpdateFailure)
+                                })
+
+
+                            }
                         })
-                  
-                }else{
-                    console.log('no draft exists')
-                    this.setState({ bulkUpdateWarning: this.state.bulkUpdateWarning + 1, documentsIgnored: [...this.state.documentsFailed, modulePath] }, () => {
-                        this.calculateWarningProgress(this.state.bulkUpdateWarning)
-                    })
-                }
-       
-          })
+
+                    } else {
+                        console.log('no draft exists')
+                        this.setState({ bulkUpdateWarning: this.state.bulkUpdateWarning + 1, documentsIgnored: [...this.state.documentsFailed, modulePath] }, () => {
+                            this.calculateWarningProgress(this.state.bulkUpdateWarning)
+                        })
+                    }
+
+                })
+            }
+
+        })
+
+
+
+        this.setState({ isModalOpen: false, showBulkConfirmation: true })
+
+
+
+    }
+
+
+
+
+
+
+
+    //functions for success & failure messages
+    private updateShowBulkPublishConfirmation = (showBulkConfirmation) => {
+        this.setState({ showBulkConfirmation })
+    }
+
+    private calculateFailureProgress = (num: number) => {
+        if (num >= 0) {
+            let stat = (num) / this.props.documentsSelected.length * 100
+            this.setState({ progressFailureValue: stat, showBulkConfirmation: true }, () => {
+                this.getDocumentFailed()
+            })
         }
+    }
 
-    })
-                
-                // this.calculateFailureProgress(this.state.bulkUpdateFailure)
+    private calculateSuccessProgress = (num: number) => {
+        if (num >= 0) {
+            let stat = (num) / this.props.documentsSelected.length * 100
+            this.setState({ progressSuccessValue: stat, showBulkConfirmation: true }, () => {
+                this.getDocumentsSucceeded()
+            })
+        }
+    }
 
+    private calculateWarningProgress = (num: number) => {
+        if (num >= 0) {
+            let stat = (num) / this.props.documentsSelected.length * 100
+            this.setState({ progressWarningValue: stat, showBulkConfirmation: true }, () => {
+                this.getDocumentIgnored()
+            })
+        }
+    }
+    private getDocumentsSucceeded = () => {
+        if (this.state.documentsSucceeded.length > 0) {
+            let succeeded = this.state.documentsSucceeded.join(",")
+            this.setState({ confirmationSucceeded: succeeded })
+        }
+    }
 
-                this.setState( {isModalOpen: false, showBulkConfirmation: true})
-      
+    private getDocumentIgnored = () => {
+        if (this.state.documentsIgnored.length > 0) {
+            let ignored = this.state.documentsIgnored.join(",")
+            this.setState({ confirmationIgnored: ignored })
+        }
+    }
 
-            
-  }
-  
-
-  
-
-  
- 
-
-  //functions for success & failure messages
-  private updateShowBulkPublishConfirmation = (showBulkConfirmation) => {
-    this.setState({ showBulkConfirmation })
-}
-
-private calculateFailureProgress = (num: number) => {
-    if (num >= 0) {
-        let stat = (num) / this.props.documentsSelected.length * 100
-        this.setState({ progressFailureValue: stat, showBulkConfirmation: true }, () => {
-            this.getDocumentFailed()
-        })
+    private getDocumentFailed = () => {
+        if (this.state.documentsFailed.length > 0) {
+            let failed = this.state.documentsFailed.join(",")
+            this.setState({ confirmationFailed: failed })
+        }
     }
 }
-
-private calculateSuccessProgress = (num: number) => {
-    if (num >= 0) {
-        let stat = (num) / this.props.documentsSelected.length * 100
-        this.setState({ progressSuccessValue: stat, showBulkConfirmation: true }, () => {
-            this.getDocumentsSucceeded()
-        })
-    }
-}
-
-private calculateWarningProgress = (num: number) => {
-    if (num >= 0) {
-        let stat = (num) / this.props.documentsSelected.length * 100
-        this.setState({ progressWarningValue: stat, showBulkConfirmation: true }, () => {
-            this.getDocumentIgnored()
-        })
-    }
-}
-private getDocumentsSucceeded = () => {
-    if (this.state.documentsSucceeded.length > 0) {
-        let succeeded = this.state.documentsSucceeded.join(",")
-        this.setState({ confirmationSucceeded: succeeded })
-    }
-}
-
-private getDocumentIgnored = () => {
-    if (this.state.documentsIgnored.length > 0) {
-        let ignored = this.state.documentsIgnored.join(",")
-        this.setState({ confirmationIgnored: ignored })
-    }
-}
-
-private getDocumentFailed = () => {
-    if (this.state.documentsFailed.length > 0) {
-        let failed = this.state.documentsFailed.join(",")
-        this.setState({ confirmationFailed: failed })
-    }
-}
-  }
 export { BulkOperationPublish }
