@@ -330,6 +330,12 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
             this.setState({ portalUrl: url})
         }
     }
+    // private onPublishEvent = () => {
+    //     // the published state cannot be ascertained correctly when moving from one page to another
+    //     const path = this.props.location.pathname.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
+    //     console.log('onPublishEvent path', path)
+    //     console.log('onPublishEvent variant', this.state.variant)
+    //     this.getPortalUrl(path, this.state.variant)
 
     private getLocale = (path) =>{
         // remove /module from path
@@ -357,6 +363,8 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
         path =  path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + "/en_US.harray.4.json"
+  console.log('VERSION URL', path)
+
         fetch(path)
             .then(response => response.json())
             .then((responseJSON) => {
@@ -434,6 +442,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
 
     private getPortalUrl = (path, variant) => {
         const variantPath = "/content" + path + "/en_US/variants/" + variant + ".url.txt"
+        console.log('getPortalUrl variantPath', variantPath)
         fetch(variantPath)
             .then(resp => {
                 if (resp.ok) {
