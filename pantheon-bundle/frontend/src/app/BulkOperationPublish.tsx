@@ -161,7 +161,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                         })
                     } else {
                         console.log('no draft exists')
-                        this.setState({ bulkUpdateWarning: this.state.bulkUpdateWarning + 1, documentsIgnored: [...this.state.documentsFailed, modulePath] }, () => {
+                        this.setState({ bulkUpdateWarning: this.state.bulkUpdateWarning + 1, documentsIgnored: [...this.state.documentsIgnored, modulePath] }, () => {
                             this.calculateWarningProgress(this.state.bulkUpdateWarning)
                         })
                     }
