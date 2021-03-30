@@ -9,7 +9,7 @@ export interface IBulkOperationPublishProps {
     documentsSelected: Array<{ cells: [string, { title: { props: { children: string[], href: string } } }, string, string, string], selected: boolean }>
     contentTypeSelected: string
     isBulkPublish: boolean
-    updateIsBulkPublish: (isBulkPublish) => any
+    isBulkUnpublish: boolean
 }
 
 class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, any>{
@@ -45,7 +45,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
         const publishHeader = (
             <React.Fragment>
                 <Title headingLevel="h1" size={BaseSizes["2xl"]}>
-                    Publish
+                    {this.props.isBulkPublish ? 'Publish' : 'Unpublish'}
             </Title>
             </React.Fragment>
         )
@@ -82,11 +82,40 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
             </React.Fragment>
         );
 
+        const unpublishModal = (
+            <React.Fragment>
+                <Modal
+                    variant={ModalVariant.medium}
+                    title="Unpublish"
+                    isOpen={this.state.isModalOpen}
+                    header={publishHeader}
+                    aria-label="Unpublish"
+                    onClose={this.handleModalClose}
+                    actions={[
+                        <Button form="bulk_unpublish" key="unpublish" variant="primary" onClick={this.onBulkPublish}>
+                            Unpublish
+              </Button>,
+                        <Button key="cancel" variant="secondary" onClick={this.handleModalClose}>
+                            Cancel
+                </Button>
+                    ]}
+                >
+                    <div>
+                        {this.props.contentTypeSelected == 'module' ? <div id="unpublish__module_helper_text"><p>Unpublishing <b>{this.props.documentsSelected.length}</b> module{this.props.documentsSelected.length > 1 ? 's.' : '.'}</p></div> : <div id="unpublish__assembly_helper_text"><p>Unpublishing <b>{this.props.documentsSelected.length}</b> assembl{this.props.documentsSelected.length > 1 ? 'ies.' : 'y.'}</p></div>}
+                        <br />
+                        <p>Unpublishing assemblies does <b>not</b> unpublish included modules.</p>
+                        <br />
+                        <p>If selected modules are included in assemblies, they will <b>not</b> be unpublished.</p>
+                    </div>
+                </Modal>
+            </React.Fragment>
+        );
+
         return (
             <React.Fragment>
                 {this.state.showBulkConfirmation &&
                     <BulkPublishConfirmation
-                        header="Bulk Publish"
+                        header={this.props.isBulkPublish ? "Bulk Publish" : "Bulk Unpublish"}
                         subheading="Documents updated in the bulk operation"
                         updateSucceeded={this.state.confirmationSucceeded}
                         updateIgnored={this.state.confirmationIgnored}
@@ -96,9 +125,11 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                         progressFailureValue={this.state.progressFailureValue}
                         progressWarningValue={this.state.progressWarningValue}
                         onShowBulkOperationConfirmation={this.updateShowBulkPublishConfirmation}
+                        isBulkUnpublish={this.props.isBulkUnpublish}
                     />}
 
                 {this.props.isBulkPublish && publishModal}
+                {this.props.isBulkUnpublish && unpublishModal}
             </React.Fragment>
         );
     }
@@ -110,7 +141,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
     private onBulkPublish = (event) => {
         const formData = new FormData();
 
-        formData.append(":operation", "pant:publish");
+        {this.props.isBulkPublish ? formData.append(":operation", "pant:publish") : formData.append(":operation", "pant:unpublish")}
 
 
         const hdrs = {
@@ -134,7 +165,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                 formData.append("locale", "en_US")
                 formData.append("variant", variant)
                 Utils.draftExist(backend).then((exist) => {
-                    if (exist) {
+                    if (exist || this.props.isBulkUnpublish) {
                         fetch("/content" + modulePath, {
                             body: formData,
                             method: "post",
@@ -146,6 +177,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                                     canChangePublishState: true,
                                     documentsSucceeded: [...this.state.documentsSucceeded, modulePath],
                                     isBulkPublish: false,
+                                    isBulkUnpublish: false,
                                     showPublishMessage: true,
                                     bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
                                 }, () => {
