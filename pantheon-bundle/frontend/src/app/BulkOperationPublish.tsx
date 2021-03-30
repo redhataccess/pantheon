@@ -45,7 +45,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
         const publishHeader = (
             <React.Fragment>
                 <Title headingLevel="h1" size={BaseSizes["2xl"]}>
-                    {this.props.isBulkPublish == true ? 'Publish' : 'Unpublish'}
+                    {this.props.isBulkPublish ? 'Publish' : 'Unpublish'}
             </Title>
             </React.Fragment>
         )
@@ -86,13 +86,13 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
             <React.Fragment>
                 <Modal
                     variant={ModalVariant.medium}
-                    title="Publish"
+                    title="Unpublish"
                     isOpen={this.state.isModalOpen}
                     header={publishHeader}
-                    aria-label="Publish"
+                    aria-label="Unpublish"
                     onClose={this.handleModalClose}
                     actions={[
-                        <Button form="bulk_publish" key="publish" variant="primary" onClick={this.onBulkPublish}>
+                        <Button form="bulk_unpublish" key="unpublish" variant="primary" onClick={this.onBulkPublish}>
                             Unpublish
               </Button>,
                         <Button key="cancel" variant="secondary" onClick={this.handleModalClose}>
@@ -101,7 +101,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                     ]}
                 >
                     <div>
-                        {this.props.contentTypeSelected == 'module' ? <div id="publish__module_helper_text"><p>Unpublishing <b>{this.props.documentsSelected.length}</b> module{this.props.documentsSelected.length > 1 ? 's.' : '.'}</p></div> : <div id="publish__assembly_helper_text"><p>Unpublishing <b>{this.props.documentsSelected.length}</b> assembl{this.props.documentsSelected.length > 1 ? 'ies.' : 'y.'}</p></div>}
+                        {this.props.contentTypeSelected == 'module' ? <div id="unpublish__module_helper_text"><p>Unpublishing <b>{this.props.documentsSelected.length}</b> module{this.props.documentsSelected.length > 1 ? 's.' : '.'}</p></div> : <div id="unpublish__assembly_helper_text"><p>Unpublishing <b>{this.props.documentsSelected.length}</b> assembl{this.props.documentsSelected.length > 1 ? 'ies.' : 'y.'}</p></div>}
                         <br />
                         <p>Unpublishing assemblies does <b>not</b> unpublish included modules.</p>
                         <br />
@@ -115,7 +115,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
             <React.Fragment>
                 {this.state.showBulkConfirmation &&
                     <BulkPublishConfirmation
-                        header="Bulk Publish"
+                        header={this.props.isBulkPublish ? "Bulk Publish" : "Bulk Unpublish"}
                         subheading="Documents updated in the bulk operation"
                         updateSucceeded={this.state.confirmationSucceeded}
                         updateIgnored={this.state.confirmationIgnored}

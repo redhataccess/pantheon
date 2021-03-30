@@ -1,6 +1,5 @@
 import React from 'react';
 import { Modal, ModalVariant, Button, Title, TitleSizes, AlertActionCloseButton, Alert, AlertActionLink, Progress, ProgressVariant, ProgressSize, List, ListItem, ProgressMeasureLocation } from '@patternfly/react-core';
-import WarningTriangleIcon from '@patternfly/react-icons/dist/js/icons/warning-triangle-icon';
 import "@app/app.css";
 
 export interface IBulkPublishProps {
