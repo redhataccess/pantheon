@@ -129,7 +129,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                 let docPath = hrefPart.match("/repositories/.*") ? hrefPart.match("/repositories/.*") : ""
                 let path = hrefPart.slice(hrefPart.indexOf("/module"))
                 let modulePath = hrefPart.slice(hrefPart.indexOf("/repositories"))
-                const backend = "/content" + modulePath + "/en_US/variants/unified/draft"
+                const backend = "/content" + modulePath + `/en_US/variants/${variant}/draft`
 
                 formData.append("locale", "en_US")
                 formData.append("variant", variant)
