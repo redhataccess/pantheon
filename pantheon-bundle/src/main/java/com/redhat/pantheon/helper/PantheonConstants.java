@@ -43,6 +43,7 @@ public class PantheonConstants {
     public static final String VIEW_URI = "view_uri";
     public static final String PORTAL_URL = "PORTAL_URL";
     public static final String VALID_XREF = "valid_Xref";
+    public static final String TYPE_XREF = "xref";
 
     static {
         RELEASED_SUFFIXES.add("/released");

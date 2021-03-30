@@ -103,3 +103,7 @@
 // nt:folder - https://wiki.apache.org/jackrabbit/nt%3Afolder
 // sling:folder - https://cwiki.apache.org/confluence/display/SLING/sling-Folder
 // other sling types - https://cwiki.apache.org/confluence/display/SLING/Sling+Node+Types
+
+//Validation Node type
+[pant:validation] > nt:unstructured, sling:Resource, mix:referenceable, mix:created, mix:lastModified
+    - sling:resourceType (string) = 'pantheon/validation' mandatory autocreated

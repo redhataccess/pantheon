@@ -2,11 +2,12 @@ package com.redhat.pantheon.validation.model;
 
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.api.Field;
+import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import com.redhat.pantheon.model.workspace.WorkspaceChild;
 
 import javax.inject.Named;
 
-
+@JcrPrimaryType("pant:validation")
 public interface Validation extends WorkspaceChild {
 
     @Named("pant:message")
