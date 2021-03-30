@@ -33,10 +33,10 @@ export interface IContentDisplayState {
 
 export interface IModuleDisplayState extends IContentDisplayState {
     assemblyTitle: string
-    assemblyPath: string  
+    assemblyPath: string
 }
 
-export interface IAssemblyDisplayState extends IContentDisplayState{}
+export interface IAssemblyDisplayState extends IContentDisplayState { }
 
 class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDisplayState> {
     isAssembly: any;
@@ -130,7 +130,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                             <Text><strong><span id="span-source-type-product">Product</span></strong></Text>
                         </TextContent>
                     </LevelItem>
-                    <LevelItem>{}</LevelItem>
+                    <LevelItem>{ }</LevelItem>
 
                     {!this.isAssembly && <LevelItem>
                         <TextContent>
@@ -155,7 +155,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                             <Text><span>{this.state.productValue + " " + this.state.versionValue}</span></Text>
                         </TextContent>
                     </LevelItem>
-                    <LevelItem>{}</LevelItem>
+                    <LevelItem>{ }</LevelItem>
                     {!this.isAssembly && <LevelItem>
                         <TextContent>
                             <Text>
@@ -192,8 +192,8 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
 
                 <br />
                 <Level>
-                    <LevelItem>{}</LevelItem>
-                    <LevelItem>{}</LevelItem>
+                    <LevelItem>{ }</LevelItem>
+                    <LevelItem>{ }</LevelItem>
                     <LevelItem>
                         <Button variant="secondary" onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{"  "}
                     </LevelItem>
@@ -303,15 +303,15 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     }
 
                 }
-                if(!this.isAssembly){
+                if (!this.isAssembly) {
                     // get the variant UUID
-                for (const variants of responseJSON.__children__){
-                    if(variants.__name__ === "variants"){
-                        for (const variant of variants.__children__){
-                            this.fetchIncludedInAssembliesDetails(variant[Fields.JCR_UUID])
+                    for (const variants of responseJSON.__children__) {
+                        if (variants.__name__ === "variants") {
+                            for (const variant of variants.__children__) {
+                                this.fetchIncludedInAssembliesDetails(variant[Fields.JCR_UUID])
+                            }
                         }
                     }
-                }
                 }
             })
     }
@@ -325,38 +325,39 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
     }
 
     private onGetUrl = (url) => {
-        console.log("Received url="+url)
-        if(url!==""){
-            this.setState({ portalUrl: url})
+        console.log("Received url=" + url)
+        if (url !== "") {
+            this.setState({ portalUrl: url })
         }
     }
 
-    private getLocale = (path) =>{
+    private getLocale = (path) => {
         // remove /module from path
-        path =  path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
+        path = path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + ".harray.1.json"
         fetch(path)
             .then((response) => {
                 if (response.ok) {
                     return response.json()
-                }else {
+                } else {
                     throw new Error(response.statusText)
                 }
             })
             .then(responseJSON => {
-                    const locale = responseJSON.__children__[0].__name__
-                    const localeFinal = locale.replace("_","-")
-                    this.setState({locale: localeFinal})
-                }
+                const locale = responseJSON.__children__[0].__name__
+                const localeFinal = locale.replace("_", "-")
+                this.setState({ locale: localeFinal })
+            }
 
             )
     }
     private getVersionUUID = (path) => {
         // remove /module from path
-        path =  path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
+        path = path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + "/en_US.harray.4.json"
+
         fetch(path)
             .then(response => response.json())
             .then((responseJSON) => {
@@ -439,8 +440,8 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                 if (resp.ok) {
                     resp.text().then(text => {
                         // get portal url from api and set it only if it is not empty
-                        if(text.trim() !== "") {
-                            this.setState({portalUrl: text})
+                        if (text.trim() !== "") {
+                            this.setState({ portalUrl: text })
                         }
                     })
                 }
@@ -481,18 +482,18 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
             })
     }
 
-    private fetchIncludedInAssembliesDetails =  (data) => {
-        fetch("/module/assemblies.json/"+data)
+    private fetchIncludedInAssembliesDetails = (data) => {
+        fetch("/module/assemblies.json/" + data)
             .then((response) => {
                 if (response.ok) {
                     return response.json()
-                }else {
+                } else {
                     throw new Error(response.statusText)
                 }
             })
             .then(responseJSON => {
-                    this.setState({assemblyData: responseJSON.assemblies})
-                }
+                this.setState({ assemblyData: responseJSON.assemblies })
+            }
 
             )
     }
