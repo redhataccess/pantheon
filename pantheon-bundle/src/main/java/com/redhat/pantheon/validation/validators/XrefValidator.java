@@ -65,7 +65,7 @@ public class XrefValidator implements Validator {
                 }
                 int count = 0;
                 for (String xref : filepaths) {
-                    count += (int) resultLinks.eachAttr("id").stream().filter(s -> s.equalsIgnoreCase(xref)).count();
+                    count += (int) resultLinks.eachAttr("id").stream().filter(s -> s.matches("(.*)"+xref+"(.*)")).count();
                 }
                 return count == XrefValidationHelper.getObjectsToValidate(this.uid).size() ? true : false;
         }
