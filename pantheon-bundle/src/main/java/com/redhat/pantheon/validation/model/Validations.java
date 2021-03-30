@@ -1,4 +1,4 @@
-package com.redhat.pantheon.model.document;
+package com.redhat.pantheon.validation.model;
 
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.workspace.WorkspaceChild;

@@ -1,5 +1,3 @@
-
-
 package com.redhat.pantheon.asciidoctor.extension;
 
 import com.redhat.pantheon.model.assembly.TableOfContents;

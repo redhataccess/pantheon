@@ -1,21 +1,16 @@
 package com.redhat.pantheon.validation.validators;
 
-import com.redhat.pantheon.model.Xref;
+import com.redhat.pantheon.helper.PantheonConstants;
+import com.redhat.pantheon.validation.helper.XrefValidationHelper;
 import com.redhat.pantheon.validation.model.ErrorDetails;
 import com.redhat.pantheon.validation.model.Violations;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collector;
 
 /**
  * This is a sample validator that
@@ -35,15 +30,16 @@ import java.util.stream.Collector;
 )
 public class XrefValidator implements Validator {
 
-    private static List<String> xRefs = new ArrayList<>();
-
     private String content;
+
+    private String uid;
 
     public XrefValidator() {
     }
 
-    public XrefValidator(String content) {
+    public XrefValidator(String uid, String content) {
         this.content = content;
+        this.uid = uid;
     }
 
     @Override
@@ -52,10 +48,10 @@ public class XrefValidator implements Validator {
     }
 
     private Violations checkIfXrefValid(Violations violations) {
-        if (!isValidXref()) {
+        if (isValidXref()) {
             return violations;
         }
-        return violations.add("Not a valid Xref",
+        return violations.add(PantheonConstants.VALID_XREF,
                 new ErrorDetails().add("invalid Cross reference(s) exists in the document"));
     }
 
@@ -63,11 +59,16 @@ public class XrefValidator implements Validator {
         try {
                 Document doc = Jsoup.parse(content);
                 Elements resultLinks = doc.select("h2");
+                List<String>  filepaths = XrefValidationHelper.getObjectsToValidate(this.uid);
+                if(null == filepaths || filepaths.size()==0){
+                    return true;
+                }
                 int count = 0;
-                for (String xref : xRefs) {
+                for (String xref : filepaths) {
                     count += (int) resultLinks.eachAttr("id").stream().filter(s -> s.equalsIgnoreCase(xref)).count();
                 }
-                return count == xRefs.size() ? true : false;
+                System.out.println(count + " xref : "+ XrefValidationHelper.getObjectsToValidate(this.uid));
+                return count == XrefValidationHelper.getObjectsToValidate(this.uid).size() ? true : false;
         }
         catch (Exception ex){
             ex.printStackTrace();
@@ -82,15 +83,7 @@ public class XrefValidator implements Validator {
      */
     @Override
     public String getName() {
-        return "XrefValidator";
+        return XrefValidator.class.getClass().getName();
     }
 
-    public List<String> getObjectsToValidate() {
-        return xRefs;
-    }
-
-    public static void setObjectsToValidate(List<String> objectsToValidate) {
-        if(objectsToValidate.size()>0)
-            xRefs.addAll(objectsToValidate);
-    }
 }

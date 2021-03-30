@@ -8,6 +8,7 @@ import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.validation.helper.XrefValidationHelper;
 import com.redhat.pantheon.validation.validators.XrefValidator;
 import org.apache.sling.api.resource.Resource;
 import org.asciidoctor.ast.ContentNode;
@@ -20,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.redhat.pantheon.helper.PantheonConstants.RESOURCE_TYPE_ASSEMBLY;
-import static com.redhat.pantheon.validation.validators.XrefValidator.setObjectsToValidate;
 import static com.redhat.pantheon.helper.PantheonConstants.RESOURCE_TYPE_MODULE;
 
 public class PantheonXrefProcessor extends InlineMacroProcessor {
@@ -57,7 +57,7 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
             content = preprocessWithPattern(content, XREF_PATTERN, urlList);
             content = preprocessWithPattern(content, TRIANGLE_PATTERN, urlList);
         }
-        setObjectsToValidate(urlList);
+        new XrefValidationHelper().setObjectsToValidate(documentVariant.uuid().get(), urlList);
         return content;
     }
 

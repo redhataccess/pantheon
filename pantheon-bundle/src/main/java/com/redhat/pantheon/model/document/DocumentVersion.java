@@ -5,6 +5,7 @@ import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.workspace.WorkspaceChild;
+import com.redhat.pantheon.validation.model.Validations;
 
 import javax.inject.Named;
 
