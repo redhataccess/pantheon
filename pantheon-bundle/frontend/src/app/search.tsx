@@ -60,6 +60,7 @@ export interface ISearchState {
 
   // bulk publish
   isBulkPublish: boolean
+  isBulkUnpublish: boolean
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
@@ -105,7 +106,8 @@ class Search extends Component<IAppState, ISearchState> {
       isBulkOperationButtonDisabled: true,
 
       //bulk operation - publish
-      isBulkPublish: false
+      isBulkPublish: false,
+      isBulkUnpublish: false
     };
     this.drawerRef = React.createRef();
 
@@ -308,10 +310,10 @@ class Search extends Component<IAppState, ISearchState> {
           <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length === 0} onClick={this.handleEditMetadata} data-testid="edit_metadata">Edit metadata</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" isAriaDisabled={this.state.documentsSelected.length > 0 ? false : true} onClick={this.handleBulkPublish}>Publish</Button>
+          <Button variant="primary" isAriaDisabled={this.state.documentsSelected.length > 0 ? false : true} onClick={()=>this.handleBulkPublish('publish')}>Publish</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" isAriaDisabled={true}>Unpublish</Button>
+          <Button variant="primary" isAriaDisabled={this.state.documentsSelected.length > 0 ? false : true} onClick={()=>this.handleBulkPublish('unpublish')}>Unpublish</Button>
         </ToolbarItem>}
 
       </React.Fragment>
@@ -342,7 +344,13 @@ class Search extends Component<IAppState, ISearchState> {
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isBulkPublish={this.state.isBulkPublish}
-                updateIsBulkPublish={this.updateIsBulkPublish}
+                isBulkUnpublish={this.state.isBulkUnpublish}
+              />}
+               {this.state.isBulkUnpublish && <BulkOperationPublish 
+                documentsSelected={this.state.documentsSelected}
+                contentTypeSelected={this.state.contentTypeSelected}
+                isBulkPublish={this.state.isBulkPublish}
+                isBulkUnpublish={this.state.isBulkUnpublish}
               />}
               {drawerContent}
             </DrawerContentBody>
@@ -633,16 +641,18 @@ class Search extends Component<IAppState, ISearchState> {
 
   }
 
-  private handleBulkPublish = (event) => {
-    this.setState({ isBulkPublish: !this.state.isBulkPublish })
+  private handleBulkPublish = (text) => {
+    if(text == 'publish'){
+      this.setState({ isBulkPublish: !this.state.isBulkPublish, isBulkUnpublish: false })
+    }
+    if(text == 'unpublish'){
+      this.setState({ isBulkUnpublish: !this.state.isBulkUnpublish, isBulkPublish: false })
+
+    }
   }
   
   private updateIsEditMetadata = (updateIsEditMetadata) => {
     this.setState({ isEditMetadata: updateIsEditMetadata })
-  }
-
-  private updateIsBulkPublish = updateIsBulkPublish => {
-    this.setState({isBulkPublish: updateIsBulkPublish})
   }
 
 }
