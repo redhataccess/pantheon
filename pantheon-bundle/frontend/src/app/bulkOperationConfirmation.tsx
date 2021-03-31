@@ -14,7 +14,7 @@ export interface IBulkOperationProps {
   progressSuccessValue: number
   progressFailureValue: number
   progressWarningValue: number
-  // onShowBulkEditConfirmation: (showBulkEditConfirmation) => any
+  onShowBulkEditConfirmation: (showBulkEditConfirmation) => any
   onMetadataEditError: (metadataEditError) => any
   updateIsEditMetadata: (isEditMetadata) => any
 }
@@ -48,20 +48,20 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
 
     return (
       <React.Fragment>
-          <Alert
-            variant="info"
-            title="Bulk Edit"
-            actionClose={<AlertActionCloseButton data-testid="hide-alert-button" onClose={this.hideAlert} />}
-            actionLinks={
-              <React.Fragment>
-                <AlertActionLink data-testid="view-details-link" onClick={this.handleModalToggle}>View details</AlertActionLink>
-              </React.Fragment>
-            }
-          >
-            <div><Progress value={this.props.progressSuccessValue} title="Update Succeeded" variant={ProgressVariant.success} size={ProgressSize.sm} /></div>
-            <div><Progress value={this.props.progressFailureValue} title="Update failed" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
-            <div><Progress value={this.props.progressWarningValue} title="No draft version found. No action taken" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>
-          </Alert>
+        <Alert
+          variant="info"
+          title="Bulk Edit"
+          actionClose={<AlertActionCloseButton data-testid="hide-alert-button" onClose={this.hideAlert} />}
+          actionLinks={
+            <React.Fragment>
+              <AlertActionLink data-testid="view-details-link" onClick={this.handleModalToggle}>View details</AlertActionLink>
+            </React.Fragment>
+          }
+        >
+          <div><Progress value={this.props.progressSuccessValue} title="Update Succeeded" variant={ProgressVariant.success} size={ProgressSize.sm} /></div>
+          <div><Progress value={this.props.progressFailureValue} title="Update failed" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
+          <div><Progress value={this.props.progressWarningValue} title="No draft version found. No action taken" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>
+        </Alert>
         <Modal
           variant={ModalVariant.large}
           isOpen={isModalOpen}
@@ -124,16 +124,8 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
   };
 
   private hideAlert = () => {
-    // this.props.onShowBulkEditConfirmation(false)
+    this.props.onShowBulkEditConfirmation(false)
     this.props.onMetadataEditError("")
-    // console.log("[hideAlert] showBulkEditConfirmation: false")
-    // this.updateIsEditMetadata()
-    //TODO: refresh documentsSelected
-    // this.SearchResults.current.doSearch()
-  }
-
-  private updateIsEditMetadata = () => {
-    // call parent `updateIsEditMetadata` method
     this.props.updateIsEditMetadata(false)
   }
 }

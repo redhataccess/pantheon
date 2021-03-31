@@ -52,10 +52,9 @@ export interface ISearchState {
   // metadata
   productsSelected: string[]
   repositoriesSelected: string[]
-  documentsSelected: Array<{ cells: [string, { title: { props: {children: string[], href: string } } }, string, string, string], selected: boolean }>
+  documentsSelected: Array<{ cells: [string, { title: { props: { children: string[], href: string } } }, string, string, string], selected: boolean }>
   contentTypeSelected: string
   isEditMetadata: boolean
-  showBulkEditConfirmation: boolean
   editMetadataWarn: boolean
   isBulkOperationButtonDisabled: boolean
   bulkOperationCompleted: boolean
@@ -65,10 +64,9 @@ export interface ISearchState {
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
-  private searchResultsRef;
 
   constructor(props) {
-    super(props);   
+    super(props);
     this.state = {
       // states for drawer
       filterLabel: "repo",
@@ -102,7 +100,6 @@ class Search extends Component<IAppState, ISearchState> {
       documentsSelected: [],
       contentTypeSelected: "",
       isEditMetadata: false,
-      showBulkEditConfirmation: false,
       editMetadataWarn: false,
       isBulkOperationButtonDisabled: true,
       bulkOperationCompleted: false,
@@ -111,7 +108,6 @@ class Search extends Component<IAppState, ISearchState> {
       isBulkPublish: false
     };
     this.drawerRef = React.createRef();
-    this.searchResultsRef = React.createRef();
   }
 
   public componentDidMount() {
@@ -136,11 +132,6 @@ class Search extends Component<IAppState, ISearchState> {
     // TODO: enable resize
     // toolbar
     // window.removeEventListener("resize", this.closeExpandableContent);
-  }
-
-  public componentDidUpdate(prevProps) {
-    
-
   }
 
   public render() {
@@ -196,7 +187,6 @@ class Search extends Component<IAppState, ISearchState> {
       <React.Fragment>
         <ExpandableSection toggleText="Modules" className="pf-c-title search-results__section search-results__section--module" isActive={true} isExpanded={modulesIsExpanded} onToggle={this.onModulesToggle}>
           <SearchResults
-            ref={this.searchResultsRef}
             contentType="module"
             keyWord={this.state.inputValue}
             repositoriesSelected={this.state.repositoriesSelected}
@@ -214,7 +204,6 @@ class Search extends Component<IAppState, ISearchState> {
         <br />
         <ExpandableSection toggleText="Assemblies" className="pf-c-title search-results__section search-results__section--assembly" isActive={true} isExpanded={assembliesIsExpanded} onToggle={this.onAssembliesToggle}>
           <SearchResults
-            ref={this.searchResultsRef}
             contentType="assembly"
             keyWord={this.state.inputValue}
             repositoriesSelected={this.state.repositoriesSelected}
@@ -338,17 +327,15 @@ class Search extends Component<IAppState, ISearchState> {
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody className="search-results">
               {this.state.editMetadataWarn && <Alert variant="danger" isInline title="Attempt to apply the same product/version to multiple repositories is not allowed." />}
-              {(this.state.isEditMetadata || this.state.showBulkEditConfirmation )&& <BulkOperationMetadata
+              {(this.state.isEditMetadata || this.state.bulkOperationCompleted) && <BulkOperationMetadata
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isEditMetadata={this.state.isEditMetadata}
-                showBulkEditConfirmation={this.state.showBulkEditConfirmation}
                 bulkOperationCompleted={this.state.bulkOperationCompleted}
                 updateIsEditMetadata={this.updateIsEditMetadata}
-                updateShowBulkEditConfirmation={this.updateShowBulkEditConfirmation}
                 updateBulkOperationCompleted={this.updateBulkOperationCompleted}
               />}
-              {this.state.isBulkPublish && <BulkOperationPublish 
+              {this.state.isBulkPublish && <BulkOperationPublish
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isBulkPublish={this.state.isBulkPublish}
@@ -626,7 +613,7 @@ class Search extends Component<IAppState, ISearchState> {
   private handleEditMetadata = (event) => {
     if (this.state.repositoriesSelected.length > 1) {
       this.setState({ editMetadataWarn: true }, () => {
-        this.setState({ isBulkOperationButtonDisabled: true })
+        this.setState({ isBulkOperationButtonDisabled: true, bulkOperationCompleted: false })
       })
     } else {
       this.setState({
@@ -634,7 +621,7 @@ class Search extends Component<IAppState, ISearchState> {
         editMetadataWarn: false
       }, () => {
         if (this.state.editMetadataWarn === false && this.state.repositoriesSelected.length === 1) {
-          this.setState({ isBulkOperationButtonDisabled: false })
+          this.setState({ isBulkOperationButtonDisabled: false, bulkOperationCompleted: false })
         } else {
           this.setState({ isBulkOperationButtonDisabled: true })
         }
@@ -646,30 +633,21 @@ class Search extends Component<IAppState, ISearchState> {
   private handleBulkPublish = (event) => {
     this.setState({ isBulkPublish: !this.state.isBulkPublish })
   }
-  
+
   private updateIsEditMetadata = (updateIsEditMetadata) => {
     this.setState({ isEditMetadata: updateIsEditMetadata })
   }
 
-  private updateShowBulkEditConfirmation = (showBulkEditConfirmation) => {
-    this.setState({ showBulkEditConfirmation })
-  }
-
   private updateBulkOperationCompleted = (bulkOperationCompleted) => {
-    this.setState({ bulkOperationCompleted}, ()=>{
-      if(this.state.bulkOperationCompleted){
-        this.setState({documentsSelected: []})
-        
-        // refresh documentsSelected
-        console.log("[updateBulkOperationCompleted] trigger doSearch")
-        this.searchResultsRef.current.doSearch()
-        
+    this.setState({ bulkOperationCompleted }, () => {
+      if (this.state.bulkOperationCompleted) {
+        this.setState({ documentsSelected: [], isBulkOperationButtonDisabled: true })
       }
     })
   }
 
   private updateIsBulkPublish = updateIsBulkPublish => {
-    this.setState({isBulkPublish: updateIsBulkPublish})
+    this.setState({ isBulkPublish: updateIsBulkPublish })
   }
 
 }

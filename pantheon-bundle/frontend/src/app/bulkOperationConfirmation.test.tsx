@@ -18,7 +18,7 @@ const props = {
     progressSuccessValue: 50,
     progressFailureValue: 10,
     progressWarningValue: 40,
-    // onShowBulkEditConfirmation: (showBulkEditConfirmation) => anymatch,
+    onShowBulkEditConfirmation: (showBulkEditConfirmation) => anymatch,
     onMetadataEditError: (metadataEditError) => anymatch,
     updateIsEditMetadata: (isEditMetadata) => anymatch
 }
