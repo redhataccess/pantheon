@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, ModalVariant, Button, Title, TitleSizes, AlertActionCloseButton, Alert, AlertActionLink, Progress, ProgressVariant, ProgressSize, List, ListItem, ProgressMeasureLocation } from '@patternfly/react-core';
+import { Modal, ModalVariant, Button, Title, TitleSizes, AlertActionCloseButton, Alert, AlertActionLink, Progress, ProgressVariant, ProgressSize, List, ListItem, ProgressMeasureLocation, ListComponent, OrderType } from '@patternfly/react-core';
 import "@app/app.css";
 
 export interface IBulkPublishProps {
@@ -74,11 +74,11 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
           <strong>{`${this.props.isBulkUnpublish ? "Unpublished" : "Published"} Succeessfully:`}</strong>
           <br />
           <span id="update-succeeded">
-            <List aria-label="succeeded">
+            <List aria-label="succeeded" component={ListComponent.ol} type={OrderType.number}>
               {this.props.updateSucceeded.length > 0 &&
-                this.props.updateSucceeded.split(",").map((data) => (
+                this.props.updateSucceeded.split(",").map((data, index) => (
                   data.length > 0 &&
-                  <ListItem>{data}</ListItem>
+                  <ListItem key={index}>{data}</ListItem>
                 ))}
             </List>
           </span>
@@ -86,11 +86,11 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
           <br />
           {!this.props.isBulkUnpublish && (<div><strong>Publish Ignored:</strong>
           <span id="update-ignored">
-            <List aria-label="ignored">
+            <List aria-label="ignored" component={ListComponent.ol} type={OrderType.number}>
               {this.props.updateIgnored.length > 0 &&
-                this.props.updateIgnored.split(",").map((data) => (
+                this.props.updateIgnored.split(",").map((data, index) => (
                   data.length > 0 &&
-                  <ListItem>{data}</ListItem>
+                  <ListItem key={index}>{data}</ListItem>
                 ))}
             </List>
           </span></div>)}
@@ -99,11 +99,11 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
           <strong>{`${this.props.isBulkUnpublish ? "Unpublish" : "Publish"} Failed:`}</strong>
           <br />
           <span id="update-failed">
-            <List aria-label="failed">
+            <List aria-label="failed" component={ListComponent.ol} type={OrderType.number}>
               {this.props.updateFailed.length > 0 &&
-                this.props.updateFailed.split(",").map((data) => (
+                this.props.updateFailed.split(",").map((data, index) => (
                   data.length > 0 &&
-                  <ListItem>{data}</ListItem>
+                  <ListItem key={index}>{data}</ListItem>
                 ))}
             </List>
           </span>
