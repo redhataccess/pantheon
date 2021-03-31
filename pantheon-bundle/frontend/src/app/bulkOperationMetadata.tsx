@@ -367,7 +367,6 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
                     // check draft version
                     const backend = "/content" + docPath + "/en_US/variants/" + variant + "/draft/metadata"
-                    // this.setState({ showBulkEditConfirmation: true })
                     Utils.draftExist(backend).then((exist) => {
                         if (exist) {
                             // Process form for each docPath
