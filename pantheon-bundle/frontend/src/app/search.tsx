@@ -658,9 +658,12 @@ class Search extends Component<IAppState, ISearchState> {
   private updateBulkOperationCompleted = (bulkOperationCompleted) => {
     this.setState({ bulkOperationCompleted}, ()=>{
       if(this.state.bulkOperationCompleted){
+        this.setState({documentsSelected: []})
+        
         // refresh documentsSelected
         console.log("[updateBulkOperationCompleted] trigger doSearch")
-        this.searchResultsRef.current && this.searchResultsRef.current.doSearch()
+        this.searchResultsRef.current.doSearch()
+        
       }
     })
   }
