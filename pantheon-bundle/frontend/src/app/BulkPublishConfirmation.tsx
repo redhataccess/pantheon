@@ -1,6 +1,5 @@
 import React from 'react';
-import { Modal, ModalVariant, Button, Title, TitleSizes, AlertActionCloseButton, Alert, AlertActionLink, Progress, ProgressVariant, ProgressSize, List, ListItem, ProgressMeasureLocation } from '@patternfly/react-core';
-import WarningTriangleIcon from '@patternfly/react-icons/dist/js/icons/warning-triangle-icon';
+import { Modal, ModalVariant, Button, Title, TitleSizes, AlertActionCloseButton, Alert, AlertActionLink, Progress, ProgressVariant, ProgressSize, List, ListItem, ProgressMeasureLocation, ListComponent, OrderType } from '@patternfly/react-core';
 import "@app/app.css";
 
 export interface IBulkPublishProps {
@@ -14,6 +13,7 @@ export interface IBulkPublishProps {
   progressFailureValue: number
   progressWarningValue: number
   onShowBulkOperationConfirmation: (showBulkConfirmation) => any
+  isBulkUnpublish: boolean
 }
 
 class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
@@ -48,7 +48,7 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
         <div className="p2-search__pf-c-alert">
           <Alert
             variant="info"
-            title="Bulk Publish"
+            title={this.props.isBulkUnpublish ? "Bulk Unpublish" : "Bulk Publish"}
             actionClose={<AlertActionCloseButton data-testid="hide-alert-button" onClose={this.hideAlert} />}
             actionLinks={
               <React.Fragment>
@@ -56,9 +56,9 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
               </React.Fragment>
             }
           >
-            <div><Progress value={this.props.progressSuccessValue} title="Publish Successful" variant={ProgressVariant.success} size={ProgressSize.sm} /></div>
-            <div><Progress value={this.props.progressFailureValue} title="Publish Failed (metadata missing)" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
-            <div><Progress value={this.props.progressWarningValue} title="Publish Failed (no draft version found)" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>
+            <div><Progress value={this.props.progressSuccessValue} title={this.props.isBulkUnpublish ? "Unpublish Successful" : "Publish Successful"} variant={ProgressVariant.success} size={ProgressSize.sm} /></div>
+            <div><Progress value={this.props.progressFailureValue} title={this.props.isBulkUnpublish ? "Unpublish Failed" : "Publish Failed (metadata missing)"} variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
+            {!this.props.isBulkUnpublish && <div><Progress value={this.props.progressWarningValue} title="Publish Failed (no draft version found)" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>}
           </Alert>
         </div>
         <Modal
@@ -71,40 +71,39 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
           onClose={this.handleModalToggle}
           footer={footer}
         >
-          <strong>Published Succeessfully:</strong>
+          <strong>{`${this.props.isBulkUnpublish ? "Unpublished" : "Published"} Succeessfully:`}</strong>
           <br />
           <span id="update-succeeded">
-            <List aria-label="succeeded">
+            <List aria-label="succeeded" component={ListComponent.ol} type={OrderType.number}>
               {this.props.updateSucceeded.length > 0 &&
-                this.props.updateSucceeded.split(",").map((data) => (
+                this.props.updateSucceeded.split(",").map((data, index) => (
                   data.length > 0 &&
-                  <ListItem>{data}</ListItem>
+                  <ListItem key={index}>{data}</ListItem>
                 ))}
             </List>
           </span>
           <br />
           <br />
-          <strong>Publish Ignored:</strong>
-          <br />
+          {!this.props.isBulkUnpublish && (<div><strong>Publish Ignored:</strong>
           <span id="update-ignored">
-            <List aria-label="ignored">
+            <List aria-label="ignored" component={ListComponent.ol} type={OrderType.number}>
               {this.props.updateIgnored.length > 0 &&
-                this.props.updateIgnored.split(",").map((data) => (
+                this.props.updateIgnored.split(",").map((data, index) => (
                   data.length > 0 &&
-                  <ListItem>{data}</ListItem>
+                  <ListItem key={index}>{data}</ListItem>
                 ))}
             </List>
-          </span>
+          </span></div>)}
           <br />
           <br />
-          <strong>Publish Failed:</strong>
+          <strong>{`${this.props.isBulkUnpublish ? "Unpublish" : "Publish"} Failed:`}</strong>
           <br />
           <span id="update-failed">
-            <List aria-label="failed">
+            <List aria-label="failed" component={ListComponent.ol} type={OrderType.number}>
               {this.props.updateFailed.length > 0 &&
-                this.props.updateFailed.split(",").map((data) => (
+                this.props.updateFailed.split(",").map((data, index) => (
                   data.length > 0 &&
-                  <ListItem>{data}</ListItem>
+                  <ListItem key={index}>{data}</ListItem>
                 ))}
             </List>
           </span>
