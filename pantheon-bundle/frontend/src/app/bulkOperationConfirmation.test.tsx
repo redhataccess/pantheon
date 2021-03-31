@@ -8,6 +8,7 @@ import { render, fireEvent } from '@testing-library/react'
 const anymatch = require("anymatch")
 
 const props = {
+    isEditMetadata: true,
     header: "Bulk Edit",
     subheading: "Summary",
     updateSucceeded: "/repositories/s/a,/repositories/s/b,/repositories/s/c",
@@ -18,7 +19,8 @@ const props = {
     progressFailureValue: 10,
     progressWarningValue: 40,
     onShowBulkEditConfirmation: (showBulkEditConfirmation) => anymatch,
-    onMetadataEditError: (metadataEditError) => anymatch
+    onMetadataEditError: (metadataEditError) => anymatch,
+    updateIsEditMetadata: (isEditMetadata) => anymatch
 }
 
 describe("BulkOperationConfirmation tests", () => {

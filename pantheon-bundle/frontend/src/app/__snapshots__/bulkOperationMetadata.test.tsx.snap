@@ -2,19 +2,6 @@
 
 exports[`BulkOperationMetadata tests should render BulkOperationMetadata component 1`] = `
 <Fragment>
-  <BulkOperationConfirmation
-    footer=""
-    header="Bulk Edit"
-    onMetadataEditError={[Function]}
-    onShowBulkEditConfirmation={[Function]}
-    progressFailureValue={0}
-    progressSuccessValue={0}
-    progressWarningValue={0}
-    subheading="Documents updated in the bulk operation"
-    updateFailed=""
-    updateIgnored=""
-    updateSucceeded=""
-  />
   <Modal
     actions={
       Array [

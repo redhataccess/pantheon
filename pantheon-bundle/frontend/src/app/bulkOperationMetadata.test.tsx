@@ -11,7 +11,10 @@ const props = {
     documentsSelected: anymatch,
     contentTypeSelected: "module",
     isEditMetadata: true,
+    showBulkEditConfirmation: true,
+    bulkOperationCompleted: true,
     updateIsEditMetadata: (isEditMetadata) => anymatch,
+    updateBulkOperationCompleted: (bulkOperationCompleted) => anymatch
 }
 describe("BulkOperationMetadata tests", () => {
     const api = "/content/products.harray.1.json"
@@ -43,6 +46,7 @@ describe("BulkOperationMetadata tests", () => {
     it("should render an Alert component", () => {
 
         const wrapper = mount(<BulkOperationMetadata {...props} />)
+        wrapper.setState({ showBulkEditConfirmation: true })
         const alert = wrapper.find(Alert)
         expect(alert.exists()).toBe(true)
     })
@@ -50,6 +54,7 @@ describe("BulkOperationMetadata tests", () => {
     it("should render an Button component", () => {
 
         const wrapper = mount(<BulkOperationMetadata {...props} />)
+        wrapper.setState({ showBulkEditConfirmation: true })
         const button = wrapper.find(Alert)
         expect(button.exists()).toBe(true)
     })
