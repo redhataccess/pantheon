@@ -553,7 +553,11 @@ class Search extends Component<IAppState, ISearchState> {
       repositoriesSelected
     }, () => {
       if (this.state.repositoriesSelected.length === 0) {
-        this.setState({ documentsSelected: [], isBulkOperationButtonDisabled: true })
+        this.setState({
+          documentsSelected: [],
+          isBulkOperationButtonDisabled: true,
+          contentTypeSelected: ""
+        })
       }
 
       if (this.state.repositoriesSelected.length === 1 && this.state.editMetadataWarn === true) {
@@ -641,7 +645,11 @@ class Search extends Component<IAppState, ISearchState> {
   private updateBulkOperationCompleted = (bulkOperationCompleted) => {
     this.setState({ bulkOperationCompleted }, () => {
       if (this.state.bulkOperationCompleted) {
-        this.setState({ documentsSelected: [], isBulkOperationButtonDisabled: true })
+        this.setState({
+          documentsSelected: [],
+          isBulkOperationButtonDisabled: true,
+          contentTypeSelected: ""
+        })
       }
     })
   }
