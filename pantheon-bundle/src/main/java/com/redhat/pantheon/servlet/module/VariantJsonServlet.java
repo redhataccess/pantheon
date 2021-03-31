@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet.module;
 
 import com.google.common.base.Charsets;
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.extension.url.DrupalXrefProvider;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.Child;
@@ -130,7 +131,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Return the body content of the module ONLY
         variantMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
-                        .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider()))
+                        .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new DrupalXrefProvider()))
                         .andThen(Html.getElementById("doc-content", Html.getElementByTagName("cp-documentation", Html.getBody())))
                         .apply(releasedContent.get().jcrContent().get().jcrData().get()));
 

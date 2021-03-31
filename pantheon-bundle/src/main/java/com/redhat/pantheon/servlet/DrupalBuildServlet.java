@@ -1,5 +1,6 @@
 package com.redhat.pantheon.servlet;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redhat.pantheon.asciidoctor.AsciidoctorPool;
 import com.redhat.pantheon.asciidoctor.extension.SlingResourceIncludeProcessor;
 import com.redhat.pantheon.model.assembly.TableOfContents;
@@ -31,9 +32,11 @@ import org.osgi.service.component.annotations.Reference;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -62,10 +65,15 @@ public class DrupalBuildServlet extends SlingAllMethodsServlet {
         String commitref = request.getParameter("commitref");
         String build_identifier = request.getParameter("build_identifier");
 
-        System.out.println("repo: " + repo);
-        System.out.println("path: " + path);
-        System.out.println("commitref: " + commitref);
-        System.out.println("build_identifier: " + build_identifier);
+//        System.out.println("repo: " + repo);
+//        System.out.println("path: " + path);
+//        System.out.println("commitref: " + commitref);
+//        System.out.println("build_identifier: " + build_identifier);
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("build_identifier", build_identifier);
+        payload.put("path", path);
+        payload.put("repo", repo);
 
         Path tempdir = Files.createTempDirectory("teamRyan-");
         try (Git git = Git.cloneRepository().setURI(repo).setDirectory(tempdir.toFile()).call()) {
@@ -73,7 +81,7 @@ public class DrupalBuildServlet extends SlingAllMethodsServlet {
             RevWalk walk = new RevWalk(git.getRepository());
             RevCommit commit = walk.parseCommit(commitId);
             RevTree tree = commit.getTree();
-            System.out.println("Tree: " + tree);
+//            System.out.println("Tree: " + tree);
 
             final TreeWalk treeWalk = new TreeWalk(git.getRepository());
             treeWalk.addTree(tree);
@@ -88,7 +96,7 @@ public class DrupalBuildServlet extends SlingAllMethodsServlet {
 
             String content = new String(loader.getBytes());
 
-            System.out.println(content);
+//            System.out.println(content);
 
             OptionsBuilder ob = OptionsBuilder.options()
                     // we're generating html
@@ -137,8 +145,11 @@ public class DrupalBuildServlet extends SlingAllMethodsServlet {
                             }
                         });
 
+
+
                 String html = asciidoctor.convert(content, ob.get());
-                System.out.println(html);
+//                System.out.println(html);
+                payload.put("html", html);
             } finally {
                 asciidoctorPool.returnObject(asciidoctor);
             }
@@ -146,6 +157,8 @@ public class DrupalBuildServlet extends SlingAllMethodsServlet {
             throw new ServletException(e);
         }
 
-
+        response.setContentType("application/json");
+        Writer w = response.getWriter();
+        w.write(new ObjectMapper().writer().writeValueAsString(payload));
     }
 }
