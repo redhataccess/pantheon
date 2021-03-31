@@ -215,13 +215,11 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                 if (this.state.documentsSucceeded.length > 0 ||
                     this.state.documentsFailed.length > 0 ||
                     this.state.documentsIgnored.length > 0) {
-                        console.log("[handleModalToggle] Save button was clicked")
                         // Save button was clicked. Documents were processed.
                         this.props.updateIsEditMetadata(false)
                         this.props.updateBulkOperationCompleted(true)
                         this.setState({ showBulkEditConfirmation: true })
                 } else {
-                    console.log("[handleModalToggle] Cancel button was clicked")
                     // Cancle button was clicked. Documents were not processed.
                     this.props.updateIsEditMetadata(false)
                     this.props.updateBulkOperationCompleted(false)
