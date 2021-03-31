@@ -55,7 +55,7 @@ export interface ISearchState {
   documentsSelected: Array<{ cells: [string, { title: { props: {children: string[], href: string } } }, string, string, string], selected: boolean }>
   contentTypeSelected: string
   isEditMetadata: boolean
-  editMetadataWarn: boolean
+  bulkOperationWarn: boolean
   isBulkOperationButtonDisabled: boolean
 
   // bulk publish
@@ -102,7 +102,7 @@ class Search extends Component<IAppState, ISearchState> {
       documentsSelected: [],
       contentTypeSelected: "",
       isEditMetadata: false,
-      editMetadataWarn: false,
+      bulkOperationWarn: false,
       isBulkOperationButtonDisabled: true,
 
       //bulk operation - publish
@@ -310,10 +310,10 @@ class Search extends Component<IAppState, ISearchState> {
           <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length === 0} onClick={this.handleEditMetadata} data-testid="edit_metadata">Edit metadata</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" isAriaDisabled={this.state.documentsSelected.length > 0 ? false : true} onClick={()=>this.handleBulkPublish('publish')}>Publish</Button>
+          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length === 0} onClick={()=>this.handleBulkPublish('publish')}>Publish</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" isAriaDisabled={this.state.documentsSelected.length > 0 ? false : true} onClick={()=>this.handleBulkPublish('unpublish')}>Unpublish</Button>
+          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length === 0} onClick={()=>this.handleBulkPublish('unpublish')}>Unpublish</Button>
         </ToolbarItem>}
 
       </React.Fragment>
@@ -333,7 +333,7 @@ class Search extends Component<IAppState, ISearchState> {
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody className="search-results">
-              {this.state.editMetadataWarn && <Alert variant="danger" isInline title="Attempt to apply the same product/version to multiple repositories is not allowed." />}
+              {this.state.bulkOperationWarn && <Alert variant="danger" isInline title="Attempt to perform bulk operation on multiple repositories is not allowed." />}
               {this.state.isEditMetadata && <BulkOperationMetadata
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
@@ -567,8 +567,8 @@ class Search extends Component<IAppState, ISearchState> {
         this.setState({ documentsSelected: [], isBulkOperationButtonDisabled: true })
       }
 
-      if (this.state.repositoriesSelected.length === 1 && this.state.editMetadataWarn === true) {
-        this.setState({ editMetadataWarn: false })
+      if (this.state.repositoriesSelected.length === 1 && this.state.bulkOperationWarn === true) {
+        this.setState({ bulkOperationWarn: false })
       }
 
     });
@@ -622,16 +622,17 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   private handleEditMetadata = (event) => {
+    this.setState({isBulkPublish: false, isBulkUnpublish: false})
     if (this.state.repositoriesSelected.length > 1) {
-      this.setState({ editMetadataWarn: true }, () => {
+      this.setState({ bulkOperationWarn: true }, () => {
         this.setState({ isBulkOperationButtonDisabled: true })
       })
     } else {
       this.setState({
         isEditMetadata: !this.state.isEditMetadata,
-        editMetadataWarn: false
+        bulkOperationWarn: false
       }, () => {
-        if (this.state.editMetadataWarn === false && this.state.repositoriesSelected.length === 1) {
+        if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
           this.setState({ isBulkOperationButtonDisabled: false })
         } else {
           this.setState({ isBulkOperationButtonDisabled: true })
@@ -642,6 +643,22 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   private handleBulkPublish = (text) => {
+    this.setState({isEditMetadata: false})
+    if (this.state.repositoriesSelected.length > 1) {
+      this.setState({ bulkOperationWarn: true }, () => {
+        this.setState({ isBulkOperationButtonDisabled: true })
+      })
+    } else{
+      this.setState({
+        bulkOperationWarn: false
+      }, () => {
+        if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
+          this.setState({ isBulkOperationButtonDisabled: false })
+        } else {
+          this.setState({ isBulkOperationButtonDisabled: true })
+        }
+      })
+    }
     if(text == 'publish'){
       this.setState({ isBulkPublish: !this.state.isBulkPublish, isBulkUnpublish: false })
     }
