@@ -93,7 +93,7 @@ When your work is ready to be reviewed and merged, create a pull request.
 Both the technical review and peer review processes take place in pull requests in GitHub.
 
 #### Documentation review
-After creating and labeling a pull request as outlined above, the developers review the pull request and add comments regarding technical accuracy. Writers receive a notification that comments have been added via email, and when all comments have been addressed, the developers change the label from **awaiting tech review** to **tech review passed**.
+After creating and labeling a pull request as outlined above, the developers review the pull request and add comments regarding technical accuracy. Writers receive a notification that comments have been added via email, and when all comments have been addressed, the developers change the label from **awaiting tech review** to **tech review complete**.
 
 When technical review is complete, writers click the **Reviewers** gear icon and select the name of a team member to request peer review. The peer writer reviews the pull request for clarity, consistency, and compliance with necessary standards.
 Writers receive a notification that comments have been added via email, and when all comments have been addressed, the reviewer clicks **Review changes > Approve** from the **Files changed** tab of the pull request to approve the changes and the pull request.
@@ -109,7 +109,7 @@ When you have addressed all technical review and peer review comments, notify th
 1. Remove `WIP` from the title of the pull request.
 1. Click **Request Review** and enter `@redhataccess/pantheon-developers`.
 
-The developers check that the **Tech review passed** label has been added to the pull request and peer pull request approval provided, then accept it.
+The developers check that the **Tech review complete** label has been added to the pull request and peer pull request approval provided, then accept it.
 
 ## Installing Pantheon
 
