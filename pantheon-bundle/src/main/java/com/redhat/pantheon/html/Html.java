@@ -32,7 +32,7 @@ import static com.redhat.pantheon.conf.GlobalConfig.IMAGE_PATH_PREFIX;
  */
 public class Html {
 
-    private static final String UUID_HREF_REGEX = "(?<uuid>[\\w]{8}-[\\w]{4}-[\\w]{4}-[\\w]{4}-[\\w]{12})(?:\\.html?)?";
+    private static final String UUID_HREF_REGEX = "(?<uuid>[\\w]{8}-[\\w]{4}-[\\w]{4}-[\\w]{4}-[\\w]{12})(?:\\.html?)?(?:#(?<anchor>.+))?";
     private static final Pattern UUID_HREF_PATTERN = Pattern.compile(UUID_HREF_REGEX);
 
     private static final Logger log = LoggerFactory.getLogger(Html.class);
@@ -76,11 +76,12 @@ public class Html {
                         Matcher m = UUID_HREF_PATTERN.matcher(href);
                         if (m.matches()) {
                             String uuid = m.group("uuid"); // uuid to a document variant
+                            String anchor = m.group("anchor"); // if author supplied, the anchor id
                             try {
                                 Resource resource = resolver.getResource(resolver.adaptTo(Session.class).getNodeByIdentifier(uuid).getPath());
                                 DocumentVariant variant = resource.adaptTo(DocumentVariant.class);
                                 String url = provider.generateUrlString(variant);
-                                link.attr("href", url);
+                                link.attr("href", url + (anchor == null ? "" : "#" + anchor));
                             } catch (RepositoryException e) {
                                 log.warn("Attempted to rewrite URL for link target " + uuid + " but was unsuccessful.", e);
                             }
