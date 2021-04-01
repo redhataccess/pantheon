@@ -62,6 +62,7 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
         String[] repoParam = request.getParameterValues("repo");
         String contentTypeParam = paramValue(request, "ctype");
         String[] statusParam = request.getParameterValues("status");
+        String xrefValidationParam = paramValue(request, "xrefvalidation");
 
         if(keyParam==null || keyParam.contains("Uploaded")){
             keyParam = "pant:dateUploaded";
