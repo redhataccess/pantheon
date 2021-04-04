@@ -5,13 +5,21 @@
 
 
 [id="con_about-assemblies_{context}"]
-= About Assemblies
+= Overview of assemblies
+:_module-type: CONCEPT
 
 [role="_abstract"]
-In {ProductName} {ProdctNumber}, each assembly encompasses a single user story. An assembly can include concept, procedure, or reference modules but all modules in an assembly must relate to that specific user story. Previously, many Red Hat documentation teams used assemblies as the structure of user guides and other "books." In {ProductName} {ProductNumber}, there are no books, only user stories, with one assembly per user story. Focusing on user stories is part of the Flexible Customer Content (FCC) effort at Red Hat. One of the goals of this approach is to make it easier for users to search for each specific action they want to perform.
+In {ProductName} {ProdctNumber}, each assembly encompasses a single user story. Previously, an assembly could include multiple user stories, with only one assembly being used for a complete user guide. However, in {ProductName} {ProductNumber}, each user story requires a separate guide.
 
-Link:https://redhat-documentation.github.io/modular-docs/#forming-assemblies[Assemblies] are discussed in detail in our company's description of modular documentation. Here are specific guidelines for creating assemblies in {ProductName} {ProductNumber}:
+Focusing on single user stories is part of the Flexible Customer Content (FCC) effort at Red Hat. One of the goals of this approach is to make it easier for users to search for each specific action they want to perform.
 
-* Because each assembly relates to a single user story, you must break down an assembly that currently relates to a "book" into independent assemblies.
+Assemblies in {ProductName} {ProductNumber} must conform with the following guidelines, in addition to regular documentation guidelines:
+
+* Existing assemblies that relate to more than one user story must be broken down into assemblies that describe one user story each.
 * Nesting assemblies is currently not supported but will be in the future.
-* Each assembly relates to a single product. Although a specific solution for a customer might involve a combination of several products, {ProductName} {ProductNumber} currently only supports single-product searches. It is expected that later versions of {ProductName} will support multi-product searches, in which case an assembly that included modules from different products could be created, but for now, each assembly must relate to a single product.
+* Each assembly relates to a single product. Although a specific solution for a customer might involve a combination of several products, {ProductName} {ProductNumber} currently only supports single-product searches. It is expected that later versions of {ProductName} will support multi-product searches, allowing assemblies that include modules relating to different products.
+
+[role="_additional-resources"]
+.Additional resources
+
+Link:https://redhat-documentation.github.io/modular-docs/#forming-assemblies[Assemblies in Red Hat documentation]
