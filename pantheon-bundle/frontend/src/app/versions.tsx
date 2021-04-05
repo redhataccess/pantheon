@@ -68,8 +68,6 @@ interface IState {
     usecaseOptions: any
     usecaseValue: string
     assemblyData: []
-    // draftValidations: Array<{"pant:message": string, "pant:validationCategory": string, "jcr:primaryType": string, "pant:validator": string}>
-    // releasedValidations: Array<{"pant:message": string, "pant:validationCategory": string, "jcr:primaryType": string, "pant:validator": string}>
     draftValidations: any
     releasedValidations: any
 }
@@ -247,17 +245,18 @@ class Versions extends Component<IProps, IState> {
                                                         </TextListItem>
                                                     </TextList>))}
                                             </TextContent>
-                                            <TextContent>
+                                            <br />
+                                            {data.validations !== undefined && <TextContent>
                                                 <Text><strong>Validations</strong></Text>
-                                            </TextContent>
-                                            <TextContent>
-                                                {data.validations !== undefined && data.validations.map(item => (
+                                            </TextContent>}
+                                            {data.validations !== undefined && <TextContent>
+                                                {data.validations.map(item => (
                                                     <TextList component={TextListVariants.ul}>
                                                         <TextListItem component={TextListItemVariants.li}>
                                                             <Text component={TextVariants.p}>{item["pant:message"]}</Text>
                                                         </TextListItem>
                                                     </TextList>))}
-                                            </TextContent>
+                                            </TextContent>}
                                         </CardBody>
                                     </Card>
                                 </GridItem>)
@@ -321,17 +320,19 @@ class Versions extends Component<IProps, IState> {
                                                         </TextList>
                                                     ))}
                                                 </TextContent>
-                                                <TextContent>
+                                                <br />
+                                                {data.validations !== undefined && <TextContent>
                                                     <Text><strong>Validations</strong></Text>
-                                                </TextContent>
-                                                <TextContent>
-                                                    {data.validations !== undefined && data.validations.map(item => (
+                                                </TextContent>}
+
+                                                {data.validations !== undefined && <TextContent>
+                                                    {data.validations.map(item => (
                                                         <TextList component={TextListVariants.ul}>
                                                             <TextListItem component={TextListItemVariants.li}>
                                                                 <Text component={TextVariants.p}>{item["pant:message"]}</Text>
                                                             </TextListItem>
                                                         </TextList>))}
-                                                </TextContent>
+                                                </TextContent>}
                                             </CardBody>
 
                                         </Card>
@@ -845,14 +846,14 @@ class Versions extends Component<IProps, IState> {
     private getValidations = (versionType) => {
         let versionValue = ""
         let validationPath = ""
-        
+
         if (versionType !== undefined && versionType.length > 0) {
             versionValue = versionType
         }
 
         validationPath = "/content" + this.props.modulePath + "/en_US/variants/" + this.props.variant + "/" + versionValue + "/validations.harray.1.json"
-        
-        fetch(validationPath )
+
+        fetch(validationPath)
             .then(response => response.json())
             .then(json => {
                 if (versionValue === "draft") {
