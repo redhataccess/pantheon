@@ -10,6 +10,8 @@ export interface IBulkOperationPublishProps {
     contentTypeSelected: string
     isBulkPublish: boolean
     isBulkUnpublish: boolean
+    updateBulkOperationCompleted: (bulkOperationConfirmation) => any
+    bulkOperationCompleted: boolean
 }
 
 class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, any>{
@@ -135,7 +137,9 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
     }
 
     private handleModalClose = () => {
-        this.setState({ isModalOpen: false })
+        this.setState({ isModalOpen: false }, () => {
+            this.props.updateBulkOperationCompleted(false)
+        })
     }
 
     private onBulkPublish = (event) => {
@@ -149,11 +153,18 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
             "cache-control": "no-cache",
             "Access-Control-Allow-Origin": "*",
         }
+        let variant
+        if(this.props.documentsSelected){
+            variant = this.props.documentsSelected[0].cells[1].title.props.href.split("?variant=")[1]
+            formData.append("variant", variant)
+        }
+        
+        formData.append("locale", "en_US")
+
         this.props.documentsSelected.map((r) => {
             if (r.cells[1].title.props.href) {
                 let href = r.cells[1].title.props.href
                 let documentTitle = r.cells[1].title.props.children[1]
-                let variant = href.split("?variant=")[1]
 
                 //href part is module path
                 let hrefPart = href.slice(0, href.indexOf("?"))
@@ -162,8 +173,6 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                 let modulePath = hrefPart.slice(hrefPart.indexOf("/repositories"))
                 const backend = "/content" + modulePath + `/en_US/variants/${variant}/draft`
 
-                formData.append("locale", "en_US")
-                formData.append("variant", variant)
                 Utils.draftExist(backend).then((exist) => {
                     if (exist || this.props.isBulkUnpublish) {
                         fetch("/content" + modulePath, {
@@ -181,8 +190,8 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                                     showPublishMessage: true,
                                     bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
                                 }, () => {
+                                    this.props.updateBulkOperationCompleted(true)
                                     this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
-
                                 })
                             } else {
                                 console.log("publish failed " + response.status)
