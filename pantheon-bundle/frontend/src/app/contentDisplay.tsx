@@ -251,7 +251,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
 
         this.getPortalUrl(path, this.state.variant)
 
-        fetch(path + "/en_US.harray.4.json")
+        fetch("/content" + path + "/en_US.harray.4.json")
             .then(response => response.json())
             .then(responseJSON => {
                 // TODO: refactor for loops

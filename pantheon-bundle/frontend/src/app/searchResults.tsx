@@ -19,7 +19,7 @@ import {
   EmptyStateIcon,
   EmptyStateVariant
 } from "@patternfly/react-core";
-import { SearchIcon } from "@patternfly/react-icons";
+import { SearchIcon, ExclamationTriangleIcon, ExclamationCircleIcon } from "@patternfly/react-icons";
 import CheckCircleIcon from "@patternfly/react-icons/dist/js/icons/check-circle-icon"
 import { SlingTypesPrefixes } from "./Constants";
 
@@ -95,7 +95,8 @@ class SearchResults extends Component<IProps, ISearchState> {
           "checkedItem": false,
           "publishedDate": "-",
           "pant:moduleType": "-",
-          "variant": ""
+          "variant": "",
+          "validations": ""
         }
       ],
       // states for table
@@ -277,14 +278,19 @@ class SearchResults extends Component<IProps, ISearchState> {
 
           responseJSON.results.map((item, key) => {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
-            let publishedIcon = publishedDate !== "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : ""
-            if (publishedIcon === "") {
+            
+            let docIcon = publishedDate !== "-" ? <div><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : null
+            if (docIcon === null) {
               const productVersion = item["productVersion"] != undefined ? item["productVersion"] : "-"
-              publishedIcon = productVersion == "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Metadata missing</div>}><i className="pf-icon pf-icon-warning-triangle" /></Tooltip></div> : ""
-            }
 
+              docIcon = productVersion == "-" ? <div><Tooltip position="top" content={<div>Metadata missing</div>}><ExclamationTriangleIcon color="#f0ab00" /></Tooltip></div> : null
+            }
+            if (item.validations !== undefined && item.validations.length > 1) {
+              let vIcon = <div><Tooltip position="top" content={<div>{item.validations}</div>}><ExclamationCircleIcon color="#c9190b" /></Tooltip></div>
+              docIcon = <span>{docIcon}{vIcon}</span>
+            }
             const cellItem = new Array()
-            cellItem.push(publishedIcon)
+            cellItem.push(docIcon)
             if (this.props.userAuthenticated) {
               cellItem.push({ title: <a href={"/pantheon/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
             } else {

@@ -1,9 +1,11 @@
 package com.redhat.pantheon.servlet;
 
+import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.module.*;
+import com.redhat.pantheon.validation.model.Validations;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -238,6 +240,10 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                         .toChild(sourceContent -> sourceContent.draft().isPresent() ? sourceContent.draft() : sourceContent.released())
                         .asOptional();
 
+        // get Validations
+        Optional<Validations> draftValidations = module.getValidations(DEFAULT_MODULE_LOCALE, variantName, "draft");
+        Optional<Validations> releasedValidations = module.getValidations(DEFAULT_MODULE_LOCALE, variantName, "released");
+
         // TODO Need some DTOs to convert to maps
         Map<String, Object> m = super.resourceToMap(resource);
         String resourcePath = resource.getPath();
@@ -310,6 +316,15 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("variant", variantName);
         }
 
+        // Render xrefValidations as array.
+        List<Map> xrefValidationsList = new ArrayList<>();
+        if(draftValidations.isPresent() && draftValidations.get().listChildren().next().getValueMap().get("pant:message")!=null){
+            m.put("validations",draftValidations.get().listChildren().next().getValueMap().get("pant:message"));
+        }else if(releasedValidations.isPresent() && releasedValidations.get().listChildren().next().getValueMap().get("pant:message")!=null){
+            m.put("validations",releasedValidations.get().listChildren().next().getValueMap().get("pant:message"));
+        }else{
+            m.put("validations","-");
+        }
         log.trace(m.toString());
         return m;
     }
