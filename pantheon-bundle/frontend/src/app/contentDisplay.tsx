@@ -357,6 +357,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
         path = path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + "/en_US.harray.4.json"
+
         fetch(path)
             .then(response => response.json())
             .then((responseJSON) => {

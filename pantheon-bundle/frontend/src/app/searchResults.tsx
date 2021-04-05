@@ -34,6 +34,7 @@ export interface IProps {
   onSelectContentType: (contentType) => any
   currentBulkOperation: string
   disabledClassname: string
+  bulkOperationCompleted: boolean
 }
 export interface ISearchState {
 
@@ -123,6 +124,7 @@ class SearchResults extends Component<IProps, ISearchState> {
       || this.props.keyWord !== prevProps.keyWord
       || this.props.filters !== prevProps.filters
       || this.props.onGetdocumentsSelected !== prevProps.onGetdocumentsSelected
+      || this.props.bulkOperationCompleted !== prevProps.bulkOperationCompleted
     ) {
       this.doSearch()
     }
@@ -356,7 +358,6 @@ class SearchResults extends Component<IProps, ISearchState> {
     this.setState({
       rows
     });
-    // console.log("[onSelect] bulkSelected rows =>", rows)
     // update props.documentSelected
     let selectedRows;
     selectedRows = this.state.rows.map(oneRow => {
@@ -366,10 +367,9 @@ class SearchResults extends Component<IProps, ISearchState> {
     })
     // filter undefined values
     selectedRows = selectedRows.filter(r => r !== undefined)
-    // console.log("[onSelect] bulkSelected selectedRows =>", selectedRows)
-    if (selectedRows.length > 0) {
-      this.props.onGetdocumentsSelected(selectedRows);
-    }
+
+    this.props.onGetdocumentsSelected(selectedRows);
+
     if (selectedRows.length > 0 || isSelected == true) {
       this.props.onSelectContentType(this.props.contentType);
     }
