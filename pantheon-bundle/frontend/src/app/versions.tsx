@@ -246,10 +246,10 @@ class Versions extends Component<IProps, IState> {
                                                     </TextList>))}
                                             </TextContent>
                                             <br />
-                                            {data.validations !== undefined && <TextContent>
+                                            {data.validations !== undefined && data.validations.length > 0 && <TextContent>
                                                 <Text><strong>Validations</strong></Text>
                                             </TextContent>}
-                                            {data.validations !== undefined && <TextContent>
+                                            {data.validations !== undefined && data.validations.length > 0 && <TextContent>
                                                 {data.validations.map(item => (
                                                     <TextList component={TextListVariants.ul}>
                                                         <TextListItem component={TextListItemVariants.li}>
@@ -321,11 +321,11 @@ class Versions extends Component<IProps, IState> {
                                                     ))}
                                                 </TextContent>
                                                 <br />
-                                                {data.validations !== undefined && <TextContent>
+                                                {data.validations !== undefined && data.validations.length > 0 && <TextContent>
                                                     <Text><strong>Validations</strong></Text>
                                                 </TextContent>}
 
-                                                {data.validations !== undefined && <TextContent>
+                                                {data.validations !== undefined && data.validations.length > 0 && <TextContent>
                                                     {data.validations.map(item => (
                                                         <TextList component={TextListVariants.ul}>
                                                             <TextListItem component={TextListItemVariants.li}>
