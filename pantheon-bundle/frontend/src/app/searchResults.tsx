@@ -279,18 +279,18 @@ class SearchResults extends Component<IProps, ISearchState> {
           responseJSON.results.map((item, key) => {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
             
-            let myIcon = publishedDate !== "-" ? <div><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : null
-            if (myIcon === null) {
+            let docIcon = publishedDate !== "-" ? <div><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : null
+            if (docIcon === null) {
               const productVersion = item["productVersion"] != undefined ? item["productVersion"] : "-"
 
-              myIcon = productVersion == "-" ? <div><Tooltip position="top" content={<div>Metadata missing</div>}><ExclamationTriangleIcon color="#f0ab00" /></Tooltip></div> : null
+              docIcon = productVersion == "-" ? <div><Tooltip position="top" content={<div>Metadata missing</div>}><ExclamationTriangleIcon color="#f0ab00" /></Tooltip></div> : null
             }
             if (item.validations !== undefined && item.validations.length > 1) {
               let vIcon = <div><Tooltip position="top" content={<div>{item.validations}</div>}><ExclamationCircleIcon color="#c9190b" /></Tooltip></div>
-              myIcon = <span>{myIcon}{vIcon}</span>
+              docIcon = <span>{docIcon}{vIcon}</span>
             }
             const cellItem = new Array()
-            cellItem.push(myIcon)
+            cellItem.push(docIcon)
             if (this.props.userAuthenticated) {
               cellItem.push({ title: <a href={"/pantheon/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
             } else {
