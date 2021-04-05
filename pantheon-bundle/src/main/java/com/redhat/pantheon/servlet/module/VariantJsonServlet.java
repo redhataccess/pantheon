@@ -77,25 +77,25 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
     @Override
     protected boolean isValidResource(@Nonnull SlingHttpServletRequest request, @Nonnull Resource resource) {
         ModuleVariant moduleVariant = resource.adaptTo(ModuleVariant.class);
-        Optional<ModuleVersion> releasedRevision = moduleVariant != null ? Optional.ofNullable(moduleVariant.released().get()) : Optional.empty();
+        Optional<ModuleVersion> draftRevision = moduleVariant != null ? Optional.ofNullable(moduleVariant.draft().get()) : Optional.empty();
 
-        return releasedRevision.isPresent();
+        return draftRevision.isPresent();
     }
 
     @Override
     protected Map<String, Object> resourceToMap(@Nonnull SlingHttpServletRequest request,
                                                 @NotNull Resource resource) throws RepositoryException {
         ModuleVariant moduleVariant = resource.adaptTo(ModuleVariant.class);
-        Optional<ModuleMetadata> releasedMetadata = Child.from(moduleVariant)
-                    .toChild(ModuleVariant::released)
+        Optional<ModuleMetadata> draftMetadata = Child.from(moduleVariant)
+                    .toChild(ModuleVariant::draft)
                     .toChild(ModuleVersion::metadata)
                     .asOptional();
-        Optional<FileResource> releasedContent = Child.from(moduleVariant)
-                    .toChild(ModuleVariant::released)
+        Optional<FileResource> draftContent = Child.from(moduleVariant)
+                    .toChild(ModuleVariant::draft)
                     .toChild(ModuleVersion::cachedHtml)
                     .asOptional();
-        Optional<ModuleVersion> releasedRevision = Child.from(moduleVariant)
-                    .toChild(ModuleVariant::released)
+        Optional<ModuleVersion> draftRevision = Child.from(moduleVariant)
+                    .toChild(ModuleVariant::draft)
                     .asOptional();
 
         Map<String, Object> variantMap = super.resourceToMap(request, resource);
@@ -107,13 +107,13 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         String resourcePath = resource.getPath();
         variantMap.put("locale", ServletUtils.toLanguageTag(moduleVariant.getParentLocale().getName()));
-        variantMap.put("revision_id", releasedRevision.get().getName());
-        variantMap.put("title", releasedMetadata.get().title().get());
-        variantMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline().get() : "");
-        variantMap.put("description", releasedMetadata.get().getValueMap().containsKey("jcr:description") ? releasedMetadata.get().description().get() : releasedMetadata.get().mAbstract().get());
+        variantMap.put("revision_id", draftRevision.get().getName());
+        variantMap.put("title", draftMetadata.get().title().get());
+        variantMap.put("headline", draftMetadata.get().getValueMap().containsKey("pant:headline") ? draftMetadata.get().headline().get() : "");
+        variantMap.put("description", draftMetadata.get().getValueMap().containsKey("jcr:description") ? draftMetadata.get().description().get() : draftMetadata.get().mAbstract().get());
         variantMap.put("content_type", CONTENT_TYPE);
-        variantMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
-        variantMap.put("date_first_published", releasedMetadata.get().getValueMap().containsKey("pant:dateFirstPublished") ? releasedMetadata.get().dateFirstPublished().get().toInstant().toString() : "");
+        variantMap.put("date_published", draftMetadata.get().getValueMap().containsKey("pant:datePublished") ? draftMetadata.get().datePublished().get().toInstant().toString() : "");
+        variantMap.put("date_first_published", draftMetadata.get().getValueMap().containsKey("pant:dateFirstPublished") ? draftMetadata.get().dateFirstPublished().get().toInstant().toString() : "");
         variantMap.put("status", "published");
 
         // Assume the path is something like: /content/<something>/my/resource/path
@@ -133,7 +133,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
                 Html.parse(Charsets.UTF_8.name())
                         .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new DrupalXrefProvider()))
                         .andThen(Html.getElementById("doc-content", Html.getElementByTagName("cp-documentation", Html.getBody())))
-                        .apply(releasedContent.get().jcrContent().get().jcrData().get()));
+                        .apply(draftContent.get().jcrContent().get().jcrData().get()));
 
         // Fields that are part of the spec and yet to be implemented
         // TODO Should either of these be the variant name?
@@ -144,7 +144,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Making these arrays - in the future, we will have multi-product, so get the API right the first time
         List<Map> productList = new ArrayList<>();
         variantMap.put("products", productList);
-        ProductVersion pv = releasedMetadata.get().productVersion().getReference();
+        ProductVersion pv = draftMetadata.get().productVersion().getReference();
         String versionUrlFragment = "";
         String productUrlFragment = "";
         if (pv != null) {
@@ -159,7 +159,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         }
 
         // Process url_fragment from metadata
-        String urlFragment = releasedMetadata.get().urlFragment().get() != null ? releasedMetadata.get().urlFragment().get() : "";
+        String urlFragment = draftMetadata.get().urlFragment().get() != null ? draftMetadata.get().urlFragment().get() : "";
         if (!urlFragment.isEmpty()) {
             variantMap.put(VANITY_URL_FRAGMENT, urlFragment);
         }
@@ -167,7 +167,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
             variantMap.put(VANITY_URL_FRAGMENT, "");
         }
 
-        String searchKeywords = releasedMetadata.get().searchKeywords().get();
+        String searchKeywords = draftMetadata.get().searchKeywords().get();
         if (searchKeywords != null && !searchKeywords.isEmpty()) {
             variantMap.put(SEARCH_KEYWORDS, searchKeywords.split(", *"));
         }

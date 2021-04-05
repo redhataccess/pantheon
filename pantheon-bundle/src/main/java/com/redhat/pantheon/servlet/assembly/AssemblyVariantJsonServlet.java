@@ -74,27 +74,27 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
     @Override
     protected boolean isValidResource(@Nonnull SlingHttpServletRequest request, @Nonnull Resource resource) {
         AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
-        Optional<AssemblyVersion> releasedRevision = assemblyVariant != null ? Optional.ofNullable(assemblyVariant.released().get()) : Optional.empty();
-        if (!releasedRevision.isPresent()) {
-            setCustomErrorMessage("Released assembly version not found for provided variant uuid " + suffix.getParameters(request).get("variantUuid"));
+        Optional<AssemblyVersion> draftRevision = assemblyVariant != null ? Optional.ofNullable(assemblyVariant.draft().get()) : Optional.empty();
+        if (!draftRevision.isPresent()) {
+            setCustomErrorMessage("Draft assembly version not found for provided variant uuid " + suffix.getParameters(request).get("variantUuid"));
         }
-        return releasedRevision.isPresent();
+        return draftRevision.isPresent();
     }
 
     @Override
     protected Map<String, Object> resourceToMap(@Nonnull SlingHttpServletRequest request,
                                                 @NotNull Resource resource) throws RepositoryException {
         AssemblyVariant assemblyVariant = resource.adaptTo(AssemblyVariant.class);
-        Optional<AssemblyMetadata> releasedMetadata = Child.from(assemblyVariant)
-                .toChild(AssemblyVariant::released)
+        Optional<AssemblyMetadata> draftMetadata = Child.from(assemblyVariant)
+                .toChild(AssemblyVariant::draft)
                 .toChild(AssemblyVersion::metadata)
                 .asOptional();
-        Optional<FileResource> releasedContent = Child.from(assemblyVariant)
-                .toChild(AssemblyVariant::released)
+        Optional<FileResource> draftContent = Child.from(assemblyVariant)
+                .toChild(AssemblyVariant::draft)
                 .toChild(AssemblyVersion::cachedHtml)
                 .asOptional();
-        Optional<AssemblyVersion> releasedRevision = Child.from(assemblyVariant)
-                .toChild(AssemblyVariant::released)
+        Optional<AssemblyVersion> draftRevision = Child.from(assemblyVariant)
+                .toChild(AssemblyVariant::draft)
                 .asOptional();
 
         Map<String, Object> variantMap = super.resourceToMap(request, resource);
@@ -106,13 +106,13 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         String resourcePath = resource.getPath();
         Locale locale = ULocale.createCanonical(assemblyVariant.getParentLocale().getName()).toLocale();
         variantMap.put("locale", ServletUtils.toLanguageTag(locale));
-        variantMap.put("revision_id", releasedRevision.get().getName());
-        variantMap.put("title", releasedMetadata.get().title().get());
-        variantMap.put("headline", releasedMetadata.get().getValueMap().containsKey("pant:headline") ? releasedMetadata.get().headline().get() : "");
-        variantMap.put("description", releasedMetadata.get().mAbstract().get());
+        variantMap.put("revision_id", draftRevision.get().getName());
+        variantMap.put("title", draftMetadata.get().title().get());
+        variantMap.put("headline", draftMetadata.get().getValueMap().containsKey("pant:headline") ? draftMetadata.get().headline().get() : "");
+        variantMap.put("description", draftMetadata.get().mAbstract().get());
         variantMap.put("content_type", "assembly");
-        variantMap.put("date_published", releasedMetadata.get().getValueMap().containsKey("pant:datePublished") ? releasedMetadata.get().datePublished().get().toInstant().toString() : "");
-        variantMap.put("date_first_published", releasedMetadata.get().getValueMap().containsKey("pant:dateFirstPublished") ? releasedMetadata.get().dateFirstPublished().get().toInstant().toString() : "");
+        variantMap.put("date_published", draftMetadata.get().getValueMap().containsKey("pant:datePublished") ? draftMetadata.get().datePublished().get().toInstant().toString() : "");
+        variantMap.put("date_first_published", draftMetadata.get().getValueMap().containsKey("pant:dateFirstPublished") ? draftMetadata.get().dateFirstPublished().get().toInstant().toString() : "");
         variantMap.put("status", "published");
 
         // Assume the path is something like: /content/<something>/my/resource/path
@@ -132,7 +132,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                 Html.parse(Charsets.UTF_8.name())
                         .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new DrupalXrefProvider()))
                         .andThen(Html.getElementById("doc-content", Html.getElementByTagName("cp-documentation", Html.getBody())))
-                        .apply(releasedContent.get().jcrContent().get().jcrData().get()));
+                        .apply(draftContent.get().jcrContent().get().jcrData().get()));
 
         // Fields that are part of the spec and yet to be implemented
         // TODO Should either of these be the variant name?
@@ -143,7 +143,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Making these arrays - in the future, we will have multi-product, so get the API right the first time
         List<Map> productList = new ArrayList<>();
         variantMap.put("products", productList);
-        ProductVersion pv = releasedMetadata.get().productVersion().getReference();
+        ProductVersion pv = draftMetadata.get().productVersion().getReference();
         String productUrlFragment = "";
         String versionUrlFragment = "";
         if (pv != null) {
@@ -158,14 +158,14 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         }
 
         // Process url_fragment from metadata
-        String urlFragment = releasedMetadata.get().urlFragment().get() != null ? releasedMetadata.get().urlFragment().get() : "";
+        String urlFragment = draftMetadata.get().urlFragment().get() != null ? draftMetadata.get().urlFragment().get() : "";
         if (!urlFragment.isEmpty()) {
             variantMap.put(VANITY_URL_FRAGMENT, urlFragment);
         } else {
             variantMap.put(VANITY_URL_FRAGMENT, "");
         }
 
-        String searchKeywords = releasedMetadata.get().searchKeywords().get();
+        String searchKeywords = draftMetadata.get().searchKeywords().get();
         if (searchKeywords != null && !searchKeywords.isEmpty()) {
             variantMap.put(SEARCH_KEYWORDS, searchKeywords.split(", *"));
         } else {
@@ -184,7 +184,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         List<Map<String, String>> publishedModuleList = new ArrayList<>();
         variantMap.put("modules_included", moduleList);
 
-        AssemblyContent assemblyContent = assemblyVariant.released().get().content().get();
+        AssemblyContent assemblyContent = assemblyVariant.draft().get().content().get();
 
         if (assemblyContent != null & assemblyContent.getChildren() != null) {
             for (Resource childResource : assemblyContent.getChildren()) {
@@ -205,7 +205,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                 moduleMap.put("title", ServletHelper.getModuleTitleFromUuid(canonical));
                 moduleMap.put("module_uuid", module.uuid().get());
                 // check if the module is published
-                if (canonical.released().isPresent() && System.getenv(PANTHEON_HOST) != null) {
+                if (canonical.draft().isPresent() && System.getenv(PANTHEON_HOST) != null) {
                     String variantUrl = System.getenv(PANTHEON_HOST)
                             + MODULE_VARIANT_API_PATH
                             + "/"
@@ -218,7 +218,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                     moduleMap.put("relative_url", "");
                 }
                 moduleMap.put("level_offset", String.valueOf(page.leveloffset().get()));
-                if (canonical.released().isPresent() && System.getenv(PANTHEON_ENV) != null) {}
+                if (canonical.draft().isPresent() && System.getenv(PANTHEON_ENV) != null) {}
                     moduleMap.put("pantheon_env", System.getenv(PANTHEON_ENV));
             }
             moduleList.stream().filter(map -> map.containsKey(VARIANT_URL))

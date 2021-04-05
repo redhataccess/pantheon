@@ -55,23 +55,23 @@ public class VariantJsonServletTest {
         slingContext.build()
                 .resource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT",
                         "jcr:primaryType", "pant:moduleVariant")
-                .resource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT/released/metadata",
+                .resource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT/draft/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description")
-                .resource("/content/repositories/repo/entities/enterprise/module/en_US/source/released/jcr:content",
+                .resource("/content/repositories/repo/entities/enterprise/module/en_US/source/draft/jcr:content",
                         "jcr:data", "This is the source content")
-                .resource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
+                .resource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT/draft/cached_html/jcr:content",
                         "jcr:data", testHTML)
                 .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT",
                         "jcr:primaryType", "pant:assemblyVariant")
-                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/released",
+                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/draft",
                         "jcr:primaryType", "pant:assemblyVersion")
-                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/released/metadata",
+                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/draft/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description")
-                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/released/cached_html/jcr:content",
+                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/draft/cached_html/jcr:content",
                         "jcr:data", testHTML)
-                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/released/content/0",
+                .resource("/content/repositories/repo/entities/enterprise/assemblies/changes/en_US/variants/DEFAULT/draft/content/0",
                         "jcr:moduleVariantUuid", slingContext.resourceResolver()
                                 .getResource("/content/repositories/repo/entities/enterprise/module/en_US/variants/DEFAULT")
                                 .getValueMap()
@@ -122,12 +122,12 @@ public class VariantJsonServletTest {
         slingContext.build()
                 .resource("/content/repositories/repo/module/en_US/variants/DEFAULT",
                         "jcr:primaryType", "pant:moduleVariant")
-                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/metadata",
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/metadata",
                         "jcr:title", "A title",
                         "jcr:description", "A description")
-                .resource("/content/repositories/repo/module/en_US/source/released/jcr:content",
+                .resource("/content/repositories/repo/module/en_US/source/draft/jcr:content",
                         "jcr:data", "This is the source content")
-                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/released/cached_html/jcr:content",
+                .resource("/content/repositories/repo/module/en_US/variants/DEFAULT/draft/cached_html/jcr:content",
                         "jcr:data", testHTML)
                 .commit();
 
