@@ -11,7 +11,9 @@ const props = {
     documentsSelected: anymatch,
     contentTypeSelected: "module",
     isBulkPublish: true,
-    isBulkUnpublish: false
+    isBulkUnpublish: false,
+    updateBulkOperationCompleted: (bulkOperationCompleted) => anymatch,
+    bulkOperationCompleted: true
 }
 describe("BulkOperationPublish tests", () => {
     const api = "/content/products.harray.1.json"

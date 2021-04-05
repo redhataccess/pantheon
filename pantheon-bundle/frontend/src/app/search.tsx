@@ -342,12 +342,16 @@ class Search extends Component<IAppState, ISearchState> {
                 contentTypeSelected={this.state.contentTypeSelected}
                 isBulkPublish={this.state.isBulkPublish}
                 isBulkUnpublish={this.state.isBulkUnpublish}
+                bulkOperationCompleted={this.state.bulkOperationCompleted}
+                updateBulkOperationCompleted={this.updateBulkOperationCompleted}
               />}
                {this.state.isBulkUnpublish && <BulkOperationPublish 
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isBulkPublish={this.state.isBulkPublish}
                 isBulkUnpublish={this.state.isBulkUnpublish}
+                bulkOperationCompleted={this.state.bulkOperationCompleted}
+                updateBulkOperationCompleted={this.updateBulkOperationCompleted}
               />}
               {drawerContent}
             </DrawerContentBody>
@@ -644,7 +648,7 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   private handleBulkPublish = (text) => {
-    this.setState({isEditMetadata: false})
+    this.setState({isEditMetadata: false, bulkOperationCompleted: false})
     if (this.state.repositoriesSelected.length > 1) {
       this.setState({ bulkOperationWarn: true }, () => {
         this.setState({ isBulkOperationButtonDisabled: true })
@@ -655,18 +659,19 @@ class Search extends Component<IAppState, ISearchState> {
       }, () => {
         if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
           this.setState({ isBulkOperationButtonDisabled: false })
+          if(text == 'publish'){
+            this.setState({ isBulkPublish: !this.state.isBulkPublish, isBulkUnpublish: false })
+          }
+          if(text == 'unpublish'){
+            this.setState({ isBulkUnpublish: !this.state.isBulkUnpublish, isBulkPublish: false })
+      
+          }
         } else {
           this.setState({ isBulkOperationButtonDisabled: true })
         }
       })
     }
-    if(text == 'publish'){
-      this.setState({ isBulkPublish: !this.state.isBulkPublish, isBulkUnpublish: false })
-    }
-    if(text == 'unpublish'){
-      this.setState({ isBulkUnpublish: !this.state.isBulkUnpublish, isBulkPublish: false })
-
-    }
+    
   }
 
   private updateIsEditMetadata = (updateIsEditMetadata) => {
