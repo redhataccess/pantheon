@@ -539,6 +539,10 @@ class Search extends Component<IAppState, ISearchState> {
   };
 
   private onSelectRepositories = (checked, event) => {
+    this.setState({
+      documentsSelected: [],
+      contentTypeSelected: ''
+    })
     let repositoriesSelected = new Array()
     let repositories
 
@@ -577,8 +581,8 @@ class Search extends Component<IAppState, ISearchState> {
       }
 
     });
-
-    this.getdocumentsSelected(this.state.documentsSelected)
+    //TO-DO- why did we have this?
+    // this.getdocumentsSelected(this.state.documentsSelected)
 
   }
 
