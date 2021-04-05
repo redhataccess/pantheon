@@ -1,15 +1,23 @@
 package com.redhat.pantheon.validation.validators;
 
 import com.redhat.pantheon.helper.PantheonConstants;
+import com.redhat.pantheon.jcr.JcrQueryHelper;
+import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.validation.helper.XrefValidationHelper;
 import com.redhat.pantheon.validation.model.ErrorDetails;
 import com.redhat.pantheon.validation.model.Violations;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
 import java.util.List;
 
 /**
@@ -32,14 +40,16 @@ public class XrefValidator implements Validator {
 
     private String content;
 
-    private String uid;
+    private DocumentVariant documentVariant;
+
+    private static final Logger log = LoggerFactory.getLogger(XrefValidator.class.getName());
 
     public XrefValidator() {
     }
 
-    public XrefValidator(String uid, String content) {
+    public XrefValidator(DocumentVariant documentVariant, String content) {
         this.content = content;
-        this.uid = uid;
+        this.documentVariant = documentVariant;
     }
 
     @Override
@@ -58,21 +68,46 @@ public class XrefValidator implements Validator {
     private boolean isValidXref() {
         try {
                 Document doc = Jsoup.parse(content);
-                Elements resultLinks = doc.select("h2");
-                List<String>  filepaths = XrefValidationHelper.getObjectsToValidate(this.uid);
-                if(null == filepaths || filepaths.size()==0){
+                List<String>  xrefTargets = XrefValidationHelper.getObjectsToValidate(this.documentVariant.uuid().get());
+                Elements resultLinks = doc.select("a");
+                if(null == xrefTargets || xrefTargets.size()==0){
                     return true;
                 }
                 int count = 0;
-                for (String xref : filepaths) {
-                    count += (int) resultLinks.eachAttr("id").stream().filter(s -> s.matches("(.*)"+xref+"(.*)")).count();
+                for (String xref : xrefTargets) {
+                    count = getXrefCounts(resultLinks, count, xref);
                 }
-                return count == XrefValidationHelper.getObjectsToValidate(this.uid).size() ? true : false;
+                return count == XrefValidationHelper.getObjectsToValidate(this.documentVariant.uuid().get()).size() ? true : false;
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
         return false;
+    }
+
+    private int getXrefCounts(Elements resultLinks, int count, String xref) throws RepositoryException {
+        if(xref.endsWith(".adoc")){
+            JcrQueryHelper jcrQueryHelper = new JcrQueryHelper(this.documentVariant.getResourceResolver());
+            log.debug("xref : ", xref);
+            if(xref.startsWith("..")){    // if filepath is relative in context to root directory
+                log.debug("documentVariant for xref is",documentVariant.getParent().getParent().getParent().getPath());
+                Resource resource = documentVariant.getParentLocale().getParent().getParent();
+                String[] resourceFragment = xref.split("/");
+                for(String rf:resourceFragment){
+                    switch (rf){
+                        case "..":resource = resource.getParent(); break;   // TODO: fails in case dependent document not yet uploaded
+                        default: resource = resource.getChild(rf); break;
+                    }
+                }
+                log.debug("relative resource path is", resource);
+                count += resource!=null ? 1 :0;
+            }else { // if filepath is name only
+                    count +=jcrQueryHelper.query("/jcr:root/content/(repositories)//"+xref,1000L, 0L, Query.XPATH).count()> 0?1:0;
+                }
+        } else {   //if path is an anchor
+            count += (int) resultLinks.eachAttr("href").stream().filter(s->s.endsWith(xref)).count() > 0?1:0;
+        }
+        return count;
     }
 
     /**

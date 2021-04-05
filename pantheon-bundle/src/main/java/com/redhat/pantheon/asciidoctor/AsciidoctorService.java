@@ -338,7 +338,6 @@ public class AsciidoctorService {
             }
             log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
             serviceResourceResolver.commit();
-
             return html;
         } catch (PersistenceException pex) {
             throw new RuntimeException(pex);
