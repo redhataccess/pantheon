@@ -5,6 +5,7 @@ import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.api.SlingModel;
 import com.redhat.pantheon.model.workspace.WorkspaceChild;
+import com.redhat.pantheon.validation.model.Validations;
 
 import javax.inject.Named;
 
@@ -29,6 +30,9 @@ public interface DocumentVersion extends WorkspaceChild {
 
     @Named("ack_status")
     Child<AckStatus> ackStatus();
+
+    @Named("validations")
+    Child<Validations> validations();
 
     @Override
     DocumentVariant getParent();

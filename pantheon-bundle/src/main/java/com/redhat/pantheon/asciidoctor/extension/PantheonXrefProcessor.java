@@ -8,18 +8,15 @@ import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.validation.helper.XrefValidationHelper;
+import com.redhat.pantheon.validation.validators.XrefValidator;
 import org.apache.sling.api.resource.Resource;
 import org.asciidoctor.ast.ContentNode;
 import org.asciidoctor.extension.InlineMacroProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,14 +52,16 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
     }
 
     public String preprocess(String content) {
+        List<String> urlList = new ArrayList<>();
         if (!documentVariant.getPath().startsWith("/content/docs/")) {
-            content = preprocessWithPattern(content, XREF_PATTERN);
-            content = preprocessWithPattern(content, TRIANGLE_PATTERN);
+            content = preprocessWithPattern(content, XREF_PATTERN, urlList);
+            content = preprocessWithPattern(content, TRIANGLE_PATTERN, urlList);
         }
+        new XrefValidationHelper().setObjectsToValidate(documentVariant.uuid().get(), urlList);
         return content;
     }
 
-    private String preprocessWithPattern(String line, Pattern pattern) {
+    private String preprocessWithPattern(String line, Pattern pattern, List<String> filePaths) {
         Matcher matcher = pattern.matcher(line);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
@@ -70,6 +69,7 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
             String anchor = Optional.ofNullable(matcher.group("anchor")).orElse("");
             String label = Optional.ofNullable(matcher.group("label")).orElse("");
 
+            filePaths.add(filepath);
             // Decide whether this is an xref that we can resolve
             // Assume it's a relative path to a file in the same repo for now
             Resource containingFolder = documentVariant.getParentLocale().getParent().getParent();
