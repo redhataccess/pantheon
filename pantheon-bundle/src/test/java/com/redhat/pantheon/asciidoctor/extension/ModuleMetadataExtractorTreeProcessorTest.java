@@ -2,6 +2,8 @@ package com.redhat.pantheon.asciidoctor.extension;
 
 import com.redhat.pantheon.model.api.SlingModels;
 import com.redhat.pantheon.model.module.ModuleMetadata;
+import com.redhat.pantheon.model.module.ModuleType;
+
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
@@ -15,7 +17,7 @@ import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@ExtendWith({SlingContextExtension.class, MockitoExtension.class})
+@ExtendWith({ SlingContextExtension.class, MockitoExtension.class })
 class ModuleMetadataExtractorTreeProcessorTest {
 
     private final SlingContext slingContext = new SlingContext();
@@ -23,42 +25,31 @@ class ModuleMetadataExtractorTreeProcessorTest {
     @Test
     void extractMetadata() {
         // Given
-        slingContext.build()
-                .resource("/content/module1/locales/en_US/1/metadata")
-                .commit();
-        ModuleMetadata metadata =
-                SlingModels.getModel(
-                        slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"),
-                        ModuleMetadata.class);
+        slingContext.build().resource("/content/module1/locales/en_US/1/metadata").commit();
+        ModuleMetadata metadata = SlingModels.getModel(
+                slingContext.resourceResolver().getResource("/content/module1/locales/en_US/1/metadata"),
+                ModuleMetadata.class);
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
-        final String adocContent = "= A title for content" +
-                "\n" +
-                "\n" +
-                "[." + MetadataExtractorTreeProcessor.ROLE_ABSTRACT + "]\n" +
-                "This is the module abstract";
+        final String adocContent = "= A title for content" + "\n" + "\n" + "[."
+                + MetadataExtractorTreeProcessor.ROLE_ABSTRACT + "]\n" + "This is the module abstract";
 
         // When
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
         assertEquals("A title for content", metadata.title().get());
-        assertEquals("This is the module abstract",  metadata.mAbstract().get());
+        assertEquals("This is the module abstract", metadata.mAbstract().get());
     }
 
     @Test
     void extractMetadataAbstractNotPresent() {
         // Given
-        slingContext.build()
-                .resource("/content/module1/locales/en_US/1/metadata")
-                .commit();
-        ModuleMetadata metadata =
-                SlingModels.getModel(
-                        slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"),
-                        ModuleMetadata.class);
+        slingContext.build().resource("/content/module1/locales/en_US/1/metadata").commit();
+        ModuleMetadata metadata = SlingModels.getModel(
+                slingContext.resourceResolver().getResource("/content/module1/locales/en_US/1/metadata"),
+                ModuleMetadata.class);
         Resource module = slingContext.resourceResolver().getResource("/content/module1");
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
@@ -75,27 +66,16 @@ class ModuleMetadataExtractorTreeProcessorTest {
     @Test
     void extractHeadline() {
         // Given
-        slingContext.build()
-                .resource("/content/module1/locales/en_US/1/metadata")
-                .commit();
-        ModuleMetadata metadata =
-                SlingModels.getModel(
-                        slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"),
-                        ModuleMetadata.class);
+        slingContext.build().resource("/content/module1/locales/en_US/1/metadata").commit();
+        ModuleMetadata metadata = SlingModels.getModel(
+                slingContext.resourceResolver().getResource("/content/module1/locales/en_US/1/metadata"),
+                ModuleMetadata.class);
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
-        final String adocContent = "include::shared/attributes.adoc[]\n" +
-                "\n" +
-                "= Test Asciidoc Book\n" +
-                "Red Hat Documentation team <author@email.com>\n" +
-                "\n" +
-                "[[support]]\n" +
-                "== Headline\n" +
-                "\n" +
-                "[[support-ticket]]\n" +
-                "=== Logging a support request";
+        final String adocContent = "include::shared/attributes.adoc[]\n" + "\n" + "= Test Asciidoc Book\n"
+                + "Red Hat Documentation team <author@email.com>\n" + "\n" + "[[support]]\n" + "== Headline\n" + "\n"
+                + "[[support-ticket]]\n" + "=== Logging a support request";
 
         // When
         asciidoctor.load(adocContent, new HashMap<>());
@@ -105,37 +85,24 @@ class ModuleMetadataExtractorTreeProcessorTest {
     }
 
     /**
-     * CCS-3176
-     * This specific regression test makes sure that when the context property is not available in a given block,
-     * the extension code doesn't fail. This has been observed when the content has a data list
+     * CCS-3176 This specific regression test makes sure that when the context
+     * property is not available in a given block, the extension code doesn't fail.
+     * This has been observed when the content has a data list
      */
     @Test
     void extractHeadlineWithException() {
         // Given
-        slingContext.build()
-                .resource("/content/module1/locales/en_US/1/metadata")
-                .commit();
-        ModuleMetadata metadata =
-                SlingModels.getModel(
-                        slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"),
-                        ModuleMetadata.class);
+        slingContext.build().resource("/content/module1/locales/en_US/1/metadata").commit();
+        ModuleMetadata metadata = SlingModels.getModel(
+                slingContext.resourceResolver().getResource("/content/module1/locales/en_US/1/metadata"),
+                ModuleMetadata.class);
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
-        final String adocContent =
-                "`GTC` — Generic Token Card.\n" +
-                "\n" +
-                "`Username`::\n" +
-                "+\n" +
-                "Enter the user name to be used in the authentication process.\n" +
-                "\n" +
-                "`Password`::\n" +
-                "+\n" +
-                "Enter the password to be used in the authentication process.\n" +
-                "\n" +
-                "[[bh-Configuring_Protected_EAP_PEAP_Settings]]\n" +
-                "[discrete]\n";
+        final String adocContent = "`GTC` — Generic Token Card.\n" + "\n" + "`Username`::\n" + "+\n"
+                + "Enter the user name to be used in the authentication process.\n" + "\n" + "`Password`::\n" + "+\n"
+                + "Enter the password to be used in the authentication process.\n" + "\n"
+                + "[[bh-Configuring_Protected_EAP_PEAP_Settings]]\n" + "[discrete]\n";
 
         // When
         asciidoctor.load(adocContent, new HashMap<>());
@@ -147,24 +114,79 @@ class ModuleMetadataExtractorTreeProcessorTest {
     @Test
     void extractHeadlineNotPresent() {
         // Given
-        slingContext.build()
-                .resource("/content/module1/locales/en_US/1/metadata")
-                .commit();
-        ModuleMetadata metadata =
-                SlingModels.getModel(
-                        slingContext.resourceResolver().getResource(
-                                "/content/module1/locales/en_US/1/metadata"),
-                        ModuleMetadata.class);
+        slingContext.build().resource("/content/module1/locales/en_US/1/metadata").commit();
+        ModuleMetadata metadata = SlingModels.getModel(
+                slingContext.resourceResolver().getResource("/content/module1/locales/en_US/1/metadata"),
+                ModuleMetadata.class);
         MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.javaExtensionRegistry().treeprocessor(extension);
-        final String adocContent = "= A title for content" +
-                "\n";
+        final String adocContent = "= A title for content" + "\n";
 
         // When
         asciidoctor.load(adocContent, new HashMap<>());
 
         // Then
         assertNull(metadata.headline().get());
+    }
+
+    @Test
+    void extractModuleTypeWhenLowercase() {
+        // Given
+        slingContext.build().resource("/content/module1/locales/en_US/1/metadata").commit();
+        ModuleMetadata metadata = SlingModels.getModel(
+                slingContext.resourceResolver().getResource("/content/module1/locales/en_US/1/metadata"),
+                ModuleMetadata.class);
+        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
+        Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+        asciidoctor.javaExtensionRegistry().treeprocessor(extension);
+        final String adocContent = "= A title for content" + "\n" + ":_module-type: concept\n" + "\n" + "[[support]]\n"
+                + "== Headline\n";
+
+        // When
+        asciidoctor.load(adocContent, new HashMap<>());
+
+        // Then
+        assertEquals(ModuleType.CONCEPT, metadata.moduleType().get());
+    }
+
+    @Test
+    void extractModuleTypeWhenMixedcase() {
+        // Given
+        slingContext.build().resource("/content/module1/locales/en_US/1/metadata").commit();
+        ModuleMetadata metadata = SlingModels.getModel(
+                slingContext.resourceResolver().getResource("/content/module1/locales/en_US/1/metadata"),
+                ModuleMetadata.class);
+        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
+        Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+        asciidoctor.javaExtensionRegistry().treeprocessor(extension);
+        final String adocContent = "= A title for content" + "\n" + ":_module-type: Procedure\n" + "\n"
+                + "[[support]]\n" + "== Headline\n";
+
+        // When
+        asciidoctor.load(adocContent, new HashMap<>());
+
+        // Then
+        assertEquals(ModuleType.PROCEDURE, metadata.moduleType().get());
+    }
+
+    @Test
+    void extractModuleTypeWhenNotPresent() {
+        // Given
+        slingContext.build().resource("/content/module1/locales/en_US/1/metadata").commit();
+        ModuleMetadata metadata = SlingModels.getModel(
+                slingContext.resourceResolver().getResource("/content/module1/locales/en_US/1/metadata"),
+                ModuleMetadata.class);
+        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
+        Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+        asciidoctor.javaExtensionRegistry().treeprocessor(extension);
+        final String adocContent = "= A title for content" + "\n" + ":_module-type: \n" + "\n" + "[[support]]\n"
+                + "== Headline\n";
+
+        // When
+        asciidoctor.load(adocContent, new HashMap<>());
+
+        // Then
+        assertNull(metadata.moduleType().get());
     }
 }

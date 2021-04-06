@@ -227,7 +227,8 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
     @Override
     protected Map<String, Object> resourceToMap(Resource resource) {
-        Module module = resource.adaptTo(Module.class);
+        com.redhat.pantheon.model.module.Module module = resource.adaptTo(
+          com.redhat.pantheon.model.module.Module.class);
 
         String variantName = module.getWorkspace().getCanonicalVariantName();
 
