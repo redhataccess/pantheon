@@ -22,7 +22,6 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
             isModalOpen: true,
 
             showBulkConfirmation: false,
-            metadataEditError: "",
 
             //progress bar
             progressFailureValue: 0,
@@ -32,7 +31,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
             bulkUpdateSuccess: 0,
             bulkUpdateWarning: 0,
 
-            documentTitles: [],
+            docsSelected: this.props.documentsSelected,
             documentsSucceeded: [],
             documentsFailed: [""],
             documentsIgnored: [""],
@@ -164,12 +163,9 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
         this.props.documentsSelected.map((r) => {
             if (r.cells[1].title.props.href) {
                 let href = r.cells[1].title.props.href
-                let documentTitle = r.cells[1].title.props.children[1]
 
                 //href part is module path
                 let hrefPart = href.slice(0, href.indexOf("?"))
-                let docPath = hrefPart.match("/repositories/.*") ? hrefPart.match("/repositories/.*") : ""
-                let path = hrefPart.slice(hrefPart.indexOf("/module"))
                 let modulePath = hrefPart.slice(hrefPart.indexOf("/repositories"))
                 const backend = "/content" + modulePath + `/en_US/variants/${variant}/draft`
 
@@ -181,20 +177,17 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                             headers: hdrs
                         }).then(response => {
                             if (response.status === 201 || response.status === 200) {
-                                console.log("publish works: " + response.status)
+                                console.log(this.props.isBulkPublish ? "publish works: " : "unpublish works: " + response.status)
                                 this.setState({
-                                    canChangePublishState: true,
                                     documentsSucceeded: [...this.state.documentsSucceeded, modulePath],
-                                    isBulkPublish: false,
-                                    isBulkUnpublish: false,
-                                    showPublishMessage: true,
                                     bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
                                 }, () => {
-                                    this.props.updateBulkOperationCompleted(true)
                                     this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
-                                })
+                                    this.props.updateBulkOperationCompleted(true)
+                                }
+                                )
                             } else {
-                                console.log("publish failed " + response.status)
+                                console.log(this.props.isBulkPublish ? "publish failed " : "unpublish failed " + response.status)
                                 this.setState({ bulkUpdateFailure: this.state.bulkUpdateFailure + 1, documentsFailed: [...this.state.documentsFailed, modulePath] }, () => {
                                     this.calculateFailureProgress(this.state.bulkUpdateFailure)
                                 })
@@ -228,8 +221,9 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
     }
 
     private calculateSuccessProgress = (num: number) => {
+        //calculating stat variable with docsSelected state variable because updateBulkOperationCompleted resets documentsSelected prop to []
         if (num >= 0) {
-            let stat = (num) / this.props.documentsSelected.length * 100
+            let stat = (num) / this.state.docsSelected.length * 100
             this.setState({ progressSuccessValue: stat, showBulkConfirmation: true }, () => {
                 this.getDocumentsSucceeded()
             })

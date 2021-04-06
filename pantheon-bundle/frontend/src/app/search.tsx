@@ -539,9 +539,11 @@ class Search extends Component<IAppState, ISearchState> {
   };
 
   private onSelectRepositories = (checked, event) => {
+    //set these state values when selecting repo until user begins selecting titles
     this.setState({
       documentsSelected: [],
-      contentTypeSelected: ''
+      contentTypeSelected: '',
+      isBulkOperationButtonDisabled: true
     })
     let repositoriesSelected = new Array()
     let repositories
@@ -653,6 +655,7 @@ class Search extends Component<IAppState, ISearchState> {
 
   private handleBulkPublish = (text) => {
     this.setState({isEditMetadata: false, bulkOperationCompleted: false})
+    //handle warning if bulk publish/unpublish attempted on > 1 repo
     if (this.state.repositoriesSelected.length > 1) {
       this.setState({ bulkOperationWarn: true }, () => {
         this.setState({ isBulkOperationButtonDisabled: true })
@@ -663,6 +666,7 @@ class Search extends Component<IAppState, ISearchState> {
       }, () => {
         if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
           this.setState({ isBulkOperationButtonDisabled: false })
+          //determine if publish or unpublish bulk operation
           if(text == 'publish'){
             this.setState({ isBulkPublish: !this.state.isBulkPublish, isBulkUnpublish: false })
           }
@@ -692,10 +696,6 @@ class Search extends Component<IAppState, ISearchState> {
         })
       }
     })
-  }
-
-  private updateIsBulkPublish = updateIsBulkPublish => {
-    this.setState({ isBulkPublish: updateIsBulkPublish })
   }
 
 }
