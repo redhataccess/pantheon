@@ -687,6 +687,13 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   private updateBulkOperationCompleted = (bulkOperationCompleted) => {
+    //when closing bulk operation modal and no bulk operation was completed, reset bulk operations to false
+    if(!bulkOperationCompleted){
+      this.setState({
+        isBulkPublish: false,
+        isBulkUnpublish: false,
+      })
+    }
     this.setState({ bulkOperationCompleted }, () => {
       if (this.state.bulkOperationCompleted) {
         this.setState({
