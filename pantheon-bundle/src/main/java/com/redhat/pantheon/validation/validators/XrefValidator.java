@@ -1,13 +1,11 @@
 package com.redhat.pantheon.validation.validators;
 
 import com.redhat.pantheon.helper.PantheonConstants;
-import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.validation.helper.XrefValidationHelper;
 import com.redhat.pantheon.validation.model.ErrorDetails;
 import com.redhat.pantheon.validation.model.Violations;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -17,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
 import java.util.List;
 
 /**
@@ -87,23 +84,17 @@ public class XrefValidator implements Validator {
 
     private int getXrefCounts(Elements resultLinks, int count, String xref) throws RepositoryException {
         if(xref.endsWith(".adoc")){
-            JcrQueryHelper jcrQueryHelper = new JcrQueryHelper(this.documentVariant.getResourceResolver());
-            log.debug("xref : ", xref);
-            if(xref.startsWith("..")){    // if filepath is relative in context to root directory
-                log.debug("documentVariant for xref is",documentVariant.getParent().getParent().getParent().getPath());
-                Resource resource = documentVariant.getParentLocale().getParent().getParent();
-                String[] resourceFragment = xref.split("/");
-                for(String rf:resourceFragment){
-                    switch (rf){
-                        case "..":resource = resource.getParent(); break;   // TODO: fails in case dependent document not yet uploaded
-                        default: resource = resource.getChild(rf); break;
-                    }
+            Resource resource = documentVariant.getParentLocale().getParent().getParent();
+            String[] resourceFragment = xref.split("/");
+
+            for(String rf:resourceFragment){
+                switch (rf){
+                    case "..":resource = resource.getParent(); break;   // TODO: fails in case dependent document not yet uploaded
+                    default: resource = resource.getChild(rf); break;
                 }
-                log.debug("relative resource path is", resource);
-                count += resource!=null ? 1 :0;
-            }else { // if filepath is name only
-                    count +=jcrQueryHelper.query("/jcr:root/content/(repositories)//"+xref,1000L, 0L, Query.XPATH).count()> 0?1:0;
-                }
+            }
+
+            count += resource!=null ? 1 :0;
         } else {   //if path is an anchor
             count += (int) resultLinks.eachAttr("href").stream().filter(s->s.endsWith(xref)).count() > 0?1:0;
         }
