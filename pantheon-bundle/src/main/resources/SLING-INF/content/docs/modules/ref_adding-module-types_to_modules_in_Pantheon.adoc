@@ -1,5 +1,6 @@
-[id='identifying-module-types_{context}']
+[id='adding-module-types_to_modules_in_Pantheon_{context}']
 = Adding the module type to modules in {ProductShortName}
+
 :_module-type: REFERENCE
 
 [role="_abstract"]
@@ -10,6 +11,9 @@ Use one or both of the following identifiers to declare the module's type:
 * The `:_module-type:` attribute after the module's title
 * The corresponding prefix in the module's file name
 
+{ProductShortName} {ProductNumber} first checks for the `:_module-type:` attribute. Any value other than those specified above is ignored. If there is no valid attribute, {ProductShortName} {ProductNumber} then checks if the module's file name includes a valid prefix. If both a valid attribute and prefix exist, {ProductShortName} {ProductNumber}  uses the attribute.
+
+
 Attribute (preferred method)::
 Enter the correct attribute in the line immediately following the module's title, choosing among the following:
 +
@@ -19,9 +23,9 @@ Enter the correct attribute in the line immediately following the module's title
 +
 ====
 .Example
+`= Identifying {ProductShortName} module types`
 
-`= Identifying {ProductShortName} module types
-:_module-type: REFERENCE`
+`:_module-type: REFERENCE`
 
 ====
 
@@ -44,10 +48,6 @@ Hyphen after the prefix:
 `**ref-**identifying-module-types.adoc`
 
 ====
-
-How {ProductShortName} {ProductNumber}  checks identifiers::
-
-{ProductShortName} {ProductNumber} first checks for  :`_module-type:` attribute. Any value other than those specified above is ignored. If there is no valid attribute, {ProductShortName} {ProductNumber} then checks if the module's file name includes a valid prefix. If both a valid attribute and prefix exist, {ProductShortName} {ProductNumber}  uses the attribute.
 
 .Additional resources
 
