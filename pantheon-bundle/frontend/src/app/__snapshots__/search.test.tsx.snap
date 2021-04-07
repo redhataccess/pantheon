@@ -253,6 +253,7 @@ exports[`Search tests should render default Search component 1`] = `
             </Select>
           </ToolbarFilter>
         </ForwardRef>
+        .
       </ToolbarToggleGroup>
       <ForwardRef
         variant="icon-button-group"
@@ -347,6 +348,7 @@ exports[`Search tests should render default Search component 1`] = `
           toggleTextExpanded=""
         >
           <SearchResults
+            bulkOperationCompleted={false}
             contentType="module"
             currentBulkOperation=""
             disabledClassname=""
@@ -375,6 +377,7 @@ exports[`Search tests should render default Search component 1`] = `
           toggleTextExpanded=""
         >
           <SearchResults
+            bulkOperationCompleted={false}
             contentType="assembly"
             currentBulkOperation=""
             disabledClassname=""

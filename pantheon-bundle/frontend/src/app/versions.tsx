@@ -67,14 +67,16 @@ interface IState {
     successAlertVisible: boolean
     usecaseOptions: any
     usecaseValue: string
-    assemblyData: [],
+    assemblyData: []
+    draftValidations: any
+    releasedValidations: any
 }
 
 
 class Versions extends Component<IProps, IState> {
 
-    public draft = [{ type: "draft", icon: BlankImage, path: "", version: "", publishedState: "Not published", updatedDate: "", firstButtonType: "primary", secondButtonType: "secondary", firstButtonText: "Publish", secondButtonText: "Preview", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} } }]
-    public release = [{ type: "release", icon: CheckImage, "path": "", version: "", publishedState: "Released", updatedDate: "", firstButtonType: "secondary", secondButtonType: "primary", firstButtonText: "Unpublish", secondButtonText: "View", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} }, draftUploadDate: "" }]
+    public draft = [{ type: "draft", icon: BlankImage, path: "", version: "", publishedState: "Not published", updatedDate: "", firstButtonType: "primary", secondButtonType: "secondary", firstButtonText: "Publish", secondButtonText: "Preview", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} }, validations: [] }]
+    public release = [{ type: "release", icon: CheckImage, "path": "", version: "", publishedState: "Released", updatedDate: "", firstButtonType: "secondary", secondButtonType: "primary", firstButtonText: "Unpublish", secondButtonText: "View", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} }, validations: [], draftUploadDate: "" }]
 
     constructor(props) {
         super(props)
@@ -107,6 +109,8 @@ class Versions extends Component<IProps, IState> {
             ],
             usecaseValue: "",
             assemblyData: [],
+            draftValidations: [],
+            releasedValidations: []
         }
     }
 
@@ -172,7 +176,6 @@ class Versions extends Component<IProps, IState> {
                 }
 
                 <Grid hasGutter={true}>
-                    {/* {console.log("[results]", this.state.results)} */}
                     {this.state.results.map((type, key1) => (
                         type.map((data, key2) => (
                             data.version !== "" && data.type === "draft" && (
@@ -180,13 +183,13 @@ class Versions extends Component<IProps, IState> {
                                     <Card className="pf-m-light pf-site-background-medium pf-c-card-draft">
                                         <CardHeader>
                                             <CardHeaderMain><strong>Draft</strong></CardHeaderMain>
-                                            <CardActions>{}</CardActions>
+                                            <CardActions>{ }</CardActions>
                                             {data.metadata !== undefined && !this.state.showMetadataAlertIcon &&
                                                 <CardActions>
                                                     <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="draft">Add metadata</Button>
                                                 </CardActions>}
                                             {data.metadata !== undefined && this.state.showMetadataAlertIcon &&
-                                                <CardActions><i className="pf-icon pf-icon-warning-triangle" />
+                                                <CardActions><ExclamationTriangleIcon color="#f0ab00" />
                                                     <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="draft">Add metadata</Button>
                                                 </CardActions>}
                                             <CardActions><Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)} id="draftPreview">Preview</Button>
@@ -242,6 +245,18 @@ class Versions extends Component<IProps, IState> {
                                                         </TextListItem>
                                                     </TextList>))}
                                             </TextContent>
+                                            <br />
+                                            {data.validations !== undefined && data.validations.length > 0 && <TextContent>
+                                                <Text><strong>Validations</strong></Text>
+                                            </TextContent>}
+                                            {data.validations !== undefined && data.validations.length > 0 && <TextContent>
+                                                {data.validations.map(item => (
+                                                    <TextList component={TextListVariants.ul}>
+                                                        <TextListItem component={TextListItemVariants.li}>
+                                                            <Text component={TextVariants.p}>{item["pant:message"]}</Text>
+                                                        </TextListItem>
+                                                    </TextList>))}
+                                            </TextContent>}
                                         </CardBody>
                                     </Card>
                                 </GridItem>)
@@ -255,7 +270,7 @@ class Versions extends Component<IProps, IState> {
                                         <Card className="pf-m-selected">
                                             <CardHeader>
                                                 <CardHeaderMain><strong><span id="span-source-type-version-published">Published</span></strong></CardHeaderMain>
-                                                <CardActions>{}</CardActions>
+                                                <CardActions>{ }</CardActions>
                                                 <CardActions>
                                                     <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="released">Add metadata</Button>
                                                 </CardActions>
@@ -305,6 +320,19 @@ class Versions extends Component<IProps, IState> {
                                                         </TextList>
                                                     ))}
                                                 </TextContent>
+                                                <br />
+                                                {data.validations !== undefined && data.validations.length > 0 && <TextContent>
+                                                    <Text><strong>Validations</strong></Text>
+                                                </TextContent>}
+
+                                                {data.validations !== undefined && data.validations.length > 0 && <TextContent>
+                                                    {data.validations.map(item => (
+                                                        <TextList component={TextListVariants.ul}>
+                                                            <TextListItem component={TextListItemVariants.li}>
+                                                                <Text component={TextVariants.p}>{item["pant:message"]}</Text>
+                                                            </TextListItem>
+                                                        </TextList>))}
+                                                </TextContent>}
                                             </CardBody>
 
                                         </Card>
@@ -407,6 +435,8 @@ class Versions extends Component<IProps, IState> {
     private fetchVersions = () => {
         // TODO: need a better fix for the 404 error.
         if (this.props.modulePath !== "") {
+            this.getValidations("draft")
+            this.getValidations("released")
             // fetchpath needs to start from modulePath instead of modulePath/en_US.
             // We need extact the module uuid for customer portal url to the module.
             const fetchpath = "/content" + this.props.modulePath + ".harray.5.json"
@@ -446,6 +476,7 @@ class Versions extends Component<IProps, IState> {
                             this.draft[0].updatedDate = draftDate !== undefined ? draftDate : ""
                             // this.props.modulePath starts with a slash
                             this.draft[0].path = "/content" + this.props.modulePath + "/en_US/variants/" + firstVariant.__name__ + "/" + moduleVersion.__name__
+                            this.draft[0].validations = this.state.draftValidations
                         }
                         if (moduleVersion.__name__ === "released") {
                             this.release[0].version = "Version " + moduleVersion.__name__
@@ -455,6 +486,7 @@ class Versions extends Component<IProps, IState> {
                             this.release[0].draftUploadDate = draftDate !== undefined ? draftDate : ""
                             // this.props.modulePath starts with a slash
                             this.release[0].path = "/content" + this.props.modulePath + "/en_US/variants/" + firstVariant.__name__ + "/" + moduleVersion.__name__
+                            this.release[0].validations = this.state.releasedValidations
                             variantReleased = true
                         }
                         if (!variantReleased) {
@@ -809,6 +841,28 @@ class Versions extends Component<IProps, IState> {
     private setAlertTitle = () => {
         const alertTitle = "Publishing " + this.props.contentType
         this.setState({ alertTitle })
+    }
+
+    private getValidations = (versionType) => {
+        let versionValue = ""
+        let validationPath = ""
+
+        if (versionType !== undefined && versionType.length > 0) {
+            versionValue = versionType
+        }
+
+        validationPath = "/content" + this.props.modulePath + "/en_US/variants/" + this.props.variant + "/" + versionValue + "/validations.harray.1.json"
+
+        fetch(validationPath)
+            .then(response => response.json())
+            .then(json => {
+                if (versionValue === "draft") {
+                    this.setState({ draftValidations: json.__children__ })
+                } else {
+                    this.setState({ releasedValidations: json.__children__ })
+                }
+
+            })
     }
 }
 

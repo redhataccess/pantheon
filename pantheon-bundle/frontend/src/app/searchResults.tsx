@@ -19,7 +19,7 @@ import {
   EmptyStateIcon,
   EmptyStateVariant
 } from "@patternfly/react-core";
-import { SearchIcon } from "@patternfly/react-icons";
+import { SearchIcon, ExclamationTriangleIcon, ExclamationCircleIcon } from "@patternfly/react-icons";
 import CheckCircleIcon from "@patternfly/react-icons/dist/js/icons/check-circle-icon"
 import { SlingTypesPrefixes } from "./Constants";
 
@@ -34,6 +34,7 @@ export interface IProps {
   onSelectContentType: (contentType) => any
   currentBulkOperation: string
   disabledClassname: string
+  bulkOperationCompleted: boolean
 }
 export interface ISearchState {
 
@@ -94,7 +95,8 @@ class SearchResults extends Component<IProps, ISearchState> {
           "checkedItem": false,
           "publishedDate": "-",
           "pant:moduleType": "-",
-          "variant": ""
+          "variant": "",
+          "validations": ""
         }
       ],
       // states for table
@@ -122,6 +124,7 @@ class SearchResults extends Component<IProps, ISearchState> {
       || this.props.keyWord !== prevProps.keyWord
       || this.props.filters !== prevProps.filters
       || this.props.onGetdocumentsSelected !== prevProps.onGetdocumentsSelected
+      || this.props.bulkOperationCompleted !== prevProps.bulkOperationCompleted
     ) {
       this.doSearch()
     }
@@ -275,14 +278,19 @@ class SearchResults extends Component<IProps, ISearchState> {
 
           responseJSON.results.map((item, key) => {
             const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
-            let publishedIcon = publishedDate !== "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : ""
-            if (publishedIcon === "") {
+            
+            let docIcon = publishedDate !== "-" ? <div><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : null
+            if (docIcon === null) {
               const productVersion = item["productVersion"] != undefined ? item["productVersion"] : "-"
-              publishedIcon = productVersion == "-" ? <div style={{ margin: "100px" }}><Tooltip position="top" content={<div>Metadata missing</div>}><i className="pf-icon pf-icon-warning-triangle" /></Tooltip></div> : ""
-            }
 
+              docIcon = productVersion == "-" ? <div><Tooltip position="top" content={<div>Metadata missing</div>}><ExclamationTriangleIcon color="#f0ab00" /></Tooltip></div> : null
+            }
+            if (item.validations !== undefined && item.validations.length > 1) {
+              let vIcon = <div><Tooltip position="top" content={<div>{item.validations}</div>}><ExclamationCircleIcon color="#c9190b" /></Tooltip></div>
+              docIcon = <span>{docIcon}{vIcon}</span>
+            }
             const cellItem = new Array()
-            cellItem.push(publishedIcon)
+            cellItem.push(docIcon)
             if (this.props.userAuthenticated) {
               cellItem.push({ title: <a href={"/pantheon/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
             } else {
@@ -332,6 +340,7 @@ class SearchResults extends Component<IProps, ISearchState> {
 
   public changePerPageLimit = (pageLimitValue) => {
     this.setState({ pageLimit: pageLimitValue, page: 1, itemsPerPage: pageLimitValue }, () => {
+      this.props.onGetdocumentsSelected([])
       this.doSearch()
     })
   }
@@ -350,7 +359,6 @@ class SearchResults extends Component<IProps, ISearchState> {
     this.setState({
       rows
     });
-    // console.log("[onSelect] bulkSelected rows =>", rows)
     // update props.documentSelected
     let selectedRows;
     selectedRows = this.state.rows.map(oneRow => {
@@ -360,10 +368,9 @@ class SearchResults extends Component<IProps, ISearchState> {
     })
     // filter undefined values
     selectedRows = selectedRows.filter(r => r !== undefined)
-    // console.log("[onSelect] bulkSelected selectedRows =>", selectedRows)
-    if (selectedRows.length > 0) {
-      this.props.onGetdocumentsSelected(selectedRows);
-    }
+
+    this.props.onGetdocumentsSelected(selectedRows);
+
     if (selectedRows.length > 0 || isSelected == true) {
       this.props.onSelectContentType(this.props.contentType);
     }

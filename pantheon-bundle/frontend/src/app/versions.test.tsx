@@ -211,7 +211,7 @@ describe("Versions tests", () => {
         wrapper.setState({
             "login": true,
             "showMetadataAlertIcon": false,
-            "results": [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Not published", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } } }]],
+            "results": [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Not published", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } }, "validation":[] }]],
         })
         const spy = sinon.spy(instance, "changePublishState")
         wrapper.find(Button).at(2).simulate("click")
@@ -223,7 +223,7 @@ describe("Versions tests", () => {
         const instance = wrapper.instance()
         wrapper.setState({
             "login": true,
-            "results": [[{ "type": "release", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Released", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } } }]],
+            "results": [[{ "type": "release", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Released", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } }, "validation":[] }]],
         })
         const spy = sinon.spy(instance, "changePublishState")
         wrapper.find(Button).at(2).simulate("click")

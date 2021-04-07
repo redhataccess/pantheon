@@ -11,7 +11,6 @@
   - portalUrl = 'access.stage.redhat.com'
 
 - pantheonCssPath = "//#{portalUrl}/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/rhdocs.min.css"
-- cpDocsJsPath = "//#{portalUrl}/webassets/avalon/j/public_modules/node_modules/@cpelements/cp-documentation/dist/cp-documentation.umd.js"
 
 
 - wrappingTag = 'cp-documentation'
@@ -48,10 +47,13 @@
     %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/custom-elements-es5-adapter.js")
     %script(src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.3.0/webcomponents-bundle.js")
     %script(src="https://#{portalUrl}/webassets/avalon/j/lib/require.js")
-    :javascript
-      chrometwo_require(["#{cpDocsJsPath}"]);
 
     :javascript
+      chrometwo_require(["pfe", "wc"], function (pfe, wc) {
+        pfe.include("pfe-icon");
+        wc.include("@cpelements/cp-documentation/dist/cp-documentation.umd");
+      });
+
       window.addEventListener('load', function() {
         var cpDocumentations = document.querySelectorAll('cp-documentation');
         for (let index = 0; index < cpDocumentations.length; index++) {
