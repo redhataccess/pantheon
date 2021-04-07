@@ -1,13 +1,11 @@
 package com.redhat.pantheon.validation.validators;
 
 import com.redhat.pantheon.helper.PantheonConstants;
-import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.validation.helper.XrefValidationHelper;
 import com.redhat.pantheon.validation.model.ErrorDetails;
 import com.redhat.pantheon.validation.model.Violations;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -17,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
 import java.util.List;
 
 /**
@@ -87,7 +84,6 @@ public class XrefValidator implements Validator {
 
     private int getXrefCounts(Elements resultLinks, int count, String xref) throws RepositoryException {
         if(xref.endsWith(".adoc")){
-            JcrQueryHelper jcrQueryHelper = new JcrQueryHelper(this.documentVariant.getResourceResolver());
             Resource resource = documentVariant.getParentLocale().getParent().getParent();
             String[] resourceFragment = xref.split("/");
 
