@@ -117,10 +117,10 @@ class GitImport extends Component {
                     if (response.status === 201 || response.status === 200 || response.status === 202) {
                       console.log(" Works " + response.status)
                       this.setState({ isFormSubmitted: true, isSucess: true, msgType: "success", submitMsg: "The git import has been submitted it might take up to 1 minute to see it in the module library." })
-                    } else if (response.status === 500) {
+                    } else if (response.status === 500 || response.status === 400) {
                       console.log(" Failed " + response.status)
-                      response.text().then((text) => {
-                        this.setState({ submitMsg: JSON.parse(text).error })
+                      response.json().then((json) => {
+                        this.setState({ submitMsg: json.error.details })
                       });
                     } else {
                       this.setState({ isSucess: false, msgType: "danger", submitMsg: "The git import submission has failed." })
