@@ -55,34 +55,46 @@ public class XrefValidator implements Validator {
     }
 
     private Violations checkIfXrefValid(Violations violations) {
-        if (isValidXref()) {
-            return violations;
-        }
-        return violations.add(PantheonConstants.VALID_XREF,
-                new ErrorDetails().add("invalid Cross reference(s) exists in the document"));
+        return violations.add(PantheonConstants.TYPE_XREF,
+                checkXref());
     }
 
-    private boolean isValidXref() {
+    /**
+     * Process xrefs
+     *
+     * @return
+     */
+    private ErrorDetails checkXref() {
+        ErrorDetails errorDetails = new ErrorDetails();
         try {
-                Document doc = Jsoup.parse(content);
-                List<String>  xrefTargets = XrefValidationHelper.getObjectsToValidate(this.documentVariant.uuid().get());
-                Elements resultLinks = doc.select("a");
-                if(null == xrefTargets || xrefTargets.size()==0){
-                    return true;
+            Document doc = Jsoup.parse(content);
+            List<String>  xrefTargets = XrefValidationHelper.getObjectsToValidate(this.documentVariant.uuid().get());
+            Elements resultLinks = doc.select("a");
+            if(null == xrefTargets || xrefTargets.size()==0){
+                return errorDetails;
+            }
+            for (String xref : xrefTargets) {
+                String target = getInvalidXrefs(resultLinks, xref);
+                if(null != target) {
+                    errorDetails.add(target);
                 }
-                int count = 0;
-                for (String xref : xrefTargets) {
-                    count = getXrefCounts(resultLinks, count, xref);
-                }
-                return count == XrefValidationHelper.getObjectsToValidate(this.documentVariant.uuid().get()).size() ? true : false;
+            }
         }
         catch (Exception ex){
-            ex.printStackTrace();
+            log.error("error at validation occured",ex);
         }
-        return false;
+        return errorDetails;
     }
 
-    private int getXrefCounts(Elements resultLinks, int count, String xref) throws RepositoryException {
+    /**
+     * Check if processed xrefs are invalid, return the target xpath if so.
+     *
+     * @param resultLinks
+     * @param xref
+     * @return
+     * @throws RepositoryException
+     */
+    private String getInvalidXrefs(Elements resultLinks, String xref) throws RepositoryException {
         if(xref.endsWith(".adoc")){
             Resource resource = documentVariant.getParentLocale().getParent().getParent();
             String[] resourceFragment = xref.split("/");
@@ -94,11 +106,10 @@ public class XrefValidator implements Validator {
                 }
             }
 
-            count += resource!=null ? 1 :0;
+            return resource==null ? xref :null;
         } else {   //if path is an anchor
-            count += (int) resultLinks.eachAttr("href").stream().filter(s->s.endsWith(xref)).count() > 0?1:0;
+            return (int) resultLinks.eachAttr("href").stream().filter(s->s.endsWith(xref)).count() > 0? null :xref;
         }
-        return count;
     }
 
     /**
