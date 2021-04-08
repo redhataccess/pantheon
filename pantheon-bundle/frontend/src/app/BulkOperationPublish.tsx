@@ -177,7 +177,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                             headers: hdrs
                         }).then(response => {
                             if (response.status === 201 || response.status === 200) {
-                                console.log(this.props.isBulkPublish ? "publish works: " : "unpublish works: " + response.status)
+                                console.log(this.props.isBulkPublish ? "publish works: " + response.status : "unpublish works: " + response.status)
                                 this.setState({
                                     documentsSucceeded: [...this.state.documentsSucceeded, modulePath],
                                     bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
@@ -187,7 +187,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                                 }
                                 )
                             } else {
-                                console.log(this.props.isBulkPublish ? "publish failed " : "unpublish failed " + response.status)
+                                console.log(this.props.isBulkPublish ? "publish failed " + response.status : "unpublish failed " + response.status)
                                 this.setState({ bulkUpdateFailure: this.state.bulkUpdateFailure + 1, documentsFailed: [...this.state.documentsFailed, modulePath] }, () => {
                                     this.calculateFailureProgress(this.state.bulkUpdateFailure)
                                 })
@@ -213,7 +213,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
 
     private calculateFailureProgress = (num: number) => {
         if (num >= 0) {
-            let stat = (num) / this.props.documentsSelected.length * 100
+            let stat = (num) / this.state.docsSelected.length * 100
             this.setState({ progressFailureValue: stat, showBulkConfirmation: true }, () => {
                 this.getDocumentFailed()
             })
@@ -221,7 +221,6 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
     }
 
     private calculateSuccessProgress = (num: number) => {
-        //calculating stat variable with docsSelected state variable because updateBulkOperationCompleted resets documentsSelected prop to []
         if (num >= 0) {
             let stat = (num) / this.state.docsSelected.length * 100
             this.setState({ progressSuccessValue: stat, showBulkConfirmation: true }, () => {
@@ -232,7 +231,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
 
     private calculateWarningProgress = (num: number) => {
         if (num >= 0) {
-            let stat = (num) / this.props.documentsSelected.length * 100
+            let stat = (num) / this.state.docsSelected.length * 100
             this.setState({ progressWarningValue: stat, showBulkConfirmation: true }, () => {
                 this.getDocumentIgnored()
             })
