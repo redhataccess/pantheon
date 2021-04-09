@@ -17,7 +17,7 @@ ifdef::context[:parent-context: {context}]
 [role="_abstract"]
 Welcome to {ProductShortName} help.
 
-This document describes the main concepts, requirements, and actions in {ProductShortName}.
+This document describes how you can configure your documentation repository and publish your project in {ProductShortName}.
 
 include::../modules/ref_prerequisites.adoc[leveloffset=+1]
 
