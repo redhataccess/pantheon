@@ -105,7 +105,7 @@ public class XrefValidator implements Validator {
                     default: resource = resource.getChild(rf); break;
                 }
             }
-
+          
             return resource==null ? xref :null;
         } else {   //if path is an anchor
             return (int) resultLinks.eachAttr("href").stream().filter(s->s.endsWith(xref)).count() > 0? null :xref;
