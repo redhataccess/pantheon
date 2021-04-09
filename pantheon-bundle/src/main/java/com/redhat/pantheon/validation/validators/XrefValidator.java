@@ -59,7 +59,7 @@ public class XrefValidator implements Validator {
             return violations;
         }
         return violations.add(PantheonConstants.VALID_XREF,
-                new ErrorDetails().add("invalid Cross reference(s) exists in the document"));
+                new ErrorDetails().add("Invalid cross references"));
     }
 
     private boolean isValidXref() {

@@ -32,7 +32,7 @@ exports[`BulkOperationConfirmation tests should render BulkOperationConfirmation
         measureLocation="top"
         min={0}
         size="sm"
-        title="Update Succeeded"
+        title="Succeeded"
         tooltipPosition="top"
         value={50}
         valueText={null}
@@ -49,7 +49,7 @@ exports[`BulkOperationConfirmation tests should render BulkOperationConfirmation
         measureLocation="top"
         min={0}
         size="sm"
-        title="Update failed"
+        title="Failed"
         tooltipPosition="top"
         value={10}
         valueText={null}
@@ -66,7 +66,7 @@ exports[`BulkOperationConfirmation tests should render BulkOperationConfirmation
         measureLocation="top"
         min={0}
         size="sm"
-        title="No draft version found. No action taken"
+        title="No drafts found - no action taken"
         tooltipPosition="top"
         value={40}
         valueText={null}
@@ -120,7 +120,7 @@ exports[`BulkOperationConfirmation tests should render BulkOperationConfirmation
     variant="large"
   >
     <strong>
-      Update Succeeded:
+      Succeeded:
     </strong>
     <br />
     <span
@@ -151,7 +151,7 @@ exports[`BulkOperationConfirmation tests should render BulkOperationConfirmation
     <br />
     <br />
     <strong>
-      Update Ignored:
+      Ignored:
     </strong>
     <br />
     <span
@@ -177,7 +177,7 @@ exports[`BulkOperationConfirmation tests should render BulkOperationConfirmation
     <br />
     <br />
     <strong>
-      Update Failed:
+      Failed:
     </strong>
     <br />
     <span
