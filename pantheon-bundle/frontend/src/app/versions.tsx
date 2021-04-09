@@ -12,12 +12,14 @@ import {
     Title,
     Tooltip,
 } from "@patternfly/react-core"
+import { TreeView, TreeViewDataItem } from '@patternfly/react-core';
 
 import CheckImage from "@app/images/check_image.jpg"
 import BlankImage from "@app/images/blank.jpg"
 import { Redirect } from "react-router-dom"
-import { ExclamationTriangleIcon, TimesIcon, PlusCircleIcon } from "@patternfly/react-icons"
+import { ExclamationTriangleIcon, TimesIcon, PlusCircleIcon, JsIcon } from "@patternfly/react-icons"
 import { Metadata, PantheonContentTypes, PathPrefixes } from "./Constants"
+import { array } from "prop-types";
 
 export interface IProps {
     contentType: string
@@ -43,6 +45,7 @@ export interface IMetadata {
 }
 
 interface IState {
+    activeItems: any
     alertTitle: string
     allProducts: any
     allProductVersions: any
@@ -81,6 +84,7 @@ class Versions extends Component<IProps, IState> {
     constructor(props) {
         super(props)
         this.state = {
+            activeItems: {},
             alertTitle: "",
             allProducts: [],
             // tslint:disable-next-line: object-literal-sort-keys
@@ -249,14 +253,10 @@ class Versions extends Component<IProps, IState> {
                                             {data.validations !== undefined && data.validations.length > 0 && <TextContent>
                                                 <Text><strong>Validations</strong></Text>
                                             </TextContent>}
-                                            {data.validations !== undefined && data.validations.length > 0 && <TextContent>
-                                                {data.validations.map(item => (
-                                                    <TextList component={TextListVariants.ul}>
-                                                        <TextListItem component={TextListItemVariants.li}>
-                                                            <Text component={TextVariants.p}>{item["pant:message"]}</Text>
-                                                        </TextListItem>
-                                                    </TextList>))}
-                                            </TextContent>}
+
+                                            {data.validations !== undefined && data.validations.length > 0 &&
+                                                <TreeView data={data.validations} activeItems={this.state.activeItems} onSelect={this.onClickTree} hasBadges />
+                                            }
                                         </CardBody>
                                     </Card>
                                 </GridItem>)
@@ -325,14 +325,9 @@ class Versions extends Component<IProps, IState> {
                                                     <Text><strong>Validations</strong></Text>
                                                 </TextContent>}
 
-                                                {data.validations !== undefined && data.validations.length > 0 && <TextContent>
-                                                    {data.validations.map(item => (
-                                                        <TextList component={TextListVariants.ul}>
-                                                            <TextListItem component={TextListItemVariants.li}>
-                                                                <Text component={TextVariants.p}>{item["pant:message"]}</Text>
-                                                            </TextListItem>
-                                                        </TextList>))}
-                                                </TextContent>}
+                                                {data.validations !== undefined && data.validations.length > 0 &&
+                                                    <TreeView data={data.validations} activeItems={this.state.activeItems} onSelect={this.onClickTree} hasBadges />
+                                                }
                                             </CardBody>
 
                                         </Card>
@@ -851,18 +846,42 @@ class Versions extends Component<IProps, IState> {
             versionValue = versionType
         }
 
-        validationPath = "/content" + this.props.modulePath + "/en_US/variants/" + this.props.variant + "/" + versionValue + "/validations.harray.1.json"
+        validationPath = "/content" + this.props.modulePath + "/en_US/variants/" + this.props.variant + "/" + versionValue + "/validations.harray.2.json"
 
         fetch(validationPath)
             .then(response => response.json())
             .then(json => {
+                const xrefValidation = this.getHarrayChildNamed(json, "xref")
+
+                let options = new Array()
+                if (xrefValidation.__children__ != undefined && xrefValidation.__children__.length > 0) {
+
+                    let rootChildren = new Array()
+
+                    for (const childNode of xrefValidation.__children__) {
+                        const children = {
+                            "name": childNode["pant:xrefTarget"], "id": childNode["pant:xrefTarget"].split(" ").join(""),
+                            "children": [{ name: childNode["pant:message"], id: childNode["pant:message"].split(" ").join("") }]
+                        }
+                        rootChildren.push(children)
+                    }
+                    const root = { name: "xref Targets", id: "xrefs", children: rootChildren, defaultExpanded: true }
+                    options.push(root)
+
+                }
                 if (versionValue === "draft") {
-                    this.setState({ draftValidations: json.__children__ })
+                    this.setState({ draftValidations: options })
                 } else {
-                    this.setState({ releasedValidations: json.__children__ })
+                    this.setState({ releasedValidations: options })
                 }
 
             })
+    }
+
+    private onClickTree = (evt, treeViewItem, parentItem) => {
+        this.setState({
+            activeItems: [treeViewItem, parentItem]
+        });
     }
 }
 
