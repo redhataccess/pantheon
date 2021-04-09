@@ -13,7 +13,7 @@ public class ValidationHelper {
     public void createXrefValidationNode(DocumentVersion documentVersion, String content){
         Violations violations = new XrefValidator(documentVersion.getParent(), content).validate();
         if(violations.hasViolations()) {
-            ValidationType validationType = documentVersion.validations().getOrCreate().validationType().getOrCreate();
+            ValidationType validationType = documentVersion.validations().getOrCreate().validationType(PantheonConstants.TYPE_XREF).getOrCreate();
             Validation validation;
             ErrorDetails errorDetails = violations.get(PantheonConstants.TYPE_XREF);
             if(errorDetails == null){

@@ -9,7 +9,7 @@ import javax.inject.Named;
 @JcrPrimaryType("sling:OrderedFolder")
 public interface Validations extends WorkspaceChild {
 
-    @Named("validation_type")
-    Child<ValidationType> validationType();
-
+    default Child<ValidationType> validationType(String type) {
+        return child(type, ValidationType.class);
+    }
 }
