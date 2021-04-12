@@ -376,7 +376,9 @@ class Search extends Component<IAppState, ISearchState> {
       })
       .then(responseJSON => {
         for (const repository of responseJSON.__children__) {
-          repos.push({ name: repository.__name__, id: repository["jcr:uuid"] })
+          if (repository["jcr:primaryType"] === "pant:workspace") {
+            repos.push({ name: repository.__name__, id: repository["jcr:uuid"] })
+          }
         }
         this.setState({
           repositories: repos,
