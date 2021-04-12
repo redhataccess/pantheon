@@ -85,7 +85,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                         <Button form="bulk_edit_metadata" isAriaDisabled={this.props.documentsSelected.length === 0 ? true : false} key="confirm" variant="primary" onClick={this.saveMetadata}>
                             Save
                 </Button>,
-                        <Button data-testid="metadata-modal-cancel-button" key="cancel" variant="secondary" onClick={this.handleModalToggle}>
+                        <Button data-testid="metadata-modal-cancel-button" key="cancel" variant="secondary" onClick={this.handleModalClose}>
                             Cancel
                   </Button>
                     ]}
@@ -205,33 +205,6 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
             this.props.updateIsEditMetadata(false)
             this.setState({ showBulkEditConfirmation: false })
             this.props.updateBulkOperationCompleted(false)
-        })
-    }
-
-    private handleModalToggle = (event) => {
-        this.setState({ isModalOpen: !this.state.isModalOpen }, () => {
-
-            if (!this.state.isModalOpen) {
-                if ((this.state.documentsSucceeded.length > 0
-                    || this.state.documentsFailed.length > 0
-                    || this.state.documentsIgnored.length > 0)
-                    && this.state.metadataEditError.length > 0) {
-                    // Save button was clicked. Documents were processed.
-                    this.props.updateIsEditMetadata(false)
-                    this.props.updateBulkOperationCompleted(true)
-                    this.setState({ showBulkEditConfirmation: true })
-                } else {
-                    // Cancle button was clicked. Documents were not processed.
-                    this.setState({ showBulkEditConfirmation: false })
-                    this.props.updateIsEditMetadata(false)
-                    this.props.updateBulkOperationCompleted(false)
-                }
-
-
-            } else {
-                this.setState({ showBulkEditConfirmation: false })
-                this.props.updateBulkOperationCompleted(false)
-            }
         })
     }
 
