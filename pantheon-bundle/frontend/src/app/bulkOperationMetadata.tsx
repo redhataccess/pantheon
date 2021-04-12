@@ -212,20 +212,21 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
         this.setState({ isModalOpen: !this.state.isModalOpen }, () => {
 
             if (!this.state.isModalOpen) {
-                if (this.state.documentsSucceeded.length > 0 ||
-                    this.state.documentsFailed.length > 0 ||
-                    this.state.documentsIgnored.length > 0) {
-                        // Save button was clicked. Documents were processed.
-                        this.props.updateIsEditMetadata(false)
-                        this.props.updateBulkOperationCompleted(true)
-                        this.setState({ showBulkEditConfirmation: true })
+                if ((this.state.documentsSucceeded.length > 0
+                    || this.state.documentsFailed.length > 0
+                    || this.state.documentsIgnored.length > 0)
+                    && this.state.metadataEditError.length > 0) {
+                    // Save button was clicked. Documents were processed.
+                    this.props.updateIsEditMetadata(false)
+                    this.props.updateBulkOperationCompleted(true)
+                    this.setState({ showBulkEditConfirmation: true })
                 } else {
                     // Cancle button was clicked. Documents were not processed.
+                    this.setState({ showBulkEditConfirmation: false })
                     this.props.updateIsEditMetadata(false)
                     this.props.updateBulkOperationCompleted(false)
-                    this.setState({ showBulkEditConfirmation: false })
                 }
-                
+
 
             } else {
                 this.setState({ showBulkEditConfirmation: false })
