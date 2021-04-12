@@ -81,6 +81,9 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
                   data.length > 0 &&
                   <ListItem key={index}>{data}</ListItem>
                 ))}
+              {this.props.updateSucceeded.length === 0 &&
+                <ListItem key={"succeeded-0"}>n/a</ListItem>
+              }
             </List>
           </span>
           <br />
@@ -94,6 +97,9 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
                   data.length > 0 &&
                   <ListItem key={index}>{data}</ListItem>
                 ))}
+              {this.props.updateIgnored.length === 0 &&
+                <ListItem key={"ignored-0"}>n/a</ListItem>
+              }
             </List>
           </span>
           <br />
@@ -107,6 +113,9 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
                   data.length > 0 &&
                   <ListItem key={index}>{data}</ListItem>
                 ))}
+              {this.props.updateFailed.length === 0 &&
+                <ListItem key={"failed-0"}>n/a</ListItem>
+              }
             </List>
           </span>
           <br />

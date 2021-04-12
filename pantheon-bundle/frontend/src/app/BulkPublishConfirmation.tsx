@@ -80,20 +80,26 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
                   data.length > 0 &&
                   <ListItem key={index}>{data}</ListItem>
                 ))}
+              {this.props.updateSucceeded.length === 0 &&
+                <ListItem key={"succeeded-0"}>n/a</ListItem>
+              }
             </List>
           </span>
           <br />
           <br />
           {!this.props.isBulkUnpublish && (<div><strong>Publish Ignored:</strong>
-          <span id="update-ignored">
-            <List aria-label="ignored" component={ListComponent.ol} type={OrderType.number}>
-              {this.props.updateIgnored.length > 0 &&
-                this.props.updateIgnored.split(",").map((data, index) => (
-                  data.length > 0 &&
-                  <ListItem key={index}>{data}</ListItem>
-                ))}
-            </List>
-          </span></div>)}
+            <span id="update-ignored">
+              <List aria-label="ignored" component={ListComponent.ol} type={OrderType.number}>
+                {this.props.updateIgnored.length > 0 &&
+                  this.props.updateIgnored.split(",").map((data, index) => (
+                    data.length > 0 &&
+                    <ListItem key={index}>{data}</ListItem>
+                  ))}
+                {this.props.updateIgnored.length === 0 &&
+                  <ListItem key={"ignored-0"}>n/a</ListItem>
+                }
+              </List>
+            </span></div>)}
           <br />
           <br />
           <strong>{`${this.props.isBulkUnpublish ? "Unpublish" : "Publish"} Failed:`}</strong>
@@ -105,6 +111,9 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
                   data.length > 0 &&
                   <ListItem key={index}>{data}</ListItem>
                 ))}
+              {this.props.updateFailed.length === 0 &&
+                <ListItem key={"failed-0"}>n/a</ListItem>
+              }
             </List>
           </span>
           <br />
@@ -123,8 +132,6 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
 
   private hideAlert = () => {
     this.props.onShowBulkOperationConfirmation(false)
-    //TODO: refresh documentsSelected
-    // this.SearchResults.current.doSearch()
   }
 }
 
