@@ -40,7 +40,8 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES;
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleVariant",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleVariants",
                 ADAPTER_CLASSES + "=com.redhat.pantheon.model.module.ModuleVersion",
-                ADAPTER_CLASSES + "=com.redhat.pantheon.model.workspace.Workspace"
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.workspace.Workspace",
+                ADAPTER_CLASSES + "=com.redhat.pantheon.model.alias.DocumentAlias"
         }
 )
 public class CustomModelAdapterFactory extends SlingModelAdapterFactory {
