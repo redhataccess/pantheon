@@ -302,13 +302,13 @@ class Search extends Component<IAppState, ISearchState> {
         <ToolbarGroup variant="icon-button-group">
         </ToolbarGroup>
         {this.props.userAuthenticated && (this.props.isAuthor || this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length === 0} onClick={this.handleEditMetadata} data-testid="edit_metadata">Edit metadata</Button>
+          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length !== 1} onClick={this.handleEditMetadata} data-testid="edit_metadata">Edit metadata</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length === 0} onClick={()=>this.handleBulkPublish('publish')}>Publish</Button>
+          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length !== 1} onClick={()=>this.handleBulkPublish('publish')}>Publish</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length === 0} onClick={()=>this.handleBulkPublish('unpublish')}>Unpublish</Button>
+          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length !== 1} onClick={()=>this.handleBulkPublish('unpublish')}>Unpublish</Button>
         </ToolbarItem>}
 
       </React.Fragment>
@@ -376,7 +376,9 @@ class Search extends Component<IAppState, ISearchState> {
       })
       .then(responseJSON => {
         for (const repository of responseJSON.__children__) {
-          repos.push({ name: repository.__name__, id: repository["jcr:uuid"] })
+          if (repository["jcr:primaryType"] === "pant:workspace") {
+            repos.push({ name: repository.__name__, id: repository["jcr:uuid"] })
+          }
         }
         this.setState({
           repositories: repos,
