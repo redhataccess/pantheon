@@ -67,16 +67,17 @@ public class XrefValidator implements Validator {
     private ErrorDetails checkXref() {
         ErrorDetails errorDetails = new ErrorDetails();
         try {
-            Document doc = Jsoup.parse(content);
-            List<String>  xrefTargets = XrefValidationHelper.getObjectsToValidate(this.documentVariant.uuid().get());
-            Elements resultLinks = doc.select("a");
+            List<String>  xrefTargets = XrefValidationHelper.getObjectsToValidate();
             if(null == xrefTargets || xrefTargets.size()==0){
                 return errorDetails;
             }
             for (String xref : xrefTargets) {
-                String target = getInvalidXrefs(resultLinks, xref);
-                if(null != target) {
-                    errorDetails.add(target);
+                if(!xref.endsWith(".adoc")) {
+                    if(validateIfAnchor(content,xref)<1){ // If it is anchor, it has not yet validated,
+                        errorDetails.add(xref);
+                    }
+                }else {
+                    errorDetails.add(xref); // if it is a adoc file, it's already processed and validated
                 }
             }
         }
@@ -87,29 +88,17 @@ public class XrefValidator implements Validator {
     }
 
     /**
-     * Check if processed xrefs are invalid, return the target xpath if so.
+     * if path is an anchor, validate
      *
-     * @param resultLinks
+     * @param content
      * @param xref
      * @return
      * @throws RepositoryException
      */
-    private String getInvalidXrefs(Elements resultLinks, String xref) throws RepositoryException {
-        if(xref.endsWith(".adoc")){
-            Resource resource = documentVariant.getParentLocale().getParent().getParent();
-            String[] resourceFragment = xref.split("/");
-
-            for(String rf:resourceFragment){
-                switch (rf){
-                    case "..":resource = resource.getParent(); break;   // TODO: fails in case dependent document not yet uploaded
-                    default: resource = resource.getChild(rf); break;
-                }
-            }
-          
-            return resource==null ? xref :null;
-        } else {   //if path is an anchor
-            return (int) resultLinks.eachAttr("href").stream().filter(s->s.endsWith(xref)).count() > 0? null :xref;
-        }
+    private int validateIfAnchor(String content, String xref) throws RepositoryException {
+            //if path is an anchor
+        Document doc = Jsoup.parse(content);
+        return doc.getElementsByAttributeValue("id",xref).size();
     }
 
     /**

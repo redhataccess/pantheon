@@ -4,6 +4,7 @@ import com.redhat.pantheon.helper.Symlinks;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.servlet.assets.ImageServletFilter;
+import com.redhat.pantheon.validation.helper.XrefValidationHelper;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -69,6 +70,7 @@ public class DocumentPreviewFilter implements Filter {
             }
             // FIXME - need to rework document preview servlets to support latest suffix (variant preview servlet already works)
             String forwardString = firstResource.get().getPath() + ".preview/" + mode;
+            XrefValidationHelper.initMap();
             request.getRequestDispatcher(forwardString).forward(request, response);
         } catch (RepositoryException e) {
             throw new ServletException(e);

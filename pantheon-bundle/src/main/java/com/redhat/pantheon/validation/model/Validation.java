@@ -4,6 +4,8 @@ import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import com.redhat.pantheon.model.workspace.WorkspaceChild;
+import com.redhat.pantheon.validation.helper.XrefValidationHelper;
+import org.apache.sling.api.resource.ValueMap;
 
 import javax.inject.Named;
 
@@ -29,6 +31,9 @@ public interface Validation extends WorkspaceChild {
             this.validationType().set("xref");
             this.xrefTarget().set(violations.get(PantheonConstants.TYPE_XREF).getDetails(index));
         }
+        return this;
+    }
+    default  Validation getValidation(){
         return this;
     }
 }

@@ -11,6 +11,7 @@ import com.redhat.pantheon.model.document.Document;
 import com.redhat.pantheon.model.document.DocumentLocale;
 import com.redhat.pantheon.model.document.DocumentMetadata;
 import com.redhat.pantheon.servlet.ServletUtils;
+import com.redhat.pantheon.validation.helper.XrefValidationHelper;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ModifiableValueMap;
@@ -126,6 +127,7 @@ public abstract class VersionUploadOperation extends AbstractPostOperation {
             resolver.commit();
 
             Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
+            XrefValidationHelper.initMap();
             asciidoctorService.getDocumentHtml(document, localeObj, document.getWorkspace().getCanonicalVariantName(),
                     true, context, true);
 
