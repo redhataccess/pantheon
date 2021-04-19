@@ -65,7 +65,7 @@ class GitImport extends Component {
                 <TextInput id="branch-name" type="text" placeholder="Branch" value={branch} onChange={this.handleBranchInput} />
               </FormGroup>
               <br />
-              <Button aria-label="Submit the repository and branch information to the git integration service." onClick={this.cloneRepo}>Submit</Button>
+              <Button aria-label="Submit the repository and branch information to the git integration service." onClick={this.cloneRepoGit2Pantheon}>Submit</Button>
               <div>
                 {this.renderRedirect()}
               </div>
@@ -78,13 +78,72 @@ class GitImport extends Component {
 
   private handleRepoInput = repository => {
     this.setState({ repository });
-    console.log("Repository " + repository)
   };
 
   private handleBranchInput = branch => {
     this.setState({ branch });
-    console.log("Branch " + branch)
   };
+
+  private cloneRepoGit2Pantheon = (postBody) => {
+    if (this.state.repository === "") {
+      this.setState({ isMissingFields: true })
+    } else {
+      const hdrs = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+      const body = {
+        'branch': this.state.branch,
+        'repo': this.state.repository
+      }
+      fetch('http://git2pantheon-qa.int.us-east.aws.preprod.paas.redhat.com/api/clone', {
+
+        body: JSON.stringify(body),
+        headers: hdrs,
+        method: 'POST'
+      })
+      .then(response => {
+        console.log('response', response)
+      })
+    }
+  }
+        // response.text().then((text) => {
+        //   console.log('text', text)
+        //    fetch('http://git2pantheon-qa.int.us-east.aws.preprod.paas.redhat.com/api/progress-update/all',{
+        //   body: text,
+        //   headers: hdrs,
+        //   method: 'POST'
+        // }).then(response => {
+        //   console.log('second response', response)
+        // })
+        // })
+        
+        // console.log(response.json)
+       
+      // })
+      // response.json())
+      // .then(data => {
+      //   // console.log('Success:', data);
+      //   console.log('data', data);
+
+      // })
+      // .catch((error) => {
+      //   console.error('Error:', error);
+      // });
+      // fetch("localhost:5000/api/clone")
+      //   .then((resp => {
+      //     if (!resp.ok) {
+      //       this.setState({ isFormSubmitted: true, isSucess: false, msgType: "danger", submitMsg: "Error occurred, could not find the git2pantheon URL configuration." })
+      //     } else {
+      //       resp.text().then((text) => {
+      //         this.setState({ git2pantheonURL: text })
+      //         console.log("The response text from pant:syncServiceUrl is: " + text)
+      //       })
+      //     }
+      //   }))
+      // }
+
+  // }
 
   private cloneRepo = (postBody) => {
     console.log("My repo is: " + this.state.repository + " and branch is " + this.state.branch + ".")
