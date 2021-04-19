@@ -8,14 +8,19 @@ import java.util.Map;
 
 public class XrefValidationHelper {
 
-    private static Map<String, List<String>> xRefs = new HashMap<>();
+    private static List<String> xRefs;
 
-    public static List<String> getObjectsToValidate(String uuid) {
-        return xRefs.get(uuid);
+    public static List<String> getObjectsToValidate() {
+        return xRefs;
     }
 
-    public static void setObjectsToValidate(String uuid, List<String> objectsToValidate) {
-        if(objectsToValidate.size()>0)
-            xRefs.put(uuid, objectsToValidate);
+    public static void initList() {
+        xRefs = new ArrayList<>();
+    }
+
+    public static void setObjectsToValidate(List<String> objectsToValidate) {
+        if(objectsToValidate.size()>0){
+                xRefs.addAll(objectsToValidate);
+        }
     }
 }
