@@ -18,7 +18,7 @@ public class ValidationHelper {
     public void createXrefValidationNode(DocumentVersion documentVersion, String content) throws PersistenceException {
         Violations violations = new XrefValidator(documentVersion.getParent(), content).validate();
         Validations validations = documentVersion.validations().getOrCreate();
-        if(null != validations.validationType(PantheonConstants.TYPE_XREF)){
+        if(null != validations.validationType(PantheonConstants.TYPE_XREF).get()){
             try {
                 validations.validationType(PantheonConstants.TYPE_XREF).get().delete();
             } catch (Exception e) {
@@ -29,7 +29,7 @@ public class ValidationHelper {
         if(violations.hasViolations()) {
             Validation validation;
             ErrorDetails errorDetails = violations.get(PantheonConstants.TYPE_XREF);
-            if(errorDetails.length() ==0 || null == errorDetails){
+            if(null == errorDetails || errorDetails.length() ==0){
                 return;
             }
             ValidationType validationType = validations.validationType(PantheonConstants.TYPE_XREF).getOrCreate();

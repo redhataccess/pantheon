@@ -1,34 +1,23 @@
 package com.redhat.pantheon.servlet;
 
-import com.redhat.pantheon.helper.Symlinks;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
-import com.redhat.pantheon.model.document.DocumentVariant;
-import com.redhat.pantheon.servlet.assets.ImageServletFilter;
 import com.redhat.pantheon.validation.helper.XrefValidationHelper;
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletFilter;
-import org.apache.sling.servlets.annotations.SlingServletPaths;
 import org.jetbrains.annotations.NotNull;
-import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
@@ -70,7 +59,7 @@ public class DocumentPreviewFilter implements Filter {
             }
             // FIXME - need to rework document preview servlets to support latest suffix (variant preview servlet already works)
             String forwardString = firstResource.get().getPath() + ".preview/" + mode;
-            XrefValidationHelper.initMap();
+            XrefValidationHelper.initList();
             request.getRequestDispatcher(forwardString).forward(request, response);
         } catch (RepositoryException e) {
             throw new ServletException(e);

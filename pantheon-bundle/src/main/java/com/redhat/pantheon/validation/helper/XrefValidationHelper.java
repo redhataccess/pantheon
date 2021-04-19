@@ -14,7 +14,7 @@ public class XrefValidationHelper {
         return xRefs;
     }
 
-    public static void initMap() {
+    public static void initList() {
         xRefs = new ArrayList<>();
     }
 
