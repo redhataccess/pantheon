@@ -10,7 +10,7 @@ include::../attributes.adoc[]
 ifdef::context[:parent-context: {context}]
 
 [id="assembly-help_{context}"]
-= Pantheon Help Page
+= {ProductName} User Guide
 
 :context: assembly-help
 
@@ -21,10 +21,14 @@ This document describes the main concepts, requirements, and actions in {Product
 
 include::../modules/ref_prerequisites.adoc[leveloffset=+1]
 
+ifeval::[{ProductName} == "Pantheon"]
+include::../modules/proc_submitting-documentation-feedback.adoc[leveloffset=+1]
+endif::[]
+
 == Overview of {ProductShortName}
 
 This overview describes {ProductShortName} and the key terms associated with it.
- 
+
 include::../modules/con_pantheon.adoc[leveloffset=+2]
 
 include::../modules/ref_pantheon-user-interface.adoc[leveloffset=+2]
@@ -75,7 +79,7 @@ include::../modules/proc-search-view-results.adoc[leveloffset=+2]
 
 == Preparing content for publication
 
-After you have imported your content into {ProductShortName}, prepare it for publication by assigning metadata. After you assign metadata, you can preview your {ContentTerm} to see how it looks in the {PublishingPortal}. 
+After you have imported your content into {ProductShortName}, prepare it for publication by assigning metadata. After you assign metadata, you can preview your {ContentTerm} to see how it looks in the {PublishingPortal}.
 
 include::../modules/proc_assigning-metadata-to-a-module.adoc[leveloffset=+2]
 
