@@ -12,7 +12,7 @@ include::../modules/con_definition-of-a-module.adoc[]
 include::../modules/con_comparison-between-modules-and-DITA-topics.adoc[]
 
 include::../modules/con_definition-of-metadata.adoc[]
-include::../modules/ref_identifying-module-types.adoc[]
+include::../modules/ref_adding-module-types_to_modules_in_Pantheon.adoc[]
 
 ifdef::parent-context[:context: {parent-context}]
 ifndef::parent-context[:!context:]
