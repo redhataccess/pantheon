@@ -46,40 +46,47 @@ Fork the repository so that you can create and work with branches independently 
 After you have forked the repository, you must clone it to your local machine and add the original `redhataccess/pantheon` repository as an upstream remote.
 
 1. From a terminal, clone the repository:
-       ```
-       $ git clone git@github.com:<user-space>/pantheon.git
-       ```
+
+    ```sh
+    $ git clone git@github.com:<user-space>/pantheon.git
+    ```
 1. Set up `redhataccess/pantheon` as the upstream:
-       ```
-       $ cd pantheon
-       $ git remote add upstream git@github.com:redhataccess/pantheon.git
-       ```
+
+    ```sh
+    $ cd pantheon
+    $ git remote add upstream git@github.com:redhataccess/pantheon.git
+    ```
 
 ### Creating a working branch
 
 Whenever you work on a new issue, you must create a new working branch based on the latest version of the upstream master branch.
 
 1. Ensure you are on master
-       ```
-       $ git checkout master
-       ```
-1. Ensure your fork is up to date
-       ```
-       $ git pull upstream master
-       ```
-1. Create a working branch based on the issue in JIRA. For example:
-       ```
-       $ git checkout -b FCCEUD-<ID#>
-       ```       
 
-### Creating a pull request and completing review
+    ```sh
+    $ git checkout master
+    ```
+1. Ensure your fork is up to date
+
+    ```sh
+    $ git pull upstream master
+    ```
+1. Create a working branch based on the issue in JIRA. For example:
+
+
+    ```sh
+    $ git checkout -b FCCEUD-<ID#>
+    ```       
+
+### Creating a pull request and completing review 
 
 When your work is ready to be reviewed and merged, create a pull request.
 
 1. Push your working branch to your fork:
-       ```
-       $ git push -u origin <branch_name>
-       ```
+
+    ```sh
+    $ git push -u origin <branch_name>
+    ```
 1. From the repository page in GitHub, click **New pull request**.
 1. Select your working branch from the compare list.
 1. Add `WIP:` to the title of the pull request. This automatically converts the pull request to a draft pull request.
