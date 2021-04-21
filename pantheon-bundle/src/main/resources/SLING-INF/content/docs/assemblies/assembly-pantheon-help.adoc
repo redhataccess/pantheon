@@ -21,7 +21,7 @@ This document describes the main concepts, requirements, and actions in {Product
 
 include::../modules/ref_prerequisites.adoc[leveloffset=+1]
 
-ifeval::[{ProductName} == "Pantheon"]
+ifeval::["{ProductName}" == "Pantheon"]
 include::../modules/proc_submitting-documentation-feedback.adoc[leveloffset=+1]
 endif::[]
 
