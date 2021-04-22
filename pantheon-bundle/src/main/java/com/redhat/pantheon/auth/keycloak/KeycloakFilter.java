@@ -50,6 +50,7 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(KeycloakFilter.class.getName());
     private static final String KARAF_ETC = "karaf.etc";
     private static final String KEYCLOAKOIDCFILTER_CONFIG_FILE_NAME = "keycloak.json";
+    private static final int MAX_RETRIES = 3;
     protected KeycloakDeployment keycloakDeployment;
     private PathBasedKeycloakConfigResolver keycloakConfigResolver;
     /**
@@ -103,7 +104,18 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
             chain.doFilter(req, res);
             return;
         }
-        super.doFilter(req, res, chain);
+
+        // We see "failed to turn code into token: java.net.SocketException" in Stage and PROD
+        // discussion thread: https://lists.jboss.org/pipermail/keycloak-user/2016-November/008478.html
+        for (int count = 0; count < MAX_RETRIES; count++) {
+            try{
+                super.doFilter(req, res, chain);
+                // Stop retry if succeeded on the first attempt
+                count = MAX_RETRIES;
+            } catch (Exception e) {
+                throw  e;
+            }
+        }
     }
 
     private KeycloakDeployment createKeycloakDeploymentFrom(InputStream is) {

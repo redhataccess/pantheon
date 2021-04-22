@@ -15,7 +15,6 @@ public class XrefValidationHelper {
     }
 
     public List<String> getObjectsToValidate() {
-
         return xRefs;
     }
 
