@@ -50,7 +50,6 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(KeycloakFilter.class.getName());
     private static final String KARAF_ETC = "karaf.etc";
     private static final String KEYCLOAKOIDCFILTER_CONFIG_FILE_NAME = "keycloak.json";
-    private static final int MAX_RETRIES = 3;
     protected KeycloakDeployment keycloakDeployment;
     private PathBasedKeycloakConfigResolver keycloakConfigResolver;
     /**
