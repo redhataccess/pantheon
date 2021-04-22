@@ -105,7 +105,7 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
             return;
         }
 
-        // We see failed to turn code into token: java.net.SocketException in Stag and PROD
+        // We see "failed to turn code into token: java.net.SocketException" in Stage and PROD
         // discussion thread: https://lists.jboss.org/pipermail/keycloak-user/2016-November/008478.html
         for (int count = 0; count < MAX_RETRIES; count++) {
             try{
@@ -116,8 +116,6 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
                 throw  e;
             }
         }
-
-
     }
 
     private KeycloakDeployment createKeycloakDeploymentFrom(InputStream is) {
