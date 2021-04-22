@@ -192,6 +192,12 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                         progressWarningValue={this.state.progressWarningValue}
                         onShowBulkEditConfirmation={this.updateShowBulkEditConfirmation}
                         onMetadataEditError={this.updateMetadataEditError}
+                        onProgressSuccessValue={this.updateProgressSuccessValue}
+                        onProgressFailureValue={this.updateProgressFailureValue}
+                        onProgressWarningValue={this.updateProgressWarningValue}
+                        onUpdateSucceeded={this.updateUpdateSucceeded}
+                        onUpdateIgnored={this.updateUpdateIgnored}
+                        onUpdateFailed={this.updateUpdateFailed}
                     />}
 
                 {this.props.isEditMetadata && metadataModal}
@@ -351,11 +357,11 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                             }).then(response => {
                                 if (response.status === 201 || response.status === 200) {
 
-                                    let docs = new Array()
-                                    docs = this.state.documentsSucceeded
-                                    docs.push(docPath)
+                                    // let docs = new Array()
+                                    // docs = this.state.documentsSucceeded
+                                    // docs.push(docPath)
                                     this.setState({
-                                        documentsSucceeded: docs,
+                                        documentsSucceeded: [...this.state.documentsSucceeded, docPath],
                                         usecaseValue: "",
                                         product: { label: "", value: "" },
                                         productVersion: { label: "", uuid: "" },
@@ -410,6 +416,30 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
     private updateMetadataEditError = (metadataEditError) => {
         this.setState({ metadataEditError })
+    }
+
+    private updateProgressSuccessValue = (progressSuccessValue) => {
+        this.setState({ progressSuccessValue })
+    }
+
+    private updateProgressFailedValue = (progressFailedValue) => {
+        this.setState({ progressFailedValue })
+    }
+
+    private updateProgressWarnValue = (progressWarningValue) => {
+        this.setState({ progressWarningValue })
+    }
+
+    private updateUpdateSucceeded = (updateSucceeded) => {
+        this.setState({ updateSucceeded })
+    }
+
+    private updateUpdateFailed = (updateFailed) => {
+        this.setState({ updateFailed })
+    }
+
+    private updateUpdateIgnored = (updateIgnored) => {
+        this.setState({ updateIgnored })
     }
 
     private calculateFailureProgress = (num: number) => {
