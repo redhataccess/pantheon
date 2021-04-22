@@ -127,7 +127,7 @@ public abstract class VersionUploadOperation extends AbstractPostOperation {
             resolver.commit();
 
             Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
-            XrefValidationHelper.initList();
+            new XrefValidationHelper().initList();
             asciidoctorService.getDocumentHtml(document, localeObj, document.getWorkspace().getCanonicalVariantName(),
                     true, context, true);
 
