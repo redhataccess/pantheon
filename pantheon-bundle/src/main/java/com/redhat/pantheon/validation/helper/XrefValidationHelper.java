@@ -10,6 +10,10 @@ public class XrefValidationHelper {
 
     private static List<String> xRefs;
 
+    public XrefValidationHelper() {
+        initList();
+    }
+
     public static List<String> getObjectsToValidate() {
         return xRefs;
     }
@@ -20,7 +24,7 @@ public class XrefValidationHelper {
 
     public static void setObjectsToValidate(List<String> objectsToValidate) {
         if(objectsToValidate.size()>0){
-                xRefs.addAll(objectsToValidate);
+            xRefs.addAll(objectsToValidate);
         }
     }
 }
