@@ -10,6 +10,10 @@ public class XrefValidationHelper {
 
     private static List<String> xRefs;
 
+    public XrefValidationHelper() {
+        initList();
+    }
+
     public static List<String> getObjectsToValidate() {
         return xRefs;
     }
