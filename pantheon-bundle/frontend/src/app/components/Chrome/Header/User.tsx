@@ -27,7 +27,7 @@ class User extends Component<IAppState, IState> {
 
     public render() {
         const dropdownItems = [
-            <DropdownItem key="help" href="/pantheon/docs/assemblies/assembly-pantheon-help.html" target="_blank">Help</DropdownItem>,
+            <DropdownItem key="User guide" href="/pantheon/docs/assemblies/assembly-pantheon-help.html" target="_blank">Help</DropdownItem>,
             <DropdownItem key="contribute" href="https://github.com/redhataccess/pantheon" target="_blank">Contribute to Pantheon</DropdownItem>
         ]
         return (
