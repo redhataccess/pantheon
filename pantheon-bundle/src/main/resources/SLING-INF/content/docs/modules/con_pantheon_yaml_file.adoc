@@ -29,7 +29,7 @@ For example, if you specify `name: rhel_docs`, and one of your files is named [f
 NOTE: You must define the values for `server` and `repository`.
 
 .Example {ProductShortName} configuration file
-// [options="nowrap" subs="normal"]
+[source,yaml,options="nowrap",subs="attributes+,+quotes"]
 ----
 # Config file for {ProductShortName}
 
