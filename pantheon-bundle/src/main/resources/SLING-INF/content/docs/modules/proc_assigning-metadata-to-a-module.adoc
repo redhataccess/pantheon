@@ -13,12 +13,12 @@ Metadata in modules and assemblies does the following:
 
 [NOTE]
 ====
-Module type is also metadata. You define the module's type directly within the module. See  xref:identifying-module-types_assembly-help[Identifying {ProductShortName} module types].
+Module type is also metadata. You define the module's type directly within the module. See xref:identifying-module-types_assembly-help[Identifying {ProductShortName} module types].
 ====
 
 .Prerequisites
 
-* You are logged in.
+* You are logged in to {ProductShortName}.
 * The {ContentTerm} to be assigned metadata has been imported into {ProductShortName}.
 
 .Procedure

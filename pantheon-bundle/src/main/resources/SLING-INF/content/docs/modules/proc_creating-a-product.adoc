@@ -7,7 +7,7 @@ A product must exist in {ProductName} before you can assign a product name to th
 .Prerequisites
 
 * You are logged in to {ProductShortName}.
-* You have permissions to publish content in {ProductShortName}.
+* You are assigned the publisher role.
 
 .Procedure
 
@@ -34,3 +34,4 @@ Entering the above information creates a {ProductShortName} product named `.NET 
 
 // .Additional resources
 // link:placeholder.url.com[Creating a product version]
+// link:placeholder.url.com[Pantheon user roles]
