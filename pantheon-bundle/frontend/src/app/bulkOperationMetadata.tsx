@@ -422,24 +422,24 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
         this.setState({ progressSuccessValue })
     }
 
-    private updateProgressFailedValue = (progressFailedValue) => {
+    private updateProgressFailureValue = (progressFailedValue) => {
         this.setState({ progressFailedValue })
     }
 
-    private updateProgressWarnValue = (progressWarningValue) => {
+    private updateProgressWarningValue = (progressWarningValue) => {
         this.setState({ progressWarningValue })
     }
 
-    private updateUpdateSucceeded = (updateSucceeded) => {
-        this.setState({ updateSucceeded })
+    private updateUpdateSucceeded = (confirmationSucceeded) => {
+        this.setState({ confirmationSucceeded })
     }
 
-    private updateUpdateFailed = (updateFailed) => {
-        this.setState({ updateFailed })
+    private updateUpdateFailed = (confirmationFailed) => {
+        this.setState({ confirmationFailed })
     }
 
-    private updateUpdateIgnored = (updateIgnored) => {
-        this.setState({ updateIgnored })
+    private updateUpdateIgnored = (confirmationIgnored) => {
+        this.setState({ confirmationIgnored })
     }
 
     private calculateFailureProgress = (num: number) => {
