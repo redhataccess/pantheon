@@ -1,6 +1,7 @@
 package com.redhat.pantheon.servlet;
 
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.extension.url.UrlException;
 import com.redhat.pantheon.extension.url.UrlProvider;
 import com.redhat.pantheon.model.ModelException;
 import com.redhat.pantheon.model.document.Document;
@@ -43,9 +44,9 @@ public class DocumentCustomerPortalUrlServlet extends SlingSafeMethodsServlet {
                     : ((Document) o).locale("en_US").get()
                     .variants().get()
                     .canonicalVariant().get();
-            UrlProvider provider = new CustomerPortalUrlUuidProvider();
-            response.getWriter().write(Optional.ofNullable(provider.generateUrlString(dv)).orElse(""));
-        } catch (ModelException e) {
+            UrlProvider provider = new CustomerPortalUrlUuidProvider(dv);
+            response.getWriter().write(Optional.ofNullable(provider.generateUrlString()).orElse(""));
+        } catch (ModelException | UrlException e) {
             throw new ServletException(e);
         }
     }

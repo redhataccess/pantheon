@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet.util;
 
 
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.extension.url.UrlException;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.ModelException;
@@ -169,8 +170,12 @@ public class ServletHelper {
         }
         if (assemblyVariant.released().isPresent() && System.getenv(PORTAL_URL) != null) {
             // Add Customer Portal view_uri
-            String view_uri = new CustomerPortalUrlUuidProvider().generateUrlString(assemblyVariant);
-            assemblyVariantDetails.put("view_uri", view_uri);
+            try {
+                String view_uri = new CustomerPortalUrlUuidProvider(assemblyVariant).generateUrlString();
+                assemblyVariantDetails.put("view_uri", view_uri);
+            } catch (UrlException e) {
+                // TODO - add error stuff here
+            }
         }
         if(addPath){
             assemblyVariantDetails.put("path", assemblyVariant.getParentLocale().getParent().getPath());

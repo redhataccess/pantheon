@@ -4,6 +4,7 @@ import com.redhat.pantheon.conf.GlobalConfig;
 import com.redhat.pantheon.extension.Events;
 import com.redhat.pantheon.extension.events.document.DocumentVersionUnpublishedEvent;
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.extension.url.UrlException;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.Child;
@@ -105,7 +106,7 @@ public class UnpublishVersion extends AbstractPostOperation {
                         .variant(variant).get();
 
                 // Need to cache the URL now because once the document is unpublished, it can no longer be constructed
-                String publishedUrl = new CustomerPortalUrlUuidProvider().generateUrlString(docVariant);
+                String publishedUrl = new CustomerPortalUrlUuidProvider(docVariant).generateUrlString();
 
                 super.run(request, response, processors);
 
@@ -114,7 +115,7 @@ public class UnpublishVersion extends AbstractPostOperation {
                 // TODO We need to change the event so that the right variant is processed
                 events.fireEvent(new DocumentVersionUnpublishedEvent(documentVersion, publishedUrl), 15); // FIXME - URL is lost to hydra when this actually fires because we generated from the no-longer-existing released version
             }
-        } catch (RepositoryException ex) {
+        } catch (RepositoryException | UrlException ex) {
             logger.error("An error has occured ", ex.getMessage());
         }
         log.debug("Operation UnPublishinging draft version,  completed");

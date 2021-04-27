@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet.module;
 
 import com.google.common.base.Charsets;
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.extension.url.UrlException;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.Child;
@@ -130,7 +131,7 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Return the body content of the module ONLY
         variantMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
-                        .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider()))
+                        .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider(moduleVariant)))
                         .andThen(Html.getElementById("doc-content", Html.getElementByTagName("cp-documentation", Html.getBody())))
                         .apply(releasedContent.get().jcrContent().get().jcrData().get()));
 
@@ -176,8 +177,12 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
-            String view_uri = new CustomerPortalUrlUuidProvider().generateUrlString(moduleVariant);
-            variantMap.put(VIEW_URI, view_uri);
+            try {
+                String view_uri = new CustomerPortalUrlUuidProvider(moduleVariant).generateUrlString();
+                variantMap.put(VIEW_URI, view_uri);
+            } catch (UrlException e) {
+                // TODO - add error message stuff here
+            }
         }
         else {
             variantMap.put(VIEW_URI, "");

@@ -1,6 +1,7 @@
 package com.redhat.pantheon.servlet.sitemap;
 
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.extension.url.UrlException;
 import com.redhat.pantheon.extension.url.UrlProvider;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.document.DocumentMetadata;
@@ -116,11 +117,12 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
 
         // Process external url
         if (System.getenv(PORTAL_URL) != null) {
-            UrlProvider provider = new CustomerPortalUrlUuidProvider();
             documentVariant = resource.adaptTo(DocumentVariant.class);
 
             if (documentVariant != null && documentVariant.released().isPresent()) {
-                locPath = provider.generateUrlString(documentVariant);
+                try {
+                    locPath = new CustomerPortalUrlUuidProvider(documentVariant).generateUrlString();
+                } catch (UrlException e) {}
             }
         } else {
             locPath = resource.getPath();
