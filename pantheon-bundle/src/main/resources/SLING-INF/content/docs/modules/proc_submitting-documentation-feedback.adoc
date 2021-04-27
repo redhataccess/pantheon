@@ -5,7 +5,14 @@ _module-type: PROCEDURE
 [role="_abstract"]
 If you encounter any documentation bugs or have any requests for additions or changes to the {ProductName} end-user documentation, you can open a Jira ticket to create a request for the documentation team.
 
-Do not submit documentation feedback to report a bug or to create a functionality request for Pantheon.
+Do not submit documentation feedback to report a bug or to create a functionality request for Pantheon 2.
+
+[NOTE]
+====
+For reporting Pantheon 2 product feedback:
+* Production problems or interruptions in service go on the CCSOPS Jira board.
+* New feature requests go on the CCS Jira board.
+====
 
 .Procedure
 
@@ -21,3 +28,8 @@ Description:: Enter information that fully explains the feedback. Include as muc
 . Click *Create*.
 
 Jira creates a new ticket, with ID *FCCEUD-<__n__>*.
+
+.Additional resources
+
+* Report Pantheon 2 Production problems or interruptions in service: link:https://projects.engineering.redhat.com/secure/QuickSearch.jspa?searchString=ccsops[CCSOPS Jira Kanban board]
+* New feature requests: link:https://projects.engineering.redhat.com/secure/RapidBoard.jspa?rapidView=5237&projectKey=CCS[CCS Jira Kanban board]
