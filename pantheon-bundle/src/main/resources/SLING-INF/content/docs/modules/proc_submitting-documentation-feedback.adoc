@@ -5,7 +5,7 @@ _module-type: PROCEDURE
 [role="_abstract"]
 If you encounter any documentation bugs or have any requests for additions or changes to the {ProductName} end-user documentation, you can open a Jira ticket to create a request for the documentation team.
 
-Do not submit documentation feedback to submit a bug or functionality request for Pantheon.
+Do not submit documentation feedback to report a bug or to create a functionality request for Pantheon.
 
 .Procedure
 
@@ -17,3 +17,7 @@ Project:: *FCC - Pantheon V2 End-User Documentation* (FCCEUD)
 Issue Type:: *Bug* or *Task*
 Summary:: This is the title of the ticket. Enter *`[FEEDBACK]`* Followed by a short description of the issue. For example: `[FEEDBACK] Broken link in module "Module types"`
 Description:: Enter information that fully explains the feedback. Include as much detail as you can, including any questions you would like answered.
+
+. Click *Create*.
+
+Jira creates a new ticket, with ID *FCCEUD-<__n__>*.
