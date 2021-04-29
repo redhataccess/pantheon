@@ -16,6 +16,7 @@ export interface IContentDisplayState {
     moduleTitle: string
     moduleType: string
     portalUrl: string
+    portalUrlType: string
     productValue: string
     releasePath: string
     releaseUpdateDate: string
@@ -52,6 +53,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
             moduleTitle: "",
             moduleType: "",
             portalUrl: "",
+            portalUrlType: "",
             productValue: "",
             releasePath: "",
             releaseUpdateDate: "",
@@ -109,14 +111,25 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== "-"
                             && this.state.variantUUID !== ""
                             && this.state.portalUrl !== ""
+                            && this.state.portalUrlType === "LIVE"
                             && <span><a href={this.state.portalUrl} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                         }
                     </LevelItem>
                     <LevelItem>
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== "-"
-                            && this.state.variantUUID !== ""
+                        {this.state.variantUUID !== ""
                             && this.state.portalUrl !== ""
+                            && this.state.portalUrlType === "LIVE"
                             && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
+                        }
+                        {this.state.variantUUID !== ""
+                            && this.state.portalUrl !== ""
+                            && this.state.portalUrlType === "PRELIVE"
+                            && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy pre-live URL  <CopyIcon /></a></span>
+                        }
+                        {this.state.variantUUID !== ""
+                            && this.state.portalUrl !== ""
+                            && this.state.portalUrlType === "ERROR"
+                            && <span>URL Warning: {this.state.portalUrl}</span>
                         }
 
                         <span>&emsp;{this.state.copySuccess !== "" && this.state.copySuccess}</span>
@@ -434,15 +447,12 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
     }
 
     private getPortalUrl = (path, variant) => {
-        const variantPath = "/content" + path + "/en_US/variants/" + variant + ".url.txt"
+        const variantPath = "/content" + path + "/en_US/variants/" + variant + ".url.json"
         fetch(variantPath)
             .then(resp => {
                 if (resp.ok) {
-                    resp.text().then(text => {
-                        // get portal url from api and set it only if it is not empty
-                        if (text.trim() !== "") {
-                            this.setState({ portalUrl: text })
-                        }
+                    resp.json().then(json => {
+                        this.setState({ portalUrl: json.url, portalUrlType: json.type})
                     })
                 }
             })

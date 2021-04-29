@@ -181,10 +181,9 @@ public class VariantJsonServlet extends AbstractJsonSingleQueryServlet {
                 String view_uri = new CustomerPortalUrlUuidProvider(moduleVariant).generateUrlString();
                 variantMap.put(VIEW_URI, view_uri);
             } catch (UrlException e) {
-                // TODO - add error message stuff here
+                variantMap.put(VIEW_URI, "");
             }
-        }
-        else {
+        } else {
             variantMap.put(VIEW_URI, "");
         }
         List<HashMap<String, String>>includeAssemblies = new ArrayList<>();

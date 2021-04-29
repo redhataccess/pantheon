@@ -32,6 +32,9 @@ public class CustomerPortalUrlUuidProvider extends CustomerPortalUrlProvider {
         try {
             DocumentMetadata metadata = documentVariant.latestVersion().get().metadata().get();
             ProductVersion pv = metadata.productVersion().getReference();
+            if (pv == null) {
+                throw new UrlException("Document does not have associated product/version metadata.");
+            }
             StringBuilder sb = new StringBuilder(getHost(documentVariant.getResourceResolver()));
             sb.append(URL_PREFIX)
                     .append(ServletUtils.toLanguageTag(getLocale(documentVariant))).append("/") // turns en_US into en-us which is likely a customer portal requirement (need to confirm)

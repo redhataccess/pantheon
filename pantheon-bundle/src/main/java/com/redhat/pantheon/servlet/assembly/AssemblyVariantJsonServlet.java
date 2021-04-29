@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import com.ibm.icu.util.ULocale;
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
 import com.redhat.pantheon.extension.url.UrlException;
+import com.redhat.pantheon.extension.url.UrlProvider;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.Child;
@@ -178,7 +179,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
                 String view_uri = new CustomerPortalUrlUuidProvider(assemblyVariant).generateUrlString();
                 variantMap.put(VIEW_URI, view_uri);
             } catch (UrlException e) {
-                // TODO - put error message stuff here
+                variantMap.put(VIEW_URI, "");
             }
         } else {
             variantMap.put(VIEW_URI, "");

@@ -19,6 +19,8 @@ import org.osgi.service.component.annotations.Component;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Component(
@@ -31,12 +33,14 @@ import java.util.Optional;
         resourceTypes = { "pantheon/moduleVariant", "pantheon/assemblyVariant", "pantheon/module", "pantheon/assembly" },
         methods = "GET",
         selectors = "url",
-        extensions = "txt")
+        extensions = "json")
 public class DocumentCustomerPortalUrlServlet extends SlingSafeMethodsServlet {
 
     @Override
     protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) throws ServletException, IOException {
         Resource r = request.getResource();
+        String url = "";
+        String type = "";
         try {
             Object o = ServletHelper.resourceToModel(r);
             DocumentVariant dv = o instanceof DocumentVariant
@@ -45,9 +49,15 @@ public class DocumentCustomerPortalUrlServlet extends SlingSafeMethodsServlet {
                     .variants().get()
                     .canonicalVariant().get();
             UrlProvider provider = new CustomerPortalUrlUuidProvider(dv);
-            response.getWriter().write(Optional.ofNullable(provider.generateUrlString()).orElse(""));
+            url = provider.generateUrlString();
+            type = provider.getUrlType().toString();
         } catch (ModelException | UrlException e) {
-            throw new ServletException(e);
+            url = e.getMessage();
+            type = "ERROR";
         }
+        Map<String, String> map = new HashMap<>();
+        map.put("url", url);
+        map.put("type", type);
+        ServletUtils.writeAsJson(response, map);
     }
 }
