@@ -1,5 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
+import com.redhat.pantheon.helper.Symlinks;
 import com.redhat.pantheon.model.Xref;
 import com.redhat.pantheon.model.assembly.TableOfContents;
 import com.redhat.pantheon.model.document.Document;
@@ -81,7 +82,7 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
             // Assume it's a relative path to a file in the same repo for now
             Resource containingFolder = documentVariant.getParentLocale().getParent().getParent();
             String targetPath = containingFolder.getPath() + "/" + filepath;
-            Resource desiredTarget = documentVariant.getResourceResolver().getResource(targetPath);
+            Resource desiredTarget = Symlinks.resolve(documentVariant.getResourceResolver(), targetPath);
 
             if (desiredTarget != null && XREF_ALLOWED_TARGET_TYPES.contains(desiredTarget.getResourceType())) {
                 UUID uuid = UUID.randomUUID();
