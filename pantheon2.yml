@@ -33,6 +33,6 @@ modules:
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/proc_versioning_a_product.adoc
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/proc_submitting-documentation-feedback.adoc
   # Reference modules
-  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/ref_identifying-module-types.adoc
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/ref_adding-module-types_to_modules_in_Pantheon.adoc
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/ref_pantheon-user-interface.adoc
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/ref_prerequisites.adoc
