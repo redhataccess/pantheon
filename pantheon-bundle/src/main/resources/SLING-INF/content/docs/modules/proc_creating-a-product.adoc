@@ -32,7 +32,7 @@ Product Description: Documentation for the .NET Core framework.
 Product Version: 4.4-Beta
 Version URL Fragment: 4.4-beta
 
-Entering the above information creates a {ProductShortName} product named `.NET Core`. The URL for documentation that is associated with this product includes `net_core` to identify the product. For example, after creating the product version `4.4-beta` and assigning a module the `*.NET Core*` product and version `*4.4-beta*`, the resulting URL for that module is:
+Entering the above information creates a {ProductShortName} product named `.NET Core`. The URL for documentation that is associated with this product includes the URL Fragment `net_core` to identify the product, and the Version URL Fragment is `4.4-beta`. The resulting URL for that module is:
 
 `\https://access.stage.redhat.com/documentation/en-us/topic/net_core/4.4-beta/_module-UUID_`
 
