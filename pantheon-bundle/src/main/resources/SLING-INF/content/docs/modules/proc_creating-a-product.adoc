@@ -13,10 +13,12 @@ A product must exist in {ProductName} before you can assign a product name to th
 
 . Navigate to menu:Products[New Product].
 
-. Enter the following information:
-  Product Name:: The text that appears in {ProductShortName}, the document preview, and in user-facing content.
-  Product UrlFragment:: This string appears in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
-  Product Description (optional):: A description of the product.
+. Enter the following information, items marked with a star are mandatory:
+  Product Name *:: The text that appears in {ProductShortName}, the document preview, and in user-facing content.
+  Product URL Fragment *:: This string appears in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
+  Product Description:: A description of the product.
+  Product Version *:: The product version.
+  Version URL Fragment *:: This string appears in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
 
 . Click btn:[Save].
 
@@ -24,9 +26,11 @@ After creating a product, you need to create a product version.
 
 .Example
 
-Product Name:: .NET Core
-Product UrlFragment:: `net_core`
-Product Description:: Documentation for the .NET Core framework.
+Product Name: .NET Core
+Product URL Fragment: `net_core`
+Product Description: Documentation for the .NET Core framework.
+Product Version: 4.4-Beta
+Version URL Fragment: 4.4-beta
 
 Entering the above information creates a {ProductShortName} product named `.NET Core`. The URL for documentation that is associated with this product includes `net_core` to identify the product. For example, after creating the product version `4.4-beta` and assigning a module the `*.NET Core*` product and version `*4.4-beta*`, the resulting URL for that module is:
 
