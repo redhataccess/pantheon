@@ -12,17 +12,13 @@ A product must exist in {ProductName} before you can assign a product name to th
 .Procedure
 
 . Navigate to menu:Products[New Product].
-
 . Enter the following information, items marked with a star are mandatory:
   Product Name *:: The text that appears in {ProductShortName}, the document preview, and in user-facing content.
   Product URL Fragment *:: This string appears in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
   Product Description:: A description of the product.
   Product Version *:: The product version.
   Version URL Fragment *:: This string appears in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
-
 . Click btn:[Save].
-
-After creating a product, you need to create a product version.
 
 .Example
 
