@@ -22,13 +22,13 @@ A product must exist in {ProductName} before you can assign a product name to th
 
 .Example
 
-Product Name: .NET Core
-Product URL Fragment: `net_core`
-Product Description: Documentation for the .NET Core framework.
-Product Version: 4.4-Beta
-Version URL Fragment: 4.4-beta
+* Product Name: .NET Core
+* Product URL Fragment: net_core
+* Product Description: Documentation for the .NET Core framework.
+* Product Version: 4.4-Beta
+* Version URL Fragment: 4.4-beta
 
-Entering the above information creates a {ProductShortName} product named `.NET Core`. The URL for documentation that is associated with this product includes the URL Fragment `net_core` to identify the product, and the Version URL Fragment is `4.4-beta`. The resulting URL for that module is:
+Entering the above information creates a {ProductShortName} product named _.NET Core_. The URL for documentation that is associated with this product includes the URL Fragment _net_core_ to identify the product, and the Version URL Fragment is _4.4-beta_. The resulting URL for that module is:
 
 `\https://access.stage.redhat.com/documentation/en-us/topic/net_core/4.4-beta/_module-UUID_`
 
