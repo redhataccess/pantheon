@@ -36,6 +36,5 @@ Entering the above information creates a {ProductShortName} product named `.NET 
 
 `\https://access.stage.redhat.com/documentation/en-us/topic/net_core/4.4-beta/_module-UUID_`
 
-
 // .Additional resources
 // link:placeholder.url.com[Creating a product version]
