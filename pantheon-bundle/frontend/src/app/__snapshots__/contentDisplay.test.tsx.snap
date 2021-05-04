@@ -75,9 +75,9 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
         <Text>
           <strong>
             <span
-              id="span-source-type-draft-uploaded"
+              id="span-source-type-firstpublished"
             >
-              Draft uploaded
+              First Published Date
             </span>
           </strong>
         </Text>
@@ -88,9 +88,9 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
         <Text>
           <strong>
             <span
-              id="span-source-type-published"
+              id="span-source-type-lastpublished"
             >
-              Published
+              Last Published Date
             </span>
           </strong>
         </Text>
@@ -255,9 +255,9 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
         <Text>
           <strong>
             <span
-              id="span-source-type-draft-uploaded"
+              id="span-source-type-firstpublished"
             >
-              Draft uploaded
+              First Published Date
             </span>
           </strong>
         </Text>
@@ -268,9 +268,9 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
         <Text>
           <strong>
             <span
-              id="span-source-type-published"
+              id="span-source-type-lastpublished"
             >
-              Published
+              Last Published Date
             </span>
           </strong>
         </Text>
