@@ -7,6 +7,8 @@ import {
 } from "@patternfly/react-core"
 import { Header } from "@app/components/Chrome/Header/Header"
 import { Sidebar } from "@app/components/Chrome/Sidebar/Sidebar"
+import { GitImportProvider } from "./contexts/GitImportContext"
+import GitImportAlert from "@app/GitImportAlert"
 import { Routes } from "@app/routes"
 import "@app/app.css"
 
@@ -46,14 +48,14 @@ class App extends Component<any, IAppState> {
     fetch("/api/userinfo.json")
       .then(response => response.json())
       .then(responseJSON => {
-          this.setState({
-            isAdmin: responseJSON.userID === App.ADMIN_USER || responseJSON.groups.includes(App.ADMIN_GROUP),
-            isAuthor: responseJSON.groups.includes(App.AUTHOR_GROUP),
-            isPublisher: responseJSON.groups.includes(App.PUBLISHER_GROUP),
-            userAuthenticated: responseJSON.userID !== App.ANON_USER,
-            username: responseJSON.userID
-          })
-    })
+        this.setState({
+          isAdmin: responseJSON.userID === App.ADMIN_USER || responseJSON.groups.includes(App.ADMIN_GROUP),
+          isAuthor: responseJSON.groups.includes(App.AUTHOR_GROUP),
+          isPublisher: responseJSON.groups.includes(App.PUBLISHER_GROUP),
+          userAuthenticated: responseJSON.userID !== App.ANON_USER,
+          username: responseJSON.userID
+        })
+      })
   }
 
   public onNavToggle() {
@@ -68,13 +70,21 @@ class App extends Component<any, IAppState> {
   public render() {
     return (
       <React.Fragment>
-       <Page
-          header={<Header isNavOpen={this.state.isNavOpen} onNavToggle={this.onNavToggle} appState={this.state} />}
-          sidebar={<Sidebar isNavOpen={this.state.isNavOpen} appState={this.state} />}>
-          <PageSection variant={PageSectionVariants.light}>
-            <Routes {...this.state} />
-          </PageSection>
-        </Page>
+        
+          <Page
+            header={<Header isNavOpen={this.state.isNavOpen} onNavToggle={this.onNavToggle} appState={this.state} />}
+            sidebar={<Sidebar isNavOpen={this.state.isNavOpen} appState={this.state} />}>
+          <GitImportProvider>
+            <PageSection variant={PageSectionVariants.light}>
+            
+            <React.Fragment><GitImportAlert {...this.state}/></React.Fragment>
+
+              <Routes {...this.state}>
+              </Routes>
+            </PageSection>
+            </GitImportProvider>
+          </Page>
+        
       </React.Fragment>
     );
   }

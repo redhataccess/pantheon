@@ -1,5 +1,5 @@
 import React from 'react'
-import { GitImport } from '@app/gitImport'
+import GitImport from "./gitImport"
 import '@app/fetchMock'
 
 import { mount, shallow } from 'enzyme'
