@@ -35,10 +35,10 @@ exports[`SearchResults tests should render default Search component 1`] = `
             "title": "Repository",
           },
           Object {
-            "title": "Updated date",
+            "title": "Upload Date",
           },
           Object {
-            "title": "Published date",
+            "title": "Last Published Date",
           },
         ]
       }
