@@ -11,14 +11,12 @@ export interface IContentDisplayState {
     attributesFilePath: string
     copySuccess: string
     draftPath: string
-    draftUpdateDate: string
     modulePath: string
     moduleTitle: string
     moduleType: string
     portalUrl: string
     productValue: string
     releasePath: string
-    releaseUpdateDate: string
     releaseVersion: string
     results: any
     variant: string
@@ -29,6 +27,8 @@ export interface IContentDisplayState {
     versionUrlFragment: string
     locale: string
     assemblyData: any
+    firstPublishDate: string
+    lastPublishDate: string
 }
 
 export interface IModuleDisplayState extends IContentDisplayState {
@@ -47,14 +47,12 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
             attributesFilePath: "",
             copySuccess: "",
             draftPath: "",
-            draftUpdateDate: "",
             modulePath: "",
             moduleTitle: "",
             moduleType: "",
             portalUrl: "",
             productValue: "",
             releasePath: "",
-            releaseUpdateDate: "",
             releaseVersion: "",
             results: {},
             variant: "DEFAULT",
@@ -66,7 +64,9 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
             portalHostUrl: "",
             productUrlFragment: "",
             versionUrlFragment: "",
-            locale: ""
+            locale: "",
+            firstPublishDate: "",
+            lastPublishDate: ""
         }
     }
 
@@ -106,14 +106,14 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     </LevelItem>
                     <LevelItem />
                     <LevelItem>
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== "-"
+                        {this.state.lastPublishDate.trim() !== "" && this.state.lastPublishDate !== "-"
                             && this.state.variantUUID !== ""
                             && this.state.portalUrl !== ""
                             && <span><a href={this.state.portalUrl} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                         }
                     </LevelItem>
                     <LevelItem>
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== "-"
+                        {this.state.lastPublishDate.trim() !== "" && this.state.lastPublishDate !== "-"
                             && this.state.variantUUID !== ""
                             && this.state.portalUrl !== ""
                             && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
@@ -139,12 +139,12 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     </LevelItem>}
                     <LevelItem>
                         <TextContent>
-                            <Text><strong><span id="span-source-type-draft-uploaded">Draft uploaded</span></strong></Text>
+                            <Text><strong><span id="span-source-type-firstpublished">First Published Date</span></strong></Text>
                         </TextContent>
                     </LevelItem>
                     <LevelItem>
                         <TextContent>
-                            <Text><strong><span id={this.isAssembly ? "span-source-type-draft-published" : "span-source-type-published"}>Published</span></strong></Text>
+                            <Text><strong><span id="span-source-type-lastpublished">Last Published Date</span></strong></Text>
                         </TextContent>
                     </LevelItem>
                 </Level>
@@ -170,9 +170,9 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         <TextContent>
                             <Text>
                                 <span>
-                                    {this.state.draftUpdateDate.trim() !== ""
-                                        && this.state.draftUpdateDate.length >= 15 ?
-                                        new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.draftUpdateDate)) : "--"}
+                                    {this.state.firstPublishDate.trim() !== ""
+                                        && this.state.firstPublishDate.length >= 15 ?
+                                        new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.firstPublishDate)) : "--"}
                                 </span>
                             </Text>
                         </TextContent>
@@ -181,9 +181,9 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         <TextContent>
                             <Text>
                                 <span>
-                                    {this.state.releaseUpdateDate.trim() !== ""
-                                        && this.state.releaseUpdateDate.length >= 15 ?
-                                        new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.releaseUpdateDate)) : "--"}
+                                    {this.state.lastPublishDate.trim() !== ""
+                                        && this.state.lastPublishDate.length >= 15 ?
+                                        new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.lastPublishDate)) : "--"}
                                 </span>
                             </Text>
                         </TextContent>
@@ -230,18 +230,15 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
         return window.open(docPath)
     }
 
-    private updateDate = (draftDate, releaseDate, releaseVersion, variantUUID) => {
+    private updateDate = (releaseVersion, variantUUID) => {
         this.setState({
-            draftUpdateDate: draftDate,
             variantUUID,
-            releaseUpdateDate: releaseDate,
             releaseVersion,
         })
     }
 
 
     private fetchModuleDetails = async (data) => {
-        console.log(data)
         await this.getVariantParam()
         const path = data.location.pathname.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         this.setState({
@@ -264,9 +261,6 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         if (!myChild.__children__) {
                             continue
                         }
-                        if (myChild.__name__ === "draft") {
-                            this.setState({ draftUpdateDate: myChild["jcr:created"] })
-                        }
 
                         for (const myGrandchild of myChild.__children__) {
                             if (!myGrandchild.__children__) {
@@ -275,6 +269,12 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
 
                             for (const offspring of myGrandchild.__children__) {
                                 if (offspring.__name__ === "metadata") {
+                                    if (myGrandchild.__name__ === "released") {
+                                        this.setState({
+                                            firstPublishDate: offspring["pant:dateFirstPublished"],
+                                            lastPublishDate: offspring["pant:datePublished"]
+                                        })
+                                    }
 
                                     if (offspring[Fields.JCR_TITLE] !== undefined) {
 

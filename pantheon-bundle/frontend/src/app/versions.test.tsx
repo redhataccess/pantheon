@@ -22,7 +22,7 @@ const props = {
     onGetVersion: (versionValue) => anymatch,
     onGetUrl: (url) => anymatch,
     productInfo: "Red Hat Enterprise Linux",
-    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
+    updateDate: (releaseVersion, variantUUID) => anymatch,
     variant: "test",
     variantUUID: "abcd-1234",
     versionModulePath: "/modules/test_module/en_US/variants/test/draft",
@@ -195,12 +195,12 @@ describe("Versions tests", () => {
             onGetVersion: (versionValue) => anymatch,
             onGetUrl: (url) => anymatch,
             productInfo: "Red Hat Enterprise Linux",
-            updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
+            updateDate: (releaseVersion, variantUUID) => anymatch,
             variant: "DEFAULT",
             variantUUID: "abcd-1234",
             versionModulePath: "versionPath",
         }
-        state.updateDate("-", "-", 1, "1234")
+        state.updateDate(1, "1234")
         expect(state.modulePath).toEqual("somePath")
         expect(state.versionModulePath).toEqual("versionPath")
     })

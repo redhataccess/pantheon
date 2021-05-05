@@ -279,6 +279,12 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("pant:publishedDate","-");
         }
 
+        if(releasedMetadata.isPresent() && releasedMetadata.get().dateFirstPublished().get()!=null){
+            m.put("pant:dateFirstPublished",sdf.format(releasedMetadata.get().dateFirstPublished().get().getTime()));
+        }else{
+            m.put("pant:dateFirstPublished","-");
+        }
+
         if(draftMetadata.isPresent() && draftMetadata.get().title().get()!=null){
             m.put("jcr:title",draftMetadata.get().title().get());
         }else if(releasedMetadata.isPresent() && releasedMetadata.get().title().get()!=null){
