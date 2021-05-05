@@ -357,11 +357,11 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                             }).then(response => {
                                 if (response.status === 201 || response.status === 200) {
 
-                                    // let docs = new Array()
-                                    // docs = this.state.documentsSucceeded
-                                    // docs.push(docPath)
+                                    let docs = new Array()
+                                    docs = this.state.documentsSucceeded
+                                    docs.push(docPath)
                                     this.setState({
-                                        documentsSucceeded: [...this.state.documentsSucceeded, docPath],
+                                        documentsSucceeded: docPath,
                                         usecaseValue: "",
                                         product: { label: "", value: "" },
                                         productVersion: { label: "", uuid: "" },

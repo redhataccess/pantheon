@@ -144,9 +144,9 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
     this.props.onProgressSuccessValue(0)
     this.props.onProgressWarningValue(0)
     this.props.onProgressWarningValue(0)
-    this.props.onUpdateSucceeded(0)
-    this.props.onUpdateIgnored(0)
-    this.props.onUpdateFailed(0)
+    this.props.onUpdateSucceeded("")
+    this.props.onUpdateIgnored("")
+    this.props.onUpdateFailed("")
   }
 }
 
