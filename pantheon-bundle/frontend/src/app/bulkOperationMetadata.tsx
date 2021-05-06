@@ -192,6 +192,12 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                         progressWarningValue={this.state.progressWarningValue}
                         onShowBulkEditConfirmation={this.updateShowBulkEditConfirmation}
                         onMetadataEditError={this.updateMetadataEditError}
+                        onProgressSuccessValue={this.updateProgressSuccessValue}
+                        onProgressFailureValue={this.updateProgressFailureValue}
+                        onProgressWarningValue={this.updateProgressWarningValue}
+                        onUpdateSucceeded={this.updateUpdateSucceeded}
+                        onUpdateIgnored={this.updateUpdateIgnored}
+                        onUpdateFailed={this.updateUpdateFailed}
                     />}
 
                 {this.props.isEditMetadata && metadataModal}
@@ -355,7 +361,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                                     docs = this.state.documentsSucceeded
                                     docs.push(docPath)
                                     this.setState({
-                                        documentsSucceeded: docs,
+                                        documentsSucceeded: docPath,
                                         usecaseValue: "",
                                         product: { label: "", value: "" },
                                         productVersion: { label: "", uuid: "" },
@@ -410,6 +416,30 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
     private updateMetadataEditError = (metadataEditError) => {
         this.setState({ metadataEditError })
+    }
+
+    private updateProgressSuccessValue = (progressSuccessValue) => {
+        this.setState({ progressSuccessValue })
+    }
+
+    private updateProgressFailureValue = (progressFailedValue) => {
+        this.setState({ progressFailedValue })
+    }
+
+    private updateProgressWarningValue = (progressWarningValue) => {
+        this.setState({ progressWarningValue })
+    }
+
+    private updateUpdateSucceeded = (confirmationSucceeded) => {
+        this.setState({ confirmationSucceeded })
+    }
+
+    private updateUpdateFailed = (confirmationFailed) => {
+        this.setState({ confirmationFailed })
+    }
+
+    private updateUpdateIgnored = (confirmationIgnored) => {
+        this.setState({ confirmationIgnored })
     }
 
     private calculateFailureProgress = (num: number) => {

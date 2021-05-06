@@ -17,6 +17,12 @@ export interface IBulkOperationProps {
   onShowBulkEditConfirmation: (showBulkEditConfirmation) => any
   onMetadataEditError: (metadataEditError) => any
   updateIsEditMetadata: (isEditMetadata) => any
+  onProgressSuccessValue: (progressSuccessValue) => any
+  onProgressFailureValue: (progressFailureValue) => any
+  onProgressWarningValue: (progressWarningValue) => any
+  onUpdateSucceeded: (updateSucceeded) => any
+  onUpdateIgnored: (updateIgnored) => any
+  onUpdateFailed: (updateFailed) => any
 }
 
 class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any>{
@@ -135,6 +141,12 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
     this.props.onShowBulkEditConfirmation(false)
     this.props.onMetadataEditError("")
     this.props.updateIsEditMetadata(false)
+    this.props.onProgressSuccessValue(0)
+    this.props.onProgressWarningValue(0)
+    this.props.onProgressWarningValue(0)
+    this.props.onUpdateSucceeded("")
+    this.props.onUpdateIgnored("")
+    this.props.onUpdateFailed("")
   }
 }
 
