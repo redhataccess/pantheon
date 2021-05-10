@@ -60,7 +60,6 @@ export function GitImportProvider({ children }: IGitImportProviderProps) {
       headers: hdrs,
       method: 'POST'
     }).then(response => response.text().then(text => {
-      console.log('TEXT!!!!', text)
       statusKey = text;
       //if first fetch fails, upload has failed a return a single upload with 0 total files
       if (text.includes("error")) {
@@ -86,8 +85,6 @@ export function GitImportProvider({ children }: IGitImportProviderProps) {
             headers: hdrs,
             method: 'POST'
           })
-            // .catch(e => console.error("ERROR! in /status", e));
-
         };
         poll({
           fn: getStatus,

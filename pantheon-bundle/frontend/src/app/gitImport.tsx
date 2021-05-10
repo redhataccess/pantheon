@@ -54,7 +54,6 @@ export default function GitImport(props: any) {
 
   return (
     <React.Fragment>
-      {console.log('COTEXT TYPE', context)}
       <Bullseye>
         <div className="app-container">
           {isFormSubmitted && (
