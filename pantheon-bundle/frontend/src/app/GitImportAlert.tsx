@@ -1,48 +1,34 @@
 import React, { useContext, useEffect, Component, useState } from "react";
-import { AlertGroup, Alert, AlertActionCloseButton } from "@patternfly/react-core";
+import { AlertGroup, Alert } from "@patternfly/react-core";
 import "@app/app.css";
-import { GitImportContext } from "@app/contexts/GitImportContext"
-
+import { GitImportContext, IGitImport } from "@app/contexts/GitImportContext"
 
 export default function GitImportAlert(props: any) {
+  const [uploadsDisplayed, setUploadsDisplayed] = useState([] as IGitImport[]);
+  const { uploads } = useContext(GitImportContext);
+  const uploadsCopy = [...uploads];
 
-const [reposUploaded, setReposUploaded] = useState([]as any)
-
-const { uploads } = useContext(GitImportContext);
-useEffect(()=> {
-  setReposUploaded(uploads)
-
-}, [uploads])
-console.log('GITIMPORTALET', uploads)
-return (
-  <AlertGroup isToast className="git-import-alert-group">
-  {/* { reposUploaded.length > 0 && reposUploaded.map(upload =>  */}
-    <Alert
-    title="test">
-     <p>Repository name: </p>
-     <p>Total files uploaded: </p>
-   </Alert>
-   {reposUploaded.map(u => <p>{u.repoName}</p>)}
-  {/* )} */}
-   </AlertGroup>
-);
+  useEffect(() => {
+    for (let i = 0; i < uploadsDisplayed.length; i++) {
+      if (uploadsDisplayed[i].id === uploadsCopy[i].id) {
+        uploadsCopy.splice(i, 1);
+      }
+    }
+    setUploadsDisplayed([...uploads]);
+  }, [uploads]);
 
   return (
-       <AlertGroup isToast className="git-import-alert-group">
-       { reposUploaded.length > 0 && reposUploaded.map(upload => 
-         <Alert
-         isLiveRegion
-          variant={reposUploaded.success === true ? "success" : "danger"}
-          title={reposUploaded.success === true ? "Git Import Successful" : "Git Import Failed"}
-          key={`alert-${reposUploaded.repoName}`}
-          timeout
-          // actionClose={<AlertActionCloseButton onClose={() => alert('Clicked the close button')} />}
-
-        >
-          <p>Repository name: {reposUploaded.repoName}</p>
-          <p>Total files uploaded: {reposUploaded.totalFiles}</p>
-        </Alert>
-       )}
-        </AlertGroup>
+    <AlertGroup isToast className="git-import-alert-group">
+      {(uploadsCopy && uploadsCopy.length > 0) && uploadsCopy.map((upload: any) => {
+        return <Alert
+          isLiveRegion
+          variant={upload.success === true ? "success" : "danger"}
+          title={upload.success === true ? "Git Import Successful" : "Git Import Failed"}
+          key={`alert-${upload.repoName}`}
+          timeout>
+          <p>Repository name: {upload.repoName}</p>
+          <p>Total files uploaded: {upload.totalFiles}</p>
+        </Alert>})}
+    </AlertGroup>
   );
 }

@@ -69,23 +69,18 @@ class App extends Component<any, IAppState> {
 
   public render() {
     return (
-      <React.Fragment>
-        
+      <GitImportProvider>
+        <React.Fragment>
           <Page
             header={<Header isNavOpen={this.state.isNavOpen} onNavToggle={this.onNavToggle} appState={this.state} />}
             sidebar={<Sidebar isNavOpen={this.state.isNavOpen} appState={this.state} />}>
-          <GitImportProvider>
+            <GitImportAlert />
             <PageSection variant={PageSectionVariants.light}>
-            
-            <React.Fragment><GitImportAlert {...this.state}/></React.Fragment>
-
-              <Routes {...this.state}>
-              </Routes>
+              <Routes {...this.state} />
             </PageSection>
-            </GitImportProvider>
           </Page>
-        
-      </React.Fragment>
+        </React.Fragment>
+      </GitImportProvider>
     );
   }
 }

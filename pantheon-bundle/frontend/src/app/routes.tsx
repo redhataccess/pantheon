@@ -9,8 +9,6 @@ import GitImport from "./gitImport"
 import { ContentDisplay }  from "@app/contentDisplay"
 import { IAppState } from "./app"
 import { ProductProvider } from "./contexts/ProductContext"
-// import { GitImportProvider } from "./contexts/GitImportContext"
-import GitImportAlert from "./GitImportAlert"
 import { ErrorBoundary } from "./ErrorBoundary"
 
 interface IAppRoute {
