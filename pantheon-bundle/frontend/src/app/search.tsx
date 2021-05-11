@@ -305,10 +305,10 @@ class Search extends Component<IAppState, ISearchState> {
           <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length !== 1} onClick={this.handleEditMetadata} data-testid="edit_metadata">Edit metadata</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length !== 1} onClick={()=>this.handleBulkPublish('publish')}>Publish</Button>
+          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length !== 1} onClick={() => this.handleBulkPublish('publish')}>Publish</Button>
         </ToolbarItem>}
         {this.props.userAuthenticated && (this.props.isPublisher || this.props.isAdmin) && <ToolbarItem>
-          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length !== 1} onClick={()=>this.handleBulkPublish('unpublish')}>Unpublish</Button>
+          <Button variant="primary" isAriaDisabled={this.state.isBulkOperationButtonDisabled || this.state.repositoriesSelected.length !== 1} onClick={() => this.handleBulkPublish('unpublish')}>Unpublish</Button>
         </ToolbarItem>}
 
       </React.Fragment>
@@ -345,7 +345,7 @@ class Search extends Component<IAppState, ISearchState> {
                 bulkOperationCompleted={this.state.bulkOperationCompleted}
                 updateBulkOperationCompleted={this.updateBulkOperationCompleted}
               />}
-               {this.state.isBulkUnpublish && <BulkOperationPublish 
+              {this.state.isBulkUnpublish && <BulkOperationPublish
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isBulkPublish={this.state.isBulkPublish}
@@ -635,7 +635,7 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   private handleEditMetadata = (event) => {
-    this.setState({isBulkPublish: false, isBulkUnpublish: false})
+    this.setState({ isBulkPublish: false, isBulkUnpublish: false })
     if (this.state.repositoriesSelected.length > 1) {
       this.setState({ bulkOperationWarn: true }, () => {
         this.setState({ isBulkOperationButtonDisabled: true, bulkOperationCompleted: false })
@@ -656,32 +656,32 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   private handleBulkPublish = (text) => {
-    this.setState({isEditMetadata: false, bulkOperationCompleted: false})
+    this.setState({ isEditMetadata: false, bulkOperationCompleted: false })
     //handle warning if bulk publish/unpublish attempted on > 1 repo
     if (this.state.repositoriesSelected.length > 1) {
       this.setState({ bulkOperationWarn: true }, () => {
         this.setState({ isBulkOperationButtonDisabled: true })
       })
-    } else{
+    } else {
       this.setState({
         bulkOperationWarn: false
       }, () => {
         if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
           this.setState({ isBulkOperationButtonDisabled: false })
           //determine if publish or unpublish bulk operation
-          if(text == 'publish'){
+          if (text == 'publish') {
             this.setState({ isBulkPublish: !this.state.isBulkPublish, isBulkUnpublish: false })
           }
-          if(text == 'unpublish'){
+          if (text == 'unpublish') {
             this.setState({ isBulkUnpublish: !this.state.isBulkUnpublish, isBulkPublish: false })
-      
+
           }
         } else {
           this.setState({ isBulkOperationButtonDisabled: true })
         }
       })
     }
-    
+
   }
 
   private updateIsEditMetadata = (updateIsEditMetadata) => {
@@ -690,7 +690,7 @@ class Search extends Component<IAppState, ISearchState> {
 
   private updateBulkOperationCompleted = (bulkOperationCompleted) => {
     //when closing bulk operation modal and no bulk operation was completed, reset bulk operations to false
-    if(!bulkOperationCompleted){
+    if (!bulkOperationCompleted) {
       this.setState({
         isBulkPublish: false,
         isBulkUnpublish: false,
