@@ -44,7 +44,7 @@ export default function GitImport(props: any) {
   const { cloneRepoGit2Pantheon, status } = context
 
   const handleSubmit = () => {
-    if (repository === "" || branch === "") {
+    if (repository === "") {
       setIsMissingFields(true)
     } else {
       setIsFormSubmittedput(true)
@@ -71,7 +71,7 @@ export default function GitImport(props: any) {
               <div className="notification-container">
                 <Alert
                   variant="warning"
-                  title="A repository url and branch name are required."
+                  title="A repository url is required."
                   actionClose={<AlertActionCloseButton onClose={dismissNotification} />}
                 />
               </div>

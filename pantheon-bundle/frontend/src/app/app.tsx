@@ -70,7 +70,6 @@ class App extends Component<any, IAppState> {
   public render() {
     return (
       <GitImportProvider>
-        <React.Fragment>
           <Page
             header={<Header isNavOpen={this.state.isNavOpen} onNavToggle={this.onNavToggle} appState={this.state} />}
             sidebar={<Sidebar isNavOpen={this.state.isNavOpen} appState={this.state} />}>
@@ -79,7 +78,6 @@ class App extends Component<any, IAppState> {
               <Routes {...this.state} />
             </PageSection>
           </Page>
-        </React.Fragment>
       </GitImportProvider>
     );
   }

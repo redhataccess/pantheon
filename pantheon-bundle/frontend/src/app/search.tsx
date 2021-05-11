@@ -23,8 +23,6 @@ import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
 import { IAppState } from "@app/app"
 import { BulkOperationMetadata } from "./bulkOperationMetadata";
 import { BulkOperationPublish } from "./BulkOperationPublish"
-import { PathPrefixes } from "./Constants";
-import GitImportAlert  from "@app/GitImportAlert"
 
 
 
