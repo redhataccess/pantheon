@@ -5,7 +5,7 @@ import { Product } from "@app/product"
 import { ProductDetails } from "@app/productDetails"
 import ProductListing from "@app/productListing"
 import { Login } from "@app/login"
-import { GitImport } from "./gitImport"
+import GitImport from "./gitImport"
 import { ContentDisplay }  from "@app/contentDisplay"
 import { IAppState } from "./app"
 import { ProductProvider } from "./contexts/ProductContext"
@@ -100,6 +100,7 @@ class Routes extends Component<IAppState> {
         ))}
         <Route render={() => <Search {...this.props} />} />
         </Switch>
+        
       </ErrorBoundary>
     )
   }

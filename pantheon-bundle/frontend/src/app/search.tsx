@@ -23,7 +23,7 @@ import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
 import { IAppState } from "@app/app"
 import { BulkOperationMetadata } from "./bulkOperationMetadata";
 import { BulkOperationPublish } from "./BulkOperationPublish"
-import { PathPrefixes } from "./Constants";
+
 
 
 export interface ISearchState {
@@ -316,6 +316,7 @@ class Search extends Component<IAppState, ISearchState> {
 
     return (
       <React.Fragment>
+
         <Toolbar
           id="toolbar-with-filter"
           className="pf-m-toggle-group-container filters-bar__filters-wrapper"
