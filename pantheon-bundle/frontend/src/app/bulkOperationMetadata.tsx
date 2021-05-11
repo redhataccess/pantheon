@@ -374,9 +374,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
                                     let docs = new Array()
                                     docs = this.state.documentsSucceeded
-                                    console.log("[saveMetadata] docs0=>", docs)
                                     docs.push(docPath)
-                                    console.log("[saveMetadata] docs=>", docs)
                                     this.setState({
                                         documentsSucceeded: docs,
                                         usecaseValue: "",
