@@ -657,29 +657,38 @@ class Search extends Component<IAppState, ISearchState> {
   }
 
   private handleBulkPublish = (text) => {
-    this.setState({ isEditMetadata: false, bulkOperationCompleted: false })
+    this.setState({ isEditMetadata: false })
     //handle warning if bulk publish/unpublish attempted on > 1 repo
     if (this.state.repositoriesSelected.length > 1) {
       this.setState({ bulkOperationWarn: true }, () => {
-        this.setState({ isBulkOperationButtonDisabled: true })
+        this.setState({ isBulkOperationButtonDisabled: true, bulkOperationCompleted: false })
       })
     } else {
       this.setState({
         bulkOperationWarn: false
       }, () => {
-        if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
-          this.setState({ isBulkOperationButtonDisabled: false })
-          //determine if publish or unpublish bulk operation
-          if (text == 'publish') {
-            this.setState({ isBulkPublish: !this.state.isBulkPublish, isBulkUnpublish: false })
-          }
-          if (text == 'unpublish') {
-            this.setState({ isBulkUnpublish: !this.state.isBulkUnpublish, isBulkPublish: false })
 
-          }
-        } else {
-          this.setState({ isBulkOperationButtonDisabled: true })
+        //determine if publish or unpublish bulk operation
+        if (text == 'publish') {
+          this.setState({ isBulkPublish: !this.state.isBulkPublish, isBulkUnpublish: false }, () => {
+            if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
+              this.setState({ isBulkOperationButtonDisabled: false, bulkOperationCompleted: false })
+            } else {
+              this.setState({ isBulkOperationButtonDisabled: true })
+            }
+          })
         }
+        else if (text == 'unpublish') {
+          this.setState({ isBulkUnpublish: !this.state.isBulkUnpublish, isBulkPublish: false }, () => {
+            if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
+              this.setState({ isBulkOperationButtonDisabled: false, bulkOperationCompleted: false })
+            } else {
+              this.setState({ isBulkOperationButtonDisabled: true })
+            }
+          })
+
+        }
+
       })
     }
 
