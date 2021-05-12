@@ -14,6 +14,8 @@ export interface IBulkPublishProps {
   progressWarningValue: number
   onShowBulkOperationConfirmation: (showBulkConfirmation) => any
   isBulkUnpublish: boolean
+  bulkOperationCompleted: boolean
+  updateBulkOperationCompleted: (bulkOperationCompleted) => any
 }
 
 class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
@@ -130,6 +132,12 @@ class BulkPublishConfirmation extends React.Component<IBulkPublishProps, any>{
 
   private hideAlert = () => {
     this.props.onShowBulkOperationConfirmation(false)
+    // set bulkOperationCompleted to false
+    this.updateBulkOperationCompleted(false)
+  }
+
+  private updateBulkOperationCompleted = (bulkOperationCompleted) => {
+    this.props.updateBulkOperationCompleted(bulkOperationCompleted)
   }
 }
 
