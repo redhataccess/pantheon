@@ -53,6 +53,10 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
               Product
             </span>
           </strong>
+          <br />
+          <span>
+             
+          </span>
         </Text>
       </TextContent>
     </LevelItem>
@@ -67,6 +71,8 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
               Module type
             </span>
           </strong>
+          <br />
+          <span />
         </Text>
       </TextContent>
     </LevelItem>
@@ -80,6 +86,10 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
               First Published Date
             </span>
           </strong>
+          <br />
+          <span>
+            --
+          </span>
         </Text>
       </TextContent>
     </LevelItem>
@@ -93,40 +103,7 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
               Last Published Date
             </span>
           </strong>
-        </Text>
-      </TextContent>
-    </LevelItem>
-  </Level>
-  <Level>
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <span>
-             
-          </span>
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem />
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <span />
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <span>
-            --
-          </span>
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem>
-      <TextContent>
-        <Text>
+          <br />
           <span>
             --
           </span>
@@ -233,6 +210,10 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
               Product
             </span>
           </strong>
+          <br />
+          <span>
+             
+          </span>
         </Text>
       </TextContent>
     </LevelItem>
@@ -247,6 +228,8 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
               Module type
             </span>
           </strong>
+          <br />
+          <span />
         </Text>
       </TextContent>
     </LevelItem>
@@ -260,6 +243,10 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
               First Published Date
             </span>
           </strong>
+          <br />
+          <span>
+            --
+          </span>
         </Text>
       </TextContent>
     </LevelItem>
@@ -273,40 +260,7 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
               Last Published Date
             </span>
           </strong>
-        </Text>
-      </TextContent>
-    </LevelItem>
-  </Level>
-  <Level>
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <span>
-             
-          </span>
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem />
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <span />
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <span>
-            --
-          </span>
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem>
-      <TextContent>
-        <Text>
+          <br />
           <span>
             --
           </span>
