@@ -127,38 +127,20 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                 <Level>
                     <LevelItem>
                         <TextContent>
-                            <Text><strong><span id="span-source-type-product">Product</span></strong></Text>
+                            <Text>
+                                <strong><span id="span-source-type-product">Product</span></strong>
+                                <br />
+                                <span>{this.state.productValue + " " + this.state.versionValue}</span>
+                            </Text>
                         </TextContent>
                     </LevelItem>
                     <LevelItem>{ }</LevelItem>
 
-                    {!this.isAssembly && <LevelItem>
-                        <TextContent>
-                            <Text><strong><span id="span-source-name-module-type">Module type</span></strong></Text>
-                        </TextContent>
-                    </LevelItem>}
-                    <LevelItem>
-                        <TextContent>
-                            <Text><strong><span id="span-source-type-firstpublished">First Published Date</span></strong></Text>
-                        </TextContent>
-                    </LevelItem>
-                    <LevelItem>
-                        <TextContent>
-                            <Text><strong><span id="span-source-type-lastpublished">Last Published Date</span></strong></Text>
-                        </TextContent>
-                    </LevelItem>
-                </Level>
-
-                <Level>
-                    <LevelItem>
-                        <TextContent>
-                            <Text><span>{this.state.productValue + " " + this.state.versionValue}</span></Text>
-                        </TextContent>
-                    </LevelItem>
-                    <LevelItem>{ }</LevelItem>
                     {!this.isAssembly && <LevelItem>
                         <TextContent>
                             <Text>
+                                <strong><span id="span-source-name-module-type">Module type</span></strong>
+                                <br />
                                 <span>
                                     {this.state.moduleType.trim() !== "" ?
                                         this.state.moduleType : ""}
@@ -169,6 +151,8 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     <LevelItem>
                         <TextContent>
                             <Text>
+                                <strong><span id="span-source-type-firstpublished">First Published Date</span></strong>
+                                <br />
                                 <span>
                                     {this.state.firstPublishDate.trim() !== ""
                                         && this.state.firstPublishDate.length >= 15 ?
@@ -180,6 +164,8 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     <LevelItem>
                         <TextContent>
                             <Text>
+                                <strong><span id="span-source-type-lastpublished">Last Published Date</span></strong>
+                                <br />
                                 <span>
                                     {this.state.lastPublishDate.trim() !== ""
                                         && this.state.lastPublishDate.length >= 15 ?
