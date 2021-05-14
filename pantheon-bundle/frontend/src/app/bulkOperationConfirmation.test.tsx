@@ -18,6 +18,8 @@ const props = {
     progressSuccessValue: 50,
     progressFailureValue: 10,
     progressWarningValue: 40,
+    bulkOperationCompleted: true,
+    updateBulkOperationCompleted: (bulkOperationCompleted) => anymatch,
     onShowBulkEditConfirmation: (showBulkEditConfirmation) => anymatch,
     onMetadataEditError: (metadataEditError) => anymatch,
     updateIsEditMetadata: (isEditMetadata) => anymatch,
