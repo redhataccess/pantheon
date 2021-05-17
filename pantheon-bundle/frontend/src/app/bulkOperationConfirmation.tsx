@@ -14,6 +14,8 @@ export interface IBulkOperationProps {
   progressSuccessValue: number
   progressFailureValue: number
   progressWarningValue: number
+  bulkOperationCompleted: boolean
+  updateBulkOperationCompleted: (bulkOperationCompleted) => any
   onShowBulkEditConfirmation: (showBulkEditConfirmation) => any
   onMetadataEditError: (metadataEditError) => any
   updateIsEditMetadata: (isEditMetadata) => any
@@ -147,6 +149,12 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
     this.props.onUpdateSucceeded("")
     this.props.onUpdateIgnored("")
     this.props.onUpdateFailed("")
+    // set bulkOperationCompleted to false
+    this.updateBulkOperationCompleted(false)
+  }
+
+  private updateBulkOperationCompleted = (bulkOperationCompleted) => {
+    this.props.updateBulkOperationCompleted(bulkOperationCompleted)
   }
 }
 
