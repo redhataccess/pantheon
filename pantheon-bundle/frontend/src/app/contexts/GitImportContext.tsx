@@ -129,7 +129,7 @@ export function GitImportProvider({ children }: IGitImportProviderProps) {
                 success: true
               };
             }
-            if (json.status === "error") {
+            else if (json.status === "error") {
               singleUpload = {
                 id: Date.now(),
                 totalFiles: 0,
