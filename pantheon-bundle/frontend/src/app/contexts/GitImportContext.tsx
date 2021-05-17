@@ -102,7 +102,7 @@ export function GitImportProvider({ children }: IGitImportProviderProps) {
       } else {
         const validateStatus = async (response) => {
           const json = await response.json();
-          return json.status === "done";
+          return json.status === "done" || json.status === "error";
         }
         //second fetch takes the status key and returns the status of repo upload once it is complete
         //we keep making this call until status === "done" signifying the upload has completed
@@ -120,12 +120,23 @@ export function GitImportProvider({ children }: IGitImportProviderProps) {
           interval: 2000
         }).then((response: any) => {
           response.json().then(json => {
-            const singleUpload = {
-              id: Date.now(),
-              totalFiles: json.total_files_uploaded,
-              repoName: repository,
-              success: true
-            };
+            let singleUpload
+            if (json.status === "done") {
+              singleUpload = {
+                id: Date.now(),
+                totalFiles: json.total_files_uploaded,
+                repoName: repository,
+                success: true
+              };
+            }
+            else if (json.status === "error") {
+              singleUpload = {
+                id: Date.now(),
+                totalFiles: 0,
+                repoName: repository,
+                success: false
+              };
+            }
             setUploads([...uploads, singleUpload]);
           });
         });
