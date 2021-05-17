@@ -199,6 +199,8 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                         onUpdateSucceeded={this.updateUpdateSucceeded}
                         onUpdateIgnored={this.updateUpdateIgnored}
                         onUpdateFailed={this.updateUpdateFailed}
+                        bulkOperationCompleted={this.props.bulkOperationCompleted}
+                        updateBulkOperationCompleted={this.props.updateBulkOperationCompleted}
                     />}
 
                 {this.props.isEditMetadata && metadataModal}
@@ -389,7 +391,6 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                                     }, () => {
                                         this.setState({ showBulkEditConfirmation: true })
                                         this.props.updateIsEditMetadata(false)
-                                        this.props.updateBulkOperationCompleted(true)
                                         this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
                                     })
                                 } else {
@@ -421,6 +422,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                     })
                 }
             })
+            this.props.updateBulkOperationCompleted(true)
         }
     }
 
