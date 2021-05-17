@@ -1,5 +1,5 @@
 [id='pantheon-yaml-file_{context}']
-= Description of {ProductShortName} configuration file
+= Description of the {ProductShortName} configuration file
 
 [role="_abstract"]
 The configuration file, named `pantheon2.yml`, resides in the root directory of your documentation repository. You use this file to designate a Git repository as a source that {ProductShortName} can use to import content. This configuration file provides the information necessary for {ProductShortName} to interact with files in the repository.
@@ -14,7 +14,8 @@ The configuration file enables you to perform the following actions:
 
 The configuration file enables you to import content from a Git repository into {ProductShortName}.
 
-.{ProductShortName} configuration file defines the following parameters:
+The {ProductShortName} configuration file defines the following parameters:
+
 * `server` The URL of the {ProductShortName} server.
 * `repositories` A multi-valued structure with the following child members:
 +
