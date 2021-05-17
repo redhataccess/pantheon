@@ -1,5 +1,5 @@
 [id="creating-a-product_{context}"]
-= Creating a product in Pantheon
+= Creating a product in {ProductName}
 
 [role="_abstract"]
 A product must exist in {ProductName} before you can assign a product name to the metadata of a module or assembly. If the product doesn't already exist, you need to create one.
@@ -14,8 +14,8 @@ A product must exist in {ProductName} before you can assign a product name to th
 . Navigate to menu:Products[New Product].
 
 . Complete the following information:
-  Product Name:: Enter the name for your product. The product name displays in {ProductShortName}, the document preview, and in user-facing content.
-  Product UrlFragment:: Enter the product URL fragment. The URL fragment displays in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
+  Product Name:: Enter the name for your product. The product name is displayed in {ProductShortName}, the document preview, and in user-facing content.
+  Product UrlFragment:: Enter the product URL fragment. The URL fragment is displayed in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
   Product Description (optional):: Provide a description of the product.
 
 . Click btn:[Save].
@@ -34,4 +34,4 @@ Entering the above information creates a {ProductShortName} product named `.NET 
 
 // .Additional resources
 // link:placeholder.url.com[Creating a product version]
-// link:placeholder.url.com[Pantheon user roles]
+// link:placeholder.url.com[{ProductName} user roles]

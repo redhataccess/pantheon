@@ -6,7 +6,7 @@
 To enable a repository as a content source for {ProductShortName}, you must configure the repository by adding a configuration file to the root directory.
 
 .Prerequisites
-* A repository that contains your documentation.
+* You have a repository that contains your documentation.
 * You have a server URL from {ProductShortName} administrator.
 
 .Procedure

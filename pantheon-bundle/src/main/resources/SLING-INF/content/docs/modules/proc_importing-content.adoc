@@ -1,6 +1,6 @@
 [id="importing-(ContentTerm}_{context}"]
 
-= Importing content to Pantheon
+= Importing {ContentTerm} to {ProductName}
 
 [role="_abstract"]
 You can import modules and assemblies into {ProductShortName} from either GitHub or GitLab.
@@ -9,7 +9,7 @@ You can import modules and assemblies into {ProductShortName} from either GitHub
 
 //* You are assigned a publisher or author role in {ProductShortName}.
 * You are logged in to {ProductShortName}.
-* You have a URL to the Git repository with your {ContentTerm}. For example, +https://github.com/openshift/openshift-docs+.
+* You have a URL to the Git repository with your {ContentTerm}. For example, \https://github.com/openshift/openshift-docs.
 
 .Procedure
 

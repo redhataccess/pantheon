@@ -1,5 +1,5 @@
 [id="versioning-a-product_{context}"]
-= Assigning a version to a Pantheon product
+= Assigning a version to a {ProductName} product
 
 [role="_abstract"]
 Your product must have at least one product version assigned to it before you can import your modules and assemblies to {ProductShortName}.
@@ -16,8 +16,8 @@ Your product must have at least one product version assigned to it before you ca
 . Find the product and click the drop-down arrow>Product Details.
 
 . Provide the following information:
-  New Version:: Set the value for the new version of your product. The version displays in {ProductShortName}, and the document preview.
-  URL Fragment:: Enter the new version URL fragment. The URL fragment displays in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
+  New Version:: Set the value for the new version of your product. The version is displayed in {ProductShortName}, and the document preview.
+  URL Fragment:: Enter the new version URL fragment. The URL fragment is displayed in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
 
 . Click btn:[Save].
 

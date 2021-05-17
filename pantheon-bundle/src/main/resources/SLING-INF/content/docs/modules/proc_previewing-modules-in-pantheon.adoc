@@ -1,5 +1,5 @@
 [id="previewing-modules-in-pantheon_{context}"]
-= Previewing content in Pantheon
+= Previewing {ContentTerm} in {ProductName}
 
 [role="_abstract"]
 Preview {ContentTerm} that has been imported into {ProductShortName}.
