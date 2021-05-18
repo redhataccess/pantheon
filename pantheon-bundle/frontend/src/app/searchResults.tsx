@@ -169,6 +169,8 @@ class SearchResults extends Component<IProps, ISearchState> {
           showDropdownOptions={this.state.showDropdownOptions}
           bottom={this.state.bottom}
           className="results__pagination"
+          currentBulkOperation={this.props.currentBulkOperation}
+          
         />}
 
         {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small} className="search-results--empty">
