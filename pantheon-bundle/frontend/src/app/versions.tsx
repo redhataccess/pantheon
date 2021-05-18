@@ -31,7 +31,7 @@ export interface IProps {
     attributesFilePath: string
     assemblies?: any
     onGetUrl: (url) => any
-    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
+    updateDate: (releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
 }
@@ -285,7 +285,7 @@ class Versions extends Component<IProps, IState> {
                                             <CardBody>
                                                 <TextContent>
                                                     <Text><strong>Upload time</strong></Text>
-                                                    <Text component={TextVariants.p}>{data.draftUploadDate}</Text>
+                                                    <Text component={TextVariants.p}>{data.updatedDate}</Text>
                                                 </TextContent>
                                                 <br />
                                                 <TextContent>
@@ -444,13 +444,14 @@ class Versions extends Component<IProps, IState> {
 
                     const firstVariant = this.getHarrayChildNamed(variants, this.props.variant)
                     // process draftUpdateDate from source/draft
-                    let draftDate = ""
+                    let draftUpload = ""
+                    let releaseUpload = ""
                     if (source !== "undefined" && source.__name__ === "source") {
                         for (const childNode of source.__children__) {
                             if (childNode.__name__ === "draft") {
-                                draftDate = childNode["jcr:created"]
+                                draftUpload = childNode["jcr:created"]
                             } else if (childNode.__name__ === "released") {
-                                draftDate = childNode["jcr:created"]
+                                releaseUpload = childNode["jcr:created"]
                             }
                         }
                     }
@@ -468,7 +469,7 @@ class Versions extends Component<IProps, IState> {
                             this.draft[0].version = "Version " + moduleVersion.__name__
                             this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
                             // get created date from source/draft
-                            this.draft[0].updatedDate = draftDate !== undefined ? draftDate : ""
+                            this.draft[0].updatedDate = draftUpload
                             // this.props.modulePath starts with a slash
                             this.draft[0].path = "/content" + this.props.modulePath + "/en_US/variants/" + firstVariant.__name__ + "/" + moduleVersion.__name__
                             this.draft[0].validations = this.state.draftValidations
@@ -476,9 +477,9 @@ class Versions extends Component<IProps, IState> {
                         if (moduleVersion.__name__ === "released") {
                             this.release[0].version = "Version " + moduleVersion.__name__
                             this.release[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
-                            this.release[0].updatedDate = this.release[0].metadata["pant:datePublished"] !== undefined ? this.release[0].metadata["pant:datePublished"] : ""
+                            this.release[0].updatedDate = releaseUpload
                             // get created date from source/draft
-                            this.release[0].draftUploadDate = draftDate !== undefined ? draftDate : ""
+                            this.release[0].draftUploadDate = draftUpload
                             // this.props.modulePath starts with a slash
                             this.release[0].path = "/content" + this.props.modulePath + "/en_US/variants/" + firstVariant.__name__ + "/" + moduleVersion.__name__
                             this.release[0].validations = this.state.releasedValidations
@@ -487,7 +488,7 @@ class Versions extends Component<IProps, IState> {
                         if (!variantReleased) {
                             this.release[0].updatedDate = "-"
                         }
-                        this.props.updateDate((draftDate !== "" ? draftDate : ""), this.release[0].updatedDate, this.release[0].version, variantUuid)
+                        this.props.updateDate(this.release[0].version, variantUuid)
                     }
                     this.setState({
                         results: [this.draft, this.release],

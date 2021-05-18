@@ -18,9 +18,17 @@ const props = {
     progressSuccessValue: 50,
     progressFailureValue: 10,
     progressWarningValue: 40,
+    bulkOperationCompleted: true,
+    updateBulkOperationCompleted: (bulkOperationCompleted) => anymatch,
     onShowBulkEditConfirmation: (showBulkEditConfirmation) => anymatch,
     onMetadataEditError: (metadataEditError) => anymatch,
-    updateIsEditMetadata: (isEditMetadata) => anymatch
+    updateIsEditMetadata: (isEditMetadata) => anymatch,
+    onProgressSuccessValue: (progressSuccessValue) => anymatch,
+    onProgressFailureValue: (progressFailureValue) => anymatch,
+    onProgressWarningValue: (progressWarningValue) => anymatch,
+    onUpdateSucceeded: (updateSucceeded) => anymatch,
+    onUpdateIgnored: (updateIgnored) => anymatch,
+    onUpdateFailed: (updateFailed) => anymatch
 }
 
 describe("BulkOperationConfirmation tests", () => {

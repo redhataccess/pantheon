@@ -179,6 +179,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
             <React.Fragment>
                 {this.state.showBulkEditConfirmation &&
                     <BulkOperationConfirmation
+                        key={new Date().getTime()}
                         isEditMetadata={this.props.isEditMetadata}
                         updateIsEditMetadata={this.props.updateIsEditMetadata}
                         header="Bulk Edit"
@@ -192,6 +193,14 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                         progressWarningValue={this.state.progressWarningValue}
                         onShowBulkEditConfirmation={this.updateShowBulkEditConfirmation}
                         onMetadataEditError={this.updateMetadataEditError}
+                        onProgressSuccessValue={this.updateProgressSuccessValue}
+                        onProgressFailureValue={this.updateProgressFailureValue}
+                        onProgressWarningValue={this.updateProgressWarningValue}
+                        onUpdateSucceeded={this.updateUpdateSucceeded}
+                        onUpdateIgnored={this.updateUpdateIgnored}
+                        onUpdateFailed={this.updateUpdateFailed}
+                        bulkOperationCompleted={this.props.bulkOperationCompleted}
+                        updateBulkOperationCompleted={this.props.updateBulkOperationCompleted}
                     />}
 
                 {this.props.isEditMetadata && metadataModal}
@@ -331,6 +340,20 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
             formData.append("documentUsecase", this.state.usecaseValue)
             formData.append("searchKeywords", this.state.keywords === undefined ? "" : this.state.keywords)
 
+            // reinitialize states
+            if (this.props.documentsSelected.length > 0) {
+                this.setState({
+                    documentsSucceeded: [""],
+                    documentsIgnored: [""],
+                    documentsFailed: [""],
+                    bulkUpdateSuccess: 0,
+                    bulkUpdateWarning: 0,
+                    bulkUpdateFailure: 0,
+                    progressSuccessValue: 0,
+                    progressFailedValue: 0,
+                    progressWarningValue: 0
+                });
+            }
             this.props.documentsSelected.map((r) => {
                 if (r.cells[1].title.props.href) {
                     let href = r.cells[1].title.props.href
@@ -368,7 +391,6 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                                     }, () => {
                                         this.setState({ showBulkEditConfirmation: true })
                                         this.props.updateIsEditMetadata(false)
-                                        this.props.updateBulkOperationCompleted(true)
                                         this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
                                     })
                                 } else {
@@ -400,6 +422,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                     })
                 }
             })
+            this.props.updateBulkOperationCompleted(true)
         }
     }
 
@@ -410,6 +433,30 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
     private updateMetadataEditError = (metadataEditError) => {
         this.setState({ metadataEditError })
+    }
+
+    private updateProgressSuccessValue = (progressSuccessValue) => {
+        this.setState({ progressSuccessValue })
+    }
+
+    private updateProgressFailureValue = (progressFailedValue) => {
+        this.setState({ progressFailedValue })
+    }
+
+    private updateProgressWarningValue = (progressWarningValue) => {
+        this.setState({ progressWarningValue })
+    }
+
+    private updateUpdateSucceeded = (confirmationSucceeded) => {
+        this.setState({ confirmationSucceeded })
+    }
+
+    private updateUpdateFailed = (confirmationFailed) => {
+        this.setState({ confirmationFailed })
+    }
+
+    private updateUpdateIgnored = (confirmationIgnored) => {
+        this.setState({ confirmationIgnored })
     }
 
     private calculateFailureProgress = (num: number) => {

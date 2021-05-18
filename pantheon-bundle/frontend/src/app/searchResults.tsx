@@ -70,8 +70,8 @@ class SearchResults extends Component<IProps, ISearchState> {
         { title: "" },
         { title: "Title", cellTransforms: [headerCol()] },
         { title: "Repository" },
-        { title: "Updated date" },
-        { title: "Published date" }
+        { title: "Upload Date" },
+        { title: "Last Published Date" }
       ],
       displayLoadIcon: true,
       // filterQuery: "",
@@ -277,9 +277,9 @@ class SearchResults extends Component<IProps, ISearchState> {
           const data = new Array()
 
           responseJSON.results.map((item, key) => {
-            const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
-            
-            let docIcon = publishedDate !== "-" ? <div><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : null
+            const lastUpdateDate = item["pant:publishedDate"]
+
+            let docIcon = lastUpdateDate !== "-" ? <div><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : null
             if (docIcon === null) {
               const productVersion = item["productVersion"] != undefined ? item["productVersion"] : "-"
 
@@ -297,9 +297,10 @@ class SearchResults extends Component<IProps, ISearchState> {
               let docTitle = item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]
               cellItem.push(docTitle)
             }
+            { title: "Last Published Date" }
             cellItem.push(item["pant:transientSourceName"])
             cellItem.push(item["pant:dateUploaded"])
-            cellItem.push(publishedDate)
+            cellItem.push(lastUpdateDate)
 
             data.push({ cells: cellItem })
           })

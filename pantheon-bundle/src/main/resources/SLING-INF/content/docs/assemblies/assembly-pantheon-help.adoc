@@ -45,7 +45,7 @@ include::../modules/con_definition-of-a-module.adoc[leveloffset=+2]
 
 include::../modules/con_definition-of-metadata.adoc[leveloffset=+2]
 
-include::../modules/ref_identifying-module-types.adoc[leveloffset=+2]
+include::../modules/ref_adding-module-types_to_modules_in_Pantheon.adoc[leveloffset=+2]
 
 == Configuring your repository
 

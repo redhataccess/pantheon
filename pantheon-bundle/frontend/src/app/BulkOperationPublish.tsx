@@ -10,8 +10,8 @@ export interface IBulkOperationPublishProps {
     contentTypeSelected: string
     isBulkPublish: boolean
     isBulkUnpublish: boolean
-    updateBulkOperationCompleted: (bulkOperationConfirmation) => any
     bulkOperationCompleted: boolean
+    updateBulkOperationCompleted: (bulkOperationConfirmation) => any
 }
 
 class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, any>{
@@ -116,6 +116,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
             <React.Fragment>
                 {this.state.showBulkConfirmation &&
                     <BulkPublishConfirmation
+                        key={new Date().getTime()}
                         header={this.props.isBulkPublish ? "Bulk Publish" : "Bulk Unpublish"}
                         subheading="Documents updated in the bulk operation"
                         updateSucceeded={this.state.confirmationSucceeded}
@@ -127,6 +128,8 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                         progressWarningValue={this.state.progressWarningValue}
                         onShowBulkOperationConfirmation={this.updateShowBulkPublishConfirmation}
                         isBulkUnpublish={this.props.isBulkUnpublish}
+                        bulkOperationCompleted={this.props.bulkOperationCompleted}
+                        updateBulkOperationCompleted={this.props.updateBulkOperationCompleted}
                     />}
 
                 {this.props.isBulkPublish && publishModal}
@@ -160,6 +163,18 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
         
         formData.append("locale", "en_US")
 
+        // reinitialize states
+        if (this.props.documentsSelected.length > 0) {
+            this.setState({
+                documentsSucceeded: [],
+                documentsFailed: [""],
+                documentsIgnored: [""],
+                confirmationSucceeded: "",
+                confirmationIgnored: "",
+                confirmationFailed: "",
+            });
+        }
+
         this.props.documentsSelected.map((r) => {
             if (r.cells[1].title.props.href) {
                 let href = r.cells[1].title.props.href
@@ -183,7 +198,6 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                                     bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
                                 }, () => {
                                     this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
-                                    this.props.updateBulkOperationCompleted(true)
                                 }
                                 )
                             } else {
@@ -203,7 +217,9 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
             }
 
         })
-        this.setState({ isModalOpen: false, showBulkConfirmation: true })
+        this.setState({ isModalOpen: false, showBulkConfirmation: true }, ()=>{
+            this.props.updateBulkOperationCompleted(true)
+        })
     }
 
     //functions for success & failure messages

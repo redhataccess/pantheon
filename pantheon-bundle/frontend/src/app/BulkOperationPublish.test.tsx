@@ -12,9 +12,10 @@ const props = {
     contentTypeSelected: "module",
     isBulkPublish: true,
     isBulkUnpublish: false,
-    updateBulkOperationCompleted: (bulkOperationCompleted) => anymatch,
-    bulkOperationCompleted: true
+    bulkOperationCompleted: true,
+    updateBulkOperationCompleted: (bulkOperationCompleted) => anymatch
 }
+
 describe("BulkOperationPublish tests", () => {
     const api = "/content/products.harray.1.json"
 
