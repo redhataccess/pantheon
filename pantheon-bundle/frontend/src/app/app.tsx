@@ -10,6 +10,7 @@ import { Sidebar } from "@app/components/Chrome/Sidebar/Sidebar"
 import { GitImportProvider } from "./contexts/GitImportContext"
 import GitImportAlert from "@app/GitImportAlert"
 import { Routes } from "@app/routes"
+import { ErrorBoundary } from "./ErrorBoundary"
 import "@app/app.css"
 
 export interface IAppState {
@@ -69,6 +70,7 @@ class App extends Component<any, IAppState> {
 
   public render() {
     return (
+      <ErrorBoundary hasError={false}>
       <GitImportProvider>
           <Page
             header={<Header isNavOpen={this.state.isNavOpen} onNavToggle={this.onNavToggle} appState={this.state} />}
@@ -79,6 +81,7 @@ class App extends Component<any, IAppState> {
             </PageSection>
           </Page>
       </GitImportProvider>
+      </ErrorBoundary>
     );
   }
 }
