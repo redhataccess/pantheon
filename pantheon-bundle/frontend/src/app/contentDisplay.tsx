@@ -114,6 +114,11 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                             && this.state.portalUrlType === "LIVE"
                             && <span><a href={this.state.portalUrl} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
                         }
+                        {this.state.variantUUID !== ""
+                            && this.state.portalUrl !== ""
+                            && this.state.portalUrlType === "PRELIVE"
+                            && <span><a href={this.state.portalUrl} target="_blank">Pre-live Customer Portal URL</a> </span>
+                        }
                     </LevelItem>
                     <LevelItem>
                         {this.state.variantUUID !== ""
@@ -129,7 +134,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         {this.state.variantUUID !== ""
                             && this.state.portalUrl !== ""
                             && this.state.portalUrlType === "ERROR"
-                            && <span>URL Warning: {this.state.portalUrl}</span>
+                            && <span>No URL; {this.state.portalUrl}</span>
                         }
 
                         <span>&emsp;{this.state.copySuccess !== "" && this.state.copySuccess}</span>
