@@ -79,6 +79,7 @@ exports[`SearchResults tests should render default Search component 1`] = `
   <Pagination
     bottom={true}
     className="results__pagination"
+    currentBulkOperation=""
     handleItemsPerPage={[Function]}
     handleMoveLeft={[Function]}
     handleMoveRight={[Function]}
