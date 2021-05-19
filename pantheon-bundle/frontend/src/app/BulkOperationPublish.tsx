@@ -11,6 +11,8 @@ export interface IBulkOperationPublishProps {
     isBulkPublish: boolean
     isBulkUnpublish: boolean
     bulkOperationCompleted: boolean
+    updateIsBulkPublish: (isBulkPublish) => any
+    updateIsBulkUnpublish: (isBulkUnpublish) => any
     updateBulkOperationCompleted: (bulkOperationConfirmation) => any
 }
 
@@ -41,13 +43,20 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
         };
     }
 
+    public componentWillUnmount() {
+        // fix Warning: Can't perform a React state update on an unmounted component
+        this.setState = (state, callback) => {
+            return;
+        };
+    }
+
     public render() {
         const { isModalOpen } = this.state;
         const publishHeader = (
             <React.Fragment>
                 <Title headingLevel="h1" size={BaseSizes["2xl"]}>
                     {this.props.isBulkPublish ? 'Publish' : 'Unpublish'}
-            </Title>
+                </Title>
             </React.Fragment>
         )
         const publishModal = (
@@ -55,7 +64,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                 <Modal
                     variant={ModalVariant.medium}
                     title="Publish"
-                    isOpen={this.state.isModalOpen}
+                    isOpen={isModalOpen}
                     header={publishHeader}
                     aria-label="Publish"
                     onClose={this.handleModalClose}
@@ -88,7 +97,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                 <Modal
                     variant={ModalVariant.medium}
                     title="Unpublish"
-                    isOpen={this.state.isModalOpen}
+                    isOpen={isModalOpen}
                     header={publishHeader}
                     aria-label="Unpublish"
                     onClose={this.handleModalClose}
@@ -140,15 +149,16 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
 
     private handleModalClose = () => {
         this.setState({ isModalOpen: false }, () => {
+            this.setState({ showBulkConfirmation: false })
             this.props.updateBulkOperationCompleted(false)
+            this.props.updateIsBulkPublish(false)
+            this.props.updateIsBulkUnpublish(false)
         })
     }
 
     private onBulkPublish = (event) => {
         const formData = new FormData();
-
-        {this.props.isBulkPublish ? formData.append(":operation", "pant:publish") : formData.append(":operation", "pant:unpublish")}
-
+        { this.props.isBulkPublish ? formData.append(":operation", "pant:publish") : formData.append(":operation", "pant:unpublish") }
 
         const hdrs = {
             "Accept": "application/json",
@@ -156,14 +166,14 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
             "Access-Control-Allow-Origin": "*",
         }
         let variant
-        if(this.props.documentsSelected){
+        if (this.props.documentsSelected) {
             variant = this.props.documentsSelected[0].cells[1].title.props.href.split("?variant=")[1]
             formData.append("variant", variant)
         }
-        
+
         formData.append("locale", "en_US")
 
-        // reinitialize states
+        // reinitialize states for republishing
         if (this.props.documentsSelected.length > 0) {
             this.setState({
                 documentsSucceeded: [],
@@ -172,6 +182,14 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                 confirmationSucceeded: "",
                 confirmationIgnored: "",
                 confirmationFailed: "",
+                bulkUpdateFailure: 0,
+                bulkUpdateSuccess: 0,
+                bulkUpdateWarning: 0,
+                progressFailureValue: 0,
+                progressSuccessValue: 0,
+                progressWarningValue: 0,
+                showBulkConfirmation: false,
+                docsSelected: this.props.documentsSelected
             });
         }
 
@@ -183,42 +201,39 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                 let hrefPart = href.slice(0, href.indexOf("?"))
                 let modulePath = hrefPart.slice(hrefPart.indexOf("/repositories"))
                 const backend = "/content" + modulePath + `/en_US/variants/${variant}/draft`
+                let exist = this.props.isBulkPublish ? Utils.draftExist(backend) : false
 
-                Utils.draftExist(backend).then((exist) => {
-                    if (exist || this.props.isBulkUnpublish) {
-                        fetch("/content" + modulePath, {
-                            body: formData,
-                            method: "post",
-                            headers: hdrs
-                        }).then(response => {
-                            if (response.status === 201 || response.status === 200) {
-                                console.log(this.props.isBulkPublish ? "publish works: " + response.status : "unpublish works: " + response.status)
-                                this.setState({
-                                    documentsSucceeded: [...this.state.documentsSucceeded, modulePath],
-                                    bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
-                                }, () => {
-                                    this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
-                                }
-                                )
-                            } else {
-                                console.log(this.props.isBulkPublish ? "publish failed " + response.status : "unpublish failed " + response.status)
-                                this.setState({ bulkUpdateFailure: this.state.bulkUpdateFailure + 1, documentsFailed: [...this.state.documentsFailed, modulePath] }, () => {
-                                    this.calculateFailureProgress(this.state.bulkUpdateFailure)
-                                })
+                if (exist || this.props.isBulkUnpublish) {
+                    fetch("/content" + modulePath, {
+                        body: formData,
+                        method: "post",
+                        headers: hdrs
+                    }).then(response => {
+                        if (response.status === 201 || response.status === 200) {
+                            this.setState({
+                                documentsSucceeded: [...this.state.documentsSucceeded, modulePath],
+                                bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
+                            }, () => {
+                                this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
                             }
-                        })
-                    } else {
-                        console.log('no draft exists')
-                        this.setState({ bulkUpdateWarning: this.state.bulkUpdateWarning + 1, documentsIgnored: [...this.state.documentsIgnored, modulePath] }, () => {
-                            this.calculateWarningProgress(this.state.bulkUpdateWarning)
-                        })
-                    }
-                })
+                            )
+                        } else {
+                            this.setState({ bulkUpdateFailure: this.state.bulkUpdateFailure + 1, documentsFailed: [...this.state.documentsFailed, modulePath] }, () => {
+                                this.calculateFailureProgress(this.state.bulkUpdateFailure)
+                            })
+                        }
+                    })
+                } else {
+                    this.setState({ bulkUpdateWarning: this.state.bulkUpdateWarning + 1, documentsIgnored: [...this.state.documentsIgnored, modulePath] }, () => {
+                        this.calculateWarningProgress(this.state.bulkUpdateWarning)
+                    })
+                }
             }
 
         })
-        this.setState({ isModalOpen: false, showBulkConfirmation: true }, ()=>{
+        this.setState({ showBulkConfirmation: true }, () => {
             this.props.updateBulkOperationCompleted(true)
+            this.props.isBulkPublish ? this.props.updateIsBulkPublish(false) : this.props.updateIsBulkUnpublish(false)
         })
     }
 
