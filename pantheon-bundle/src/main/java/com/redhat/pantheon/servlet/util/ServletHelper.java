@@ -17,6 +17,8 @@ import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -57,6 +59,8 @@ public class ServletHelper {
         VARIANT_TYPES.add(PantheonConstants.RESOURCE_TYPE_ASSEMBLYVARIANT);
         VARIANT_TYPES.add(PantheonConstants.RESOURCE_TYPE_MODULEVARIANT);
     }
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServletHelper.class);
 
     /**
      * Instantiates a new Servlet helper.
@@ -174,7 +178,7 @@ public class ServletHelper {
                 String view_uri = new CustomerPortalUrlUuidProvider(assemblyVariant).generateUrlString();
                 assemblyVariantDetails.put("view_uri", view_uri);
             } catch (UrlException e) {
-                // TODO - add error stuff here
+                LOG.warn("Failed to generate URL for " + assemblyVariant.getPath() + " but could not.", e);
             }
         }
         if(addPath){

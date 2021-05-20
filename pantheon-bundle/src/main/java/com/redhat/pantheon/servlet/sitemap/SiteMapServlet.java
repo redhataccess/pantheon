@@ -122,7 +122,9 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
             if (documentVariant != null && documentVariant.released().isPresent()) {
                 try {
                     locPath = new CustomerPortalUrlUuidProvider(documentVariant).generateUrlString();
-                } catch (UrlException e) {}
+                } catch (UrlException e) {
+                    log.error("SiteMapServlet requested a URL for " + documentVariant.getPath() + " that could not be generated, this should never happen", e);
+                }
             }
         } else {
             locPath = resource.getPath();
