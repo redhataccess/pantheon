@@ -338,20 +338,24 @@ class Search extends Component<IAppState, ISearchState> {
                 updateIsEditMetadata={this.updateIsEditMetadata}
                 updateBulkOperationCompleted={this.updateBulkOperationCompleted}
               />}
-              {this.state.isBulkPublish && <BulkOperationPublish
+              {(this.state.isBulkPublish || this.state.bulkOperationCompleted) && <BulkOperationPublish
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isBulkPublish={this.state.isBulkPublish}
                 isBulkUnpublish={this.state.isBulkUnpublish}
                 bulkOperationCompleted={this.state.bulkOperationCompleted}
+                updateIsBulkPublish={this.updateIsBulkPublish}
+                updateIsBulkUnpublish={this.updateIsBulkUnpublish}
                 updateBulkOperationCompleted={this.updateBulkOperationCompleted}
               />}
-              {this.state.isBulkUnpublish && <BulkOperationPublish
+              {(this.state.isBulkUnpublish || this.state.bulkOperationCompleted) && <BulkOperationPublish
                 documentsSelected={this.state.documentsSelected}
                 contentTypeSelected={this.state.contentTypeSelected}
                 isBulkPublish={this.state.isBulkPublish}
                 isBulkUnpublish={this.state.isBulkUnpublish}
                 bulkOperationCompleted={this.state.bulkOperationCompleted}
+                updateIsBulkPublish={this.updateIsBulkPublish}
+                updateIsBulkUnpublish={this.updateIsBulkUnpublish}
                 updateBulkOperationCompleted={this.updateBulkOperationCompleted}
               />}
               {drawerContent}
@@ -669,7 +673,7 @@ class Search extends Component<IAppState, ISearchState> {
       }, () => {
 
         //determine if publish or unpublish bulk operation
-        if (text == 'publish') {
+        if (text === 'publish') {
           this.setState({ isBulkPublish: !this.state.isBulkPublish, isBulkUnpublish: false }, () => {
             if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
               this.setState({ isBulkOperationButtonDisabled: false, bulkOperationCompleted: false })
@@ -678,7 +682,7 @@ class Search extends Component<IAppState, ISearchState> {
             }
           })
         }
-        else if (text == 'unpublish') {
+        else if (text === 'unpublish') {
           this.setState({ isBulkUnpublish: !this.state.isBulkUnpublish, isBulkPublish: false }, () => {
             if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
               this.setState({ isBulkOperationButtonDisabled: false, bulkOperationCompleted: false })
@@ -694,8 +698,16 @@ class Search extends Component<IAppState, ISearchState> {
 
   }
 
-  private updateIsEditMetadata = (updateIsEditMetadata) => {
-    this.setState({ isEditMetadata: updateIsEditMetadata })
+  private updateIsEditMetadata = (isEditMetadata) => {
+    this.setState({ isEditMetadata })
+  }
+
+  private updateIsBulkPublish = (isBulkPublish) => {
+    this.setState({ isBulkPublish })
+  }
+
+  private updateIsBulkUnpublish = (isBulkUnpublish) => {
+    this.setState({ isBulkUnpublish })
   }
 
   private updateBulkOperationCompleted = (bulkOperationCompleted) => {
@@ -704,6 +716,7 @@ class Search extends Component<IAppState, ISearchState> {
       this.setState({
         isBulkPublish: false,
         isBulkUnpublish: false,
+        documentsSelected: [],
       })
     }
     this.setState({ bulkOperationCompleted }, () => {

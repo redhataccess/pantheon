@@ -47,6 +47,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
             bulkUpdateSuccess: 0,
             bulkUpdateWarning: 0,
 
+            docsSelected: this.props.documentsSelected,
             documentsSucceeded: [""],
             documentsFailed: [""],
             documentsIgnored: [""],
@@ -77,7 +78,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                 <Modal
                     variant={ModalVariant.medium}
                     title="Edit metadata"
-                    isOpen={this.state.isModalOpen}
+                    isOpen={isModalOpen}
                     header={header}
                     aria-label="Edit metadata"
                     onClose={this.handleModalClose}
@@ -351,7 +352,8 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                     bulkUpdateFailure: 0,
                     progressSuccessValue: 0,
                     progressFailedValue: 0,
-                    progressWarningValue: 0
+                    progressWarningValue: 0,
+                    docsSelected: this.props.documentsSelected,
                 });
             }
             this.props.documentsSelected.map((r) => {
@@ -389,7 +391,6 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                                         bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
                                         showBulkEditConfirmation: true
                                     }, () => {
-                                        this.setState({ showBulkEditConfirmation: true })
                                         this.props.updateIsEditMetadata(false)
                                         this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
                                     })
@@ -461,7 +462,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
     private calculateFailureProgress = (num: number) => {
         if (num >= 0) {
-            let stat = (num) / this.props.documentsSelected.length * 100
+            let stat = (num) / this.state.docsSelected.length * 100
             this.setState({ progressFailureValue: stat, showBulkConfirmation: true }, () => {
                 this.getDocumentFailed()
             })
@@ -470,7 +471,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
     private calculateSuccessProgress = (num: number) => {
         if (num >= 0) {
-            let stat = (num) / this.props.documentsSelected.length * 100
+            let stat = (num) / this.state.docsSelected.length * 100
             this.setState({ progressSuccessValue: stat, showBulkConfirmation: true }, () => {
                 this.getDocumentsSucceeded()
             })
@@ -479,7 +480,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
     private calculateWarningProgress = (num: number) => {
         if (num >= 0) {
-            let stat = (num) / this.props.documentsSelected.length * 100
+            let stat = (num) / this.state.docsSelected.length * 100
             this.setState({ progressWarningValue: stat, showBulkConfirmation: true }, () => {
                 this.getDocumentIgnored()
             })
