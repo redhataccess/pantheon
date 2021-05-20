@@ -31,7 +31,7 @@ class ErrorBoundary extends React.Component<IErrorBoundaryProps, any> {
         <Alert isInline variant="danger" title="An Error Has Occurred.">
           <p>
             Please click{' '}
-            <a href="/">here</a>
+            <a href="/pantheon">here</a>
            {' '} to return to the homepage.
           </p>
         </Alert>
