@@ -122,6 +122,7 @@ describe("ContentDisplay tests for Assembly", () => {
         wrapper.setState({ "lastPublishDate": "Fri Oct 18 2019 17:35:50 GMT-0400" })
         wrapper.setState({ "variantUUID": "123" })
         wrapper.setState({ "portalUrl": "https://example.com" })
+        wrapper.setState({ "portalUrlType": "LIVE" })
         const sourceTypeText = wrapper.find("a").at(0).text()
 
         // ensure it matches what is expected
@@ -357,6 +358,7 @@ describe("ContentDisplay tests for Module", () => {
         wrapper.setState({ "lastPublishDate": "Fri Oct 18 2019 17:35:50 GMT-0400" })
         wrapper.setState({ "variantUUID": "123" })
         wrapper.setState({ "portalUrl": "https://example.com" })
+        wrapper.setState({ "portalUrlType": "LIVE" })
         const sourceTypeText = wrapper.find("a").at(0).text()
 
         // ensure it matches what is expected
