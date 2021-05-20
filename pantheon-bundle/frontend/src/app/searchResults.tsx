@@ -124,7 +124,9 @@ class SearchResults extends Component<IProps, ISearchState> {
       || this.props.keyWord !== prevProps.keyWord
       || this.props.filters !== prevProps.filters
       || this.props.onGetdocumentsSelected !== prevProps.onGetdocumentsSelected
-      || this.props.bulkOperationCompleted !== prevProps.bulkOperationCompleted
+      || (this.props.bulkOperationCompleted !== prevProps.bulkOperationCompleted
+        && this.props.currentBulkOperation.length === 0
+      )
     ) {
       this.doSearch()
     }
