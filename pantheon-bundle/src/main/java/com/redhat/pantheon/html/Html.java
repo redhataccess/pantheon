@@ -1,5 +1,6 @@
 package com.redhat.pantheon.html;
 
+import com.redhat.pantheon.extension.url.UrlException;
 import com.redhat.pantheon.extension.url.UrlProvider;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.document.DocumentVariant;
@@ -79,9 +80,11 @@ public class Html {
                             try {
                                 Resource resource = resolver.getResource(resolver.adaptTo(Session.class).getNodeByIdentifier(uuid).getPath());
                                 DocumentVariant variant = resource.adaptTo(DocumentVariant.class);
-                                String url = provider.generateUrlString(variant);
-                                link.attr("href", url);
-                            } catch (RepositoryException e) {
+                                String url = provider.generateUrlString();
+                                if (provider.getUrlType() == UrlProvider.urlType.LIVE) {
+                                    link.attr("href", url);
+                                }
+                            } catch (RepositoryException | UrlException e) {
                                 log.warn("Attempted to rewrite URL for link target " + uuid + " but was unsuccessful.", e);
                             }
                         }

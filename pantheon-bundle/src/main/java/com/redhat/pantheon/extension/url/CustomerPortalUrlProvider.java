@@ -15,9 +15,13 @@ import java.util.Optional;
  *      document locale
  *      customer portal host
  */
-public abstract class CustomerPortalUrlProvider implements UrlProvider {
+public abstract class CustomerPortalUrlProvider extends UrlProvider {
 
     protected static final String URL_PREFIX = "/documentation/";
+
+    public CustomerPortalUrlProvider(DocumentVariant documentVariant) {
+        super(documentVariant);
+    }
 
     protected String getDocumentType(DocumentVariant variant) {
         return PantheonConstants.RESOURCE_TYPE_ASSEMBLYVARIANT.equals(variant.getResourceType()) ? "guide" : "topic";
