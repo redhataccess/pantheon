@@ -347,6 +347,7 @@ class SearchResults extends Component<IProps, ISearchState> {
     this.setState({ pageLimit: pageLimitValue, page: 1, itemsPerPage: pageLimitValue }, () => {
       this.props.onGetdocumentsSelected([])
       this.doSearch()
+      this.props.onSelectContentType("")
     })
   }
 
