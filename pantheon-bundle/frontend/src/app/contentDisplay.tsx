@@ -1,7 +1,7 @@
 import React, { Component } from "react"
-import { CopyIcon } from "@patternfly/react-icons";
+import { CopyIcon, InfoCircleIcon } from "@patternfly/react-icons";
 import {
-    Card, Text, TextContent, TextVariants, Level, LevelItem, Button, Divider, Title
+    Card, Text, TextContent, TextVariants, Level, LevelItem, Button, Divider, Title, Tooltip
 } from "@patternfly/react-core"
 
 import { Versions } from "@app/versions"
@@ -119,8 +119,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     </LevelItem>
                     <LevelItem />
                     <LevelItem>
-                        {this.state.lastPublishDate.trim() !== "" && this.state.lastPublishDate !== "-"
-                            && this.state.variantUUID !== ""
+                        {this.state.variantUUID !== ""
                             && this.state.portalUrl !== ""
                             && this.state.portalUrlType === "LIVE"
                             && <span><a href={this.state.portalUrl} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
@@ -132,8 +131,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         }
                     </LevelItem>
                     <LevelItem>
-                        {this.state.lastPublishDate.trim() !== "" && this.state.lastPublishDate !== "-"
-                            && this.state.variantUUID !== ""
+                        {this.state.variantUUID !== ""
                             && this.state.portalUrl !== ""
                             && this.state.portalUrlType === "LIVE"
                             && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
@@ -146,7 +144,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         {this.state.variantUUID !== ""
                             && this.state.portalUrl !== ""
                             && this.state.portalUrlType === "ERROR"
-                            && <span>No URL; {this.state.portalUrl}</span>
+                            && <span><div><Tooltip position="top" content={<div>NO URL; {this.state.portalUrl}</div>}><InfoCircleIcon /></Tooltip></div></span>
                         }
 
                         <span>&emsp;{this.state.copySuccess !== "" && this.state.copySuccess}</span>
