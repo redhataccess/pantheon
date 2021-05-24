@@ -30,6 +30,7 @@ export interface IContentDisplayState {
     assemblyData: any
     firstPublishDate: string
     lastPublishDate: string
+    regeneratePortalUrl: boolean
 }
 
 export interface IModuleDisplayState extends IContentDisplayState {
@@ -68,7 +69,8 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
             versionUrlFragment: "",
             locale: "",
             firstPublishDate: "",
-            lastPublishDate: ""
+            lastPublishDate: "",
+            regeneratePortalUrl: false
         }
     }
 
@@ -81,6 +83,15 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
         this.getPortalHostUrl()
         this.getLocale(this.props.location.pathname)
 
+    }
+
+    public componentDidUpdate(prevProps, prevState) {
+        if (prevState.regeneratePortalUrl !== this.state.regeneratePortalUrl) {
+            this.getPortalUrl(this.state.modulePath, this.state.variant)
+            if(this.state.regeneratePortalUrl === true){
+                this.setState({regeneratePortalUrl: false})
+            }
+        }
     }
 
     public render() {
@@ -222,6 +233,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         onGetUrl={this.onGetUrl}
                         onGetProduct={this.getProduct}
                         onGetVersion={this.getVersion}
+                        canRegeneratePortalUrl={this.canRegeneratePortalUrl}
                     />
                 </Card>
 
@@ -509,6 +521,10 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     })
                 }
             })
+    }
+
+    private canRegeneratePortalUrl = (regeneratePortalUrl: boolean) => {
+        this.setState({regeneratePortalUrl})
     }
 
 }
