@@ -34,6 +34,7 @@ export interface IProps {
     updateDate: (releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
+    canRegeneratePortalUrl: (regeneratePortalUrl) => any
 }
 
 // Define properties in Metadata
@@ -562,7 +563,7 @@ class Versions extends Component<IProps, IState> {
                             canChangePublishState: true,
                             publishAlertVisible: false,
                             showMetadataAlertIcon: false
-                        })
+                        }, () => this.props.canRegeneratePortalUrl(true))
                     } else {
                         console.log(buttonText + " failed " + response.status)
                         this.setState({ publishAlertVisible: true })
@@ -638,7 +639,7 @@ class Versions extends Component<IProps, IState> {
                         canChangePublishState: true,
                         publishAlertVisible: false,
                         successAlertVisible: true,
-                    })
+                    }, () => this.props.canRegeneratePortalUrl(true))
                     if (this.state.metadataPath.endsWith("/draft")) {
                         this.setState({ showMetadataAlertIcon: false })
                         this.fetchVersions()
