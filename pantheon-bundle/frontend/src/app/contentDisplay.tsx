@@ -88,7 +88,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
     public componentDidUpdate(prevProps, prevState) {
         if (prevState.regeneratePortalUrl !== this.state.regeneratePortalUrl) {
             this.getPortalUrl(this.state.modulePath, this.state.variant)
-            if (this.state.regeneratePortalUrl === true) {
+            if(this.state.regeneratePortalUrl === true){
                 this.setState({regeneratePortalUrl: false})
             }
         }
