@@ -11,7 +11,7 @@ import {
   Divider,
   SimpleListItem, SimpleList,
   SearchInput,
-  ToolbarChipGroup, ToolbarChip, Alert, AlertActionLink,
+  ToolbarChipGroup, ToolbarChip, Alert, AlertActionLink, AlertActionCloseButton,
 } from "@patternfly/react-core";
 
 import { SearchResults } from "@app/searchResults";
@@ -48,6 +48,7 @@ export interface ISearchState {
 
   productFilterValue: string
   repoFilterValue: string
+  isMultipleRepoErrorOpen : boolean
 
   // metadata
   productsSelected: string[]
@@ -96,6 +97,8 @@ class Search extends Component<IAppState, ISearchState> {
       // search
       productsSelected: [],
       repositoriesSelected: [],
+
+      isMultipleRepoErrorOpen: false,
 
       // bulk operation
       documentsSelected: [],
@@ -326,6 +329,7 @@ class Search extends Component<IAppState, ISearchState> {
           <ToolbarContent>{toolbarItems}</ToolbarContent>
         </Toolbar>
         <Divider />
+        {this.state.repositoriesSelected.length > 1 && this.state.isMultipleRepoErrorOpen && (<Alert variant="danger" isInline title="You may not perform a bulk operation on more than one repository." actionClose={<AlertActionCloseButton onClose={this.onMultipleRepoErrorClose} />}><p>Please deselect one repository to continue.</p></Alert>)}
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody className="search-results">
@@ -524,6 +528,10 @@ class Search extends Component<IAppState, ISearchState> {
     }
   };
 
+  private onMultipleRepoErrorClose = () => {
+    this.setState({isMultipleRepoErrorOpen: false})
+  }
+
   private onChangeProductFilter = (value, event) => {
     this.setState({
       productFilterValue: value
@@ -550,7 +558,8 @@ class Search extends Component<IAppState, ISearchState> {
     this.setState({
       documentsSelected: [],
       contentTypeSelected: '',
-      isBulkOperationButtonDisabled: true
+      isBulkOperationButtonDisabled: true,
+      isMultipleRepoErrorOpen: false
     })
     let repositoriesSelected = new Array()
     let repositories
@@ -587,6 +596,10 @@ class Search extends Component<IAppState, ISearchState> {
 
       if (this.state.repositoriesSelected.length === 1 && this.state.bulkOperationWarn === true) {
         this.setState({ bulkOperationWarn: false })
+      }
+
+      if(this.state.repositoriesSelected.length > 1){
+        this.setState({isMultipleRepoErrorOpen: true})
       }
 
     });
