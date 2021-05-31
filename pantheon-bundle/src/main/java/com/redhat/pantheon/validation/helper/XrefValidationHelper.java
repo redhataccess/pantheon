@@ -8,12 +8,18 @@ import java.util.Map;
 
 public class XrefValidationHelper {
 
-    private List<String> xRefs;
+    private static List<String> xRefs;
 
-    public XrefValidationHelper() {
-        initList();
+    private XrefValidationHelper() {
     }
 
+    private static class SingletonHelper{
+        private static final XrefValidationHelper INSTANCE = new XrefValidationHelper();
+    }
+
+    public static XrefValidationHelper getInstance(){
+        return SingletonHelper.INSTANCE;
+    }
     public List<String> getObjectsToValidate() {
         return xRefs;
     }
