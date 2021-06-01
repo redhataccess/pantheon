@@ -329,7 +329,7 @@ class Search extends Component<IAppState, ISearchState> {
           <ToolbarContent>{toolbarItems}</ToolbarContent>
         </Toolbar>
         <Divider />
-        {this.state.repositoriesSelected.length > 1 && this.state.isMultipleRepoErrorOpen && (<Alert variant="danger" isInline title="You may not perform a bulk operation on more than one repository." actionClose={<AlertActionCloseButton onClose={this.onMultipleRepoErrorClose} />}><p>Please deselect one repository to continue.</p></Alert>)}
+        {this.state.repositoriesSelected.length > 1 && this.state.isMultipleRepoErrorOpen && (<Alert variant="danger" isInline title="You may not perform a bulk operation on more than one repository." actionClose={<AlertActionCloseButton onClose={this.onMultipleRepoErrorClose} />}><p>Please deselect all but one repository to continue.</p></Alert>)}
         <Drawer isExpanded={isExpanded} isInline={true} position="left" onExpand={this.onExpand}>
           <DrawerContent panelContent={panelContent}>
             <DrawerContentBody className="search-results">
