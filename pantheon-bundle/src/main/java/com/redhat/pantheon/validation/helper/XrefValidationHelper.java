@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class XrefValidationHelper {
 
-    private static List<String> xRefs;
+    private List<String> xRefs;
 
     private XrefValidationHelper() {
     }
@@ -29,8 +29,9 @@ public class XrefValidationHelper {
     }
 
     public void setObjectsToValidate(List<String> objectsToValidate) {
-        if(null != xRefs && objectsToValidate.size()>0){
-            xRefs.addAll(objectsToValidate);
+        if(null == xRefs || objectsToValidate.isEmpty()){
+            return;
         }
+        xRefs.addAll(objectsToValidate);
     }
 }
