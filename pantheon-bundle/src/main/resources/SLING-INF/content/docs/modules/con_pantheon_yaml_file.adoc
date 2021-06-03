@@ -1,5 +1,5 @@
 [id='pantheon-yaml-file_{context}']
-= The {ProductShortName} configuration file
+= Description of the {ProductShortName} configuration file
 
 [role="_abstract"]
 The configuration file, named `pantheon2.yml`, resides in the root directory of your documentation repository. You use this file to designate a Git repository as a source that {ProductShortName} can use to import content. This configuration file provides the information necessary for {ProductShortName} to interact with files in the repository.
@@ -14,22 +14,23 @@ The configuration file enables you to perform the following actions:
 
 The configuration file enables you to import content from a Git repository into {ProductShortName}.
 
-Use the configuration file to define the following parameters:
+The {ProductShortName} configuration file defines the following parameters:
 
-`server`:: The URL of the {ProductShortName} server.
-`repositories`:: A multi-valued structure with the following child members:
+* `server` The URL of the {ProductShortName} server.
+* `repositories` A multi-valued structure with the following child members:
 +
-`name`:: A unique ID that appears in URLs on the {ProductShortName} site when you view modules and assemblies. For example, if you specify `name: rhel_docs`, and one of your files is named [filename]`foo.adoc`, the module's URL in {ProductShortName} is:
+** `name` (optional) A unique ID that displays in URLs on the {ProductShortName} site when you view modules and assemblies.
++
+For example, if you specify `name: rhel_docs`, and one of your files is named [filename]`foo.adoc`, the module's URL in {ProductShortName} is:
 `\http://<_{ProductShortName}__url>/content/repositories/**rhel_docs**/entities/modules/getting_started/foo.adoc.preview`
-`modules`:: Patterns for modules that show up in the search results on {ProductShortName}.
-`resources`:: Image files, legal information or other content that is not a complete module or assembly.
-`attributes`:: A path to the repository-wide attributes file that your documents might depend on.
+** `modules` (optional) Patterns for modules that show up in the search results on {ProductShortName}.
+** `resources` (optional) Image files, legal information, or other content that is not a complete module or assembly.
+** `attributes` (optional) A path to the repository-wide attributes file. Provide this value if your documents relies on the attributes file.
++
+NOTE: You must define the values for `server` and `repository`.
 
-You must define the values for `server` and `repository`.
-
-.Example configuration file
-
-// [options="nowrap" subs="normal"]
+.Example {ProductShortName} configuration file
+[source,yaml,options="nowrap",subs="attributes+,+quotes"]
 ----
 # Config file for {ProductShortName}
 

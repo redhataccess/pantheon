@@ -1,12 +1,12 @@
 [id="versioning-a-product_{context}"]
-= Versioning a product
+= Assigning a version to a {ProductName} product
 
 [role="_abstract"]
-A product must have at least one product version assigned to it.
+Your product must have at least one product version assigned to it before you can import your modules and assemblies to {ProductShortName}.
 
 .Prerequisites
 
-* You are logged in.
+* You are logged in to {ProductShortName}.
 * The product to be versioned exists in {ProductName}.
 
 .Procedure
@@ -15,15 +15,17 @@ A product must have at least one product version assigned to it.
 
 . Find the product and click the drop-down arrow>Product Details.
 
-. Enter the following information:
-  New Version:: This is the text that appears in {ProductShortName}, and the document preview.
-  URL Fragment:: This string appears in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
+. Provide the following information:
+  New Version:: Set the value for the new version of your product. The version is displayed in {ProductShortName}, and the document preview.
+  URL Fragment:: Enter the new version URL fragment. The URL fragment is displayed in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
 
 . Click btn:[Save].
 
-.Example
+.Example {ProductShortName} product versioning
 
 New Version:: 4.4 Beta
 URL Fragment:: `4.4-beta`
 
-After creating a product version *4.4-beta* and assigning a module the *.NET Core* product and version *4.4-beta*, the resulting URL for that module is: `\https://access.stage.redhat.com/documentation/en-us/topic/net_core/4.4-beta/<_module-UUID_>`
+After creating a product version *4.4-beta* and assigning a module the *.NET Core* product and version *4.4-beta*, the resulting URL for that module is:
+
+`\https://access.stage.redhat.com/documentation/en-us/topic/net_core/4.4-beta/<_module-UUID_>`

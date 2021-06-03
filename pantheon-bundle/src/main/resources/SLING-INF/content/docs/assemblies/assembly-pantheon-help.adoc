@@ -17,7 +17,7 @@ ifdef::context[:parent-context: {context}]
 [role="_abstract"]
 Welcome to {ProductShortName} help.
 
-This document describes the main concepts, requirements, and actions in {ProductShortName}.
+This document describes how you can configure your documentation repository and publish your project in {ProductShortName}.
 
 include::../modules/ref_prerequisites.adoc[leveloffset=+1]
 
@@ -47,13 +47,15 @@ include::../modules/con_definition-of-metadata.adoc[leveloffset=+2]
 
 include::../modules/ref_adding-module-types_to_modules_in_Pantheon.adoc[leveloffset=+2]
 
-== Configuring your repository
+== Setting up documentation repositories for {ProductShortName}
 
 Before you can add {ContentTerm} to {ProductName}, you must configure your documentation repository as a content source for {ProductShortName} and then create a product and product version in {ProductShortName} to associate with your {ContentTerm}.
 
-* xref:configuring-a-repository-as-a-content-source-for-pantheon_assembly-help[Configuring your documentation repository as a content source for {ProductShortName}.]
-* xref:creating-a-product_assembly-help[Creating a product] in {ProductShortName} for your {ContentTerm}
-* xref:versioning-a-product_assembly-help[Creating a product version] in {ProductShortName} for your {ContentTerm}
+To add your {ContentTerm} to {ProductShortName}, you need to complete the following actions:
+
+* xref:configuring-a-repository-as-a-content-source-for-pantheon_assembly-help[Configuring your documentation repository as a content source for {ProductShortName}]
+* xref:creating-a-product_assembly-help[Creating a product in {ProductShortName}]
+* xref:versioning-a-product_assembly-help[Assigning a version to a {ProductShortName} product]
 
 include::../modules/con_pantheon_yaml_file.adoc[leveloffset=+2]
 

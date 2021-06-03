@@ -10,6 +10,7 @@ Do not submit documentation feedback to report a bug or to create a functionalit
 [NOTE]
 ====
 For reporting Pantheon 2 product feedback:
+
 * Production problems or interruptions in service go on the CCSOPS Jira board.
 * New feature requests go on the CCS Jira board.
 ====

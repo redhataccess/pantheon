@@ -1,11 +1,11 @@
 [id="previewing-modules-in-pantheon_{context}"]
-= Previewing {ContentTerm} in {ProductShortName}
+= Previewing {ContentTerm} in {ProductName}
 
 [role="_abstract"]
-Preview {ContentTerm} that has been imported into {ProductShortName}. 
+Preview {ContentTerm} that has been imported into {ProductShortName}.
 
 .Prerequisites
-* You are logged in.
+* You are logged in to {ProductShortName}.
 +
 If you are not logged in, you can still see the rendered {ContentTerm} if it is already published to the {PublishingPortal}.
 
