@@ -59,7 +59,6 @@ public class DocumentPreviewFilter implements Filter {
             }
             // FIXME - need to rework document preview servlets to support latest suffix (variant preview servlet already works)
             String forwardString = firstResource.get().getPath() + ".preview/" + mode;
-            new XrefValidationHelper().initList();
             request.getRequestDispatcher(forwardString).forward(request, response);
         } catch (RepositoryException e) {
             throw new ServletException(e);

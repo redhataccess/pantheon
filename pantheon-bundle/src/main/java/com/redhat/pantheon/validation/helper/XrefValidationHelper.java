@@ -10,10 +10,16 @@ public class XrefValidationHelper {
 
     private List<String> xRefs;
 
-    public XrefValidationHelper() {
-        initList();
+    private XrefValidationHelper() {
     }
 
+    private static class SingletonHelper{
+        private static final XrefValidationHelper INSTANCE = new XrefValidationHelper();
+    }
+
+    public static XrefValidationHelper getInstance(){
+        return SingletonHelper.INSTANCE;
+    }
     public List<String> getObjectsToValidate() {
         return xRefs;
     }
@@ -23,8 +29,9 @@ public class XrefValidationHelper {
     }
 
     public void setObjectsToValidate(List<String> objectsToValidate) {
-        if(objectsToValidate.size()>0){
-            xRefs.addAll(objectsToValidate);
+        if(null == xRefs || objectsToValidate.isEmpty()){
+            return;
         }
+        xRefs.addAll(objectsToValidate);
     }
 }

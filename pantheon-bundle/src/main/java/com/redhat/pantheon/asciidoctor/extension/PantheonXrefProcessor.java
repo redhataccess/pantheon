@@ -58,7 +58,7 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
             content = preprocessWithPattern(content, XREF_PATTERN, urlList);
             content = preprocessWithPattern(content, TRIANGLE_PATTERN, urlList);
         }
-        new XrefValidationHelper().setObjectsToValidate(urlList);
+        XrefValidationHelper.getInstance().setObjectsToValidate(urlList);
         return content;
     }
 
