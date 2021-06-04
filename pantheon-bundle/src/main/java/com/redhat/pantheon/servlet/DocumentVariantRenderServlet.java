@@ -3,6 +3,7 @@ package com.redhat.pantheon.servlet;
 import com.redhat.pantheon.asciidoctor.AsciidoctorService;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.document.DocumentVariant;
+import com.redhat.pantheon.validation.helper.XrefValidationHelper;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -93,6 +94,7 @@ public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
 
         // only allow forced rerendering if this is a draft version. Released and historical revs are written in stone.
         boolean draft = latest && variant.hasDraft();
+        XrefValidationHelper.getInstance().initList();
         String html = asciidoctorService.getDocumentHtml(
                 variant.getParentLocale().getParent(),
                 LocaleUtils.toLocale(variant.getParentLocale().getName()),
