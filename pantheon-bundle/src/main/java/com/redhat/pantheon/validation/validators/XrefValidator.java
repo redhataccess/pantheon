@@ -67,8 +67,7 @@ public class XrefValidator implements Validator {
     private ErrorDetails checkXref() {
         ErrorDetails errorDetails = new ErrorDetails();
         try {
-            XrefValidationHelper xrefValidationHelper = new XrefValidationHelper();
-            List<String>  xrefTargets = xrefValidationHelper.getObjectsToValidate();
+            List<String>  xrefTargets = XrefValidationHelper.getInstance().getObjectsToValidate();
             if(null == xrefTargets || xrefTargets.size()==0){
                 return errorDetails;
             }
