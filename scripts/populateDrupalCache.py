@@ -14,7 +14,7 @@ failure = 0
 for sitemap in sitemaps:
     r = requests.get(sitemap)
 
-    if r.status_code is not 200:
+    if r.status_code != 200:
         print('Error, status code for ' + url + ' was ' + r.status_code)
     else:
         xmldoc = minidom.parseString(r.content)
