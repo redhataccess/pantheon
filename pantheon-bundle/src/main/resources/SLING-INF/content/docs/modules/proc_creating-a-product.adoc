@@ -13,8 +13,7 @@ Before you can assign a product name to the metadata of a module or assembly, th
 
 . Navigate to menu:Products[New Product].
 . Enter the following information, items marked with a star (*) are mandatory:
-  +
-  [horizontal]
+[horizontal]
   Product Name *:: The text that appears in {ProductShortName}, the document preview, and in user-facing content. This name is replaced by the value of the `:pantheonproduct:` attribute in user-facing content that {ProductShortName} generates.
   Product URL Fragment *:: This string appears in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
   Product Description:: A description of the product.
