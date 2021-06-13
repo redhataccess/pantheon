@@ -23,11 +23,11 @@ Before you can assign a product name to the metadata of a module or assembly, th
 
 .Example
 [horizontal]
-*Product Name*:: .NET Core
-*Product URL Fragment*:: net_core
-*Product Description*:: Documentation for the .NET Core framework.
-*Product Version*:: 4.4-Beta
-*Version URL Fragment*:: 4.4-beta
+Product Name:: .NET Core
+Product URL Fragment:: net_core
+Product Description:: Documentation for the .NET Core framework.
+Product Version:: 4.4-Beta
+Version URL Fragment:: 4.4-beta
 
 Entering the above information creates a {ProductShortName} product named *.NET Core*. The URL for documentation that is associated with this product includes the URL Fragment *net_core* to identify the product, and the Version URL Fragment is *4.4-beta*.
 
