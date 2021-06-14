@@ -55,7 +55,7 @@ To add your {ContentTerm} to {ProductShortName}, you need to complete the follow
 
 * xref:configuring-a-repository-as-a-content-source-for-pantheon_assembly-help[Configuring your documentation repository as a content source for {ProductShortName}]
 * xref:creating-a-product_assembly-help[Creating a product in {ProductShortName}]
-* xref:versioning-a-product_assembly-help[Assigning a version to a {ProductShortName} product]
+//* xref:versioning-a-product_assembly-help[Assigning a version to a {ProductShortName} product]
 
 include::../modules/con_pantheon_yaml_file.adoc[leveloffset=+2]
 
@@ -63,7 +63,7 @@ include::../modules/proc_config_repo.adoc[leveloffset=+2]
 
 include::../modules/proc_creating-a-product.adoc[leveloffset=+2]
 
-include::../modules/proc_versioning_a_product.adoc[leveloffset=+2]
+//include::../modules/proc_versioning_a_product.adoc[leveloffset=+2]
 
 include::../modules/proc_importing-content.adoc[leveloffset=+1]
 
