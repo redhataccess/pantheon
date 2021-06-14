@@ -36,3 +36,10 @@ The resulting URL for that module is:
 
 `\https://access.stage.redhat.com/documentation/en-us/topic/net_core/4.4-beta/_module-UUID_`
 
+<<<<<<< HEAD
+=======
+
+// .Additional resources
+// link:placeholder.url.com[Creating a product version]
+// link:placeholder.url.com[{ProductName} user roles]
+>>>>>>> 4c5f73f... fcceud-50 updates to Create Product
