@@ -1,13 +1,13 @@
 [id="creating-a-product_{context}"]
-= Creating a product
+= Creating a product in {ProductName}
 
 [role="_abstract"]
 Before you can assign a product name to the metadata of a module or assembly, the product must exist in {ProductName}.
 
 .Prerequisites
 
-* You are logged in.
-* You have Publisher permissions.
+* You are logged in to {ProductShortName}.
+* You are assigned the publisher role.
 
 .Procedure
 
@@ -21,8 +21,8 @@ Before you can assign a product name to the metadata of a module or assembly, th
   Version URL Fragment *:: This string appears in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
 . Click btn:[Save].
 
-.Example
-[horizontal]
+.Example {ProductShortName} product configuration
+
 Product Name:: .NET Core
 Product URL Fragment:: net_core
 Product Description:: Documentation for the .NET Core framework.
@@ -34,3 +34,4 @@ Entering the above information creates a {ProductShortName} product named *.NET 
 The resulting URL for that module is:
 
 `\https://access.stage.redhat.com/documentation/en-us/topic/net_core/4.4-beta/_module-UUID_`
+
