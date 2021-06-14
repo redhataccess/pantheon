@@ -19,6 +19,7 @@ Before you can assign a product name to the metadata of a module or assembly, th
   Product Description:: A description of the product.
   Product Version *:: The product version. This value is replaced by the value of the product version  or version number attribute in user-facing content that {ProductShortName} generates.
   Version URL Fragment *:: This string appears in the user-facing URL for any content that belongs to this product and version. A URL fragment can include letters, numbers, hyphens, periods and underscores.
+
 . Click btn:[Save].
 
 .Example {ProductShortName} product configuration
