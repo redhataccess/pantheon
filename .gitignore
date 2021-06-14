@@ -21,3 +21,4 @@ sling-org-apache-sling-karaf-configs/.settings
 
 pantheon-karaf-dist/src/main/resources/etc/keystore/
 pantheon-karaf-dist/src/main/resources/etc/org.ops4j.pax.web.cfg
+.m2
