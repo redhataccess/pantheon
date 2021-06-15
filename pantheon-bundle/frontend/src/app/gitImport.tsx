@@ -64,7 +64,7 @@ export default function GitImport(props: any) {
               onClose={dismissNotification}
               actions={[<Button key="yes" variant="primary" onClick={setRedirect}>Yes</Button>,
               <Button key="no" variant="secondary" onClick={dismissNotification}>No</Button>]}>
-              The git import has been submitted and the upload will begin. Do you want to be redirected to the module library?
+              The git import has been submitted and the upload will begin. Please do not refresh this page, as it will interfere with the progress of your import status. Would you like to be redirected to the module library at this time?
             </Modal>)}
           <div>
             {isMissingFields && (
