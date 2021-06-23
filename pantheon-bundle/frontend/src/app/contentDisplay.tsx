@@ -182,7 +182,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                                 <strong><span id="span-source-type-firstpublished">First Published Date</span></strong>
                                 <br />
                                 <span>
-                                    {this.state.firstPublishDate.trim() !== ""
+                                    {this.state.firstPublishDate !== undefined && this.state.firstPublishDate.trim() !== ""
                                         && this.state.firstPublishDate.length >= 15 ?
                                         new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.firstPublishDate)) : "--"}
                                 </span>
@@ -195,7 +195,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                                 <strong><span id="span-source-type-lastpublished">Last Published Date</span></strong>
                                 <br />
                                 <span>
-                                    {this.state.lastPublishDate.trim() !== ""
+                                    {this.state.lastPublishDate != undefined && this.state.lastPublishDate.trim() !== ""
                                         && this.state.lastPublishDate.length >= 15 ?
                                         new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.lastPublishDate)) : "--"}
                                 </span>
