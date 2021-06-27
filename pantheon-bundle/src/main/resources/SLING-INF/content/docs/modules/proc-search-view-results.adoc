@@ -31,7 +31,7 @@ In the Search results table, click the link of a content item.
 
 == Previewing text
 
-You can see the text of the latest draft of a module or an assembly using the {ProductName} the search engine.
+You can preview an approximation of how the latest draft of a module or an assembly will be rendered on the Customer Portal using {ProductName}.
 
 .Procedure
 
