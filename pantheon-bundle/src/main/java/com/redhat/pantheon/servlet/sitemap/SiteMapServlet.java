@@ -33,8 +33,7 @@ import static com.redhat.pantheon.helper.PantheonConstants.*;
         service = Servlet.class,
         property = {
                 Constants.SERVICE_DESCRIPTION + "=Sitemap Servlet",
-                Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team",
-                "sling.servlet.paths="+ "[\"/api/sitemap/module.sitemap.xml\", \"/api/sitemap/assembly.sitemap.xml\" ]"
+                Constants.SERVICE_VENDOR + "=Red Hat Content Tooling team"
         }
 )
 @SlingServletResourceTypes(
@@ -90,10 +89,10 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
             stream.writeStartDocument(XML_DOCUMENT_VERSION);
             stream.writeStartElement("", URL_SET, SITEMAP_NAMESPACE);
             stream.writeNamespace("", SITEMAP_NAMESPACE);
-
+            Boolean isPortalUrl = System.getenv(PORTAL_URL) != null ? true : false;
             documentAssets.forEach(r -> {
                 try {
-                    writeXML(r, stream, request);
+                    writeXML(r, stream, request, isPortalUrl);
                 } catch (XMLStreamException e) {
                     e.printStackTrace();
                 }
@@ -107,7 +106,7 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
         }
     }
 
-    private void writeXML(Resource resource, XMLStreamWriter xmlStream, SlingHttpServletRequest slingRequest)
+    private void writeXML(Resource resource, XMLStreamWriter xmlStream, SlingHttpServletRequest slingRequest, Boolean isPortalUrl)
             throws XMLStreamException {
         xmlStream.writeStartElement(SITEMAP_NAMESPACE, URL);
 
@@ -116,7 +115,7 @@ public class SiteMapServlet extends SlingAllMethodsServlet {
         Date dateModified = null;
 
         // Process external url
-        if (System.getenv(PORTAL_URL) != null) {
+        if (isPortalUrl) {
             documentVariant = resource.adaptTo(DocumentVariant.class);
 
             if (documentVariant != null && documentVariant.released().isPresent()) {
