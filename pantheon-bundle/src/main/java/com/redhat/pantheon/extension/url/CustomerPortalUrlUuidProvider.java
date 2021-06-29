@@ -30,7 +30,7 @@ public class CustomerPortalUrlUuidProvider extends CustomerPortalUrlProvider {
     @Override
     public String generateUrlString() throws UrlException {
         try {
-            DocumentMetadata metadata = documentVariant.latestVersion().get().metadata().get();
+            DocumentMetadata metadata = documentVariant.released().isPresent()? documentVariant.released().get().metadata().get() : documentVariant.latestVersion().get().metadata().get();
             ProductVersion pv = metadata.productVersion().getReference();
             if (pv == null) {
                 throw new UrlException("Document does not have associated product/version metadata.");
