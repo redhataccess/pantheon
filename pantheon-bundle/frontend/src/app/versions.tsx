@@ -878,6 +878,9 @@ class Versions extends Component<IProps, IState> {
                 }
 
             })
+            .catch((error) => {
+                // console.log("No validations node for " + validationPath + " => ", error)
+            })
     }
 
     private onClickTree = (evt, treeViewItem, parentItem) => {

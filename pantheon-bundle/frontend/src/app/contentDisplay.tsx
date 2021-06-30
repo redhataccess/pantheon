@@ -195,7 +195,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                                 <strong><span id="span-source-type-lastpublished">Last Published Date</span></strong>
                                 <br />
                                 <span>
-                                    {this.state.lastPublishDate != undefined && this.state.lastPublishDate.trim() !== ""
+                                    {this.state.lastPublishDate !== undefined && this.state.lastPublishDate.trim() !== ""
                                         && this.state.lastPublishDate.length >= 15 ?
                                         new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.lastPublishDate)) : "--"}
                                 </span>
@@ -285,8 +285,12 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                             for (const offspring of myGrandchild.__children__) {
                                 if (offspring.__name__ === "metadata") {
                                     if (myGrandchild.__name__ === "released") {
+                                        if (offspring["pant:dateFirstPublished"] !== undefined) {
+                                            this.setState({
+                                                firstPublishDate: offspring["pant:dateFirstPublished"],
+                                            })
+                                        }
                                         this.setState({
-                                            firstPublishDate: offspring["pant:dateFirstPublished"],
                                             lastPublishDate: offspring["pant:datePublished"]
                                         })
                                     }
