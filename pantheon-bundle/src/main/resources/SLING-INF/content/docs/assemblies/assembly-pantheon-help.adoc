@@ -45,6 +45,8 @@ include::../modules/con_definition-of-a-module.adoc[leveloffset=+2]
 
 include::../modules/con_definition-of-metadata.adoc[leveloffset=+2]
 
+include::../modules/con_about-xrefs-validation-in-pantheon.adoc[leveloffset=+2]
+
 include::../modules/ref_adding-module-types_to_modules_in_Pantheon.adoc[leveloffset=+2]
 
 == Setting up documentation repositories for {ProductShortName}
@@ -86,6 +88,8 @@ After you have imported your content into {ProductShortName}, prepare it for pub
 include::../modules/proc_assigning-metadata-to-a-module.adoc[leveloffset=+2]
 
 include::../modules/proc_previewing-modules-in-pantheon.adoc[leveloffset=+2]
+
+include::../modules/proc_checking-xref-validation-errors.adoc[leveloffset=+2]
 
 include::../modules/proc_publishing-content.adoc[leveloffset=+1]
 
