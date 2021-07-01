@@ -8,8 +8,8 @@ ifdef::context[:parent-context: {context}]
 :context: search-modules
 
 [role="_abstract"]
-You can search for content in the *{ContentTerm}* tab of {ProductShortName} by simple keyword or free text search after you  apply one or more filters to your query.
+You can search for content in the *Search* tab of {ProductShortName}.
 
 include::../modules/proc-search-keyword.adoc[]
-include::../modules/proc-search-filters.adoc[]
+// include::../modules/proc-search-filters.adoc[]
 include::../modules/proc-search-view-results.adoc[]

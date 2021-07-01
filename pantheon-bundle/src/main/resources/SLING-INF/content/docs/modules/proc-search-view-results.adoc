@@ -1,3 +1,7 @@
+// Module included in the following assemblies:
+//
+// */assembly-searching-modules.adoc
+
 [id='search-view-results_{context}']
 
 = Viewing search results
@@ -19,7 +23,7 @@ You can see additional details for each content item that is displayed in your s
 
 .Procedure
 
-In the Search results table, click the link of a content item.
+In the Search results table, click an item.
 +
 {ProductName} displays the following information:
 
