@@ -65,7 +65,7 @@
             <id>maven2-central-repository</id>
             <name>Maven2 central Repository</name>
             <url>https://repo1.maven.org/maven2</url>
-            <layout>default</layout>
+<!--            <layout>default</layout>-->
             <releases>
                 <enabled>true</enabled>
                 <updatePolicy>daily</updatePolicy>
@@ -75,6 +75,21 @@
                 <updatePolicy>daily</updatePolicy>
             </snapshots>
         </repository>
+        <repository>
+            <id>redhat-public-repository-group</id>
+            <name>Red Hat Public Repository Group</name>
+            <url>https://maven.repository.redhat.com/ga/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </snapshots>
+        </repository>
+
         <!-- Commented out for till long term plan is implemented -->
 <!--        <repository>-->
 <!--            <id>apache-snapshots</id>-->
@@ -100,5 +115,16 @@
                 <updatePolicy>daily</updatePolicy>
             </snapshots>
         </pluginRepository>
-    </pluginRepositories>
+        <pluginRepository>
+            <id>redhat-public-repository-group</id>
+            <name>Red Hat Public Repository Group</name>
+            <url>https://maven.repository.redhat.com/ga/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+</pluginRepositories>
 </project>

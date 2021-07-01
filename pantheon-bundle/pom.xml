@@ -319,10 +319,11 @@
             <artifactId>jsoup</artifactId>
             <version>1.12.1</version>
         </dependency>
+        <!-- Use the version of servlet adapter that are in-line with RH-SSO -->
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-servlet-filter-adapter</artifactId>
-            <version>11.0.3</version>
+            <version>9.0.13.redhat-00006</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.http.whiteboard -->
         <dependency>

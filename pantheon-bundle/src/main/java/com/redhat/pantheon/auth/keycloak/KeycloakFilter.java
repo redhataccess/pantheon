@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
         service = Filter.class,
         property = {
                 KeycloakOIDCFilter.CONFIG_FILE_PARAM + "=" + "keycloak.json",
-                "keycloak.config.skipPattern=(/pantheon/internal/modules.json|/pantheon/builddate.json|/pantheon/fonts/*|/content/repositories.harray.1.json|/starter.html|/bin/browser.html|/content/starter/css/bundle.css|/content/starter/img/sling-logo.svg|/content/starter/img/asf-logo.svg|/content/starter/img/sling-logo.svg|/content/starter/img/gradient.jpg|/content/starter/fonts/OpenSans-Light-webfont.woff|/content/starter/fonts/OpenSans-Regular-webfont.woff|/system/sling.js|/system/*|/pantheon/*.js)",
+                "keycloak.config.skipPattern=(/pantheon/internal/modules.json|/pantheon/builddate.json|/pantheon/fonts/*|/content/repositories.harray.1.json|/starter.html|/bin/browser.html|/content/starter/css/bundle.css|/content/starter/img/sling-logo.svg|/content/starter/img/asf-logo.svg|/content/starter/img/sling-logo.svg|/content/starter/img/gradient.jpg|/content/starter/fonts/OpenSans-Light-webfont.woff|/content/starter/fonts/OpenSans-Regular-webfont.woff|/system/sling.js|/system/*|/pantheon/*.js|/static/rhdocs.css|/pantheon/fonts/RedHatText-Medium.woff|/conf/pantheon/*)",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/pantheon/*",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/content/pantheon",
                 HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=" + "/content/products",
@@ -50,7 +50,7 @@ public class KeycloakFilter extends KeycloakOIDCFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(KeycloakFilter.class.getName());
     private static final String KARAF_ETC = "karaf.etc";
     private static final String KEYCLOAKOIDCFILTER_CONFIG_FILE_NAME = "keycloak.json";
-    private static final int MAX_RETRIES = 3;
+    private static final int MAX_RETRIES = 5;
     protected KeycloakDeployment keycloakDeployment;
     private PathBasedKeycloakConfigResolver keycloakConfigResolver;
     /**
