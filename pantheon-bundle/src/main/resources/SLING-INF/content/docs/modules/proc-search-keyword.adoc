@@ -1,11 +1,21 @@
+// Module included in the following assemblies:
+//
+// */assembly-searching-modules.adoc
+
 [id='search-keyword_{context}']
 
-= Searching for content using keywords
+= Searching for content
 
 [role="_abstract"]
-The *Search* tab allows you to enter keywords or free text to search for content.
+You can search for content in the *Search* tab of {ProductShortName} by entering a word or phrase and applying one or more filters. You can filter by repository, publication status, or content type.
+
 
 .Procedure
 
-. In the search bar at top left, enter a free text phrase or keywords.
-. Click the search icon to initiate the search.
+. Navigate to the link:{LinkToSearchPage}[Search page] and click *Search*.
+. On the left, select the repositories you want to search from the list of *Filters*.
+. In the upper left, enter one or more words in the text box.
+. Optional: Choose one or more document *Statuses* as search filters. Options: *Published* and *Draft*. If you do not select any, items of all statuses are included.
+. Optional: Choose one or more *Content types* as search filters. Options: *Concept*, *Procedure*, and *Reference*.  If you do not select any, items of all types are returned.
+
+{ProductName} displays the results in two tables, *Modules* and *Assemblies*.
