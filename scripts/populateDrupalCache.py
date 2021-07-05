@@ -22,13 +22,19 @@ env = dict({
             'https://pantheon.corp.dev.redhat.com/api/sitemap/module.sitemap.xml'
         ]})
 
-headers = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+proxies = {}
 
 def gather_urls(user_input):
     urls = []
     sitemaps = env.get(user_input)
+    if sitemaps is None:
+        print_usage()
+        sys.exit(0)
+    if user_input != "prod":
+        proxies["http"] = "http://squid.corp.redhat.com:3128"
+        proxies["https"] = "https://squid.corp.redhat.com:3128"
     for sitemap in sitemaps:
-        r = requests.get(sitemap, headers=headers)
+        r = requests.get(sitemap, proxies=proxies)
         if r.status_code != 200:
             print('Error, status code for ' + sitemap + ' was ' + r.status_code)
         else:
@@ -44,7 +50,7 @@ def perform_requests(urls):
     failure = 0
     for url in urls:
         try:
-            rr = requests.get(url, headers=headers)
+            rr = requests.get(url, proxies=proxies)
             print(str(rr.status_code) + ': ' + url)
             success += 1
         except requests.exceptions.RequestException as e:
