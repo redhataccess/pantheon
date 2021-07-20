@@ -729,7 +729,6 @@ class Search extends Component<IAppState, ISearchState> {
       this.setState({
         isBulkPublish: false,
         isBulkUnpublish: false,
-        documentsSelected: [],
       })
     }
     this.setState({ bulkOperationCompleted }, () => {
