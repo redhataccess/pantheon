@@ -1,3 +1,6 @@
+// File deprecated to be removed. Not for review.
+
+
 [id="checking-xref-validation-errors_{context}"]
 
 = Checking xref validation errors

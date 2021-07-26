@@ -1,3 +1,6 @@
+// File deprecated to be removed. Not for review.
+
+
 [id="about-xrefs-validation-in-pantheon_{context}"]
 = About xref validation in Pantheon
 

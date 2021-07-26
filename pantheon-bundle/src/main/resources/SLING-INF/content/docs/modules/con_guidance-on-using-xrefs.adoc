@@ -1,0 +1,55 @@
+[id="guidance-on-using-xrefs_{context}"]
+= Guidance on using xrefs
+
+[role="_abstract"]
+To ensure that internal cross-references, xrefs, work when you publish your content, use only inter-document xrefs. Although AsciiDoc supports different forms of xref, {ProductShortName} validates only inter-document xrefs. If validation fails, {ProductShortName} flags invalid xrefs.
+
+NOTE: {ProductShortName} only validates xrefs within a repository.
+
+The following are the syntaxes of inter-document xref:
+
+* `\xref:document-b.adoc#target-section[Target section]`
+* `\xref:../modules/document-c.adoc[Content C]`
+
+[dicsrete]
+== Example of using xrefs
+
+In this example, the following are the source and targets:
+
+source document:: 
+* A file `document-a.adoc`.
+
+Targets:: 
+
+* A section called _target section_ in the file _document-b.adoc_.
+* A file _document-c.adoc_.
+
+Use xrefs as follows:
+
+* To cross-reference section target section in document-b.adoc from document-a.adoc, use the following form:
+
+** `\xref:document-b.adoc#target-section[target section]`
++
+where `target-section` is the anchor for _target section_.
+
+* To cross-reference document document-c.adoc from document-a.adoc, use the following form:
+
+** `\xref:../modules/document-c.adoc[Section C]`
++
+where `../modules/document-c.adoc` is the path to _document-c.adoc_ relative to _document-a.adoc_.
+
+IMPORTANT: Do not use xrefs with empty `[]`.
+
+[discrete]
+== xfref validation in {ProductShortName}
+
+{ProductShortName} checks xrefs when you:
+
+* import a repository from git to pantheon,
+* regenerate draft HTML for your imported content,
+* publish your content.
+
+If {ProductShortName} finds any xref-errors, it displays a red alert icon next to the module or assembly with incorrect xref on the search page. Expand the module or assembly with errors to find the xrefs that are incorrect. Use this information to correct the incorrect xrefs in the source and re-import your content.
+
+NOTE: The order in which modules were imported can result in false validation errors. Regenerate draft HTML for the flagged content and the target content to check this.   
+
