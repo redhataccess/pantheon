@@ -127,7 +127,6 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                 {this.state.showBulkConfirmation &&
                     <BulkPublishConfirmation
                         key={new Date().getTime()}
-                        //header={this.props.isBulkUnpublish ? "Bulk Unpublish" : "Bulk Publish"}
                         header={this.props.bulkOperationTitle}
                         subheading="Documents updated in the bulk operation"
                         updateSucceeded={this.state.confirmationSucceeded}
