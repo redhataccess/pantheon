@@ -13,6 +13,7 @@ const props = {
     isBulkPublish: true,
     isBulkUnpublish: false,
     bulkOperationCompleted: true,
+    bulkOperationTitle: "Bulk Publish",
     updateIsBulkPublish: (isBulkPublish) => anymatch,
     updateIsBulkUnpublish: (isBulkUnpublish) => anymatch,
     updateBulkOperationCompleted: (bulkOperationCompleted) => anymatch

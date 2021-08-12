@@ -11,6 +11,7 @@ export interface IBulkOperationPublishProps {
     isBulkPublish: boolean
     isBulkUnpublish: boolean
     bulkOperationCompleted: boolean
+    bulkOperationTitle: string
     updateIsBulkPublish: (isBulkPublish) => any
     updateIsBulkUnpublish: (isBulkUnpublish) => any
     updateBulkOperationCompleted: (bulkOperationConfirmation) => any
@@ -126,7 +127,8 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                 {this.state.showBulkConfirmation &&
                     <BulkPublishConfirmation
                         key={new Date().getTime()}
-                        header={this.props.isBulkPublish ? "Bulk Publish" : "Bulk Unpublish"}
+                        //header={this.props.isBulkUnpublish ? "Bulk Unpublish" : "Bulk Publish"}
+                        header={this.props.bulkOperationTitle}
                         subheading="Documents updated in the bulk operation"
                         updateSucceeded={this.state.confirmationSucceeded}
                         updateIgnored={this.state.confirmationIgnored}
@@ -138,6 +140,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                         onShowBulkOperationConfirmation={this.updateShowBulkPublishConfirmation}
                         isBulkUnpublish={this.props.isBulkUnpublish}
                         bulkOperationCompleted={this.props.bulkOperationCompleted}
+                        bulkOperationTitle={this.props.bulkOperationTitle}
                         updateBulkOperationCompleted={this.props.updateBulkOperationCompleted}
                     />}
 
