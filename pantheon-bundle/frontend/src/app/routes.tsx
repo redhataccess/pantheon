@@ -5,7 +5,7 @@ import { Product } from "@app/product"
 import { ProductDetails } from "@app/productDetails"
 import ProductListing from "@app/productListing"
 import { Login } from "@app/login"
-import { GitImport } from "./gitImport"
+import GitImport from "./gitImport"
 import { ContentDisplay }  from "@app/contentDisplay"
 import { IAppState } from "./app"
 import { ProductProvider } from "./contexts/ProductContext"
@@ -92,12 +92,13 @@ class Routes extends Component<IAppState> {
     return (
       // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
       // FIXME: here we are routing to the form based authentication regardless if SSO is enabled or not
-      <Switch>
+        <Switch>
         {routes.map(({ path, exact, component, requiresLogin }, idx) => (
           <Route path={path} exact={exact} render={(routeProps) => (this.props.userAuthenticated || !requiresLogin) ? component(routeProps) : <Login />} key={idx} />
         ))}
         <Route render={() => <Search {...this.props} />} />
-      </Switch>
+        </Switch>
+        
     )
   }
 }

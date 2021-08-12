@@ -1,0 +1,27 @@
+// Module included in the following assemblies:
+//
+// <List assemblies here, each on a new line>
+
+
+
+[id="con_about-assemblies_{context}"]
+= Overview of assemblies
+:_module-type: CONCEPT
+
+[role="_abstract"]
+In {ProductName} {ProdctNumber}, each assembly encompasses a single user story. This is a key element of the Flexible Customer Content (FCC) effort at Red Hat. An assembly can include concept, procedure, or reference modules but all modules in an assembly must relate to that specific user story.
+
+Previously, a single assembly, such as the master.adoc for a user guide, could include a number of user stories without affecting search results  However, in {ProductName} {ProductNumber}, it is important to limit each assembly to a single user story in order to make it easier for users to search for a specific action they want to perform.
+
+If a user story includes several actions, each action should have its own module. For example, migrating a storage domain is a user story. Part of that story could be described in a module named "Backing up a storage domain" and another part in a module named "Restoring a storage domain."
+
+Assemblies in {ProductName} {ProductNumber} must conform with the following guidelines, in addition to those that apply to documentation in general:
+
+* Existing assemblies that relate to more than one user story must be broken down into assemblies that describe one user story each.
+* Nesting assemblies is currently not supported but will be in the future.
+* Each assembly relates to a single product. Although a specific solution for a customer might involve a combination of several products, {ProductName} {ProductNumber} currently only supports single-product searches. It is expected that later versions of {ProductName} will support multi-product searches, allowing assemblies that include modules relating to different products.
+
+[role="_additional-resources"]
+.Additional resources
+
+Link:https://redhat-documentation.github.io/modular-docs/#forming-assemblies[Assemblies in Red Hat documentation]

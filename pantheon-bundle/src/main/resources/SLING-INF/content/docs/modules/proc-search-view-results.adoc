@@ -1,16 +1,45 @@
+// Module included in the following assemblies:
+//
+// */assembly-searching-modules.adoc
+
 [id='search-view-results_{context}']
 
 = Viewing search results
 
 [role="_abstract"]
-Search results are presented in a table organized in columns with the following headings:
+{ProductName} displays search results in two tables, *Modules* and *Assemblies*. which have the following columns:
 
-* *Title* - the content title
-* *Published* - the publication status, *Published* or *Not published*
-* *Draft uploaded* - the date the draft was uploaded
-* *Content Type* - the content type, *Assembly*, *Concept*, *Procedure*, or *Reference*
+* *Title*
+* *Repository* : the repository in which content is located
+* *Upload date* : the date on which the latest draft of the content was uploaded
+* *Last Published date* : the date the content was last published
 
-.Sorting search results
+You can select the number of results you want to be displayed per page.
 
-. Select a property from the fourth menu to sort according to that property (*Uploaded date*, *Title*, *Updated date*, or *Module type*)
-. Select the number of results you want to be displayed per page.
+
+== Viewing content details
+
+You can see additional details for each content item that is displayed in your search results.
+
+.Procedure
+
+In the Search results table, click an item.
++
+{ProductName} displays the following information:
+
+* *Module*: Complete directory path of the module's .adoc file.
+* *Product*
+* *Module type*
+* *First published date*
+* *Last published date*
+
+== Previewing text
+
+You can preview an approximation of how the latest draft of a module or an assembly will be rendered on the Customer Portal using {ProductName}.
+
+.Procedure
+
+. In the Search results table, click the link of a content item.
+. Click *Preview* in the gray text box in the lower half of the page.
+
+{ProductName} displays the text, rendered similarly to its appearance in the Customer Portal.

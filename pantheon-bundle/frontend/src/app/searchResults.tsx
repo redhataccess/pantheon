@@ -70,8 +70,8 @@ class SearchResults extends Component<IProps, ISearchState> {
         { title: "" },
         { title: "Title", cellTransforms: [headerCol()] },
         { title: "Repository" },
-        { title: "Updated date" },
-        { title: "Published date" }
+        { title: "Upload Date" },
+        { title: "Last Published Date" }
       ],
       displayLoadIcon: true,
       // filterQuery: "",
@@ -124,7 +124,9 @@ class SearchResults extends Component<IProps, ISearchState> {
       || this.props.keyWord !== prevProps.keyWord
       || this.props.filters !== prevProps.filters
       || this.props.onGetdocumentsSelected !== prevProps.onGetdocumentsSelected
-      || this.props.bulkOperationCompleted !== prevProps.bulkOperationCompleted
+      || (this.props.bulkOperationCompleted !== prevProps.bulkOperationCompleted
+        && this.props.currentBulkOperation.length === 0
+      )
     ) {
       this.doSearch()
     }
@@ -169,6 +171,8 @@ class SearchResults extends Component<IProps, ISearchState> {
           showDropdownOptions={this.state.showDropdownOptions}
           bottom={this.state.bottom}
           className="results__pagination"
+          currentBulkOperation={this.props.currentBulkOperation}
+          
         />}
 
         {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small} className="search-results--empty">
@@ -277,9 +281,9 @@ class SearchResults extends Component<IProps, ISearchState> {
           const data = new Array()
 
           responseJSON.results.map((item, key) => {
-            const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
-            
-            let docIcon = publishedDate !== "-" ? <div><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : null
+            const lastUpdateDate = item["pant:publishedDate"]
+
+            let docIcon = lastUpdateDate !== "-" ? <div><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : null
             if (docIcon === null) {
               const productVersion = item["productVersion"] != undefined ? item["productVersion"] : "-"
 
@@ -297,9 +301,10 @@ class SearchResults extends Component<IProps, ISearchState> {
               let docTitle = item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]
               cellItem.push(docTitle)
             }
+            { title: "Last Published Date" }
             cellItem.push(item["pant:transientSourceName"])
             cellItem.push(item["pant:dateUploaded"])
-            cellItem.push(publishedDate)
+            cellItem.push(lastUpdateDate)
 
             data.push({ cells: cellItem })
           })
@@ -342,6 +347,7 @@ class SearchResults extends Component<IProps, ISearchState> {
     this.setState({ pageLimit: pageLimitValue, page: 1, itemsPerPage: pageLimitValue }, () => {
       this.props.onGetdocumentsSelected([])
       this.doSearch()
+      this.props.onSelectContentType("")
     })
   }
 

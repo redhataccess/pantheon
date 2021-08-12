@@ -279,6 +279,12 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("pant:publishedDate","-");
         }
 
+        if(releasedMetadata.isPresent() && releasedMetadata.get().dateFirstPublished().get()!=null){
+            m.put("pant:dateFirstPublished",sdf.format(releasedMetadata.get().dateFirstPublished().get().getTime()));
+        }else{
+            m.put("pant:dateFirstPublished","-");
+        }
+
         if(draftMetadata.isPresent() && draftMetadata.get().title().get()!=null){
             m.put("jcr:title",draftMetadata.get().title().get());
         }else if(releasedMetadata.isPresent() && releasedMetadata.get().title().get()!=null){
@@ -316,15 +322,21 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("variant", variantName);
         }
 
-        // Render xrefValidations as array.
-        List<Map> xrefValidationsList = new ArrayList<>();
-        if(draftValidations.isPresent() && draftValidations.get().listChildren().next().getValueMap().get("pant:message")!=null){
-            m.put("validations",draftValidations.get().listChildren().next().getValueMap().get("pant:message"));
-        }else if(releasedValidations.isPresent() && releasedValidations.get().listChildren().next().getValueMap().get("pant:message")!=null){
-            m.put("validations",releasedValidations.get().listChildren().next().getValueMap().get("pant:message"));
-        }else{
-            m.put("validations","-");
+        // Render only the first validation error
+        Optional<Resource> xref = null;
+        String message = "";
+        if (draftValidations.isPresent() && draftValidations.get().getChild("xref") != null) {
+            xref = Optional.ofNullable(draftValidations.get().getChild("xref"));
+        } else if (releasedValidations.isPresent() && releasedValidations.get().getChild("xref") != null) {
+            xref = Optional.ofNullable(releasedValidations.get().getChild("xref"));
         }
+        if (xref != null && xref.get().hasChildren() ) {
+            message = xref.get().listChildren().next().getValueMap().get("pant:message").toString();
+            m.put("validations", message.length() > 0 ? message : "-");
+        } else {
+            m.put("validations", "-");
+        }
+
         log.trace(m.toString());
         return m;
     }

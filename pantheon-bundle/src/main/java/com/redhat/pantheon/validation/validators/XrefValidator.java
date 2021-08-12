@@ -55,50 +55,50 @@ public class XrefValidator implements Validator {
     }
 
     private Violations checkIfXrefValid(Violations violations) {
-        if (isValidXref()) {
-            return violations;
-        }
-        return violations.add(PantheonConstants.VALID_XREF,
-                new ErrorDetails().add("Invalid cross references"));
+        return violations.add(PantheonConstants.TYPE_XREF,
+                checkXref());
     }
 
-    private boolean isValidXref() {
+    /**
+     * Process xrefs
+     *
+     * @return
+     */
+    private ErrorDetails checkXref() {
+        ErrorDetails errorDetails = new ErrorDetails();
         try {
-                Document doc = Jsoup.parse(content);
-                List<String>  xrefTargets = XrefValidationHelper.getObjectsToValidate(this.documentVariant.uuid().get());
-                Elements resultLinks = doc.select("a");
-                if(null == xrefTargets || xrefTargets.size()==0){
-                    return true;
-                }
-                int count = 0;
-                for (String xref : xrefTargets) {
-                    count = getXrefCounts(resultLinks, count, xref);
-                }
-                return count == XrefValidationHelper.getObjectsToValidate(this.documentVariant.uuid().get()).size() ? true : false;
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
-        return false;
-    }
-
-    private int getXrefCounts(Elements resultLinks, int count, String xref) throws RepositoryException {
-        if(xref.endsWith(".adoc")){
-            Resource resource = documentVariant.getParentLocale().getParent().getParent();
-            String[] resourceFragment = xref.split("/");
-
-            for(String rf:resourceFragment){
-                switch (rf){
-                    case "..":resource = resource.getParent(); break;   // TODO: fails in case dependent document not yet uploaded
-                    default: resource = resource.getChild(rf); break;
+            List<String>  xrefTargets = XrefValidationHelper.getInstance().getObjectsToValidate();
+            if(null == xrefTargets || xrefTargets.size()==0){
+                return errorDetails;
+            }
+            for (String xref : xrefTargets) {
+                if(!xref.endsWith(".adoc")) {
+                    if(validateIfAnchor(content,xref)<1){ // If it is anchor, it has not yet validated,
+                        errorDetails.add(xref);
+                    }
+                }else {
+                    errorDetails.add(xref); // if it is a adoc file, it's already processed and validated
                 }
             }
-
-            count += resource!=null ? 1 :0;
-        } else {   //if path is an anchor
-            count += (int) resultLinks.eachAttr("href").stream().filter(s->s.endsWith(xref)).count() > 0?1:0;
         }
-        return count;
+        catch (Exception ex){
+            log.error("error at validation occured",ex);
+        }
+        return errorDetails;
+    }
+
+    /**
+     * if path is an anchor, validate
+     *
+     * @param content
+     * @param xref
+     * @return
+     * @throws RepositoryException
+     */
+    private int validateIfAnchor(String content, String xref) throws RepositoryException {
+            //if path is an anchor
+        Document doc = Jsoup.parse(content);
+        return doc.getElementsByAttributeValue("id",xref).size();
     }
 
     /**

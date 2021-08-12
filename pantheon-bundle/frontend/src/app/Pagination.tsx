@@ -15,6 +15,7 @@ export interface IProps {
   showDropdownOptions: boolean
   bottom: boolean
   className?: string
+  currentBulkOperation: string
 }
 
 class Pagination extends React.Component<IProps> {
@@ -59,6 +60,11 @@ class Pagination extends React.Component<IProps> {
       this.nextPageButton = false;
     }
     if (this.props.pageNumber === 1 && this.props.nextPageRecordCount === 0) {
+      this.firstPageButton = true;
+      this.previousPageButton = true;
+      this.nextPageButton = true;
+    }
+    if(this.props.currentBulkOperation !== ""){
       this.firstPageButton = true;
       this.previousPageButton = true;
       this.nextPageButton = true;

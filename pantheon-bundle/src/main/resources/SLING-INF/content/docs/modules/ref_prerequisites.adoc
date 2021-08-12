@@ -12,25 +12,21 @@
 = Prerequisites
 
 [role="_abstract"]
-{ProductName} is optimized for certain web browsers and operating systems.
+{ProductShortName} is supported with the following operating systems and browsers. Ensure that your system meets the following requirements:
 
-.Operating Systems
-
-{ProductName} {ProductNumber} is supported on the following operating systems:
-
-[NOTE]
-====
-Operating system support affects the performance of the uploader more than other {ProductName} components.
-====
+.Supported operating systems
 
 * Fedora 30 or later
 * RHEL 7 CSB
 * RHEL 8 CSB
 * macOS 10.15 (Catalina) or later
 
-.Browsers
+[NOTE]
+====
+Using unsupported operating system affects the performance of the uploader more than other {ProductName} components.
+====
 
-{ProductName} {ProductNumber} is supported on the following browsers:
+.Supported browsers
 
 * Chrome 78.0 or later
 * Firefox 71.0 or later

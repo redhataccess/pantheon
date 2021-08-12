@@ -3,6 +3,8 @@ package com.redhat.pantheon.servlet.assembly;
 import com.google.common.base.Charsets;
 import com.ibm.icu.util.ULocale;
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.extension.url.UrlException;
+import com.redhat.pantheon.extension.url.UrlProvider;
 import com.redhat.pantheon.html.Html;
 import com.redhat.pantheon.model.ProductVersion;
 import com.redhat.pantheon.model.api.Child;
@@ -129,7 +131,7 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
         // Return the body content of the assembly ONLY
         variantMap.put("body",
                 Html.parse(Charsets.UTF_8.name())
-                        .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider()))
+                        .andThen(Html.rewriteUuidUrls(request.getResourceResolver(), new CustomerPortalUrlUuidProvider(assemblyVariant)))
                         .andThen(Html.getElementById("doc-content", Html.getElementByTagName("cp-documentation", Html.getBody())))
                         .apply(releasedContent.get().jcrContent().get().jcrData().get()));
 
@@ -173,8 +175,12 @@ public class AssemblyVariantJsonServlet extends AbstractJsonSingleQueryServlet {
 
         // Process view_uri
         if (System.getenv(PORTAL_URL) != null) {
-            String view_uri = new CustomerPortalUrlUuidProvider().generateUrlString(assemblyVariant);
-            variantMap.put(VIEW_URI, view_uri);
+            try {
+                String view_uri = new CustomerPortalUrlUuidProvider(assemblyVariant).generateUrlString();
+                variantMap.put(VIEW_URI, view_uri);
+            } catch (UrlException e) {
+                variantMap.put(VIEW_URI, "");
+            }
         } else {
             variantMap.put(VIEW_URI, "");
         }

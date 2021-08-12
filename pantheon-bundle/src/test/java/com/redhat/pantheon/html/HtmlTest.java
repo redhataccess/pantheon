@@ -98,11 +98,16 @@ class HtmlTest {
 
         // When
         String transformedHtml = Html.parse(Charsets.UTF_8.name())
-                .andThen(Html.rewriteUuidUrls(sCtx.resourceResolver(), new UrlProvider() {
+                .andThen(Html.rewriteUuidUrls(sCtx.resourceResolver(), new UrlProvider(null) {
 
                     @Override
-                    public String generateUrlString(DocumentVariant variant) {
+                    public String generateUrlString() {
                         return "someTestString";
+                    }
+
+                    @Override
+                    public urlType getUrlType() {
+                        return urlType.LIVE;
                     }
                 }))
                 .andThen(doc -> doc.toString())

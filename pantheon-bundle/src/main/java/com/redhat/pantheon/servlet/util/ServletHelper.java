@@ -2,6 +2,7 @@ package com.redhat.pantheon.servlet.util;
 
 
 import com.redhat.pantheon.extension.url.CustomerPortalUrlUuidProvider;
+import com.redhat.pantheon.extension.url.UrlException;
 import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.ModelException;
@@ -16,6 +17,8 @@ import com.redhat.pantheon.model.module.ModuleVariant;
 import com.redhat.pantheon.model.module.ModuleVersion;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -56,6 +59,8 @@ public class ServletHelper {
         VARIANT_TYPES.add(PantheonConstants.RESOURCE_TYPE_ASSEMBLYVARIANT);
         VARIANT_TYPES.add(PantheonConstants.RESOURCE_TYPE_MODULEVARIANT);
     }
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServletHelper.class);
 
     /**
      * Instantiates a new Servlet helper.
@@ -169,8 +174,12 @@ public class ServletHelper {
         }
         if (assemblyVariant.released().isPresent() && System.getenv(PORTAL_URL) != null) {
             // Add Customer Portal view_uri
-            String view_uri = new CustomerPortalUrlUuidProvider().generateUrlString(assemblyVariant);
-            assemblyVariantDetails.put("view_uri", view_uri);
+            try {
+                String view_uri = new CustomerPortalUrlUuidProvider(assemblyVariant).generateUrlString();
+                assemblyVariantDetails.put("view_uri", view_uri);
+            } catch (UrlException e) {
+                LOG.warn("Failed to generate URL for " + assemblyVariant.getPath() + " but could not.", e);
+            }
         }
         if(addPath){
             assemblyVariantDetails.put("path", assemblyVariant.getParentLocale().getParent().getPath());

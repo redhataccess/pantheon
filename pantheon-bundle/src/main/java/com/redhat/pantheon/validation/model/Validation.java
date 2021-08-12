@@ -4,6 +4,8 @@ import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.annotation.JcrPrimaryType;
 import com.redhat.pantheon.model.workspace.WorkspaceChild;
+import com.redhat.pantheon.validation.helper.XrefValidationHelper;
+import org.apache.sling.api.resource.ValueMap;
 
 import javax.inject.Named;
 
@@ -19,12 +21,19 @@ public interface Validation extends WorkspaceChild {
     @Named("pant:validationType")
     Field<String> validationType();
 
-    default Validation setValidation (Violations violations) {
-        if(null != violations.get(PantheonConstants.VALID_XREF)){
-            this.message().set(violations.get(PantheonConstants.VALID_XREF).getDetails());
-            this.status().set("warning");
+    @Named("pant:xrefTarget")
+    Field<String> xrefTarget();
+
+    default Validation setValidation (Violations violations, int index) {
+        if(null != violations.get(PantheonConstants.TYPE_XREF)){
+            this.message().set("invalid Cross reference exists in the document");
+            this.status().set("error");
             this.validationType().set("xref");
+            this.xrefTarget().set(violations.get(PantheonConstants.TYPE_XREF).getDetails(index));
         }
+        return this;
+    }
+    default  Validation getValidation(){
         return this;
     }
 }

@@ -1,5 +1,5 @@
 [id="user-roles_{context}"]
-= User roles
+= {ProductName} user roles
 
 [role="_abstract"]
 As a {ProductShortName} user, you are assigned a role that determines what actions you can perform.
@@ -13,7 +13,7 @@ There are two user roles defined in {ProductShortName} - *Author* and *Publisher
 * Preview and stage content.
 * Search and sort any content imported into {ProductShortName}.
 * Manage module metadata that is configurable in the user interface.
- 
+
 *Publisher*::
 * All the permissions associated with the *Author* role.
 * Publish content to the {PublishingPortal} and the {PublishingPortalSearch}. 

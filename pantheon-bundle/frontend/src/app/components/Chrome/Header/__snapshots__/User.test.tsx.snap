@@ -9,7 +9,7 @@ exports[`User tests should render User component 1`] = `
           href="/pantheon/docs/assemblies/assembly-pantheon-help.html"
           target="_blank"
         >
-          Help
+          User Guide
         </DropdownItem>,
         <DropdownItem
           href="https://github.com/redhataccess/pantheon"

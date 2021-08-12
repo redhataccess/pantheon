@@ -1,5 +1,5 @@
 [id='about-products_{context}']
-= About Products in {ProductName}
+= About products in {ProductName}
 
 [role='_abstract']
 A _product_ in {ProductName} is a category that corresponds to an actual product in your organization's portfolio. For example: Red Hat Enterprise Linux (RHEL) is a Red Hat product. There is also a {ProductName} product named Red Hat Enterprise Linux that contains the modules and assemblies for RHEL documentation.
@@ -10,6 +10,6 @@ Limitations:
 
 * Only a *Publisher* can create a new product.
 
-* you cannot create a new product with a product name that already exists.
+* You cannot create a new product with a product name that already exists.
 
 * The value for the product version can be any string, it is not limited to numbers.

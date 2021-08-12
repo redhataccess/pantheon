@@ -47,6 +47,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
             bulkUpdateSuccess: 0,
             bulkUpdateWarning: 0,
 
+            docsSelected: this.props.documentsSelected,
             documentsSucceeded: [""],
             documentsFailed: [""],
             documentsIgnored: [""],
@@ -77,7 +78,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                 <Modal
                     variant={ModalVariant.medium}
                     title="Edit metadata"
-                    isOpen={this.state.isModalOpen}
+                    isOpen={isModalOpen}
                     header={header}
                     aria-label="Edit metadata"
                     onClose={this.handleModalClose}
@@ -85,7 +86,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                         <Button form="bulk_edit_metadata" isAriaDisabled={this.props.documentsSelected.length === 0 ? true : false} key="confirm" variant="primary" onClick={this.saveMetadata}>
                             Save
                 </Button>,
-                        <Button data-testid="metadata-modal-cancel-button" key="cancel" variant="secondary" onClick={this.handleModalToggle}>
+                        <Button data-testid="metadata-modal-cancel-button" key="cancel" variant="secondary" onClick={this.handleModalClose}>
                             Cancel
                   </Button>
                     ]}
@@ -179,6 +180,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
             <React.Fragment>
                 {this.state.showBulkEditConfirmation &&
                     <BulkOperationConfirmation
+                        key={new Date().getTime()}
                         isEditMetadata={this.props.isEditMetadata}
                         updateIsEditMetadata={this.props.updateIsEditMetadata}
                         header="Bulk Edit"
@@ -192,6 +194,14 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                         progressWarningValue={this.state.progressWarningValue}
                         onShowBulkEditConfirmation={this.updateShowBulkEditConfirmation}
                         onMetadataEditError={this.updateMetadataEditError}
+                        onProgressSuccessValue={this.updateProgressSuccessValue}
+                        onProgressFailureValue={this.updateProgressFailureValue}
+                        onProgressWarningValue={this.updateProgressWarningValue}
+                        onUpdateSucceeded={this.updateUpdateSucceeded}
+                        onUpdateIgnored={this.updateUpdateIgnored}
+                        onUpdateFailed={this.updateUpdateFailed}
+                        bulkOperationCompleted={this.props.bulkOperationCompleted}
+                        updateBulkOperationCompleted={this.props.updateBulkOperationCompleted}
                     />}
 
                 {this.props.isEditMetadata && metadataModal}
@@ -205,32 +215,6 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
             this.props.updateIsEditMetadata(false)
             this.setState({ showBulkEditConfirmation: false })
             this.props.updateBulkOperationCompleted(false)
-        })
-    }
-
-    private handleModalToggle = (event) => {
-        this.setState({ isModalOpen: !this.state.isModalOpen }, () => {
-
-            if (!this.state.isModalOpen) {
-                if (this.state.documentsSucceeded.length > 0 ||
-                    this.state.documentsFailed.length > 0 ||
-                    this.state.documentsIgnored.length > 0) {
-                        // Save button was clicked. Documents were processed.
-                        this.props.updateIsEditMetadata(false)
-                        this.props.updateBulkOperationCompleted(true)
-                        this.setState({ showBulkEditConfirmation: true })
-                } else {
-                    // Cancle button was clicked. Documents were not processed.
-                    this.props.updateIsEditMetadata(false)
-                    this.props.updateBulkOperationCompleted(false)
-                    this.setState({ showBulkEditConfirmation: false })
-                }
-                
-
-            } else {
-                this.setState({ showBulkEditConfirmation: false })
-                this.props.updateBulkOperationCompleted(false)
-            }
         })
     }
 
@@ -357,6 +341,21 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
             formData.append("documentUsecase", this.state.usecaseValue)
             formData.append("searchKeywords", this.state.keywords === undefined ? "" : this.state.keywords)
 
+            // reinitialize states
+            if (this.props.documentsSelected.length > 0) {
+                this.setState({
+                    documentsSucceeded: [""],
+                    documentsIgnored: [""],
+                    documentsFailed: [""],
+                    bulkUpdateSuccess: 0,
+                    bulkUpdateWarning: 0,
+                    bulkUpdateFailure: 0,
+                    progressSuccessValue: 0,
+                    progressFailedValue: 0,
+                    progressWarningValue: 0,
+                    docsSelected: this.props.documentsSelected,
+                });
+            }
             this.props.documentsSelected.map((r) => {
                 if (r.cells[1].title.props.href) {
                     let href = r.cells[1].title.props.href
@@ -392,9 +391,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                                         bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
                                         showBulkEditConfirmation: true
                                     }, () => {
-                                        this.setState({ showBulkEditConfirmation: true })
                                         this.props.updateIsEditMetadata(false)
-                                        this.props.updateBulkOperationCompleted(true)
                                         this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
                                     })
                                 } else {
@@ -426,6 +423,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                     })
                 }
             })
+            this.props.updateBulkOperationCompleted(true)
         }
     }
 
@@ -438,9 +436,33 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
         this.setState({ metadataEditError })
     }
 
+    private updateProgressSuccessValue = (progressSuccessValue) => {
+        this.setState({ progressSuccessValue })
+    }
+
+    private updateProgressFailureValue = (progressFailedValue) => {
+        this.setState({ progressFailedValue })
+    }
+
+    private updateProgressWarningValue = (progressWarningValue) => {
+        this.setState({ progressWarningValue })
+    }
+
+    private updateUpdateSucceeded = (confirmationSucceeded) => {
+        this.setState({ confirmationSucceeded })
+    }
+
+    private updateUpdateFailed = (confirmationFailed) => {
+        this.setState({ confirmationFailed })
+    }
+
+    private updateUpdateIgnored = (confirmationIgnored) => {
+        this.setState({ confirmationIgnored })
+    }
+
     private calculateFailureProgress = (num: number) => {
         if (num >= 0) {
-            let stat = (num) / this.props.documentsSelected.length * 100
+            let stat = (num) / this.state.docsSelected.length * 100
             this.setState({ progressFailureValue: stat, showBulkConfirmation: true }, () => {
                 this.getDocumentFailed()
             })
@@ -449,7 +471,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
     private calculateSuccessProgress = (num: number) => {
         if (num >= 0) {
-            let stat = (num) / this.props.documentsSelected.length * 100
+            let stat = (num) / this.state.docsSelected.length * 100
             this.setState({ progressSuccessValue: stat, showBulkConfirmation: true }, () => {
                 this.getDocumentsSucceeded()
             })
@@ -458,7 +480,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
     private calculateWarningProgress = (num: number) => {
         if (num >= 0) {
-            let stat = (num) / this.props.documentsSelected.length * 100
+            let stat = (num) / this.state.docsSelected.length * 100
             this.setState({ progressWarningValue: stat, showBulkConfirmation: true }, () => {
                 this.getDocumentIgnored()
             })

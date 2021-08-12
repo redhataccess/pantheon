@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, ModalVariant, Button, Title, TitleSizes, AlertActionCloseButton, Alert, AlertActionLink, Progress, ProgressVariant, ProgressSize, List, ListItem, ProgressMeasureLocation, ListComponent, OrderType } from '@patternfly/react-core';
+import { Modal, ModalVariant, Button, Title, TitleSizes, AlertActionCloseButton, Alert, AlertActionLink, Progress, ProgressVariant, ProgressSize, List, ListItem, ProgressMeasureLocation, ListComponent, OrderType, ListVariant } from '@patternfly/react-core';
 import WarningTriangleIcon from '@patternfly/react-icons/dist/js/icons/warning-triangle-icon';
 import "@app/app.css";
 
@@ -14,9 +14,17 @@ export interface IBulkOperationProps {
   progressSuccessValue: number
   progressFailureValue: number
   progressWarningValue: number
+  bulkOperationCompleted: boolean
+  updateBulkOperationCompleted: (bulkOperationCompleted) => any
   onShowBulkEditConfirmation: (showBulkEditConfirmation) => any
   onMetadataEditError: (metadataEditError) => any
   updateIsEditMetadata: (isEditMetadata) => any
+  onProgressSuccessValue: (progressSuccessValue) => any
+  onProgressFailureValue: (progressFailureValue) => any
+  onProgressWarningValue: (progressWarningValue) => any
+  onUpdateSucceeded: (updateSucceeded) => any
+  onUpdateIgnored: (updateIgnored) => any
+  onUpdateFailed: (updateFailed) => any
 }
 
 class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any>{
@@ -75,39 +83,47 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
           <strong>Succeeded:</strong>
           <br />
           <span id="update-succeeded">
-            <List aria-label="succeeded" component={ListComponent.ol} type={OrderType.number}>
-              {this.props.updateSucceeded.length > 0 &&
-                this.props.updateSucceeded.split(",").map((data, index) => (
-                  data.length > 0 &&
-                  <ListItem key={index}>{data}</ListItem>
-                ))}
-            </List>
+            {this.props.updateSucceeded.length > 0 && <List aria-label="succeeded" component={ListComponent.ol} type={OrderType.number}>
+              {this.props.updateSucceeded.split(",").map((data, index) => (
+                data.length > 0 &&
+                <ListItem key={index}>{data}</ListItem>
+              ))}
+
+            </List>}
+            {this.props.updateSucceeded.length === 0 && <List aria-label="succeeded-empty" variant={ListVariant.inline}>
+              <ListItem key={"succeeded-0"}>n/a</ListItem>
+            </List>}
           </span>
           <br />
           <br />
           <strong>Ignored:</strong>
           <br />
           <span id="update-ignored">
-            <List aria-label="ignored" component={ListComponent.ol} type={OrderType.number}>
-              {this.props.updateIgnored.length > 0 &&
-                this.props.updateIgnored.split(",").map((data, index) => (
-                  data.length > 0 &&
-                  <ListItem key={index}>{data}</ListItem>
-                ))}
-            </List>
+            {this.props.updateIgnored.length > 0 && <List aria-label="ignored" component={ListComponent.ol} type={OrderType.number}>
+              {this.props.updateIgnored.split(",").map((data, index) => (
+                data.length > 0 &&
+                <ListItem key={index}>{data}</ListItem>
+              ))}
+            </List>}
+            {this.props.updateIgnored.length === 0 && <List aria-label="ignored-empty" variant={ListVariant.inline}>
+              <ListItem key={"ignored-0"}>n/a</ListItem>
+            </List>}
           </span>
           <br />
           <br />
           <strong>Failed:</strong>
           <br />
           <span id="update-failed">
-            <List aria-label="failed" component={ListComponent.ol} type={OrderType.number}>
-              {this.props.updateFailed.length > 0 &&
-                this.props.updateFailed.split(",").map((data, index) => (
-                  data.length > 0 &&
-                  <ListItem key={index}>{data}</ListItem>
-                ))}
+            {this.props.updateFailed.length > 0 && <List aria-label="failed" component={ListComponent.ol} type={OrderType.number}>
+              {this.props.updateFailed.split(",").map((data, index) => (
+                data.length > 0 &&
+                <ListItem key={index}>{data}</ListItem>
+              ))}
+            </List>}
+            {this.props.updateFailed.length === 0 && <List aria-label="failed-empty" variant={ListVariant.inline}>
+              <ListItem key={"failed-0"}>n/a</ListItem>
             </List>
+            }
           </span>
           <br />
           <br />
@@ -127,6 +143,18 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
     this.props.onShowBulkEditConfirmation(false)
     this.props.onMetadataEditError("")
     this.props.updateIsEditMetadata(false)
+    this.props.onProgressSuccessValue(0)
+    this.props.onProgressWarningValue(0)
+    this.props.onProgressWarningValue(0)
+    this.props.onUpdateSucceeded("")
+    this.props.onUpdateIgnored("")
+    this.props.onUpdateFailed("")
+    // set bulkOperationCompleted to false
+    this.updateBulkOperationCompleted(false)
+  }
+
+  private updateBulkOperationCompleted = (bulkOperationCompleted) => {
+    this.props.updateBulkOperationCompleted(bulkOperationCompleted)
   }
 }
 
