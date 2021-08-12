@@ -100,5 +100,5 @@
                 <updatePolicy>daily</updatePolicy>
             </snapshots>
         </pluginRepository>
-    </pluginRepositories>
+</pluginRepositories>
 </project>

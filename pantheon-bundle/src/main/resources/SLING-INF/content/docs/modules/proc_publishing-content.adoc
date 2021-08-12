@@ -1,6 +1,6 @@
 //include::../attributes.adoc[]
 [id="publishing-content_{context}"]
-= Publishing {ContentTerm}
+= Publishing {ContentTerm} to the {PublishingPortal}
 
 [role="_abstract"]
 You need to publish a module or assembly when you want it to appear on the {PublishingPortal}.
@@ -8,13 +8,13 @@ You need to publish a module or assembly when you want it to appear on the {Publ
 .Prerequisites
 
 * You are assigned the publisher role.
-* You are logged in.
+* You are logged in to {ProductShortName}.
 * The {ContentTerm} to be published has been imported to {ProductShortName}.
 * The metadata required for publishing has been applied to the {ContentTerm}.
 
 .Procedure
 
-. Navigate to link:{LinkToSearchPage}[Search page].
+. Navigate to the link:{LinkToSearchPage}[Search page].
 
 . Click the name of the module or assembly you want to publish.
 +
@@ -30,4 +30,4 @@ where, __PRODUCT_URL__ is the URL for the product, and __UUID__ is the auto-gene
 
 [role="_additional-resources"]
 .Additional Resources
-* link:<LinkToHowToSearchModules>[How To Search Modules]
+* xref:searching-for-content_assembly-help[Searching for content]

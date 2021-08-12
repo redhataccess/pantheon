@@ -4,6 +4,8 @@ import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.api.Field;
 import com.redhat.pantheon.model.api.FileResource;
 import com.redhat.pantheon.model.workspace.WorkspaceChild;
+import com.redhat.pantheon.validation.model.Validation;
+import com.redhat.pantheon.validation.model.Validations;
 
 import javax.annotation.Nonnull;
 import javax.inject.Named;
@@ -123,4 +125,35 @@ public interface Document extends WorkspaceChild {
                 .toChild(DocumentVersion::ackStatus)
                 .asOptional();
     }
+
+    /**
+     *
+     * @param locale the locale to fetch the validations content
+     * @param variantName
+     * @param versionType
+     * @return the validations data for draft/released version for a given locale
+     */
+    default Optional<Validations> getValidations(@Nonnull final Locale locale,
+                                                 @Nonnull final String variantName,
+                                                 @Nonnull final String versionType) {
+        if (versionType.equalsIgnoreCase("draft")){
+            return Child.from(this)
+                    .toChild(m -> m.locale(locale))
+                    .toChild(DocumentLocale::variants)
+                    .toChild(variants -> variants.variant(variantName))
+                    .toChild(DocumentVariant::draft)
+                    .toChild(DocumentVersion::validations)
+                    .asOptional();
+        } else {
+            return Child.from(this)
+                    .toChild(m -> m.locale(locale))
+                    .toChild(DocumentLocale::variants)
+                    .toChild(variants -> variants.variant(variantName))
+                    .toChild(DocumentVariant::released)
+                    .toChild(DocumentVersion::validations)
+                    .asOptional();
+        }
+    }
+
+
 }

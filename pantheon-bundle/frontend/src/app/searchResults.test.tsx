@@ -11,13 +11,19 @@ import { HashRouter as Router, Link } from "react-router-dom"
 import { Pagination } from "@app/Pagination"
 import { Table } from "@patternfly/react-table"
 
+const anymatch = require("anymatch")
 const props = {
     contentType: "assemblies",
     keyWord: "test",
     filters: { ctype: ["PROCEDURE"], status: ["draft"] },
     productsSelected: [],
     repositoriesSelected: ["test"],
-    userAuthenticated: true
+    userAuthenticated: true,
+    onGetdocumentsSelected: (documentsSelected) => anymatch,
+    onSelectContentType: (contentType) => anymatch,
+    currentBulkOperation: "",
+    disabledClassname: "",
+    bulkOperationCompleted: false,
 }
 
 const propsEmptyState = {
@@ -26,7 +32,12 @@ const propsEmptyState = {
     filters: { ctype: [], status: [] },
     productsSelected: [],
     repositoriesSelected: [],
-    userAuthenticated: true
+    userAuthenticated: true,
+    onGetdocumentsSelected: (documentsSelected) => anymatch,
+    onSelectContentType: (contentType) => anymatch,
+    currentBulkOperation: "",
+    disabledClassname: "",
+    bulkOperationCompleted: false,
 }
 
 describe("SearchResults tests", () => {
@@ -58,13 +69,6 @@ describe("SearchResults tests", () => {
         const wrapper = mount(<Router><SearchResults {...props} /></Router>)
         const divider = wrapper.find(Divider)
         expect(divider.exists()).toBe(true)
-    })
-
-    it("should render a Pagination component", () => {
-        const wrapper = mount(<Router><SearchResults {...props} /></Router>)
-        wrapper.setState({isEmptyResults: false})
-        const pagination = wrapper.find(Pagination)
-        expect(pagination.exists()).toBe(true)
     })
 
 });

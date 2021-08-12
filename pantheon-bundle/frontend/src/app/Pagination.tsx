@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Level, LevelItem } from "@patternfly/react-core";
+import { DropdownItem, Level, LevelItem } from "@patternfly/react-core";
 import { ContextSelector, ContextSelectorItem } from "@patternfly/react-core";
 import { Dropdown } from "@app/Dropdown";
 
@@ -8,28 +8,29 @@ export interface IProps {
   handleMoveRight: () => any
   handleMoveToFirst: () => any
   handlePerPageLimit: (itemsPerPage) => any
+  handleItemsPerPage: (itemsPerPage) => any
   pageNumber: number
   nextPageRecordCount: number
-  perPageLimit:number
+  perPageLimit: number
   showDropdownOptions: boolean
   bottom: boolean
   className?: string
+  currentBulkOperation: string
 }
 
 class Pagination extends React.Component<IProps> {
 
   public dropdownItems = [
+    "5 items per page",
     "25 items per page",
     "50 items per page",
-    "75 items per page",
     "100 items per page"
-    ];
+  ];
 
   public state = {
     filteredItems: this.dropdownItems,
-    isExpanded: false, 
+    isExpanded: false,
     isOpen: false,
-    itemsPerPage: 25,
     renderSearch: false,
     searchValue: "",
     selected: this.dropdownItems[0]
@@ -43,27 +44,32 @@ class Pagination extends React.Component<IProps> {
   public render() {
     const { isOpen, filteredItems } = this.state;
 
-    if(this.props.pageNumber === 1 && this.props.nextPageRecordCount !== 0){
-        this.firstPageButton=true;
-        this.previousPageButton=true;
-        this.nextPageButton=false;
+    if (this.props.pageNumber === 1 && this.props.nextPageRecordCount !== 0) {
+      this.firstPageButton = true;
+      this.previousPageButton = true;
+      this.nextPageButton = false;
     }
-    if(this.props.nextPageRecordCount === 0 && this.props.pageNumber !== 1){
-      this.firstPageButton=false;
-      this.previousPageButton=false;
-      this.nextPageButton=true;
+    if (this.props.nextPageRecordCount === 0 && this.props.pageNumber !== 1) {
+      this.firstPageButton = false;
+      this.previousPageButton = false;
+      this.nextPageButton = true;
     }
-    if(this.props.pageNumber !== 1 && this.props.nextPageRecordCount !== 0){
-      this.firstPageButton=false;
-      this.previousPageButton=false;
-      this.nextPageButton=false;
+    if (this.props.pageNumber !== 1 && this.props.nextPageRecordCount !== 0) {
+      this.firstPageButton = false;
+      this.previousPageButton = false;
+      this.nextPageButton = false;
     }
-    if(this.props.pageNumber === 1 && this.props.nextPageRecordCount === 0){
-      this.firstPageButton=true;
-      this.previousPageButton=true;
-      this.nextPageButton=true;
+    if (this.props.pageNumber === 1 && this.props.nextPageRecordCount === 0) {
+      this.firstPageButton = true;
+      this.previousPageButton = true;
+      this.nextPageButton = true;
     }
-    
+    if(this.props.currentBulkOperation !== ""){
+      this.firstPageButton = true;
+      this.previousPageButton = true;
+      this.nextPageButton = true;
+    }
+
     return (
       <Fragment>
         <Level>
@@ -86,7 +92,7 @@ class Pagination extends React.Component<IProps> {
                             {this.props.showDropdownOptions &&
                               <Dropdown
                                 perPageValue={this.dropDownValue}
-                                newPerPagevalue={this.state.itemsPerPage + " items per page"}
+                                newPerPagevalue={this.props.perPageLimit + " items per page"}
                               />
                             }
                             <button disabled={this.firstPageButton} data-action="first" aria-label="Go to first page" className="pf-c-button pf-m-plain" type="button" onClick={this.props.handleMoveToFirst}><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img">
@@ -118,10 +124,11 @@ class Pagination extends React.Component<IProps> {
   private dropDownValue = (value) => {
     this.setState({
       isOpen: !this.state.isOpen,
-      itemsPerPage: Number(value.substr(0,value.indexOf(" "))),
+      itemsPerPage: Number(value.substr(0, value.indexOf(" "))),
       selected: value
-    },()=>{
-      this.props.handlePerPageLimit(this.state.itemsPerPage)
+    }, () => {
+      this.props.handlePerPageLimit(Number(value.substr(0, value.indexOf(" "))))
+      this.props.handleItemsPerPage(Number(value.substr(0, value.indexOf(" "))))
     });
   };
 }

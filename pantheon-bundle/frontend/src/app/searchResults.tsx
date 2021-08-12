@@ -6,7 +6,8 @@ import {
   TableBody,
   headerCol,
 } from "@patternfly/react-table";
-
+import { Checkbox } from '@patternfly/react-core';
+import { Tooltip } from '@patternfly/react-core';
 import "@app/app.css";
 import styles from "@patternfly/react-styles/css/components/Table/table";
 import { Pagination } from "@app/Pagination"
@@ -18,7 +19,7 @@ import {
   EmptyStateIcon,
   EmptyStateVariant
 } from "@patternfly/react-core";
-import { SearchIcon } from "@patternfly/react-icons";
+import { SearchIcon, ExclamationTriangleIcon, ExclamationCircleIcon } from "@patternfly/react-icons";
 import CheckCircleIcon from "@patternfly/react-icons/dist/js/icons/check-circle-icon"
 import { SlingTypesPrefixes } from "./Constants";
 
@@ -29,6 +30,11 @@ export interface IProps {
   productsSelected: string[]
   repositoriesSelected: string[]
   userAuthenticated: boolean
+  onGetdocumentsSelected: (documentsSelected) => any
+  onSelectContentType: (contentType) => any
+  currentBulkOperation: string
+  disabledClassname: string
+  bulkOperationCompleted: boolean
 }
 export interface ISearchState {
 
@@ -50,6 +56,7 @@ export interface ISearchState {
   itemsPerPage: number
   results: any
   rows: any
+  canSelectAll: boolean
   showDropdownOptions: boolean
   bottom: boolean
 }
@@ -63,8 +70,8 @@ class SearchResults extends Component<IProps, ISearchState> {
         { title: "" },
         { title: "Title", cellTransforms: [headerCol()] },
         { title: "Repository" },
-        { title: "Updated date" },
-        { title: "Published date" }
+        { title: "Upload Date" },
+        { title: "Last Published Date" }
       ],
       displayLoadIcon: true,
       // filterQuery: "",
@@ -82,12 +89,14 @@ class SearchResults extends Component<IProps, ISearchState> {
           "name": "",
           "jcr:title": "",
           "jcr:description": "",
+          "productVersion": "",
           "sling:transientSource": "",
           "pant:transientSourceName": "",
           "checkedItem": false,
           "publishedDate": "-",
           "pant:moduleType": "-",
-          "variant": ""
+          "variant": "",
+          "validations": ""
         }
       ],
       // states for table
@@ -96,9 +105,13 @@ class SearchResults extends Component<IProps, ISearchState> {
           cells: ["", "", "", ""]
         }
       ],
-      showDropdownOptions: false,
+      canSelectAll: true,
+      showDropdownOptions: true,
       bottom: true,
     };
+
+    this.onSelect = this.onSelect.bind(this);
+    this.toggleSelect = this.toggleSelect.bind(this);
   }
 
   public componentDidMount() {
@@ -109,22 +122,42 @@ class SearchResults extends Component<IProps, ISearchState> {
     if (this.props.repositoriesSelected !== prevProps.repositoriesSelected
       || this.props.productsSelected !== prevProps.productsSelected
       || this.props.keyWord !== prevProps.keyWord
-      || this.props.filters !== prevProps.filters) {
-
+      || this.props.filters !== prevProps.filters
+      || this.props.onGetdocumentsSelected !== prevProps.onGetdocumentsSelected
+      || (this.props.bulkOperationCompleted !== prevProps.bulkOperationCompleted
+        && this.props.currentBulkOperation.length === 0
+      )
+    ) {
       this.doSearch()
     }
   }
 
   public render() {
-    const { columns, rows } = this.state;
+    const { columns, rows, canSelectAll, results } = this.state;
 
     return (
       <React.Fragment>
-
-        {!this.state.isEmptyResults && <Table aria-label="Simple Table" cells={columns} rows={rows}>
-          <TableHeader className={styles.modifiers.nowrap} />
-          <TableBody className="results__table-body" />
-        </Table>}
+        {!this.state.isEmptyResults &&
+          <div className={this.props.disabledClassname}>
+            <Checkbox
+              label="Can select all"
+              className="pf-u-mb-lg"
+              isChecked={canSelectAll}
+              onChange={this.toggleSelect}
+              aria-label="toggle select all checkbox"
+              id={"toggle-select-all-" + this.props.contentType}
+              name={"toggle-select-all-" + this.props.contentType}
+            />
+            <Table
+              onSelect={this.onSelect}
+              canSelectAll={canSelectAll}
+              aria-label={"Selectable Table " + this.props.contentType}
+              cells={columns}
+              rows={rows}
+            >
+              <TableHeader className={styles.modifiers.nowrap} />
+              <TableBody className="results__table-body" />
+            </Table></div>}
 
         {!this.state.isEmptyResults && <Pagination
           handleMoveLeft={this.updatePageCounter("L")}
@@ -133,10 +166,13 @@ class SearchResults extends Component<IProps, ISearchState> {
           pageNumber={this.state.page}
           nextPageRecordCount={this.state.nextPageRowCount}
           handlePerPageLimit={this.changePerPageLimit}
+          handleItemsPerPage={this.changePerPageLimit}
           perPageLimit={this.state.pageLimit}
           showDropdownOptions={this.state.showDropdownOptions}
           bottom={this.state.bottom}
           className="results__pagination"
+          currentBulkOperation={this.props.currentBulkOperation}
+          
         />}
 
         {this.state.isEmptyResults && <EmptyState variant={EmptyStateVariant.small} className="search-results--empty">
@@ -200,9 +236,10 @@ class SearchResults extends Component<IProps, ISearchState> {
         }
       }
 
-      backend += "&offset=" + ((this.state.page - 1) * this.state.pageLimit) + "&limit=" + this.state.pageLimit
-      if (!backend.includes("Uploaded") && !backend.includes("direction")) {
-        backend += "&key=Uploaded&direction=desc"
+      backend += "&offset=" + ((this.state.page - 1) * this.state.itemsPerPage) + "&limit=" + this.state.itemsPerPage
+
+      if (!backend.includes("Updated") && !backend.includes("direction")) {
+        backend += "&key=Updated&direction=desc"
       }
 
       return backend
@@ -242,20 +279,32 @@ class SearchResults extends Component<IProps, ISearchState> {
         .then(responseJSON => {
           this.setState({ results: responseJSON.results, nextPageRowCount: responseJSON.hasNextPage ? 1 : 0 })
           const data = new Array()
+
           responseJSON.results.map((item, key) => {
-            const publishedDate = item["pant:publishedDate"] !== undefined ? item["pant:publishedDate"] : "-"
-            const publishedIcon = publishedDate !== "-" ? <><CheckCircleIcon className="p2-search__check-circle-icon"/></> : ""
+            const lastUpdateDate = item["pant:publishedDate"]
+
+            let docIcon = lastUpdateDate !== "-" ? <div><Tooltip position="top" content={<div>Published successfully</div>}><CheckCircleIcon className="p2-search__check-circle-icon" /></Tooltip></div> : null
+            if (docIcon === null) {
+              const productVersion = item["productVersion"] != undefined ? item["productVersion"] : "-"
+
+              docIcon = productVersion == "-" ? <div><Tooltip position="top" content={<div>Metadata missing</div>}><ExclamationTriangleIcon color="#f0ab00" /></Tooltip></div> : null
+            }
+            if (item.validations !== undefined && item.validations.length > 1) {
+              let vIcon = <div><Tooltip position="top" content={<div>{item.validations}</div>}><ExclamationCircleIcon color="#c9190b" /></Tooltip></div>
+              docIcon = <span>{docIcon}{vIcon}</span>
+            }
             const cellItem = new Array()
-            cellItem.push(publishedIcon)
+            cellItem.push(docIcon)
             if (this.props.userAuthenticated) {
               cellItem.push({ title: <a href={"/pantheon/#" + item["sling:resourceType"].substring(SlingTypesPrefixes.PANTHEON.length) + "/" + item['pant:transientPath'] + "?variant=" + item.variant}> {item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]} </a> })
             } else {
               let docTitle = item["jcr:title"] !== "-" ? item["jcr:title"] : item["pant:transientPath"]
               cellItem.push(docTitle)
             }
+            { title: "Last Published Date" }
             cellItem.push(item["pant:transientSourceName"])
             cellItem.push(item["pant:dateUploaded"])
-            cellItem.push(publishedDate)
+            cellItem.push(lastUpdateDate)
 
             data.push({ cells: cellItem })
           })
@@ -294,10 +343,52 @@ class SearchResults extends Component<IProps, ISearchState> {
     }
   }
 
-  private changePerPageLimit = (pageLimitValue) => {
-    this.setState({ pageLimit: pageLimitValue, page: 1 }, () => {
-      return (this.state.pageLimit + " items per page")
+  public changePerPageLimit = (pageLimitValue) => {
+    this.setState({ pageLimit: pageLimitValue, page: 1, itemsPerPage: pageLimitValue }, () => {
+      this.props.onGetdocumentsSelected([])
+      this.doSearch()
+      this.props.onSelectContentType("")
     })
+  }
+
+  private onSelect(event, isSelected, rowId) {
+    let rows;
+    if (rowId === -1) {
+      rows = this.state.rows.map(oneRow => {
+        oneRow.selected = isSelected;
+        return oneRow;
+      });
+    } else {
+      rows = [...this.state.rows];
+      rows[rowId].selected = isSelected;
+    }
+    this.setState({
+      rows
+    });
+    // update props.documentSelected
+    let selectedRows;
+    selectedRows = this.state.rows.map(oneRow => {
+      if (oneRow.selected === true) {
+        return oneRow;
+      }
+    })
+    // filter undefined values
+    selectedRows = selectedRows.filter(r => r !== undefined)
+
+    this.props.onGetdocumentsSelected(selectedRows);
+
+    if (selectedRows.length > 0 || isSelected == true) {
+      this.props.onSelectContentType(this.props.contentType);
+    }
+    if (selectedRows.length == 0 && isSelected == false) {
+      this.props.onSelectContentType("");
+    }
+  }
+
+  private toggleSelect(checked) {
+    this.setState({
+      canSelectAll: checked
+    });
   }
 }
 

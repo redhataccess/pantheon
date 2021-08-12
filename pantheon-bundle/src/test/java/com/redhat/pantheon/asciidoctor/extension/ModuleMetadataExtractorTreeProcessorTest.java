@@ -73,6 +73,37 @@ class ModuleMetadataExtractorTreeProcessorTest {
     }
 
     @Test
+    void extractMetadataAbstractInferred() {
+        // Given
+        slingContext.build().resource("/content/module1/locales/en_US/1/metadata").commit();
+        ModuleMetadata metadata =
+                SlingModels.getModel(
+                        slingContext.resourceResolver().getResource(
+				"/content/module1/locales/en_US/1/metadata"),
+			ModuleMetadata.class);
+        Resource module = slingContext.resourceResolver().getResource("/content/module1");
+        MetadataExtractorTreeProcessor extension = new MetadataExtractorTreeProcessor(metadata);
+        Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+        asciidoctor.javaExtensionRegistry().treeprocessor(extension);
+        final String adocContent = "// Some comment.\n" 
+                                 + "\n" 
+                                 + "[id='something_{context}']\n"
+                                 + "= A title for content\n" 
+                                 + "\n"
+                                 + "This para is selected as the abstract even if the role is not set.\n" 
+                                 + "\n"
+                                 + "Some other text or block like a procedure.";
+
+        // When
+        asciidoctor.load(adocContent, new HashMap<>());
+
+        // Then
+        assertEquals("A title for content", metadata.title().get());
+        assertEquals("This para is selected as the abstract even if the role is not set.",
+			metadata.mAbstract().get());
+    }
+
+    @Test
     void extractHeadline() {
         // Given
         slingContext.build()

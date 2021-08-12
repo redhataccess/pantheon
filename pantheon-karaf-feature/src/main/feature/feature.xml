@@ -20,6 +20,7 @@
 <features name="pantheon-features" xmlns="http://karaf.apache.org/xmlns/features/v1.5.0">
     <!-- Using 0.1.0 version so that 0.1.1 is searched for in any circumstance -->
     <repository>mvn:org.apache.sling/org.apache.sling.karaf-features/0.1.1-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.keycloak/keycloak-osgi-features/11.0.3/xml/features</repository>
     <!-- Pantheon -->
     <feature name="pantheon-bundle" version="${project.version}">
         <feature>sling-models</feature>
@@ -33,6 +34,8 @@
         <!-- This is needed for sling-pipes -->
         <feature>sling-distribution</feature>
         <feature>sling-pipes</feature>
+        <!-- Keycloak integration -->
+        <feature>keycloak-servlet-filter-adapter</feature>
         <config name="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-com.redhat.pantheon">
             user.mapping=[\
             "com.redhat.pantheon\=pantheon"\
@@ -57,12 +60,17 @@
                 create group pantheon-authors \n\
                 create group pantheon-publishers\n\
                 create group pantheon-statusProvider\n\
+                create group pantheon-administrators \n\
                 create service user pantheon\n\
                 create user sync-service with password sync-service\n\
                 \n\
                 set ACL for pantheon\n\
                 allow jcr:all on /content restriction(rep:glob,*)\n\
                 allow jcr:all on /conf/pantheon\n\
+                end\n\
+                \n\
+                set ACL for pantheon-administrators\n\
+                allow jcr:all on / \n\
                 end\n\
                 \n\
                 set ACL for pantheon-authors\n\
@@ -120,9 +128,14 @@
             request.log.service.output = data/log/request.log
             request.log.service.outputtype = 1
         </config>
-        <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.9.9</bundle>
-        <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.9.9</bundle>
-        <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.9.9</bundle>
+        <!-- keycloak config -->
+        <config name="com.redhat.pantheon.auth.keycloak.KeycloakFilter">
+            keycloak-servlet-filter-adapter = ${karaf.etc}/keycloak.json
+        </config>
+
+        <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.10.4</bundle>
+        <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.10.4</bundle>
+        <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.10.4</bundle>
         <bundle>mvn:org.apache.sling/org.apache.sling.commons.log/5.1.10</bundle>
         <!-- This is already present in the sling karaf features, but not the -all dependency  -->
         <bundle>mvn:org.codehaus.groovy/groovy-all/2.4.9</bundle>

@@ -122,10 +122,23 @@ public class MetadataExtractorTreeProcessor extends Treeprocessor {
                             }
                         })
                         .findFirst();
+
+         // if no abstract was specified in the source, use the first paragraph
+         // as long as the file has more than one block
+         if (!abstractNode.isPresent() && allNodes.size() > 1) {
+            abstractNode = allNodes.stream().filter(block -> {
+                try {
+                    return block.getContext().equals("paragraph");
+                } catch (Exception e) {
+                    return false;
+                }
+            }).findFirst();
+        }
+
         abstractNode.ifPresent(node -> documentMetadata.mAbstract().set(node.getContent().toString()));
 
         // if no abstract is detected, reset if
-        if(!abstractNode.isPresent()) {
+        if (!abstractNode.isPresent()) {
             documentMetadata.mAbstract().set(null);
         }
     }

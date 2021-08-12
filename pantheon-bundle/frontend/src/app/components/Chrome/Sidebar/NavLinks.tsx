@@ -27,7 +27,6 @@ class NavLinks extends Component<IAppState, any> {
     const productText = "New Product"
     const productsText = "Product Listing"
     const searchText = "Search"
-    const searchBetaText = "Search Beta"
     const slingHomeText = "Sling Welcome"
 
     return (
@@ -41,14 +40,6 @@ class NavLinks extends Component<IAppState, any> {
               onClick={this.handleItemOnclick}
             >
               <Link to="/search" data-testid="navLink_search">{searchText}</Link>
-            </NavItem>
-            <NavItem
-              groupId="grp-1"
-              itemId="grp-1_itm-2"
-              isActive={this.state.activeGroup === "grp-1" && this.state.activeItem === "grp-1_itm-2"}
-              onClick={this.handleItemOnclick}
-            >
-              <Link to="/searchbeta" data-testid="navLink_searchbeta">{searchBetaText}</Link>
             </NavItem>
             {(this.props.userAuthenticated) &&
               (<NavItem
@@ -88,7 +79,7 @@ class NavLinks extends Component<IAppState, any> {
               component="a"
               onClick={this.handleItemOnclick}
             >
-              <a href="/starter/index.html" target="_blank">{slingHomeText}</a>
+              <a href="/starter.html" target="_blank">{slingHomeText}</a>
             </NavItem>
             <NavItem
               groupId="grp-3"

@@ -1,0 +1,202 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BulkOperationConfirmation tests should render BulkOperationConfirmation component 1`] = `
+<Fragment>
+  <Alert
+    actionClose={
+      <AlertActionCloseButton
+        data-testid="hide-alert-button"
+        onClose={[Function]}
+      />
+    }
+    actionLinks={
+      <React.Fragment>
+        <AlertActionLink
+          data-testid="view-details-link"
+          onClick={[Function]}
+        >
+          View details
+        </AlertActionLink>
+      </React.Fragment>
+    }
+    title="Bulk Edit"
+    variant="info"
+  >
+    <div>
+      <Progress
+        className=""
+        id=""
+        isTitleTruncated={false}
+        label={null}
+        max={100}
+        measureLocation="top"
+        min={0}
+        size="sm"
+        title="Update Succeeded"
+        tooltipPosition="top"
+        value={50}
+        valueText={null}
+        variant="success"
+      />
+    </div>
+    <div>
+      <Progress
+        className=""
+        id=""
+        isTitleTruncated={false}
+        label={null}
+        max={100}
+        measureLocation="top"
+        min={0}
+        size="sm"
+        title="Update failed"
+        tooltipPosition="top"
+        value={10}
+        valueText={null}
+        variant="danger"
+      />
+    </div>
+    <div>
+      <Progress
+        className=""
+        id=""
+        isTitleTruncated={false}
+        label={null}
+        max={100}
+        measureLocation="top"
+        min={0}
+        size="sm"
+        title="No draft version found. No action taken"
+        tooltipPosition="top"
+        value={40}
+        valueText={null}
+        variant="warning"
+      />
+    </div>
+  </Alert>
+  <Modal
+    actions={Array []}
+    appendTo={[Function]}
+    aria-describedby="confirmation-header-description"
+    aria-label="confirmation dialog"
+    aria-labelledby="confirmation-header-label"
+    className=""
+    footer={
+      <Title
+        headingLevel="h4"
+        size="md"
+      >
+        <span
+          className="pf-u-pl-sm"
+        >
+          
+        </span>
+      </Title>
+    }
+    hasNoBodyWrapper={false}
+    header={
+      <React.Fragment>
+        <Title
+          headingLevel="h1"
+          id="bulk-operation-more-details"
+          size="2xl"
+        >
+          Bulk Edit
+        </Title>
+        <p
+          className="pf-u-pt-sm"
+        >
+          Summary
+        </p>
+      </React.Fragment>
+    }
+    isOpen={false}
+    onClose={[Function]}
+    ouiaSafe={true}
+    showClose={true}
+    title=""
+    titleIconVariant={null}
+    titleLabel=""
+    variant="large"
+  >
+    <strong>
+      Update Succeeded:
+    </strong>
+    <br />
+    <span
+      id="update-succeeded"
+    >
+      <List
+        aria-label="succeeded"
+        component="ol"
+        type="1"
+      >
+        <ListItem
+          key="0"
+        >
+          /repositories/s/a
+        </ListItem>
+        <ListItem
+          key="1"
+        >
+          /repositories/s/b
+        </ListItem>
+        <ListItem
+          key="2"
+        >
+          /repositories/s/c
+        </ListItem>
+      </List>
+    </span>
+    <br />
+    <br />
+    <strong>
+      Update Ignored:
+    </strong>
+    <br />
+    <span
+      id="update-ignored"
+    >
+      <List
+        aria-label="ignored"
+        component="ol"
+        type="1"
+      >
+        <ListItem
+          key="0"
+        >
+          /repositorires/i/a
+        </ListItem>
+        <ListItem
+          key="1"
+        >
+          /repositorires/i/b
+        </ListItem>
+      </List>
+    </span>
+    <br />
+    <br />
+    <strong>
+      Update Failed:
+    </strong>
+    <br />
+    <span
+      id="update-failed"
+    >
+      <List
+        aria-label="failed"
+        component="ol"
+        type="1"
+      >
+        <ListItem
+          key="0"
+        >
+          /repositories/f/a
+        </ListItem>
+      </List>
+    </span>
+    <br />
+    <br />
+  </Modal>
+</Fragment>
+`;

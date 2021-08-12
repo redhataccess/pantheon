@@ -104,42 +104,43 @@ describe("ContentDisplay tests for Assembly", () => {
         expect(sourceTypeText).toEqual("Product")
     })
 
-    it("renders Published heading", () => {
-        const sourceTypeText = wrapper.find("#span-source-type-draft-published").first().text()
+    it("renders First Published Date heading", () => {
+        const sourceTypeText = wrapper.find("#span-source-type-firstpublished").first().text()
         // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("Published")
+        expect(sourceTypeText).toEqual("First Published Date")
     })
 
-    it("renders Draft Uploaded heading", () => {
-        const sourceTypeText = wrapper.find("#span-source-type-draft-uploaded").first().text()
+    it("renders Last Published Date heading", () => {
+        const sourceTypeText = wrapper.find("#span-source-type-lastpublished").first().text()
 
         // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("Draft uploaded")
+        expect(sourceTypeText).toEqual("Last Published Date")
     })
 
     it("renders View on Customer Portal hotlink", () => {
         wrapper.setState({ "login": true })
-        wrapper.setState({ "releaseUpdateDate": "Fri Oct 18 2019 17:35:50 GMT-0400" })
+        wrapper.setState({ "lastPublishDate": "Fri Oct 18 2019 17:35:50 GMT-0400" })
         wrapper.setState({ "variantUUID": "123" })
         wrapper.setState({ "portalUrl": "https://example.com" })
+        wrapper.setState({ "portalUrlType": "LIVE" })
         const sourceTypeText = wrapper.find("a").at(0).text()
 
         // ensure it matches what is expected
         expect(sourceTypeText).toContain("View on Customer Portal")
     })
 
-    it("should check if draftUpdateDate exists", () => {
+    it("should check if lastPublishDate exists", () => {
         const wrapper = shallow(<ContentDisplay {...assemblyProps} />)
         wrapper.setState({ "login": true })
-        wrapper.setState({ "draftUpdateDate": "abcd" })
-        expect(wrapper.state("draftUpdateDate")).toBeDefined()
+        wrapper.setState({ "lastPublishDate": "abcd" })
+        expect(wrapper.state("lastPublishDate")).toBeDefined()
     })
 
-    it("should check if releaseUpdateDate exists", () => {
+    it("should check if firstPublishDate exists", () => {
         const wrapper = shallow(<ContentDisplay {...assemblyProps} />)
         wrapper.setState({ "login": true })
-        wrapper.setState({ "releaseUpdateDate": "abcd" })
-        expect(wrapper.state("releaseUpdateDate")).toBeDefined()
+        wrapper.setState({ "firstPublishDate": "abcd" })
+        expect(wrapper.state("firstPublishDate")).toBeDefined()
     })
 
     it("should have a Title", () => {
@@ -332,17 +333,17 @@ describe("ContentDisplay tests for Module", () => {
     })
 
     it("renders Published heading", () => {
-        const sourceTypeText = wrapper.find("#span-source-type-published").first().text()
+        const sourceTypeText = wrapper.find("#span-source-type-lastpublished").first().text()
 
         // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("Published")
+        expect(sourceTypeText).toEqual("Last Published Date")
     })
 
     it("renders Draft Uploaded heading", () => {
-        const sourceTypeText = wrapper.find("#span-source-type-draft-uploaded").first().text()
+        const sourceTypeText = wrapper.find("#span-source-type-firstpublished").first().text()
 
         // ensure it matches what is expected
-        expect(sourceTypeText).toEqual("Draft uploaded")
+        expect(sourceTypeText).toEqual("First Published Date")
     })
 
     it("renders Module Type heading", () => {
@@ -354,9 +355,10 @@ describe("ContentDisplay tests for Module", () => {
 
     it("renders View on Customer Portal hotlink", () => {
         wrapper.setState({ "login": true })
-        wrapper.setState({ "releaseUpdateDate": "Fri Oct 18 2019 17:35:50 GMT-0400" })
+        wrapper.setState({ "lastPublishDate": "Fri Oct 18 2019 17:35:50 GMT-0400" })
         wrapper.setState({ "variantUUID": "123" })
         wrapper.setState({ "portalUrl": "https://example.com" })
+        wrapper.setState({ "portalUrlType": "LIVE" })
         const sourceTypeText = wrapper.find("a").at(0).text()
 
         // ensure it matches what is expected

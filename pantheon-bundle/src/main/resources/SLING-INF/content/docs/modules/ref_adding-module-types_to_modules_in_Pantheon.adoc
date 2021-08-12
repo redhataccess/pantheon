@@ -1,0 +1,53 @@
+:_module-type: REFERENCE
+[id='adding-module-types_to_modules_in_Pantheon_{context}']
+= Adding the module type to modules in {ProductShortName}
+
+[role="_abstract"]
+In {ProductShortName}, you can search and filter modules  by type: concept, procedure, or reference. You declare a module's type by adding an identifier to each module.
+
+Use one or both of the following identifiers to declare the module's type:
+
+* The `:_module-type:` attribute, preceding the module's ID
+* The corresponding prefix in the module's file name
+
+{ProductShortName} {ProductNumber} first checks for the `:_module-type:` attribute. Any value other than those specified above is ignored. If there is no valid attribute, {ProductShortName} {ProductNumber} then checks if the module's file name includes a valid prefix. If both a valid attribute and prefix exist, {ProductShortName} {ProductNumber}  uses the attribute.
+
+
+Attribute (preferred method)::
+Enter the correct attribute in the line before the module's ID to avoid build problems, choosing among the following:
++
+* `:_module-type: CONCEPT`
+* `:_module-type: PROCEDURE`
+* `:_module-type: REFERENCE`
++
+====
+.Example
+`:_module-type: REFERENCE`
+`[id='identifying-module-types_in_Pantheon_{context}']`
+
+`= Identifying {ProductShortName} module types`
+====
+
+Prefix::
+Begin the file names of modules with one of the following prefixes, followed by either an underscore or a hyphen:
++
+* `con`
+* `proc`
+* `ref`
++
+====
+.Examples: A reference module
+
+Underscore after the prefix:
+
+`**ref_**identifying-module-types.adoc`
+
+Hyphen after the prefix:
+
+`**ref-**identifying-module-types.adoc`
+
+====
+
+.Additional resources
+
+* link:https://redhat-documentation.github.io/modular-docs/#writing-mod-docs[Types of modules in Red Hat documentation] in the _Modular Documentation Reference Guide_

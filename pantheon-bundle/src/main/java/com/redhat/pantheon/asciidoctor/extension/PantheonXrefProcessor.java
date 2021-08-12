@@ -1,5 +1,6 @@
 package com.redhat.pantheon.asciidoctor.extension;
 
+import com.redhat.pantheon.helper.Symlinks;
 import com.redhat.pantheon.model.Xref;
 import com.redhat.pantheon.model.assembly.TableOfContents;
 import com.redhat.pantheon.model.document.Document;
@@ -8,18 +9,15 @@ import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.module.Module;
 import com.redhat.pantheon.model.module.ModuleLocale;
 import com.redhat.pantheon.model.module.ModuleVariant;
+import com.redhat.pantheon.validation.helper.XrefValidationHelper;
+import com.redhat.pantheon.validation.validators.XrefValidator;
 import org.apache.sling.api.resource.Resource;
 import org.asciidoctor.ast.ContentNode;
 import org.asciidoctor.extension.InlineMacroProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,26 +53,36 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
     }
 
     public String preprocess(String content) {
+        List<String> urlList = new ArrayList<>();
         if (!documentVariant.getPath().startsWith("/content/docs/")) {
-            content = preprocessWithPattern(content, XREF_PATTERN);
-            content = preprocessWithPattern(content, TRIANGLE_PATTERN);
+            content = preprocessWithPattern(content, XREF_PATTERN, urlList);
+            content = preprocessWithPattern(content, TRIANGLE_PATTERN, urlList);
         }
+        XrefValidationHelper.getInstance().setObjectsToValidate(urlList);
         return content;
     }
 
-    private String preprocessWithPattern(String line, Pattern pattern) {
+    private String preprocessWithPattern(String line, Pattern pattern, List<String> filePaths) {
         Matcher matcher = pattern.matcher(line);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
             String filepath = Optional.ofNullable(matcher.group("filepath")).orElse("");
             String anchor = Optional.ofNullable(matcher.group("anchor")).orElse("");
             String label = Optional.ofNullable(matcher.group("label")).orElse("");
+            String pathPrefix = "";
+            for (int pos = line.indexOf(matcher.group(0))-1; pos != -1; pos -=1 ) {
+                pathPrefix = line.charAt(pos)+pathPrefix;
+                if(pathPrefix.contains("\n")){
+                    pathPrefix = pathPrefix.substring(1);
+                    break;
+                }
+            }
 
             // Decide whether this is an xref that we can resolve
             // Assume it's a relative path to a file in the same repo for now
             Resource containingFolder = documentVariant.getParentLocale().getParent().getParent();
             String targetPath = containingFolder.getPath() + "/" + filepath;
-            Resource desiredTarget = documentVariant.getResourceResolver().getResource(targetPath);
+            Resource desiredTarget = Symlinks.resolve(documentVariant.getResourceResolver(), targetPath);
 
             if (desiredTarget != null && XREF_ALLOWED_TARGET_TYPES.contains(desiredTarget.getResourceType())) {
                 UUID uuid = UUID.randomUUID();
@@ -83,8 +91,13 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
             } else {
                 // TODO - Once validation exists, might want to add a check here for "target exists but is not publishable"
                 matcher.appendReplacement(sb, matcher.group(0)); // ".group(0)" is the special group that contains the
-            }                                                    // entire content of what was matched. I.e., we leave
-        }                                                        // this alone/unmodified.
+                                                                // entire content of what was matched. I.e., we leave
+                                                                // this alone/unmodified.
+                if(!pathPrefix.matches("^(\\s*\\/\\/[^\\n\\r]+$)")){
+                    filePaths.add(filepath);
+                }
+            }
+        }
         matcher.appendTail(sb);
         return sb.toString();
     }

@@ -1,12 +1,11 @@
 import React, { Component } from "react"
 import { Route, RouteComponentProps, Switch } from "react-router-dom"
 import { Search } from "@app/search"
-import { SearchBeta } from "@app/searchBeta"
 import { Product } from "@app/product"
 import { ProductDetails } from "@app/productDetails"
 import ProductListing from "@app/productListing"
 import { Login } from "@app/login"
-import { GitImport } from "./gitImport"
+import GitImport from "./gitImport"
 import { ContentDisplay }  from "@app/contentDisplay"
 import { IAppState } from "./app"
 import { ProductProvider } from "./contexts/ProductContext"
@@ -30,14 +29,6 @@ class Routes extends Component<IAppState> {
         icon: null,
         label: "Search",
         path: "/search",
-        requiresLogin: false
-      },
-      {
-        component: (routeProps) => <SearchBeta {...this.props} />,
-        exact: true,
-        icon: null,
-        label: "Search Beta",
-        path: "/searchbeta",
         requiresLogin: false
       },
       {
@@ -100,12 +91,14 @@ class Routes extends Component<IAppState> {
 
     return (
       // https://github.com/ReactTraining/react-router/issues/5521#issuecomment-329491083
-      <Switch>
+      // FIXME: here we are routing to the form based authentication regardless if SSO is enabled or not
+        <Switch>
         {routes.map(({ path, exact, component, requiresLogin }, idx) => (
           <Route path={path} exact={exact} render={(routeProps) => (this.props.userAuthenticated || !requiresLogin) ? component(routeProps) : <Login />} key={idx} />
         ))}
         <Route render={() => <Search {...this.props} />} />
-      </Switch>
+        </Switch>
+        
     )
   }
 }

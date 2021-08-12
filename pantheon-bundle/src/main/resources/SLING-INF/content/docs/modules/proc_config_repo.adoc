@@ -1,15 +1,19 @@
 [id="configuring-a-repository-as-a-content-source-for-pantheon_{context}"]
 
-= Configuring a repository as a content source for {ProductShortName}
+= Configuring your documentation repository as a content source for {ProductShortName}
 
 [role="_abstract"]
-In order to enable a repository as a content source for {ProductShortName}, you need to configure the repository by adding a configuration file to the root directory.
+To enable a repository as a content source for {ProductShortName}, you must configure the repository by adding a configuration file to the root directory.
+
+.Prerequisites
+* You have a repository that contains your documentation.
+* You have a server URL from {ProductShortName} administrator.
 
 .Procedure
 
 . In a text editor, paste the content of the sample configuration file in xref:pantheon-yaml-file_{context}[] into a new text file. Name the file [filename]`pantheon2.yml`. This file is the {ProductShortName} configuration file for your repository.
 
-. Replace the default value for `server` with the URL you receive from a {ProductShortName} administrator.
+. Replace the default value of `server` with the URL you receive from a {ProductShortName} administrator.
 +
 [options="nowrap" subs="normal"]
 ----
@@ -29,5 +33,6 @@ You specify the actual URL of the repository when you synchronize the repository
 ====
 
 . Add the configuration file to the root directory of the repository.
+. Upload local repository content to your remote repository.
 
 You can now import content from the repository into {ProductShortName}.

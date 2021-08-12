@@ -23,7 +23,9 @@ exports[`Sidebar tests should render Sidebar component 1`] = `
         >
           <NavLinks
             isAdmin={false}
+            isAuthor={false}
             isNavOpen={true}
+            isPublisher={false}
             userAuthenticated={true}
             username="demo"
           />

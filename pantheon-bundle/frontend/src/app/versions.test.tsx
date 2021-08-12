@@ -20,12 +20,13 @@ const props = {
     modulePath: "/modules/test",
     onGetProduct: (productValue) => anymatch,
     onGetVersion: (versionValue) => anymatch,
+    onGetUrl: (url) => anymatch,
     productInfo: "Red Hat Enterprise Linux",
-    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
+    updateDate: (releaseVersion, variantUUID) => anymatch,
     variant: "test",
     variantUUID: "abcd-1234",
     versionModulePath: "/modules/test_module/en_US/variants/test/draft",
-    onPublishEvent: () => anymatch
+    canRegeneratePortalUrl: (regeneratePortalUrl) => anymatch
 }
 
 describe("Versions tests", () => {
@@ -193,14 +194,15 @@ describe("Versions tests", () => {
             modulePath: "somePath",
             onGetProduct: (productValue) => anymatch,
             onGetVersion: (versionValue) => anymatch,
+            onGetUrl: (url) => anymatch,
             productInfo: "Red Hat Enterprise Linux",
-            updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => anymatch,
+            updateDate: (releaseVersion, variantUUID) => anymatch,
             variant: "DEFAULT",
             variantUUID: "abcd-1234",
             versionModulePath: "versionPath",
-            onPublishEvent: () => anymatch
+            canRegeneratePortalUrl:(regeneratePortalUrl) => anymatch
         }
-        state.updateDate("-", "-", 1, "1234")
+        state.updateDate(1, "1234")
         expect(state.modulePath).toEqual("somePath")
         expect(state.versionModulePath).toEqual("versionPath")
     })
@@ -211,7 +213,7 @@ describe("Versions tests", () => {
         wrapper.setState({
             "login": true,
             "showMetadataAlertIcon": false,
-            "results": [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Not published", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } } }]],
+            "results": [[{ "type": "draft", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Not published", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } }, "validation":[] }]],
         })
         const spy = sinon.spy(instance, "changePublishState")
         wrapper.find(Button).at(2).simulate("click")
@@ -223,7 +225,7 @@ describe("Versions tests", () => {
         const instance = wrapper.instance()
         wrapper.setState({
             "login": true,
-            "results": [[{ "type": "release", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Released", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } } }]],
+            "results": [[{ "type": "release", "icon": "BlankImage", "path": "/modules/test", "version": "Version 1", "publishedState": "Released", "updatedDate": "", "firstButtonType": "primary", "secondButtonType": "secondary", "firstButtonText": "Publish", "secondButtonText": "Preview", "isDropdownOpen": false, "isArchiveDropDownOpen": false, "metadata": { productVersion: { label: "test", uuid: 1234 } }, "validation":[] }]],
         })
         const spy = sinon.spy(instance, "changePublishState")
         wrapper.find(Button).at(2).simulate("click")

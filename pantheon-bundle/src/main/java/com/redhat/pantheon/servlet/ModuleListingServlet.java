@@ -1,9 +1,11 @@
 package com.redhat.pantheon.servlet;
 
+import com.redhat.pantheon.helper.PantheonConstants;
 import com.redhat.pantheon.jcr.JcrQueryHelper;
 import com.redhat.pantheon.model.HashableFileResource;
 import com.redhat.pantheon.model.api.Child;
 import com.redhat.pantheon.model.module.*;
+import com.redhat.pantheon.validation.model.Validations;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -238,6 +240,10 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
                         .toChild(sourceContent -> sourceContent.draft().isPresent() ? sourceContent.draft() : sourceContent.released())
                         .asOptional();
 
+        // get Validations
+        Optional<Validations> draftValidations = module.getValidations(DEFAULT_MODULE_LOCALE, variantName, "draft");
+        Optional<Validations> releasedValidations = module.getValidations(DEFAULT_MODULE_LOCALE, variantName, "released");
+
         // TODO Need some DTOs to convert to maps
         Map<String, Object> m = super.resourceToMap(resource);
         String resourcePath = resource.getPath();
@@ -273,6 +279,12 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("pant:publishedDate","-");
         }
 
+        if(releasedMetadata.isPresent() && releasedMetadata.get().dateFirstPublished().get()!=null){
+            m.put("pant:dateFirstPublished",sdf.format(releasedMetadata.get().dateFirstPublished().get().getTime()));
+        }else{
+            m.put("pant:dateFirstPublished","-");
+        }
+
         if(draftMetadata.isPresent() && draftMetadata.get().title().get()!=null){
             m.put("jcr:title",draftMetadata.get().title().get());
         }else if(releasedMetadata.isPresent() && releasedMetadata.get().title().get()!=null){
@@ -289,6 +301,13 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
             m.put("jcr:description","-");
         }
 
+        if(draftMetadata.isPresent() && draftMetadata.get().productVersion().get()!=null){
+            m.put("productVersion",draftMetadata.get().productVersion().get());
+        }else if(releasedMetadata.isPresent() && releasedMetadata.get().productVersion().get()!=null){
+            m.put("productVersion",releasedMetadata.get().productVersion().get());
+        }else{
+            m.put("productVersion","-");
+        }
         // Assume the path is something like: /content/<something>/my/resource/path
         m.put("pant:transientPath", resourcePath.substring("/content/".length()));
         // Example path: /content/repositories/ben_2019-04-11_16-15-15/shared/attributes.module.adoc
@@ -301,6 +320,21 @@ public class ModuleListingServlet extends AbstractJsonQueryServlet {
 
         if (!variantName.isEmpty()) {
             m.put("variant", variantName);
+        }
+
+        // Render only the first validation error
+        Optional<Resource> xref = null;
+        String message = "";
+        if (draftValidations.isPresent() && draftValidations.get().getChild("xref") != null) {
+            xref = Optional.ofNullable(draftValidations.get().getChild("xref"));
+        } else if (releasedValidations.isPresent() && releasedValidations.get().getChild("xref") != null) {
+            xref = Optional.ofNullable(releasedValidations.get().getChild("xref"));
+        }
+        if (xref != null && xref.get().hasChildren() ) {
+            message = xref.get().listChildren().next().getValueMap().get("pant:message").toString();
+            m.put("validations", message.length() > 0 ? message : "-");
+        } else {
+            m.put("validations", "-");
         }
 
         log.trace(m.toString());

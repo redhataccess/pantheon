@@ -14,6 +14,7 @@ import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.model.document.DocumentVersion;
 import com.redhat.pantheon.servlet.util.ServletHelper;
 import com.redhat.pantheon.sling.ServiceResourceResolverProvider;
+import com.redhat.pantheon.validation.helper.XrefValidationHelper;
 import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
@@ -100,6 +101,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
                         .released().get();
 
                 // Regenerate the document once more
+                XrefValidationHelper.getInstance().initList();
                 asciidoctorService.getDocumentHtml(document, locale, variant, false, new HashMap(),true);
                 events.fireEvent(new DocumentVersionPublishedEvent(documentVersion), 15);
                 ServletUtils.getCustomerPortalUrl(request, response);

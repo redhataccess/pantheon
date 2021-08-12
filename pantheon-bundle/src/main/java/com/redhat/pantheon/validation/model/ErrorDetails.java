@@ -41,4 +41,22 @@ public class ErrorDetails {
     public String getDetails(){
         return String.join(System.lineSeparator(), details);
     }
+
+    /**
+     * Get details string through index.
+     *
+     * @return the string
+     */
+    public String getDetails(int index){
+        return details.get(index);
+    }
+
+    /**
+     * Get length of ErrorDetails.
+     *
+     * @return the int
+     */
+    public int length(){
+        return details.size();
+    }
 }

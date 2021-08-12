@@ -28,9 +28,10 @@ public class Symlinks {
                 }
             }
 
-            res = resolver.resolve(realPath.toString().replaceAll("/+", "/"));
+            String collapsedSlashPath = realPath.toString().replaceAll("/+", "/");
+            res = resolver.resolve(collapsedSlashPath);
             if (Arrays.stream(res.getPath().split("/")).anyMatch(t -> ".".equals(t) || "..".equals(t))
-                    && !res.getPath().equals(realPath.toString())) {
+                    && !res.getPath().equals(collapsedSlashPath)) {
                 // Compensating for glitchy sling code here.
                 // If you ask sling for something like this:
                 // /content/docs/Pantheon/assemblies/../modules/ref_pantheon-user-interface.adoc

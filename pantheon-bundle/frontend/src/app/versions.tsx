@@ -12,12 +12,14 @@ import {
     Title,
     Tooltip,
 } from "@patternfly/react-core"
+import { TreeView, TreeViewDataItem } from '@patternfly/react-core';
 
 import CheckImage from "@app/images/check_image.jpg"
 import BlankImage from "@app/images/blank.jpg"
 import { Redirect } from "react-router-dom"
-import { ExclamationTriangleIcon, TimesIcon, PlusCircleIcon } from "@patternfly/react-icons"
-import { PantheonContentTypes, PathPrefixes } from "./Constants"
+import { ExclamationTriangleIcon, TimesIcon, PlusCircleIcon, JsIcon } from "@patternfly/react-icons"
+import { Metadata, PantheonContentTypes, PathPrefixes } from "./Constants"
+import { array } from "prop-types";
 
 export interface IProps {
     contentType: string
@@ -28,10 +30,11 @@ export interface IProps {
     variantUUID: string
     attributesFilePath: string
     assemblies?: any
-    updateDate: (draftUpdateDate, releaseUpdateDate, releaseVersion, variantUUID) => any
+    onGetUrl: (url) => any
+    updateDate: (releaseVersion, variantUUID) => any
     onGetProduct: (productValue) => any
     onGetVersion: (versionValue) => any
-    onPublishEvent: () => void
+    canRegeneratePortalUrl: (regeneratePortalUrl) => any
 }
 
 // Define properties in Metadata
@@ -43,6 +46,7 @@ export interface IMetadata {
 }
 
 interface IState {
+    activeItems: any
     alertTitle: string
     allProducts: any
     allProductVersions: any
@@ -67,19 +71,21 @@ interface IState {
     successAlertVisible: boolean
     usecaseOptions: any
     usecaseValue: string
-    assemblyData: [],
+    assemblyData: []
+    draftValidations: any
+    releasedValidations: any
 }
 
 
 class Versions extends Component<IProps, IState> {
-    private static USE_CASES = ["Select Use Case", "Administer", "Deploy", "Develop", "Install", "Migrate", "Monitor", "Network", "Plan", "Provision", "Release", "Troubleshoot", "Optimize"]
 
-    public draft = [{ type: "draft", icon: BlankImage, path: "", version: "", publishedState: "Not published", updatedDate: "", firstButtonType: "primary", secondButtonType: "secondary", firstButtonText: "Publish", secondButtonText: "Preview", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} } }]
-    public release = [{ type: "release", icon: CheckImage, "path": "", version: "", publishedState: "Released", updatedDate: "", firstButtonType: "secondary", secondButtonType: "primary", firstButtonText: "Unpublish", secondButtonText: "View", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} }, draftUploadDate: "" }]
+    public draft = [{ type: "draft", icon: BlankImage, path: "", version: "", publishedState: "Not published", updatedDate: "", firstButtonType: "primary", secondButtonType: "secondary", firstButtonText: "Publish", secondButtonText: "Preview", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} }, validations: [] }]
+    public release = [{ type: "release", icon: CheckImage, "path": "", version: "", publishedState: "Released", updatedDate: "", firstButtonType: "secondary", secondButtonType: "primary", firstButtonText: "Unpublish", secondButtonText: "View", isDropdownOpen: false, isArchiveDropDownOpen: false, metadata: { productVersion: {} }, validations: [], draftUploadDate: "" }]
 
     constructor(props) {
         super(props)
         this.state = {
+            activeItems: {},
             alertTitle: "",
             allProducts: [],
             // tslint:disable-next-line: object-literal-sort-keys
@@ -108,6 +114,8 @@ class Versions extends Component<IProps, IState> {
             ],
             usecaseValue: "",
             assemblyData: [],
+            draftValidations: [],
+            releasedValidations: []
         }
     }
 
@@ -173,7 +181,6 @@ class Versions extends Component<IProps, IState> {
                 }
 
                 <Grid hasGutter={true}>
-                    {/* {console.log("[results]", this.state.results)} */}
                     {this.state.results.map((type, key1) => (
                         type.map((data, key2) => (
                             data.version !== "" && data.type === "draft" && (
@@ -181,13 +188,13 @@ class Versions extends Component<IProps, IState> {
                                     <Card className="pf-m-light pf-site-background-medium pf-c-card-draft">
                                         <CardHeader>
                                             <CardHeaderMain><strong>Draft</strong></CardHeaderMain>
-                                            <CardActions>{}</CardActions>
+                                            <CardActions>{ }</CardActions>
                                             {data.metadata !== undefined && !this.state.showMetadataAlertIcon &&
                                                 <CardActions>
                                                     <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="draft">Add metadata</Button>
                                                 </CardActions>}
                                             {data.metadata !== undefined && this.state.showMetadataAlertIcon &&
-                                                <CardActions><i className="pf-icon pf-icon-warning-triangle" />
+                                                <CardActions><ExclamationTriangleIcon color="#f0ab00" />
                                                     <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="draft">Add metadata</Button>
                                                 </CardActions>}
                                             <CardActions><Button variant="link" isInline={true} onClick={() => this.previewDoc(data.secondButtonText)} id="draftPreview">Preview</Button>
@@ -243,6 +250,14 @@ class Versions extends Component<IProps, IState> {
                                                         </TextListItem>
                                                     </TextList>))}
                                             </TextContent>
+                                            <br />
+                                            {data.validations !== undefined && data.validations.length > 0 && <TextContent>
+                                                <Text><strong>Validations</strong></Text>
+                                            </TextContent>}
+
+                                            {data.validations !== undefined && data.validations.length > 0 &&
+                                                <TreeView data={data.validations} activeItems={this.state.activeItems} onSelect={this.onClickTree} hasBadges />
+                                            }
                                         </CardBody>
                                     </Card>
                                 </GridItem>)
@@ -256,7 +271,7 @@ class Versions extends Component<IProps, IState> {
                                         <Card className="pf-m-selected">
                                             <CardHeader>
                                                 <CardHeaderMain><strong><span id="span-source-type-version-published">Published</span></strong></CardHeaderMain>
-                                                <CardActions>{}</CardActions>
+                                                <CardActions>{ }</CardActions>
                                                 <CardActions>
                                                     <Button variant="link" isInline={true} onClick={this.handleModalToggle} id="released">Add metadata</Button>
                                                 </CardActions>
@@ -271,7 +286,7 @@ class Versions extends Component<IProps, IState> {
                                             <CardBody>
                                                 <TextContent>
                                                     <Text><strong>Upload time</strong></Text>
-                                                    <Text component={TextVariants.p}>{data.draftUploadDate}</Text>
+                                                    <Text component={TextVariants.p}>{data.updatedDate}</Text>
                                                 </TextContent>
                                                 <br />
                                                 <TextContent>
@@ -306,6 +321,14 @@ class Versions extends Component<IProps, IState> {
                                                         </TextList>
                                                     ))}
                                                 </TextContent>
+                                                <br />
+                                                {data.validations !== undefined && data.validations.length > 0 && <TextContent>
+                                                    <Text><strong>Validations</strong></Text>
+                                                </TextContent>}
+
+                                                {data.validations !== undefined && data.validations.length > 0 &&
+                                                    <TreeView data={data.validations} activeItems={this.state.activeItems} onSelect={this.onClickTree} hasBadges />
+                                                }
                                             </CardBody>
 
                                         </Card>
@@ -370,7 +393,7 @@ class Versions extends Component<IProps, IState> {
                             helperText="Explanations of document user cases included in documentation."
                         >
                             <FormSelect value={this.state.usecaseValue} onChange={this.onChangeUsecase} aria-label="FormSelect Usecase">
-                                {Versions.USE_CASES.map((option, key) => (
+                                {Metadata.USE_CASES.map((option, key) => (
                                     <FormSelectOption key={"usecase_" + key} value={option} label={option} />
                                 ))}
                             </FormSelect>
@@ -408,6 +431,8 @@ class Versions extends Component<IProps, IState> {
     private fetchVersions = () => {
         // TODO: need a better fix for the 404 error.
         if (this.props.modulePath !== "") {
+            this.getValidations("draft")
+            this.getValidations("released")
             // fetchpath needs to start from modulePath instead of modulePath/en_US.
             // We need extact the module uuid for customer portal url to the module.
             const fetchpath = "/content" + this.props.modulePath + ".harray.5.json"
@@ -420,13 +445,14 @@ class Versions extends Component<IProps, IState> {
 
                     const firstVariant = this.getHarrayChildNamed(variants, this.props.variant)
                     // process draftUpdateDate from source/draft
-                    let draftDate = ""
+                    let draftUpload = ""
+                    let releaseUpload = ""
                     if (source !== "undefined" && source.__name__ === "source") {
                         for (const childNode of source.__children__) {
                             if (childNode.__name__ === "draft") {
-                                draftDate = childNode["jcr:created"]
+                                draftUpload = childNode["jcr:created"]
                             } else if (childNode.__name__ === "released") {
-                                draftDate = childNode["jcr:created"]
+                                releaseUpload = childNode["jcr:created"]
                             }
                         }
                     }
@@ -444,24 +470,26 @@ class Versions extends Component<IProps, IState> {
                             this.draft[0].version = "Version " + moduleVersion.__name__
                             this.draft[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
                             // get created date from source/draft
-                            this.draft[0].updatedDate = draftDate !== undefined ? draftDate : ""
+                            this.draft[0].updatedDate = draftUpload
                             // this.props.modulePath starts with a slash
                             this.draft[0].path = "/content" + this.props.modulePath + "/en_US/variants/" + firstVariant.__name__ + "/" + moduleVersion.__name__
+                            this.draft[0].validations = this.state.draftValidations
                         }
                         if (moduleVersion.__name__ === "released") {
                             this.release[0].version = "Version " + moduleVersion.__name__
                             this.release[0].metadata = this.getHarrayChildNamed(moduleVersion, "metadata")
-                            this.release[0].updatedDate = this.release[0].metadata["pant:datePublished"] !== undefined ? this.release[0].metadata["pant:datePublished"] : ""
+                            this.release[0].updatedDate = releaseUpload
                             // get created date from source/draft
-                            this.release[0].draftUploadDate = draftDate !== undefined ? draftDate : ""
+                            this.release[0].draftUploadDate = draftUpload
                             // this.props.modulePath starts with a slash
                             this.release[0].path = "/content" + this.props.modulePath + "/en_US/variants/" + firstVariant.__name__ + "/" + moduleVersion.__name__
+                            this.release[0].validations = this.state.releasedValidations
                             variantReleased = true
                         }
                         if (!variantReleased) {
                             this.release[0].updatedDate = "-"
                         }
-                        this.props.updateDate((draftDate !== "" ? draftDate : ""), this.release[0].updatedDate, this.release[0].version, variantUuid)
+                        this.props.updateDate(this.release[0].version, variantUuid)
                     }
                     this.setState({
                         results: [this.draft, this.release],
@@ -511,17 +539,16 @@ class Versions extends Component<IProps, IState> {
                     // console.log("Published file path:", this.props.modulePath)
                     this.draft[0].version = "";
                     this.setState({ unpublishAlertForModuleVisible: false })
-                    this.props.onPublishEvent()
                 } else {
                     formData.append(":operation", "pant:unpublish");
                     // console.log("Unpublished file path:", this.props.modulePath);
                     this.release[0].version = "";
                     this.setState({ unpublishAlertForModuleVisible: true })
-                    this.props.onPublishEvent()
                 }
                 const hdrs = {
                     "Accept": "application/json",
-                    "cache-control": "no-cache"
+                    "cache-control": "no-cache",
+                    "Access-Control-Allow-Origin": "*"
                 }
                 formData.append("locale", "en_US")
                 formData.append("variant", this.props.variant)
@@ -536,15 +563,15 @@ class Versions extends Component<IProps, IState> {
                             canChangePublishState: true,
                             publishAlertVisible: false,
                             showMetadataAlertIcon: false
-                        })
-                        this.props.onPublishEvent()
+                        }, () => this.props.canRegeneratePortalUrl(true))
                     } else {
                         console.log(buttonText + " failed " + response.status)
                         this.setState({ publishAlertVisible: true })
                         this.setAlertTitle()
                     }
                     this.fetchVersions()
-                });
+                    return response.json()
+                }).then(response => this.props.onGetUrl(response.path));
             }
         }
     }
@@ -573,6 +600,7 @@ class Versions extends Component<IProps, IState> {
         })
     }
 
+    //TODO: refactor this method and move necessary code to Utils
     private saveMetadata = (event) => {
         // save form data
         if (this.state.product.value === undefined || this.state.product.value === "Select a Product" || this.state.product.value === ""
@@ -611,7 +639,7 @@ class Versions extends Component<IProps, IState> {
                         canChangePublishState: true,
                         publishAlertVisible: false,
                         successAlertVisible: true,
-                    })
+                    }, () => this.props.canRegeneratePortalUrl(true))
                     if (this.state.metadataPath.endsWith("/draft")) {
                         this.setState({ showMetadataAlertIcon: false })
                         this.fetchVersions()
@@ -688,7 +716,9 @@ class Versions extends Component<IProps, IState> {
             })
             .then(responseJSON => {
                 for (const product of responseJSON.__children__) {
-                    products.push({ label: product.name, value: product.__name__ })
+                    if (product.name !== undefined) {
+                        products.push({ label: product.name, value: product.__name__ })
+                    }
                 }
                 this.setState({
                     allProducts: products
@@ -808,6 +838,55 @@ class Versions extends Component<IProps, IState> {
     private setAlertTitle = () => {
         const alertTitle = "Publishing " + this.props.contentType
         this.setState({ alertTitle })
+    }
+
+    private getValidations = (versionType) => {
+        let versionValue = ""
+        let validationPath = ""
+
+        if (versionType !== undefined && versionType.length > 0) {
+            versionValue = versionType
+        }
+
+        validationPath = "/content" + this.props.modulePath + "/en_US/variants/" + this.props.variant + "/" + versionValue + "/validations.harray.2.json"
+
+        fetch(validationPath)
+            .then(response => response.json())
+            .then(json => {
+                const xrefValidation = this.getHarrayChildNamed(json, "xref")
+
+                let options = new Array()
+                if (xrefValidation.__children__ != undefined && xrefValidation.__children__.length > 0) {
+
+                    let rootChildren = new Array()
+
+                    for (const childNode of xrefValidation.__children__) {
+                        const children = {
+                            "name": childNode["pant:xrefTarget"], "id": childNode["pant:xrefTarget"].split(" ").join(""),
+                            "children": [{ name: childNode["pant:message"], id: childNode["pant:message"].split(" ").join("") }]
+                        }
+                        rootChildren.push(children)
+                    }
+                    const root = { name: "xref Targets", id: "xrefs", children: rootChildren, defaultExpanded: true }
+                    options.push(root)
+
+                }
+                if (versionValue === "draft") {
+                    this.setState({ draftValidations: options })
+                } else {
+                    this.setState({ releasedValidations: options })
+                }
+
+            })
+            .catch((error) => {
+                // console.log("No validations node for " + validationPath + " => ", error)
+            })
+    }
+
+    private onClickTree = (evt, treeViewItem, parentItem) => {
+        this.setState({
+            activeItems: [treeViewItem, parentItem]
+        });
     }
 }
 

@@ -53,6 +53,10 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
               Product
             </span>
           </strong>
+          <br />
+          <span>
+             
+          </span>
         </Text>
       </TextContent>
     </LevelItem>
@@ -67,50 +71,7 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
               Module type
             </span>
           </strong>
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <strong>
-            <span
-              id="span-source-type-draft-uploaded"
-            >
-              Draft uploaded
-            </span>
-          </strong>
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <strong>
-            <span
-              id="span-source-type-published"
-            >
-              Published
-            </span>
-          </strong>
-        </Text>
-      </TextContent>
-    </LevelItem>
-  </Level>
-  <Level>
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <span>
-             
-          </span>
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem />
-    <LevelItem>
-      <TextContent>
-        <Text>
+          <br />
           <span />
         </Text>
       </TextContent>
@@ -118,6 +79,14 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
     <LevelItem>
       <TextContent>
         <Text>
+          <strong>
+            <span
+              id="span-source-type-firstpublished"
+            >
+              First Published Date
+            </span>
+          </strong>
+          <br />
           <span>
             --
           </span>
@@ -127,6 +96,14 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
     <LevelItem>
       <TextContent>
         <Text>
+          <strong>
+            <span
+              id="span-source-type-lastpublished"
+            >
+              Last Published Date
+            </span>
+          </strong>
+          <br />
           <span>
             --
           </span>
@@ -155,11 +132,12 @@ exports[`ContentDisplay tests for Assembly should render ContentDisplay componen
     <Versions
       assemblies={Array []}
       attributesFilePath=""
+      canRegeneratePortalUrl={[Function]}
       contentType="module"
       modulePath=""
       onGetProduct={[Function]}
+      onGetUrl={[Function]}
       onGetVersion={[Function]}
-      onPublishEvent={[Function]}
       productInfo=""
       updateDate={[Function]}
       variant="DEFAULT"
@@ -233,6 +211,10 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
               Product
             </span>
           </strong>
+          <br />
+          <span>
+             
+          </span>
         </Text>
       </TextContent>
     </LevelItem>
@@ -247,50 +229,7 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
               Module type
             </span>
           </strong>
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <strong>
-            <span
-              id="span-source-type-draft-uploaded"
-            >
-              Draft uploaded
-            </span>
-          </strong>
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <strong>
-            <span
-              id="span-source-type-published"
-            >
-              Published
-            </span>
-          </strong>
-        </Text>
-      </TextContent>
-    </LevelItem>
-  </Level>
-  <Level>
-    <LevelItem>
-      <TextContent>
-        <Text>
-          <span>
-             
-          </span>
-        </Text>
-      </TextContent>
-    </LevelItem>
-    <LevelItem />
-    <LevelItem>
-      <TextContent>
-        <Text>
+          <br />
           <span />
         </Text>
       </TextContent>
@@ -298,6 +237,14 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
     <LevelItem>
       <TextContent>
         <Text>
+          <strong>
+            <span
+              id="span-source-type-firstpublished"
+            >
+              First Published Date
+            </span>
+          </strong>
+          <br />
           <span>
             --
           </span>
@@ -307,6 +254,14 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
     <LevelItem>
       <TextContent>
         <Text>
+          <strong>
+            <span
+              id="span-source-type-lastpublished"
+            >
+              Last Published Date
+            </span>
+          </strong>
+          <br />
           <span>
             --
           </span>
@@ -335,11 +290,12 @@ exports[`ContentDisplay tests for Module should render ModuleDisplay component 1
     <Versions
       assemblies={Array []}
       attributesFilePath=""
+      canRegeneratePortalUrl={[Function]}
       contentType="module"
       modulePath=""
       onGetProduct={[Function]}
+      onGetUrl={[Function]}
       onGetVersion={[Function]}
-      onPublishEvent={[Function]}
       productInfo=""
       updateDate={[Function]}
       variant="DEFAULT"

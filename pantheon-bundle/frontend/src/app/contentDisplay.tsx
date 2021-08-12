@@ -1,7 +1,7 @@
 import React, { Component } from "react"
-import { CopyIcon } from "@patternfly/react-icons";
+import { CopyIcon, InfoCircleIcon } from "@patternfly/react-icons";
 import {
-    Card, Text, TextContent, TextVariants, Level, LevelItem, Button, Divider, Title
+    Card, Text, TextContent, TextVariants, Level, LevelItem, Button, Divider, Title, Tooltip
 } from "@patternfly/react-core"
 
 import { Versions } from "@app/versions"
@@ -11,14 +11,13 @@ export interface IContentDisplayState {
     attributesFilePath: string
     copySuccess: string
     draftPath: string
-    draftUpdateDate: string
     modulePath: string
     moduleTitle: string
     moduleType: string
     portalUrl: string
+    portalUrlType: string
     productValue: string
     releasePath: string
-    releaseUpdateDate: string
     releaseVersion: string
     results: any
     variant: string
@@ -29,14 +28,17 @@ export interface IContentDisplayState {
     versionUrlFragment: string
     locale: string
     assemblyData: any
+    firstPublishDate: string
+    lastPublishDate: string
+    regeneratePortalUrl: boolean
 }
 
 export interface IModuleDisplayState extends IContentDisplayState {
     assemblyTitle: string
-    assemblyPath: string  
+    assemblyPath: string
 }
 
-export interface IAssemblyDisplayState extends IContentDisplayState{}
+export interface IAssemblyDisplayState extends IContentDisplayState { }
 
 class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDisplayState> {
     isAssembly: any;
@@ -47,14 +49,13 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
             attributesFilePath: "",
             copySuccess: "",
             draftPath: "",
-            draftUpdateDate: "",
             modulePath: "",
             moduleTitle: "",
             moduleType: "",
             portalUrl: "",
+            portalUrlType: "",
             productValue: "",
             releasePath: "",
-            releaseUpdateDate: "",
             releaseVersion: "",
             results: {},
             variant: "DEFAULT",
@@ -66,7 +67,10 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
             portalHostUrl: "",
             productUrlFragment: "",
             versionUrlFragment: "",
-            locale: ""
+            locale: "",
+            firstPublishDate: "",
+            lastPublishDate: "",
+            regeneratePortalUrl: false
         }
     }
 
@@ -79,6 +83,15 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
         this.getPortalHostUrl()
         this.getLocale(this.props.location.pathname)
 
+    }
+
+    public componentDidUpdate(prevProps, prevState) {
+        if (prevState.regeneratePortalUrl !== this.state.regeneratePortalUrl) {
+            this.getPortalUrl(this.state.modulePath, this.state.variant)
+            if(this.state.regeneratePortalUrl === true){
+                this.setState({regeneratePortalUrl: false})
+            }
+        }
     }
 
     public render() {
@@ -106,17 +119,32 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     </LevelItem>
                     <LevelItem />
                     <LevelItem>
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== "-"
-                            && this.state.variantUUID !== ""
+                        {this.state.variantUUID !== ""
                             && this.state.portalUrl !== ""
+                            && this.state.portalUrlType === "LIVE"
                             && <span><a href={this.state.portalUrl} target="_blank">View on Customer Portal  <i className="fa pf-icon-arrow" /></a> </span>
+                        }
+                        {this.state.variantUUID !== ""
+                            && this.state.portalUrl !== ""
+                            && this.state.portalUrlType === "PRELIVE"
+                            && <span><a href={this.state.portalUrl} target="_blank">Pre-live Customer Portal URL</a> </span>
                         }
                     </LevelItem>
                     <LevelItem>
-                        {this.state.releaseUpdateDate.trim() !== "" && this.state.releaseUpdateDate !== "-"
-                            && this.state.variantUUID !== ""
+                        {this.state.variantUUID !== ""
                             && this.state.portalUrl !== ""
+                            && this.state.portalUrlType === "LIVE"
                             && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy permanent URL  <CopyIcon /></a></span>
+                        }
+                        {this.state.variantUUID !== ""
+                            && this.state.portalUrl !== ""
+                            && this.state.portalUrlType === "PRELIVE"
+                            && <span><a id="permanentURL" onClick={this.copyToClipboard} onMouseLeave={this.mouseLeave}>Copy pre-live URL  <CopyIcon /></a></span>
+                        }
+                        {this.state.variantUUID !== ""
+                            && this.state.portalUrl !== ""
+                            && this.state.portalUrlType === "ERROR"
+                            && <span><div><Tooltip position="top" content={<div>NO URL; {this.state.portalUrl}</div>}><InfoCircleIcon /></Tooltip></div></span>
                         }
 
                         <span>&emsp;{this.state.copySuccess !== "" && this.state.copySuccess}</span>
@@ -127,38 +155,20 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                 <Level>
                     <LevelItem>
                         <TextContent>
-                            <Text><strong><span id="span-source-type-product">Product</span></strong></Text>
+                            <Text>
+                                <strong><span id="span-source-type-product">Product</span></strong>
+                                <br />
+                                <span>{this.state.productValue + " " + this.state.versionValue}</span>
+                            </Text>
                         </TextContent>
                     </LevelItem>
-                    <LevelItem>{}</LevelItem>
+                    <LevelItem>{ }</LevelItem>
 
-                    {!this.isAssembly && <LevelItem>
-                        <TextContent>
-                            <Text><strong><span id="span-source-name-module-type">Module type</span></strong></Text>
-                        </TextContent>
-                    </LevelItem>}
-                    <LevelItem>
-                        <TextContent>
-                            <Text><strong><span id="span-source-type-draft-uploaded">Draft uploaded</span></strong></Text>
-                        </TextContent>
-                    </LevelItem>
-                    <LevelItem>
-                        <TextContent>
-                            <Text><strong><span id={this.isAssembly ? "span-source-type-draft-published" : "span-source-type-published"}>Published</span></strong></Text>
-                        </TextContent>
-                    </LevelItem>
-                </Level>
-
-                <Level>
-                    <LevelItem>
-                        <TextContent>
-                            <Text><span>{this.state.productValue + " " + this.state.versionValue}</span></Text>
-                        </TextContent>
-                    </LevelItem>
-                    <LevelItem>{}</LevelItem>
                     {!this.isAssembly && <LevelItem>
                         <TextContent>
                             <Text>
+                                <strong><span id="span-source-name-module-type">Module type</span></strong>
+                                <br />
                                 <span>
                                     {this.state.moduleType.trim() !== "" ?
                                         this.state.moduleType : ""}
@@ -169,10 +179,12 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     <LevelItem>
                         <TextContent>
                             <Text>
+                                <strong><span id="span-source-type-firstpublished">First Published Date</span></strong>
+                                <br />
                                 <span>
-                                    {this.state.draftUpdateDate.trim() !== ""
-                                        && this.state.draftUpdateDate.length >= 15 ?
-                                        new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.draftUpdateDate)) : "--"}
+                                    {this.state.firstPublishDate !== undefined && this.state.firstPublishDate.trim() !== ""
+                                        && this.state.firstPublishDate.length >= 15 ?
+                                        new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.firstPublishDate)) : "--"}
                                 </span>
                             </Text>
                         </TextContent>
@@ -180,10 +192,12 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     <LevelItem>
                         <TextContent>
                             <Text>
+                                <strong><span id="span-source-type-lastpublished">Last Published Date</span></strong>
+                                <br />
                                 <span>
-                                    {this.state.releaseUpdateDate.trim() !== ""
-                                        && this.state.releaseUpdateDate.length >= 15 ?
-                                        new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.releaseUpdateDate)) : "--"}
+                                    {this.state.lastPublishDate !== undefined && this.state.lastPublishDate.trim() !== ""
+                                        && this.state.lastPublishDate.length >= 15 ?
+                                        new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(new Date(this.state.lastPublishDate)) : "--"}
                                 </span>
                             </Text>
                         </TextContent>
@@ -192,8 +206,8 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
 
                 <br />
                 <Level>
-                    <LevelItem>{}</LevelItem>
-                    <LevelItem>{}</LevelItem>
+                    <LevelItem>{ }</LevelItem>
+                    <LevelItem>{ }</LevelItem>
                     <LevelItem>
                         <Button variant="secondary" onClick={() => this.generateDraftHtml(this.props.location.pathname)}>Generate Draft Html</Button>{"  "}
                     </LevelItem>
@@ -214,9 +228,10 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         attributesFilePath={this.state.attributesFilePath}
                         assemblies={this.state.assemblyData}
                         updateDate={this.updateDate}
+                        onGetUrl={this.onGetUrl}
                         onGetProduct={this.getProduct}
                         onGetVersion={this.getVersion}
-                        onPublishEvent={this.onPublishEvent}
+                        canRegeneratePortalUrl={this.canRegeneratePortalUrl}
                     />
                 </Card>
 
@@ -230,18 +245,15 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
         return window.open(docPath)
     }
 
-    private updateDate = (draftDate, releaseDate, releaseVersion, variantUUID) => {
+    private updateDate = (releaseVersion, variantUUID) => {
         this.setState({
-            draftUpdateDate: draftDate,
             variantUUID,
-            releaseUpdateDate: releaseDate,
             releaseVersion,
         })
     }
-    
-    
+
+
     private fetchModuleDetails = async (data) => {
-        console.log(data)
         await this.getVariantParam()
         const path = data.location.pathname.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         this.setState({
@@ -251,7 +263,7 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
 
         this.getPortalUrl(path, this.state.variant)
 
-        fetch(path + "/en_US.harray.4.json")
+        fetch("/content" + path + "/en_US.harray.4.json")
             .then(response => response.json())
             .then(responseJSON => {
                 // TODO: refactor for loops
@@ -264,9 +276,6 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                         if (!myChild.__children__) {
                             continue
                         }
-                        if (myChild.__name__ === "draft") {
-                            this.setState({ draftUpdateDate: myChild["jcr:created"] })
-                        }
 
                         for (const myGrandchild of myChild.__children__) {
                             if (!myGrandchild.__children__) {
@@ -275,6 +284,16 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
 
                             for (const offspring of myGrandchild.__children__) {
                                 if (offspring.__name__ === "metadata") {
+                                    if (myGrandchild.__name__ === "released") {
+                                        if (offspring["pant:dateFirstPublished"] !== undefined) {
+                                            this.setState({
+                                                firstPublishDate: offspring["pant:dateFirstPublished"],
+                                            })
+                                        }
+                                        this.setState({
+                                            lastPublishDate: offspring["pant:datePublished"]
+                                        })
+                                    }
 
                                     if (offspring[Fields.JCR_TITLE] !== undefined) {
 
@@ -303,15 +322,15 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     }
 
                 }
-                if(!this.isAssembly){
+                if (!this.isAssembly) {
                     // get the variant UUID
-                for (const variants of responseJSON.__children__){
-                    if(variants.__name__ === "variants"){
-                        for (const variant of variants.__children__){
-                            this.fetchIncludedInAssembliesDetails(variant[Fields.JCR_UUID])
+                    for (const variants of responseJSON.__children__) {
+                        if (variants.__name__ === "variants") {
+                            for (const variant of variants.__children__) {
+                                this.fetchIncludedInAssembliesDetails(variant[Fields.JCR_UUID])
+                            }
                         }
                     }
-                }
                 }
             })
     }
@@ -324,39 +343,40 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
         this.setState({ versionValue: version })
     }
 
-    private onPublishEvent = () => {
-        // the published state cannot be ascertained correctly when moving from one page to another
-        const path = this.props.location.pathname.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
-        this.getPortalUrl(path, this.state.variant)
-
+    private onGetUrl = (url) => {
+        console.log("Received url=" + url)
+        if (url !== "") {
+            this.setState({ portalUrl: url })
+        }
     }
 
-    private getLocale = (path) =>{
+    private getLocale = (path) => {
         // remove /module from path
-        path =  path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
+        path = path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + ".harray.1.json"
         fetch(path)
             .then((response) => {
                 if (response.ok) {
                     return response.json()
-                }else {
+                } else {
                     throw new Error(response.statusText)
                 }
             })
             .then(responseJSON => {
-                    const locale = responseJSON.__children__[0].__name__
-                    const localeFinal = locale.replace("_","-")
-                    this.setState({locale: localeFinal})
-                }
+                const locale = responseJSON.__children__[0].__name__
+                const localeFinal = locale.replace("_", "-")
+                this.setState({ locale: localeFinal })
+            }
 
             )
     }
     private getVersionUUID = (path) => {
         // remove /module from path
-        path =  path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
+        path = path.substring(this.isAssembly ? PathPrefixes.ASSEBMLY_PATH_PREFIX.length : PathPrefixes.MODULE_PATH_PREFIX.length)
         // path = "/content" + path + "/en_US/1/metadata.json"
         path = "/content" + path + "/en_US.harray.4.json"
+
         fetch(path)
             .then(response => response.json())
             .then((responseJSON) => {
@@ -407,13 +427,6 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                             for (const productVersion of productChild.__children__) {
                                 if (productVersion[Fields.JCR_UUID] === uuid) {
                                     this.setState({ productValue: product.name, versionValue: productVersion.name, productUrlFragment: product.urlFragment, versionUrlFragment: productVersion.urlFragment })
-                                    const isGuideOrTopic = this.isAssembly ? '/guide/' : '/topic/'
-                                    const url = this.state.portalHostUrl + '/documentation/'+this.state.locale.toLocaleLowerCase()+'/' + this.state.productUrlFragment + '/' + this.state.versionUrlFragment + isGuideOrTopic + this.state.variantUUID
-                                    console.log("Constructed url="+url)
-                                    if(this.state.productUrlFragment!==""){
-                                        this.setState({ portalUrl: url})
-                                    }
-                                    break
                                 }
                             }
                         }
@@ -440,23 +453,13 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
     }
 
     private getPortalUrl = (path, variant) => {
-        const variantPath = "/content" + path + "/en_US/variants/" + variant + ".url.txt"
+        const variantPath = "/content" + path + "/en_US/variants/" + variant + ".url.json"
         fetch(variantPath)
             .then(resp => {
                 if (resp.ok) {
-                    resp.text().then(text => {
-                        // get portal url from api and set it only if it is not empty
-                        if(text.trim() !== "") {
-                            this.setState({portalUrl: text})
-                        }else{
-                            // if portal url is empty, assemble the URL at client side
-                            console.log("GetPortalURI API returned empty URI. Falling back to url construction at UI")
-                            this.getVersionUUID(this.props.location.pathname)
-                        }
+                    resp.json().then(json => {
+                        this.setState({ portalUrl: json.url, portalUrlType: json.type})
                     })
-                }else {
-                    console.log("GetPortalURI API returned error. Falling back to url construction at UI")
-                    this.getVersionUUID(this.props.location.pathname)
                 }
             })
     }
@@ -495,18 +498,18 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
             })
     }
 
-    private fetchIncludedInAssembliesDetails =  (data) => {
-        fetch("/module/assemblies.json/"+data)
+    private fetchIncludedInAssembliesDetails = (data) => {
+        fetch("/module/assemblies.json/" + data)
             .then((response) => {
                 if (response.ok) {
                     return response.json()
-                }else {
+                } else {
                     throw new Error(response.statusText)
                 }
             })
             .then(responseJSON => {
-                    this.setState({assemblyData: responseJSON.assemblies})
-                }
+                this.setState({ assemblyData: responseJSON.assemblies })
+            }
 
             )
     }
@@ -520,6 +523,10 @@ class ContentDisplay extends Component<any, IModuleDisplayState | IAssemblyDispl
                     })
                 }
             })
+    }
+
+    private canRegeneratePortalUrl = (regeneratePortalUrl: boolean) => {
+        this.setState({regeneratePortalUrl})
     }
 
 }
