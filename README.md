@@ -96,7 +96,7 @@ Install the Pantheon codebase, perform some basic initial configuration, and dep
 
 **Prerequisites**
 * Tested on Red Hat Enterprise Linux (RHEL) 8.3 and Fedora 33.
-* openJDK
+* openJDK 1.8.0
 * Podman
 
 **Procedure**
@@ -117,6 +117,7 @@ Install the Pantheon codebase, perform some basic initial configuration, and dep
         # User specific aliases and functions
         export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 
+NOTE: Log in to a new shell to enable the new environment variable.
 
 4. Start a mongo container on port `27017`:
 
@@ -134,8 +135,9 @@ Use the `pantheon-uploader` tool to upload local content to Pantheon.
 
 1. Install the `pantheon-uploader` tool:
 
-        $ wget -S https://raw.githubusercontent.com/redhataccess/pantheon/master/uploader/setup.sh
-        $ sh setup.sh
+        $ pip-3 install --no-cache-dir git+https://github.com/redhataccess/pantheon-uploader.git
+        $ chmod +x install.sh
+        $ sh install.sh
 
 2. Create a new product in the Pantheon dashboard:
     1. Navigate to http://localhost:8181/pantheon and log in with username `admin` and `password` admin.
