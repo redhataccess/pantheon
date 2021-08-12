@@ -26,7 +26,7 @@ public interface Validation extends WorkspaceChild {
 
     default Validation setValidation (Violations violations, int index) {
         if(null != violations.get(PantheonConstants.TYPE_XREF)){
-            this.message().set("invalid Cross reference exists in the document");
+            this.message().set("Invalid cross references");
             this.status().set("error");
             this.validationType().set("xref");
             this.xrefTarget().set(violations.get(PantheonConstants.TYPE_XREF).getDetails(index));
