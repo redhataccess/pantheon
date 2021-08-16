@@ -17,15 +17,15 @@ The configuration file enables you to import content from a Git repository into 
 The {ProductShortName} configuration file defines the following parameters:
 
 * `server` The URL of the {ProductShortName} server.
-* `repository`
+* `repository` The name of the repository. It is recommended not to include spaces in the repository name.
 * `variants` A multi-valued structure with the following child members:
 +
-** `name` (optional) A unique ID that displays in URLs on the {ProductShortName} site when you view modules and assemblies.
+** `name` (optional) A unique ID that displays in URLs on the {ProductShortName} site when you view modules and assemblies. If no value is provided for `name`, this field is defined as *DEFAULT*.
 +
 For example, if you specify `name: rhel_docs`, and one of your files is named [filename]`foo.adoc`, the module's URL in {ProductShortName} is:
-`\http://<_{ProductShortName}__url>/content/repositories/**rhel_docs**/entities/modules/getting_started/foo.adoc.preview`
+`\http://<_{ProductShortName}__url>/content/repositories/*repository*/entities/modules/getting_started/foo.adoc.preview`
 ** `path` The path containing the resource files (for example attributes.adoc).
-** `canonical` Canonical is associated with variants. A module belongs to one or more variants, but there is only one canonical variant.
+** `canonical` Canonical is associated with variants. A module belongs to one or more variants, but there is only one canonical variant. Possible values: *true* or *false*.
 
 * `modules` (optional) Patterns for modules that show up in the search results on {ProductShortName}.
 ** `resources` (optional) Image files, legal information, or other content that is not a complete module or assembly.
