@@ -38,17 +38,6 @@ jobs:
     - name: Build with Maven
       run: ./mvnw clean install -pl sling-org-apache-sling-karaf-features,sling-org-apache-sling-karaf-configs,pantheon-bundle,pantheon-karaf-feature,pantheon-karaf-dist
 
-    - name: Install Go dependencies
-      working-directory: tools/git2pantheon
-      run: |
-        go get gopkg.in/src-d/go-git.v4
-
-    - name: Build git2pantheon
-      working-directory: tools/git2pantheon
-      run: |
-        go build
-        go test -race -coverprofile=coverage.txt -covermode=atomic
-
     - name: Push to Codecov
       uses: codecov/codecov-action@v1
       if: ${{ matrix.java }} == '1.8'
