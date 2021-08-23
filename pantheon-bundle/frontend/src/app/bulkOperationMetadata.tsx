@@ -416,7 +416,7 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
                                 this.calculateWarningProgress(this.state.bulkUpdateWarning)
                                 if (this.state.bulkUpdateWarning > 0 && this.state.bulkUpdateWarning === this.props.documentsSelected.length) {
 
-                                    this.setState({ metadataEditError: "No draft versions found on selected items. Unable to save metadata." })
+                                    this.setState({ metadataEditError: "No drafts found on selected items. Unable to save metadata." })
                                 }
                             })
                         }

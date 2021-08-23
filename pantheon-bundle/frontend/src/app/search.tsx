@@ -63,6 +63,7 @@ export interface ISearchState {
   // bulk publish
   isBulkPublish: boolean
   isBulkUnpublish: boolean
+  bulkOperationTitle: string
 }
 class Search extends Component<IAppState, ISearchState> {
   private drawerRef: React.RefObject<HTMLInputElement>;
@@ -110,7 +111,8 @@ class Search extends Component<IAppState, ISearchState> {
 
       //bulk operation - publish
       isBulkPublish: false,
-      isBulkUnpublish: false
+      isBulkUnpublish: false,
+      bulkOperationTitle: "Bulk Publish",
     };
     this.drawerRef = React.createRef();
   }
@@ -348,6 +350,7 @@ class Search extends Component<IAppState, ISearchState> {
                 isBulkPublish={this.state.isBulkPublish}
                 isBulkUnpublish={this.state.isBulkUnpublish}
                 bulkOperationCompleted={this.state.bulkOperationCompleted}
+                bulkOperationTitle={this.state.bulkOperationTitle}
                 updateIsBulkPublish={this.updateIsBulkPublish}
                 updateIsBulkUnpublish={this.updateIsBulkUnpublish}
                 updateBulkOperationCompleted={this.updateBulkOperationCompleted}
@@ -358,6 +361,7 @@ class Search extends Component<IAppState, ISearchState> {
                 isBulkPublish={this.state.isBulkPublish}
                 isBulkUnpublish={this.state.isBulkUnpublish}
                 bulkOperationCompleted={this.state.bulkOperationCompleted}
+                bulkOperationTitle={this.state.bulkOperationTitle}
                 updateIsBulkPublish={this.updateIsBulkPublish}
                 updateIsBulkUnpublish={this.updateIsBulkUnpublish}
                 updateBulkOperationCompleted={this.updateBulkOperationCompleted}
@@ -687,7 +691,7 @@ class Search extends Component<IAppState, ISearchState> {
 
         //determine if publish or unpublish bulk operation
         if (text === 'publish') {
-          this.setState({ isBulkPublish: !this.state.isBulkPublish, isBulkUnpublish: false }, () => {
+          this.setState({ isBulkPublish: true, isBulkUnpublish: false, bulkOperationTitle: "Bulk Publish" }, () => {
             if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
               this.setState({ isBulkOperationButtonDisabled: false, bulkOperationCompleted: false })
             } else {
@@ -696,7 +700,7 @@ class Search extends Component<IAppState, ISearchState> {
           })
         }
         else if (text === 'unpublish') {
-          this.setState({ isBulkUnpublish: !this.state.isBulkUnpublish, isBulkPublish: false }, () => {
+          this.setState({ isBulkUnpublish: true, isBulkPublish: false, bulkOperationTitle: "Bulk Unpublish" }, () => {
             if (this.state.bulkOperationWarn === false && this.state.repositoriesSelected.length === 1) {
               this.setState({ isBulkOperationButtonDisabled: false, bulkOperationCompleted: false })
             } else {

@@ -66,9 +66,9 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
             </React.Fragment>
           }
         >
-          <div><Progress value={this.props.progressSuccessValue} title="Update Succeeded" variant={ProgressVariant.success} size={ProgressSize.sm} /></div>
-          <div><Progress value={this.props.progressFailureValue} title="Update failed" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
-          <div><Progress value={this.props.progressWarningValue} title="No draft version found. No action taken" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>
+          <div><Progress value={this.props.progressSuccessValue} title="Succeeded" variant={ProgressVariant.success} size={ProgressSize.sm} /></div>
+          <div><Progress value={this.props.progressFailureValue} title="Failed" variant={ProgressVariant.danger} size={ProgressSize.sm} /></div>
+          <div><Progress value={this.props.progressWarningValue} title="No drafts found - no action taken" variant={ProgressVariant.warning} size={ProgressSize.sm} /></div>
         </Alert>
         <Modal
           variant={ModalVariant.large}
@@ -80,7 +80,7 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
           onClose={this.handleModalToggle}
           footer={footer}
         >
-          <strong>Update Succeeded:</strong>
+          <strong>Succeeded:</strong>
           <br />
           <span id="update-succeeded">
             {this.props.updateSucceeded.length > 0 && <List aria-label="succeeded" component={ListComponent.ol} type={OrderType.number}>
@@ -96,7 +96,7 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
           </span>
           <br />
           <br />
-          <strong>Update Ignored:</strong>
+          <strong>Ignored:</strong>
           <br />
           <span id="update-ignored">
             {this.props.updateIgnored.length > 0 && <List aria-label="ignored" component={ListComponent.ol} type={OrderType.number}>
@@ -111,7 +111,7 @@ class BulkOperationConfirmation extends React.Component<IBulkOperationProps, any
           </span>
           <br />
           <br />
-          <strong>Update Failed:</strong>
+          <strong>Failed:</strong>
           <br />
           <span id="update-failed">
             {this.props.updateFailed.length > 0 && <List aria-label="failed" component={ListComponent.ol} type={OrderType.number}>
