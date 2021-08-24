@@ -132,4 +132,21 @@ color: var(--pf-global--success-color--100)
 .repo-list-container{
     height: 500px;
     overflow-y: auto;
-}  
+}
+
+.pf-c-tree-view__node-text[class] {
+    overflow:visible;
+    white-space:break-spaces;
+    overflow-wrap: break-word;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.pf-c-tree-view__node {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
