@@ -11,7 +11,7 @@ The following are the syntaxes of inter-document xref:
 * `\xref:document-b.adoc#target-section[Target section]`
 * `\xref:../modules/document-c.adoc[Content C]`
 
-[dicsrete]
+[discrete]
 == Example of using xrefs
 
 In this example, the following are the source and targets:
@@ -38,14 +38,14 @@ where `target-section` is the anchor for _target section_.
 +
 where `../modules/document-c.adoc` is the path to _document-c.adoc_ relative to _document-a.adoc_.
 
-IMPORTANT: Do not use xrefs with empty `[]`.
+IMPORTANT: Always include text within the square brackets in an xref.
 
 [discrete]
 == xfref validation in {ProductShortName}
 
 {ProductShortName} checks xrefs when you:
 
-* import a repository from git to pantheon,
+* import a Git repository to {ProductShortName},
 * regenerate draft HTML for your imported content,
 * publish your content.
 
