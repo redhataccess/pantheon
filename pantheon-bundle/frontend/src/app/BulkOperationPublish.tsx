@@ -203,8 +203,8 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                 let hrefPart = href.slice(0, href.indexOf("?"))
                 let modulePath = hrefPart.slice(hrefPart.indexOf("/repositories"))
                 const backend = "/content" + modulePath + `/en_US/variants/${variant}/draft`
-                let exist = this.props.isBulkPublish ? Utils.draftExist(backend) : false
-
+                
+                Utils.draftExist(backend).then((exist) => {
                 if (exist || this.props.isBulkUnpublish) {
                     fetch("/content" + modulePath, {
                         body: formData,
@@ -230,6 +230,7 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                         this.calculateWarningProgress(this.state.bulkUpdateWarning)
                     })
                 }
+            })
             }
 
         })
