@@ -21,8 +21,7 @@ public class ValidationHelper {
         Violations violations = new XrefValidator(documentVersion.getParent(), content).validate();
         // Get xrefTargetMap
         HashMap<String, ArrayList<String>> xrefTargetsMap = XrefValidationHelper.getObjectsToValidate();
-        logger.info("[" +ValidationHelper.class.getSimpleName()+"] xrefTargetsMap=>" + xrefTargetsMap.toString() );
-        logger.info("[" +ValidationHelper.class.getSimpleName()+"] documentVersion.getParent.uuid=>" + documentVersion.getParent().uuid().get() );
+
         if (xrefTargetsMap != null && xrefTargetsMap.containsKey(documentVersion.getParent().uuid().get())) {
             Validations validations = documentVersion.validations().getOrCreate();
             if(null != validations.validationType(PantheonConstants.TYPE_XREF).get()){
@@ -36,7 +35,6 @@ public class ValidationHelper {
             if(violations.hasViolations()) {
                 Validation validation;
                 ErrorDetails errorDetails = violations.get(PantheonConstants.TYPE_XREF);
-                logger.info("[" +ValidationHelper.class.getSimpleName()+"] errorDetails=>" + errorDetails.getDetails().toString());
                 if(null == errorDetails || errorDetails.length() ==0){
                     return;
                 }

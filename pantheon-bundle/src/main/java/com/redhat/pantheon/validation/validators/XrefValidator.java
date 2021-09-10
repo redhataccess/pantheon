@@ -68,10 +68,6 @@ public class XrefValidator implements Validator {
     private ErrorDetails checkXref(HashMap<String, ArrayList<String>> xrefTargets) {
         ErrorDetails errorDetails = new ErrorDetails();
         try {
-            if (null != xrefTargets)
-                log.info("[" + XrefValidator.class.getSimpleName() + "] xrefTargets=>" + xrefTargets.toString());
-            log.info("[" + XrefValidator.class.getSimpleName() + "] urlList=>" + XrefValidationHelper.getUrlList().toString());
-            log.info("[" + XrefValidator.class.getSimpleName() + "] xrefs=>" + XrefValidationHelper.getObjectsToValidate().toString());
             if (null == xrefTargets || xrefTargets.size() == 0) {
                 return errorDetails;
             }

@@ -61,7 +61,6 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
             content = preprocessWithPattern(content, XREF_PATTERN, urlList);
             content = preprocessWithPattern(content, TRIANGLE_PATTERN, urlList);
         }
-        log.info("[" + PantheonXrefProcessor.class.getSimpleName() + "] urlList=> " + urlList.toString());
 
         XrefValidationHelper.setUrlList(urlList);
         if (!urlList.isEmpty()) {
