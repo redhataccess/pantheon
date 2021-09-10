@@ -14,6 +14,7 @@ import com.redhat.pantheon.validation.validators.XrefValidator;
 import org.apache.sling.api.resource.Resource;
 import org.asciidoctor.ast.ContentNode;
 import org.asciidoctor.extension.InlineMacroProcessor;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,18 +48,28 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
      * @param documentVariant
      * @param tableOfContents Doesn't necessarily need to be populated when this constructor is called.
      */
-    public PantheonXrefProcessor(DocumentVariant documentVariant, TableOfContents tableOfContents) {
+    public PantheonXrefProcessor(@Reference DocumentVariant documentVariant, @Reference TableOfContents tableOfContents) {
         this.documentVariant = documentVariant;
         this.toc = tableOfContents;
     }
 
     public String preprocess(String content) {
         List<String> urlList = new ArrayList<>();
+        HashMap<String, ArrayList<String>> xrefTargetsMap = new HashMap<>();
+
         if (!documentVariant.getPath().startsWith("/content/docs/")) {
             content = preprocessWithPattern(content, XREF_PATTERN, urlList);
             content = preprocessWithPattern(content, TRIANGLE_PATTERN, urlList);
         }
-        XrefValidationHelper.getInstance().setObjectsToValidate(urlList);
+        log.info("[" + PantheonXrefProcessor.class.getSimpleName() + "] urlList=> " + urlList.toString());
+
+        XrefValidationHelper.setUrlList(urlList);
+        if (!urlList.isEmpty()) {
+            xrefTargetsMap.put(documentVariant.uuid().get(), (ArrayList<String>) urlList);
+            XrefValidationHelper.setObjectsToValidate(xrefTargetsMap);
+        }
+
+
         return content;
     }
 

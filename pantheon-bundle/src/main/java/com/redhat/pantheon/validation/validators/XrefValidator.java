@@ -5,17 +5,18 @@ import com.redhat.pantheon.model.document.DocumentVariant;
 import com.redhat.pantheon.validation.helper.XrefValidationHelper;
 import com.redhat.pantheon.validation.model.ErrorDetails;
 import com.redhat.pantheon.validation.model.Violations;
-import org.apache.sling.api.resource.Resource;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is a sample validator that
@@ -56,7 +57,7 @@ public class XrefValidator implements Validator {
 
     private Violations checkIfXrefValid(Violations violations) {
         return violations.add(PantheonConstants.TYPE_XREF,
-                checkXref());
+                checkXref(XrefValidationHelper.getObjectsToValidate()));
     }
 
     /**
@@ -64,25 +65,32 @@ public class XrefValidator implements Validator {
      *
      * @return
      */
-    private ErrorDetails checkXref() {
+    private ErrorDetails checkXref(HashMap<String, ArrayList<String>> xrefTargets) {
         ErrorDetails errorDetails = new ErrorDetails();
         try {
-            List<String>  xrefTargets = XrefValidationHelper.getInstance().getObjectsToValidate();
-            if(null == xrefTargets || xrefTargets.size()==0){
+            if (null != xrefTargets)
+                log.info("[" + XrefValidator.class.getSimpleName() + "] xrefTargets=>" + xrefTargets.toString());
+            log.info("[" + XrefValidator.class.getSimpleName() + "] urlList=>" + XrefValidationHelper.getUrlList().toString());
+            log.info("[" + XrefValidator.class.getSimpleName() + "] xrefs=>" + XrefValidationHelper.getObjectsToValidate().toString());
+            if (null == xrefTargets || xrefTargets.size() == 0) {
                 return errorDetails;
             }
-            for (String xref : xrefTargets) {
-                if(!xref.endsWith(".adoc")) {
-                    if(validateIfAnchor(content,xref)<1){ // If it is anchor, it has not yet validated,
-                        errorDetails.add(xref);
+            for (Map.Entry mapElement : xrefTargets.entrySet()) {
+                ArrayList<String> targetList = (ArrayList<String>) mapElement.getValue();
+
+                for (String xref : targetList) {
+                    if (!xref.endsWith(".adoc")) {
+                        if (validateIfAnchor(content, xref) < 1) { // If it is anchor, it has not yet validated,
+                            errorDetails.add(xref);
+                        }
+                    } else {
+                        errorDetails.add(xref); // if it is a adoc file, it's already processed and validated
                     }
-                }else {
-                    errorDetails.add(xref); // if it is a adoc file, it's already processed and validated
                 }
             }
         }
         catch (Exception ex){
-            log.error("error at validation occured",ex);
+            log.error("error at validation occurred",ex);
         }
         return errorDetails;
     }

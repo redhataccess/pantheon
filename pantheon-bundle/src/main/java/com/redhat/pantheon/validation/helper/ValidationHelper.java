@@ -8,6 +8,8 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 /**
@@ -17,26 +19,34 @@ public class ValidationHelper {
     Logger logger = LoggerFactory.getLogger(ValidationHelper.class);
     public void createXrefValidationNode(DocumentVersion documentVersion, String content) throws PersistenceException {
         Violations violations = new XrefValidator(documentVersion.getParent(), content).validate();
-        Validations validations = documentVersion.validations().getOrCreate();
-        if(null != validations.validationType(PantheonConstants.TYPE_XREF).get()){
-            try {
-                validations.validationType(PantheonConstants.TYPE_XREF).get().delete();
-            } catch (Exception e) {
-                logger.error("error while validation node creation",e);
+        // Get xrefTargetMap
+        HashMap<String, ArrayList<String>> xrefTargetsMap = XrefValidationHelper.getObjectsToValidate();
+        logger.info("[" +ValidationHelper.class.getSimpleName()+"] xrefTargetsMap=>" + xrefTargetsMap.toString() );
+        logger.info("[" +ValidationHelper.class.getSimpleName()+"] documentVersion.getParent.uuid=>" + documentVersion.getParent().uuid().get() );
+        if (xrefTargetsMap != null && xrefTargetsMap.containsKey(documentVersion.getParent().uuid().get())) {
+            Validations validations = documentVersion.validations().getOrCreate();
+            if(null != validations.validationType(PantheonConstants.TYPE_XREF).get()){
+                try {
+                    validations.validationType(PantheonConstants.TYPE_XREF).get().delete();
+                } catch (Exception e) {
+                    logger.error("error while validation node creation",e);
+                }
+            }
+
+            if(violations.hasViolations()) {
+                Validation validation;
+                ErrorDetails errorDetails = violations.get(PantheonConstants.TYPE_XREF);
+                logger.info("[" +ValidationHelper.class.getSimpleName()+"] errorDetails=>" + errorDetails.getDetails().toString());
+                if(null == errorDetails || errorDetails.length() ==0){
+                    return;
+                }
+                ValidationType validationType = validations.validationType(PantheonConstants.TYPE_XREF).getOrCreate();
+                for(int ind=0; ind< errorDetails.length();ind++) {
+                    validation = validationType.page(ind+1).getOrCreate();
+                    validation.setValidation(violations, ind);
+                }
             }
         }
 
-        if(violations.hasViolations()) {
-            Validation validation;
-            ErrorDetails errorDetails = violations.get(PantheonConstants.TYPE_XREF);
-            if(null == errorDetails || errorDetails.length() ==0){
-                return;
-            }
-            ValidationType validationType = validations.validationType(PantheonConstants.TYPE_XREF).getOrCreate();
-            for(int ind=0; ind< errorDetails.length();ind++) {
-                validation = validationType.page(ind+1).getOrCreate();
-                validation.setValidation(violations, ind);
-            }
-        }
     }
 }

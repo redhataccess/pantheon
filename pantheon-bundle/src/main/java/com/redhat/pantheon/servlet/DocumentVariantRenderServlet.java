@@ -50,6 +50,7 @@ public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
     private final Logger log = LoggerFactory.getLogger(DocumentVariantRenderServlet.class);
 
     private AsciidoctorService asciidoctorService;
+    private XrefValidationHelper xrefValidationHelper;
 
     @Activate
     public DocumentVariantRenderServlet(
@@ -94,7 +95,7 @@ public class DocumentVariantRenderServlet extends SlingSafeMethodsServlet {
 
         // only allow forced rerendering if this is a draft version. Released and historical revs are written in stone.
         boolean draft = latest && variant.hasDraft();
-        XrefValidationHelper.getInstance().initList();
+        XrefValidationHelper.initList();
         String html = asciidoctorService.getDocumentHtml(
                 variant.getParentLocale().getParent(),
                 LocaleUtils.toLocale(variant.getParentLocale().getName()),
