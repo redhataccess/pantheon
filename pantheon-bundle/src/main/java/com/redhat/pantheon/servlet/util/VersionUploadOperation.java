@@ -38,7 +38,6 @@ import java.util.Set;
 public abstract class VersionUploadOperation extends AbstractPostOperation {
 
     private static final Logger log = LoggerFactory.getLogger(VersionUploadOperation.class);
-    private XrefValidationHelper xrefValidationHelper;
 
     private static final Set<String> METADATA_COPY_EXCLUDES = Collections.unmodifiableSet(
             new HashSet<>(
@@ -128,8 +127,7 @@ public abstract class VersionUploadOperation extends AbstractPostOperation {
             resolver.commit();
 
             Map<String, Object> context = asciidoctorService.buildContextFromRequest(request);
-//            XrefValidationHelper.getInstance().initList();
-            xrefValidationHelper.initList();
+            XrefValidationHelper.initList();
             asciidoctorService.getDocumentHtml(document, localeObj, document.getWorkspace().getCanonicalVariantName(),
                     true, context, true);
 

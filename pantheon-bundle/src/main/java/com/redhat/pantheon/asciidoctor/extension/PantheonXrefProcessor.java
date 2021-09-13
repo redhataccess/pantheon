@@ -62,12 +62,10 @@ public class PantheonXrefProcessor extends InlineMacroProcessor {
             content = preprocessWithPattern(content, TRIANGLE_PATTERN, urlList);
         }
 
-        XrefValidationHelper.setUrlList(urlList);
         if (!urlList.isEmpty()) {
             xrefTargetsMap.put(documentVariant.uuid().get(), (ArrayList<String>) urlList);
             XrefValidationHelper.setObjectsToValidate(xrefTargetsMap);
         }
-
 
         return content;
     }

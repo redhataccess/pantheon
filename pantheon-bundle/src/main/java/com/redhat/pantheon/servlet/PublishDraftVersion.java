@@ -55,7 +55,6 @@ public class PublishDraftVersion extends AbstractPostOperation {
     private Events events;
     private AsciidoctorService asciidoctorService;
     private ServiceResourceResolverProvider serviceResourceResolverProvider;
-    private XrefValidationHelper xrefValidationHelper;
     private Logger logger = LoggerFactory.getLogger(PublishDraftVersion.class);
 
     @Activate
