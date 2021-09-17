@@ -39,20 +39,17 @@ export class Utils {
      * @param path 
      */
     static draftExist(path) {
-        return new Promise((resolve, reject) => {
-            fetch(path + ".json")
-                .then(response => {
-                    if (response.ok) {
-                        resolve(true)
-                    } else {
-                        resolve(false)
-                    }
-
-                })
-                .catch((error) => {
-                    console.log("[draftExist] error detected=>", error + " for " + path)
-                    reject(error)
-                })
-        })
+        let exists = false
+        return fetch(path + ".json")
+            .then(response => {
+                if (response.ok) {
+                    exists = true
+                }
+                return exists
+            })
+            .catch((error) => {
+                console.log("[draftExist] error detected=>", error + " for " + path)
+                return false
+            })
     }
 }
