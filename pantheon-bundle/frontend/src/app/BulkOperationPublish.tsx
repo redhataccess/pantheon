@@ -203,31 +203,18 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
                 let hrefPart = href.slice(0, href.indexOf("?"))
                 let modulePath = hrefPart.slice(hrefPart.indexOf("/repositories"))
                 const backend = "/content" + modulePath + `/en_US/variants/${variant}/draft`
-                let exist = this.props.isBulkPublish ? Utils.draftExist(backend) : false
+                if (this.props.isBulkUnpublish) {
+                    this.processDocuments(modulePath, formData, hdrs)
 
-                if (exist || this.props.isBulkUnpublish) {
-                    fetch("/content" + modulePath, {
-                        body: formData,
-                        method: "post",
-                        headers: hdrs
-                    }).then(response => {
-                        if (response.status === 201 || response.status === 200) {
-                            this.setState({
-                                documentsSucceeded: [...this.state.documentsSucceeded, modulePath],
-                                bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
-                            }, () => {
-                                this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
-                            }
-                            )
+                } else {
+                    Utils.draftExist(backend).then((exist) => {
+                        if (exist) {
+                            this.processDocuments(modulePath, formData, hdrs)
                         } else {
-                            this.setState({ bulkUpdateFailure: this.state.bulkUpdateFailure + 1, documentsFailed: [...this.state.documentsFailed, modulePath] }, () => {
-                                this.calculateFailureProgress(this.state.bulkUpdateFailure)
+                            this.setState({ bulkUpdateWarning: this.state.bulkUpdateWarning + 1, documentsIgnored: [...this.state.documentsIgnored, modulePath] }, () => {
+                                this.calculateWarningProgress(this.state.bulkUpdateWarning)
                             })
                         }
-                    })
-                } else {
-                    this.setState({ bulkUpdateWarning: this.state.bulkUpdateWarning + 1, documentsIgnored: [...this.state.documentsIgnored, modulePath] }, () => {
-                        this.calculateWarningProgress(this.state.bulkUpdateWarning)
                     })
                 }
             }
@@ -289,6 +276,28 @@ class BulkOperationPublish extends React.Component<IBulkOperationPublishProps, a
             let failed = this.state.documentsFailed.join(",")
             this.setState({ confirmationFailed: failed })
         }
+    }
+
+    private processDocuments = (modulePath, formData, hdrs) => {
+        fetch("/content" + modulePath, {
+            body: formData,
+            method: "post",
+            headers: hdrs
+        }).then(response => {
+            if (response.status === 201 || response.status === 200) {
+                this.setState({
+                    documentsSucceeded: [...this.state.documentsSucceeded, modulePath],
+                    bulkUpdateSuccess: this.state.bulkUpdateSuccess + 1,
+                }, () => {
+                    this.calculateSuccessProgress(this.state.bulkUpdateSuccess)
+                }
+                )
+            } else {
+                this.setState({ bulkUpdateFailure: this.state.bulkUpdateFailure + 1, documentsFailed: [...this.state.documentsFailed, modulePath] }, () => {
+                    this.calculateFailureProgress(this.state.bulkUpdateFailure)
+                })
+            }
+        })
     }
 }
 export { BulkOperationPublish }

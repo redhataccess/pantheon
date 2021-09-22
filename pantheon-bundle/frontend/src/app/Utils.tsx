@@ -1,5 +1,7 @@
+import { resolve } from "path"
+
 export class Utils {
-    
+
     /**
      * fetchHelper
      * @param endpoint: string
@@ -7,15 +9,15 @@ export class Utils {
      */
 
     static fetchHelper = (endpoint: string, options: object) => {
-    
+
         if (options !== null) {
             return fetch(endpoint, options)
-              .then(Utils.handleErrors)
-              .then(response => response.json())
+                .then(Utils.handleErrors)
+                .then(response => response.json())
         } else {
             return fetch(endpoint)
-              .then(Utils.handleErrors)
-              .then(response => response.json())
+                .then(Utils.handleErrors)
+                .then(response => response.json())
         }
     }
 
@@ -51,4 +53,3 @@ export class Utils {
             })
     }
 }
-   

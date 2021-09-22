@@ -87,6 +87,7 @@ public class PublishDraftVersion extends AbstractPostOperation {
             return;
         }
         long startTime = System.currentTimeMillis();
+        XrefValidationHelper.initList();
         super.run(request, response, processors);
         try {
             if (response.getError() == null) {
@@ -101,13 +102,12 @@ public class PublishDraftVersion extends AbstractPostOperation {
                         .released().get();
 
                 // Regenerate the document once more
-                XrefValidationHelper.getInstance().initList();
                 asciidoctorService.getDocumentHtml(document, locale, variant, false, new HashMap(),true);
                 events.fireEvent(new DocumentVersionPublishedEvent(documentVersion), 15);
                 ServletUtils.getCustomerPortalUrl(request, response);
             }
         }catch (RepositoryException ex){
-            logger.error("An error has occured ", ex.getMessage());
+            logger.error("An error has occurred ", ex.getMessage());
         }
         log.debug("Operation Publishing draft version,  completed");
         long elapseTime = System.currentTimeMillis() - startTime;

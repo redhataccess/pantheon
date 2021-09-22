@@ -2,36 +2,25 @@ package com.redhat.pantheon.validation.helper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class XrefValidationHelper {
 
-    private List<String> xRefs;
+    private static HashMap<String, ArrayList<String>> xRefs;
 
-    private XrefValidationHelper() {
+    public XrefValidationHelper() {
+        xRefs = new HashMap<String, ArrayList<String>>();
     }
 
-    private static class SingletonHelper{
-        private static final XrefValidationHelper INSTANCE = new XrefValidationHelper();
-    }
-
-    public static XrefValidationHelper getInstance(){
-        return SingletonHelper.INSTANCE;
-    }
-    public List<String> getObjectsToValidate() {
+    public static HashMap<String, ArrayList<String>> getObjectsToValidate() {
         return xRefs;
     }
 
-    public void initList() {
-        xRefs = new ArrayList<>();
+    public static void initList() {
+        XrefValidationHelper.xRefs = new HashMap<String, ArrayList<String>>();
     }
 
-    public void setObjectsToValidate(List<String> objectsToValidate) {
-        if(null == xRefs || objectsToValidate.isEmpty()){
-            return;
-        }
-        xRefs.addAll(objectsToValidate);
+    public static void setObjectsToValidate(HashMap<String, ArrayList<String>> objectsToValidate) {
+        XrefValidationHelper.xRefs = objectsToValidate;
     }
 }

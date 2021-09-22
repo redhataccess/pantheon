@@ -288,8 +288,7 @@ public class AsciidoctorService {
             String html = "";
             try {
                 TableOfContents tableOfContents = new TableOfContents();
-                PantheonXrefProcessor xrefProcessor = new PantheonXrefProcessor(documentVariant, tableOfContents
-                );
+                PantheonXrefProcessor xrefProcessor = new PantheonXrefProcessor(documentVariant, tableOfContents);
                 // extensions needed to generate a module's html
                 asciidoctor.javaExtensionRegistry().includeProcessor(
                         new SlingResourceIncludeProcessor(base, tableOfContents, xrefProcessor));

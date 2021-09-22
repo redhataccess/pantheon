@@ -61,7 +61,9 @@ class BulkOperationMetadata extends React.Component<IBulkOperationMetadataProps,
 
     public componentDidMount() {
         // fetch products and label for metadata Modal
-        this.fetchProducts()
+        if (this.props.isEditMetadata) {
+            this.fetchProducts()
+        }
     }
 
     public render() {
