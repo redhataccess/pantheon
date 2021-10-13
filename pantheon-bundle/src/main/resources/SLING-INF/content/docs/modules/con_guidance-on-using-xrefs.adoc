@@ -26,7 +26,7 @@ Targets::
 
 Use xrefs as follows:
 
-* To cross-reference section target section in document-b.adoc from document-a.adoc, use the following form:
+* To cross-reference section _Target section_ in `document-b.adoc` from `document-a.adoc`, use the following form:
 
 ** `\xref:document-b.adoc#target-section[target section]`
 +
