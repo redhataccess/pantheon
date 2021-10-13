@@ -28,9 +28,10 @@ Use xrefs as follows:
 
 * To cross-reference section _Target section_ in `document-b.adoc` from `document-a.adoc`, use the following form:
 
-** `\xref:document-b.adoc#target-section[target section]`
 +
-where `target-section` is the anchor for _target section_.
+`\xref:document-b.adoc#target-section[Target section]`
++
+where `target-section` is the anchor for _Target section_.
 
 * To cross-reference document document-c.adoc from document-a.adoc, use the following form:
 
@@ -38,7 +39,10 @@ where `target-section` is the anchor for _target section_.
 +
 where `../modules/document-c.adoc` is the path to _document-c.adoc_ relative to _document-a.adoc_.
 
-IMPORTANT: Always include text within the square brackets in an xref.
+[IMPORTANT]
+====
+Always include text within the square brackets in an xref.
+====
 
 [discrete]
 == xfref validation in {ProductShortName}
@@ -49,7 +53,7 @@ IMPORTANT: Always include text within the square brackets in an xref.
 * regenerate draft HTML for your imported content,
 * publish your content.
 
-If {ProductShortName} finds any xref-errors, it displays a red alert icon next to the module or assembly with incorrect xref on the search page. Expand the module or assembly with errors to find the xrefs that are incorrect. Use this information to correct the incorrect xrefs in the source and re-import your content.
+If {ProductShortName} finds any errors from xrefs, it displays a red alert icon next to the module or assembly with the source of the error on the search page. Expand the module or assembly to find the broken xrefs. After you fix the xrefs in the Asciidoc source, re-import your content.
 
 NOTE: The order in which modules were imported can result in false validation errors. Regenerate draft HTML for the flagged content and the target content to check this.   
 
