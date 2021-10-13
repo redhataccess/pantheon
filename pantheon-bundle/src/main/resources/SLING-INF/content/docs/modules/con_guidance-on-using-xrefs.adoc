@@ -6,7 +6,7 @@ To ensure that internal cross-references, xrefs, work when you publish your cont
 
 NOTE: {ProductShortName} only validates xrefs within a repository.
 
-The following are the syntaxes of inter-document xref:
+.Examples of inter-document xrefs:
 
 * `\xref:document-b.adoc#target-section[Target section]`
 * `\xref:../modules/document-c.adoc[Content C]`
