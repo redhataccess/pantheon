@@ -47,6 +47,11 @@ Always include text within the square brackets in an xref.
 [discrete]
 == xfref validation in {ProductShortName}
 
+[IMPORTANT]
+====
+There is a known issue due to which some xrefs are being incorrectly flagged as broken by {ProductShortName}.
+====
+
 {ProductShortName} checks xrefs when you:
 
 * import a Git repository to {ProductShortName},
@@ -55,5 +60,7 @@ Always include text within the square brackets in an xref.
 
 If {ProductShortName} finds any errors from xrefs, it displays a red alert icon next to the module or assembly with the source of the error on the search page. Expand the module or assembly to find the broken xrefs. After you fix the xrefs in the Asciidoc source, re-import your content.
 
-NOTE: The order in which modules were imported can result in false validation errors. Regenerate draft HTML for the flagged content and the target content to check this.   
-
+[NOTE] 
+====
+The order in which modules were imported can result in false validation errors. Regenerate draft HTML for the flagged content and the target content to check this.   
+====
