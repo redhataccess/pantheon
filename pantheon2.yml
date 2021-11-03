@@ -16,6 +16,7 @@ modules:
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/con_comparison-between-modules-and-DITA-topics.adoc
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/con_definition-of-a-module.adoc
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/con_definition-of-metadata.adoc
+  - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/con_guidance-on-using-xrefs.adoc
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/con_pantheon.adoc
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/con_pantheon_yaml_file.adoc
   - pantheon-bundle/src/main/resources/SLING-INF/content/docs/modules/con_user-roles.adoc
