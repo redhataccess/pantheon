@@ -1,0 +1,15 @@
+:_module-type: CONCEPT
+
+[id="con_role-of-abstract_{context}"]
+= Role of abstract in search engine results
+
+[role="_abstract"]
+In {ProductShortName}, each source file includes an abstract that provides search engines with metadata about your content. The abstract describes the purpose of the document and helps the reader to decide if the content is relevant.
+
+{ProductShortName} automatically detects the first paragraph of a module or an assembly as the abstract. If you want to use another paragraph as the abstract, you must specify it with the `[role="_abstract"]` tag in your source files. Ensure that the abstract paragraph immediately follows the tag, with no blank lines in between.
+
+Use consistent phrasing in abstracts across documents to make your content easy to find. You can include simple phrases and keywords that your readers might enter into a search engine. The abstract is displayed in the Red Hat Customer Portal search results and web search engine results.
+
+[role="_additional-resources"]
+.Additional resources
+* link:https://github.com/redhat-documentation/modular-docs/tree/master/modular-docs-manual/files[Modular documentation templates]
