@@ -1,0 +1,374 @@
+// Module included in the following assemblies:
+//
+// <List assemblies here, each on a new line>
+
+
+[id='ref_content_checklist_{context}']
+== Content Checklist for {ProductName}
+
+[role="_abstract"]
+In order to be sure that every component of the {ProductName} tool chain can work with your content, be sure it complies with the following guidelines:
+
+.Assembly requirements
+[cols="30%,35%,35",options="header"]
+|====
+|Requirement
+|Description
+|Example
+
+|Avoid unsupported includes
+
+|The only supported structure for an include is: `include::path/to/some/module/some-module.adoc[leveloffset=+x]`
+
+Always have an empty line between includes.  This applies to both master.adoc and other assemblies.
+|*Supported*
+`include::meta/enterprise/meta/proc_providing-feedback-on-red-hat-documentation.adoc[]`
+
+`include::modules/con_concept-module.adoc[leveloffset=+1]`
+
+`include::assemblies/some_assembly.adoc[leveloffset=+2]`
+
+*Not supported*
+
+link:https://docs.asciidoctor.org/asciidoc/latest/directives/include-with-leveloffset/[According to its specifications], asciidoc interprets the following set of include statements as all having leveloffset=+1, with `leveloffset=-1` returning the offset to 0:
+
+:leveloffset: +1
+`include::some-module.adoc[]`
+
+`include::some-other-module.adoc[]`
+
+`include::yet-another--module.adoc[]`
+``:leveloffset: -1`
+
+This feature can be a useful time saver. Unfortunately, {ProductName} does not support it, so you must write the leveloffset in the square brackets for each module.
+|====
+
+.Module requirements
+[cols="30%,35%,35",options="header"]
+|====
+|Requirement
+|Description
+|Example
+
+|No includes except for snippets
+|Modules should not include other modules or assemblies. Modules can include snippets.
+|*Supported*
+
+In modules/some_modules.adoc:
+
+`include::meta/snip_beta.adoc[leveloffset=+1]`
+
+`include::meta/snip_techpreview.adoc[leveloffset=+1]`
+
+*Not supported*
+
+In modules/con_some-modules.adoc:
+
+`include::modules/some-module.adoc[leveloffset=+1]`
+|====
+
+.Title and ID requirements
+[cols="30%,35%,35",options="header"]
+|====
+|Requirement
+|Description
+|Example
+
+|Use level 1 headings for titles
+|The name of a title, assembly or module must be a level 1 heading (that is, `"= Some heading"`).
+|*Supported*
+
+`[id="proc_some-procedure_{context}"]` +
+`= Some procedure`
+
+*NOT supported*
+
+`[id="proc_some-procedure_{context}"]` +
+`== Some procedure`
+
+|Avoid using in-line anchors on the same line as a title name
+|Insert in-line anchors in the line before a title. In-line anchors placed on the same line as your assembly/module title do not render correctly in {ProductName}.
+|*Supported*
+
+`[id="configuring-time-settings-using-web-console_{context}"]` +
+`[[some-anchor-id]]` +
+`= Configuring time settings using the web console`
+
+*NOT supported*
+
+`[id="configuring-time-settings-using-web-console_{context}"]` +
+`= Configuring time settings using the web console[[some anchor-id]]`
+
+|Do not use attributes in title/chapter names or IDs, _except_ for the `{context}` attribute in an ID
+a|
+
+[NOTE]
+====
+The tooling team plans to implement support for using attributes titles, chapter names, or IDs, in a future release of {ProductName}.
+====
+|
+|====
+
+.Content requirements
+[cols="30%,35%,35",options="header"]
+|====
+|Requirement
+|Description
+|Example
+
+|Metadata variables must be at the header level
+a|{ProductName} extracts some information from variables defined in the document content. These variables must be defined at the header level, not at the body level. Otherwise, {ProductName} cannot extract them.
+
+As of this writing, the only such variable is `:_module-type:`, but future development may introduce other such variables as well.
+
+Supported values of the attribute:
+
+* `:_content-type: ASSEMBLY`
+* `:_content-type: PROCEDURE`
+* `:_content-type: REFERENCE`
+* `:_content-type: CONCEPT`
+* `:_content-type: SNIPPET`
+
+Using the `:_module-type:` variable is optional if you add the module type prefix to your file names:
+
+* `proc_some-module.adoc`
+* `con_some-module.adoc`
+*  `ref_some-module.adoc`.
+
+If your file names do not begin with these prefixes, you must use the `:_module-type:` variable at the header level of your modules.
+
+[IMPORTANT]
+====
+Put the `:_module-type:` variable before the `[module-id]` to avoid build problems.
+====
+
+|*Supported order*
+
+`:_module-type: PROCEDURE` +
+`[module-id]` +
+`= Title name`
+
+*NOT supported order*
+
+`[module-id]` +
+`= Title name` +
+`:_module-type: PROCEDURE`
+
+`[module-id]` +
+`:_module-type: PROCEDURE` +
+`= Title name`
+
+|Use the abstract tag if any paragraph besides the first one is your abstract.
+
+Optional: Use the abstract when your paragraph is your abstract.
+|In {ProductName}, each source file includes an abstract that provides search engines with metadata about your content. The abstract describes the purpose of the document and helps the reader to decide if the content is relevant.
+
+{ProductName} automatically detects the first paragraph of a module or an assembly as the abstract. To use another paragraph as the abstract, you must specify it with the `[role="_abstract"]` tag in the line before the abstract paragraph, with no blank lines in between.
+
+Use consistent phrasing in abstracts across documents to make your content easy to find. You can include simple phrases and keywords that your readers might enter into a search engine. The abstract is displayed in the Red Hat Customer Portal search results and web search engine results.
+
+|*Module abstract example*
+
+`[id="kernel_{context}"]` +
+`= Kernel`
+
+`[role="_abstract"]` +
+`Write your module abstract here.`
+
+*Assembly abstract example*
+
+`[id="a-collection-of-modules"]` +
+`= A collection of modules`
+
+`:context: a-collection-of-modules`
+
+`[role="_abstract"]` +
+`Write your module abstract here.`
+
+|UI elements and macros
+a|If you use macros for the UI elements (for example. `btn:[Open]` or `menu:View[Toolbar > Customize])`, do not forget to put the `:experimental:` tag in every module in which you use macros. Otherwise your UI elements will not render in standalone files.
+
+These macros include:
+
+* `btn:[Label]`
+* `menu:File[Save]`
+* `kbd:[Key1+Key2]`
+
+*Verification steps*
+
+Check that the module renders correctly:
+
+[source, terminal]
+----
+$ asciidoctor --safe -v -n path/to/some-random-module.adoc
+----
+
+Open the generated preview:
+
+[source, terminal]
+----
+$ gio open path/to/some-random-module.html
+----
+|*Example*
+
+`:experimental:`
+
+`[id="proc_some-procedure_{context}"]` +
+`= Some procedure`
+
+`Press kbd:[Ctrl-T].`
+
+|Do not use HTML markup
+|Do not use HTML markup on inline elements.
+|*Supported*
+
+Text between * and * renders as *bold*
+Text between _ and _ renders as _italic_
+
+*NOT supported*
+
+Neither `<strong>text in bold</strong>` nor
+`<em>text in italic</em>` render as as expected.
+
+|Do not use "naked" or "vanilla" xrefs or links
+|{ProductName} cannot resolve "naked" or "vanilla" xrefs or links. Instead, use square brackets containing human-readable text after an xref or a link.
+
+For example:
+
+`\xref:module-id_assembly-context-variable-value[Human-readable text].`
+
+|*Supported*
+
+`\xref:adding-remote-hosts_managing-remote-systems-in-the-web-console[Adding remote hosts]`
+
+*NOT supported*
+
+`\<<section-title,cross reference text>>`
+
+`\xref:adding-remote-hosts_managing-remote-systems-in-the-web-console[]`
+
+|Making xrefs work in standalone files
+|In {ProductName}, xrefs do not open in a standalone module or in an assembly that does not include the file to which the xref refers. To make xrefs work, add the appropriate conditional statements.
+a|*Supported*
+
+`ifdef::cockpit[]` +
+`\xref:adding-remote-hosts_managing-remote-systems-in-the-web-console[add remote hosts]` +
+`endif::[]`
+
+`ifdef::cockpit[]` +
+`\link:some-link[human readable tag]` +
+`endif::[]`
+
+|File paths when building assemblies and standalone modules
+|Ensure that the way you include files, images, and path-based xrefs, works both when you build the whole assembly and when you build individual standalone modules.
+
+Your documentation repository should have a standard way of specifying the paths. For details, ask your repository maintainers.
+|For example, the currently recommended xref format in RHEL documentation is this:
+
+`\xref:modules/desktop/con_input-methods.adoc[Input methods]`
+
+The file path is relative to the location of your assembly.
+
+To reference another assembly in RHEL documentation:
+
+`\xref:assembly_troubleshooting-lvm.adoc[Troubleshooting LVM]`
+
+|Be conscious of the limitations of level 2 headings
+|Use level 2 headings wisely.
+|====
+
+.Additional resources requirements
+[cols="30%,35%,35",options="header"]
+|====
+|Requirement
+|Description
+|Example
+
+|Additional resources
+|Additional resources for assemblies must start with `==`
+
+Additional resources for modules must start with `.`
+
+Otherwise {ProductName} does not render the output correctly.
+Add the `[role="_additional-resources"]` flag before the additional resources section of each module or assembly that lists additional resources.
+|*Example of additional resources section in assemblies:*
+
+`[role="_additional-resources"] +
+== Additional resources`
+
+*Example of additional resources section in modules:*
+
+`[role="_additional-resources"] +
+.Additional resources`
+
+|No plain paragraphs in an additional resources section
+|An additional resources section must be a bulleted list with links. Do not put a plain paragraph under the additional resources heading.
+
+a|*Supported*
+
+`[role="_additional-resources"] +
+== Additional resources` +
+`* \link:some-url.com[Human readable]` +
+`* \xref:`some_xref[Human readable]` +
+`*\oscap(8)` man page`
+
+*NOT supported*
+
+`[role="_additional-resources"]` +
+`== Additional resources` +
+`For further information, see the link: \some-url.com[] guide.`
+
+|Links and xrefs require labels in additional resources
+a|Human readable text within the square brackets is required if you use links or xrefs in additional resources.
+
+[NOTE]
+====
+The tooling team plans to remove thsi requirement in a future release of {ProductName}.
+====
+
+|*Supported*
+
+`[role="_additional-resources"]` +
+`== Additional resources` +
+`* \link:some-url.com[Human readable]` +
+`* \xref:some_xref[Human readable]`
+
+*NOT supported*
+
+`[role="_additional-resources"]` +
+`== Additional resources` +
+`* \link:some-url.com[]` +
+`* \xref:some_xref[]`
+
+|Recommendation: Limit the text around links in additional resources
+|In the list of additional resources, use only links with little or no additional text accompanying them.
+a|*Recommended*
+
+`[role="_additional-resources"]` +
+`== Additional resources` +
+`* \link:some-url.com[Human readable]` +
+`* \xref:some_xref[Human readable]` +
+`* The `oscap(8)` man page`
+
+*NOT supported*
+
+`[role="_additional-resources"]` +
+`== Additional resources` +
+`*\For further information, see the l\ink:some-url.com[] guide.` +
+`*You can find the detailed usage of `oscap` in the `oscap(8)` man page.`
+
+|No empty lines after aAdditional resources
+|There can be NO empty lines between the additional resources heading and your first link.
+
+a|*Supported*
+
+`[role="_additional-resources"]` +
+`== Additional resources` +
+`*\link:some-url.com[Human readable]`
+
+*NOT supported*
+
+`[role="_additional-resources"]` +
+`== Additional resources` +
+                          <==== empty line +
+`*\link:some-url.com[Human readable]`
