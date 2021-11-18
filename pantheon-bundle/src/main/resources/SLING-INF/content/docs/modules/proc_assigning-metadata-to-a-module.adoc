@@ -13,7 +13,7 @@ Metadata in modules and assemblies does the following:
 
 [NOTE]
 ====
-Module type is also metadata. You define the module's type directly within the module. See xref:identifying-module-types_assembly-help[Identifying {ProductShortName} module types].
+Module type is also metadata. You define the module's type directly within the module. See xref:adding-module-types_to_modules_in_Pantheon_assembly-help[Adding the module type to modules in {ProductShortName}].
 ====
 
 .Prerequisites
