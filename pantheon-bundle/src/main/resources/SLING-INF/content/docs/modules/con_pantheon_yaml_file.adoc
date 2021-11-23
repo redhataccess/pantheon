@@ -2,10 +2,10 @@
 = Description of the {ProductShortName} configuration file
 
 [role="_abstract"]
-The configuration file, named `{ProductShortName}2.yml`, resides in the root directory of your documentation repository. You use this file to designate a Git repository as a source that {ProductShortName} can use to import content. This configuration file provides the information necessary for {ProductShortName} to interact with files in the repository.
+The configuration file, named `pantheon2.yml`, resides in the root directory of your documentation repository. You use this file to designate a Git repository as a source that {ProductShortName} can use to import content. This configuration file provides the information necessary for {ProductShortName} to interact with files in the repository.
 
 ////
-// Keeping this section because the status of the Uploader tool is not clear. It might be relevant in the future.
+Keeping this section because the status of the Uploader tool is not clear. It might be relevant in the future.
 The configuration file enables you to perform the following actions:
 * Import content from a Git repository into {ProductShortName}
 * Upload {ContentTerm} into {ProductShortName} using the Uploader tool
@@ -17,34 +17,31 @@ The {ProductShortName} configuration file defines the following parameters:
 
 * `server` The URL of the {ProductShortName} server.
 * `repository` The name of the repository. It is recommended not to include spaces in the repository name.
-* `variants` A multi-valued structure containing the `name, `path`, and `canonical` values.
-The `canonical` tags tell the search engine that of this group of pages with similar content, one of them is "official" and we want it to be considered the most relevant.
+* `variants` Separate sets of output built on the same set of files and differentiated by these values:`name, `path`, and `canonical`. Modules and assemblies can have variants to differentiate how they are used, and what output is created.
 +
 ** `name` (optional) A unique ID that displays in URLs on the {ProductShortName} site when you view modules and assemblies. If no value is provided for `name`, this field is defined as *DEFAULT*.
 +
 For example, if you specify `name: rhel_docs`, and one of your files is named [filename]`foo.adoc`, the module's URL in {ProductShortName} is:
-`\http://<_{ProductShortName}__url>/content/repositories/*repository*/entities/modules/getting_started/foo.adoc.preview`
+`\https://<_{ProductShortName}__url>/content/repositories/*repository*/entities/modules/getting_started/foo.adoc.preview`
 ** `path` The path containing the resource files (for example attributes.adoc).
-** `canonical` Canonical is associated with variants. A module belongs to one or more variants, but there is only one canonical variant. Possible values: *true* or *false*.
+** `canonical` The primary or original variant of content. If a search engine sees multiple variants of the same piece of content (HTML page or a group of pages) it needs to know what the primary or original one is to establish ranking. Declaring a piece of content as canonical tells the search engine to treat that piece of content as the original or the `canonical` variant. Declaring canonical to be true or false is translated into HTML meta data. Possible values: *true* or *false*.
+* Examples of variants:
+** Document level - _Installing RHV using the command line_; _Installing RHV using the Administration Portal_.
+** Module level - The same module is published in multiple Red Hat documents, such as _Red Hat Decision Manager_, _Red Hat Process Automation Manager_.
 
 .Example YAML file with multiple variants
 [source,yaml,options="nowrap",subs="attributes+,+quotes"]
 ----
 server: https://pantheon.corp.redhat.com
-repository: rhel-8-docs
+repository: rhel-docs
 variants:
-  #- name: rhel83
-  #  path: rhel-8/common-content/attributes.adoc
-  #  canonical: false
   - name: rhel9
     path: rhel-9/common-content/attributes.adoc
     canonical: true
 assemblies:
-  #- rhel-8/assemblies/*.adoc
   - rhel-9/assemblies/*.adoc
 
 modules:
-  #- rhel-8/modules/*.adoc
   - rhel-9/modules/*.adoc
 
 resources:
