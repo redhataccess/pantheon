@@ -15,17 +15,31 @@ The configuration file enables you to import content from a Git repository into 
 
 The {ProductShortName} configuration file defines the following parameters:
 
-* `server` The URL of the {ProductShortName} server.
-* `repository` The name of the repository. It is recommended not to include spaces in the repository name.
-* `variants` Separate sets of output built on the same set of files and differentiated by these values:`name, `path`, and `canonical`. Modules and assemblies can have variants to differentiate how they are used, and what output is created.
+`server`:: (Required) The URL of the {ProductShortName} server.
+`repository`:: (Required) The name of the repository. It is recommended not to include spaces in the repository name.
+`variants`:: (Required) Separate sets of output built on the same set of files and differentiated by these values: `name`, `path`, and `canonical`. Modules and assemblies can have variants to differentiate how they are used, and what output is created.
 +
-** `name` (optional) A unique ID that displays in URLs on the {ProductShortName} site when you view modules and assemblies. If no value is provided for `name`, this field is defined as *DEFAULT*.
+** `name` (Optional) A unique ID that is displayed in URLs on the {ProductShortName} site when you view modules and assemblies. If no value is provided for `name`, this field is defined as *DEFAULT*.
 +
 For example, if you specify `name: rhel_docs`, and one of your files is named [filename]`foo.adoc`, the module's URL in {ProductShortName} is:
 `\https://<_{ProductShortName}__url>/content/repositories/*repository*/entities/modules/getting_started/foo.adoc.preview`
-** `path` The path containing the resource files (for example attributes.adoc).
-** `canonical` The primary or original variant of content. If a search engine sees multiple variants of the same piece of content (HTML page or a group of pages) it needs to know what the primary or original one is to establish ranking. Declaring a piece of content as canonical tells the search engine to treat that piece of content as the original or the `canonical` variant. Declaring canonical to be true or false is translated into HTML meta data. Possible values: *true* or *false*.
-* Examples of variants:
+** `path` (Optional) The path containing resource files, such as `attributes.adoc`.
+** `canonical` (Required) The primary variant of content. If a search engine sees multiple variants of the same piece of content (HTML page or a group of pages) it needs to know what the primary or original one is to establish ranking. Declaring a piece of content as `canonical` tells the search engine to treat that piece of content as the canonical variant. The canonical declaration is transformed into HTML meta data. Possible values: `*true*` or `*false*`.
+
+`assemblies`:: (optional) The path to assemblies in the repository that should be uploaded. The path can include specific files or a pattern, such as `*.adoc` to include only `.adoc` files, or `**` to include all files.
+`modules`:: Path to modules in the repository that should be uploaded.
+`resources`:: (optional) Attributes, image files, snippets, legal information, or other content that is not a complete module or assembly.
+
+[NOTE]
+====
+File paths can indicate specific files, or file patterns. For example:
+
+* This will upload everything inside `assemblies/`: `assemblies/**`
+* This will only upload `.adoc` files inside `assemblies/`: `assemblies/*.adoc`
+====
+
+.Examples of variants:
+
 ** Document level - _Installing RHV using the command line_; _Installing RHV using the Administration Portal_.
 ** Module level - The same module is published in multiple Red Hat documents, such as _Red Hat Decision Manager_, _Red Hat Process Automation Manager_.
 
@@ -38,26 +52,18 @@ variants:
   - name: rhel9
     path: rhel-9/common-content/attributes.adoc
     canonical: true
+  - name: rhel8
+    path: rhel-8/common-content/attributes.adoc
+    canonical: false
 assemblies:
-  - rhel-9/assemblies/*.adoc
-
+  - rhel/assemblies/*.adoc
 modules:
-  - rhel-9/modules/*.adoc
-
+  - rhel/modules/*.adoc
 resources:
   - images/*.png
 ----
 
-* `modules` (optional) Patterns for modules that show up in the search results on {ProductShortName}.
-** `resources` (optional) Image files, legal information, or other content that is not a complete module or assembly.
-** `attributes` (optional) A path to the repository-wide attributes file. Provide this value if your documents relies on the attributes file.
-+
-[NOTE]
-====
-You must define the values for `server` and `repository`.
-====
-
-* `assemblies` (optional) Patterns for assemblies that show up in the search results on {ProductShortName}.
+In the above example, the assemblies and modules for both rhel9 and rhel8 variants are in the same directories, `rhel/assemblies/` and `rhel/modules/`. Depending on the value of their attributes, {ProductShortName} creates the separate variants.
 
 .Example {ProductShortName} configuration file
 [source,yaml,options="nowrap",subs="attributes+,+quotes"]
