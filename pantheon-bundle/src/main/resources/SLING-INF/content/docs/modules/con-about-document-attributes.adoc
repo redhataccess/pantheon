@@ -1,0 +1,57 @@
+[id="con-about-document-attributes_{context}"]
+= About document attributes
+
+[role="_abstract"]
+You can define the document attributes in {ProductShortname} in an AsciiDoc file. You can then use these attributes in your content. When {ProductShortname} transforms the content to HTML, the attribute definitions replace the attributes. For example,
+if you define an attribute `:ProductName: Apollo` in your attributes file, and then use the attribute in your content as `\{ProductName} was released in 1969`, your content will render as `Apollo was released in 1969` in HTML.
+
+In {ProductShortname} you specify the path to your attribute file in the `pantheon2.yml` configuration file as follows:
+
+[source,yml,options="nowrap",subs="+quotes,attributes+"]
+----
+server: {server_url}
+# Example
+# server: {ProductUrl}
+repository:__<repository_name>__
+    
+variants:
+   - name: global-attributes
+     path: __<path_to_attribute_file>__/__<attribute_file_name>__.adoc
+     # Example
+     # path: _artifacts/document-attributes.adoc
+---- 
+
+When you set the path to your attributes file in in the `pantheon2.yml` configuration file, the attributes are available to each module and assembly in your repository. You don't need to explicitly include the attribute file in your module or assembly. 
+
+// The below content is for Jupiter/Ganymede
+
+////
+== Jupiter
+
+:JupiterProductShortname: Jupiter/Ganymede
+
+You can define the document attributes in {JupiterProductShortname} in an AsciiDoc file. You can then use these attributes in your content. When {JupiterProductShortname} transforms the content to HTML, the attribute definitions replace the attributes. For example,
+if you define an attribute `:ProductName: Apollo` in your attributes file, and then use the attribute in your content as `\{ProductName} was released in 1969`, your content will render as `Apollo was released in 1969` in HTML.
+
+In {JupiterProductShortname} you specify the path to your attribute file in the `build.yml` configuration file as follows:
+
+[source,yml,options="nowrap",subs="+quotes,attributes+"]
+----
+repository: __<repository-name>__
+variants:
+   - name: __<product-name>__
+     attributes:
+       -  __<path-to-attribute-file-1>__.adoc 
+       -  __<path-to-attribute-file-2>__.adoc
+       # Examples
+       # _artifacts/document-attributes-common.adoc
+       # _artifacts/document-attributes-product.adoc
+     build: true
+---- 
+
+When you set the path to your attributes file in in the `build.yml` configuration file, the attributes are available to each module and assembly in your repository. You don't need to explicitly include the attribute file in your module or assembly. If an attribute is defined in multiple files, {JupiterProductShortname} applies the definition in the  last file listed in the `build.yml` configuration file. 
+////
+
+[role="_additional-resources"]
+.Additional resources
+* xref:pantheon-yaml-file_setting-up-tools[Description of the {ProductShortName} configuration file]

@@ -23,7 +23,7 @@ The {ProductShortName} configuration file defines the following parameters:
 +
 For example, if you specify `name: rhel_docs`, and one of your files is named [filename]`foo.adoc`, the module's URL in {ProductShortName} is:
 `\https://<_{ProductShortName}__url>/content/repositories/*repository*/entities/modules/getting_started/foo.adoc.preview`
-** `path` (Optional) The path containing resource files, such as `attributes.adoc`.
+** `path` (Optional) The path containing resource files, such as `attributes.adoc`. For more information, see xref:con-about-document-attributes_setting-up-tools[About document attributes].
 ** `canonical` (Required) The primary variant of content. If a search engine sees multiple variants of the same piece of content (HTML page or a group of pages) it needs to know what the primary or original one is to establish ranking. Declaring a piece of content as `canonical` tells the search engine to treat that piece of content as the canonical variant. The canonical declaration is transformed into HTML meta data. Possible values: `*true*` or `*false*`.
 
 `assemblies`:: (optional) The path to assemblies in the repository that should be uploaded. The path can include specific files or a pattern, such as `*.adoc` to include only `.adoc` files, or `**` to include all files.
