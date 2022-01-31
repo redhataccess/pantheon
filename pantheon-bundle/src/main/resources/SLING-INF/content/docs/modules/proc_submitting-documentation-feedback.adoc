@@ -1,4 +1,4 @@
-_module-type: PROCEDURE
+:_module-type: PROCEDURE
 [id="proc_submitting-documentation-feedback_{context}"]
 = Submitting documentation feedback
 
