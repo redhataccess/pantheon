@@ -9,7 +9,7 @@
 :_module-type: CONCEPT
 
 [role="_abstract"]
-In {ProductName} {ProdctNumber}, each assembly encompasses a single user story. This is a key element of the Flexible Customer Content (FCC) effort at Red Hat. An assembly can include concept, procedure, or reference modules but all modules in an assembly must relate to that specific user story.
+In {ProductName} {ProductNumber}, each assembly encompasses a single user story. This is a key element of the Flexible Customer Content (FCC) effort at Red Hat. An assembly can include concept, procedure, or reference modules but all modules in an assembly must relate to that specific user story.
 
 Previously, a single assembly, such as the master.adoc for a user guide, could include a number of user stories without affecting search results  However, in {ProductName} {ProductNumber}, it is important to limit each assembly to a single user story in order to make it easier for users to search for a specific action they want to perform.
 
@@ -24,4 +24,4 @@ Assemblies in {ProductName} {ProductNumber} must conform with the following guid
 [role="_additional-resources"]
 .Additional resources
 
-Link:https://redhat-documentation.github.io/modular-docs/#forming-assemblies[Assemblies in Red Hat documentation]
+link:https://redhat-documentation.github.io/modular-docs/#forming-assemblies[Assemblies in Red Hat documentation]

@@ -47,7 +47,10 @@ include::../modules/con_definition-of-metadata.adoc[leveloffset=+2]
 
 include::../modules/con_guidance-on-using-xrefs.adoc[leveloffset=+2]
 
+include::../modules/con_about-snippets.adoc[leveloffset=+2]
+
 include::../modules/ref_adding-module-types_to_modules_in_Pantheon.adoc[leveloffset=+2]
+
 include::../modules/con_role-of-abstract.adoc[leveloffset=+2]
 
 
