@@ -24,4 +24,4 @@ A text snippet is not a module, but it is the only content in an AsciiDoc file.
 [role="_additional-resources"]
 .Additional resources
 
-link:https://redhat-documentation.github.io/modular-docs/#using-text-snippets[Text Snippets]
+link:https://redhat-documentation.github.io/modular-docs/#using-text-snippets[Text Snippets] in the _Modular Documentation Reference Guide_
