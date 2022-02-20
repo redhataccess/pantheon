@@ -1,5 +1,5 @@
 [id="con-about-document-attributes_{context}"]
-= About using document attributes in Pantheon
+= About using document attributes in {ProductShortname}
 
 [role="_abstract"]
 You can define the document attributes in {ProductShortname} in an AsciiDoc file. You can then use these attributes in your content by including the attribute file in the {ProductShortname} config file. When {ProductShortname} transforms the content to HTML, the attribute definitions replace the attributes. For example,
@@ -28,12 +28,10 @@ When you set the path to your attribute file in the `pantheon2.yml` configuratio
 ////
 = About using document attributes in Jupiter
 
-:JupiterProductShortname: Jupiter/Ganymede
-
-You can define the document attributes in {JupiterProductShortname} in an AsciiDoc file. You can then use these attributes in your content by including the attribute file in the {ProductShortname} config file. When {JupiterProductShortname} transforms the content to HTML, the attribute definitions replace the attributes. For example,
+You can define the document attributes in {ProductShortname} in an AsciiDoc file. You can then use these attributes in your content by including the attribute file in the {ProductShortname} config file. When {ProductShortname} transforms the content to HTML, the attribute definitions replace the attributes. For example,
 if you define an attribute `:name-of-an-attribute: value of the attribute` in your attribute file, and then use the attribute in your content as `\{name-of-an-attribute}`, your content renders as `value of the attribute` in HTML.
 
-In {JupiterProductShortname} you specify the path to your attribute file in the `build.yml` configuration file as follows:
+In {ProductShortname} you specify the path to your attribute file in the `build.yml` configuration file as follows:
 
 [source,yml,options="nowrap",subs="+quotes,attributes+"]
 ----
@@ -49,7 +47,7 @@ variants:
      build: true
 ---- 
 
-When you set the path to your attribute file in the `build.yml` configuration file, the attributes are available to each module and assembly in your repository. You don't need to explicitly include the attribute file in your module or assembly. If an attribute name is defined in multiple attribute files, {JupiterProductShortname} applies the definition in the last file listed in the `build.yml` configuration file. 
+When you set the path to your attribute file in the `build.yml` configuration file, the attributes are available to each module and assembly in your repository. You don't need to explicitly include the attribute file in your module or assembly. If an attribute name is defined in multiple attribute files, {ProductShortname} applies the definition in the last file listed in the `build.yml` configuration file. 
 ////
 
 [role="_additional-resources"]
