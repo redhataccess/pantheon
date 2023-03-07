@@ -118,12 +118,76 @@ When you have addressed all technical review and peer review comments, notify th
 
 The developers check that the **Tech review complete** label has been added to the pull request and peer pull request approval provided, then accept it.
 
-## Installing Pantheon
+## Deploying Pantheon
 
-### Prerequisites
+Install the Pantheon codebase, perform some basic initial configuration, and deploy Pantheon with a containerized MongoDB database.
+
+**Prerequisites**
+* Tested on Red Hat Enterprise Linux (RHEL) 8.3 and Fedora 33.
+* openJDK 1.8.0
 * Podman
-* Buildah
-* Java
+
+**Procedure**
+
+1. Clone the git repo:
+
+        $ git clone https://github.com/redhataccess/pantheon.git
+
+2. Set the `PANTHEON_CODEBASE` environment variable to the root directory of the repo:
+
+        $ export PANTHEON_CODEBASE=<path>/pantheon/
+
+3. Set your `JAVA_HOME` variable:
+
+
+        $ vi ~/.bashrc
+        ...
+        # User specific aliases and functions
+        export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
+
+NOTE: Log in to a new shell to enable the new environment variable.
+
+4. Start a mongo container on port `27017`:
+
+        $ podman run -p 27017:27017 --name mongodb -d mongo
+
+5. Run the `deploy_local.sh` script:
+
+        $ sh scripts/deploy_local.sh
+
+6. Navigate to http://localhost:8181/pantheon to view the Pantheon UI. Log in to the dashboard with username `admin` and password `admin`
+
+## Uploading content to Pantheon with `pantheon-uploader`
+
+Use the `pantheon-uploader` tool to upload local content to Pantheon.
+
+1. Install the `pantheon-uploader` tool:
+
+        $ pip-3 install --no-cache-dir git+https://github.com/redhataccess/pantheon-uploader.git
+        $ chmod +x install.sh
+        $ sh install.sh
+
+2. Create a new product in the Pantheon dashboard:
+    1. Navigate to http://localhost:8181/pantheon and log in with username `admin` and `password` admin.
+    2. Click **Products** and select **New Product**.
+    3. Enter a name and version for your product, as well as URL fragments.
+    4. Click **Save**.
+
+3. Update the `pantheon2.yml` file in the root of the `pantheon` repo:
+    1. Set the `server` parameter to `http://localhost:8181`.
+    2. Set the `repository` parameter to the name of the product that you created in the dashboard.
+    3. In the `assemblies` and `modules` parameters, include relative paths to the Asciidoc files that you want to upload to Pantheon
+
+4. Run the `pantheon push` command to upload the files that you defined in the `pantheon2.yml` file to Pantheon:
+
+        $ pantheon push -r <repo> -s http://localhost:8181 -u admin -p admin
+
+    Replace `<repo>` with the name of the product that you created in the dashboard. This value must be identical in three locations:
+    * The product name in the dashboard.
+    * The `repository` parameter in the `pantheon2.yml` file.
+    * The repository that you specify with the `-r` option in the `pantheon push` command.
+
+## Other relevant information
 
 ### Environment Variables
 **Project Root Directory**
