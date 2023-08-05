@@ -42,6 +42,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -133,6 +140,47 @@ public class AsciidoctorService {
         }
 
         return html;
+    }
+
+    public InputStream getDocumentPdf(@Nonnull Document document,
+                                       @Nonnull Locale locale,
+                                       @Nonnull String variantName,
+                                       boolean draft,
+                                       Map<String, Object> context,
+                                       boolean forceRegen) throws IOException {
+        Child<? extends DocumentVariant> traversal = document.locale(locale)
+                .toChild(DocumentLocale::variants)
+                .toChild(variants -> variants.variant(variantName));
+
+        Optional<? extends DocumentVersion> moduleVersion;
+        if (draft) {
+            moduleVersion =
+                    traversal.toChild(DocumentVariant::draft)
+                            .asOptional();
+        } else {
+            moduleVersion =
+                    traversal.toChild(DocumentVariant::released)
+                            .asOptional();
+        }
+
+        InputStream pdf;
+        // If regeneration is forced, the content doesn't exist yet, or it needs generation because the original
+        // asciidoc has changed,
+        // then generate and save it
+        // TODO To keep things simple, regeneration will not happen automatically when the source of the module
+        //  has changed. This can be added later
+        if (forceRegen
+                || !moduleVersion.isPresent()
+                || moduleVersion.get().cachedPdf().get() == null) {
+            pdf = buildDocumentPdf(document, locale, variantName, draft, context, true);
+        } else {
+            pdf = moduleVersion.get()
+                    .cachedPdf().get()
+                    .jcrContent().get()
+                    .jcrData().toFieldType(InputStream.class).get();
+        }
+
+        return pdf;
     }
 
     /**
@@ -344,6 +392,206 @@ public class AsciidoctorService {
     }
 
     /**
+     * Builds a document PDF. This means generating the pdf file for the document at one of its revisions.
+     * @param base          The base document which is being generated.
+     *                      The module will only be used as a base for resolving included resources and images.
+     * @param locale        The locale to build
+     * @param variantName   The variant name to generate. If unknown, provide {@link ModuleVariant#DEFAULT_VARIANT_NAME}.
+     * @param isDraft       True if aiming to generate the draft version of the module. False, to generate the released version.
+     * @param context       Any asciidoc attributes necessary to inject into the generation process
+     * @param regenMetadata If true, metadata will be extracted from the content and repopulated into the JCR module.
+     * @return The generated html string.
+     * @return An {@link InputStream} capable of producing the PDF contents.
+     * @throws IOException If there is a problem generating the PDF file
+     */
+    public InputStream buildDocumentPdf(@Nonnull Document base, @Nonnull Locale locale, @Nonnull String variantName, boolean isDraft,
+                                 Map<String, Object> context, final boolean regenMetadata) throws IOException {
+
+        Optional<HashableFileResource> sourceFile =
+                Child.from(base)
+                        .toChild(m -> m.locale(locale))
+                        .toChild(DocumentLocale::source)
+                        .toChild(sourceContent -> isDraft ? sourceContent.draft() : sourceContent.released())
+                        .asOptional();
+
+        if (!sourceFile.isPresent()) {
+            throw new RuntimeException("Cannot find source content for module: " + base.getPath() + ", locale: " + locale
+                    + ",variant: " + variantName + ", draft: " + isDraft);
+        }
+
+        // Use a service-level resource resolver to build the module or assemblies as it will require write access to the resources
+        try (ResourceResolver serviceResourceResolver = serviceResourceResolverProvider.getServiceResourceResolver()) {
+
+            Class cls = base.getResourceType().equals(PantheonConstants.RESOURCE_TYPE_ASSEMBLY) ? Assembly.class : Module.class;
+            Document serviceDocument = (Document) SlingModels.getModel(serviceResourceResolver, base.getPath(), cls);
+
+            DocumentVariant documentVariant = serviceDocument.locale(locale).getOrCreate()
+                    .variants().getOrCreate()
+                    .variant(variantName).getOrCreate();
+
+            DocumentVersion documentVersion;
+            if (isDraft) {
+                documentVersion = documentVariant.draft().getOrCreate();
+            } else {
+                documentVersion = documentVariant.released().getOrCreate();
+            }
+
+            // process product and version.
+            Optional<ProductVersion> productVersion =
+                    documentVersion.metadata()
+                            .toReference(DocumentMetadata::productVersion)
+                            .asOptional();
+
+            String productName = null;
+            if (productVersion.isPresent()) {
+                productName = productVersion.get().getProduct().name().get();
+            }
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMMM yyyy");
+
+            String entitiesPath = base.getWorkspace().entities().get().getPath();
+            Optional<String> attributesFilePath =
+                    base.getWorkspace().moduleVariantDefinitions()
+                            .toChild(vdf -> vdf.variant(variantName))
+                            .toField(ModuleVariantDefinition::attributesFilePath)
+                            .asOptional();
+
+            // build the attributes (default + those coming from http parameters)
+            AttributesBuilder atts = AttributesBuilder.attributes()
+                    // show the title on the generated html
+                    .attribute("showtitle")
+                    // show pantheonproduct on the generated html. Base the value from metadata.
+                    .attribute("pantheonproduct", productName)
+                    // show pantheonversion on the generated html. Base the value from metadata.
+                    .attribute("pantheonversion", productVersion.isPresent() ? productVersion.get().name().get() : "")
+                    // Shows custom rendering attribute to Haml
+                    .attribute("pantheonenv", System.getenv("PANTHEON_ENV") != null ? System.getenv("PANTHEON_ENV") : "dev")
+                    // Provide doctype for haml use
+                    .attribute("pantheondoctype", Assembly.class.equals(cls) ? "assembly" : "module")
+                    // we want to avoid the footer on the generated html
+                    .noFooter(true)
+                    // link the css instead of embedding it
+                    .linkCss(true)
+                    // only needed for PDF
+                    .allowUriRead(true)
+                    // only needed for PDF
+                    // TODO If a url prefix is given here, asciidoctor pdf is able to resolve images
+                    //  from this base url. So, giving it a hardcoded pantheon base url would allow this
+                    //  pantheon instance to serve images to itself while generating PDFs
+                    //.imagesDir("")
+                    // stylesheet reference
+                    .styleSheetName("/static/rhdocs.css");
+
+            if (attributesFilePath.isPresent()) {
+                // provide attribute file as argument to ASCIIDOCTOR for building doc.
+                if (PathUtils.isAbsolute(attributesFilePath.get())) {
+                    // remove the starting slash
+                    attributesFilePath = attributesFilePath.map(p -> p.substring(1));
+                }
+                atts.attribute("attsFile", PathUtils.concat(entitiesPath, attributesFilePath.get()));
+            }
+
+            Calendar updatedDate = documentVersion.metadata().get().datePublished().get();
+            if (updatedDate != null) {
+                // show pantheonupdateddate on generated html. Base the value from metadata.
+                atts.attribute("pantheonupdateddate", dateFormat.format(updatedDate.getTime()));
+
+                // This is for docs that were published before we changed the date logic, and therefore do not have
+                // "first published" metadata.
+                atts.attribute("pantheonpublisheddate", dateFormat.format(updatedDate.getTime()));
+            }
+
+            Calendar publishedDate = documentVersion.metadata().get().dateFirstPublished().get();
+            if (publishedDate != null) {
+                // show pantheonpublisheddate on generated html. Base the value from metadata.
+                atts.attribute("pantheonpublisheddate", dateFormat.format(publishedDate.getTime()));
+            }
+
+            // Add the context as attributes to the generation process
+            context.entrySet().stream().forEach(entry -> {
+                atts.attribute(entry.getKey(), entry.getValue());
+            });
+
+            // generate pdf
+            File outputFile = File.createTempFile("pantheon-pdf-", ".pdf");
+            OptionsBuilder ob = OptionsBuilder.options()
+                    // we're generating html
+                    .backend("pdf")
+                    // no physical file is being generated
+                    .toFile(outputFile)
+                    // allow for some extra flexibility
+                    .safe(SafeMode.UNSAFE) // This probably needs to change
+                    .inPlace(false)
+                    // Generate the html header and footer
+                    .headerFooter(true)
+                    // use the provided attributes
+                    .attributes(atts);
+            globalConfig.getTemplateDirectory().ifPresent(ob::templateDir);
+
+            long start = System.currentTimeMillis();
+            Asciidoctor asciidoctor = asciidoctorPool.borrowObject();
+            InputStream pdfStream;
+            try {
+                TableOfContents tableOfContents = new TableOfContents();
+                PantheonXrefProcessor xrefProcessor = new PantheonXrefProcessor(documentVariant, tableOfContents
+                );
+                // extensions needed to generate a module's html
+                asciidoctor.javaExtensionRegistry().includeProcessor(
+                        new SlingResourceIncludeProcessor(base, tableOfContents, xrefProcessor));
+
+                asciidoctor.javaExtensionRegistry().inlineMacro(MACRO_INCLUDE,
+                        new PantheonLeveloffsetProcessor(tableOfContents));
+
+                asciidoctor.javaExtensionRegistry().inlineMacro(PantheonXrefProcessor.MACRO_PREFIX,
+                        xrefProcessor);
+
+                asciidoctor.javaExtensionRegistry().inlineMacro(PantheonXrefTargetProcessor.MACRO_PREFIX,
+                        new PantheonXrefTargetProcessor());
+
+//                asciidoctor.javaExtensionRegistry().postprocessor(
+//                        new HtmlModulePostprocessor(base));
+
+                // add specific extensions for metadata regeneration
+                if (regenMetadata) {
+                    asciidoctor.javaExtensionRegistry().treeprocessor(
+                            new MetadataExtractorTreeProcessor(documentVersion.metadata().getOrCreate()));
+                }
+
+                StringBuilder content = new StringBuilder();
+                if (attributesFilePath.isPresent() && !isNullOrEmpty(attributesFilePath.get())) {
+                    content.append("include::")
+                            .append("{attsFile}")
+                            .append("[]")
+                            .append(System.lineSeparator());
+                }
+                String rawContent = sourceFile.get()
+                        .jcrContent().get()
+                        .jcrData().get();
+                content.append(xrefProcessor.preprocess(rawContent));
+
+                asciidoctor.convert(content.toString(), ob);
+//                if (documentVersion instanceof AssemblyVersion) {
+//                    ((AssemblyVersion) documentVersion).consumeTableOfContents(tableOfContents);
+//                }
+                pdfStream = cachePdfContent(documentVersion, outputFile);
+
+                // ack_status
+                // TODO: re-evaluate where ack_status node should be created
+                documentVersion.ackStatus().getOrCreate();
+            } finally {
+                asciidoctorPool.returnObject(asciidoctor);
+                outputFile.delete();
+            }
+            log.info("Rendering finished in {} ms.", System.currentTimeMillis() - start);
+            serviceResourceResolver.commit();
+
+            return pdfStream;
+        } catch (PersistenceException pex) {
+            throw new RuntimeException(pex);
+        }
+    }
+
+    /**
      * Stores (cache) the generated html content into the provided module for later retrieval. This method assumes
      * that the generated html is a result of the transformation of the Module's asciidoc content; but it will not
      * check this assertion.
@@ -356,5 +604,26 @@ public class AsciidoctorService {
                 .jcrContent().getOrCreate();
         cachedHtmlFile.jcrData().set(html);
         cachedHtmlFile.mimeType().set("text/html");
+    }
+
+    /**
+     * Stores (cache) the generated pdf content into the provided document for later retrieval. This method assumes
+     * that the generated pdf is a result of the transformation of the Module's asciidoc content; but it will not
+     * check this assertion.
+     *
+     * @param version The specific document version for which to cache the html
+     * @param pdf    The pdf file that was generated
+     * @return An {@link InputStream} with the contents of the cached PDF as it was stored.
+     */
+    private InputStream cachePdfContent(final DocumentVersion version, final File pdf) {
+        FileResource.JcrContent cachedPdf = version.cachedPdf().getOrCreate()
+                .jcrContent().getOrCreate();
+        try( FileInputStream is = new FileInputStream(pdf) ) {
+            cachedPdf.jcrData().toFieldType(InputStream.class).set(is);
+            cachedPdf.mimeType().set("application/pdf");
+            return cachedPdf.jcrData().toFieldType(InputStream.class).get();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

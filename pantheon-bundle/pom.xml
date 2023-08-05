@@ -79,6 +79,8 @@
                             com.redhat.pantheon.use
                         </Sling-Model-Packages>
                         <Import-Package>
+                            javax.security.auth.x500,
+                            javax.security.cert,
                             !jnr.a64asm,!jnr.x86asm,!org.apache.bsf,!org.apache.bsf.util,
                             !org.apache.tools.ant,!org.joda.convert,!org.objectweb.asm,!sun.misc,
                             !javax.ejb,
@@ -282,6 +284,11 @@
             <groupId>org.asciidoctor</groupId>
             <artifactId>asciidoctorj</artifactId>
             <version>2.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj-pdf</artifactId>
+            <version>1.5.4</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
